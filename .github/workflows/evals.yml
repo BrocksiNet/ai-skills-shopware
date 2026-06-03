@@ -34,7 +34,7 @@ jobs:
       SKILLS_AGENT_CMD: ${{ secrets.SKILLS_AGENT_CMD }}
       AGENT_API_KEY: ${{ secrets.AGENT_API_KEY }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
 
       - name: Guard — require an agent to be configured
         run: |
