@@ -1,0 +1,20 @@
+# Harbor task template. Copy to harbor/<task-name>/task.toml and set `task`.
+# Docs: https://github.com/harbor-framework/harbor
+
+# Which eval task under evals/tasks/ this wraps (also the dir name).
+task = "cache-tag-no-deprecated-event"
+
+# Provider-independent: swap between supported agents without changing the task.
+agent = "claude-code"   # or "codex", "opencode"
+
+# Skills under test are installed into the container before the run, e.g. via
+# `npx skills add BrocksiNet/ai-skills-shopware --skill ... -a claude-code`.
+# Run the same task with skills omitted to produce the A/B "off" arm.
+[setup]
+install_skills = true
+profile = "plugin"      # plugin | core
+
+[reward]
+# test.sh exits 0 (reward 1) on pass, non-zero (reward 0) on fail.
+type = "binary"
+timeout_seconds = 600

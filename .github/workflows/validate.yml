@@ -1,0 +1,37 @@
+name: validate
+
+# Cheap, deterministic checks. Runs on every push/PR. No model calls, no secrets.
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  validate-skills:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Validate skill structure, budgets and conflicts
+        run: bash scripts/validate-skills.sh
+
+      - name: Activation evals (dry mode — file presence + prompt parsing)
+        run: bash scripts/run-activation-evals.sh
+
+  markdown-lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Lint Markdown
+        uses: DavidAnson/markdownlint-cli2-action@v16
+        with:
+          globs: |
+            **/*.md
+            #node_modules
+        continue-on-error: true
