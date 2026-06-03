@@ -6,7 +6,7 @@ or the matching release tag — docs are the starting point, not the final word.
 
 ## Primary sources
 
-- **Developer docs:** https://developer.shopware.com/docs — concepts, guides, API.
+- **Developer docs:** <https://developer.shopware.com/docs> — concepts, guides, API.
 - **Core source:** `vendor/shopware/core` in the project, or `shopware/shopware`
   at the **release tag matching the project version** (never `trunk`).
 - **Coding guidelines:** `shopware/shopware` `coding-guidelines/` and `adr/`.

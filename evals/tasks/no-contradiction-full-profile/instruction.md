@@ -1,3 +1,5 @@
+# Task: full-profile composability (no contradictions)
+
 Run this task with a FULL profile installed (e.g. the plugin profile:
 php-foundation + shopware-plugin-development + shopware-testing +
 shopware-research-and-escalation + shopware-review-learnings).

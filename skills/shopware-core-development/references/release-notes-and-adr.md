@@ -69,7 +69,7 @@ Mechanical or obvious changes do not need an ADR.
 Conventional commits, scoped to the affected area. The title feeds the
 auto-generated changelog, so make it descriptive:
 
-```
+```text
 feat(Checkout): add CacheTagCollector support to product route
 fix(Administration): correct sw-data-grid selection reset
 ```

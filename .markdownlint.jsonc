@@ -1,0 +1,9 @@
+{
+  // Base ruleset, with project-specific deltas below.
+  "default": true,
+
+  // MD013 (line length): disabled. The docs use Markdown tables and
+  // link-heavy prose where an 80-char hard wrap is impractical and would hurt
+  // readability. Wrapping is a stylistic choice, not a correctness issue.
+  "MD013": false
+}

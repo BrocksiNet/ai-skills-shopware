@@ -1,3 +1,5 @@
+# Task: raise the PHPStan level within the baseline guardrail
+
 This is the Shopware core repo (strict profile). The current PHPStan
 configuration in `fixture/phpstan.neon` runs at `level: 8` with an existing
 `fixture/phpstan-baseline.neon`.

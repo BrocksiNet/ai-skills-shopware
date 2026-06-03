@@ -14,7 +14,7 @@ real when an agent command is configured.
 
 Each `tasks/<rule>/` is a fixture task:
 
-```
+```text
 tasks/<rule>/
 ├── instruction.md     # the prompt given to the agent
 ├── fixture/           # starting code copied into the agent's working dir
