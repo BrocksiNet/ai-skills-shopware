@@ -5,5 +5,10 @@
   // MD013 (line length): disabled. The docs use Markdown tables and
   // link-heavy prose where an 80-char hard wrap is impractical and would hurt
   // readability. Wrapping is a stylistic choice, not a correctness issue.
-  "MD013": false
+  "MD013": false,
+
+  // MD024 (duplicate headings): only flag duplicates that are siblings under
+  // the same parent. Repeating per-tool sub-headings (Cursor / Claude Code /
+  // Codex / OpenCode) under different use-case sections is intentional.
+  "MD024": { "siblings_only": true }
 }

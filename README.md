@@ -60,8 +60,9 @@ difference between tools is the `-a` target.
 
 ### Plugin / project development (most people)
 
+#### Cursor
+
 ```bash
-# Cursor
 npx skills add BrocksiNet/ai-skills-shopware \
   --skill php-foundation \
   --skill shopware-plugin-development \
@@ -71,8 +72,9 @@ npx skills add BrocksiNet/ai-skills-shopware \
   -a cursor
 ```
 
+#### Claude Code
+
 ```bash
-# Claude Code
 npx skills add BrocksiNet/ai-skills-shopware \
   --skill php-foundation \
   --skill shopware-plugin-development \
@@ -82,8 +84,9 @@ npx skills add BrocksiNet/ai-skills-shopware \
   -a claude-code
 ```
 
+#### Codex
+
 ```bash
-# Codex
 npx skills add BrocksiNet/ai-skills-shopware \
   --skill php-foundation \
   --skill shopware-plugin-development \
@@ -93,8 +96,9 @@ npx skills add BrocksiNet/ai-skills-shopware \
   -a codex
 ```
 
+#### OpenCode
+
 ```bash
-# OpenCode
 npx skills add BrocksiNet/ai-skills-shopware \
   --skill php-foundation \
   --skill shopware-plugin-development \
@@ -106,8 +110,9 @@ npx skills add BrocksiNet/ai-skills-shopware \
 
 ### App development
 
+#### Cursor
+
 ```bash
-# Cursor
 npx skills add BrocksiNet/ai-skills-shopware \
   --skill php-foundation \
   --skill shopware-app-development \
@@ -117,8 +122,9 @@ npx skills add BrocksiNet/ai-skills-shopware \
   -a cursor
 ```
 
+#### Claude Code
+
 ```bash
-# Claude Code
 npx skills add BrocksiNet/ai-skills-shopware \
   --skill php-foundation \
   --skill shopware-app-development \
@@ -128,8 +134,9 @@ npx skills add BrocksiNet/ai-skills-shopware \
   -a claude-code
 ```
 
+#### Codex
+
 ```bash
-# Codex
 npx skills add BrocksiNet/ai-skills-shopware \
   --skill php-foundation \
   --skill shopware-app-development \
@@ -139,8 +146,9 @@ npx skills add BrocksiNet/ai-skills-shopware \
   -a codex
 ```
 
+#### OpenCode
+
 ```bash
-# OpenCode
 npx skills add BrocksiNet/ai-skills-shopware \
   --skill php-foundation \
   --skill shopware-app-development \
@@ -152,8 +160,9 @@ npx skills add BrocksiNet/ai-skills-shopware \
 
 ### Shopware platform / core contribution
 
+#### Cursor
+
 ```bash
-# Cursor
 npx skills add BrocksiNet/ai-skills-shopware \
   --skill php-foundation \
   --skill shopware-core-development \
@@ -163,8 +172,9 @@ npx skills add BrocksiNet/ai-skills-shopware \
   -a cursor
 ```
 
+#### Claude Code
+
 ```bash
-# Claude Code
 npx skills add BrocksiNet/ai-skills-shopware \
   --skill php-foundation \
   --skill shopware-core-development \
@@ -174,8 +184,9 @@ npx skills add BrocksiNet/ai-skills-shopware \
   -a claude-code
 ```
 
+#### Codex
+
 ```bash
-# Codex
 npx skills add BrocksiNet/ai-skills-shopware \
   --skill php-foundation \
   --skill shopware-core-development \
@@ -185,8 +196,9 @@ npx skills add BrocksiNet/ai-skills-shopware \
   -a codex
 ```
 
+#### OpenCode
+
 ```bash
-# OpenCode
 npx skills add BrocksiNet/ai-skills-shopware \
   --skill php-foundation \
   --skill shopware-core-development \
