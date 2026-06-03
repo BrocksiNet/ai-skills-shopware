@@ -55,6 +55,9 @@ Canonical one-liners live in [`use-cases/`](use-cases/):
 [`app-development.md`](use-cases/app-development.md), and
 [`core-development.md`](use-cases/core-development.md).
 
+Each use-case below lists one ready-to-copy command per supported tool. The only
+difference between tools is the `-a` target.
+
 ### Plugin / project development (most people)
 
 ```bash
@@ -66,19 +69,132 @@ npx skills add BrocksiNet/ai-skills-shopware \
   --skill shopware-research-and-escalation \
   --skill shopware-review-learnings \
   -a cursor
+```
 
-# Claude Code  ->  -a claude-code
-# Codex        ->  -a codex
-# OpenCode     ->  -a opencode
+```bash
+# Claude Code
+npx skills add BrocksiNet/ai-skills-shopware \
+  --skill php-foundation \
+  --skill shopware-plugin-development \
+  --skill shopware-testing \
+  --skill shopware-research-and-escalation \
+  --skill shopware-review-learnings \
+  -a claude-code
+```
+
+```bash
+# Codex
+npx skills add BrocksiNet/ai-skills-shopware \
+  --skill php-foundation \
+  --skill shopware-plugin-development \
+  --skill shopware-testing \
+  --skill shopware-research-and-escalation \
+  --skill shopware-review-learnings \
+  -a codex
+```
+
+```bash
+# OpenCode
+npx skills add BrocksiNet/ai-skills-shopware \
+  --skill php-foundation \
+  --skill shopware-plugin-development \
+  --skill shopware-testing \
+  --skill shopware-research-and-escalation \
+  --skill shopware-review-learnings \
+  -a opencode
 ```
 
 ### App development
 
-Swap `--skill shopware-plugin-development` for `--skill shopware-app-development`.
+```bash
+# Cursor
+npx skills add BrocksiNet/ai-skills-shopware \
+  --skill php-foundation \
+  --skill shopware-app-development \
+  --skill shopware-testing \
+  --skill shopware-research-and-escalation \
+  --skill shopware-review-learnings \
+  -a cursor
+```
+
+```bash
+# Claude Code
+npx skills add BrocksiNet/ai-skills-shopware \
+  --skill php-foundation \
+  --skill shopware-app-development \
+  --skill shopware-testing \
+  --skill shopware-research-and-escalation \
+  --skill shopware-review-learnings \
+  -a claude-code
+```
+
+```bash
+# Codex
+npx skills add BrocksiNet/ai-skills-shopware \
+  --skill php-foundation \
+  --skill shopware-app-development \
+  --skill shopware-testing \
+  --skill shopware-research-and-escalation \
+  --skill shopware-review-learnings \
+  -a codex
+```
+
+```bash
+# OpenCode
+npx skills add BrocksiNet/ai-skills-shopware \
+  --skill php-foundation \
+  --skill shopware-app-development \
+  --skill shopware-testing \
+  --skill shopware-research-and-escalation \
+  --skill shopware-review-learnings \
+  -a opencode
+```
 
 ### Shopware platform / core contribution
 
-Swap `--skill shopware-plugin-development` for `--skill shopware-core-development`.
+```bash
+# Cursor
+npx skills add BrocksiNet/ai-skills-shopware \
+  --skill php-foundation \
+  --skill shopware-core-development \
+  --skill shopware-testing \
+  --skill shopware-research-and-escalation \
+  --skill shopware-review-learnings \
+  -a cursor
+```
+
+```bash
+# Claude Code
+npx skills add BrocksiNet/ai-skills-shopware \
+  --skill php-foundation \
+  --skill shopware-core-development \
+  --skill shopware-testing \
+  --skill shopware-research-and-escalation \
+  --skill shopware-review-learnings \
+  -a claude-code
+```
+
+```bash
+# Codex
+npx skills add BrocksiNet/ai-skills-shopware \
+  --skill php-foundation \
+  --skill shopware-core-development \
+  --skill shopware-testing \
+  --skill shopware-research-and-escalation \
+  --skill shopware-review-learnings \
+  -a codex
+```
+
+```bash
+# OpenCode
+npx skills add BrocksiNet/ai-skills-shopware \
+  --skill php-foundation \
+  --skill shopware-core-development \
+  --skill shopware-testing \
+  --skill shopware-research-and-escalation \
+  --skill shopware-review-learnings \
+  -a opencode
+```
 
 Building across more than one use-case (e.g. a monorepo with platform and
 extensions)? Add each use-case's surface skill: the surface routing keeps strict
