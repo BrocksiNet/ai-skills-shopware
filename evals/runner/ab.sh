@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 #
-# Layer 3 runner: A/B ablation for one task. Runs it with the skill profile ON
+# Layer 3 runner: A/B ablation for one task. Runs it with the skill set ON
 # and OFF and reports whether the skill moved the result.
 #
 #   ./ab.sh <task-name> [repeats]

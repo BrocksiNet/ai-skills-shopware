@@ -17,21 +17,24 @@ release tag, and run `npx skills update` to pull improvements.
 - **One source of truth.** Stop copying rules between `.cursor/`, `~/.claude/skills/`,
   and `~/.codex/skills/`. Author once, project everywhere.
 - **No per-provider drift.** The same skill behaves the same in every tool.
-- **Profiles, not a mega-prompt.** Install the *core* or *plugin* profile per
-  project so context stays lean and rules stay relevant.
+- **Organised by surface, not persona.** Skills key on *what you are editing* —
+  the platform (`src/Core`), a plugin/project (`custom/plugins`), or an app
+  (`custom/apps`). The right one activates from the path/context, so context
+  stays lean and a monorepo that spans surfaces just works.
 - **Proven, not assumed.** Every rule ships with evals so we can show it changes
   the model's output (see [Validating skills](#validating-skills)).
 
 ## Skill index
 
-| Skill | Profile | Purpose |
+| Skill | Surface | Purpose |
 | ----- | ------- | ------- |
-| [`php-foundation`](skills/php-foundation/SKILL.md) | shared | Strict PHP 8.x base: `strict_types`, enums/DTOs over arrays, PER-CS, `list<>` over `array<>`. |
-| [`shopware-core-development`](skills/shopware-core-development/SKILL.md) | core | Strict rules for contributing to `shopware/shopware`: deprecation policy, release notes (RELEASE_INFO/UPGRADE) + ADRs, PHPStan baseline discipline, `@internal` boundaries. |
-| [`shopware-plugin-development`](skills/shopware-plugin-development/SKILL.md) | plugin | Pragmatic plugin/app rules: smallest safe change, 6.6/6.7 compat, DAL usage, HTTP cache tags (6.7+), migrations, decoration. |
-| [`shopware-testing`](skills/shopware-testing/SKILL.md) | both | PHPUnit standards: unit vs integration placement, `IntegrationTestBehaviour`, data providers, no real I/O in unit tests. |
-| [`shopware-review-learnings`](skills/shopware-review-learnings/SKILL.md) | both | Recurring findings from real plugin/app/PR reviews. Grows over time. |
-| [`shopware-research-and-escalation`](skills/shopware-research-and-escalation/SKILL.md) | both | When to research vs. proceed, the Shopware docs map, Context7 for libraries, and the when-stuck ladder. |
+| [`php-foundation`](skills/php-foundation/SKILL.md) | any PHP | Strict PHP 8.x base: `strict_types`, enums/DTOs over arrays, PER-CS, `list<>` over `array<>`. |
+| [`shopware-core-development`](skills/shopware-core-development/SKILL.md) | platform (`shopware/shopware`, `src/`) | Strict rules for changing the platform: deprecation policy, release notes (RELEASE_INFO/UPGRADE) + ADRs, PHPStan baseline discipline, `@internal` boundaries. |
+| [`shopware-plugin-development`](skills/shopware-plugin-development/SKILL.md) | plugin / project (`custom/plugins`) | Pragmatic PHP-extension rules: smallest safe change, 6.6/6.7 compat, DAL usage, HTTP cache tags (6.7+), migrations, decoration. |
+| [`shopware-app-development`](skills/shopware-app-development/SKILL.md) | app (`custom/apps`, `manifest.xml`) | Declarative app rules: manifest, least-privilege permissions, sandboxed Twig app scripts, webhooks + Admin API, Meteor Admin SDK. |
+| [`shopware-testing`](skills/shopware-testing/SKILL.md) | any test | PHPUnit standards: unit vs integration placement, `IntegrationTestBehaviour`, data providers, no real I/O in unit tests. |
+| [`shopware-review-learnings`](skills/shopware-review-learnings/SKILL.md) | any review | Recurring findings from real plugin/app/PR reviews. Grows over time. |
+| [`shopware-research-and-escalation`](skills/shopware-research-and-escalation/SKILL.md) | any | When to research vs. proceed, the Shopware docs map, Context7 for libraries, and the when-stuck ladder. |
 
 See [`REGISTRY.md`](REGISTRY.md) for the full catalog with ownership and the
 topic → owning-skill coverage matrix that keeps skills from contradicting each
@@ -39,11 +42,20 @@ other.
 
 ## Install
 
-Requires Node.js (for `npx`). Pick a **profile** and install it into your tool.
-The two profiles are install-time exclusive: a given project uses *core* or
-*plugin*, never both, so strict and pragmatic rules never load together.
+Requires Node.js (for `npx`). There is no single "install everything" command on
+purpose: you install the skills for the use-case you are working on, so the
+context stays lean. The surface skills (`core` / `plugin` / `app`) are **not**
+install-time exclusive: they disambiguate on the target you are editing, so only
+the right one activates per task. Installing several use-case sets together is
+safe; in a monorepo, editing `src/Core` fires the platform rules while editing
+`custom/plugins` fires the plugin rules.
 
-### Plugin / app development (most people)
+Canonical one-liners live in [`use-cases/`](use-cases/):
+[`plugin-development.md`](use-cases/plugin-development.md),
+[`app-development.md`](use-cases/app-development.md), and
+[`core-development.md`](use-cases/core-development.md).
+
+### Plugin / project development (most people)
 
 ```bash
 # Cursor
@@ -60,21 +72,27 @@ npx skills add BrocksiNet/ai-skills-shopware \
 # OpenCode     ->  -a opencode
 ```
 
-### Shopware core contribution
+### App development
 
-```bash
-npx skills add BrocksiNet/ai-skills-shopware \
-  --skill php-foundation \
-  --skill shopware-core-development \
-  --skill shopware-testing \
-  --skill shopware-research-and-escalation \
-  --skill shopware-review-learnings \
-  -a cursor
-```
+Swap `--skill shopware-plugin-development` for `--skill shopware-app-development`.
 
-Use `-g` to install into the user-level directory (all projects) instead of the
-current project. See [`profiles/core.md`](profiles/core.md) and
-[`profiles/plugin.md`](profiles/plugin.md) for the canonical one-liners.
+### Shopware platform / core contribution
+
+Swap `--skill shopware-plugin-development` for `--skill shopware-core-development`.
+
+Building across more than one use-case (e.g. a monorepo with platform and
+extensions)? Add each use-case's surface skill: the surface routing keeps strict
+and pragmatic rules from firing on the wrong code.
+
+### Prefer a project-level install
+
+Install into the **current project** (the default — no `-g`), not user-level.
+Skills are pinned per release and tuned to a project's Shopware version and
+surface, so a per-project install stays reproducible for the whole team and
+never fires stale or version-mismatched rules on an unrelated repo. The `-g`
+flag installs user-level (all projects), but the rules are then global and
+effectively unpinned — only reach for it if you work on Shopware almost
+exclusively and accept that trade-off.
 
 ### Pin a version
 
@@ -123,9 +141,9 @@ We do not assume the rules are applied — we test it. Three layers:
    off and compares pass rates — proof the skill earns its context budget.
 
 For a hands-on, real-instance check, follow
-[`docs/local-validation.md`](docs/local-validation.md): install a profile, point
-it at your own local Shopware, run a task, verify with the project's own tooling,
-and send feedback.
+[`docs/local-validation.md`](docs/local-validation.md): install the skills for
+your use-case, point them at your own local Shopware, run a task, verify with the
+project's own tooling, and send feedback.
 
 ## Curation & governance
 
@@ -140,8 +158,8 @@ This is a curated library, not a dumping ground. A rule is included only if it:
    dependency. MIT content may be vendored as a pinned, attributed snapshot;
    CC-BY-SA content is rewritten.
 
-Ownership: the `core` profile is platform/maintainer-controlled. Propose changes
-via PR; recurring real-world findings go through the
+Ownership: the `shopware-core-development` skill is platform/maintainer-controlled.
+Propose changes via PR; recurring real-world findings go through the
 [issue templates](.github/ISSUE_TEMPLATE) and become review-learnings + eval tasks.
 
 ## Credits

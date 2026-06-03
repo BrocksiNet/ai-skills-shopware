@@ -1,22 +1,33 @@
 ---
 name: shopware-plugin-development
 description: >-
-  Pragmatic rules for building Shopware 6 plugins, apps, and project code. Use
-  when creating or changing a plugin/app: services and DI, DAL reads/writes,
-  HTTP cache tags (6.7+), database migrations, event subscribers, decoration,
-  and 6.6/6.7 version compatibility. Triggers on "build a Shopware plugin",
-  "add a service", "query with the DAL", "add a migration", "cache this route",
-  "subscribe to an event", "make this 6.7 compatible". Do NOT use for
-  shopware/shopware core contributions (use shopware-core-development), generic
-  PHP style (use php-foundation), or test authoring (use shopware-testing).
+  Pragmatic rules for extending Shopware 6 with PHP — plugins and a shop
+  project's own backend code. Use when the target lives on top of the platform:
+  paths like custom/plugins, custom/static-plugins, vendor/store.shopware.com, a
+  standalone plugin repo (a class extending Shopware\Core\Framework\Plugin\Plugin),
+  or project src/ services. Covers services and DI, DAL reads/writes, HTTP cache
+  tags (6.7+), database migrations, event subscribers, decoration, and 6.6/6.7
+  compatibility. Triggers on "build a Shopware plugin", "add a service", "query
+  with the DAL", "add a migration", "cache this route", "decorate a core
+  service", "subscribe to an event", "make this 6.7 compatible". Do NOT use for
+  the platform itself (shopware-core-development), for declarative apps with a
+  manifest.xml (shopware-app-development), generic PHP style (php-foundation),
+  or test authoring (shopware-testing).
 ---
 
-# Shopware plugin development (pragmatic profile)
+# Shopware plugin / project development (pragmatic surface)
 
-For plugins, apps, and customer-project code that runs *on top of* Shopware.
-The goal is the **smallest coherent, safe change** that fits Shopware's
-extension model — not re-architecting, and not defensive ceremony without a
-concrete failure mode. Inherits `php-foundation`; adds the deltas below.
+For PHP that runs *on top of* Shopware — plugins (`custom/plugins`,
+`custom/static-plugins`, `vendor/store.shopware.com`, a standalone plugin repo)
+and a shop project's own backend code. The goal is the **smallest coherent,
+safe change** that fits Shopware's extension model — not re-architecting, and
+not defensive ceremony without a concrete failure mode. Inherits
+`php-foundation`; adds the deltas below.
+
+> Surface check: this skill is for PHP extensions. Editing the platform itself
+> is `shopware-core-development`; a **declarative app** (`manifest.xml` under
+> `custom/apps`, app scripts, webhooks) is `shopware-app-development` — apps have
+> no plugin DI/DAL at runtime, so do not apply these rules there.
 
 Load a reference only when the task needs it:
 
@@ -54,8 +65,11 @@ Load a reference only when the task needs it:
   release.
 - **Plugin lifecycle:** handle install/update/activate/deactivate/uninstall;
   respect `keepUserData` on uninstall; clean up only what you own.
-- **Version awareness:** check the supported Shopware range in `composer.json`
-  and keep the code working across it (see the compatibility reference).
+- **Version awareness:** check the supported Shopware range in `composer.json`,
+  keep code working across it, and align Symfony usage to the version that range
+  pins. For cross-version migrations and modernization, reach for **Rector**
+  (`frosh/shopware-rector` set) and review the dry-run — do not hand-edit blindly
+  (see the compatibility reference).
 
 ## Definition of done
 
@@ -68,5 +82,9 @@ Load a reference only when the task needs it:
 
 ## Further reading (optional, non-load-bearing)
 
-- Shopware developer docs: plugin fundamentals, DAL, HTTP cache, migrations.
+- Shopware developer docs:
+  [Plugin guides](https://developer.shopware.com/docs/guides/plugins/plugins/),
+  [Data Abstraction Layer](https://developer.shopware.com/docs/concepts/framework/data-abstraction-layer.html)
+  ([reading data](https://developer.shopware.com/docs/guides/plugins/plugins/framework/data-handling/reading-data.html)),
+  [Migrations](https://developer.shopware.com/docs/concepts/framework/migrations.html).
 - brocksi.net: API-aware guidelines; 6.7 cache tags migration guide.

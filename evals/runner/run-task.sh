@@ -5,13 +5,13 @@
 #   ./run-task.sh <task-name> [on|off]
 #
 # Copies the task fixture into a temp working dir, (optionally) enables/disables
-# the skill profile, invokes the agent with the task instruction, captures the
+# the skill set, invokes the agent with the task instruction, captures the
 # transcript, then runs the task's grade.sh.
 #
 # Required:
 #   SKILLS_AGENT_CMD  - reads the prompt on stdin, works in CWD, prints transcript to stdout.
-# Optional (for true A/B; otherwise toggle the profile by hand):
-#   SKILLS_PROFILE_ON_CMD  / SKILLS_PROFILE_OFF_CMD  - enable/disable the profile for your tool.
+# Optional (for true A/B; otherwise toggle the skill set by hand):
+#   SKILLS_PROFILE_ON_CMD  / SKILLS_PROFILE_OFF_CMD  - enable/disable the skill set for your tool.
 set -euo pipefail
 
 TASK="${1:?usage: run-task.sh <task-name> [on|off]}"

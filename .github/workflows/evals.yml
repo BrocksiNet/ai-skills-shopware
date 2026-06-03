@@ -13,8 +13,8 @@ on:
     types: [labeled]
   workflow_dispatch:
     inputs:
-      profile:
-        description: "Profile to test (plugin|core)"
+      use_case:
+        description: "Use-case to test (plugin|app|core)"
         default: "plugin"
 
 permissions:

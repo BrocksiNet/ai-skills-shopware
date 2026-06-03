@@ -17,7 +17,7 @@ labels: ["false-trigger"]
 
 ## Context
 
-- Profile installed:
+- Skills installed:
 - Tool (Cursor / Claude Code / Codex):
 
 ## Proposed follow-up

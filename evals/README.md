@@ -33,7 +33,7 @@ rules only.
 ## Layer 3 — A/B ablation (`runner/`)
 
 - `runner/run-task.sh <task> <on|off>` — copy the fixture into a temp workdir,
-  invoke the agent with the skill profile enabled (`on`) or disabled (`off`),
+  invoke the agent with the skill set enabled (`on`) or disabled (`off`),
   capture the transcript, then run `grade.sh`.
 - `runner/ab.sh <task>` — run both, compare pass/fail. A skill that does not move
   the result is not earning its context budget.
@@ -41,7 +41,7 @@ rules only.
 The agent is provided via `SKILLS_AGENT_CMD` (reads the prompt on stdin, works in
 the current directory, prints its transcript to stdout). Skill on/off is provided
 by `SKILLS_PROFILE_ON_CMD` / `SKILLS_PROFILE_OFF_CMD` hooks (install/uninstall or
-enable/disable the profile for the target tool) — leave unset to A/B manually.
+enable/disable the skill set for the target tool) — leave unset to A/B manually.
 
 ## Harbor (`harbor/`)
 

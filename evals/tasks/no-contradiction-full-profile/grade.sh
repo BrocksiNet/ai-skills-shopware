@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # Grader: no-contradiction-full-profile
-# Detects contradictory guidance in the transcript when a full profile is loaded.
+# Detects contradictory guidance in the transcript when a full skill set is loaded.
 # Deterministic contradiction checks first; LLM-judge is the documented fallback
 # for fuzzier coherence (set SKILLS_JUDGE_CMD to enable it).
 set -euo pipefail

@@ -7,7 +7,7 @@ description: >-
   submission. Triggers on "review this Shopware code", "what would a reviewer
   say", "is this headless/API-aware", "common Shopware mistakes". Do NOT use as
   a generic PHP linter (use php-foundation), for test rules (use
-  shopware-testing), or to re-define topics already owned by the profile skills
+  shopware-testing), or to re-define topics already owned by the surface skills
   — this skill records findings and points at the owning skill.
 ---
 
@@ -17,7 +17,7 @@ A living list of the issues that *actually recur* in reviews. This is the
 delta-principle skill: it only captures things the base model (and humans) keep
 getting wrong, grown from real review findings — not a re-statement of the docs.
 
-It does not re-own topics. When a finding belongs to a profile topic (DAL, cache,
+It does not re-own topics. When a finding belongs to a surface-skill topic (DAL, cache,
 migrations, deprecations), the entry points at the owning skill rather than
 redefining the rule. New entries come through the
 [issue templates](../../.github/ISSUE_TEMPLATE) and graduate into eval tasks.

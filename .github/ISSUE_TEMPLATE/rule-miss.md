@@ -20,7 +20,7 @@ labels: ["rule-miss", "review-learning"]
 ## Context
 
 - Shopware version:
-- Profile installed:
+- Skills installed:
 - Tool (Cursor / Claude Code / Codex):
 - Prompt used:
 

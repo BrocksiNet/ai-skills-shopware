@@ -35,6 +35,23 @@ public function oldHandle(Context $context): void
 - Deprecate the whole surface: class, method, parameter, constant, public
   property, service id, event, and route as applicable.
 
+## Which annotation, when (BC lifecycle)
+
+Shopware's backward-compatibility workflow uses different annotations depending
+on where the change is in its lifecycle. Pick the right one:
+
+| Situation | Annotation | Notes |
+| --------- | ---------- | ----- |
+| New public API still being stabilised | `@internal` | Mark new public API `@internal` until release; remove the tag when it goes public. |
+| Obsolete code, replacement shipping **now** behind a feature flag | `@feature-deprecated` | During development; becomes a plain `@deprecated` when the feature is released. |
+| Obsolete public code, removal scheduled for the **next major** | `@deprecated tag:v6.x.0` | The standard deprecation; old code removed in the major. |
+| Breaking change hidden behind a **major** feature flag | `@major-deprecated` | Hide breaking behaviour behind the major flag; document it in `UPGRADE`. |
+
+Always name the replacement and the target tag, and keep both code paths alive
+until the major lands. See the developer-docs
+[Backward Compatibility](https://developer.shopware.com/docs/resources/guidelines/code/backward-compatibility.html)
+guide for the full matrix.
+
 ## Breaking-change checklist
 
 - [ ] Is there a non-breaking alternative (add new, deprecate old)? Prefer it.

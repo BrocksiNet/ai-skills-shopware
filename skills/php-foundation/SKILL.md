@@ -8,14 +8,14 @@ description: >-
   "return a DTO instead of an array", PER-CS / coding-style questions, and
   PHPStan type errors. Do NOT use for non-PHP work (Twig-only, Vue/JS/SCSS),
   for PHPUnit test authoring (use shopware-testing), or for Shopware-specific
-  framework topics like DAL, cache, or migrations (use the profile skills).
+  framework topics like DAL, cache, or migrations (use the surface skills).
 ---
 
 # PHP foundation (Shopware-aligned)
 
-The shared PHP baseline every Shopware profile inherits. It encodes only what
+The shared PHP baseline every Shopware use-case inherits. It encodes only what
 models get wrong *in practice* for Shopware codebases — not a generic PHP
-tutorial. The profile skills (`shopware-core-development`,
+tutorial. The surface skills (`shopware-core-development`,
 `shopware-plugin-development`) add stricter deltas on top; they never contradict
 this base.
 
@@ -70,7 +70,7 @@ final readonly class PriceResult
 - **`readonly` for DTOs / Value Objects / events** — data that should not mutate
   after construction. Use constructor property promotion.
 - Do *not* slap `readonly` on Doctrine entities or DAL entity classes — that is a
-  framework concern handled in the profile skills; ask before doing it.
+  framework concern handled in the surface skills; ask before doing it.
 
 ## Static-analysis-friendly typing (Shopware convention)
 
@@ -100,7 +100,7 @@ intent clearer — not for their own sake.
 - [ ] No known-shape `array` that should be a DTO/VO; no constant-set that should be an enum.
 - [ ] `#[\Override]` on overrides/implementations; classes referenced via `use`.
 - [ ] `list<T>` used for sequential collections; PHPDoc only where language types cannot express the shape.
-- [ ] ECS passes (PER-CS). For Shopware specifics (DAL, cache, migrations, tests) defer to the profile / testing skills.
+- [ ] ECS passes (PER-CS). For Shopware specifics (DAL, cache, migrations, tests) defer to the surface / testing skills.
 
 ## Further reading (optional, non-load-bearing)
 

@@ -6,16 +6,23 @@ The coverage matrix is the mechanism that keeps skills from contradicting each
 other: every topic has exactly one owning skill. `scripts/validate-skills.sh`
 flags duplicate topic ownership and overlapping trigger phrases.
 
+Skills are organised by **target surface** — *what you are editing* — not by
+persona. The surface is usually obvious from the path (`src/Core` vs
+`custom/plugins` vs `custom/apps`), so the right skill activates by context and
+the surface skills can all be installed together without contradicting (see
+[Precedence](#precedence-when-more-than-one-applies)).
+
 ## Catalog
 
-| Skill | Owner | Profile | Triggers on | Stays quiet for |
+| Skill | Owner | Surface | Triggers on | Stays quiet for |
 | ----- | ----- | ------- | ----------- | --------------- |
-| `php-foundation` | maintainer | shared | Writing/refactoring PHP for Shopware: types, enums, DTOs, coding style | Non-PHP, generic JS/Vue/Twig-only work |
-| `shopware-core-development` | maintainer (platform-controlled) | core | Contributing to `shopware/shopware`, ADRs, release notes (RELEASE_INFO/UPGRADE), deprecations, PHPStan baseline | Plugin/app/project code, app scripts |
-| `shopware-plugin-development` | maintainer | plugin | Building a Shopware plugin/app/project: DAL, services, cache, migrations, compat | Core contributions, generic PHP libraries |
-| `shopware-testing` | maintainer | both | Writing/fixing PHPUnit tests for Shopware code | Storefront E2E/Playwright, Jest, manual QA |
-| `shopware-review-learnings` | maintainer + contributors | both | Reviewing Shopware code, "is this idiomatic", recurring pitfalls | Greenfield generic PHP, non-Shopware review |
-| `shopware-research-and-escalation` | maintainer | both | Uncertainty about Shopware behavior/symbols, "should I research", being stuck | Tasks the model is confident about |
+| `php-foundation` | maintainer | any PHP | Writing/refactoring PHP for Shopware: types, enums, DTOs, coding style | Non-PHP, generic JS/Vue/Twig-only work |
+| `shopware-core-development` | maintainer (platform-controlled) | platform (`shopware/shopware`, `src/`) | Changing platform code: ADRs, release notes (RELEASE_INFO/UPGRADE), deprecations, PHPStan baseline | Plugins, apps, project code |
+| `shopware-plugin-development` | maintainer | plugin / project (`custom/plugins`, project `src/`) | PHP extensions on top of Shopware: DAL, services, cache, migrations, decoration, compat | Platform code, declarative apps, generic PHP libraries |
+| `shopware-app-development` | maintainer | app (`custom/apps`, `manifest.xml`) | Declarative apps: manifest, permissions, app scripts, webhooks, Admin API | Plugin PHP (DI/DAL/decoration), platform code |
+| `shopware-testing` | maintainer | any test | Writing/fixing PHPUnit tests for Shopware code | Storefront E2E/Playwright, Jest, manual QA |
+| `shopware-review-learnings` | maintainer + contributors | any review | Reviewing Shopware code, "is this idiomatic", recurring pitfalls | Greenfield generic PHP, non-Shopware review |
+| `shopware-research-and-escalation` | maintainer | any | Uncertainty about Shopware behavior/symbols, "should I research", being stuck | Tasks the model is confident about |
 
 ## Coverage matrix (one topic → one owning skill)
 
@@ -34,6 +41,9 @@ flags duplicate topic ownership and overlapping trigger phrases.
 | Database migrations (`MigrationStep`, destructive/non-destructive) | `shopware-plugin-development` |
 | Version compatibility (6.6 / 6.7) | `shopware-plugin-development` |
 | Service decoration & DI registration | `shopware-plugin-development` |
+| App manifest, permissions & lifecycle (`manifest.xml`, `app:install`, requirements) | `shopware-app-development` |
+| App scripts (sandboxed Twig hooks in `Resources/scripts/`) | `shopware-app-development` |
+| App communication (webhooks, Admin API, registration & signing) | `shopware-app-development` |
 | Unit vs integration test placement | `shopware-testing` |
 | Integration test wiring (`IntegrationTestBehaviour`, DAL fixtures) | `shopware-testing` |
 | Test data, data providers, assertions | `shopware-testing` |
@@ -43,11 +53,19 @@ flags duplicate topic ownership and overlapping trigger phrases.
 
 ### Precedence (when more than one applies)
 
-1. Project-local skills override user-global skills (standard tool behavior).
-2. A profile skill (`core`/`plugin`) may extend `php-foundation` with stricter
-   deltas, but must state any intentional override explicitly — never silently
-   contradict the base.
-3. `shopware-review-learnings` records findings; it points at the owning skill
+The surface skills (`shopware-core-development`, `shopware-plugin-development`,
+`shopware-app-development`) are **mutually exclusive per task**, not per install:
+exactly one matches the surface you are editing. They can all be installed at
+once — the descriptions disambiguate on the target (path / artifact), so only
+the right one activates. There is no project-level "core vs plugin" choice.
+
+1. **Surface wins.** The target you are editing selects the surface skill
+   (`src/Core…` → core; `custom/plugins…` → plugin; `custom/apps` + `manifest.xml`
+   → app). If a request is ambiguous, resolve the surface first.
+2. Project-local skills override user-global skills (standard tool behavior).
+3. A surface skill extends `php-foundation` with stricter deltas, but must state
+   any intentional override explicitly — never silently contradict the base.
+4. `shopware-review-learnings` records findings; it points at the owning skill
    rather than re-defining a topic.
 
 ## Sources behind the seed (rewritten, not copied)

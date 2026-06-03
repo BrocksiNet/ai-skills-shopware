@@ -2,4 +2,4 @@ blank_issues_enabled: true
 contact_links:
   - name: Local validation guide
     url: https://github.com/BrocksiNet/ai-skills-shopware/blob/main/docs/local-validation.md
-    about: How to test a profile against a real local Shopware instance before filing.
+    about: How to test the skills against a real local Shopware instance before filing.

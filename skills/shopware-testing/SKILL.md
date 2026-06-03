@@ -12,8 +12,8 @@ description: >-
 
 # Shopware testing (PHPUnit)
 
-Standards for fast, correct, isolated PHPUnit tests of Shopware code. Used by
-both profiles. Inherits `php-foundation`. The point of this skill is that rules
+Standards for fast, correct, isolated PHPUnit tests of Shopware code. Used across
+all use-cases. Inherits `php-foundation`. The point of this skill is that rules
 are confirmed by *running tests*, not by claiming compliance — so the tests
 themselves must be trustworthy.
 

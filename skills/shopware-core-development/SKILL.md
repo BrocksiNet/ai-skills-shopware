@@ -1,23 +1,32 @@
 ---
 name: shopware-core-development
 description: >-
-  Strict rules for contributing to the Shopware core (shopware/shopware) and
-  first-party bundles.   Use when working inside the Shopware platform repo:
-  release notes (RELEASE_INFO / UPGRADE), ADRs, deprecation handling, @internal
-  boundaries, PHPStan baseline discipline, and public-API stability. Triggers on
-  "contribute to Shopware core", "add a release note", "add a changelog",
-  "deprecate this", "write an ADR", "raise the PHPStan level", "is this a
-  breaking change". Do NOT use for plugin/app/
-  project development (use shopware-plugin-development) or for generic PHP style
-  (use php-foundation).
+  Strict rules for changing the Shopware platform itself — code that ships in
+  shopware/shopware or first-party bundles. Use when the target is the platform
+  source: paths like src/Core, src/Storefront, src/Administration, the
+  shopware/shopware repo, or shopware-core Composer packages. Covers backward
+  compatibility and deprecation cycles, @internal boundaries, PHPStan baseline
+  discipline, RELEASE_INFO / UPGRADE notes, ADRs, and conventional commits.
+  Triggers on "contribute to Shopware core", "change platform code", "deprecate
+  a public symbol", "add a release note", "write an ADR", "raise the PHPStan
+  level", "is this a breaking change". Do NOT use when the target is an
+  extension on top of Shopware: a plugin (custom/plugins ->
+  shopware-plugin-development), an app (custom/apps, manifest.xml ->
+  shopware-app-development), or for generic PHP style (php-foundation).
 ---
 
-# Shopware core development (strict profile)
+# Shopware platform / core development (strict surface)
 
-For changes that land in `shopware/shopware` itself. This is the strictest
-profile: core code is consumed by thousands of plugins, so backward
-compatibility, deprecation discipline, and static-analysis hygiene are
-mandatory, not optional. Inherits `php-foundation`; adds the deltas below.
+For changes that land in the Shopware **platform** itself — `shopware/shopware`,
+the `shopware-core` packages, or first-party bundles under `src/`. This is the
+strictest surface: platform code is consumed by thousands of plugins and apps,
+so backward compatibility, deprecation discipline, and static-analysis hygiene
+are mandatory, not optional. Inherits `php-foundation`; adds the deltas below.
+
+> Surface check: this skill is for editing the platform. Building **on top of**
+> Shopware is a different surface — a PHP plugin/project (`shopware-plugin-development`)
+> or a declarative app (`shopware-app-development`). The right one is usually
+> obvious from the path (`src/Core` vs `custom/plugins` vs `custom/apps`).
 
 Load a reference file only when the task needs it:
 
@@ -75,5 +84,10 @@ Load a reference file only when the task needs it:
 
 ## Further reading (optional, non-load-bearing)
 
-- `shopware/shopware` `coding-guidelines/core/`, `adr/`, and `delivery-process/documenting-a-release.md`.
-- Shopware developer docs: contribution guidelines, deprecations, backward-compatibility promise.
+- `shopware/shopware`: [coding-guidelines](https://github.com/shopware/shopware/tree/trunk/coding-guidelines),
+  [adr/](https://github.com/shopware/shopware/tree/trunk/adr),
+  [delivery-process/documenting-a-release.md](https://github.com/shopware/shopware/blob/trunk/delivery-process/documenting-a-release.md),
+  and the [Changelog & Release Info Process ADR](https://github.com/shopware/shopware/blob/trunk/adr/2025-10-28-changelog-release-info-process.md).
+- Shopware developer docs:
+  [Contribution Guidelines](https://developer.shopware.com/docs/resources/guidelines/code/contribution.html)
+  and [Backward Compatibility](https://developer.shopware.com/docs/resources/guidelines/code/backward-compatibility.html).

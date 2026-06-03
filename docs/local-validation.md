@@ -1,7 +1,7 @@
 # Local validation on a real Shopware instance (dogfooding)
 
 The automated eval suite proves the skills change model output in fixtures. This
-guide is the **human-in-the-loop** counterpart: install a profile in your own
+guide is the **human-in-the-loop** counterpart: install the skills in your own
 IDE, point it at a **real local Shopware instance**, run real tasks, and judge
 the result with the project's own tooling — not by guessing. Findings here feed
 new entries into `shopware-review-learnings` and new `evals/tasks/`.
@@ -18,12 +18,14 @@ You should be able to follow this end-to-end on your own machine.
   [`shopwareLabs/ai-coding-tools`](https://github.com/shopwareLabs/ai-coding-tools)
   dev-tooling MCP so the agent can run PHPStan/ECS/PHPUnit itself.
 
-## 2. Install a profile
+## 2. Install the skills
 
-Pick the profile that matches the instance (plugin/app project vs. core checkout):
+Install the skills for the use-case the instance exercises. Plugin/project
+development is the common choice (swap in `shopware-app-development` for apps, or
+`shopware-core-development` for a platform checkout):
 
 ```bash
-# Plugin / app / project (most common) — into the current project
+# Plugin / project development (most common), into the current project
 npx skills add BrocksiNet/ai-skills-shopware \
   --skill php-foundation \
   --skill shopware-plugin-development \
@@ -32,6 +34,11 @@ npx skills add BrocksiNet/ai-skills-shopware \
   --skill shopware-review-learnings \
   -a cursor    # or -a claude-code / -a codex / -a opencode
 ```
+
+See the canonical one-liners in [`use-cases/`](../use-cases/):
+[`plugin-development.md`](../use-cases/plugin-development.md),
+[`app-development.md`](../use-cases/app-development.md), and
+[`core-development.md`](../use-cases/core-development.md).
 
 Confirm the skills landed in the tool's skills directory (e.g. `.cursor/skills/`,
 `~/.claude/skills/`, `~/.codex/skills/`, `.opencode/skills/`) and that the agent
@@ -69,8 +76,9 @@ Or ask the agent to run them via the dev-tooling MCP and report results.
 
 ## 5. A/B by hand
 
-Disable the skills (uninstall the profile, or temporarily move the skills dir)
-and run the **same** task on a clean copy. Compare:
+Disable the skills without uninstalling them (`npx skills disable <name>`, or
+`npx skills disable --all`) and run the **same** task on a clean copy. Re-enable
+afterwards with `npx skills enable <name>`. Compare:
 
 - Did the skill-on version avoid a mistake the skill-off version made?
 - Did it produce code that passes PHPStan/ECS/PHPUnit on the first try?
@@ -93,7 +101,7 @@ automatically next time.
 
 ## Quick checklist
 
-- [ ] Profile installed and visible to the agent.
+- [ ] Skills installed and visible to the agent.
 - [ ] Ran ≥3 representative tasks against a real instance.
 - [ ] Verified output with PHPStan + ECS + PHPUnit (or dev-tooling MCP).
 - [ ] A/B'd at least one task with the skill off.

@@ -7,7 +7,7 @@ description: >-
   applies, or when an approach keeps failing. Triggers on "I'm not sure how
   Shopware does X", "does this method exist", "which version", "verify before
   changing", "I'm stuck / it keeps failing". Do NOT use for topics you are
-  confident about, or as a substitute for the profile rules (DAL, cache,
+  confident about, or as a substitute for the surface-skill rules (DAL, cache,
   testing) — it tells you when and how to verify, not the rules themselves.
 ---
 
@@ -50,7 +50,7 @@ verify it cheaply afterwards (PHPStan/tests will catch a mistake).
 
 Once you know the topic, apply the owning skill's rule (DAL ->
 `shopware-plugin-development`, tests -> `shopware-testing`, etc.). This skill gets
-you *to verified ground*; the profile skills tell you what to do there.
+you *to verified ground*; the surface skills tell you what to do there.
 
 ## Definition of done (for a research step)
 

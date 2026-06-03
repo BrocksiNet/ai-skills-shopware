@@ -1,6 +1,7 @@
 # shopware-core-development — should trigger
 
 - I'm contributing to shopware/shopware and need to deprecate this public method.
+- Change behavior in src/Core/Checkout without breaking backward compatibility.
 - Add a release note for this core change (RELEASE_INFO / UPGRADE).
 - Add a changelog entry for this core change.
 - Should I write an ADR for switching the cart persistence strategy?
