@@ -27,6 +27,14 @@ Detailed, growing lists live in references (load on demand):
 - API-aware / headless findings -> [`references/api-aware.md`](references/api-aware.md)
 - DAL & performance findings -> [`references/dal-and-performance.md`](references/dal-and-performance.md)
 
+## Pre-submit (before opening or requesting review)
+
+- **CI green** — confirm checks pass (`gh-tooling` `pr_checks` or php-tooling MCP) before
+  you ask for review or mark the PR ready.
+- **PR size** — aim for &lt;400 lines changed; if larger, split the PR or explain in the
+  description why it must stay together (pair with `shopware-pr-description`).
+- **Self-review** — scan seeded findings and red flags below against your diff.
+
 ## Seeded findings (high-frequency)
 
 - **Custom data has no Store-API route.** Plugins add data but expose it only via
@@ -37,6 +45,21 @@ Detailed, growing lists live in references (load on demand):
   `shopware-plugin-development` -> `references/dal-usage.md`.)
 - **Deprecated `*CacheTagsEvent` in 6.7 code.** Migrate to `CacheTagCollector`.
   (Owning topic: `shopware-plugin-development` -> `references/cache-tags.md`.)
+- **New Store-API / Admin API route without OpenAPI schema.** Endpoints ship with
+  no schema entry — headless clients and API docs drift. Add or extend the OpenAPI
+  definition for every new public route. (See `references/api-aware.md`.)
+- **Business logic in controllers.** DAL calls, rules, orchestration, or branching
+  live in a controller instead of an injected service. Thin controllers: validate
+  input, delegate, return response. (Owning topic: `shopware-plugin-development`.)
+
+## Red flags (Shopware-specific)
+
+- New Store-API or Admin API endpoint with no OpenAPI schema update.
+- Business logic in controllers — move orchestration and DAL work to services.
+- Admin route without ACL / privilege check.
+- Custom data exposed only in Twig, not via Store-API.
+- Migration without a migration test.
+- Deprecated `*CacheTagsEvent` in 6.7+ code.
 
 ## How to add a finding
 

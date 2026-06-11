@@ -30,6 +30,9 @@ Load the skeleton on demand:
 - Keep descriptions factual and concise — no hype.
 - Pair with `shopware-core-development` when the change needs RELEASE_INFO or
   UPGRADE entries.
+- If the diff is large (&gt;~400 lines), say why it is not split or note follow-up
+  PRs. Confirm CI is green before marking ready for review (`shopware-review-learnings`
+  pre-submit).
 
 ## Definition of done
 

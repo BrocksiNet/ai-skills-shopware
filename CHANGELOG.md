@@ -8,6 +8,24 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.2.0] - 2026-06-11
+
+### Added
+
+- Skills: `shopware-pr-description`, `shopware-pr-review`, `shopware-assistant-style`,
+  `shopware-podman-dev` (optional; Podman/Mutagen + `~/shopware-dev` hub).
+- `shopware-review-learnings`: pre-submit checklist (CI, PR size, self-review),
+  Shopware-specific red flags, OpenAPI schema and thin-controller findings.
+- `docs/tooling-stack.md`; FoS shopware-phpunit references in `shopware-testing`.
+- Expanded `release-notes-and-adr.md` (from former changelog rule).
+
+### Changed
+
+- README and podman-dev docs: `sw-dev link` as preferred install path; optional podman skill.
+- `.gitignore`: `skills-lock.json`, `.agents/` (npx skills add artifacts).
+
+## [0.1.0] - 2026-06-03
+
 ### Added
 
 - Initial scaffold of the provider-independent Shopware skills repository.
@@ -38,4 +56,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   (`actions/checkout@v5`, `markdownlint-cli2-action@v23`).
 - `docs/local-validation.md` and GitHub issue templates for feedback.
 
-[Unreleased]: https://github.com/BrocksiNet/ai-skills-shopware/commits/main
+[Unreleased]: https://github.com/BrocksiNet/ai-skills-shopware/compare/v0.2.0...main
+[0.2.0]: https://github.com/BrocksiNet/ai-skills-shopware/compare/v0.1.0...v0.2.0
+[0.1.0]: https://github.com/BrocksiNet/ai-skills-shopware/releases/tag/v0.1.0

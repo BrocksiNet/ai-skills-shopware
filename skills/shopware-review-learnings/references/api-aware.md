@@ -18,6 +18,10 @@ grow it as new findings recur.
 - **Missing or inconsistent response shape.** Custom routes that return ad-hoc
   arrays instead of typed, documented, consistent structures (consider a DTO and
   an OpenAPI/Store-API schema entry).
+- **New endpoint, no OpenAPI schema.** A Store-API or Admin API route is added
+  but the OpenAPI spec is not updated (or the route is not registered in the
+  schema at all). Reviewers treat this as a blocker for public API changes —
+  add the path, request/response shapes, and tags before merge.
 
 ## TODO
 
