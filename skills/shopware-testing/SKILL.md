@@ -1,86 +1,74 @@
 ---
 name: shopware-testing
 description: >-
-  PHPUnit standards for Shopware 6 code (unit and integration). Use when
+  PHPUnit standards for Shopware 6 code (unit, integration, migration). Use when
   writing, fixing, or reviewing PHPUnit tests for a Shopware service, DAL flow,
-  subscriber, controller, or DTO. Triggers on "write a unit test", "generate
-  tests for this class", "integration test for this route", "add test
-  coverage", "this test is flaky", "mock this dependency". Do NOT use for
-  storefront end-to-end / Playwright tests, Administration Jest tests, manual
-  QA, or non-Shopware PHP testing (those are out of scope here).
+  subscriber, controller, migration, or DTO. Triggers on "write a unit test",
+  "generate tests for this class", "integration test for this route", "migration
+  test", "add test coverage", "Codecov patch", "this test is flaky", "mock this
+  dependency". Do NOT use for storefront E2E/Playwright, Administration Jest,
+  manual QA, or non-Shopware PHP testing.
 ---
 
 # Shopware testing (PHPUnit)
 
 Standards for fast, correct, isolated PHPUnit tests of Shopware code. Used across
-all use-cases. Inherits `php-foundation`. The point of this skill is that rules
-are confirmed by *running tests*, not by claiming compliance — so the tests
-themselves must be trustworthy.
+all use-cases. Inherits `php-foundation`. Rules are confirmed by *running tests*,
+not by claiming compliance.
 
-## Unit vs integration — pick the right kind
+Load references on demand:
 
-Decide before writing. Putting integration concerns in a unit test (or vice
-versa) is the most common failure.
+- Unit vs integration placement, assertions, data → this file (below)
+- Exception assertions (`expectExceptionObject`) → [`references/exception-assertions.md`](references/exception-assertions.md)
+- DAL / repository integration → [`references/integration-repository.md`](references/integration-repository.md)
+- shopware/shopware: migrations, Codecov, `#[CoversClass]` → [`references/core-platform-patterns.md`](references/core-platform-patterns.md)
+- FoS shopware-phpunit + plugin patterns → [`references/external-inspiration.md`](references/external-inspiration.md)
 
-- **Unit test** (`tests/unit/...`): no kernel, no database, no container, no real
-  HTTP. Construct the class under test directly and pass mocks/stubs/fakes.
-  Use for DTOs, value objects, pure services, calculators, subscribers whose
-  logic does not need the DAL.
-- **Integration test** (`tests/integration/...`): use
-  `IntegrationTestBehaviour` (transaction rollback per test), the real container,
-  and the DAL. Use for controllers/routes, indexers, message handlers, and
-  anything whose contract requires wired-up persistence.
+## Unit vs integration vs migration
 
-```php
-final class PriceCalculatorTest extends TestCase   // unit: extends plain TestCase
-{
-    public function testRoundsGross(): void
-    {
-        $calc = new PriceCalculator();
-        static::assertSame(11.9, $calc->gross(10.0, 0.19));
-    }
-}
-```
+| Kind | Path | When |
+| ---- | ---- | ---- |
+| Unit | `tests/unit/` | No kernel contract required; pure logic with mocks |
+| Integration | `tests/integration/` | Container, DAL, HTTP routes, indexers |
+| Migration | `tests/migration/` | Schema/data steps in `MigrationStep` classes |
 
-```php
-final class ExampleRouteTest extends TestCase       // integration
-{
-    use IntegrationTestBehaviour;
+**Unit** (`tests/unit/...`): construct the class under test; mock repos, HTTP,
+clock, filesystem. No real DB unless documenting a Codecov placement exception
+(see core-platform-patterns).
 
-    public function testReturnsProducts(): void
-    {
-        $repo = $this->getContainer()->get('product.repository');
-        // ... arrange via DAL, act, assert against real behavior
-    }
-}
-```
+**Integration** (`tests/integration/...`): `IntegrationTestBehaviour`, real
+container + DAL, transaction rollback per test.
+
+**Migration** (`tests/migration/...`): run migration steps against real schema;
+assert columns, data transforms, idempotency.
 
 ## Rules
 
-- **No real I/O in unit tests.** Mock repositories, HTTP clients, the system
-  clock, the filesystem. A unit test that hits the DB or network is mislabeled.
-- **`assertSame` over `assertEquals`** for scalar/identity checks (catches type
-  coercion). Reserve `assertEquals` for intentional loose comparison.
-- **Data providers** for table-driven cases (`#[DataProvider]`); name the cases.
-- **Build test data, do not hardcode brittle fixtures.** Use builders/factories
-  and `Context::createDefaultContext()` / `Uuid::randomHex()`; create only the
-  data the test needs.
-- **One behavior per test**, descriptive method names, arrange-act-assert.
-- **Cover the contract**, not the implementation: public behavior, edge cases,
-  and error paths the class promises — not private methods.
-- **Deterministic**: no `sleep`, no real time/random without injection, no order
-  dependence between tests.
+- **No real I/O in unit tests** unless the class docblock documents a deliberate
+  platform/Codecov exception.
+- **`assertSame` over `assertEquals`** for scalars; **`expectExceptionObject`**
+  over split exception assertions (see reference).
+- **Data providers** (`#[DataProvider]`) for table cases; name cases.
+- **Create your own test data** — `Uuid::randomHex()`, `Context::createDefaultContext()`;
+  never depend on pre-existing DB rows in integration tests.
+- **One behavior per test**; arrange-act-assert; cover the public contract.
+- **Deterministic** — no `sleep`, no unordered shared state.
+
+## Platform core extras
+
+- Dedicated test file when Danger/review expects coverage of a new helper class.
+- `#[CoversClass]` when patch coverage under the `phpunit-unit` Codecov flag matters.
+- Run via project php-tooling (Docker) when available; see core-platform-patterns.
 
 ## Definition of done
 
-- [ ] Correct suite chosen (unit = no kernel/DB/HTTP; integration = `IntegrationTestBehaviour`).
-- [ ] Dependencies mocked in unit tests; no real I/O.
-- [ ] `assertSame` for identity; data providers for table cases; cases named.
-- [ ] Test data built (not brittle constants); default context / random ids used.
-- [ ] Covers public contract incl. edge/error paths; deterministic.
-- [ ] `vendor/bin/phpunit` (the relevant suite) passes.
+- [ ] Correct suite (unit / integration / migration).
+- [ ] Dependencies mocked in unit tests (unless documented exception).
+- [ ] `assertSame` / `expectExceptionObject`; named data providers.
+- [ ] Own fixtures in integration tests; deterministic.
+- [ ] `vendor/bin/phpunit` (or php-tooling MCP / `docker compose exec web …`) green.
 
-## Further reading (optional, non-load-bearing)
+## Further reading
 
-- Shopware developer docs: testing (unit & integration), `IntegrationTestBehaviour`.
-- shopwareLabs/ai-coding-tools test-writing rules.
+- [Shopware testing docs](https://developer.shopware.com/docs/guides/plugins/plugins/testing)
+- [FriendsOfShopware shopware-phpunit](https://github.com/FriendsOfShopware/agent-skills/tree/main/skills/shopware-phpunit) for plugin-heavy patterns

@@ -35,6 +35,13 @@ release tag, and run `npx skills update` to pull improvements.
 | [`shopware-testing`](skills/shopware-testing/SKILL.md) | any test | PHPUnit standards: unit vs integration placement, `IntegrationTestBehaviour`, data providers, no real I/O in unit tests. |
 | [`shopware-review-learnings`](skills/shopware-review-learnings/SKILL.md) | any review | Recurring findings from real plugin/app/PR reviews. Grows over time. |
 | [`shopware-research-and-escalation`](skills/shopware-research-and-escalation/SKILL.md) | any | When to research vs. proceed, the Shopware docs map, Context7 for libraries, and the when-stuck ladder. |
+| [`shopware-pr-description`](skills/shopware-pr-description/SKILL.md) | core PR workflow | GitHub PR body template for `shopware/shopware` contributions (copy-paste ready). |
+| [`shopware-assistant-style`](skills/shopware-assistant-style/SKILL.md) | any communication | Plain, concise answers; support-ticket replies in one copy block. |
+| [`shopware-pr-review`](skills/shopware-pr-review/SKILL.md) | PR review | Triage GitHub review threads; fix, reply, or push back with confidence. |
+| [`shopware-podman-dev`](skills/shopware-podman-dev/SKILL.md) | linked Podman checkout | Never host php/composer/phpunit — MCP or `podman compose exec web`; `~/shopware-dev` hub. |
+
+See [`docs/tooling-stack.md`](docs/tooling-stack.md) for how this repo fits with
+shopware-ai-coding-tools and a multi-instance proxy setup.
 
 See [`REGISTRY.md`](REGISTRY.md) for the full catalog with ownership and the
 topic → owning-skill coverage matrix that keeps skills from contradicting each

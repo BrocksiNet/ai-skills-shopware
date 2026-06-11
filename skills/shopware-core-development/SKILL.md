@@ -31,7 +31,7 @@ are mandatory, not optional. Inherits `php-foundation`; adds the deltas below.
 Load a reference file only when the task needs it:
 
 - Deprecations & breaking changes -> [`references/deprecations.md`](references/deprecations.md)
-- Release notes (RELEASE_INFO / UPGRADE) & ADRs -> [`references/release-notes-and-adr.md`](references/release-notes-and-adr.md)
+- Release notes (RELEASE_INFO / UPGRADE) & ADRs -> [`references/release-notes-and-adr.md`](references/release-notes-and-adr.md) (includes migrated `changelog.mdc` detail)
 - PHPStan baseline discipline -> [`references/static-analysis-baseline.md`](references/static-analysis-baseline.md)
 
 ## Hard guardrails (refuse rather than violate)

@@ -15,6 +15,10 @@ discipline.
 | `shopware-testing` | PHPUnit unit/integration standards. |
 | `shopware-research-and-escalation` | Verify against installed source; escalate instead of guessing. |
 | `shopware-review-learnings` | Recurring real-world findings. |
+| `shopware-pr-description` | GitHub PR body for shopware/shopware (migrated from `.cursor/rules/pr-template.mdc`). |
+| `shopware-assistant-style` | Communication style and support-ticket copy format (migrated from `.cursor/rules/shopware-rules.mdc`). |
+| `shopware-pr-review` | React to GitHub review comments (migrated from `.cursor/rules/review.mdc`). |
+| `shopware-podman-dev` | Podman/MCP execution — never host php/composer/phpunit on linked checkouts. |
 
 ## Install (one-liner)
 
@@ -26,6 +30,10 @@ npx skills add BrocksiNet/ai-skills-shopware \
   --skill shopware-testing \
   --skill shopware-research-and-escalation \
   --skill shopware-review-learnings \
+  --skill shopware-pr-description \
+  --skill shopware-assistant-style \
+  --skill shopware-pr-review \
+  --skill shopware-podman-dev \
   -a cursor
 ```
 

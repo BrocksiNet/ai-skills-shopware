@@ -23,6 +23,10 @@ the surface skills can all be installed together without contradicting (see
 | `shopware-testing` | maintainer | any test | Writing/fixing PHPUnit tests for Shopware code | Storefront E2E/Playwright, Jest, manual QA |
 | `shopware-review-learnings` | maintainer + contributors | any review | Reviewing Shopware code, "is this idiomatic", recurring pitfalls | Greenfield generic PHP, non-Shopware review |
 | `shopware-research-and-escalation` | maintainer | any | Uncertainty about Shopware behavior/symbols, "should I research", being stuck | Tasks the model is confident about |
+| `shopware-pr-description` | maintainer | core PR workflow | Creating/updating shopware/shopware PR bodies, filling the GitHub PR template | Release-note file edits, plugin/app PRs |
+| `shopware-assistant-style` | maintainer | any communication | Support ticket replies, short/plain answers, copy-ready customer text | Code rules, PR templates, release notes |
+| `shopware-pr-review` | maintainer | PR review threads | Reacting to GitHub review comments, fix vs reply vs push back | Initial PR body, generic idiomatic review |
+| `shopware-podman-dev` | maintainer | linked Podman checkout | Running php/composer/phpunit/console/npm in shopware-dev projects | Test structure, PR text, release notes |
 
 ## Coverage matrix (one topic → one owning skill)
 
@@ -50,6 +54,12 @@ the surface skills can all be installed together without contradicting (see
 | Recurring review findings (cross-cutting, delta-only) | `shopware-review-learnings` |
 | When to research vs proceed; docs map; Context7 | `shopware-research-and-escalation` |
 | What to do when stuck (escalation ladder) | `shopware-research-and-escalation` |
+| shopware/shopware PR body format (GitHub template, copy-paste output) | `shopware-pr-description` |
+| Assistant tone: plain language, concise answers, support-ticket copy blocks | `shopware-assistant-style` |
+| Reacting to GitHub PR review comments (fix / reply / push back, confidence %) | `shopware-pr-review` |
+| Migration tests, Codecov `#[CoversClass]`, core platform test placement | `shopware-testing` |
+| Container execution (Podman/MCP, not host php/composer/phpunit) | `shopware-podman-dev` |
+| shopware-dev hub (`~/shopware-dev`, `sw-dev link`, Mutagen, multi-lane proxy) | `shopware-podman-dev` |
 
 ### Precedence (when more than one applies)
 
@@ -78,6 +88,7 @@ the right one activates. There is no project-level "core vs plugin" choice.
 | `biotech-shopware/claude-shopware-skill` | Skill shape + source policy + docs-map idea | model-after |
 | `netresearch/php-modernization-skill` | PHP 8.x modernization patterns + guardrail idea | CC-BY-SA → rewrite |
 | LambdaTest phpunit-skill / mcpmarket php-testing-standards | Generic PHPUnit patterns | rewrite |
+| FriendsOfShopware/agent-skills `shopware-phpunit` | Plugin/integration patterns, fixtures, mocks | link in `shopware-testing/references/external-inspiration.md` |
 | brocksi.net blog (API-aware guidelines, PHPStan+ECS) | Review learnings + Shopware static analysis | own content |
 
 ## Adding a skill or rule
