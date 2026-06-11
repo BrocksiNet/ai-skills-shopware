@@ -13,3 +13,7 @@ node_modules/
 # Local environment / secrets (never commit API keys for the eval harness)
 .env
 .env.*
+
+# skills.sh CLI lockfile (local paths; use sw-dev link instead of npx skills add)
+skills-lock.json
+.agents/

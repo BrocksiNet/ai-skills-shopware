@@ -38,7 +38,7 @@ release tag, and run `npx skills update` to pull improvements.
 | [`shopware-pr-description`](skills/shopware-pr-description/SKILL.md) | core PR workflow | GitHub PR body template for `shopware/shopware` contributions (copy-paste ready). |
 | [`shopware-assistant-style`](skills/shopware-assistant-style/SKILL.md) | any communication | Plain, concise answers; support-ticket replies in one copy block. |
 | [`shopware-pr-review`](skills/shopware-pr-review/SKILL.md) | PR review | Triage GitHub review threads; fix, reply, or push back with confidence. |
-| [`shopware-podman-dev`](skills/shopware-podman-dev/SKILL.md) | linked Podman checkout | Never host php/composer/phpunit — MCP or `podman compose exec web`; `~/shopware-dev` hub. |
+| [`shopware-podman-dev`](skills/shopware-podman-dev/SKILL.md) | linked Podman checkout | **Optional.** Never host php/composer/phpunit — MCP or `podman compose exec web`; for `~/shopware-dev` + Mutagen setups. |
 
 See [`docs/tooling-stack.md`](docs/tooling-stack.md) for how this repo fits with
 shopware-ai-coding-tools and a multi-instance proxy setup.

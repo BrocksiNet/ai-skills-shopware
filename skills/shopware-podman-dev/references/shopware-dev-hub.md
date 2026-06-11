@@ -4,6 +4,10 @@ Personal central config at `~/shopware-dev`. Linked Shopware checkouts consume
 it via `sw-dev link` — no per-project `compose.override.yaml` or MCP JSON to
 duplicate.
 
+**Skills** live in `ai-skills-shopware/skills/` (this repo). `instances.json`
+lists which skills to symlink; `skills_source` points at that folder. Optional
+`shopware-podman-dev` — omit from `"skills"` if you do not use Podman.
+
 ## What `sw-dev link` does
 
 1. Writes `COMPOSE_FILE` block in project `.env` (compose.yaml + shared +

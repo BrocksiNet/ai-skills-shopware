@@ -49,8 +49,9 @@ npx skills add BrocksiNet/ai-skills-shopware \
 `php`/`composer`/`phpunit`, when the checkout is linked via `~/shopware-dev`.
 
 If you use the `~/shopware-dev` hub, you do **not** need `npx skills add` per
-project — `sw-dev link` symlinks skills from `~/shopware-dev/skills/` into
-`.cursor/skills/` automatically.
+project — `sw-dev link` symlinks skills from **this repo's** `skills/` into
+`.cursor/`, `.claude/`, `.codex/`, and `.agents/` for all three tools. Omit
+`shopware-podman-dev` from `instances.json` if you do not use Podman.
 
 Optional plugin work:
 
