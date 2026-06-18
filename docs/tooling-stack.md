@@ -126,7 +126,7 @@ Worth upstreaming if you stay on the plugin:
 
 ## Quick decision
 
-```
+```text
 Need auto-generated unit tests with 20+ UNIT-* rule reviews?
   → keep test-writing plugin + php-tooling MCP
 

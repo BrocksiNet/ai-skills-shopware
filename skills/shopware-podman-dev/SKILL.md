@@ -42,7 +42,7 @@ They target compose service `web`, workdir `/var/www/html`.
 
 A project is **shopware-dev linked** when `.env` contains:
 
-```
+```dotenv
 # --- shopware-dev (managed by sw-dev) ---
 ```
 
@@ -148,7 +148,7 @@ sw-dev validate --static-only   # no podman exec / no HTTP
 
 ## Hub layout (edit once)
 
-```
+```text
 ~/shopware-dev/
   instances.json
   overrides/shared.podman-mutagen.yaml
