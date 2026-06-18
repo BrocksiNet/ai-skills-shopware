@@ -36,6 +36,8 @@ class Migration1700000000AddExampleColumn extends MigrationStep
 
 - **Split destructive from non-destructive.** Adding goes in `update()`; dropping
   goes in `updateDestructive()`. Never drop data in `update()`.
+- **`updateDestructive()` stays small** — no long-running backfills or heavy work;
+  that belongs in `update()` or a command.
 - **Idempotent / guarded.** Guard with existence checks (or `IF NOT EXISTS`) so a
   re-run does not fail.
 - **Never edit a shipped migration.** Once a migration has been released and run

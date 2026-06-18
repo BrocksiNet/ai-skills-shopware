@@ -31,6 +31,24 @@ this base.
 - **PER Coding Style** (the successor to PSR-12). Shopware enforces this via
   EasyCodingStandard (`ecs.php`); run it, do not hand-format.
 
+## Shopware trunk habits (review-backed)
+
+Patterns `mitelg` and `nfortier-shopware` flag repeatedly on `shopware/shopware`
+PRs — apply in core, plugins, and project PHP alike:
+
+- **No `empty()`.** Use explicit checks (`=== null`, `=== ''`, `=== []`, typed
+  `count()`). In tests, prefer PHPUnit `assertEmpty()` / `assertNotEmpty()` over
+  `empty()` in assertions.
+- **Inject interfaces**, not concrete services or repositories, when an interface
+  exists (`FooRepositoryInterface`, `ClockInterface`, …). Concrete types only
+  when the implementation is intentional.
+- **Time via PSR-20 clock.** Inject `Psr\Clock\ClockInterface`; do not call
+  `time()`, `microtime()`, or `new \DateTimeImmutable()` in domain/services for
+  “now”. Tests mock the clock — no fuzzy `time()` comparisons.
+- **No `@var` on properties** when a native property type or method-level
+  `@return`/`@param` generic suffices. PHPDoc is for shapes PHP cannot express,
+  not a shortcut around typing.
+
 ## Use the right shape for data
 
 Raw associative arrays are the most common Shopware-context mistake. They defeat
@@ -100,6 +118,7 @@ intent clearer — not for their own sake.
 - [ ] No known-shape `array` that should be a DTO/VO; no constant-set that should be an enum.
 - [ ] `#[\Override]` on overrides/implementations; classes referenced via `use`.
 - [ ] `list<T>` used for sequential collections; PHPDoc only where language types cannot express the shape.
+- [ ] No `empty()`; interfaces injected where available; `ClockInterface` for time; no redundant `@var` on properties.
 - [ ] ECS passes (PER-CS). For Shopware specifics (DAL, cache, migrations, tests) defer to the surface / testing skills.
 
 ## Further reading (optional, non-load-bearing)

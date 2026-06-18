@@ -51,14 +51,21 @@ Detailed, growing lists live in references (load on demand):
 - **Business logic in controllers.** DAL calls, rules, orchestration, or branching
   live in a controller instead of an injected service. Thin controllers: validate
   input, delegate, return response. (Owning topic: `shopware-plugin-development`.)
+- **Admin route ACL uses constant-form privilege keys** — match existing
+  `Administration::…` / route `_acl` conventions; PHPStan rules flag wrong shapes.
+  (Core: `shopware-core-development` -> `platform-architecture.md`.)
+- **`updateDestructive()` misused.** Long-running backfills or heavy work do not
+  belong in destructive migrations; never edit shipped migrations — add a new class.
+  (Owning topic: `shopware-plugin-development` -> `references/migrations.md`; core:
+  `platform-architecture.md`.)
 
 ## Red flags (Shopware-specific)
 
 - New Store-API or Admin API endpoint with no OpenAPI schema update.
 - Business logic in controllers — move orchestration and DAL work to services.
-- Admin route without ACL / privilege check.
+- Admin route without ACL / privilege check or wrong ACL constant form.
 - Custom data exposed only in Twig, not via Store-API.
-- Migration without a migration test.
+- Migration without a migration test; destructive step used for heavy work.
 - Deprecated `*CacheTagsEvent` in 6.7+ code.
 
 ## How to add a finding
@@ -73,6 +80,6 @@ Detailed, growing lists live in references (load on demand):
 
 - DAL: TODO - capture the recurring "writing without the right Context" finding.
 - Performance: TODO - indexer / message-queue misuse findings.
-- Security: TODO - unvalidated Store-API input; missing ACL on admin routes.
+- Security: TODO - unvalidated Store-API input (ACL covered above).
 - Storefront: TODO - blocking/uncached AJAX in hot paths.
 - Apps: TODO - app-script vs plugin boundary mistakes.

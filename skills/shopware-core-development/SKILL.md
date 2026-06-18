@@ -33,6 +33,7 @@ Load a reference file only when the task needs it:
 - Deprecations & breaking changes -> [`references/deprecations.md`](references/deprecations.md)
 - Release notes (RELEASE_INFO / UPGRADE) & ADRs -> [`references/release-notes-and-adr.md`](references/release-notes-and-adr.md) (includes migrated `changelog.mdc` detail)
 - PHPStan baseline discipline -> [`references/static-analysis-baseline.md`](references/static-analysis-baseline.md)
+- Bundle boundaries, listeners, migrations -> [`references/platform-architecture.md`](references/platform-architecture.md)
 
 ## Hard guardrails (refuse rather than violate)
 
@@ -72,6 +73,10 @@ Load a reference file only when the task needs it:
   is done.
 - **ECS / PHPStan are the gate.** Run them; do not hand-wave. New code targets the
   repo's configured level with no new baseline entries.
+- **Platform architecture.** Register services in the owning bundle; no Core →
+  Storefront dependencies; prefer `#[AsEventListener]` for a single event; prefer
+  `final` for non-extension classes; thin controllers; safe session access. See
+  [`references/platform-architecture.md`](references/platform-architecture.md).
 
 ## Definition of done
 
@@ -81,6 +86,7 @@ Load a reference file only when the task needs it:
 - [ ] Developer-facing change documented in `RELEASE_INFO-6.x.md`; breaking change in `UPGRADE-6.x.md`; ADR added if the decision is architectural. (Internal refactor / small bug fix: nothing needed.)
 - [ ] PHPStan passes with no new baseline entries; if the level changed, the baseline was regenerated and committed.
 - [ ] Unit/integration tests added and green; ECS clean; conventional commit message.
+- [ ] Services registered in owning bundle; no cross-bundle boundary violations; listeners/controllers follow platform-architecture reference.
 
 ## Further reading (optional, non-load-bearing)
 

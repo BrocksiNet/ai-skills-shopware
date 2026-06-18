@@ -8,6 +8,22 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.3.0] - 2026-06-18
+
+### Added
+
+- `shopware-core-development/references/platform-architecture.md` — bundle ownership,
+  Core/Storefront boundaries, EventListener vs subscriber, `final`, session, migrations.
+- `php-foundation`: Shopware trunk habits (`empty()`, interface DI, PSR clock, `@var` discipline).
+- `shopware-testing`: unit-first placement, trunk PHPUnit rules (`expectExceptionObject`,
+  no `#[Depends]`, no mock `any()`, clock in tests).
+- `shopware-review-learnings`: ACL constant-form and migration destructive findings.
+
+### Changed
+
+- `shopware-plugin-development`: inherits trunk PHP habits; thin-controller / OpenAPI pointers.
+- `shopware-plugin-development/references/migrations.md`: `updateDestructive()` scope.
+
 ## [0.2.0] - 2026-06-11
 
 ### Added
@@ -56,6 +72,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   (`actions/checkout@v5`, `markdownlint-cli2-action@v23`).
 - `docs/local-validation.md` and GitHub issue templates for feedback.
 
-[Unreleased]: https://github.com/BrocksiNet/ai-skills-shopware/compare/v0.2.0...main
+[Unreleased]: https://github.com/BrocksiNet/ai-skills-shopware/compare/v0.3.0...main
+[0.3.0]: https://github.com/BrocksiNet/ai-skills-shopware/compare/v0.2.0...v0.3.0
 [0.2.0]: https://github.com/BrocksiNet/ai-skills-shopware/compare/v0.1.0...v0.2.0
 [0.1.0]: https://github.com/BrocksiNet/ai-skills-shopware/releases/tag/v0.1.0

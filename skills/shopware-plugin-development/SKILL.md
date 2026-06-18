@@ -51,9 +51,14 @@ Load a reference only when the task needs it:
 
 ## Plugin deltas on top of php-foundation
 
+Inherits all **`php-foundation` trunk habits** (`empty()`, interface injection,
+`ClockInterface`, typing). Also:
+
 - **Extend, do not modify.** Use service **decoration** (`decorates:`), event
-  **subscribers**, and the entity-extension / custom-field system. Register
-  services in `services.xml`/`services.yaml` with explicit ids.
+  **subscribers/listeners**, and the entity-extension / custom-field system.
+  Register services in `services.xml`/`services.yaml` with explicit ids.
+- **Thin controllers** — delegate to services; see `shopware-review-learnings`
+  red flags. New Store-API routes need OpenAPI schema updates.
 - **DAL first.** Read with `Criteria` (add associations before filtering on them;
   avoid N+1; request only the fields/associations you need). Write with
   `EntityRepository::create/update/upsert` and the right `Context`.

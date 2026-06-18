@@ -42,6 +42,31 @@ container + DAL, transaction rollback per test.
 **Migration** (`tests/migration/...`): run migration steps against real schema;
 assert columns, data transforms, idempotency.
 
+## Unit-first placement
+
+If the test **does not need** the kernel, container, DAL, or HTTP: it belongs in
+`tests/unit/`, not `tests/integration/`. Reviewers routinely request moving pure
+logic tests out of the integration suite.
+
+Exception: shopware/shopware sometimes places DB-touching tests under `tests/unit/`
+for **Codecov patch coverage** — document why in the class docblock (see
+`core-platform-patterns.md`).
+
+## Trunk-enforced rules (shopware/shopware)
+
+These match PHPStan rules and reviewer expectations on core PRs:
+
+- **`expectExceptionObject` only** — not `expectExceptionMessage()`,
+  `expectExceptionCode()`, or string matching on exception text.
+- **No `#[Depends]`** on integration tests; never combine `#[Depends]` with
+  `#[DataProvider]` (shuffle-unsafe).
+- **No `$this->anything()`** (or other catch-all matchers) in PHPUnit mocks —
+  use `createStub()` / `createMock()` with explicit expectations, or typed
+  callbacks. Prefer `createStub()` when no interaction verification is needed.
+- **Deterministic time** — mock `ClockInterface`; avoid `time()` + fuzzy
+  `assertGreaterThanOrEqual($startTime, …)`.
+- **Data providers** — row arity must match test parameters; name cases.
+
 ## Rules
 
 - **No real I/O in unit tests** unless the class docblock documents a deliberate
@@ -62,10 +87,10 @@ assert columns, data transforms, idempotency.
 
 ## Definition of done
 
-- [ ] Correct suite (unit / integration / migration).
-- [ ] Dependencies mocked in unit tests (unless documented exception).
-- [ ] `assertSame` / `expectExceptionObject`; named data providers.
-- [ ] Own fixtures in integration tests; deterministic.
+- [ ] Correct suite (unit / integration / migration); pure logic in `tests/unit/`.
+- [ ] Dependencies mocked in unit tests (unless documented Codecov exception).
+- [ ] `assertSame` / `expectExceptionObject`; no `#[Depends]`; no mock `any()`.
+- [ ] Own fixtures in integration tests; clock mocked where time matters.
 - [ ] `vendor/bin/phpunit` (or php-tooling MCP / `docker compose exec web …`) green.
 
 ## Further reading

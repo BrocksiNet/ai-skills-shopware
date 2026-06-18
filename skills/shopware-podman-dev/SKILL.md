@@ -59,7 +59,8 @@ grep -F 'shopware-dev (managed by sw-dev)' .env && sw-dev show <instance>
 **Optional skill** in [ai-skills-shopware](https://github.com/BrocksiNet/ai-skills-shopware) —
 skip it if you do not use Podman/Mutagen. With `~/shopware-dev`, `sw-dev link`
 symlinks skills from `ai-skills-shopware/skills/` into `.cursor/`, `.claude/`,
-`.codex/`, and `.agents/` so Cursor, Claude Code, and Codex share one source.
+`.codex/`, and `.agents/` so Cursor, Claude Code, OpenCode/shared agents, and
+Codex share one source.
 
 ## Shell patterns (MCP fallback)
 
@@ -102,9 +103,30 @@ cross lanes.
 
 1. Container up: `podman compose up -d` (from project root).
 2. Mutagen: sessions should be watching (`mutagen sync list`). After reboot:
-   `~/scripts/dev-startup.sh`.
+   `sw-dev startup` (or `~/shopware-dev/bin/sw-dev startup`). The old
+   `~/scripts/dev-startup.sh` path is only a compatibility wrapper.
 3. After changing `~/shopware-dev` overrides: `sw-dev link-all`, then
    `podman compose up -d --force-recreate web` if volumes/ports changed.
+
+## shopware-dev commands
+
+`~/shopware-dev/bin/sw-dev` is the source of truth for local orchestration:
+
+```bash
+sw-dev startup --quiet       # GPG, phpactor, Podman, proxy, Mutagen
+sw-dev sync all              # all lane and non-agentic Mutagen sessions
+sw-dev sync status           # lane Mutagen/container file status
+sw-dev proxy restart         # reload local trunk/sw66/sw65 proxy
+sw-dev lane shell trunk      # open shell in the lane's web container
+sw-dev lane exec 66 bin/console cache:clear
+sw-dev agentic bootstrap 65
+sw-dev agentic qa trunk ci
+sw-dev agentic matrix --with-qa
+sw-dev agentic seed trunk music
+```
+
+Compatibility wrappers remain under `~/scripts/dev-startup.sh` and
+`~/scripts/agentic-commerce/*`, but new instructions should prefer `sw-dev`.
 
 ## Validate shopware-dev
 
@@ -132,6 +154,8 @@ sw-dev validate --static-only   # no podman exec / no HTTP
   overrides/shared.podman-mutagen.yaml
   instances/trunk.yaml, sw66.yaml, …
   tooling/mcp-*.base.json
+  proxy/dev_host_proxy.py
+  lib/startup.sh, lib/mutagen.sh, lib/agentic.sh, …
   bin/sw-dev
 ```
 
