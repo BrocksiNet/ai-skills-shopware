@@ -1,6 +1,7 @@
 # Local eval/runner artifacts
 evals/.runs/
 evals/**/.out/
+evals/smoke/smoke.env
 *.log
 
 # Node (skills.sh runner helpers, markdown lint)

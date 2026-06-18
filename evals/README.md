@@ -49,6 +49,16 @@ For containerized, parallel, multi-agent runs, [`harbor/`](harbor/README.md)
 wires the same tasks into [Harbor](https://github.com/harbor-framework/harbor)
 (`claude-code` / `codex` agents, `instruction.md` + `tests/test.sh`).
 
+## Smoke evals (local A/B)
+
+[`smoke/`](smoke/) — skills ON vs OFF with Claude, Codex, or Cursor CLI.
+Guide: [`docs/smoke-evals.md`](../docs/smoke-evals.md).
+
+```bash
+./evals/smoke/smoke.sh agents
+./evals/smoke/smoke.sh ab --agent claude --task no-empty-explicit
+```
+
 ## Cost note
 
 Layers 2-3 call real models and cost money. They run in CI only behind a label or
