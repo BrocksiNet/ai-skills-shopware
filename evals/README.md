@@ -18,7 +18,14 @@ Each `tasks/<rule>/` is a fixture task:
 tasks/<rule>/
 ├── instruction.md     # the prompt given to the agent
 ├── fixture/           # starting code copied into the agent's working dir
+├── fixtures/pass/     # golden workdir that must PASS grade.sh (CI)
+├── fixtures/fail/     # optional golden FAIL case (else fixture/ is used)
 └── grade.sh           # deterministic grader (exit 0 = pass)
+```
+
+```bash
+chmod +x evals/test-graders.sh evals/tasks/*/grade.sh
+./evals/test-graders.sh
 ```
 
 `grade.sh` contract (env provided by the runner):

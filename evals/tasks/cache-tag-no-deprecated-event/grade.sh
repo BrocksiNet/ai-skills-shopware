@@ -12,7 +12,7 @@ uses_collector=0
 uses_deprecated=0
 
 if grep -rqE 'CacheTagCollector' "$WORKDIR" 2>/dev/null && \
-   grep -rqE '->addTag\(' "$WORKDIR" 2>/dev/null; then
+   grep -rqE 'addTag\(' "$WORKDIR" 2>/dev/null; then
   uses_collector=1
 fi
 

@@ -23,6 +23,29 @@ jobs:
       - name: Activation evals (dry mode — file presence + prompt parsing)
         run: bash scripts/run-activation-evals.sh
 
+  shellcheck:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+
+      - name: Install ShellCheck
+        run: sudo apt-get update && sudo apt-get install -y shellcheck
+
+      - name: Lint shell scripts
+        run: |
+          mapfile -t files < <(
+            find evals/smoke evals/runner scripts evals -maxdepth 1 -name '*.sh' -type f | sort
+          )
+          shellcheck "${files[@]}"
+
+  grader-golden:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+
+      - name: Golden grader tests (no model calls)
+        run: bash evals/test-graders.sh
+
   markdown-lint:
     runs-on: ubuntu-latest
     steps:

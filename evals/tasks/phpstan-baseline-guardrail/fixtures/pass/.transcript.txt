@@ -1,0 +1,1 @@
+Raised level requires regenerating phpstan-baseline.neon in the same change via generate-baseline.

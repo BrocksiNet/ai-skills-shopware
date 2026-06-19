@@ -30,7 +30,8 @@ smoke_task_dir() {
 
 smoke_list_tasks() {
   local task
-  for task in "${SMOKE_TASKS}"; do
+  # shellcheck disable=SC2086
+  for task in ${SMOKE_TASKS}; do
     printf '%s\n' "${task}"
   done
 }

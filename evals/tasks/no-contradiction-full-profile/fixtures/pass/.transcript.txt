@@ -1,0 +1,1 @@
+Use CacheTagCollector::addTag in a unit test with TestCase only.
