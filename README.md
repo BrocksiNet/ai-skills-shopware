@@ -29,8 +29,8 @@ release tag, and run `npx skills update` to pull improvements.
 | Skill | Surface | Purpose |
 | ----- | ------- | ------- |
 | [`php-foundation`](skills/php-foundation/SKILL.md) | any PHP | Strict PHP 8.x base: `strict_types`, enums/DTOs over arrays, PER-CS, `list<>` over `array<>`. |
-| [`shopware-core-development`](skills/shopware-core-development/SKILL.md) | platform (`shopware/shopware`, `src/`) | Strict rules for changing the platform: deprecation policy, release notes (RELEASE_INFO/UPGRADE) + ADRs, PHPStan baseline discipline, `@internal` boundaries. |
-| [`shopware-plugin-development`](skills/shopware-plugin-development/SKILL.md) | plugin / project (`custom/plugins`) | Pragmatic PHP-extension rules: smallest safe change, 6.6/6.7 compat, DAL usage, HTTP cache tags (6.7+), migrations, decoration. |
+| [`shopware-core-development`](skills/shopware-core-development/SKILL.md) | platform (`shopware/shopware`, `src/`) | Strict rules for changing the platform: deprecation policy, release notes (RELEASE_INFO/UPGRADE) + ADRs, PHPStan baseline discipline, Symfony modernization behind feature flags, `@internal` boundaries. |
+| [`shopware-plugin-development`](skills/shopware-plugin-development/SKILL.md) | plugin / project (`custom/plugins`) | Pragmatic PHP-extension rules: smallest safe change, 6.6/6.7 compat, DAL usage, HTTP cache tags (6.7+), migrations, Symfony-first components, decoration. |
 | [`shopware-app-development`](skills/shopware-app-development/SKILL.md) | app (`custom/apps`, `manifest.xml`) | Declarative app rules: manifest, least-privilege permissions, sandboxed Twig app scripts, webhooks + Admin API, Meteor Admin SDK. |
 | [`shopware-testing`](skills/shopware-testing/SKILL.md) | any test | PHPUnit standards: unit vs integration placement, `IntegrationTestBehaviour`, data providers, no real I/O in unit tests. |
 | [`shopware-review-learnings`](skills/shopware-review-learnings/SKILL.md) | any review | Recurring findings from real plugin/app/PR reviews. Grows over time. |
@@ -46,6 +46,9 @@ shopware-ai-coding-tools and a multi-instance proxy setup.
 See [`REGISTRY.md`](REGISTRY.md) for the full catalog with ownership and the
 topic → owning-skill coverage matrix that keeps skills from contradicting each
 other.
+
+See [`AGENTS.md`](AGENTS.md) for repo layout, local validation commands, and how
+to add or change skills and eval tasks.
 
 ## Install
 
@@ -233,7 +236,7 @@ exclusively and accept that trade-off.
 
 ```bash
 # Pin to a release tag for reproducibility
-npx skills add BrocksiNet/ai-skills-shopware@v0.1.0 --skill php-foundation -a cursor
+npx skills add BrocksiNet/ai-skills-shopware@v0.4.0 --skill php-foundation -a cursor
 ```
 
 ## Update
@@ -265,15 +268,45 @@ matching the folder); every skill in this repo already complies.
 
 ## Validating skills
 
-We do not assume the rules are applied — we test it. Three layers:
+We do not assume the rules are applied — we test it. See [`evals/README.md`](evals/README.md)
+and [`AGENTS.md`](AGENTS.md) for the full workflow.
+
+### Eval layers (model-dependent)
 
 1. **Activation (Layer 1):** `scripts/run-activation-evals.sh` runs each skill's
-   `evals/should-trigger.md` / `should-not-trigger.md` prompts and checks the
-   right skill loads (and the wrong ones stay quiet).
+   `skills/<skill>/evals/should-trigger.md` / `should-not-trigger.md` prompts and
+   checks the right skill loads (and the wrong ones stay quiet).
 2. **Behavioral (Layer 2):** `evals/tasks/<rule>/` give the agent a real task and
    grade the output with deterministic Shopware tooling (PHPStan/ECS/PHPUnit + grep).
-3. **A/B ablation (Layer 3):** `evals/runner/` runs each task with the skill on and
-   off and compares pass rates — proof the skill earns its context budget.
+3. **A/B ablation (Layer 3):** `evals/runner/` or [`evals/smoke/smoke.sh`](evals/smoke/smoke.sh)
+   run each task with the skill set on and off and compare pass rates — proof the
+   skill earns its context budget.
+
+### Deterministic CI (every push, no model calls)
+
+The [`validate`](.github/workflows/validate.yml) workflow runs on every push/PR:
+
+| Job | What it checks |
+| --- | -------------- |
+| `validate-skills` | Skill structure, budgets, REGISTRY conflicts; activation evals in `--dry` mode |
+| `shellcheck` | Shell scripts under `scripts/`, `evals/smoke/`, `evals/runner/`, top-level `evals/*.sh` |
+| `grader-golden` | `./evals/test-graders.sh` — each task's `fixtures/pass/` must pass and `fixture/` / `fixtures/fail/` must fail |
+| `markdown-lint` | All `**/*.md` files |
+
+Run the same checks locally:
+
+```bash
+bash scripts/validate-skills.sh
+bash scripts/run-activation-evals.sh          # dry by default without an agent
+bash evals/test-graders.sh
+# shellcheck (see validate.yml for the file list)
+./evals/smoke/smoke.sh graders               # smoke harness dry-run of graders
+```
+
+Model evals (Layers 1–3 against real agents) run only on a schedule, manual
+dispatch, or when a PR carries the `run-evals` label — see
+[`.github/workflows/evals.yml`](.github/workflows/evals.yml). Local A/B smoke:
+[`docs/smoke-evals.md`](docs/smoke-evals.md).
 
 For a hands-on, real-instance check, follow
 [`docs/local-validation.md`](docs/local-validation.md): install the skills for

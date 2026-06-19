@@ -11,7 +11,7 @@ discipline.
 | Skill | Why |
 | ----- | --- |
 | `php-foundation` | Shared strict PHP 8.x base. |
-| `shopware-core-development` | Deprecations, release notes (RELEASE_INFO/UPGRADE) + ADR, PHPStan baseline, `@internal`. |
+| `shopware-core-development` | Deprecations, release notes (RELEASE_INFO/UPGRADE) + ADR, PHPStan baseline, Symfony modernization behind feature flags, `@internal`. |
 | `shopware-testing` | PHPUnit unit/integration standards. |
 | `shopware-research-and-escalation` | Verify against installed source; escalate instead of guessing. |
 | `shopware-review-learnings` | Recurring real-world findings. |

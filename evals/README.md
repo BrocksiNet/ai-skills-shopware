@@ -5,10 +5,11 @@ layers, cheapest to most expensive.
 
 ## Layer 1 — activation (`../scripts/run-activation-evals.sh`)
 
-Sends each skill's `evals/should-trigger.md` / `should-not-trigger.md` prompts to
-an agent and checks the right skill loads (and the wrong ones stay quiet). Cheap;
-runs on every PR via CI in `--dry` mode (file presence + prompt parsing) and for
-real when an agent command is configured.
+Sends each skill's `skills/<skill>/evals/should-trigger.md` /
+`skills/<skill>/evals/should-not-trigger.md` prompts to an agent and checks the
+right skill loads (and the wrong ones stay quiet). Cheap; runs on every PR via CI
+in `--dry` mode (file presence + prompt parsing) and for real when an agent
+command is configured.
 
 ## Layer 2 — behavioral (`tasks/`)
 
@@ -71,3 +72,12 @@ Guide: [`docs/smoke-evals.md`](../docs/smoke-evals.md).
 Layers 2-3 call real models and cost money. They run in CI only behind a label or
 schedule with an API-key secret (see `../.github/workflows/evals.yml`), never on
 every push.
+
+## CI on every push (no model calls)
+
+[`../.github/workflows/validate.yml`](../.github/workflows/validate.yml) also runs:
+
+- `bash scripts/validate-skills.sh` + activation evals in dry mode
+- ShellCheck on repo shell scripts (see workflow for paths)
+- `bash evals/test-graders.sh` (golden pass/fail fixtures per task)
+- Markdown lint on all `*.md` files

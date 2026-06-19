@@ -9,7 +9,7 @@ safe change that fits how Shopware wants you to extend it).
 | Skill | Why |
 | ----- | --- |
 | `php-foundation` | Shared strict PHP 8.x base. |
-| `shopware-plugin-development` | DAL, services, cache tags, migrations, decoration, 6.6/6.7 compat. |
+| `shopware-plugin-development` | DAL, services, cache tags, migrations, decoration, Symfony-first components, 6.6/6.7 compat. |
 | `shopware-testing` | PHPUnit unit/integration standards. |
 | `shopware-research-and-escalation` | Verify against installed source; escalate instead of guessing. |
 | `shopware-review-learnings` | Recurring real-world findings (API-aware, DAL, performance). |

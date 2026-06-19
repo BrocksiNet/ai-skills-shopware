@@ -7,11 +7,11 @@ LLM-as-judge).
 ## Quick start
 
 ```bash
-cd ~/Documents/Projects/ai-skills-shopware
+cd /path/to/ai-skills-shopware
 
 cp evals/smoke/smoke.env.example evals/smoke/smoke.env   # optional tweaks
 
-chmod +x evals/smoke/smoke.sh evals/smoke/lib/*.sh evals/tasks/no-empty-explicit/grade.sh
+chmod +x evals/smoke/smoke.sh evals/smoke/lib/*.sh evals/test-graders.sh evals/tasks/*/grade.sh
 
 # No model calls — check graders + agent availability
 ./evals/smoke/smoke.sh agents
@@ -52,8 +52,16 @@ For each task, the runner creates a temp workdir, copies the fixture, then:
 
 Default skills: `php-foundation`, `shopware-testing`, `shopware-review-learnings`.
 
-Some tasks load extra skills via `evals/tasks/<task>/skills` (e.g. cache-tag adds
-`shopware-plugin-development`; phpstan adds `shopware-core-development`).
+Some tasks load extra skills via `evals/tasks/<task>/skills`:
+
+| Task | Extra skills beyond default |
+| ---- | --------------------------- |
+| `cache-tag-no-deprecated-event` | `shopware-plugin-development` |
+| `interface-di-repository` | `shopware-core-development` |
+| `phpstan-baseline-guardrail` | `shopware-core-development` |
+| `core-http-client-behind-flag` | `shopware-core-development` |
+
+Tasks without a `skills` file use the default `SMOKE_SKILLS` only.
 
 ## Default smoke tasks
 

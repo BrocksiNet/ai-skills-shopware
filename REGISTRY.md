@@ -98,5 +98,7 @@ the right one activates. There is no project-level "core vs plugin" choice.
 1. Confirm it passes the five inclusion criteria (see [README](README.md#curation--governance)).
 2. Assign it to exactly one topic row above (or add a new row — never a second owner).
 3. Write the rule in the owning skill, self-contained, in our own words.
-4. Add an eval (`evals/tasks/` for behavior, `evals/should-*.md` for activation).
+4. Add an eval (`evals/tasks/` for behavior, `skills/<skill>/evals/should-*.md` for activation).
 5. Run `./scripts/validate-skills.sh` — it must pass (no conflicts, within budgets).
+
+See [`AGENTS.md`](AGENTS.md) for repo layout and the full validation workflow.
