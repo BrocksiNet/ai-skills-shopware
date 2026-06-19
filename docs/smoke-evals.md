@@ -67,6 +67,7 @@ Some tasks load extra skills via `evals/tasks/<task>/skills` (e.g. cache-tag add
 | `interface-di-repository` | `php-foundation` + core — repository interface, not concrete DAL |
 | `cache-tag-no-deprecated-event` | plugin dev — `CacheTagCollector`, not `*CacheTagsEvent` |
 | `phpstan-baseline-guardrail` | core dev — level + baseline regenerated together |
+| `core-http-client-behind-flag` | core dev — Symfony HttpClient behind `Feature::isActive`, legacy path kept |
 
 Other eval tasks (not in default suite): `no-contradiction-full-profile`.
 

@@ -9,7 +9,8 @@ description: >-
   tags (6.7+), database migrations, event subscribers, decoration, and 6.6/6.7
   compatibility. Triggers on "build a Shopware plugin", "add a service", "query
   with the DAL", "add a migration", "cache this route", "decorate a core
-  service", "subscribe to an event", "make this 6.7 compatible". Do NOT use for
+  service", "subscribe to an event", "make this 6.7 compatible", "use Symfony
+  HttpClient", "replace custom HTTP with Symfony". Do NOT use for
   the platform itself (shopware-core-development), for declarative apps with a
   manifest.xml (shopware-app-development), generic PHP style (php-foundation),
   or test authoring (shopware-testing).
@@ -35,6 +36,7 @@ Load a reference only when the task needs it:
 - HTTP cache tags (6.7+) -> [`references/cache-tags.md`](references/cache-tags.md)
 - Database migrations -> [`references/migrations.md`](references/migrations.md)
 - 6.6 / 6.7 compatibility -> [`references/version-compatibility.md`](references/version-compatibility.md)
+- Symfony-first (prefer components over custom code) -> [`references/symfony-first.md`](references/symfony-first.md)
 
 ## Hard guardrails (refuse rather than violate)
 
@@ -72,7 +74,9 @@ Inherits all **`php-foundation` trunk habits** (`empty()`, interface injection,
   respect `keepUserData` on uninstall; clean up only what you own.
 - **Version awareness:** check the supported Shopware range in `composer.json`,
   keep code working across it, and align Symfony usage to the version that range
-  pins. For cross-version migrations and modernization, reach for **Rector**
+  pins. Prefer Symfony components over custom HTTP/time/validation when the pinned
+  stack allows ([`references/symfony-first.md`](references/symfony-first.md)).
+  For cross-version migrations and modernization, reach for **Rector**
   (`frosh/shopware-rector` set) and review the dry-run — do not hand-edit blindly
   (see the compatibility reference).
 
@@ -84,6 +88,7 @@ Inherits all **`php-foundation` trunk habits** (`empty()`, interface injection,
 - [ ] No deprecated API where a stable one exists; 6.6 compat preserved or the bump flagged.
 - [ ] Migrations idempotent and split destructive/non-destructive; lifecycle handled.
 - [ ] Static analysis (project PHPStan/ECS) passes; tests added where behavior changed (see shopware-testing).
+- [ ] Custom HTTP/time/queue/validation justified, or replaced with Symfony on the pinned version; platform APIs used for DAL/cache/routes.
 
 ## Further reading (optional, non-load-bearing)
 

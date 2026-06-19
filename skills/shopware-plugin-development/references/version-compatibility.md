@@ -41,8 +41,10 @@ target, not something to copy.
 Each Shopware minor pins a Symfony major (roughly: 6.6 → Symfony 6.4 LTS, 6.7 →
 Symfony 7.x — confirm against `composer.lock`, do not assume). Do **not** use a
 Symfony API newer than the version your supported Shopware range ships; the
-installed Symfony is the contract, not the latest Symfony docs. This is the one
-"Symfony" delta worth stating — generic Symfony usage is left to the base model.
+installed Symfony is the contract, not the latest Symfony docs. See
+[`symfony-first.md`](symfony-first.md) for preferring Symfony components in
+**plugin** code; core modernization uses feature flags
+([`modernization-and-flags.md`](../../shopware-core-development/references/modernization-and-flags.md)).
 
 ## Upgrades & modernization (tooling, not hand-edits)
 

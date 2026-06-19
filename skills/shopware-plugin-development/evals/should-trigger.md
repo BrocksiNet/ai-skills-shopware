@@ -8,3 +8,4 @@
 - Make this plugin work on both Shopware 6.6 and 6.7.
 - Subscribe to the checkout order placed event in my plugin.
 - Add a service in custom/plugins/SwagExample/src and register it in services.xml.
+- Call an external API from my plugin — should I use curl or Symfony HttpClient?

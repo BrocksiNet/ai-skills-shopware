@@ -9,7 +9,8 @@ description: >-
   discipline, RELEASE_INFO / UPGRADE notes, ADRs, and conventional commits.
   Triggers on "contribute to Shopware core", "change platform code", "deprecate
   a public symbol", "add a release note", "write an ADR", "raise the PHPStan
-  level", "is this a breaking change". Do NOT use when the target is an
+  level", "is this a breaking change", "modernize core to Symfony", "feature flag
+  for new behavior". Do NOT use when the target is an
   extension on top of Shopware: a plugin (custom/plugins ->
   shopware-plugin-development), an app (custom/apps, manifest.xml ->
   shopware-app-development), or for generic PHP style (php-foundation).
@@ -31,6 +32,7 @@ are mandatory, not optional. Inherits `php-foundation`; adds the deltas below.
 Load a reference file only when the task needs it:
 
 - Deprecations & breaking changes -> [`references/deprecations.md`](references/deprecations.md)
+- Symfony / modernization behind feature flags -> [`references/modernization-and-flags.md`](references/modernization-and-flags.md)
 - Release notes (RELEASE_INFO / UPGRADE) & ADRs -> [`references/release-notes-and-adr.md`](references/release-notes-and-adr.md) (includes migrated `changelog.mdc` detail)
 - PHPStan baseline discipline -> [`references/static-analysis-baseline.md`](references/static-analysis-baseline.md)
 - Bundle boundaries, listeners, migrations -> [`references/platform-architecture.md`](references/platform-architecture.md)
@@ -77,6 +79,9 @@ Load a reference file only when the task needs it:
   Storefront dependencies; prefer `#[AsEventListener]` for a single event; prefer
   `final` for non-extension classes; thin controllers; safe session access. See
   [`references/platform-architecture.md`](references/platform-architecture.md).
+- **Modernize, don't fossilize.** When Symfony or a newer platform service fits
+  on the pinned stack, adopt it behind `Feature::isActive()` and keep the legacy
+  path until the major — see [`references/modernization-and-flags.md`](references/modernization-and-flags.md).
 
 ## Definition of done
 
@@ -87,6 +92,7 @@ Load a reference file only when the task needs it:
 - [ ] PHPStan passes with no new baseline entries; if the level changed, the baseline was regenerated and committed.
 - [ ] Unit/integration tests added and green; ECS clean; conventional commit message.
 - [ ] Services registered in owning bundle; no cross-bundle boundary violations; listeners/controllers follow platform-architecture reference.
+- [ ] Internal modernization uses Symfony/platform building blocks behind feature flags when replacing historic workarounds (both paths tested).
 
 ## Further reading (optional, non-load-bearing)
 

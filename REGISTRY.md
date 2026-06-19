@@ -37,6 +37,7 @@ the surface skills can all be installed together without contradicting (see
 | Coding style (PER-CS, import usage, `list<>` over `array<>`) | `php-foundation` |
 | Core contribution process (release notes RELEASE_INFO/UPGRADE, ADR, conventional commits) | `shopware-core-development` |
 | Deprecation policy (`Feature::triggerDeprecationOrThrow`, `@deprecated tag:`) | `shopware-core-development` |
+| Core modernization (Symfony behind feature flags, dual paths until major) | `shopware-core-development` |
 | Static-analysis baseline discipline (PHPStan level, shrink-not-delete) | `shopware-core-development` |
 | Public-API / `@internal` boundaries | `shopware-core-development` |
 | Plugin structure & lifecycle (install/activate/uninstall, keepUserData) | `shopware-plugin-development` |
@@ -44,6 +45,7 @@ the surface skills can all be installed together without contradicting (see
 | HTTP cache & cache tags (6.7 `CacheTagCollector`) | `shopware-plugin-development` |
 | Database migrations (`MigrationStep`, destructive/non-destructive) | `shopware-plugin-development` |
 | Version compatibility (6.6 / 6.7) | `shopware-plugin-development` |
+| Symfony-first (HttpClient, Messenger, Validator vs custom code) | `shopware-plugin-development` |
 | Service decoration & DI registration | `shopware-plugin-development` |
 | App manifest, permissions & lifecycle (`manifest.xml`, `app:install`, requirements) | `shopware-app-development` |
 | App scripts (sandboxed Twig hooks in `Resources/scripts/`) | `shopware-app-development` |

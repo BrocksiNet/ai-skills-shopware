@@ -8,3 +8,5 @@
 - I want to raise the PHPStan level in the core repo, what do I need to do?
 - Is removing this public service a breaking change?
 - Mark this new internal class correctly and document it in the release notes.
+- Replace file_get_contents in core with Symfony HttpClient behind a feature flag.
+- Modernize this core service to use Messenger instead of a custom queue.

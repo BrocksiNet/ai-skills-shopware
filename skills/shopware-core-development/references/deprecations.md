@@ -1,7 +1,9 @@
 # Deprecations & breaking changes (core)
 
 Load this when removing, renaming, or changing the behavior of anything that
-might be public.
+might be public. When **replacing an internal implementation** with Symfony or a
+newer service, see also
+[`modernization-and-flags.md`](modernization-and-flags.md).
 
 ## The rule
 
