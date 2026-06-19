@@ -30,6 +30,39 @@ if (class_exists(CacheTagCollector::class)) {
 - Keep both paths covered by tests, or at least smoke-checked, until you drop the
   old minor.
 
+**Do not add `class_exists` for core framework classes that already exist in your
+minimum supported version.** `Feature`, `Context`, `Criteria`, `EntityRepository`,
+`Kernel` — all present since 6.4/6.5. Check the class's first-ship version before
+adding a guard; a guard for a class that always exists is dead code that misleads
+readers about the supported range.
+
+## Shopware feature flags
+
+Shopware ships experimental and in-progress API behind `Feature` flags
+(`\Shopware\Core\Framework\Feature`). The right pattern when calling
+`Feature::isActive()` from plugin code:
+
+```php
+use Shopware\Core\Framework\Feature;
+
+// Safe: only call isActive() when the flag is registered, avoiding E_USER_WARNING
+// on Shopware builds that don't know the flag (e.g. older minors in test env).
+// !Feature::has() means the flag was removed (graduated to always-on) — assume available.
+return !Feature::has('MY_FLAG') || Feature::isActive('MY_FLAG');
+```
+
+- **Never read `$_SERVER['MY_FLAG']` or `getenv('MY_FLAG')` directly** — that
+  bypasses Shopware's feature registry, breaks in prod mode, and reviewers will
+  flag it.
+- `Feature::has()` returns false when the flag is not registered (e.g. it was
+  removed after graduating). The pattern above treats graduation as "always active",
+  which is correct — the feature is stable.
+- In tests that stub a class guarded by a flag, set `$_SERVER['MY_FLAG'] = '1'` in
+  `setUpBeforeClass()` (and `unset` in `tearDownAfterClass()`) so
+  `Feature::isActive()` returns true without needing a full Shopware kernel boot.
+  On builds where the flag is not registered, `Feature::has()` returns false and
+  the test path is reached without the `isActive()` call anyway.
+
 ## Deprecations you will meet
 
 6.7 deprecated and stopped dispatching the `*CacheTagsEvent` events (removed in

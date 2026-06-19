@@ -29,6 +29,13 @@ Detailed, growing lists live in references (load on demand):
 
 ## Pre-submit (before opening or requesting review)
 
+- **Run quality tools before every push** — not just before PR review. Run `ecs_check`
+  and `phpstan_analyze` (via MCP or `podman compose exec web`) before each `git push`.
+  ECS exit-code-8 means a CS violation. PHPStan catches missing callers when you change
+  an interface signature. Catching these locally is free; a CI cycle costs minutes.
+- **Interface refactor checklist** — before changing any method signature on an
+  interface, grep all usages across `src/` *and* `tests/`: `grep -rn 'methodName' src/ tests/`.
+  PHPStan will catch stragglers too, but only if you run it first.
 - **CI green** — confirm checks pass (`gh-tooling` `pr_checks` or php-tooling MCP) before
   you ask for review or mark the PR ready.
 - **PR size** — aim for &lt;400 lines changed; if larger, split the PR or explain in the
@@ -58,6 +65,22 @@ Detailed, growing lists live in references (load on demand):
   belong in destructive migrations; never edit shipped migrations — add a new class.
   (Owning topic: `shopware-plugin-development` -> `references/migrations.md`; core:
   `platform-architecture.md`.)
+
+- **`class_exists` guard for a core framework class** — `class_exists(Feature::class)`,
+  `class_exists(Context::class)`, etc. are dead code when the minimum supported version
+  already ships those classes. Only guard API that was *added within* your supported range
+  (e.g. `CacheTagCollector` added in 6.7, when you still support 6.6). Check the minimum
+  `shopware/core` version in `composer.json` before adding any defensive class/method check.
+  (Owning topic: `shopware-plugin-development` -> `references/version-compatibility.md`.)
+- **Direct `$_SERVER`/`getenv` access for Shopware feature flags** — use
+  `Feature::has('FLAG') && Feature::isActive('FLAG')` (or `!Feature::has() || Feature::isActive()`
+  for "assume active when flag is gone"). `Feature::has()` guards against
+  `E_USER_WARNING` on unregistered flags; going below the platform API produces
+  fragile code reviewers will flag. (Owning topic: `shopware-plugin-development`
+  -> `references/version-compatibility.md`.)
+- **FQCN inline instead of `use` import** — `\Shopware\Core\Framework\Feature::isActive()`
+  in a method body is a PER-CS/ECS violation. Always add the `use` statement.
+  (`php-foundation` baseline rule; ECS catches it automatically.)
 
 ## Red flags (Shopware-specific)
 
