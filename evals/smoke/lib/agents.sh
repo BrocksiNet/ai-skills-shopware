@@ -10,14 +10,31 @@ smoke_agent_bin() {
     claude) command -v claude 2>/dev/null || true ;;
     codex) command -v codex 2>/dev/null || true ;;
     cursor)
-      if command -v cursor-agent >/dev/null 2>&1; then
-        command -v cursor-agent
+      if command -v agent >/dev/null 2>&1; then
+        command -v agent
       else
-        command -v agent 2>/dev/null || true
+        command -v cursor-agent 2>/dev/null || true
       fi
       ;;
     *) smoke_die "unknown agent: ${agent}" ;;
   esac
+}
+
+smoke_cursor_load_auth_args() {
+  SMOKE_CURSOR_AUTH_ARGS=()
+  if [[ -n "${CURSOR_API_KEY:-}" && "${CURSOR_API_KEY}" == crsr_* ]]; then
+    smoke_log "cursor: ignoring CURSOR_API_KEY (admin key); using browser login"
+    return 0
+  fi
+  if [[ -n "${CURSOR_API_KEY:-}" ]]; then
+    SMOKE_CURSOR_AUTH_ARGS=(--api-key "${CURSOR_API_KEY}")
+  fi
+}
+
+smoke_cursor_probe() {
+  local cursor_bin="$1"
+  shift
+  "${cursor_bin}" -p --output-format text "$@" "Reply with exactly: OK" </dev/null 2>&1
 }
 
 smoke_agent_auth_ok() {
@@ -32,14 +49,18 @@ smoke_agent_auth_ok() {
       codex login status >/dev/null 2>&1 || return 1
       ;;
     cursor)
-      local cursor_bin probe cursor_auth=()
+      local cursor_bin probe
       cursor_bin="$(smoke_agent_bin cursor)"
       [[ -n "${cursor_bin}" ]] || return 1
-      if [[ -n "${CURSOR_API_KEY:-}" ]]; then
-        cursor_auth=(--api-key "${CURSOR_API_KEY}")
+      smoke_cursor_load_auth_args
+      probe="$(smoke_cursor_probe "${cursor_bin}" "${SMOKE_CURSOR_AUTH_ARGS[@]}")" || true
+      if [[ "${probe}" == *"Authentication required"* && ${#SMOKE_CURSOR_AUTH_ARGS[@]} -gt 0 ]]; then
+        probe="$(smoke_cursor_probe "${cursor_bin}")" || return 1
       fi
-      probe="$("${cursor_bin}" -p --output-format text "${cursor_auth[@]}" "Reply with exactly: OK" </dev/null 2>&1)" || return 1
-      [[ "${probe}" == *"Authentication required"* ]] && return 1
+      if [[ "${probe}" == *"Authentication required"* ]]; then
+        return 1
+      fi
+      return 0
       ;;
   esac
 }
@@ -99,15 +120,13 @@ smoke_agent_run() {
       fi
       ;;
     cursor)
-      local cursor_bin cursor_auth=()
+      local cursor_bin
       cursor_bin="$(smoke_agent_bin cursor)"
-      if [[ -n "${CURSOR_API_KEY:-}" ]]; then
-        cursor_auth=(--api-key "${CURSOR_API_KEY}")
-      fi
+      smoke_cursor_load_auth_args
       if [[ -n "${SMOKE_CURSOR_CMD:-}" ]]; then
         ( cd "${workdir}" && eval "${SMOKE_CURSOR_CMD}" ) 2>&1 | tee "${transcript_file}"
       else
-        ( cd "${workdir}" && "${cursor_bin}" -p --force --output-format text "${cursor_auth[@]}" "${prompt}" </dev/null ) \
+        ( cd "${workdir}" && "${cursor_bin}" -p --force --output-format text "${SMOKE_CURSOR_AUTH_ARGS[@]}" "${prompt}" </dev/null ) \
           2>&1 | tee "${transcript_file}"
       fi
       ;;

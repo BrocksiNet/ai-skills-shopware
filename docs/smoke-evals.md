@@ -32,7 +32,7 @@ chmod +x evals/smoke/smoke.sh evals/smoke/lib/*.sh evals/tasks/no-empty-explicit
 | ----- | --- | ---- |
 | `claude` | `claude` (Claude Code) | `ANTHROPIC_API_KEY` or `claude auth login` |
 | `codex` | `codex` | `OPENAI_API_KEY` or `codex login` |
-| `cursor` | `cursor-agent` or `agent` | CLI-capable user or service-account key as `CURSOR_API_KEY` (Admin `crsr_` keys do **not** work). Omitted from default `SMOKE_AGENTS` until you have one. |
+| `cursor` | `agent` (or `cursor-agent`) | Local: `agent login` (browser). CI: CLI-capable user/service key as `CURSOR_API_KEY`. Admin `crsr_` keys are ignored. |
 
 Override commands in `evals/smoke/smoke.env`:
 
