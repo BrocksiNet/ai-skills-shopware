@@ -22,9 +22,7 @@ if grep -qE 'IntegrationTestBehaviour|KernelTestBehaviour|getContainer\(' "$test
 fi
 
 ran=skipped
-if command -v phpunit >/dev/null 2>&1; then
-  if (cd "$WORKDIR" && phpunit "$test_file" >/dev/null 2>&1); then ran=pass; else ran=fail; fi
-elif [ -x "$WORKDIR/vendor/bin/phpunit" ]; then
+if [ -x "$WORKDIR/vendor/bin/phpunit" ]; then
   if (cd "$WORKDIR" && vendor/bin/phpunit "$test_file" >/dev/null 2>&1); then ran=pass; else ran=fail; fi
 fi
 

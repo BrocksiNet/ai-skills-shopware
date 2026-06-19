@@ -18,9 +18,9 @@ pinned=""
 if [ -n "${SKILLS_PINNED_VERSION:-}" ]; then
   pinned="$SKILLS_PINNED_VERSION"
 elif [ -f ".skills-version" ]; then
-  pinned="$(cat .skills-version | tr -d ' \n')"
+  pinned="$(tr -d ' \n' < .skills-version)"
 elif [ -f "$ROOT/.skills-version" ]; then
-  pinned="$(cat "$ROOT/.skills-version" | tr -d ' \n')"
+  pinned="$(tr -d ' \n' < "$ROOT/.skills-version")"
 fi
 
 latest=""
