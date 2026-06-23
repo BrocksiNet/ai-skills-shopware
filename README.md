@@ -240,7 +240,7 @@ exclusively and accept that trade-off.
 
 ```bash
 # Pin to a release tag for reproducibility
-npx skills add BrocksiNet/ai-skills-shopware@v0.4.0 --skill php-foundation -a cursor
+npx skills add BrocksiNet/ai-skills-shopware@v0.5.0 --skill php-foundation -a cursor
 ```
 
 ## Update
