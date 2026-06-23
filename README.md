@@ -50,6 +50,10 @@ other.
 See [`AGENTS.md`](AGENTS.md) for repo layout, local validation commands, and how
 to add or change skills and eval tasks.
 
+We **own** our skill library — maintainer rules from shopware/shopware (e.g. PR
+[#17657](https://github.com/shopware/shopware/pull/17657)) are mined into this repo;
+see [`docs/core-pr-17657-alignment.md`](docs/core-pr-17657-alignment.md).
+
 ## Install
 
 Requires Node.js (for `npx`). There is no single "install everything" command on

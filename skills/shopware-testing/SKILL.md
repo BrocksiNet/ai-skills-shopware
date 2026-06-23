@@ -20,6 +20,7 @@ Load references on demand:
 
 - Unit vs integration placement, assertions, data → this file (below)
 - Exception assertions (`expectExceptionObject`) → [`references/exception-assertions.md`](references/exception-assertions.md)
+- Test shape, providers, feature flags, coverage attrs → [`references/test-shape-and-flags.md`](references/test-shape-and-flags.md)
 - DAL / repository integration → [`references/integration-repository.md`](references/integration-repository.md)
 - shopware/shopware: migrations, Codecov, `#[CoversClass]` → [`references/core-platform-patterns.md`](references/core-platform-patterns.md)
 - FoS shopware-phpunit + plugin patterns → [`references/external-inspiration.md`](references/external-inspiration.md)
@@ -65,7 +66,13 @@ These match PHPStan rules and reviewer expectations on core PRs:
   callbacks. Prefer `createStub()` when no interaction verification is needed.
 - **Deterministic time** — mock `ClockInterface`; avoid `time()` + fuzzy
   `assertGreaterThanOrEqual($startTime, …)`.
-- **Data providers** — row arity must match test parameters; name cases.
+- **Data providers** — use named **`yield`** cases in unit tests (not `return []`);
+  case names describe the scenario; see `test-shape-and-flags.md`.
+- **Feature flags** — unit: `#[DisabledFeatures]` for legacy/off paths; integration:
+  `Feature::skipTestIfActive()` / `skipTestIfInActive()` for flag branching (not
+  `#[DisabledFeatures]`). See reference.
+- **Coverage attrs** — no `#[CoversClass]` on integration tests; `@codeCoverageIgnore`
+  + `@see IntegrationTest` when a class is integration-only. See reference.
 
 ## Rules
 
@@ -73,7 +80,8 @@ These match PHPStan rules and reviewer expectations on core PRs:
   platform/Codecov exception.
 - **`assertSame` over `assertEquals`** for scalars; **`expectExceptionObject`**
   over split exception assertions (see reference).
-- **Data providers** (`#[DataProvider]`) for table cases; name cases.
+- **No behavior-mocking Doctrine DBAL `Connection`** in unit tests — stub
+  collaborators; cover SQL adapters in integration tests.
 - **Create your own test data** — `Uuid::randomHex()`, `Context::createDefaultContext()`;
   never depend on pre-existing DB rows in integration tests.
 - **One behavior per test**; arrange-act-assert; cover the public contract.
@@ -90,6 +98,7 @@ These match PHPStan rules and reviewer expectations on core PRs:
 - [ ] Correct suite (unit / integration / migration); pure logic in `tests/unit/`.
 - [ ] Dependencies mocked in unit tests (unless documented Codecov exception).
 - [ ] `assertSame` / `expectExceptionObject`; no `#[Depends]`; no mock `any()`.
+- [ ] Unit providers use named `yield`; integration tests omit `#[CoversClass]`.
 - [ ] Own fixtures in integration tests; clock mocked where time matters.
 - [ ] `vendor/bin/phpunit` (or php-tooling MCP / `docker compose exec web …`) green.
 

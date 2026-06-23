@@ -29,10 +29,30 @@ Rules:
 
 ## `#[CoversClass]` and patch coverage
 
-- Add `#[CoversClass(Foo::class)]` on tests that should count toward patch
-  coverage for `src/**` under the `phpunit-unit` flag.
+- Add `#[CoversClass(Foo::class)]` on **unit and migration** tests that should count
+  toward patch coverage for `src/**` under the `phpunit-unit` flag.
+- **Do not** add `#[CoversClass]`, `#[CoversFunction]`, or `#[CoversNothing]` to
+  **integration** tests — Shopware PHPStan allows those attributes only on unit and
+  migration tests.
 - Migration-job Cobertura may **exclude** non-migration `src/` paths — do not
   assume running code during migration tests covers platform classes in Codecov.
+
+## `@codeCoverageIgnore` and integration-only classes
+
+When a class is intentionally covered only by integration tests:
+
+```php
+/**
+ * @codeCoverageIgnore
+ * @see FooIntegrationTest
+ */
+final class Foo { … }
+```
+
+Import the integration test class with `use` — do not FQCN in `@see`. Simple
+struct-style classes with only public properties may use `@codeCoverageIgnore`
+without unit tests. Details: [`test-shape-and-flags.md`](../../shopware-testing/references/test-shape-and-flags.md)
+(in `shopware-testing` skill).
 
 ## Migration + indexer interactions
 

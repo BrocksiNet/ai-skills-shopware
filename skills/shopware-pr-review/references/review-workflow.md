@@ -10,6 +10,10 @@ Use whichever GitHub tooling is available in the session:
 Read the **full thread**, not only the latest line. Check the diff hunk the
 comment attaches to.
 
+After applying fixes for review or CI feedback, prefer a **new follow-up commit**
+with a message that explains the fix. Do **not** amend or force-push unless the
+user explicitly asks (pairs with `shopware-pr-description`).
+
 ## Decision matrix
 
 | Situation | Action |

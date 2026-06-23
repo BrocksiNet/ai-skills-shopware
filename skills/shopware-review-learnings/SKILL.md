@@ -26,9 +26,13 @@ Detailed, growing lists live in references (load on demand):
 
 - API-aware / headless findings -> [`references/api-aware.md`](references/api-aware.md)
 - DAL & performance findings -> [`references/dal-and-performance.md`](references/dal-and-performance.md)
+- Bug-fix scope & boyscouting -> [`references/change-scope.md`](references/change-scope.md)
 
 ## Pre-submit (before opening or requesting review)
 
+- **Scope the fix** — address root cause, not symptoms; grep callers before changing
+  shared behavior; boyscout only safe cleanups in touched files (see
+  `references/change-scope.md`).
 - **Run quality tools before every push** — not just before PR review. Run `ecs_check`
   and `phpstan_analyze` (via MCP or `podman compose exec web`) before each `git push`.
   ECS exit-code-8 means a CS violation. PHPStan catches missing callers when you change

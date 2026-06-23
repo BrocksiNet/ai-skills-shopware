@@ -32,6 +32,8 @@ are mandatory, not optional. Inherits `php-foundation`; adds the deltas below.
 Load a reference file only when the task needs it:
 
 - Deprecations & breaking changes -> [`references/deprecations.md`](references/deprecations.md)
+- Service architecture & public surface -> [`references/service-architecture.md`](references/service-architecture.md)
+- Admin/Store API OpenAPI schemas -> [`references/api-schema.md`](references/api-schema.md)
 - Symfony / modernization behind feature flags -> [`references/modernization-and-flags.md`](references/modernization-and-flags.md)
 - Release notes (RELEASE_INFO / UPGRADE) & ADRs -> [`references/release-notes-and-adr.md`](references/release-notes-and-adr.md) (includes migrated `changelog.mdc` detail)
 - PHPStan baseline discipline -> [`references/static-analysis-baseline.md`](references/static-analysis-baseline.md)
@@ -75,10 +77,12 @@ Load a reference file only when the task needs it:
   is done.
 - **ECS / PHPStan are the gate.** Run them; do not hand-wave. New code targets the
   repo's configured level with no new baseline entries.
-- **Platform architecture.** Register services in the owning bundle; no Core →
-  Storefront dependencies; prefer `#[AsEventListener]` for a single event; prefer
-  `final` for non-extension classes; thin controllers; safe session access. See
-  [`references/platform-architecture.md`](references/platform-architecture.md).
+- **Platform architecture.** Register services in the owning bundle; hexagonal
+  services; thin controllers; `@internal` adapters; `@final` where extension is not
+  intended. See [`references/service-architecture.md`](references/service-architecture.md)
+  and [`references/platform-architecture.md`](references/platform-architecture.md).
+- **Core API routes.** New Admin/Store API actions need OpenAPI JSON schemas and
+  `ApiRoutesHaveASchemaTest` coverage — see [`references/api-schema.md`](references/api-schema.md).
 - **Modernize, don't fossilize.** When Symfony or a newer platform service fits
   on the pinned stack, adopt it behind `Feature::isActive()` and keep the legacy
   path until the major — see [`references/modernization-and-flags.md`](references/modernization-and-flags.md).
@@ -87,7 +91,7 @@ Load a reference file only when the task needs it:
 
 - [ ] `php-foundation` baseline satisfied (strict types, enums/DTOs, PER-CS).
 - [ ] No public-API break without a completed deprecation cycle; `@internal` respected.
-- [ ] Deprecations use `Feature::triggerDeprecationOrThrow()` + `@deprecated tag:` annotation.
+- [ ] Deprecations use `Feature::triggerDeprecationOrThrow()` + `@deprecated tag:` annotation; core BC callers to deprecated APIs use `Feature::silent()` when required.
 - [ ] Developer-facing change documented in `RELEASE_INFO-6.x.md`; breaking change in `UPGRADE-6.x.md`; ADR added if the decision is architectural. (Internal refactor / small bug fix: nothing needed.)
 - [ ] PHPStan passes with no new baseline entries; if the level changed, the baseline was regenerated and committed.
 - [ ] Unit/integration tests added and green; ECS clean; conventional commit message.

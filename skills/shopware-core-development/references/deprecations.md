@@ -37,6 +37,25 @@ public function oldHandle(Context $context): void
 - Deprecate the whole surface: class, method, parameter, constant, public
   property, service id, event, and route as applicable.
 
+## Calling deprecated code from core (BC)
+
+- **Core must not trigger self-deprecation notices** when it still calls deprecated
+  behavior for BC. Wrap that call with
+  `Feature::silent($majorFlag, static fn () => …)` so the notice is suppressed,
+  the path is tied to the major flag, and the branch disappears when the flag is
+  removed.
+- **Do not add new code paths** that call deprecated functionality. Move internal
+  callers to the replacement API and keep legacy behavior only in focused BC tests.
+- When adding `@deprecated` on executable PHP, add matching
+  `Feature::triggerDeprecationOrThrow()` unless the deprecation uses an explicit
+  exception reason allowed by the PHPStan deprecation rule.
+- For **private implementation cleanup** (not a public deprecation cycle), use a
+  short inline comment: `// @deprecated tag:vX.Y.Z - …` near the branch to remove
+  later — not a method-level `@deprecated` annotation.
+- If a deprecated API remains for BC, add or keep **dedicated legacy tests** that
+  are easy to remove with the deprecation; guard with the relevant major feature
+  flag when needed.
+
 ## Which annotation, when (BC lifecycle)
 
 Shopware's backward-compatibility workflow uses different annotations depending

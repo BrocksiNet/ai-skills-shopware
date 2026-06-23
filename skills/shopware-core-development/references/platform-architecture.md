@@ -42,9 +42,13 @@ patterns (2025–2026).
 
 ## Migrations (platform)
 
+- Use the **exact current Unix timestamp** for new migration class names, file
+  names, and `getCreationTimestamp()` — not placeholder or rounded values.
 - **`updateDestructive()` is not for long-running work** — keep heavy backfills in
   `update()` or dedicated commands; destructive step stays small.
 - **Never edit a shipped migration** — add a new class with a new timestamp.
+- Do **not** add tests for empty/no-op `updateDestructive()` implementations;
+  cover meaningful behavior in `update()` or destructive migrations that change state.
 - Data migrations that affect indexers may need **refresh-index** follow-up; check
   existing migration tests and Danger rules for DAL entities you touch.
 

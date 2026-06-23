@@ -22,10 +22,17 @@ Load the skeleton on demand:
 
 ## Rules
 
+- Follow `.github/PULL_REQUEST_TEMPLATE.md` **closely** — fill sections 1–5 only.
+- **Do not add extra PR description sections** (for example a separate “Validation”
+  or “Testing notes” block outside the template).
 - Provide the filled PR body **always in a single outer code block** for easy copy.
 - **Never nest code blocks** inside that block — nested fences break copy-paste.
 - Fill sections 1–4 from the actual branch diff.
 - Link issues with `closes #N` (auto-closes on merge) or `relates #N`.
+- Use a **conventional PR title** when requested (e.g.
+  `fix(Checkout): allow TestBootstrapper to activate Composer plugins`).
+- After review feedback or CI failures, add a **follow-up commit** explaining that
+  fix — do not amend or force-push unless the user explicitly asks.
 - Check applicable checklist items; leave unchecked items that do not apply.
 - Keep descriptions factual and concise — no hype.
 - Pair with `shopware-core-development` when the change needs RELEASE_INFO or

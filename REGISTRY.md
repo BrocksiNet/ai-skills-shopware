@@ -36,7 +36,9 @@ the surface skills can all be installed together without contradicting (see
 | Type safety (enums over constants, DTOs/VOs over arrays, generics) | `php-foundation` |
 | Coding style (PER-CS, import usage, `list<>` over `array<>`) | `php-foundation` |
 | Core contribution process (release notes RELEASE_INFO/UPGRADE, ADR, conventional commits) | `shopware-core-development` |
-| Deprecation policy (`Feature::triggerDeprecationOrThrow`, `@deprecated tag:`) | `shopware-core-development` |
+| Core service architecture (hexagonal services, public surface vs `@internal`) | `shopware-core-development` |
+| Core Admin/Store API OpenAPI schemas | `shopware-core-development` |
+| Deprecation policy (`Feature::triggerDeprecationOrThrow`, `@deprecated tag:`, `Feature::silent`) | `shopware-core-development` |
 | Core modernization (Symfony behind feature flags, dual paths until major) | `shopware-core-development` |
 | Static-analysis baseline discipline (PHPStan level, shrink-not-delete) | `shopware-core-development` |
 | Public-API / `@internal` boundaries | `shopware-core-development` |
@@ -53,10 +55,13 @@ the surface skills can all be installed together without contradicting (see
 | Unit vs integration test placement | `shopware-testing` |
 | Integration test wiring (`IntegrationTestBehaviour`, DAL fixtures) | `shopware-testing` |
 | Test data, data providers, assertions | `shopware-testing` |
+| PHPUnit feature flags, `@codeCoverageIgnore`, integration vs unit coverage attrs | `shopware-testing` |
 | Recurring review findings (cross-cutting, delta-only) | `shopware-review-learnings` |
+| Bug-fix scope and boyscouting (root cause vs drive-by refactors) | `shopware-review-learnings` |
 | When to research vs proceed; docs map; Context7 | `shopware-research-and-escalation` |
 | What to do when stuck (escalation ladder) | `shopware-research-and-escalation` |
 | shopware/shopware PR body format (GitHub template, copy-paste output) | `shopware-pr-description` |
+| PR follow-up commits after review (no amend unless asked) | `shopware-pr-description` |
 | Assistant tone: plain language, concise answers, support-ticket copy blocks | `shopware-assistant-style` |
 | Reacting to GitHub PR review comments (fix / reply / push back, confidence %) | `shopware-pr-review` |
 | Migration tests, Codecov `#[CoversClass]`, core platform test placement | `shopware-testing` |
