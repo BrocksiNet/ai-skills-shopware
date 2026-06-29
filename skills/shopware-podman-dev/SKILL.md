@@ -58,9 +58,8 @@ grep -F 'shopware-dev (managed by sw-dev)' .env && sw-dev show <instance>
 
 **Optional skill** in [ai-skills-shopware](https://github.com/BrocksiNet/ai-skills-shopware) —
 skip it if you do not use Podman/Mutagen. With `~/shopware-dev`, `sw-dev link`
-symlinks skills from `ai-skills-shopware/skills/` into `.cursor/`, `.claude/`,
-`.codex/`, and `.agents/` so Cursor, Claude Code, OpenCode/shared agents, and
-Codex share one source.
+symlinks skills from `ai-skills-shopware/skills/` into `.agents/skills/` and
+`.claude/skills/` so Claude Code, Codex, and Cursor share one source.
 
 ## Shell patterns (MCP fallback)
 

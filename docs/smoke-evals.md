@@ -46,8 +46,8 @@ SMOKE_CURSOR_CMD='cursor-agent -p --force --output-format text'
 
 For each task, the runner creates a temp workdir, copies the fixture, then:
 
-- **ON** — symlinks `SMOKE_SKILLS` into `.claude/skills/`, `.codex/skills/`,
-  `.cursor/skills/`, and `.agents/skills/` inside the workdir.
+- **ON** — symlinks `SMOKE_SKILLS` into `.agents/skills/` and `.claude/skills/`
+  inside the workdir.
 - **OFF** — removes those directories so the agent sees no project skills.
 
 Default skills: `php-foundation`, `shopware-testing`, `shopware-review-learnings`.

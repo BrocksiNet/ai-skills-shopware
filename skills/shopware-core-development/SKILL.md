@@ -29,6 +29,11 @@ are mandatory, not optional. Inherits `php-foundation`; adds the deltas below.
 > or a declarative app (`shopware-app-development`). The right one is usually
 > obvious from the path (`src/Core` vs `custom/plugins` vs `custom/apps`).
 
+> **Upstream (trunk):** If `.agents/skills/shopware-php-code/` exists, prefer it
+> for hexagonal layout, migrations, deprecations, and API schema paths. This skill
+> keeps PHPStan baseline, release-note guardrails, and eval-linked deltas. Refactor
+> decisions → `shopware-architecture`.
+
 Load a reference file only when the task needs it:
 
 - Deprecations & breaking changes -> [`references/deprecations.md`](references/deprecations.md)

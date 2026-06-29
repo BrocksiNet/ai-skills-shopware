@@ -16,6 +16,10 @@ Standards for fast, correct, isolated PHPUnit tests of Shopware code. Used acros
 all use-cases. Inherits `php-foundation`. Rules are confirmed by *running tests*,
 not by claiming compliance.
 
+> **Upstream (trunk):** If `.agents/skills/shopware-phpunit-tests/` exists,
+> prefer it for test shape, providers, and feature flags. This skill keeps
+> plugin/integration patterns and eval-backed trunk rules below.
+
 Load references on demand:
 
 - Unit vs integration placement, assertions, data → this file (below)

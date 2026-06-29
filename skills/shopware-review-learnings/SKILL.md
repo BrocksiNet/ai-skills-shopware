@@ -22,6 +22,10 @@ migrations, deprecations), the entry points at the owning skill rather than
 redefining the rule. New entries come through the
 [issue templates](../../.github/ISSUE_TEMPLATE) and graduate into eval tasks.
 
+> **Upstream (trunk):** If `.agents/skills/shopware-change-scope/` exists, defer
+> boyscouting and root-cause scope to core. This skill keeps **delta findings**
+> that recur in real reviews (API-aware, security, DAL).
+
 Detailed, growing lists live in references (load on demand):
 
 - API-aware / headless findings -> [`references/api-aware.md`](references/api-aware.md)
@@ -30,9 +34,8 @@ Detailed, growing lists live in references (load on demand):
 
 ## Pre-submit (before opening or requesting review)
 
-- **Scope the fix** — address root cause, not symptoms; grep callers before changing
-  shared behavior; boyscout only safe cleanups in touched files (see
-  `references/change-scope.md`).
+- **Scope the fix** — address root cause, not symptoms; see `references/change-scope.md`
+  (or core `shopware-change-scope` on trunk).
 - **Run quality tools before every push** — not just before PR review. Run `ecs_check`
   and `phpstan_analyze` (via MCP or `podman compose exec web`) before each `git push`.
   ECS exit-code-8 means a CS violation. PHPStan catches missing callers when you change
@@ -107,6 +110,6 @@ Detailed, growing lists live in references (load on demand):
 
 - DAL: TODO - capture the recurring "writing without the right Context" finding.
 - Performance: TODO - indexer / message-queue misuse findings.
-- Security: TODO - unvalidated Store-API input (ACL covered above).
+- Security: hardcoded access keys, missing Store-API ACL — see `shopware-security`.
 - Storefront: TODO - blocking/uncached AJAX in hot paths.
 - Apps: TODO - app-script vs plugin boundary mistakes.
