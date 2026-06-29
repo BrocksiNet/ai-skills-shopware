@@ -29,6 +29,8 @@ release tag, and run `npx skills update` to pull improvements.
 | Skill | Surface | Purpose |
 | ----- | ------- | ------- |
 | [`php-foundation`](skills/php-foundation/SKILL.md) | any PHP | Strict PHP 8.x base: `strict_types`, enums/DTOs over arrays, PER-CS, `list<>` over `array<>`. |
+| [`shopware-architecture`](skills/shopware-architecture/SKILL.md) | any PHP refactor | Patterns, DAL boundaries, progressive enhancement, anti-patterns; defers to core on trunk. |
+| [`shopware-security`](skills/shopware-security/SKILL.md) | any PHP/API/config | Secrets, access keys, ACL, app least privilege — not covered by core skills. |
 | [`shopware-core-development`](skills/shopware-core-development/SKILL.md) | platform (`shopware/shopware`, `src/`) | Strict rules for changing the platform: deprecation policy, release notes (RELEASE_INFO/UPGRADE) + ADRs, PHPStan baseline discipline, Symfony modernization behind feature flags, `@internal` boundaries. |
 | [`shopware-plugin-development`](skills/shopware-plugin-development/SKILL.md) | plugin / project (`custom/plugins`) | Pragmatic PHP-extension rules: smallest safe change, 6.6/6.7 compat, DAL usage, HTTP cache tags (6.7+), migrations, Symfony-first components, decoration. |
 | [`shopware-app-development`](skills/shopware-app-development/SKILL.md) | app (`custom/apps`, `manifest.xml`) | Declarative app rules: manifest, least-privilege permissions, sandboxed Twig app scripts, webhooks + Admin API, Meteor Admin SDK. |
@@ -50,9 +52,10 @@ other.
 See [`AGENTS.md`](AGENTS.md) for repo layout, local validation commands, and how
 to add or change skills and eval tasks.
 
-We **own** our skill library — maintainer rules from shopware/shopware (e.g. PR
-[#17657](https://github.com/shopware/shopware/pull/17657)) are mined into this repo;
-see [`docs/core-pr-17657-alignment.md`](docs/core-pr-17657-alignment.md).
+We **own** our skill library — maintainer rules from shopware/shopware (merged in
+[#17657](https://github.com/shopware/shopware/pull/17657)) are mined, not copied;
+see [`docs/core-pr-17657-alignment.md`](docs/core-pr-17657-alignment.md) and
+[`docs/skill-resolution.md`](docs/skill-resolution.md) for trunk overlay vs full install.
 
 ## Install
 

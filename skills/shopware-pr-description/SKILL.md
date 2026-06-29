@@ -17,6 +17,10 @@ Migrated from the former `.cursor/rules/pr-template.mdc` in `shopware-trunk`.
 When creating a pull request against `shopware/shopware`, use the GitHub PR
 template from `.github/PULL_REQUEST_TEMPLATE.md` and fill every section.
 
+> **Upstream (trunk):** If `.agents/skills/shopware-pr-hygiene/` exists, defer
+> PR template and follow-up commit rules to core; this skill keeps the copy-paste
+> skeleton in `references/pr-body-template.md`.
+
 Load the skeleton on demand:
 [`references/pr-body-template.md`](references/pr-body-template.md)
 

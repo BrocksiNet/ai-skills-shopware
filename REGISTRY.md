@@ -20,6 +20,8 @@ the surface skills can all be installed together without contradicting (see
 | `shopware-core-development` | maintainer (platform-controlled) | platform (`shopware/shopware`, `src/`) | Changing platform code: ADRs, release notes (RELEASE_INFO/UPGRADE), deprecations, PHPStan baseline | Plugins, apps, project code |
 | `shopware-plugin-development` | maintainer | plugin / project (`custom/plugins`, project `src/`) | PHP extensions on top of Shopware: DAL, services, cache, migrations, decoration, compat | Platform code, declarative apps, generic PHP libraries |
 | `shopware-app-development` | maintainer | app (`custom/apps`, `manifest.xml`) | Declarative apps: manifest, permissions, app scripts, webhooks, Admin API | Plugin PHP (DI/DAL/decoration), platform code |
+| `shopware-architecture` | maintainer | any PHP refactor / design | Architecture decisions, DAL boundaries, progressive enhancement, anti-patterns | PHPUnit-only tasks, secrets-only tasks, generic PHP style |
+| `shopware-security` | maintainer | any PHP/API/config | Secrets, access keys, ACL, app permissions, webhooks | Generic security lectures, OpenAPI-only docs |
 | `shopware-testing` | maintainer | any test | Writing/fixing PHPUnit tests for Shopware code | Storefront E2E/Playwright, Jest, manual QA |
 | `shopware-review-learnings` | maintainer + contributors | any review | Reviewing Shopware code, "is this idiomatic", recurring pitfalls | Greenfield generic PHP, non-Shopware review |
 | `shopware-research-and-escalation` | maintainer | any | Uncertainty about Shopware behavior/symbols, "should I research", being stuck | Tasks the model is confident about |
@@ -37,6 +39,11 @@ the surface skills can all be installed together without contradicting (see
 | Coding style (PER-CS, import usage, `list<>` over `array<>`) | `php-foundation` |
 | Core contribution process (release notes RELEASE_INFO/UPGRADE, ADR, conventional commits) | `shopware-core-development` |
 | Core service architecture (hexagonal services, public surface vs `@internal`) | `shopware-core-development` |
+| Architecture decisions, DAL boundaries, progressive enhancement, anti-patterns | `shopware-architecture` |
+| Bounded DAL reads; repository vs Connection for entity data | `shopware-architecture` |
+| Extension mechanism choice (event vs decoration vs entity extension) | `shopware-architecture` |
+| Secrets, access keys, API ACL, app least privilege | `shopware-security` |
+| Plugin/extension Store-API & Admin OpenAPI contracts | `shopware-plugin-development` |
 | Core Admin/Store API OpenAPI schemas | `shopware-core-development` |
 | Deprecation policy (`Feature::triggerDeprecationOrThrow`, `@deprecated tag:`, `Feature::silent`) | `shopware-core-development` |
 | Core modernization (Symfony behind feature flags, dual paths until major) | `shopware-core-development` |
