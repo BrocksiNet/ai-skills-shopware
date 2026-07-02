@@ -72,6 +72,12 @@ Detailed, growing lists live in references (load on demand):
   belong in destructive migrations; never edit shipped migrations — add a new class.
   (Owning topic: `shopware-plugin-development` -> `references/migrations.md`; core:
   `platform-architecture.md`.)
+- **Cross-test docblock uses FQCN instead of `@see`.** Point at the covering test with
+  `@see ImportedTestClass` and a `use` statement — not `\Shopware\Tests\…\OtherTest`
+  in prose. (Owning topic: `shopware-testing` -> `core-platform-patterns.md`.)
+- **`#[CoversNothing]` safeguard test in `tests/unit/`.** Config/wiring checks that do
+  not cover production code belong in `tests/devops/` on core — keep the unit suite
+  for Codecov. (Owning topic: `shopware-testing` -> `core-platform-patterns.md`.)
 
 - **`class_exists` guard for a core framework class** — `class_exists(Feature::class)`,
   `class_exists(Context::class)`, etc. are dead code when the minimum supported version

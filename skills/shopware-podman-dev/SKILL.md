@@ -95,8 +95,39 @@ cross lanes.
 | trunk | `http://trunk.localhost:8088` | 8100 |
 | sw66 | `http://sw66.localhost:8088` | 8101 |
 | sw65 | `http://sw65.localhost:8088` | 8102 |
+| sw67 | `http://sw67.localhost:8088` | 8103 |
 
 `.mcp.json` Shopware HTTP URL must match **this** workspace's lane.
+
+## Add a new instance (fresh clone)
+
+Full walkthrough: `~/shopware-dev/README.md` → "Add a new instance". Short version:
+clone the tag/branch into its own folder, register the lane in
+`instances.json` + create `instances/<lane>.yaml` (unique ports), `sw-dev link
+<lane>`, `podman compose up -d`, `sw-dev sync all`, then **inside the container**:
+`composer install` → `bin/console system:install --create-database --basic-setup
+--force` → build admin (`npm ci && npm run build` in
+`src/Administration/Resources/app/administration`) → `bundle:dump` +
+`assets:install`.
+
+A bare `shopware/shopware` clone ships **no built assets and no `install.lock`**.
+The shared tooling handles the traps, but know them:
+
+- **Never build on the host.** Admin/storefront builds run in the `web` container.
+- **`install.lock` + build output are not git-ignored** and a `two-way-resolved`
+  Mutagen session (host wins) deletes container-created copies the host lacks —
+  which loops a fresh instance back to `/installer` and wipes the admin bundle.
+  `lib/mutagen.sh` ignores `install.lock`, `public/bundles`, `public/theme`,
+  `public/administration`, `public/storefront`,
+  `src/{Administration,Storefront}/Resources/public` and the storefront `vendor/`.
+  If you add such a path, add it there too.
+- **`PROJECT_ROOT` is set on `web`** by `overrides/shared.podman-mutagen.yaml`; the
+  admin Vite build needs it or dies with `paths[0] must be of type string`.
+- After changing `lib/mutagen.sh` ignores or the shared override:
+  `sw-dev sync all` (recreates sessions) and
+  `podman compose up -d --force-recreate web` (applies env).
+- For API/Admin-only work (e.g. MCP), you do **not** need the storefront theme;
+  skip `theme:compile`.
 
 ## Before running tools
 

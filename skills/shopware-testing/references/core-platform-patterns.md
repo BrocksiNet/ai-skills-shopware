@@ -51,8 +51,54 @@ final class Foo { … }
 
 Import the integration test class with `use` — do not FQCN in `@see`. Simple
 struct-style classes with only public properties may use `@codeCoverageIgnore`
-without unit tests. Details: [`test-shape-and-flags.md`](../../shopware-testing/references/test-shape-and-flags.md)
-(in `shopware-testing` skill).
+without unit tests. Details: [`test-shape-and-flags.md`](test-shape-and-flags.md).
+
+## Cross-test references in docblocks
+
+When one test documents that another test covers related behaviour, use **`@see`**
+with a **short imported class name** — not a leading-backslash FQCN in prose.
+
+```php
+use Shopware\Tests\Unit\Core\Framework\Mcp\McpDiscoveryScanDirsConfigTest;
+
+/**
+ * Storefront MCP tool wiring.
+ *
+ * @see McpDiscoveryScanDirsConfigTest
+ */
+final class McpStorefrontServiceConfigTest extends TestCase
+```
+
+Do **not**:
+
+```php
+/**
+ * … is covered by
+ * \Shopware\Tests\Unit\Core\Framework\Mcp\McpDiscoveryScanDirsConfigTest.
+ */
+```
+
+Add the `use` statement for the referenced test class; keep the docblock to one
+`@see` line when possible.
+
+## Safeguard tests — not in `tests/unit/`
+
+The **unit suite** should contribute to **Codecov patch coverage** when possible.
+**Safeguard / config / wiring checks** that intentionally do not cover production
+code belong elsewhere — on core, typically **`tests/devops/`** (DevOps PHPUnit
+config), not `tests/unit/`.
+
+| Test kind | Placement | Coverage attribute |
+| --------- | --------- | ------------------ |
+| Behaviour / production code | `tests/unit/` (or integration when kernel needed) | `#[CoversClass(…)]` when patch coverage matters |
+| Safeguard, static config, meta-check | `tests/devops/` | `#[CoversNothing]` when the test must not inflate unit metrics |
+| Integration contract | `tests/integration/` | No `Covers*` attributes |
+
+If a reviewer asks “can this safeguard test live elsewhere?”, **move it to
+`tests/devops/`** (or the project’s non-coverage suite) instead of keeping
+`#[CoversNothing]` under `tests/unit/`.
+
+Eval: `safeguard-test-not-in-unit-suite`.
 
 ## Migration + indexer interactions
 

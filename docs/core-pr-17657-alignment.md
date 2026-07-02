@@ -36,6 +36,8 @@ Status key: **done** | **partial** | **skip** | **eval:TBD** | **defer-on-trunk*
 | Integration flags: `Feature::skipTestIfActive()` / `skipTestIfInActive()`; not `#[DisabledFeatures]` | `test-shape-and-flags.md` | defer-on-trunk |
 | `@codeCoverageIgnore` + `@see IntegrationTest` when unit coverage N/A | `core-platform-patterns.md` | defer-on-trunk |
 | No `#[CoversClass]` on integration tests (PHPStan) | `core-platform-patterns.md` | **done** → `integration-no-covers-class` |
+| Cross-test docblock uses `@see` + import, not FQCN prose | `core-platform-patterns.md` | **done** → `test-docblock-use-see` |
+| `#[CoversNothing]` safeguard tests in `tests/devops/`, not `tests/unit/` | `core-platform-patterns.md` | **done** → `safeguard-test-not-in-unit-suite` |
 | Data providers: named `yield`, not `return []`; no `yield from` inline array | `test-shape-and-flags.md` | **done** → `unit-test-yield-provider` |
 | Provider names describe scenario, not raw inputs | same | defer-on-trunk |
 | Keep distinct edge cases in providers; don’t over-deduplicate | same | defer-on-trunk |

@@ -68,6 +68,12 @@ behavior.
 - If a class is covered **only by integration tests**, mark it with
   `@codeCoverageIgnore` on its own docblock line and add `@see ShortIntegrationTest`
   with a `use` import for the integration test class.
+- **Cross-test pointers** in test class docblocks: use `@see OtherTestClass` with
+  a `use` import — never a leading-backslash FQCN in prose (see
+  `core-platform-patterns.md`).
+- **Safeguard / config tests** with `#[CoversNothing]` belong in **`tests/devops/`**
+  on core — not `tests/unit/` (keep the unit suite for coverage). See
+  `core-platform-patterns.md`.
 - **Simple struct-style classes** with only public properties do not need unit
   tests — use `@codeCoverageIgnore` instead.
 - Every new class should have focused unit coverage **or** explicit

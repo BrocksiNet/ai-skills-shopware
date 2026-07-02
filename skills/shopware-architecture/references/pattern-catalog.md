@@ -14,6 +14,8 @@ reviews into here.
 | Clock injection | `time()` in domain | `clock-interface-injection` |
 | CacheTagCollector (6.7+) | Deprecated `*CacheTagsEvent` | `cache-tag-no-deprecated-event` |
 | Thin controller | DAL in controller | `business-logic-in-controller` |
+| Cross-test `@see` + import | FQCN in test docblock prose | `test-docblock-use-see` |
+| Safeguard test in devops suite | `#[CoversNothing]` under `tests/unit/` | `safeguard-test-not-in-unit-suite` |
 
 ## Candidate (graduate when recurring)
 

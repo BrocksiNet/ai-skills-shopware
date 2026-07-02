@@ -77,6 +77,8 @@ These match PHPStan rules and reviewer expectations on core PRs:
   `#[DisabledFeatures]`). See reference.
 - **Coverage attrs** — no `#[CoversClass]` on integration tests; `@codeCoverageIgnore`
   + `@see IntegrationTest` when a class is integration-only. See reference.
+- **Cross-test docblocks** — `@see OtherTest` with `use` import; no FQCN in prose.
+- **`#[CoversNothing]` safeguard tests** — `tests/devops/` on core, not `tests/unit/`.
 
 ## Rules
 
