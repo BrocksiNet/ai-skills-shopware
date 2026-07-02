@@ -75,8 +75,7 @@ These match PHPStan rules and reviewer expectations on core PRs:
 - **Feature flags** — unit: `#[DisabledFeatures]` for legacy/off paths; integration:
   `Feature::skipTestIfActive()` / `skipTestIfInActive()` for flag branching (not
   `#[DisabledFeatures]`). See reference.
-- **Coverage attrs** — no `#[CoversClass]` on integration tests; `@codeCoverageIgnore`
-  + `@see IntegrationTest` when a class is integration-only. See reference.
+- **Coverage attrs** — no `#[CoversClass]` on integration tests; use `@codeCoverageIgnore` and `@see IntegrationTest` when a class is integration-only. See reference.
 - **Cross-test docblocks** — `@see OtherTest` with `use` import; no FQCN in prose.
 - **`#[CoversNothing]` safeguard tests** — `tests/devops/` on core, not `tests/unit/`.
 
