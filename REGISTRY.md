@@ -63,6 +63,7 @@ the surface skills can all be installed together without contradicting (see
 | Integration test wiring (`IntegrationTestBehaviour`, DAL fixtures) | `shopware-testing` |
 | Test data, data providers, assertions | `shopware-testing` |
 | PHPUnit feature flags, `@codeCoverageIgnore`, integration vs unit coverage attrs | `shopware-testing` |
+| `#[Package]` on test classes (core CI routing) | `shopware-testing` |
 | Recurring review findings (cross-cutting, delta-only) | `shopware-review-learnings` |
 | Bug-fix scope and boyscouting (root cause vs drive-by refactors) | `shopware-review-learnings` |
 | When to research vs proceed; docs map; Context7 | `shopware-research-and-escalation` |

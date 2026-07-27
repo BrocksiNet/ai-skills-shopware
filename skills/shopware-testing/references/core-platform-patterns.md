@@ -37,26 +37,35 @@ Rules:
 - Migration-job Cobertura may **exclude** non-migration `src/` paths — do not
   assume running code during migration tests covers platform classes in Codecov.
 
-## `@codeCoverageIgnore` and integration-only classes
+## `@codeCoverageIgnore` on production classes
 
-When a class is intentionally covered only by integration tests:
+When a **production class** is intentionally covered only by integration tests,
+mark it on the class docblock:
 
 ```php
 /**
  * @codeCoverageIgnore
- * @see FooIntegrationTest
+ * @see \Shopware\Tests\Integration\Core\Checkout\Cart\CartNormalizerIntegrationTest
  */
-final class Foo { … }
+final class CartNormalizer { … }
 ```
 
-Import the integration test class with `use` — do not FQCN in `@see`. Simple
-struct-style classes with only public properties may use `@codeCoverageIgnore`
-without unit tests. Details: [`test-shape-and-flags.md`](test-shape-and-flags.md).
+On **shopware/shopware trunk**, use a **leading-backslash FQCN** in `@see` — do
+not add a `use` import for the test class solely for this annotation. The
+referenced test must be a **dedicated** integration test for that production
+class.
 
-## Cross-test references in docblocks
+Simple struct-style classes with only public properties may use
+`@codeCoverageIgnore` without unit tests.
 
-When one test documents that another test covers related behaviour, use **`@see`**
-with a **short imported class name** — not a leading-backslash FQCN in prose.
+> **Trunk:** defer this style to `.agents/skills/shopware-phpunit-tests/`. Our
+> full-install profile keeps the rule for contributors on older branches.
+
+## Cross-test references in **test** docblocks
+
+When one **test class** documents that another test covers related behaviour,
+use **`@see`** with a **short imported class name** — not a leading-backslash FQCN
+in prose.
 
 ```php
 use Shopware\Tests\Unit\Core\Framework\Mcp\McpDiscoveryScanDirsConfigTest;
@@ -80,6 +89,25 @@ Do **not**:
 
 Add the `use` statement for the referenced test class; keep the docblock to one
 `@see` line when possible.
+
+Eval: `test-docblock-use-see` (test-to-test pointers only).
+
+## `#[Package('…')]` on test classes
+
+Every **new test class** on shopware/shopware needs `#[Package('…')]` (import
+`Shopware\Core\Framework\Log\Package`) so failing CI jobs — especially nightlies —
+route to the owning domain team. A Danger rule fails PRs that add test classes
+without it.
+
+| Suite | Where the package value comes from |
+| ----- | ---------------------------------- |
+| Unit / migration | Copy from the `#[CoversClass]` target's `#[Package]` |
+| Integration | Dominant `#[Package]` of the mirrored `src/` tree (e.g. `tests/integration/Core/Checkout/Cart/…` → package of `src/Core/Checkout/Cart`) |
+
+When a covered class moves packages, update the test's `#[Package]` in the same
+change.
+
+Eval: `test-class-has-package-attribute`.
 
 ## Safeguard tests — not in `tests/unit/`
 

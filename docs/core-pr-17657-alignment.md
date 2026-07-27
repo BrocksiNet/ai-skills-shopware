@@ -21,7 +21,8 @@ Status key: **done** | **partial** | **skip** | **eval:TBD** | **defer-on-trunk*
 | `shopware-release-docs` | `shopware-core-development` → release-notes | **defer** |
 | `shopware-admin-js` | — | skip (not in our repo) |
 | `shopware-knowledge-capture` | `AGENTS.md` / REGISTRY | skip |
-| `triage`, `sw-review`, `bugfixer` | — | skip (gh-aw) |
+| `nightly-triage` | — | skip (gh-aw CI sweeps) |
+| `sw-triage`, `sw-review`, `sw-bugfixer` | — | skip (gh-aw; explicit invocation only) |
 
 ## Testing (`shopware-testing`)
 
@@ -33,10 +34,11 @@ Status key: **done** | **partial** | **skip** | **eval:TBD** | **defer-on-trunk*
 | `expectExceptionObject` via domain factory (already covered) | `exception-assertions.md` | done |
 | No DBAL `Connection` behavior-mock in unit tests | `test-shape-and-flags.md` | defer-on-trunk |
 | Unit legacy flags: `#[DisabledFeatures]`; not `Feature::fake()` for current major | `test-shape-and-flags.md` | defer-on-trunk |
-| Integration flags: `Feature::skipTestIfActive()` / `skipTestIfInActive()`; not `#[DisabledFeatures]` | `test-shape-and-flags.md` | defer-on-trunk |
-| `@codeCoverageIgnore` + `@see IntegrationTest` when unit coverage N/A | `core-platform-patterns.md` | defer-on-trunk |
+| Integration flags: `Feature::skipTestIfActive()` / `skipTestIfInActive()`; not `#[DisabledFeatures]` | `test-shape-and-flags.md` | **done** (runtime-enforced #18350) |
+| `@codeCoverageIgnore` on production class uses FQCN `@see` on trunk | `core-platform-patterns.md` | defer-on-trunk |
 | No `#[CoversClass]` on integration tests (PHPStan) | `core-platform-patterns.md` | **done** → `integration-no-covers-class` |
 | Cross-test docblock uses `@see` + import, not FQCN prose | `core-platform-patterns.md` | **done** → `test-docblock-use-see` |
+| `#[Package('…')]` on every test class | `core-platform-patterns.md` | **done** → `test-class-has-package-attribute` |
 | `#[CoversNothing]` safeguard tests in `tests/devops/`, not `tests/unit/` | `core-platform-patterns.md` | **done** → `safeguard-test-not-in-unit-suite` |
 | Data providers: named `yield`, not `return []`; no `yield from` inline array | `test-shape-and-flags.md` | **done** → `unit-test-yield-provider` |
 | Provider names describe scenario, not raw inputs | same | defer-on-trunk |

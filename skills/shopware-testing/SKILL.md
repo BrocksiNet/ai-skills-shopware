@@ -73,10 +73,12 @@ These match PHPStan rules and reviewer expectations on core PRs:
 - **Data providers** — use named **`yield`** cases in unit tests (not `return []`);
   case names describe the scenario; see `test-shape-and-flags.md`.
 - **Feature flags** — unit: `#[DisabledFeatures]` for legacy/off paths; integration:
-  `Feature::skipTestIfActive()` / `skipTestIfInActive()` for flag branching (not
-  `#[DisabledFeatures]`). See reference.
-- **Coverage attrs** — no `#[CoversClass]` on integration tests; use `@codeCoverageIgnore` and `@see IntegrationTest` when a class is integration-only. See reference.
-- **Cross-test docblocks** — `@see OtherTest` with `use` import; no FQCN in prose.
+  `Feature::skipTestIfActive()` / `skipTestIfInActive()` — **`#[DisabledFeatures]` is
+  rejected at runtime** in the integration suite. See reference.
+- **Coverage attrs** — no `#[CoversClass]` on integration tests; production-class
+  `@codeCoverageIgnore` uses FQCN `@see` on trunk (defer to core skill). See reference.
+- **Cross-test docblocks** (test → test) — `@see OtherTest` with `use` import; no FQCN in prose.
+- **`#[Package('…')]`** on every test class — copy from covered class or mirrored `src/` package.
 - **`#[CoversNothing]` safeguard tests** — `tests/devops/` on core, not `tests/unit/`.
 
 ## Rules
@@ -104,6 +106,7 @@ These match PHPStan rules and reviewer expectations on core PRs:
 - [ ] Dependencies mocked in unit tests (unless documented Codecov exception).
 - [ ] `assertSame` / `expectExceptionObject`; no `#[Depends]`; no mock `any()`.
 - [ ] Unit providers use named `yield`; integration tests omit `#[CoversClass]`.
+- [ ] Test classes carry `#[Package('…')]` when contributing to shopware/shopware.
 - [ ] Own fixtures in integration tests; clock mocked where time matters.
 - [ ] `vendor/bin/phpunit` (or php-tooling MCP / `docker compose exec web …`) green.
 

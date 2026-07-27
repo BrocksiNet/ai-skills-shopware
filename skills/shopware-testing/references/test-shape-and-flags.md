@@ -46,9 +46,11 @@ behavior.
 
 ### Integration tests
 
-- The suite may run **multiple times** with flags on and off.
-- For simple legacy/current branching, use `Feature::skipTestIfActive('FLAG')` or
-  `Feature::skipTestIfInActive('FLAG')` — **not** `#[DisabledFeatures]`.
+- Feature-flag state comes from the job configuration (`FEATURE_ALL`, integration-major, etc.).
+- **`#[DisabledFeatures]` is rejected at runtime** in the integration suite — the attribute has no effect there and the test runner **fails the run** if a test carries it ([#18350](https://github.com/shopware/shopware/pull/18350)).
+- Skip tests explicitly with `Feature::skipTestIfActive('FLAG')` or
+  `Feature::skipTestIfInActive('FLAG')` when the current flag value is not what
+  the scenario expects.
 - Keep **legacy flag behavior** in dedicated tests that are easy to delete when
   the flag is removed.
 
@@ -63,12 +65,22 @@ behavior.
 - When removing “duplicate” provider rows, delete only **exact semantic**
   duplicates; keep similar-looking cases that cover distinct edge behavior.
 
+## Package attribute
+
+- Every test class needs `#[Package('…')]` (import `Shopware\Core\Framework\Log\Package`).
+- Unit/migration: copy from the `#[CoversClass]` target's package.
+- Integration: mirror the dominant package of the `src/` tree the test path reflects.
+- Update the test's package when the covered class moves packages.
+
+Details: `core-platform-patterns.md`.
+
 ## Coverage annotations
 
-- If a class is covered **only by integration tests**, mark it with
-  `@codeCoverageIgnore` on its own docblock line and add `@see ShortIntegrationTest`
-  with a `use` import for the integration test class.
-- **Cross-test pointers** in test class docblocks: use `@see OtherTestClass` with
+- **Production class** covered only by integration tests: `@codeCoverageIgnore` plus
+  `@see \Fully\Qualified\IntegrationTest` (leading `\` FQCN — do not import the
+  test class solely for this annotation). On trunk, defer to core's
+  `shopware-phpunit-tests` skill.
+- **Cross-test pointers** in **test class** docblocks: `@see OtherTestClass` with
   a `use` import — never a leading-backslash FQCN in prose (see
   `core-platform-patterns.md`).
 - **Safeguard / config tests** with `#[CoversNothing]` belong in **`tests/devops/`**

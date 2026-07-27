@@ -15,6 +15,7 @@ reviews into here.
 | CacheTagCollector (6.7+) | Deprecated `*CacheTagsEvent` | `cache-tag-no-deprecated-event` |
 | Thin controller | DAL in controller | `business-logic-in-controller` |
 | Cross-test `@see` + import | FQCN in test docblock prose | `test-docblock-use-see` |
+| `#[Package]` on test classes | Missing package on new tests | `test-class-has-package-attribute` |
 | Safeguard test in devops suite | `#[CoversNothing]` under `tests/unit/` | `safeguard-test-not-in-unit-suite` |
 
 ## Candidate (graduate when recurring)
