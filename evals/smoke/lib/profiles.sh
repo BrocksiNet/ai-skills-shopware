@@ -26,18 +26,14 @@ smoke_profile_on() {
     skills="${SMOKE_SKILLS}"
   fi
 
-  for provider in claude codex cursor; do
+  for provider in claude; do
     mkdir -p "${workdir}/.${provider}/skills"
   done
-  # OpenCode / shared agents path used by sw-dev link
   mkdir -p "${workdir}/.agents/skills"
 
   for skill in ${skills}; do
     [[ -d "${SKILLS_ROOT}/${skill}" ]] || smoke_die "skill not found: ${skill}"
-    for provider in claude codex cursor; do
-      target="${workdir}/.${provider}/skills/${skill}"
-      ln -sfn "${SKILLS_ROOT}/${skill}" "${target}"
-    done
+    ln -sfn "${SKILLS_ROOT}/${skill}" "${workdir}/.claude/skills/${skill}"
     ln -sfn "${SKILLS_ROOT}/${skill}" "${workdir}/.agents/skills/${skill}"
   done
 }
@@ -46,7 +42,5 @@ smoke_profile_off() {
   local workdir="$1"
   rm -rf \
     "${workdir}/.claude/skills" \
-    "${workdir}/.codex/skills" \
-    "${workdir}/.cursor/skills" \
     "${workdir}/.agents/skills"
 }

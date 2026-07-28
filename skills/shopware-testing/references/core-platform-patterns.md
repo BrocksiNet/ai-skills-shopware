@@ -37,22 +37,96 @@ Rules:
 - Migration-job Cobertura may **exclude** non-migration `src/` paths — do not
   assume running code during migration tests covers platform classes in Codecov.
 
-## `@codeCoverageIgnore` and integration-only classes
+## `@codeCoverageIgnore` on production classes
 
-When a class is intentionally covered only by integration tests:
+When a **production class** is intentionally covered only by integration tests,
+mark it on the class docblock:
 
 ```php
 /**
  * @codeCoverageIgnore
- * @see FooIntegrationTest
+ * @see \Shopware\Tests\Integration\Core\Checkout\Cart\CartNormalizerIntegrationTest
  */
-final class Foo { … }
+final class CartNormalizer { … }
 ```
 
-Import the integration test class with `use` — do not FQCN in `@see`. Simple
-struct-style classes with only public properties may use `@codeCoverageIgnore`
-without unit tests. Details: [`test-shape-and-flags.md`](../../shopware-testing/references/test-shape-and-flags.md)
-(in `shopware-testing` skill).
+On **shopware/shopware trunk**, use a **leading-backslash FQCN** in `@see` — do
+not add a `use` import for the test class solely for this annotation. The
+referenced test must be a **dedicated** integration test for that production
+class.
+
+Simple struct-style classes with only public properties may use
+`@codeCoverageIgnore` without unit tests.
+
+> **Trunk:** defer this style to `.agents/skills/shopware-phpunit-tests/`. Our
+> full-install profile keeps the rule for contributors on older branches.
+
+## Cross-test references in **test** docblocks
+
+When one **test class** documents that another test covers related behaviour,
+use **`@see`** with a **short imported class name** — not a leading-backslash FQCN
+in prose.
+
+```php
+use Shopware\Tests\Unit\Core\Framework\Mcp\McpDiscoveryScanDirsConfigTest;
+
+/**
+ * Storefront MCP tool wiring.
+ *
+ * @see McpDiscoveryScanDirsConfigTest
+ */
+final class McpStorefrontServiceConfigTest extends TestCase
+```
+
+Do **not**:
+
+```php
+/**
+ * … is covered by
+ * \Shopware\Tests\Unit\Core\Framework\Mcp\McpDiscoveryScanDirsConfigTest.
+ */
+```
+
+Add the `use` statement for the referenced test class; keep the docblock to one
+`@see` line when possible.
+
+Eval: `test-docblock-use-see` (test-to-test pointers only).
+
+## `#[Package('…')]` on test classes
+
+Every **new test class** on shopware/shopware needs `#[Package('…')]` (import
+`Shopware\Core\Framework\Log\Package`) so failing CI jobs — especially nightlies —
+route to the owning domain team. A Danger rule fails PRs that add test classes
+without it.
+
+| Suite | Where the package value comes from |
+| ----- | ---------------------------------- |
+| Unit / migration | Copy from the `#[CoversClass]` target's `#[Package]` |
+| Integration | Dominant `#[Package]` of the mirrored `src/` tree (e.g. `tests/integration/Core/Checkout/Cart/…` → package of `src/Core/Checkout/Cart`) |
+
+When a covered class moves packages, update the test's `#[Package]` in the same
+change.
+
+Eval: `test-class-has-package-attribute`.
+
+## Safeguard tests — not in `tests/unit/`
+
+The **unit suite** should contribute to **Codecov patch coverage** when possible.
+**Safeguard / config / wiring checks** that intentionally do not cover production
+code belong elsewhere — on core, typically **`tests/devops/`** (DevOps PHPUnit
+config), not `tests/unit/`.
+
+| Test kind | Placement | Coverage attribute |
+| --------- | --------- | ------------------ |
+| Behaviour / production code | `tests/unit/` (or integration when kernel needed) | `#[CoversClass(…)]` when patch coverage matters |
+| Safeguard, static config, meta-check | `tests/devops/` | `#[CoversNothing]` when the test must not inflate unit metrics |
+| Integration contract | `tests/integration/` | No `Covers*` attributes |
+
+If a reviewer asks “can this safeguard test live elsewhere?”, **move it to
+`tests/devops/`** (or the project’s non-coverage suite) instead of keeping
+`#[CoversNothing]` under `tests/unit/`.
+
+Eval: `safeguard-test-not-in-unit-suite`.
 
 ## Migration + indexer interactions
 

@@ -15,6 +15,9 @@ node_modules/
 .env
 .env.*
 
+# Local MCP plugin config (optional personal tooling; not part of the skills library)
+.mcp-gh-tooling.json
+
 # skills.sh CLI lockfile (local paths; use sw-dev link instead of npx skills add)
 skills-lock.json
 .agents/

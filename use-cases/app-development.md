@@ -11,7 +11,7 @@ DI container and no DAL in the shop process.
 | ----- | --- |
 | `php-foundation` | Shared strict PHP 8.x base (for any external backend code you write). |
 | `shopware-app-development` | Manifest, permissions, app scripts, webhooks, Admin API, Meteor Admin SDK. |
-| `shopware-testing` | PHPUnit unit/integration standards. |
+| `shopware-security` | App secrets, least-privilege manifest, webhook verification. |
 | `shopware-research-and-escalation` | Verify against installed source; escalate instead of guessing. |
 | `shopware-review-learnings` | Recurring real-world findings. |
 
@@ -22,10 +22,10 @@ DI container and no DAL in the shop process.
 npx skills add BrocksiNet/ai-skills-shopware \
   --skill php-foundation \
   --skill shopware-app-development \
-  --skill shopware-testing \
+  --skill shopware-security \
   --skill shopware-research-and-escalation \
   --skill shopware-review-learnings \
-  -a cursor
+  -a claude-code -a codex -a cursor
 ```
 
 Install at **project level** (the default) so the version pin stays per-project

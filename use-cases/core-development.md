@@ -1,31 +1,61 @@
 # Use-case: platform / core contribution
 
 For changing the Shopware **platform** itself (`shopware/shopware`, `shopware-core`
-packages, first-party bundles under `src/`). This is the **strict** surface:
-platform code runs in thousands of plugins, so it asks for a full deprecation
-cycle, release-notes entries, `@internal` boundaries and PHPStan baseline
-discipline.
+packages, first-party bundles under `src/`).
 
-## Skills for this use-case
+See [`docs/skill-resolution.md`](../docs/skill-resolution.md) for **trunk overlay**
+vs **full** install when in-repo core skills are absent (6.5/6.6 branches).
+
+## Trunk (`shopware/shopware` with `.agents/skills/`)
+
+Core ships `shopware-php-code`, `shopware-phpunit-tests`, `shopware-pr-hygiene`,
+etc. Install **delta overlay** from this repo:
+
+| Skill | Why |
+| ----- | --- |
+| `shopware-architecture` | Refactor decisions, progressive enhancement, DAL anti-patterns |
+| `shopware-security` | Secrets, ACL — not in core skills |
+| `shopware-research-and-escalation` | Verify against installed source |
+| `shopware-review-learnings` | Recurring review deltas |
+| `shopware-pr-review` | GitHub review thread triage |
+| `shopware-podman-dev` | Podman/MCP execution |
+
+Add `shopware-plugin-development` when editing `custom/plugins` in the monorepo.
+
+```bash
+npx skills add BrocksiNet/ai-skills-shopware \
+  --skill shopware-architecture \
+  --skill shopware-security \
+  --skill shopware-research-and-escalation \
+  --skill shopware-review-learnings \
+  --skill shopware-pr-review \
+  --skill shopware-podman-dev \
+  -a claude-code -a codex -a cursor
+```
+
+## Non-trunk core (6.5 / 6.6 / no in-repo skills)
+
+Full platform skill set — core in-repo skills are **not** present:
 
 | Skill | Why |
 | ----- | --- |
 | `php-foundation` | Shared strict PHP 8.x base. |
-| `shopware-core-development` | Deprecations, release notes (RELEASE_INFO/UPGRADE) + ADR, PHPStan baseline, Symfony modernization behind feature flags, `@internal`. |
-| `shopware-testing` | PHPUnit unit/integration standards. |
-| `shopware-research-and-escalation` | Verify against installed source; escalate instead of guessing. |
-| `shopware-review-learnings` | Recurring real-world findings. |
-| `shopware-pr-description` | GitHub PR body for shopware/shopware (migrated from `.cursor/rules/pr-template.mdc`). |
-| `shopware-assistant-style` | Communication style and support-ticket copy format (migrated from `.cursor/rules/shopware-rules.mdc`). |
-| `shopware-pr-review` | React to GitHub review comments (migrated from `.cursor/rules/review.mdc`). |
-| `shopware-podman-dev` | Podman/MCP execution — never host php/composer/phpunit on linked checkouts. |
-
-## Install (one-liner)
+| `shopware-architecture` | Patterns, progressive enhancement, DAL boundaries. |
+| `shopware-security` | Secrets and ACL. |
+| `shopware-core-development` | Deprecations, release notes, PHPStan baseline. |
+| `shopware-testing` | PHPUnit standards. |
+| `shopware-research-and-escalation` | Research ladder. |
+| `shopware-review-learnings` | Recurring findings. |
+| `shopware-pr-description` | GitHub PR body for shopware/shopware. |
+| `shopware-assistant-style` | Communication style. |
+| `shopware-pr-review` | Review comment triage. |
+| `shopware-podman-dev` | Podman/MCP execution. |
 
 ```bash
-# Cursor (use -a claude-code, -a codex or -a opencode for the other tools)
 npx skills add BrocksiNet/ai-skills-shopware \
   --skill php-foundation \
+  --skill shopware-architecture \
+  --skill shopware-security \
   --skill shopware-core-development \
   --skill shopware-testing \
   --skill shopware-research-and-escalation \
@@ -34,18 +64,12 @@ npx skills add BrocksiNet/ai-skills-shopware \
   --skill shopware-assistant-style \
   --skill shopware-pr-review \
   --skill shopware-podman-dev \
-  -a cursor
+  -a claude-code -a codex -a cursor
 ```
 
-Install at **project level** (the default) so the version pin stays per-project
-and reproducible for the team; `-g` installs user-level (all projects) but is
-then global and effectively unpinned. Pin a version with
-`BrocksiNet/ai-skills-shopware@vX.Y.Z`.
+Install at **project level** (the default). Pin with `BrocksiNet/ai-skills-shopware@vX.Y.Z`.
 
-## Ownership and mixing use-cases
+## Mixing use-cases
 
-The `shopware-core-development` skill is platform/maintainer-controlled; changes
-go through PR review. If you also build extensions, add the skills from
-[`plugin-development.md`](plugin-development.md) or
-[`app-development.md`](app-development.md). They coexist safely and route by
-surface, so the strict platform rules only fire on platform code.
+Surface skills route by path. Add [`plugin-development.md`](plugin-development.md)
+when you also build extensions.

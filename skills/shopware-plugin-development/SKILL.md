@@ -33,10 +33,12 @@ not defensive ceremony without a concrete failure mode. Inherits
 Load a reference only when the task needs it:
 
 - DAL reads/writes -> [`references/dal-usage.md`](references/dal-usage.md)
+- Store-API / Admin OpenAPI & headless -> [`references/api-contracts.md`](references/api-contracts.md)
 - HTTP cache tags (6.7+) -> [`references/cache-tags.md`](references/cache-tags.md)
 - Database migrations -> [`references/migrations.md`](references/migrations.md)
 - 6.6 / 6.7 compatibility -> [`references/version-compatibility.md`](references/version-compatibility.md)
 - Symfony-first (prefer components over custom code) -> [`references/symfony-first.md`](references/symfony-first.md)
+- Architecture choices (events vs decoration) -> `shopware-architecture`
 
 ## Hard guardrails (refuse rather than violate)
 
@@ -59,8 +61,9 @@ Inherits all **`php-foundation` trunk habits** (`empty()`, interface injection,
 - **Extend, do not modify.** Use service **decoration** (`decorates:`), event
   **subscribers/listeners**, and the entity-extension / custom-field system.
   Register services in `services.xml`/`services.yaml` with explicit ids.
-- **Thin controllers** — delegate to services; see `shopware-review-learnings`
-  red flags. New Store-API routes need OpenAPI schema updates.
+- **Thin controllers** — delegate to services; see `shopware-architecture` and
+  `shopware-review-learnings`. New Store-API routes need OpenAPI (see
+  `api-contracts.md`) and ACL (`shopware-security`).
 - **DAL first.** Read with `Criteria` (add associations before filtering on them;
   avoid N+1; request only the fields/associations you need). Write with
   `EntityRepository::create/update/upsert` and the right `Context`.

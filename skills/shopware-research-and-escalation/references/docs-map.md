@@ -10,6 +10,8 @@ or the matching release tag — docs are the starting point, not the final word.
 - **Core source:** `vendor/shopware/core` in the project, or `shopware/shopware`
   at the **release tag matching the project version** (never `trunk`).
 - **Coding guidelines:** `shopware/shopware` `coding-guidelines/` and `adr/`.
+- **Core in-repo skills (trunk+):** `shopware/shopware` `.agents/skills/README.md`
+- **Install profiles:** this repo `docs/skill-resolution.md`
 
 ## Topic map
 

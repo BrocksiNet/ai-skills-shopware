@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<manifest xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+          xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/shopware/shopware/trunk/src/Core/Framework/App/Manifest/Schema/manifest-3.0.xsd">
+    <meta>
+        <name>ExampleApp</name>
+        <label>Example App</label>
+        <label lang="de-DE">Example App</label>
+        <description>Fixture app with over-broad permissions</description>
+        <author>Smoke</author>
+        <copyright>Smoke</copyright>
+        <version>1.0.0</version>
+        <license>MIT</license>
+    </meta>
+    <permissions>
+        <create>all</create>
+        <read>all</read>
+    </permissions>
+</manifest>

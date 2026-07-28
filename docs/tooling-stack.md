@@ -34,13 +34,15 @@ Install from this repo:
 ```bash
 npx skills add BrocksiNet/ai-skills-shopware \
   --skill php-foundation \
+  --skill shopware-architecture \
+  --skill shopware-security \
   --skill shopware-core-development \
   --skill shopware-testing \
   --skill shopware-research-and-escalation \
   --skill shopware-review-learnings \
   --skill shopware-pr-description \
-  --skill shopware-pr-review \
   --skill shopware-assistant-style \
+  --skill shopware-pr-review \
   --skill shopware-podman-dev \
   -a cursor
 ```
