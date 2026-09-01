@@ -126,7 +126,8 @@ Default tasks (see `evals/smoke/smoke.env.example`):
 `no-empty-explicit`, `backed-enum-over-constants`, `unit-test-passes`,
 `clock-interface-injection`, `unit-test-exception-object`, `interface-di-repository`,
 `cache-tag-no-deprecated-event`, `phpstan-baseline-guardrail`,
-`core-http-client-behind-flag`.
+`core-http-client-behind-flag`, `bc-change-not-deprecated-reason`,
+`one-covers-class-per-file`, `no-reflection-on-shopware-method`.
 
 Default agents: `claude codex cursor`. Cursor uses `agent login` locally; admin
 `crsr_` keys are ignored by the smoke harness.
@@ -143,7 +144,7 @@ Default agents: `claude codex cursor`. Cursor uses `agent login` locally; admin
 
 | Doc | Purpose |
 | --- | ------- |
-| [`docs/core-pr-17657-alignment.md`](docs/core-pr-17657-alignment.md) | Rule checklist mined from core PR #17657 (we own skills, not core’s in-repo copies) |
+| [`docs/core-pr-17657-alignment.md`](docs/core-pr-17657-alignment.md) | Rule checklist mined from core trunk skills (seed PR #17657; last mined 2026-09-01) |
 | [`docs/skill-resolution.md`](docs/skill-resolution.md) | Trunk overlay vs full install; defer to core `.agents/skills/` when present |
 | [`docs/local-validation.md`](docs/local-validation.md) | Dogfood skills on a real Shopware instance |
 | [`docs/tooling-stack.md`](docs/tooling-stack.md) | ai-skills-shopware vs shopware-ai-coding-tools MCP |

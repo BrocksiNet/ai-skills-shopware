@@ -40,3 +40,5 @@ external backend) and `shopware-plugin-development` (PHP: DI, DAL, decoration,
 migrations) are different surfaces and route by target (`custom/apps` +
 `manifest.xml` vs `custom/plugins`). If you build both, add the skills from
 [`plugin-development.md`](plugin-development.md) too; they coexist safely.
+Add [`storefront-development.md`](storefront-development.md) when the app also
+touches a theme or Meteor Admin UI.

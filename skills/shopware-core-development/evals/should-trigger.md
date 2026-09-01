@@ -1,6 +1,7 @@
 # shopware-core-development — should trigger
 
 - I'm contributing to shopware/shopware and need to deprecate this public method.
+- Plan a parameter type narrowing for the next major with a BC-change attribute.
 - Change behavior in src/Core/Checkout without breaking backward compatibility.
 - Add a release note for this core change (RELEASE_INFO / UPGRADE).
 - Add a changelog entry for this core change.
@@ -9,4 +10,5 @@
 - Is removing this public service a breaking change?
 - Mark this new internal class correctly and document it in the release notes.
 - Replace file_get_contents in core with Symfony HttpClient behind a feature flag.
+- Replace file_put_contents in this core service with Symfony Filesystem.
 - Modernize this core service to use Messenger instead of a custom queue.

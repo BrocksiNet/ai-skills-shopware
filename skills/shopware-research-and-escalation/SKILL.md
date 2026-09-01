@@ -21,6 +21,7 @@ Load a reference only when relevant:
 
 - Where to look in the docs -> [`references/docs-map.md`](references/docs-map.md)
 - Library docs + source verification policy -> [`references/context7-and-libraries.md`](references/context7-and-libraries.md)
+- Generic modern CSS/HTML/JS APIs -> [`references/modern-web-guidance.md`](references/modern-web-guidance.md)
 - What to do when stuck -> [`references/when-stuck.md`](references/when-stuck.md)
 
 ## When does research pay off?

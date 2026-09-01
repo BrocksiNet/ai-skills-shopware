@@ -117,5 +117,6 @@ Detailed, growing lists live in references (load on demand):
 - DAL: TODO - capture the recurring "writing without the right Context" finding.
 - Performance: TODO - indexer / message-queue misuse findings.
 - Security: hardcoded access keys, missing Store-API ACL — see `shopware-security`.
-- Storefront: TODO - blocking/uncached AJAX in hot paths.
+- Storefront: blocking/uncached AJAX on listing/product/home — own in
+  `shopware-storefront` (`references/cache-and-modern-web.md`).
 - Apps: TODO - app-script vs plugin boundary mistakes.

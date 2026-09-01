@@ -31,6 +31,9 @@ Rules:
 
 - Add `#[CoversClass(Foo::class)]` on **unit and migration** tests that should count
   toward patch coverage for `src/**` under the `phpunit-unit` flag.
+- **Exactly one** `#[CoversClass]` per test file — the covered class owns the
+  test. A second class needs a second test file. Danger fails new test files
+  that cover more than one class.
 - **Do not** add `#[CoversClass]`, `#[CoversFunction]`, or `#[CoversNothing]` to
   **integration** tests — Shopware PHPStan allows those attributes only on unit and
   migration tests.
@@ -57,6 +60,15 @@ class.
 
 Simple struct-style classes with only public properties may use
 `@codeCoverageIgnore` without unit tests.
+
+`@codeCoverageIgnore` is for **pass-through** code only. On trunk, PHPStan
+(`CodeCoverageIgnoreEvaluationRule`) fails annotated methods that branch, throw,
+mutate a value (`unset`, `+=`, `.=`, `++`, a second write to a local), call
+`$this->…()` / `self::…()` for effect, call a method on a parameter for effect
+(`$criteria->addFilter(...)`; entity extensions adding fields are exempt), or
+configure the parent constructor with a literal the parent does not share.
+Write a unit test instead, or point `@see` at a dedicated integration or devops
+test.
 
 > **Trunk:** defer this style to `.agents/skills/shopware-phpunit-tests/`. Our
 > full-install profile keeps the rule for contributors on older branches.
@@ -105,9 +117,13 @@ without it.
 | Integration | Dominant `#[Package]` of the mirrored `src/` tree (e.g. `tests/integration/Core/Checkout/Cart/…` → package of `src/Core/Checkout/Cart`) |
 
 When a covered class moves packages, update the test's `#[Package]` in the same
-change.
+change. `fundamentals@<area>` counts as equal to `<area>`. PHPStan
+`TestPackageMatchRule` fails mismatches (unit/migration) and integration values
+that occur in none of the mirrored `src/` packages.
 
-Eval: `test-class-has-package-attribute`.
+Every test class also needs an `@internal` class docblock.
+
+Eval: `test-class-has-package-attribute`, `test-class-marked-internal`.
 
 ## Safeguard tests — not in `tests/unit/`
 

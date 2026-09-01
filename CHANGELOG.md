@@ -8,6 +8,23 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- Mined `shopware/shopware` trunk skills as of 2026-09-01 (after #17657):
+  BC-change attributes vs `@deprecated reason:*`, PHPUnit reflection / one
+  `CoversClass` / `@internal` / `StaticEntityRepository` inference, Symfony
+  `Filesystem`, named arguments, release-note heading rules, no AI PR trailers.
+
+### Added
+
+- Eval tasks: `bc-change-not-deprecated-reason`, `one-covers-class-per-file`,
+  `test-class-marked-internal`, `no-reflection-on-shopware-method`,
+  `symfony-filesystem-over-raw-php`, `storefront-plugin-manager-register`,
+  `no-speculation-on-checkout`, `admin-use-mt-modal`.
+- Skills: `shopware-storefront`, `shopware-admin-js`.
+- Use-case: `use-cases/storefront-development.md`.
+- Modern Web Guidance as an optional CLI lookup (not a vendored skill).
+
 ## [0.3.0] - 2026-06-18
 
 ### Added
