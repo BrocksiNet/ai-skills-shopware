@@ -14,7 +14,10 @@ has_internal=0
 has_package=0
 has_covers=0
 
-grep -q '@internal' "$file" && has_internal=1
+flat="$(tr '\n' ' ' < "$file")"
+if printf '%s' "$flat" | grep -qE '/\*\*.*@internal.*\*/[[:space:]]*(#\[[^]]+\][[:space:]]*)*final class CartNormalizerTest'; then
+  has_internal=1
+fi
 grep -qE "#\[Package\(['\"]checkout\.cart['\"]\)\]" "$file" && has_package=1
 grep -q '#\[CoversClass(CartNormalizer::class)\]' "$file" && has_covers=1
 

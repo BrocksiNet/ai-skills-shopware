@@ -2,13 +2,7 @@ import Plugin from 'src/plugin-system/plugin.class';
 
 export default class ScrollHintPlugin extends Plugin {
     init() {
-        this._onScroll = this._onScroll.bind(this);
-        window.addEventListener('scroll', this._onScroll);
-    }
-
-    destroy() {
-        window.removeEventListener('scroll', this._onScroll);
-        super.destroy();
+        this.el.addEventListener('scroll', this._onScroll.bind(this));
     }
 
     _onScroll() {

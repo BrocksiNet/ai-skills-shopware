@@ -20,7 +20,7 @@ tasks/<rule>/
 ├── instruction.md     # the prompt given to the agent
 ├── fixture/           # starting code copied into the agent's working dir
 ├── fixtures/pass/     # golden workdir that must PASS grade.sh (CI)
-├── fixtures/fail/     # optional golden FAIL case (else fixture/ is used)
+├── fixtures/fail/     # optional sneak-FAIL golden (tested in addition to fixture/)
 └── grade.sh           # deterministic grader (exit 0 = pass)
 ```
 

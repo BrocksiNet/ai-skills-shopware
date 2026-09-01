@@ -94,6 +94,7 @@ Graders receive:
 Prefer grep/AST and project tooling (PHPStan, ECS, PHPUnit via `vendor/bin/`
 when present) over LLM-as-judge. Golden fixtures in `fixtures/pass/` and
 `fixtures/fail/` are tested by `evals/test-graders.sh` on every push.
+`fixture/` is also graded as FAIL unless the task has `.skip-fixture-grade`.
 
 ## Adding or changing a rule
 
@@ -121,13 +122,17 @@ at the owning skill rather than re-defining the topic.
 
 ## Smoke eval defaults
 
-Default tasks (see `evals/smoke/smoke.env.example`):
+Default tasks match `evals/smoke/lib/common.sh` and
+`evals/smoke/smoke.env.example` when `smoke.env` is absent:
 
 `no-empty-explicit`, `backed-enum-over-constants`, `unit-test-passes`,
 `clock-interface-injection`, `unit-test-exception-object`, `interface-di-repository`,
 `cache-tag-no-deprecated-event`, `phpstan-baseline-guardrail`,
-`core-http-client-behind-flag`, `bc-change-not-deprecated-reason`,
-`one-covers-class-per-file`, `no-reflection-on-shopware-method`.
+`core-http-client-behind-flag`, `dal-search-without-limit`,
+`no-access-key-in-source`, `test-docblock-use-see`,
+`test-class-has-package-attribute`, `safeguard-test-not-in-unit-suite`,
+`bc-change-not-deprecated-reason`, `one-covers-class-per-file`,
+`no-reflection-on-shopware-method`.
 
 Default agents: `claude codex cursor`. Cursor uses `agent login` locally; admin
 `crsr_` keys are ignored by the smoke harness.

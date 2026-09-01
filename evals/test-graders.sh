@@ -6,8 +6,12 @@
 #   ./evals/test-graders.sh no-empty-explicit
 #
 # Each task with grade.sh is checked:
-#   - fixture/ or fixtures/fail/  → grader must FAIL (pristine / bad state)
+#   - fixture/                    → grader must FAIL (pristine / starting state)
+#   - fixtures/fail/              → grader must FAIL (sneak / almost-pass)
 #   - fixtures/pass/              → grader must PASS (when present)
+# Both fixture/ and fixtures/fail/ run when both exist. A task may drop a
+# `.skip-fixture-grade` marker when fixture/ is only the agent start dir
+# (grader is allowed to pass on the pristine tree).
 #
 set -euo pipefail
 
@@ -76,11 +80,16 @@ test_task() {
 
   printf 'task: %s\n' "${task}"
 
+  ran_fail=0
+  if [[ -d "${task_dir}/fixture" && ! -f "${task_dir}/.skip-fixture-grade" ]]; then
+    run_grader "${task}" "fixture" "${task_dir}/fixture" fail
+    ran_fail=1
+  fi
   if [[ -d "${task_dir}/fixtures/fail" ]]; then
     run_grader "${task}" "fixtures/fail" "${task_dir}/fixtures/fail" fail
-  elif [[ -d "${task_dir}/fixture" ]]; then
-    run_grader "${task}" "fixture" "${task_dir}/fixture" fail
-  else
+    ran_fail=1
+  fi
+  if [[ "${ran_fail}" -eq 0 ]]; then
     err "${task}: no fixture/ or fixtures/fail/ for negative case"
   fi
 

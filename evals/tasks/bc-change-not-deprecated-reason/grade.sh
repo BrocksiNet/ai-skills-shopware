@@ -15,7 +15,12 @@ has_import=0
 has_reason=0
 keeps_union=0
 
-grep -qE '#\[ParameterTypeNarrowing\(' "$file" && has_attr=1
+if grep -qE '#\[ParameterTypeNarrowing\(' "$file" \
+  && grep -qE "version:\s*'v6\.8\.0'" "$file" \
+  && grep -qE "parameterName:\s*'id'" "$file" \
+  && grep -qE "newType:\s*'string'" "$file"; then
+  has_attr=1
+fi
 grep -q 'use Shopware\\Core\\Framework\\Deprecation\\BCChange\\ParameterTypeNarrowing' "$file" && has_import=1
 grep -qE '@deprecated[[:space:]]+reason:' "$file" && has_reason=1
 grep -qE 'string\|int\s+\$id' "$file" && keeps_union=1

@@ -9,8 +9,9 @@ Load when changing storefront templates, SCSS, or media.
 - Keep CMS / shopping-experience elements on their existing block structure
   so merchants can still compose them.
 - User-facing strings: `{{ 'snippet.key'|trans }}`. No hardcoded copy.
-- Forms: keep the platform CSRF field and post to the existing storefront
-  controller or a Store-API route — not a one-off unauthenticated POST.
+- Forms: post to the existing storefront controller or a Store-API route,
+  not a one-off unauthenticated POST. Do **not** add `sw_csrf` or a CSRF
+  hidden field; 6.5+ relies on SameSite cookies and `sw_csrf` is gone.
 
 ## Theme / SCSS
 

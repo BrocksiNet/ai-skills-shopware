@@ -47,7 +47,9 @@ Load a reference only when needed:
 - Visible text goes through snippets (`trans`), not hardcoded strings.
 - Product / CMS images use Shopware media + thumbnails / `srcset`, not a
   one-off `<img>` with a hardcoded CDN URL.
-- Storefront forms keep CSRF and existing controller/Store-API endpoints.
+- Storefront forms post to the existing storefront controller or a Store-API
+  route. Do **not** add `sw_csrf` or a CSRF hidden field — Shopware 6.5+
+  dropped storefront CSRF for SameSite cookies.
 
 ## When to consult Modern Web Guidance
 

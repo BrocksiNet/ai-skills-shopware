@@ -10,6 +10,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- Tightened new behavioral graders and smoke defaults after PR review:
+  exact BCChange metadata, class-docblock `@internal`, constructor-injected
+  `Filesystem`, `assertSame` on public APIs, Storefront `window` + `data-*` +
+  `destroy()`, checkout prefetch/`sw_extends`/`parent()`, Admin popover ban,
+  and `test-graders.sh` now runs both `fixture/` and `fixtures/fail/`.
+  Storefront CSRF/`sw_csrf` guidance dropped (gone since 6.5). App use-case
+  no longer routes Meteor Admin SDK to `shopware-admin-js`.
 - Mined `shopware/shopware` trunk skills as of 2026-09-01 (after #17657):
   BC-change attributes vs `@deprecated reason:*`, PHPUnit reflection / one
   `CoversClass` / `@internal` / `StaticEntityRepository` inference, Symfony

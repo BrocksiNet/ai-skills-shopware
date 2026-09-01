@@ -12,7 +12,7 @@ if [[ -f "${SMOKE_ROOT}/smoke.env" ]]; then
 fi
 
 : "${SMOKE_SKILLS:=php-foundation shopware-testing shopware-review-learnings}"
-: "${SMOKE_TASKS:=no-empty-explicit backed-enum-over-constants unit-test-passes clock-interface-injection unit-test-exception-object interface-di-repository cache-tag-no-deprecated-event phpstan-baseline-guardrail core-http-client-behind-flag}"
+: "${SMOKE_TASKS:=no-empty-explicit backed-enum-over-constants unit-test-passes clock-interface-injection unit-test-exception-object interface-di-repository cache-tag-no-deprecated-event phpstan-baseline-guardrail core-http-client-behind-flag dal-search-without-limit no-access-key-in-source test-docblock-use-see test-class-has-package-attribute safeguard-test-not-in-unit-suite bc-change-not-deprecated-reason one-covers-class-per-file no-reflection-on-shopware-method}"
 : "${SMOKE_AGENTS:=claude codex cursor}"
 : "${SMOKE_CI:=0}"
 : "${SMOKE_STRICT:=0}"

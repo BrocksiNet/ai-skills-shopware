@@ -11,17 +11,19 @@ if [ -z "$file" ]; then
 fi
 
 uses_public=0
+has_assert=0
 uses_reflection=0
 
-grep -qE -- '->calculate\s*\(' "$file" && uses_public=1
+grep -qE -- '->calculate\s*\(\s*10(\.0)?' "$file" && uses_public=1
+grep -qE "assertSame\s*\(\s*11(\.0)?\s*," "$file" && has_assert=1
 if grep -qE -- 'ReflectionMethod|setAccessible\s*\(|->invoke(Args)?\s*\(' "$file"; then
   uses_reflection=1
 fi
 
 score=0
-if [ "$uses_public" -eq 1 ] && [ "$uses_reflection" -eq 0 ]; then
+if [ "$uses_public" -eq 1 ] && [ "$has_assert" -eq 1 ] && [ "$uses_reflection" -eq 0 ]; then
   score=1
 fi
 
-echo "score=$score (public=$uses_public reflection=$uses_reflection)"
+echo "score=$score (public=$uses_public assert=$has_assert reflection=$uses_reflection)"
 [ "$score" -eq 1 ]

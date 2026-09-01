@@ -1,0 +1,3 @@
+The starting fixture is a clean ProductLoader. The grader scores
+contradictions in the agent result, so the pristine tree is allowed to
+pass. fixtures/fail/ is the negative golden.
