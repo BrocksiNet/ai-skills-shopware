@@ -10,6 +10,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- Third Copilot pass: Admin `main.js` entry is the TypeScript exception,
+  `mt-popover` is not a native popover, `calculate()` may use a receiver
+  variable, and PluginManager async `import()` is accepted. Storefront
+  cache wording now splits shared HTML vs private async loads. Added
+  evals for named arguments, Admin ACL + Jest colocation, DI deprecation
+  tags, UPGRADE past tense, listing `no-store` AJAX, Twig block/snippet,
+  `exit`/`die`, `StaticEntityRepository`, and `@codeCoverageIgnore`.
 - Tightened graders again after the second Copilot pass: assertion must
   bind to `calculate()`, Storefront plugins need a Twig `data-scroll-hint`
   host plus `window` add/remove, and `Filesystem` must be constructor-
@@ -33,7 +40,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   `test-class-marked-internal`, `no-reflection-on-shopware-method`,
   `symfony-filesystem-over-raw-php`, `storefront-plugin-manager-register`,
   `no-speculation-on-checkout`, `admin-use-mt-modal`,
-  `release-info-no-duplicate-heading`, `pr-no-ai-trailers`.
+  `release-info-no-duplicate-heading`, `pr-no-ai-trailers`,
+  `named-arguments-for-literals`, `admin-acl-role-migration`,
+  `admin-jest-colocated-spec`, `di-tag-not-while-referenced`,
+  `upgrade-entry-past-tense`, `storefront-no-blocking-nostore-ajax`,
+  `storefront-twig-block-snippet`, `test-no-exit-die`,
+  `static-entity-repository-stub`, `code-coverage-ignore-passthrough`.
 - Skills: `shopware-storefront`, `shopware-admin-js`.
 - Use-case: `use-cases/storefront-development.md`.
 - Modern Web Guidance as an optional CLI lookup (not a vendored skill).

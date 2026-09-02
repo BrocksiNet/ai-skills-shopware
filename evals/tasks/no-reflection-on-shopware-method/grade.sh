@@ -20,10 +20,20 @@ if grep -qE -- 'ReflectionMethod|setAccessible\s*\(|->invoke(Args)?\s*\(' "$file
 fi
 
 flat="$(tr '\n' ' ' < "$file")"
+# $result = (new PriceCalculator())->calculate(10.0); assertSame(11.0, $result)
 if printf '%s' "$flat" | grep -qE '\$([A-Za-z_][A-Za-z0-9_]*)[[:space:]]*=[[:space:]]*\(new PriceCalculator\(\)\)->calculate[[:space:]]*\([[:space:]]*10(\.0)?[[:space:]]*\).*assertSame[[:space:]]*\([[:space:]]*11(\.0)?[[:space:]]*,[[:space:]]*\$\1[[:space:]]*\)'; then
   has_assert=1
 fi
+# assertSame(11.0, (new PriceCalculator())->calculate(10.0))
 if printf '%s' "$flat" | grep -qE 'assertSame[[:space:]]*\([[:space:]]*11(\.0)?[[:space:]]*,[[:space:]]*\(new PriceCalculator\(\)\)->calculate[[:space:]]*\([[:space:]]*10(\.0)?'; then
+  has_assert=1
+fi
+# $calc = new PriceCalculator(); $result = $calc->calculate(10.0); assertSame(11.0, $result)
+if printf '%s' "$flat" | grep -qE '\$([A-Za-z_][A-Za-z0-9_]*)[[:space:]]*=[[:space:]]*new PriceCalculator\(\).*\$([A-Za-z_][A-Za-z0-9_]*)[[:space:]]*=[[:space:]]*\$\1->calculate[[:space:]]*\([[:space:]]*10(\.0)?[[:space:]]*\).*assertSame[[:space:]]*\([[:space:]]*11(\.0)?[[:space:]]*,[[:space:]]*\$\2[[:space:]]*\)'; then
+  has_assert=1
+fi
+# $calc = new PriceCalculator(); assertSame(11.0, $calc->calculate(10.0))
+if printf '%s' "$flat" | grep -qE '\$([A-Za-z_][A-Za-z0-9_]*)[[:space:]]*=[[:space:]]*new PriceCalculator\(\).*assertSame[[:space:]]*\([[:space:]]*11(\.0)?[[:space:]]*,[[:space:]]*\$\1->calculate[[:space:]]*\([[:space:]]*10(\.0)?'; then
   has_assert=1
 fi
 

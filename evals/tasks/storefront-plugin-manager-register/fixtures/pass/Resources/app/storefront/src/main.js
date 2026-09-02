@@ -1,3 +1,5 @@
-import ScrollHintPlugin from './scroll-hint.plugin';
-
-window.PluginManager.register('ScrollHint', ScrollHintPlugin, '[data-scroll-hint]');
+window.PluginManager.register(
+    'ScrollHint',
+    () => import('./scroll-hint.plugin'),
+    '[data-scroll-hint]'
+);

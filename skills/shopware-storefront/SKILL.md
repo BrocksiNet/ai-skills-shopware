@@ -36,8 +36,10 @@ Load a reference only when needed:
    or a custom select.
 3. **No speculation rules or prerender** on cart, checkout, account, or
    wishlist.
-4. **Do not ship blocking, uncached AJAX** on listing, product, or home
-   unless the response is explicitly excluded from HTTP cache.
+4. **Cache shared listing, product, and home HTML.** Do not fire blocking
+   AJAX on those pages for personalized data. Load genuinely private
+   responses asynchronously after first paint; do not put `no-store` on
+   the shared document.
 
 ## Storefront deltas
 

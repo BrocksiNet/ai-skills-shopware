@@ -17,23 +17,25 @@ has_window_unlisten=0
 has_raw_listener=0
 has_plugin_class=0
 
-grep -rqE --include='*.js' 'window\.PluginManager\.register\s*\(' "$WORKDIR" && has_window_register=1
-if grep -rqE --include='*.js' "PluginManager\.register\s*\([^)]*['\"]\\[data-scroll-hint\\]['\"]" "$WORKDIR"; then
+js_flat="$(find "$WORKDIR" -name '*.js' -print0 | xargs -0 cat | tr '\n' ' ')"
+
+printf '%s' "$js_flat" | grep -qE 'window\.PluginManager\.register\s*\(' && has_window_register=1
+if printf '%s' "$js_flat" | grep -qE "PluginManager\.register\s*\(.*['\"]\\[data-scroll-hint\\]['\"]"; then
   has_data_selector=1
 fi
 if grep -rqE --include='*.twig' --include='*.html' 'data-scroll-hint' "$WORKDIR"; then
   has_host=1
 fi
-if grep -rqE --include='*.js' 'window\.addEventListener\s*\(\s*['\''"]scroll['\''"]' "$WORKDIR"; then
+if printf '%s' "$js_flat" | grep -qE 'window\.addEventListener\s*\(\s*['\''"]scroll['\''"]'; then
   has_window_listen=1
 fi
-if grep -rqE --include='*.js' 'window\.removeEventListener\s*\(\s*['\''"]scroll['\''"]' "$WORKDIR"; then
+if printf '%s' "$js_flat" | grep -qE 'window\.removeEventListener\s*\(\s*['\''"]scroll['\''"]'; then
   has_window_unlisten=1
 fi
-if grep -rqE --include='*.js' 'document\.addEventListener\s*\(' "$WORKDIR"; then
+if printf '%s' "$js_flat" | grep -qE 'document\.addEventListener\s*\('; then
   has_raw_listener=1
 fi
-if grep -rqE --include='*.js' 'extends Plugin' "$WORKDIR"; then
+if printf '%s' "$js_flat" | grep -qE 'extends Plugin'; then
   has_plugin_class=1
 fi
 

@@ -5,6 +5,8 @@
 - Change behavior in src/Core/Checkout without breaking backward compatibility.
 - Add a release note for this core change (RELEASE_INFO / UPGRADE).
 - Add this CartProcessor note to RELEASE_INFO without repeating the Features heading.
+- Rewrite this UPGRADE entry in past tense; developers read it after the major.
+- Do not mark this DI service deprecated while core still injects the id.
 - Add a changelog entry for this core change.
 - Should I write an ADR for switching the cart persistence strategy?
 - I want to raise the PHPStan level in the core repo, what do I need to do?

@@ -30,7 +30,9 @@ Load a reference only when needed:
 
 ## Hard guardrails
 
-1. **TypeScript for new code.** Do not add new `.js` Admin sources.
+1. **TypeScript for new code.** Do not add new `.js` Admin sources except the
+   required `Resources/app/administration/src/main.js` entry Shopware
+   discovers and scaffolds. Implementation modules stay `.ts`.
 2. **Do not break public Admin extension APIs** without prior discussion.
 3. **Use Meteor / existing Admin components** (`mt-modal`, `mt-banner`,
    `mt-*`, or the local `sw-*` already in the file). Do not replace them
