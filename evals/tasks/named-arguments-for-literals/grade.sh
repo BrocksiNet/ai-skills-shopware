@@ -15,9 +15,9 @@ has_bare=0
 keeps_count=0
 
 flat="$(tr '\n' ' ' < "$file")"
-if printf '%s' "$flat" | grep -qE 'dump\s*\([^)]*strict:' \
-  && printf '%s' "$flat" | grep -qE 'dump\s*\([^)]*limit:' \
-  && printf '%s' "$flat" | grep -qE 'dump\s*\([^)]*fallback:'; then
+if printf '%s' "$flat" | grep -qE 'dump\s*\([^)]*strict:\s*true' \
+  && printf '%s' "$flat" | grep -qE 'dump\s*\([^)]*limit:\s*0' \
+  && printf '%s' "$flat" | grep -qE 'dump\s*\([^)]*fallback:\s*null'; then
   has_named=1
 fi
 if grep -qE 'dump\s*\(\s*true\s*,\s*0\s*,\s*null\s*\)' "$file"; then

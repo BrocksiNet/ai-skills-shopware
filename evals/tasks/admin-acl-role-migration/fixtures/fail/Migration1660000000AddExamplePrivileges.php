@@ -15,8 +15,12 @@ final class Migration1660000000AddExamplePrivileges extends MigrationStep
     public function update(Connection $connection): void
     {
         $connection->executeStatement(
-            'UPDATE acl_role SET privileges = JSON_ARRAY_APPEND(privileges, \'$\', :privilege)',
-            ['privilege' => 'swag_example.viewer']
+            <<<'SQL'
+UPDATE acl_role
+SET privileges = JSON_ARRAY_APPEND(privileges, '$', :privilege)
+WHERE active = 1
+SQL,
+            ['privilege' => 'product:read']
         );
     }
 }

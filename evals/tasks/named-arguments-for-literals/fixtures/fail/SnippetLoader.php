@@ -16,6 +16,6 @@ final class SnippetLoader
      */
     private function collect(bool $strict, int $limit, ?string $fallback): array
     {
-        return $this->dump(true, 0, null) > 0 ? [] : [];
+        return $this->dump(strict: false, limit: 10, fallback: 'x') > 0 ? [] : [];
     }
 }

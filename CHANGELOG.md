@@ -10,6 +10,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- ACL WHERE must select `swag_example.viewer` (not any filter), named
+  arguments must keep `true` / `0` / `null`, and UPGRADE past tense is
+  scoped to the CartProcessor section.
 - Fourth Copilot pass plus self-review of new graders: ACL migration
   now scopes `product:read` to existing module roles, Jest requires a
   real case/assertion, `StaticEntityRepository` must be wired into
