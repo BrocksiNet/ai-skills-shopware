@@ -15,9 +15,16 @@ has_assert=0
 uses_reflection=0
 
 grep -qE -- '->calculate\s*\(\s*10(\.0)?' "$file" && uses_public=1
-grep -qE "assertSame\s*\(\s*11(\.0)?\s*," "$file" && has_assert=1
 if grep -qE -- 'ReflectionMethod|setAccessible\s*\(|->invoke(Args)?\s*\(' "$file"; then
   uses_reflection=1
+fi
+
+flat="$(tr '\n' ' ' < "$file")"
+if printf '%s' "$flat" | grep -qE '\$([A-Za-z_][A-Za-z0-9_]*)[[:space:]]*=[[:space:]]*\(new PriceCalculator\(\)\)->calculate[[:space:]]*\([[:space:]]*10(\.0)?[[:space:]]*\).*assertSame[[:space:]]*\([[:space:]]*11(\.0)?[[:space:]]*,[[:space:]]*\$\1[[:space:]]*\)'; then
+  has_assert=1
+fi
+if printf '%s' "$flat" | grep -qE 'assertSame[[:space:]]*\([[:space:]]*11(\.0)?[[:space:]]*,[[:space:]]*\(new PriceCalculator\(\)\)->calculate[[:space:]]*\([[:space:]]*10(\.0)?'; then
+  has_assert=1
 fi
 
 score=0

@@ -16,5 +16,7 @@ final class PriceCalculatorTest extends TestCase
     public function testCalculateAppliesTax(): void
     {
         (new PriceCalculator())->calculate(10.0);
+
+        $this->assertSame(11.0, 11.0);
     }
 }

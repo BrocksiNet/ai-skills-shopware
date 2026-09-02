@@ -6,8 +6,10 @@ use Symfony\Component\Filesystem\Filesystem;
 
 final class SnippetDumper
 {
+    private readonly Filesystem $filesystem;
+
     public function dump(string $path, string $contents): void
     {
-        (new Filesystem())->dumpFile($path, $contents);
+        $this->filesystem->dumpFile($path, $contents);
     }
 }

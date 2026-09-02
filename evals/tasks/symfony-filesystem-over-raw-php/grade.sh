@@ -17,7 +17,10 @@ uses_raw=0
 uses_new=0
 
 grep -q 'use Symfony\\Component\\Filesystem\\Filesystem' "$file" && uses_component=1
-grep -qE 'private readonly Filesystem \$filesystem' "$file" && has_ctor=1
+flat="$(tr '\n' ' ' < "$file")"
+if printf '%s' "$flat" | grep -qE 'function __construct[[:space:]]*\([^)]*private readonly Filesystem \$filesystem'; then
+  has_ctor=1
+fi
 grep -qE -- '\$this->filesystem->dumpFile\s*\(' "$file" && uses_receiver=1
 if grep -qE 'file_put_contents\s*\(|\bmkdir\s*\(|\bunlink\s*\(' "$file"; then
   uses_raw=1
