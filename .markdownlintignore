@@ -1,0 +1,5 @@
+# Golden eval workdirs are inputs for grade.sh, not docs.
+# Fail fixtures are allowed to be invalid Markdown (duplicate headings,
+# official PR-template punctuation).
+evals/tasks/**/fixture/**/*.md
+evals/tasks/**/fixtures/**/*.md

@@ -57,3 +57,5 @@ jobs:
           globs: |
             **/*.md
             !node_modules
+            !evals/tasks/**/fixture/**/*.md
+            !evals/tasks/**/fixtures/**/*.md
