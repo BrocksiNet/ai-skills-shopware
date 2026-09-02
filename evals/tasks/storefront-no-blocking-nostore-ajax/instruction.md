@@ -1,10 +1,10 @@
 # Task: keep listing HTML cacheable
 
-`listing-price.plugin.js` runs on the product listing and fetches
-personalized prices with `cache: 'no-store'`. That poisons shared HTML
-or blocks first paint.
+`ListingPageController.php` sends the shared listing document with
+`Cache-Control: no-store`. The plugin still needs a private price fetch
+after first paint.
 
-- Remove the blocking `no-store` fetch from the listing plugin.
-- Personalized data may load after first paint; do not put `no-store` on
-  the shared listing document.
-- Keep the Plugin subclass.
+- Remove `no-store` from the listing **document** response.
+- Keep the Plugin subclass and its `fetch()` of personalized prices.
+  `fetch({ cache: 'no-store' })` on that private request is allowed.
+- Do not delete the personalized pricing call.

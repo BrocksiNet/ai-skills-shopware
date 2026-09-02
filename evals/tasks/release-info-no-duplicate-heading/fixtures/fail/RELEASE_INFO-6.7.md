@@ -4,6 +4,6 @@
 
 `ProductRoute` now accepts a `fields` parameter so API clients can limit payload size.
 
-## Features
+## API
 
 `CartProcessor` is now extensible so plugins can decorate cart calculation.

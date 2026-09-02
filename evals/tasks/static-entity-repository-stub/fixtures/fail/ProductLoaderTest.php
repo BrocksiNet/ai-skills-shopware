@@ -19,8 +19,8 @@ final class ProductLoaderTest extends TestCase
 {
     public function testLoadReturnsTag(): void
     {
-        $repository = $this->createMock(EntityRepository::class);
         StaticEntityRepository::of(ProductCollection::class, []);
+        $repository = $this->createStub(EntityRepository::class);
         $loader = new ProductLoader($repository);
 
         $this->assertSame('swag-example-product-a', $loader->load('a', Context::createDefaultContext()));

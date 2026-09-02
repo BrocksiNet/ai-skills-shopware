@@ -17,10 +17,16 @@ keeps_assert=0
 
 grep -qE -- '->setAutoExit\s*\(\s*false\s*\)' "$file" && has_auto=1
 grep -qE -- '->run\s*\(' "$file" && has_run=1
-if grep -qE '\b(exit|die)\s*\(' "$file"; then
+if grep -qE '\b(exit|die)\b' "$file"; then
   has_kill=1
 fi
-grep -q 'swag:example:dump' "$file" && keeps_assert=1
+if grep -qE -- 'assert(True|Same)\s*\(.*->has\s*\(\s*['\''"]swag:example:dump['\''"]' "$file"; then
+  keeps_assert=1
+fi
+flat="$(tr '\n' ' ' < "$file")"
+if printf '%s' "$flat" | grep -qE 'assert(True|Same)\s*\([^;]*->has\s*\(\s*['\''"]swag:example:dump['\''"]'; then
+  keeps_assert=1
+fi
 
 score=0
 if [ "$has_auto" -eq 1 ] && [ "$has_run" -eq 1 ] && [ "$has_kill" -eq 0 ] && [ "$keeps_assert" -eq 1 ]; then

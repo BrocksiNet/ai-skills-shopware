@@ -96,6 +96,18 @@ when present) over LLM-as-judge. Golden fixtures in `fixtures/pass/` and
 `fixtures/fail/` are tested by `evals/test-graders.sh` on every push.
 `fixture/` is also graded as FAIL unless the task has `.skip-fixture-grade`.
 
+Before you ship a `grade.sh`, check these yourself (Copilot keeps finding
+the same holes):
+
+- Wire every required token to the subject. An unused `::of()`, a filename,
+  or an empty `*.spec.ts` is not a pass.
+- Accept common compliant rewrites (receiver variables, named-arg order,
+  async `import()`, official `main.js` / `mt-popover`).
+- Do not forbid an allowed API (client `fetch({ cache: 'no-store' })` is
+  not a document-cache header).
+- `fixtures/fail/` must be a sneak: almost-pass that the old loose check
+  would have accepted.
+
 ## Adding or changing a rule
 
 1. Confirm the [five inclusion criteria](README.md#curation--governance) in README.

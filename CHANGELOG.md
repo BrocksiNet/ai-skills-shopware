@@ -10,6 +10,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- Fourth Copilot pass plus self-review of new graders: ACL migration
+  now scopes `product:read` to existing module roles, Jest requires a
+  real case/assertion, `StaticEntityRepository` must be wired into
+  `ProductLoader`, listing eval grades document `no-store` not client
+  fetch cache, `exit;`/`die` and `->has()` assertions are required,
+  RELEASE_INFO entries must sit in the existing Features section.
+  Added `mwg-only-after-shopware-primitive`. Documented grader
+  sneak-fail rules in `AGENTS.md`.
 - Third Copilot pass: Admin `main.js` entry is the TypeScript exception,
   `mt-popover` is not a native popover, `calculate()` may use a receiver
   variable, and PluginManager async `import()` is accepted. Storefront
@@ -45,7 +53,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   `admin-jest-colocated-spec`, `di-tag-not-while-referenced`,
   `upgrade-entry-past-tense`, `storefront-no-blocking-nostore-ajax`,
   `storefront-twig-block-snippet`, `test-no-exit-die`,
-  `static-entity-repository-stub`, `code-coverage-ignore-passthrough`.
+  `static-entity-repository-stub`, `code-coverage-ignore-passthrough`,
+  `mwg-only-after-shopware-primitive`.
 - Skills: `shopware-storefront`, `shopware-admin-js`.
 - Use-case: `use-cases/storefront-development.md`.
 - Modern Web Guidance as an optional CLI lookup (not a vendored skill).

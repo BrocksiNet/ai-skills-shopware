@@ -14,7 +14,12 @@ has_named=0
 has_bare=0
 keeps_count=0
 
-grep -qE 'dump\s*\(\s*strict:\s*true\s*,\s*limit:\s*0\s*,\s*fallback:\s*null\s*\)' "$file" && has_named=1
+flat="$(tr '\n' ' ' < "$file")"
+if printf '%s' "$flat" | grep -qE 'dump\s*\([^)]*strict:' \
+  && printf '%s' "$flat" | grep -qE 'dump\s*\([^)]*limit:' \
+  && printf '%s' "$flat" | grep -qE 'dump\s*\([^)]*fallback:'; then
+  has_named=1
+fi
 if grep -qE 'dump\s*\(\s*true\s*,\s*0\s*,\s*null\s*\)' "$file"; then
   has_bare=1
 fi

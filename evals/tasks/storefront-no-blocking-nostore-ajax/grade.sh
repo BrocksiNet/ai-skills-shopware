@@ -5,24 +5,23 @@ set -euo pipefail
 WORKDIR="${WORKDIR:?WORKDIR not set}"
 
 has_plugin=0
-has_nostore=0
-has_blocking_fetch=0
+has_fetch=0
+has_document_nostore=0
 
 grep -rqE --include='*.js' 'extends Plugin' "$WORKDIR" && has_plugin=1
-if grep -rqE --include='*.js' "cache:\s*['\"]no-store['\"]" "$WORKDIR"; then
-  has_nostore=1
+grep -rqE --include='*.js' 'fetch\s*\(' "$WORKDIR" && has_fetch=1
+if grep -rqE --include='*.php' --include='*.twig' --include='*.html' 'Cache-Control' "$WORKDIR" \
+  && grep -rqE --include='*.php' --include='*.twig' --include='*.html' 'no-store' "$WORKDIR"; then
+  has_document_nostore=1
 fi
-if grep -rqE --include='*.js' 'fetch\s*\(' "$WORKDIR" && grep -rqE --include='*.js' 'init\s*\(' "$WORKDIR"; then
-  # fetch inside a listing plugin init is the blocking case we reject with no-store
-  if [ "$has_nostore" -eq 1 ]; then
-    has_blocking_fetch=1
-  fi
+if grep -rqE --include='*.php' "headers->set\s*\(\s*['\"]Cache-Control['\"]\s*,\s*['\"][^'\"]*no-store" "$WORKDIR"; then
+  has_document_nostore=1
 fi
 
 score=0
-if [ "$has_plugin" -eq 1 ] && [ "$has_nostore" -eq 0 ] && [ "$has_blocking_fetch" -eq 0 ]; then
+if [ "$has_plugin" -eq 1 ] && [ "$has_fetch" -eq 1 ] && [ "$has_document_nostore" -eq 0 ]; then
   score=1
 fi
 
-echo "score=$score (plugin=$has_plugin nostore=$has_nostore blocking=$has_blocking_fetch)"
+echo "score=$score (plugin=$has_plugin fetch=$has_fetch document_nostore=$has_document_nostore)"
 [ "$score" -eq 1 ]

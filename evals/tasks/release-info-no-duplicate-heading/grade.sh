@@ -10,20 +10,30 @@ if [ -z "$file" ]; then
   exit 1
 fi
 
-has_version=0
+version_headings=0
 feature_headings=0
 has_existing=0
-has_new=0
+has_new_in_features=0
 
-grep -qE '^# 6\.7\.4\.0[[:space:]]*$' "$file" && has_version=1
+version_headings="$(grep -cE '^# 6\.7\.4\.0[[:space:]]*$' "$file" || true)"
 feature_headings="$(grep -cE '^## Features[[:space:]]*$' "$file" || true)"
 grep -q 'ProductRoute' "$file" && has_existing=1
-grep -q 'CartProcessor' "$file" && has_new=1
+
+if awk '
+    /^# 6\.7\.4\.0[[:space:]]*$/ { v=1; next }
+    /^# / { v=0 }
+    v && /^## Features[[:space:]]*$/ { f=1; next }
+    v && /^## / { f=0 }
+    v && f && /CartProcessor/ { found=1 }
+    END { exit found ? 0 : 1 }
+' "$file"; then
+  has_new_in_features=1
+fi
 
 score=0
-if [ "$has_version" -eq 1 ] && [ "$feature_headings" -eq 1 ] && [ "$has_existing" -eq 1 ] && [ "$has_new" -eq 1 ]; then
+if [ "$version_headings" -eq 1 ] && [ "$feature_headings" -eq 1 ] && [ "$has_existing" -eq 1 ] && [ "$has_new_in_features" -eq 1 ]; then
   score=1
 fi
 
-echo "score=$score (version=$has_version features=$feature_headings existing=$has_existing new=$has_new)"
+echo "score=$score (versions=$version_headings features=$feature_headings existing=$has_existing in_features=$has_new_in_features)"
 [ "$score" -eq 1 ]

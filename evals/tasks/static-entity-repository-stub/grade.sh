@@ -10,22 +10,28 @@ if [ -z "$file" ]; then
   exit 1
 fi
 
-has_stub=0
-has_of=0
-has_mock=0
+has_wired=0
+has_double=0
 keeps_assert=0
 
-grep -q 'StaticEntityRepository' "$file" && has_stub=1
-grep -qE 'StaticEntityRepository::of\s*\(\s*ProductCollection::class' "$file" && has_of=1
-if grep -qE 'createMock\s*\(\s*EntityRepository' "$file"; then
-  has_mock=1
+flat="$(tr '\n' ' ' < "$file")"
+# $repo = StaticEntityRepository::of(...); new ProductLoader($repo)
+if printf '%s' "$flat" | grep -qE '\$([A-Za-z_][A-Za-z0-9_]*)[[:space:]]*=[[:space:]]*StaticEntityRepository::of\s*\(\s*ProductCollection::class.*new ProductLoader\s*\(\s*\$\1'; then
+  has_wired=1
 fi
-grep -q 'swag-example-product' "$file" && keeps_assert=1
+# new ProductLoader(StaticEntityRepository::of(...))
+if printf '%s' "$flat" | grep -qE 'new ProductLoader\s*\(\s*StaticEntityRepository::of\s*\(\s*ProductCollection::class'; then
+  has_wired=1
+fi
+if grep -qE 'createMock\s*\(|createStub\s*\(|getMockBuilder\s*\(' "$file"; then
+  has_double=1
+fi
+grep -qE "assertSame\s*\(\s*'swag-example-product-a'" "$file" && keeps_assert=1
 
 score=0
-if [ "$has_stub" -eq 1 ] && [ "$has_of" -eq 1 ] && [ "$has_mock" -eq 0 ] && [ "$keeps_assert" -eq 1 ]; then
+if [ "$has_wired" -eq 1 ] && [ "$has_double" -eq 0 ] && [ "$keeps_assert" -eq 1 ]; then
   score=1
 fi
 
-echo "score=$score (stub=$has_stub of=$has_of mock=$has_mock assert=$keeps_assert)"
+echo "score=$score (wired=$has_wired double=$has_double assert=$keeps_assert)"
 [ "$score" -eq 1 ]

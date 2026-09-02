@@ -18,7 +18,7 @@ has_s4=0
 has_s5=0
 keeps_text=0
 
-if grep -qE 'Co-authored-by:|Co-committed-by:|Signed-off-by:' "$file"; then
+if grep -qE 'Co-authored-by|Co-committed-by|Signed-off-by' "$file"; then
   has_trailer=1
 fi
 grep -q '### 1. Why is this change necessary?' "$file" && has_s1=1

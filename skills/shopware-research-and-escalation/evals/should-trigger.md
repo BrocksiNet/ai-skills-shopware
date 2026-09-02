@@ -7,3 +7,4 @@
 - Should I research this or just proceed?
 - Where do I find the authoritative source for the DAL indexer behavior?
 - Is this CSS API Baseline enough for a Shopware storefront, or should I look it up first?
+- Shopware already has a Bootstrap modal here. Do not install Modern Web Guidance as a skill.
