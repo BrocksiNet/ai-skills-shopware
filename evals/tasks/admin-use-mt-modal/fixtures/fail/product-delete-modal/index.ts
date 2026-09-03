@@ -1,9 +1,9 @@
 const ProductDeleteModal = {
     template: `
-        <mt-modal class="product-delete-modal">
-            <button type="button" popovertarget="hint">Hint</button>
-            <div id="hint" popover>Delete this product?</div>
-        </mt-modal>
+        <sw-modal class="product-delete-modal">
+            <p>Delete this product?</p>
+            <button type="button">Confirm</button>
+        </sw-modal>
     `,
 };
 

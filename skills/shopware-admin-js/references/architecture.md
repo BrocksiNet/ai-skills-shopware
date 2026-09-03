@@ -21,7 +21,10 @@ Load when adding modules, components, services, or ACL-backed UI.
 - New Admin UI that reads or persists a DAL entity: update the privilege
   mapping in the **same** change. Limited roles need `read` / `create` /
   `update` / `delete` through viewer/editor/creator/deleter — do not rely
-  on super-admin.
+  on super-admin. `addPrivilegeMappingEntry` takes
+  `roles: { viewer: { privileges: [...], dependencies: [...] } }`. A flat
+  `privileges: { viewer: [...] }` fails `isPrivilegeMapping` and never
+  registers the key.
 - Privileges that must apply to **existing** roles need a migration on
   `acl_role.privileges`. Mapping-only changes fix future evaluations.
 - Business logic stays out of templates. Prefer composables over new

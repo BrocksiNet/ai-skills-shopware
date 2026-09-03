@@ -26,7 +26,13 @@ fi
 if grep -qE 'createMock\s*\(|createStub\s*\(|getMockBuilder\s*\(' "$file"; then
   has_double=1
 fi
-grep -qE "assertSame\s*\(\s*'swag-example-product-a'" "$file" && keeps_assert=1
+# Assertion must observe ProductLoader::load(), not a tautology on the expected string.
+if printf '%s' "$flat" | grep -qE -- 'assertSame\s*\(\s*'\''swag-example-product-a'\''\s*,\s*\$[A-Za-z_][A-Za-z0-9_]*->load\s*\('; then
+  keeps_assert=1
+fi
+if printf '%s' "$flat" | grep -qE -- '\$([A-Za-z_][A-Za-z0-9_]*)[[:space:]]*=[[:space:]]*\$[A-Za-z_][A-Za-z0-9_]*->load\s*\([^;]*assertSame\s*\(\s*'\''swag-example-product-a'\''\s*,\s*\$\1'; then
+  keeps_assert=1
+fi
 
 score=0
 if [ "$has_wired" -eq 1 ] && [ "$has_double" -eq 0 ] && [ "$keeps_assert" -eq 1 ]; then

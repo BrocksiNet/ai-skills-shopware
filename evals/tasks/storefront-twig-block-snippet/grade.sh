@@ -16,9 +16,13 @@ has_snippet=0
 has_hardcoded=0
 has_full_copy=0
 
+flat="$(tr '\n' ' ' < "$file")"
 grep -q "sw_extends '@Storefront/storefront/page/product-detail/buy-widget.html.twig'" "$file" && has_extends=1
-grep -q 'page_product_detail_buy_button' "$file" && has_block=1
-grep -q "swag-example.addToCart'|trans" "$file" && has_snippet=1
+# Block name and snippet must sit in the same block declaration.
+if printf '%s' "$flat" | grep -qE "\{%[[:space:]]*block[[:space:]]+page_product_detail_buy_button[[:space:]]*%\}.*swag-example\.addToCart'\|trans.*\{%[[:space:]]*endblock"; then
+  has_block=1
+  has_snippet=1
+fi
 grep -qiE 'Add to cart' "$file" && has_hardcoded=1
 if grep -q 'page_product_detail_buy_form' "$file" && grep -q 'page_product_detail_buy_quantity' "$file"; then
   has_full_copy=1

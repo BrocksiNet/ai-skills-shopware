@@ -6,3 +6,4 @@
 - This listing page fires uncached AJAX on every view — is that cache-safe?
 - Add a modal to the storefront product page.
 - Should I put fetchpriority on the product cover image?
+- Should I add sw_csrf to this storefront login form?

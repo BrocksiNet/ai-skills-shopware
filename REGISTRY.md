@@ -121,7 +121,7 @@ the right one activates. There is no project-level "core vs plugin" choice.
 | FriendsOfShopware/agent-skills `shopware-phpunit` | Plugin/integration patterns, fixtures, mocks | link in `shopware-testing/references/external-inspiration.md` |
 | brocksi.net blog (API-aware guidelines, PHPStan+ECS) | Review learnings + Shopware static analysis | own content |
 | Shopware `coding-guidelines/administration/` + Admin `AGENTS.md` | Admin JS/TS/Vue/Jest deltas | rewrite |
-| [GoogleChrome/modern-web-guidance](https://github.com/GoogleChrome/modern-web-guidance) | Optional CLI lookup for generic web-platform APIs | link (do not vendor; CC-BY guides) |
+| [GoogleChrome/modern-web-guidance](https://github.com/GoogleChrome/modern-web-guidance) | Optional CLI lookup for generic web-platform APIs | link (do not vendor; Apache-2.0) |
 
 ## Adding a skill or rule
 

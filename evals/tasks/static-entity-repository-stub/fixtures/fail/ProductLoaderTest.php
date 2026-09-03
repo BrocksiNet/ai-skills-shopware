@@ -6,7 +6,6 @@ use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
 use Shopware\Core\Content\Product\ProductCollection;
 use Shopware\Core\Framework\Context;
-use Shopware\Core\Framework\DataAbstractionLayer\EntityRepository;
 use Shopware\Core\Framework\Log\Package;
 use Shopware\Core\Test\Stub\DataAbstractionLayer\StaticEntityRepository;
 
@@ -19,10 +18,10 @@ final class ProductLoaderTest extends TestCase
 {
     public function testLoadReturnsTag(): void
     {
-        StaticEntityRepository::of(ProductCollection::class, []);
-        $repository = $this->createStub(EntityRepository::class);
+        $repository = StaticEntityRepository::of(ProductCollection::class, []);
         $loader = new ProductLoader($repository);
+        $loader->load('a', Context::createDefaultContext());
 
-        $this->assertSame('swag-example-product-a', $loader->load('a', Context::createDefaultContext()));
+        $this->assertSame('swag-example-product-a', 'swag-example-product-a');
     }
 }

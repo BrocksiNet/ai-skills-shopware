@@ -13,7 +13,8 @@ fi
 has_meteor=0
 has_native=0
 
-grep -qE 'mt-modal|sw-modal' "$file" && has_meteor=1
+# Starting fixture has no local sw-modal; a newly introduced sw-modal is a bypass.
+grep -qE 'mt-modal' "$file" && has_meteor=1
 if grep -qE '<dialog|HTMLDialogElement|showModal\s*\(|popovertarget|\spopover=|\spopover[\s>]|showPopover\s*\(|togglePopover\s*\(' "$file"; then
   has_native=1
 fi

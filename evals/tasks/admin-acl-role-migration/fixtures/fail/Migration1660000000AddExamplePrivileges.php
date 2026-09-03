@@ -18,7 +18,8 @@ final class Migration1660000000AddExamplePrivileges extends MigrationStep
             <<<'SQL'
 UPDATE acl_role
 SET privileges = JSON_ARRAY_APPEND(privileges, '$', :privilege)
-WHERE active = 1
+WHERE JSON_CONTAINS(privileges, JSON_QUOTE('swag_example.viewer'))
+  AND NOT JSON_CONTAINS(privileges, JSON_QUOTE('product:read'))
 SQL,
             ['privilege' => 'product:read']
         );

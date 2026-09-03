@@ -10,6 +10,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- Fifth Copilot pass: ACL mapping must use `roles.viewer.privileges`,
+  `mt-modal` is required when the module has no local `sw-modal`,
+  `StaticEntityRepository` assertions must observe `load()`, and
+  `setAutoExit(false)` must run before `Application::run()`. Twig
+  snippet tokens must sit inside the overridden block. MWG license
+  note is Apache-2.0.
 - ACL WHERE must select `swag_example.viewer` (not any filter), named
   arguments must keep `true` / `0` / `null`, and UPGRADE past tense is
   scoped to the CartProcessor section.
@@ -57,7 +63,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   `upgrade-entry-past-tense`, `storefront-no-blocking-nostore-ajax`,
   `storefront-twig-block-snippet`, `test-no-exit-die`,
   `static-entity-repository-stub`, `code-coverage-ignore-passthrough`,
-  `mwg-only-after-shopware-primitive`.
+  `mwg-only-after-shopware-primitive`, `admin-js-implementation-to-ts`,
+  `storefront-no-sw-csrf`.
 - Skills: `shopware-storefront`, `shopware-admin-js`.
 - Use-case: `use-cases/storefront-development.md`.
 - Modern Web Guidance as an optional CLI lookup (not a vendored skill).
