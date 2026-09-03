@@ -17,6 +17,7 @@ has_window_unlisten=0
 has_raw_listener=0
 has_plugin_class=0
 
+plugin_file="$(grep -rlE --include='*.js' 'extends[[:space:]]+Plugin' "$WORKDIR" 2>/dev/null | head -n1 || true)"
 js_flat="$(find "$WORKDIR" -name '*.js' -print0 | xargs -0 cat | tr '\n' ' ')"
 
 printf '%s' "$js_flat" | grep -qE 'window\.PluginManager\.register\s*\(' && has_window_register=1
@@ -26,17 +27,18 @@ fi
 if grep -rqE --include='*.twig' --include='*.html' 'data-scroll-hint' "$WORKDIR"; then
   has_host=1
 fi
-if printf '%s' "$js_flat" | grep -qE 'window\.addEventListener\s*\(\s*['\''"]scroll['\''"]'; then
-  has_window_listen=1
-fi
-if printf '%s' "$js_flat" | grep -qE 'window\.removeEventListener\s*\(\s*['\''"]scroll['\''"]'; then
-  has_window_unlisten=1
+# Listeners must live on the Plugin subclass, not on a global main.js leftover.
+if [[ -n "$plugin_file" ]]; then
+  has_plugin_class=1
+  if grep -qE -- 'window\.addEventListener\s*\(\s*['\''"]scroll['\''"]' "$plugin_file"; then
+    has_window_listen=1
+  fi
+  if grep -qE -- 'window\.removeEventListener\s*\(\s*['\''"]scroll['\''"]' "$plugin_file"; then
+    has_window_unlisten=1
+  fi
 fi
 if printf '%s' "$js_flat" | grep -qE 'document\.addEventListener\s*\('; then
   has_raw_listener=1
-fi
-if printf '%s' "$js_flat" | grep -qE 'extends Plugin'; then
-  has_plugin_class=1
 fi
 
 score=0

@@ -3,7 +3,7 @@
 set -euo pipefail
 
 WORKDIR="${WORKDIR:?WORKDIR not set}"
-php="$(find "$WORKDIR" -name '*.php' | head -n1 || true)"
+php="$(grep -rlE --include='*.php' 'extends[[:space:]]+MigrationStep' "$WORKDIR" 2>/dev/null | head -n1 || true)"
 
 has_mapping=0
 has_privilege=0
@@ -33,19 +33,23 @@ fi
 if printf '%s' "$js_flat" | grep -qE 'privileges\s*:\s*\{\s*viewer\s*:'; then
   has_invalid_shape=1
 fi
-if [[ -n "$php" ]]; then
-  grep -q 'acl_role' "$php" && has_migration=1
-  grep -q "product:read" "$php" && appends_product=1
-  if grep -qE "JSON_CONTAINS\s*\(\s*privileges\s*,\s*JSON_QUOTE\s*\(\s*'swag_example\.viewer'\s*\)" "$php"; then
-    has_role_guard=1
-  fi
-  if grep -qE "NOT[[:space:]]+JSON_CONTAINS\s*\(\s*privileges\s*,\s*JSON_QUOTE\s*\(\s*'product:read'\s*\)" "$php"; then
-    has_idempotent=1
+if [[ -n "$php" ]] && grep -qE 'function[[:space:]]+update[[:space:]]*\(' "$php"; then
+  has_migration=1
+  flat="$(tr '\n' ' ' < "$php")"
+  # Guarded UPDATE must live in update(), not in comments on a dummy PHP file.
+  if printf '%s' "$flat" | grep -qE 'function[[:space:]]+update[[:space:]]*\(.*UPDATE[[:space:]]+acl_role'; then
+    grep -q "product:read" "$php" && appends_product=1
+    if printf '%s' "$flat" | grep -qE "function[[:space:]]+update[[:space:]]*\(.*JSON_CONTAINS\s*\(\s*privileges\s*,\s*JSON_QUOTE\s*\(\s*'swag_example\.viewer'\s*\)"; then
+      has_role_guard=1
+    fi
+    if printf '%s' "$flat" | grep -qE "function[[:space:]]+update[[:space:]]*\(.*NOT[[:space:]]+JSON_CONTAINS\s*\(\s*privileges\s*,\s*JSON_QUOTE\s*\(\s*'product:read'\s*\)"; then
+      has_idempotent=1
+    fi
   fi
   if grep -qE "'privilege'\s*=>\s*'swag_example\.viewer'" "$php"; then
     overgrant=1
   fi
-  if grep -qE 'UPDATE[[:space:]]+acl_role' "$php" && [[ "$has_role_guard" -eq 0 ]]; then
+  if printf '%s' "$flat" | grep -qE 'function[[:space:]]+update[[:space:]]*\(.*UPDATE[[:space:]]+acl_role' && [[ "$has_role_guard" -eq 0 ]]; then
     overgrant=1
   fi
 fi

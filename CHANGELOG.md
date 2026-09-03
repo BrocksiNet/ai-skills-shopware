@@ -10,6 +10,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- Sixth Copilot pass: ACL SQL must live in a `MigrationStep::update()`,
+  PR trailer evals keep each section's description, listing evals keep
+  `ListingPageController`, and PluginManager listeners must sit on the
+  plugin class rather than in `main.js`.
 - Fifth Copilot pass: ACL mapping must use `roles.viewer.privileges`,
   `mt-modal` is required when the module has no local `sw-modal`,
   `StaticEntityRepository` assertions must observe `load()`, and
