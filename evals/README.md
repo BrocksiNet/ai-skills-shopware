@@ -20,7 +20,7 @@ tasks/<rule>/
 ├── instruction.md     # the prompt given to the agent
 ├── fixture/           # starting code copied into the agent's working dir
 ├── fixtures/pass/     # golden workdir that must PASS grade.sh (CI)
-├── fixtures/fail/     # optional sneak-FAIL golden (tested in addition to fixture/)
+├── fixtures/fail/     # required sneak-FAIL for new graders (almost-pass)
 └── grade.sh           # deterministic grader (exit 0 = pass)
 ```
 
@@ -35,8 +35,14 @@ chmod +x evals/test-graders.sh evals/tasks/*/grade.sh
 - `TRANSCRIPT` — path to a file containing the agent's textual output.
 
 Graders prefer deterministic Shopware tooling (PHPStan/ECS/PHPUnit) and
-grep/AST checks over LLM-as-judge. LLM-judge is a documented fallback for fuzzy
-rules only.
+scoped grep/AST checks over LLM-as-judge. LLM-judge is a documented fallback
+for fuzzy rules only.
+
+Check the **relationship** the rule cares about (this method, this mapping
+object, this Twig block), not that tokens appear somewhere in the workdir.
+Shared helpers: [`grade-helpers.sh`](grade-helpers.sh) (`grade_without_comments`,
+`grade_php_method_flat`). A comment, leftover file, or unused call is not a
+pass. New graders must ship `fixtures/fail/` as an almost-correct sneak.
 
 ## Layer 3 — A/B ablation (`runner/`)
 

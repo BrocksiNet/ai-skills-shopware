@@ -2,6 +2,9 @@
 # Grader: admin-jest-colocated-spec
 set -euo pipefail
 
+# shellcheck source=../../grade-helpers.sh
+source "$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)/grade-helpers.sh"
+
 WORKDIR="${WORKDIR:?WORKDIR not set}"
 
 has_source=0
@@ -22,9 +25,14 @@ if find "$WORKDIR" -path '*/product-card.spec.ts' | grep -q .; then
   if [[ "$(wc -l < "$spec")" -ge 500 ]]; then
     oversized=1
   fi
-  grep -qE '\b(describe|it|test)\s*\(' "$spec" && has_case=1
-  grep -qE '\bexpect\s*\(' "$spec" && has_assert=1
-  grep -qE 'ProductCard|product-card' "$spec" && uses_subject=1
+  code="$(grade_without_comments "$spec")"
+  printf '%s' "$code" | grep -qE '\b(describe|it|test)\s*\(' && has_case=1
+  # Import the component and assert on it (not a tautology / comment token).
+  if printf '%s' "$code" | grep -qE "import[[:space:]]+ProductCard[[:space:]]+from[[:space:]]+['\"]\\./product-card['\"]" \
+    && printf '%s' "$code" | grep -qE 'expect\s*\(\s*ProductCard'; then
+    has_assert=1
+    uses_subject=1
+  fi
 fi
 if find "$WORKDIR" -path '*/tests/*' -name '*.spec.ts' | grep -q .; then
   has_tests_dir=1

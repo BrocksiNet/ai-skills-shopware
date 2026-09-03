@@ -2,6 +2,9 @@
 # Grader: admin-use-mt-modal
 set -euo pipefail
 
+# shellcheck source=../../grade-helpers.sh
+source "$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)/grade-helpers.sh"
+
 WORKDIR="${WORKDIR:?WORKDIR not set}"
 file="$(grep -rl --include='*.ts' --include='*.js' --include='*.vue' 'ProductDeleteModal\|product-delete-modal' "$WORKDIR" 2>/dev/null | head -n1 || true)"
 
@@ -13,9 +16,10 @@ fi
 has_meteor=0
 has_native=0
 
-# Starting fixture has no local sw-modal; a newly introduced sw-modal is a bypass.
-grep -qE 'mt-modal' "$file" && has_meteor=1
-if grep -qE '<dialog|HTMLDialogElement|showModal\s*\(|popovertarget|\spopover=|\spopover[\s>]|showPopover\s*\(|togglePopover\s*\(' "$file"; then
+code="$(grade_without_comments "$file")"
+# Starting fixture has no local sw-modal; require the Meteor tag in markup.
+printf '%s' "$code" | grep -qE '<mt-modal[[:space:]/>]' && has_meteor=1
+if printf '%s' "$code" | grep -qE '<dialog|HTMLDialogElement|showModal\s*\(|popovertarget|\spopover=|\spopover[\s>]|showPopover\s*\(|togglePopover\s*\('; then
   has_native=1
 fi
 

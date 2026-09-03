@@ -2,6 +2,9 @@
 # Grader: test-no-exit-die
 set -euo pipefail
 
+# shellcheck source=../../grade-helpers.sh
+source "$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)/grade-helpers.sh"
+
 WORKDIR="${WORKDIR:?WORKDIR not set}"
 file="$(grep -rl --include='*.php' 'ConsoleCommandTest' "$WORKDIR" 2>/dev/null | head -n1 || true)"
 
@@ -16,18 +19,16 @@ has_order=0
 has_kill=0
 keeps_assert=0
 
-flat="$(tr '\n' ' ' < "$file")"
+code="$(grade_without_comments "$file")"
+flat="$(printf '%s' "$code" | tr '\n' ' ')"
 printf '%s' "$flat" | grep -qE -- '->setAutoExit\s*\(\s*false\s*\)' && has_auto=1
 printf '%s' "$flat" | grep -qE -- '->run\s*\(' && has_run=1
 # Default auto-exit kills PHPUnit if run() happens first.
 if printf '%s' "$flat" | grep -qE 'setAutoExit\s*\(\s*false\s*\).*->run\s*\('; then
   has_order=1
 fi
-if grep -qE '\b(exit|die)\b' "$file"; then
+if printf '%s' "$code" | grep -qE '\b(exit|die)\b'; then
   has_kill=1
-fi
-if grep -qE -- 'assert(True|Same)\s*\(.*->has\s*\(\s*['\''"]swag:example:dump['\''"]' "$file"; then
-  keeps_assert=1
 fi
 if printf '%s' "$flat" | grep -qE 'assert(True|Same)\s*\([^;]*->has\s*\(\s*['\''"]swag:example:dump['\''"]'; then
   keeps_assert=1

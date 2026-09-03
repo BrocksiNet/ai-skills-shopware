@@ -2,6 +2,9 @@
 # Grader: admin-js-implementation-to-ts
 set -euo pipefail
 
+# shellcheck source=../../grade-helpers.sh
+source "$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)/grade-helpers.sh"
+
 WORKDIR="${WORKDIR:?WORKDIR not set}"
 
 has_impl_ts=0
@@ -18,14 +21,19 @@ main_ts="$(find "$WORKDIR" -path '*/administration/src/main.ts' | head -n1 || tr
 
 if [[ -n "$impl_ts" ]]; then
   has_impl_ts=1
-  if grep -qE 'export[[:space:]]+default' "$impl_ts" && grep -qE 'swag-example-product-card' "$impl_ts"; then
+  code="$(grade_without_comments "$impl_ts")"
+  if printf '%s' "$code" | grep -qE 'export[[:space:]]+default' \
+    && printf '%s' "$code" | grep -qE 'swag-example-product-card'; then
     has_export=1
   fi
 fi
 [[ -n "$impl_js" ]] && has_impl_js=1
 if [[ -n "$main_js" ]]; then
   has_main_js=1
-  grep -qE 'product-card' "$main_js" && main_imports=1
+  main_code="$(grade_without_comments "$main_js")"
+  if printf '%s' "$main_code" | grep -qE "import[[:space:]]+['\"][^'\"]*product-card['\"]"; then
+    main_imports=1
+  fi
 fi
 [[ -n "$main_ts" ]] && has_main_ts=1
 

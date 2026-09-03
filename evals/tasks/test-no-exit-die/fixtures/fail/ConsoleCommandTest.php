@@ -20,8 +20,8 @@ final class ConsoleCommandTest extends TestCase
     {
         $application = new Application();
         $application->add(new DumpCommand());
+        // $application->setAutoExit(false);
         $application->run(new ArrayInput(['command' => 'swag:example:dump']), new NullOutput());
-        $application->setAutoExit(false);
 
         $this->assertTrue($application->has('swag:example:dump'));
     }

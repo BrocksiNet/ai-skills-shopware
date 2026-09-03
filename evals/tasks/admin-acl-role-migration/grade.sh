@@ -2,8 +2,12 @@
 # Grader: admin-acl-role-migration
 set -euo pipefail
 
+# shellcheck source=../../grade-helpers.sh
+source "$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)/grade-helpers.sh"
+
 WORKDIR="${WORKDIR:?WORKDIR not set}"
 php="$(grep -rlE --include='*.php' 'extends[[:space:]]+MigrationStep' "$WORKDIR" 2>/dev/null | head -n1 || true)"
+index="$(find "$WORKDIR" \( -path '*/swag-example/index.js' -o -path '*/swag-example/index.ts' \) | head -n1 || true)"
 
 has_mapping=0
 has_privilege=0
@@ -17,13 +21,12 @@ overgrant=0
 keeps_module=0
 
 js_flat=""
-while IFS= read -r f; do
-  js_flat+="$(tr '\n' ' ' < "$f") "
-done < <(find "$WORKDIR" \( -name '*.js' -o -name '*.ts' \) -print)
+if [[ -n "$index" ]]; then
+  js_flat="$(grade_without_comments "$index" | tr '\n' ' ')"
+fi
 
 printf '%s' "$js_flat" | grep -qE 'addPrivilegeMappingEntry\s*\(' && has_mapping=1
 printf '%s' "$js_flat" | grep -qE "product:read" && has_privilege=1
-# Shopware isPrivilegeMapping requires roles: { viewer: { privileges: [...], dependencies: [...] } }
 if printf '%s' "$js_flat" | grep -qE 'roles\s*:\s*\{' \
   && printf '%s' "$js_flat" | grep -qE 'viewer\s*:\s*\{' \
   && printf '%s' "$js_flat" | grep -qE 'privileges\s*:\s*\[' \
@@ -35,21 +38,22 @@ if printf '%s' "$js_flat" | grep -qE 'privileges\s*:\s*\{\s*viewer\s*:'; then
 fi
 if [[ -n "$php" ]] && grep -qE 'function[[:space:]]+update[[:space:]]*\(' "$php"; then
   has_migration=1
-  flat="$(tr '\n' ' ' < "$php")"
-  # Guarded UPDATE must live in update(), not in comments on a dummy PHP file.
-  if printf '%s' "$flat" | grep -qE 'function[[:space:]]+update[[:space:]]*\(.*UPDATE[[:space:]]+acl_role'; then
-    grep -q "product:read" "$php" && appends_product=1
-    if printf '%s' "$flat" | grep -qE "function[[:space:]]+update[[:space:]]*\(.*JSON_CONTAINS\s*\(\s*privileges\s*,\s*JSON_QUOTE\s*\(\s*'swag_example\.viewer'\s*\)"; then
+  update="$(grade_php_method_flat "$php" update)"
+  if printf '%s' "$update" | grep -qE 'UPDATE[[:space:]]+acl_role'; then
+    if printf '%s' "$update" | grep -qE "'privilege'\s*=>\s*'product:read'"; then
+      appends_product=1
+    fi
+    if printf '%s' "$update" | grep -qE "JSON_CONTAINS\s*\(\s*privileges\s*,\s*JSON_QUOTE\s*\(\s*'swag_example\.viewer'\s*\)"; then
       has_role_guard=1
     fi
-    if printf '%s' "$flat" | grep -qE "function[[:space:]]+update[[:space:]]*\(.*NOT[[:space:]]+JSON_CONTAINS\s*\(\s*privileges\s*,\s*JSON_QUOTE\s*\(\s*'product:read'\s*\)"; then
+    if printf '%s' "$update" | grep -qE "NOT[[:space:]]+JSON_CONTAINS\s*\(\s*privileges\s*,\s*JSON_QUOTE\s*\(\s*'product:read'\s*\)"; then
       has_idempotent=1
     fi
   fi
-  if grep -qE "'privilege'\s*=>\s*'swag_example\.viewer'" "$php"; then
+  if printf '%s' "$update" | grep -qE "'privilege'\s*=>\s*'swag_example\.viewer'"; then
     overgrant=1
   fi
-  if printf '%s' "$flat" | grep -qE 'function[[:space:]]+update[[:space:]]*\(.*UPDATE[[:space:]]+acl_role' && [[ "$has_role_guard" -eq 0 ]]; then
+  if printf '%s' "$update" | grep -qE 'UPDATE[[:space:]]+acl_role' && [[ "$has_role_guard" -eq 0 ]]; then
     overgrant=1
   fi
 fi

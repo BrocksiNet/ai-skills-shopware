@@ -2,6 +2,9 @@
 # Grader: mwg-only-after-shopware-primitive
 set -euo pipefail
 
+# shellcheck source=../../grade-helpers.sh
+source "$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)/grade-helpers.sh"
+
 WORKDIR="${WORKDIR:?WORKDIR not set}"
 file="$(find "$WORKDIR" -name 'product-card.html.twig' | head -n1 || true)"
 
@@ -14,10 +17,11 @@ has_bootstrap=0
 has_native=0
 has_mwg_skill=0
 
-if grep -qE 'data-bs-toggle="modal"|js-modal|modal fade' "$file"; then
+code="$(grade_without_comments "$file")"
+if printf '%s' "$code" | grep -qE 'data-bs-toggle="modal"|data-bs-target='; then
   has_bootstrap=1
 fi
-if grep -qE '<dialog|showModal\s*\(|popovertarget|\spopover=' "$file"; then
+if printf '%s' "$code" | grep -qE '<dialog|showModal\s*\(|popovertarget|\spopover='; then
   has_native=1
 fi
 if find "$WORKDIR" -iname '*modern-web-guidance*' -name 'SKILL.md' | grep -q .; then

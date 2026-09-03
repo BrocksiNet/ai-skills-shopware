@@ -6,7 +6,12 @@ use Shopware\Core\Framework\Deprecation\BCChange\ParameterTypeNarrowing;
 
 final class LegacyIdLoader
 {
-    #[ParameterTypeNarrowing(version: 'v6.7.0', parameterName: 'identifier', newType: 'int')]
+    #[ParameterTypeNarrowing(version: 'v6.8.0', parameterName: 'id', newType: 'string')]
+    private function unused(string|int $id): string
+    {
+        return (string) $id;
+    }
+
     public function load(string|int $id): string
     {
         return (string) $id;

@@ -1,9 +1,10 @@
 const ProductDeleteModal = {
     template: `
-        <sw-modal class="product-delete-modal">
+        <div class="product-delete-modal">
+            <!-- mt-modal -->
             <p>Delete this product?</p>
             <button type="button">Confirm</button>
-        </sw-modal>
+        </div>
     `,
 };
 

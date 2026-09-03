@@ -10,6 +10,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- Adversarial grader pass: scoped helpers strip comments and extract PHP
+  methods; new graders must check the subject relationship, not leftover
+  tokens. Almost-pass sneak-fails added or replaced for ACL, modal, Jest,
+  JS-to-TS, coverage ignore, DI tags, BCChange, `setAutoExit`, MWG, and
+  `CoversClass`.
 - Sixth Copilot pass: ACL SQL must live in a `MigrationStep::update()`,
   PR trailer evals keep each section's description, listing evals keep
   `ListingPageController`, and PluginManager listeners must sit on the

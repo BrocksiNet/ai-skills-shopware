@@ -17,7 +17,9 @@ keeps_ref=0
 
 grep -q 'swag.example.legacy_loader' "$xml" && has_service=1
 grep -qE 'deprecated=' "$xml" && has_deprecated=1
-if grep -q 'swag.example.legacy_loader' "$xml" && grep -q 'LegacyLoader' "$php"; then
+# Core still injects the service; a leftover class name is not a reference.
+if grep -qE '<argument[^>]*id="swag.example.legacy_loader"' "$xml" \
+  && grep -qE 'LegacyLoader' "$php"; then
   keeps_ref=1
 fi
 

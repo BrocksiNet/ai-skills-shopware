@@ -3,9 +3,7 @@
            xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
            xsi:schemaLocation="http://symfony.com/schema/dic/services https://symfony.com/schema/dic/services/services-1.0.xsd">
     <services>
-        <service id="swag.example.legacy_loader" class="Swag\Example\LegacyLoader" deprecated="Use Swag\Example\CurrentLoader instead"/>
-        <service id="Swag\Example\LegacyCaller">
-            <argument type="service" id="swag.example.legacy_loader"/>
-        </service>
+        <service id="swag.example.legacy_loader" class="Swag\Example\LegacyLoader"/>
+        <service id="Swag\Example\LegacyCaller"/>
     </services>
 </container>

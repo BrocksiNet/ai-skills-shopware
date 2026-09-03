@@ -99,14 +99,18 @@ when present) over LLM-as-judge. Golden fixtures in `fixtures/pass/` and
 Before you ship a `grade.sh`, check these yourself (Copilot keeps finding
 the same holes):
 
-- Wire every required token to the subject. An unused `::of()`, a filename,
-  or an empty `*.spec.ts` is not a pass.
+- Prefer the **structural relationship** that matters over “several strings
+  occur somewhere”. Scope checks to the subject file, method, class, or
+  template block. Source [`evals/grade-helpers.sh`](evals/grade-helpers.sh)
+  for comment-stripping and PHP method extraction.
+- A token in a comment, leftover file, or unused call is not a pass.
 - Accept common compliant rewrites (receiver variables, named-arg order,
   async `import()`, official `main.js` / `mt-popover`).
 - Do not forbid an allowed API (client `fetch({ cache: 'no-store' })` is
   not a document-cache header).
-- `fixtures/fail/` must be a sneak: almost-pass that the old loose check
-  would have accepted.
+- New graders need `fixtures/fail/` as an **almost-pass sneak** (what a
+  token-only check would have accepted). The pristine `fixture/` start
+  dir is not that sneak.
 
 ## Adding or changing a rule
 
