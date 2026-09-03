@@ -21,19 +21,22 @@ overgrant=0
 keeps_module=0
 
 js_flat=""
+mapping=""
 if [[ -n "$index" ]]; then
   js_flat="$(grade_without_comments "$index" | tr '\n' ' ')"
+  mapping="$(grade_js_call_args "$index" addPrivilegeMappingEntry | tr '\n' ' ')"
 fi
 
-printf '%s' "$js_flat" | grep -qE 'addPrivilegeMappingEntry\s*\(' && has_mapping=1
-printf '%s' "$js_flat" | grep -qE "product:read" && has_privilege=1
-if printf '%s' "$js_flat" | grep -qE 'roles\s*:\s*\{' \
-  && printf '%s' "$js_flat" | grep -qE 'viewer\s*:\s*\{' \
-  && printf '%s' "$js_flat" | grep -qE 'privileges\s*:\s*\[' \
-  && printf '%s' "$js_flat" | grep -qE 'dependencies\s*:\s*\['; then
+[[ -n "$mapping" ]] && has_mapping=1
+printf '%s' "$mapping" | grep -qE "product:read" && has_privilege=1
+# Shape must belong to the mapping argument, not a leftover object.
+if printf '%s' "$mapping" | grep -qE 'roles\s*:\s*\{' \
+  && printf '%s' "$mapping" | grep -qE 'viewer\s*:\s*\{' \
+  && printf '%s' "$mapping" | grep -qE 'privileges\s*:\s*\[' \
+  && printf '%s' "$mapping" | grep -qE 'dependencies\s*:\s*\['; then
   has_roles_shape=1
 fi
-if printf '%s' "$js_flat" | grep -qE 'privileges\s*:\s*\{\s*viewer\s*:'; then
+if printf '%s' "$mapping" | grep -qE 'privileges\s*:\s*\{\s*viewer\s*:'; then
   has_invalid_shape=1
 fi
 if [[ -n "$php" ]] && grep -qE 'function[[:space:]]+update[[:space:]]*\(' "$php"; then

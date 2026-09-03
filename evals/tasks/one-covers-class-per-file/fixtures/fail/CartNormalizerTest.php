@@ -10,7 +10,7 @@ use Shopware\Core\Framework\Log\Package;
  * @internal
  */
 #[Package('checkout.cart')]
-#[CoversClass(LineItemHelper::class)]
+// #[CoversClass(CartNormalizer::class)]
 final class CartNormalizerTest extends TestCase
 {
     public function testNormalizeReturnsIdShape(): void

@@ -10,6 +10,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- PHP method flatten strips comments first; ACL mapping shape is read
+  from the `addPrivilegeMappingEntry()` argument; `CoversClass` ignores
+  commented-out attributes.
 - Adversarial grader pass: scoped helpers strip comments and extract PHP
   methods; new graders must check the subject relationship, not leftover
   tokens. Almost-pass sneak-fails added or replaced for ACL, modal, Jest,

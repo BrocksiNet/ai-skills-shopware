@@ -18,7 +18,7 @@ has_import=0
 has_reason=0
 keeps_union=0
 
-flat="$(grade_flat "$file")"
+flat="$(grade_without_comments "$file" | tr '\n' ' ')"
 # Attribute must sit on load(), not an unused helper. Named-arg order may vary.
 chunk="$(printf '%s' "$flat" | grep -oE "#\[ParameterTypeNarrowing\([^]]+\)\][[:space:]]*(public|protected|private|final|static|[[:space:]])*function[[:space:]]+load\s*\(" | head -n1 || true)"
 if printf '%s' "$chunk" | grep -qE "version:\s*'v6\.8\.0'" \
