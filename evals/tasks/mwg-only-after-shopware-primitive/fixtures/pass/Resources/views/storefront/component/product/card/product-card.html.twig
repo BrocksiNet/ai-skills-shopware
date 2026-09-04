@@ -1,0 +1,10 @@
+{% block component_product_box %}
+    <button type="button" class="btn" data-bs-toggle="modal" data-bs-target="#product-quickview">
+        {{ 'listing.quickView'|trans }}
+    </button>
+    <div class="modal fade" id="product-quickview" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">Quick view</div>
+        </div>
+    </div>
+{% endblock %}

@@ -1,12 +1,17 @@
-# Core PR #17657 alignment (ai-skills-shopware owns skills)
+# Core skill alignment (ai-skills-shopware owns skills)
 
-We **mine** [shopware/shopware#17657](https://github.com/shopware/shopware/pull/17657) for
-maintainer-backed deltas. We do **not** copy core’s in-repo skills — this repo
-stays the single source of truth for plugins, older core branches, and eval-backed
-rules (`sw-dev link`, install profiles in [`skill-resolution.md`](skill-resolution.md)).
+We **mine** `shopware/shopware` trunk `.agents/skills/` for maintainer-backed
+deltas. We do **not** copy core’s in-repo skills — this repo stays the single
+source of truth for plugins, older core branches, and eval-backed rules
+(`sw-dev link`, install profiles in [`skill-resolution.md`](skill-resolution.md)).
 
-**Status:** merged to trunk (2026-06-26). Canonical path: `.agents/skills/`;
-`.claude/skills` → symlink.
+Seed PR: [#17657](https://github.com/shopware/shopware/pull/17657) (merged
+2026-06-26). **Last mined:** trunk 2026-09-01. Canonical path:
+`.agents/skills/`; `.claude/skills` → symlink.
+
+Catalog since #17657 is unchanged (no new skill names, still no storefront
+skill). Content drift is in `shopware-php-code`, `shopware-phpunit-tests`, and
+`shopware-release-docs`.
 
 Status key: **done** | **partial** | **skip** | **eval:TBD** | **defer-on-trunk**
 
@@ -19,7 +24,7 @@ Status key: **done** | **partial** | **skip** | **eval:TBD** | **defer-on-trunk*
 | `shopware-pr-hygiene` | `shopware-pr-description` | **defer** |
 | `shopware-change-scope` | `shopware-review-learnings` → change-scope | **defer** |
 | `shopware-release-docs` | `shopware-core-development` → release-notes | **defer** |
-| `shopware-admin-js` | — | skip (not in our repo) |
+| `shopware-admin-js` | `shopware-admin-js` | **done** (mined; defer short list on trunk) |
 | `shopware-knowledge-capture` | `AGENTS.md` / REGISTRY | skip |
 | `nightly-triage` | — | skip (gh-aw CI sweeps) |
 | `sw-triage`, `sw-review`, `sw-bugfixer` | — | skip (gh-aw; explicit invocation only) |
@@ -30,7 +35,15 @@ Status key: **done** | **partial** | **skip** | **eval:TBD** | **defer-on-trunk*
 | -------------- | ------ | ---- |
 | Tests as executable examples; scenario wiring visible in test body | `references/test-shape-and-flags.md` | defer-on-trunk |
 | Stable boilerplate in `setUp()`; shared collaborators when identity matters | same | defer-on-trunk |
-| Unit filesystem: `Filesystem` mock vs committed `_fixtures` | same | defer-on-trunk |
+| Unit filesystem: `Filesystem` mock vs committed `_fixtures`; write disk via `Filesystem` | same | **done** (documented) |
+| Never `exit()` / `die()` in tests; `setAutoExit(false)` | same | defer-on-trunk (documented) |
+| No `ReflectionMethod::invoke` on Shopware privates | same | **done** → `no-reflection-on-shopware-method` |
+| One `#[CoversClass]` per unit/migration file | `core-platform-patterns.md` | **done** → `one-covers-class-per-file` |
+| Test `#[Package]` must match owning class (`TestPackageMatchRule`) | same | **done** (documented; existence eval already) |
+| Every test class `@internal` | same | **done** → `test-class-marked-internal` |
+| `StaticEntityRepository` generic inference / `::of()` | `test-shape-and-flags.md` | defer-on-trunk (documented) |
+| Named arguments on helper/builder literals | same + `php-foundation` | **done** (documented) |
+| `@codeCoverageIgnore` pass-through only (`CodeCoverageIgnoreEvaluationRule`) | `core-platform-patterns.md` | defer-on-trunk (documented) |
 | `expectExceptionObject` via domain factory (already covered) | `exception-assertions.md` | done |
 | No DBAL `Connection` behavior-mock in unit tests | `test-shape-and-flags.md` | defer-on-trunk |
 | Unit legacy flags: `#[DisabledFeatures]`; not `Feature::fake()` for current major | `test-shape-and-flags.md` | defer-on-trunk |
@@ -59,13 +72,17 @@ Status key: **done** | **partial** | **skip** | **eval:TBD** | **defer-on-trunk*
 | Plugin/extension OpenAPI for custom routes | `shopware-plugin-development` → `api-contracts.md` | **done** → `store-api-openapi-required` |
 | Run `ApiRoutesHaveASchemaTest` for new/changed core API routes | `api-schema.md` | skip |
 | `Feature::silent()` when core must call deprecated API for BC | `deprecations.md` | **done** → `deprecation-silent-wrapper` |
+| Plan major breaks with `BCChange` attributes, not `@deprecated reason:*` | `deprecations.md` | **done** → `bc-change-not-deprecated-reason` |
+| Do not `<deprecated>` a DI service id core still references | `deprecations.md` | **done** (documented) |
+| Symfony `Filesystem` instead of raw PHP file functions | `service-architecture.md` | **done** → `symfony-filesystem-over-raw-php` |
 | Progressive enhancement / dual path behind flag | `shopware-architecture` → `progressive-enhancement.md` | **done** → `core-http-client-behind-flag` |
 | No new code paths calling deprecated APIs; move callers to replacement | `deprecations.md` | defer-on-trunk |
 | Inline `// @deprecated tag:` for private cleanup (not method `@deprecated`) | `deprecations.md` | defer-on-trunk |
 | Legacy tests for deprecated APIs; removable with flag/deprecation | `deprecations.md` | defer-on-trunk |
 | Migration class/file/`getCreationTimestamp()` = exact current Unix timestamp | `platform-architecture.md` | **done** → `migration-timestamp-format` |
 | No tests for empty/no-op `updateDestructive()` | `platform-architecture.md` | defer-on-trunk |
-| Release docs: external perspective; separate API vs Core sections | `release-notes-and-adr.md` | defer-on-trunk |
+| Release docs: external perspective; separate API vs Core sections | `release-notes-and-adr.md` | **done** (documented) |
+| `UPGRADE` = must third-party code change?; past tense; no repeated headings | `release-notes-and-adr.md` | **done** (documented) |
 
 ## Security (`shopware-security`) — ours only
 
@@ -82,6 +99,7 @@ Status key: **done** | **partial** | **skip** | **eval:TBD** | **defer-on-trunk*
 | Follow `.github/PULL_REQUEST_TEMPLATE.md`; no extra PR sections | `shopware-pr-description` | defer-on-trunk |
 | Conventional PR title when requested | `pr-body-template.md` | defer-on-trunk |
 | Review/CI fixes → new commit; no amend/force-push unless asked | `shopware-pr-description` + `shopware-pr-review` | defer-on-trunk |
+| No AI-agent attribution trailers (`Co-authored-by`, …) | `shopware-pr-description` | **done** (documented) |
 
 ## Review scope (`shopware-review-learnings`)
 
@@ -95,6 +113,6 @@ Status key: **done** | **partial** | **skip** | **eval:TBD** | **defer-on-trunk*
 
 | PR skill / rule | Reason |
 | --------------- | ------ |
-| `shopware-admin-js` | Admin JS not in our skill set yet |
+| `shopware-admin-js` | mined into our `shopware-admin-js`; defer short list on trunk |
 | `shopware-knowledge-capture` | Overlaps our `AGENTS.md` / REGISTRY curation |
 | `triage`, `sw-review` | Core gh-aw / internal review workflow |

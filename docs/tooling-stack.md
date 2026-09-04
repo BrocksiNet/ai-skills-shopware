@@ -102,6 +102,7 @@ Skip js-admin / js-storefront if you are not touching those trees in that sessio
 | test-writing plugin + phpunit-unit-test-writing skill | You only need `shopware-testing` + manual phpunit runs |
 | chunkhound | ripgrep + LSP is enough |
 | contributor-writing skills in plugin | You already have `shopware-pr-description` + `shopware-core-development` |
+| [Modern Web Guidance](https://github.com/GoogleChrome/modern-web-guidance) CLI for generic CSS/HTML/JS APIs | Storefront/Admin work that should use Shopware primitives (Twig, Bootstrap, `PluginManager`, `mt-*`). Do **not** install their `SKILL.md` next to ours — it claims every frontend task. Call `npx -y modern-web-guidance@latest search "…"` from `shopware-research-and-escalation` / the frontend skills instead. Set `DISABLE_TELEMETRY=1` to opt out of Google search-string telemetry. |
 
 ## Fix the plugin vs replace it
 

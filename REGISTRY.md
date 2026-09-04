@@ -29,6 +29,8 @@ the surface skills can all be installed together without contradicting (see
 | `shopware-assistant-style` | maintainer | any communication | Support ticket replies, short/plain answers, copy-ready customer text | Code rules, PR templates, release notes |
 | `shopware-pr-review` | maintainer | PR review threads | Reacting to GitHub review comments, fix vs reply vs push back | Initial PR body, generic idiomatic review |
 | `shopware-podman-dev` | maintainer | linked Podman checkout | Running php/composer/phpunit/console/npm in shopware-dev projects | Test structure, PR text, release notes |
+| `shopware-storefront` | maintainer | storefront (Twig/theme/JS) | Storefront plugins, Twig blocks, theme SCSS, HTTP-cache-safe AJAX | Admin Vue, PHP DAL, generic CSS lectures |
+| `shopware-admin-js` | maintainer | Administration JS/TS/Vue | Admin Vue/TS, Meteor `mt-*`, Jest specs, Admin ACL | Storefront Twig, PHPUnit, PHP services |
 
 ## Coverage matrix (one topic → one owning skill)
 
@@ -36,7 +38,7 @@ the surface skills can all be installed together without contradicting (see
 | ----- | ------------ |
 | PHP language baseline (`strict_types`, attributes, `#[\Override]`) | `php-foundation` |
 | Type safety (enums over constants, DTOs/VOs over arrays, generics) | `php-foundation` |
-| Coding style (PER-CS, import usage, `list<>` over `array<>`) | `php-foundation` |
+| Coding style (PER-CS, import usage, `list<>` over `array<>`, named arguments for bare literals) | `php-foundation` |
 | Core contribution process (release notes RELEASE_INFO/UPGRADE, ADR, conventional commits) | `shopware-core-development` |
 | Core service architecture (hexagonal services, public surface vs `@internal`) | `shopware-core-development` |
 | Architecture decisions, DAL boundaries, progressive enhancement, anti-patterns | `shopware-architecture` |
@@ -45,8 +47,9 @@ the surface skills can all be installed together without contradicting (see
 | Secrets, access keys, API ACL, app least privilege | `shopware-security` |
 | Plugin/extension Store-API & Admin OpenAPI contracts | `shopware-plugin-development` |
 | Core Admin/Store API OpenAPI schemas | `shopware-core-development` |
-| Deprecation policy (`Feature::triggerDeprecationOrThrow`, `@deprecated tag:`, `Feature::silent`) | `shopware-core-development` |
+| Deprecation policy (`BCChange` attributes vs `@deprecated tag:`, `Feature::silent`, no DI `<deprecated>` while core still uses the id) | `shopware-core-development` |
 | Core modernization (Symfony behind feature flags, dual paths until major) | `shopware-core-development` |
+| Local filesystem in core PHP (Symfony `Filesystem`, not raw file functions) | `shopware-core-development` |
 | Static-analysis baseline discipline (PHPStan level, shrink-not-delete) | `shopware-core-development` |
 | Public-API / `@internal` boundaries | `shopware-core-development` |
 | Plugin structure & lifecycle (install/activate/uninstall, keepUserData) | `shopware-plugin-development` |
@@ -54,7 +57,7 @@ the surface skills can all be installed together without contradicting (see
 | HTTP cache & cache tags (6.7 `CacheTagCollector`) | `shopware-plugin-development` |
 | Database migrations (`MigrationStep`, destructive/non-destructive) | `shopware-plugin-development` |
 | Version compatibility (6.6 / 6.7) | `shopware-plugin-development` |
-| Symfony-first (HttpClient, Messenger, Validator vs custom code) | `shopware-plugin-development` |
+| Symfony-first (HttpClient, Messenger, Validator, Filesystem vs custom code) | `shopware-plugin-development` |
 | Service decoration & DI registration | `shopware-plugin-development` |
 | App manifest, permissions & lifecycle (`manifest.xml`, `app:install`, requirements) | `shopware-app-development` |
 | App scripts (sandboxed Twig hooks in `Resources/scripts/`) | `shopware-app-development` |
@@ -63,18 +66,26 @@ the surface skills can all be installed together without contradicting (see
 | Integration test wiring (`IntegrationTestBehaviour`, DAL fixtures) | `shopware-testing` |
 | Test data, data providers, assertions | `shopware-testing` |
 | PHPUnit feature flags, `@codeCoverageIgnore`, integration vs unit coverage attrs | `shopware-testing` |
-| `#[Package]` on test classes (core CI routing) | `shopware-testing` |
+| `#[Package]` on test classes (core CI routing; must match owning package) | `shopware-testing` |
+| Test class `@internal`; one `#[CoversClass]` per unit/migration file | `shopware-testing` |
+| No reflection into private/protected Shopware methods in tests | `shopware-testing` |
+| Tests must not `exit()` / `die()`; `setAutoExit(false)` on console `Application` | `shopware-testing` |
+| `StaticEntityRepository` stubbing and generic inference | `shopware-testing` |
 | Recurring review findings (cross-cutting, delta-only) | `shopware-review-learnings` |
 | Bug-fix scope and boyscouting (root cause vs drive-by refactors) | `shopware-review-learnings` |
 | When to research vs proceed; docs map; Context7 | `shopware-research-and-escalation` |
 | What to do when stuck (escalation ladder) | `shopware-research-and-escalation` |
-| shopware/shopware PR body format (GitHub template, copy-paste output) | `shopware-pr-description` |
+| shopware/shopware PR body format (GitHub template, copy-paste output, no AI attribution trailers) | `shopware-pr-description` |
 | PR follow-up commits after review (no amend unless asked) | `shopware-pr-description` |
 | Assistant tone: plain language, concise answers, support-ticket copy blocks | `shopware-assistant-style` |
 | Reacting to GitHub PR review comments (fix / reply / push back, confidence %) | `shopware-pr-review` |
 | Migration tests, Codecov `#[CoversClass]`, core platform test placement | `shopware-testing` |
 | Container execution (Podman/MCP, not host php/composer/phpunit) | `shopware-podman-dev` |
 | shopware-dev hub (`~/shopware-dev`, `sw-dev link`, Mutagen, multi-lane proxy) | `shopware-podman-dev` |
+| Storefront Twig/theme inheritance, PluginManager JS, Bootstrap storefront components | `shopware-storefront` |
+| Storefront HTTP cache vs AJAX; no speculation/prerender on cart/checkout/account | `shopware-storefront` |
+| Administration Vue/TS, Meteor `mt-*`, Jest next to code, Admin ACL + privilege migrations | `shopware-admin-js` |
+| Generic modern CSS/HTML/JS lookup (Modern Web Guidance CLI) after Shopware primitives | `shopware-research-and-escalation` |
 
 ### Precedence (when more than one applies)
 
@@ -92,6 +103,10 @@ the right one activates. There is no project-level "core vs plugin" choice.
    any intentional override explicitly — never silently contradict the base.
 4. `shopware-review-learnings` records findings; it points at the owning skill
    rather than re-defining a topic.
+5. **Frontend is a second axis.** Twig/theme/storefront JS → `shopware-storefront`;
+   Administration Vue/TS → `shopware-admin-js`. Those can sit next to a PHP
+   surface skill in the same plugin. Generic modern CSS/JS lookup after
+   primitives are checked → `shopware-research-and-escalation`.
 
 ## Sources behind the seed (rewritten, not copied)
 
@@ -105,6 +120,8 @@ the right one activates. There is no project-level "core vs plugin" choice.
 | LambdaTest phpunit-skill / mcpmarket php-testing-standards | Generic PHPUnit patterns | rewrite |
 | FriendsOfShopware/agent-skills `shopware-phpunit` | Plugin/integration patterns, fixtures, mocks | link in `shopware-testing/references/external-inspiration.md` |
 | brocksi.net blog (API-aware guidelines, PHPStan+ECS) | Review learnings + Shopware static analysis | own content |
+| Shopware `coding-guidelines/administration/` + Admin `AGENTS.md` | Admin JS/TS/Vue/Jest deltas | rewrite |
+| [GoogleChrome/modern-web-guidance](https://github.com/GoogleChrome/modern-web-guidance) | Optional CLI lookup for generic web-platform APIs | link (do not vendor; Apache-2.0) |
 
 ## Adding a skill or rule
 

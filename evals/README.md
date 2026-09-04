@@ -20,7 +20,7 @@ tasks/<rule>/
 ├── instruction.md     # the prompt given to the agent
 ├── fixture/           # starting code copied into the agent's working dir
 ├── fixtures/pass/     # golden workdir that must PASS grade.sh (CI)
-├── fixtures/fail/     # optional golden FAIL case (else fixture/ is used)
+├── fixtures/fail/     # required sneak-FAIL for new graders (almost-pass)
 └── grade.sh           # deterministic grader (exit 0 = pass)
 ```
 
@@ -35,8 +35,17 @@ chmod +x evals/test-graders.sh evals/tasks/*/grade.sh
 - `TRANSCRIPT` — path to a file containing the agent's textual output.
 
 Graders prefer deterministic Shopware tooling (PHPStan/ECS/PHPUnit) and
-grep/AST checks over LLM-as-judge. LLM-judge is a documented fallback for fuzzy
-rules only.
+scoped grep/AST checks over LLM-as-judge. LLM-judge is a documented fallback
+for fuzzy rules only.
+
+Check the **relationship** the rule cares about (this method, this mapping
+object, this Twig block), not that tokens appear somewhere in the workdir.
+PHP/JS structure graders live in [`tools/ast/`](tools/ast/) (`php-parser` +
+`@babel/parser`); `grade.sh` is a thin wrapper that prints one `score=` line.
+Snippet tests: `cd evals/tools/ast && npm test`. Bash helpers in
+[`grade-helpers.sh`](grade-helpers.sh) stay for comments-as-subject and
+Twig/XML/markdown. A comment, leftover file, or unused call is not a pass.
+New graders must ship `fixtures/fail/` as an almost-correct sneak.
 
 ## Layer 3 — A/B ablation (`runner/`)
 
@@ -79,5 +88,5 @@ every push.
 
 - `bash scripts/validate-skills.sh` + activation evals in dry mode
 - ShellCheck on repo shell scripts (see workflow for paths)
-- `bash evals/test-graders.sh` (golden pass/fail fixtures per task)
+- `node --test` in `evals/tools/ast` plus `bash evals/test-graders.sh`
 - Markdown lint on all `*.md` files

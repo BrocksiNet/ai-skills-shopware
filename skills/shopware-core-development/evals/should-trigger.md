@@ -1,12 +1,17 @@
 # shopware-core-development — should trigger
 
 - I'm contributing to shopware/shopware and need to deprecate this public method.
+- Plan a parameter type narrowing for the next major with a BC-change attribute.
 - Change behavior in src/Core/Checkout without breaking backward compatibility.
 - Add a release note for this core change (RELEASE_INFO / UPGRADE).
+- Add this CartProcessor note to RELEASE_INFO without repeating the Features heading.
+- Rewrite this UPGRADE entry in past tense; developers read it after the major.
+- Do not mark this DI service deprecated while core still injects the id.
 - Add a changelog entry for this core change.
 - Should I write an ADR for switching the cart persistence strategy?
 - I want to raise the PHPStan level in the core repo, what do I need to do?
 - Is removing this public service a breaking change?
 - Mark this new internal class correctly and document it in the release notes.
 - Replace file_get_contents in core with Symfony HttpClient behind a feature flag.
+- Replace file_put_contents in this core service with Symfony Filesystem.
 - Modernize this core service to use Messenger instead of a custom queue.

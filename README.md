@@ -35,6 +35,8 @@ release tag, and run `npx skills update` to pull improvements.
 | [`shopware-plugin-development`](skills/shopware-plugin-development/SKILL.md) | plugin / project (`custom/plugins`) | Pragmatic PHP-extension rules: smallest safe change, 6.6/6.7 compat, DAL usage, HTTP cache tags (6.7+), migrations, Symfony-first components, decoration. |
 | [`shopware-app-development`](skills/shopware-app-development/SKILL.md) | app (`custom/apps`, `manifest.xml`) | Declarative app rules: manifest, least-privilege permissions, sandboxed Twig app scripts, webhooks + Admin API, Meteor Admin SDK. |
 | [`shopware-testing`](skills/shopware-testing/SKILL.md) | any test | PHPUnit standards: unit vs integration placement, `IntegrationTestBehaviour`, data providers, no real I/O in unit tests. |
+| [`shopware-storefront`](skills/shopware-storefront/SKILL.md) | storefront (Twig/theme/JS) | PluginManager, Twig/theme inheritance, Bootstrap SCSS, cache-safe AJAX; Modern Web Guidance only after Shopware primitives. |
+| [`shopware-admin-js`](skills/shopware-admin-js/SKILL.md) | Administration JS/TS/Vue | TypeScript, Meteor `mt-*`, Jest next to code, Admin ACL; defers to core `shopware-admin-js` on trunk. |
 | [`shopware-review-learnings`](skills/shopware-review-learnings/SKILL.md) | any review | Recurring findings from real plugin/app/PR reviews. Grows over time. |
 | [`shopware-research-and-escalation`](skills/shopware-research-and-escalation/SKILL.md) | any | When to research vs. proceed, the Shopware docs map, Context7 for libraries, and the when-stuck ladder. |
 | [`shopware-pr-description`](skills/shopware-pr-description/SKILL.md) | core PR workflow | GitHub PR body template for `shopware/shopware` contributions (copy-paste ready). |
@@ -69,8 +71,10 @@ safe; in a monorepo, editing `src/Core` fires the platform rules while editing
 
 Canonical one-liners live in [`use-cases/`](use-cases/):
 [`plugin-development.md`](use-cases/plugin-development.md),
-[`app-development.md`](use-cases/app-development.md), and
-[`core-development.md`](use-cases/core-development.md).
+[`app-development.md`](use-cases/app-development.md),
+[`core-development.md`](use-cases/core-development.md), and
+[`storefront-development.md`](use-cases/storefront-development.md)
+(Twig/theme/Admin JS — install beside a PHP use-case, not instead of one).
 
 Each use-case below lists one ready-to-copy command per supported tool. The only
 difference between tools is the `-a` target.

@@ -78,7 +78,14 @@ These match PHPStan rules and reviewer expectations on core PRs:
 - **Coverage attrs** — no `#[CoversClass]` on integration tests; production-class
   `@codeCoverageIgnore` uses FQCN `@see` on trunk (defer to core skill). See reference.
 - **Cross-test docblocks** (test → test) — `@see OtherTest` with `use` import; no FQCN in prose.
-- **`#[Package('…')]`** on every test class — copy from covered class or mirrored `src/` package.
+- **`#[Package('…')]`** on every test class — must match the covered class or a
+  package in the mirrored `src/` tree (`TestPackageMatchRule`).
+- **`@internal`** on every test class docblock.
+- **Exactly one `#[CoversClass]`** per unit/migration test file.
+- **No `ReflectionMethod::invoke`** on private/protected Shopware methods.
+- **Never `exit()` / `die()`** in a test path; `setAutoExit(false)` on
+  `Application::run()`.
+- **Stub DAL with `StaticEntityRepository`**, infer the generic (or `::of()`).
 - **`#[CoversNothing]` safeguard tests** — `tests/devops/` on core, not `tests/unit/`.
 
 ## Rules
@@ -106,7 +113,8 @@ These match PHPStan rules and reviewer expectations on core PRs:
 - [ ] Dependencies mocked in unit tests (unless documented Codecov exception).
 - [ ] `assertSame` / `expectExceptionObject`; no `#[Depends]`; no mock `any()`.
 - [ ] Unit providers use named `yield`; integration tests omit `#[CoversClass]`.
-- [ ] Test classes carry `#[Package('…')]` when contributing to shopware/shopware.
+- [ ] Test classes carry `#[Package('…')]` and `@internal` when contributing to shopware/shopware.
+- [ ] One `#[CoversClass]` per unit/migration file; no reflection into Shopware privates.
 - [ ] Own fixtures in integration tests; clock mocked where time matters.
 - [ ] `vendor/bin/phpunit` (or php-tooling MCP / `docker compose exec web …`) green.
 

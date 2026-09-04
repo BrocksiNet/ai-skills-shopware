@@ -8,6 +8,79 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- PHP method flatten strips comments first; ACL mapping shape is read
+  from the `addPrivilegeMappingEntry()` argument; `CoversClass` ignores
+  commented-out attributes.
+- Adversarial grader pass: scoped helpers strip comments and extract PHP
+  methods; new graders must check the subject relationship, not leftover
+  tokens. Almost-pass sneak-fails added or replaced for ACL, modal, Jest,
+  JS-to-TS, coverage ignore, DI tags, BCChange, `setAutoExit`, MWG, and
+  `CoversClass`.
+- Sixth Copilot pass: ACL SQL must live in a `MigrationStep::update()`,
+  PR trailer evals keep each section's description, listing evals keep
+  `ListingPageController`, and PluginManager listeners must sit on the
+  plugin class rather than in `main.js`.
+- Fifth Copilot pass: ACL mapping must use `roles.viewer.privileges`,
+  `mt-modal` is required when the module has no local `sw-modal`,
+  `StaticEntityRepository` assertions must observe `load()`, and
+  `setAutoExit(false)` must run before `Application::run()`. Twig
+  snippet tokens must sit inside the overridden block. MWG license
+  note is Apache-2.0.
+- ACL WHERE must select `swag_example.viewer` (not any filter), named
+  arguments must keep `true` / `0` / `null`, and UPGRADE past tense is
+  scoped to the CartProcessor section.
+- Fourth Copilot pass plus self-review of new graders: ACL migration
+  now scopes `product:read` to existing module roles, Jest requires a
+  real case/assertion, `StaticEntityRepository` must be wired into
+  `ProductLoader`, listing eval grades document `no-store` not client
+  fetch cache, `exit;`/`die` and `->has()` assertions are required,
+  RELEASE_INFO entries must sit in the existing Features section.
+  Added `mwg-only-after-shopware-primitive`. Documented grader
+  sneak-fail rules in `AGENTS.md`.
+- Third Copilot pass: Admin `main.js` entry is the TypeScript exception,
+  `mt-popover` is not a native popover, `calculate()` may use a receiver
+  variable, and PluginManager async `import()` is accepted. Storefront
+  cache wording now splits shared HTML vs private async loads. Added
+  evals for named arguments, Admin ACL + Jest colocation, DI deprecation
+  tags, UPGRADE past tense, listing `no-store` AJAX, Twig block/snippet,
+  `exit`/`die`, `StaticEntityRepository`, and `@codeCoverageIgnore`.
+- Tightened graders again after the second Copilot pass: assertion must
+  bind to `calculate()`, Storefront plugins need a Twig `data-scroll-hint`
+  host plus `window` add/remove, and `Filesystem` must be constructor-
+  promoted. Added evals `release-info-no-duplicate-heading` and
+  `pr-no-ai-trailers`.
+- Tightened new behavioral graders and smoke defaults after PR review:
+  exact BCChange metadata, class-docblock `@internal`, constructor-injected
+  `Filesystem`, `assertSame` on public APIs, Storefront `window` + `data-*` +
+  `destroy()`, checkout prefetch/`sw_extends`/`parent()`, Admin popover ban,
+  and `test-graders.sh` now runs both `fixture/` and `fixtures/fail/`.
+  Storefront CSRF/`sw_csrf` guidance dropped (gone since 6.5). App use-case
+  no longer routes Meteor Admin SDK to `shopware-admin-js`.
+- Mined `shopware/shopware` trunk skills as of 2026-09-01 (after #17657):
+  BC-change attributes vs `@deprecated reason:*`, PHPUnit reflection / one
+  `CoversClass` / `@internal` / `StaticEntityRepository` inference, Symfony
+  `Filesystem`, named arguments, release-note heading rules, no AI PR trailers.
+
+### Added
+
+- Eval tasks: `bc-change-not-deprecated-reason`, `one-covers-class-per-file`,
+  `test-class-marked-internal`, `no-reflection-on-shopware-method`,
+  `symfony-filesystem-over-raw-php`, `storefront-plugin-manager-register`,
+  `no-speculation-on-checkout`, `admin-use-mt-modal`,
+  `release-info-no-duplicate-heading`, `pr-no-ai-trailers`,
+  `named-arguments-for-literals`, `admin-acl-role-migration`,
+  `admin-jest-colocated-spec`, `di-tag-not-while-referenced`,
+  `upgrade-entry-past-tense`, `storefront-no-blocking-nostore-ajax`,
+  `storefront-twig-block-snippet`, `test-no-exit-die`,
+  `static-entity-repository-stub`, `code-coverage-ignore-passthrough`,
+  `mwg-only-after-shopware-primitive`, `admin-js-implementation-to-ts`,
+  `storefront-no-sw-csrf`.
+- Skills: `shopware-storefront`, `shopware-admin-js`.
+- Use-case: `use-cases/storefront-development.md`.
+- Modern Web Guidance as an optional CLI lookup (not a vendored skill).
+
 ## [0.3.0] - 2026-06-18
 
 ### Added

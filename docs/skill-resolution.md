@@ -88,11 +88,12 @@ npx skills add BrocksiNet/ai-skills-shopware \
 | `shopware-pr-hygiene` | PR template, follow-up commits | `shopware-pr-description` (copy-paste template) |
 | `shopware-change-scope` | boyscouting, root cause | `shopware-review-learnings` (delta findings) |
 | `shopware-release-docs` | RELEASE_INFO / UPGRADE | `shopware-core-development` (baseline guardrails) |
-| `shopware-admin-js` | Admin JS (trunk only) | not in our repo yet |
+| `shopware-admin-js` | Admin JS (trunk only) | `shopware-admin-js` (plugin/project + Meteor / MWG gate) |
 
 **Always ours (no core equivalent):** `shopware-security`, `shopware-architecture`
 (decision layer), `shopware-plugin-development`, `shopware-app-development`,
-`shopware-review-learnings`, eval tasks.
+`shopware-storefront`, `shopware-review-learnings`, eval tasks.
+`shopware-admin-js` overlays core's short skill when present.
 
 ## sw-dev link
 

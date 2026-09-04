@@ -1,0 +1,17 @@
+{
+  "name": "ai-skills-shopware-ast-graders",
+  "private": true,
+  "type": "module",
+  "description": "Eval-only AST graders for PHP and JS/TS fixtures. Not a Shopware runtime.",
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "test": "node --test tests/"
+  },
+  "dependencies": {
+    "@babel/parser": "^7.28.0",
+    "@babel/traverse": "^7.28.0",
+    "php-parser": "^3.7.0"
+  }
+}

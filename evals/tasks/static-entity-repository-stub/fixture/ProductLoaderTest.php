@@ -1,0 +1,25 @@
+<?php declare(strict_types=1);
+
+namespace Smoke\Fixture;
+
+use PHPUnit\Framework\Attributes\CoversClass;
+use PHPUnit\Framework\TestCase;
+use Shopware\Core\Framework\Context;
+use Shopware\Core\Framework\DataAbstractionLayer\EntityRepository;
+use Shopware\Core\Framework\Log\Package;
+
+/**
+ * @internal
+ */
+#[Package('inventory')]
+#[CoversClass(ProductLoader::class)]
+final class ProductLoaderTest extends TestCase
+{
+    public function testLoadReturnsTag(): void
+    {
+        $repository = $this->createMock(EntityRepository::class);
+        $loader = new ProductLoader($repository);
+
+        $this->assertSame('swag-example-product-a', $loader->load('a', Context::createDefaultContext()));
+    }
+}
