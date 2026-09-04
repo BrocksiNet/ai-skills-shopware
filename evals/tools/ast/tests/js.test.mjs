@@ -39,6 +39,23 @@ test('name only in a leftover object without export default fails', () => {
   assert.equal(evaluateImpl(ast), 0);
 });
 
+test('nested name under the default export does not count', () => {
+  const ast = parseJs(`export default {
+    metadata: { name: 'swag-example-product-card' },
+};
+`);
+  assert.equal(exportDefaultHasStringProp(ast, 'name', 'swag-example-product-card'), false);
+  assert.equal(evaluateImpl(ast), 0);
+});
+
+test('defineComponent object argument still counts as the export shape', () => {
+  const ast = parseJs(`export default defineComponent({
+    name: 'swag-example-product-card',
+});
+`);
+  assert.equal(evaluateImpl(ast), 1);
+});
+
 test('unparseable JS is null, not a throw', () => {
   assert.equal(parseJs('export default {'), null);
 });

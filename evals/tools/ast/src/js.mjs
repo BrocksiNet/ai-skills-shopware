@@ -36,16 +36,41 @@ export function exportDefaultHasStringProp(ast, key, value) {
   let found = false;
   traverse(ast, {
     ExportDefaultDeclaration(path) {
-      path.traverse({
-        ObjectProperty(propPath) {
-          if (objectKeyName(propPath.node) === key && stringLiteralValue(propPath.node.value) === value) {
-            found = true;
-          }
-        },
-      });
+      const objectExpr = objectExpressionFromDefaultExport(path.node.declaration);
+      if (objectExpr && objectHasOwnStringProp(objectExpr, key, value)) {
+        found = true;
+      }
     },
   });
   return found;
+}
+
+function objectExpressionFromDefaultExport(declaration) {
+  if (!declaration) {
+    return null;
+  }
+  if (declaration.type === 'ObjectExpression') {
+    return declaration;
+  }
+  if (declaration.type === 'CallExpression') {
+    const first = declaration.arguments[0];
+    if (first?.type === 'ObjectExpression') {
+      return first;
+    }
+  }
+  return null;
+}
+
+function objectHasOwnStringProp(objectExpr, key, value) {
+  for (const prop of objectExpr.properties ?? []) {
+    if (prop.type !== 'ObjectProperty') {
+      continue;
+    }
+    if (objectKeyName(prop) === key && stringLiteralValue(prop.value) === value) {
+      return true;
+    }
+  }
+  return false;
 }
 
 export function hasImportSourceContaining(ast, needle) {
