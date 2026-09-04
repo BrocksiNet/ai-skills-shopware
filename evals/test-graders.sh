@@ -100,8 +100,27 @@ test_task() {
   fi
 }
 
+ensure_ast_tools() {
+  local ast="${ROOT}/evals/tools/ast"
+  local task_dir uses_ast=0
+
+  for task_dir in "${TASKS_ROOT}"/*/; do
+    if [[ -f "${task_dir}/grade.sh" ]] && grep -q 'evals/tools/ast' "${task_dir}/grade.sh"; then
+      uses_ast=1
+      break
+    fi
+  done
+
+  if [[ "${uses_ast}" -eq 1 && ! -d "${ast}/node_modules" ]]; then
+    printf 'test-graders: AST tools missing. Run: cd evals/tools/ast && npm ci\n' >&2
+    exit 2
+  fi
+}
+
 main() {
   local task
+
+  ensure_ast_tools
 
   if [[ $# -gt 0 ]]; then
     for task in "$@"; do

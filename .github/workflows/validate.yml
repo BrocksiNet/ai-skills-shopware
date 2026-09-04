@@ -34,7 +34,7 @@ jobs:
       - name: Lint shell scripts
         run: |
           mapfile -t files < <(
-            find evals/smoke evals/runner scripts evals -maxdepth 1 -name '*.sh' -type f | sort
+            find evals/smoke evals/runner scripts evals evals/tools/ast -maxdepth 1 -name '*.sh' -type f | sort
           )
           shellcheck "${files[@]}"
 
@@ -42,6 +42,20 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v5
+
+      - uses: actions/setup-node@v5
+        with:
+          node-version: '22'
+          cache: npm
+          cache-dependency-path: evals/tools/ast/package-lock.json
+
+      - name: Install AST grader tools
+        working-directory: evals/tools/ast
+        run: npm ci
+
+      - name: AST snippet tests
+        working-directory: evals/tools/ast
+        run: node --test
 
       - name: Golden grader tests (no model calls)
         run: bash evals/test-graders.sh
@@ -57,5 +71,6 @@ jobs:
           globs: |
             **/*.md
             !node_modules
+            !**/node_modules/**
             !evals/tasks/**/fixture/**/*.md
             !evals/tasks/**/fixtures/**/*.md
