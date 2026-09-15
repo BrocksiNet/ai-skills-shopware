@@ -72,9 +72,11 @@ These match PHPStan rules and reviewer expectations on core PRs:
   `assertGreaterThanOrEqual($startTime, …)`.
 - **Data providers** — use named **`yield`** cases in unit tests (not `return []`);
   case names describe the scenario; see `test-shape-and-flags.md`.
-- **Feature flags** — unit: `#[DisabledFeatures]` for legacy/off paths; integration:
-  `Feature::skipTestIfActive()` / `skipTestIfInActive()` — **`#[DisabledFeatures]` is
-  rejected at runtime** in the integration suite. See reference.
+- **Feature flags** — unit: `#[DisabledFeatures]` for legacy/off paths (while two
+  majors are in flight, disable the **newer** major to assert the older one);
+  integration: `Feature::skipTestIfActive()` / `skipTestIfInActive()` —
+  **`#[DisabledFeatures]` is rejected at runtime** in the integration suite.
+  See reference.
 - **Coverage attrs** — no `#[CoversClass]` on integration tests; production-class
   `@codeCoverageIgnore` uses FQCN `@see` on trunk (defer to core skill). See reference.
 - **Cross-test docblocks** (test → test) — `@see OtherTest` with `use` import; no FQCN in prose.

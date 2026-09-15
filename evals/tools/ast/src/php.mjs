@@ -65,6 +65,32 @@ export function findClass(ast, className) {
   return found;
 }
 
+export function findClasses(ast) {
+  const classes = [];
+  if (!ast) {
+    return classes;
+  }
+  walkPhp(ast, (node) => {
+    if (node.kind === 'class') {
+      classes.push(node);
+    }
+  });
+  return classes;
+}
+
+export function astHasIdentifier(ast, name) {
+  if (!ast) {
+    return false;
+  }
+  let found = false;
+  walkPhp(ast, (node) => {
+    if (nodeName(node) === name || nodeName(node.name) === name) {
+      found = true;
+    }
+  });
+  return found;
+}
+
 export function classAttributes(classNode) {
   return flattenAttrGroups(classNode?.attrGroups);
 }

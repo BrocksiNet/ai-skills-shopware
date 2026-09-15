@@ -176,7 +176,7 @@ Default agents: `claude codex cursor`. Cursor uses `agent login` locally; admin
 
 | Doc | Purpose |
 | --- | ------- |
-| [`docs/core-pr-17657-alignment.md`](docs/core-pr-17657-alignment.md) | Rule checklist mined from core trunk skills (seed PR #17657; last mined 2026-09-01) |
+| [`docs/core-pr-17657-alignment.md`](docs/core-pr-17657-alignment.md) | Rule checklist mined from core trunk skills (seed PR #17657; last mined 2026-09-14) |
 | [`docs/skill-resolution.md`](docs/skill-resolution.md) | Trunk overlay vs full install; defer to core `.agents/skills/` when present |
 | [`docs/local-validation.md`](docs/local-validation.md) | Dogfood skills on a real Shopware instance |
 | [`docs/tooling-stack.md`](docs/tooling-stack.md) | ai-skills-shopware vs shopware-ai-coding-tools MCP |

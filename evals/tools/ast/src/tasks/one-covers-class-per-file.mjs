@@ -3,6 +3,7 @@ import {
   attributeClassRefNames,
   classAttributes,
   findClass,
+  findClasses,
   findPhpClassFile,
 } from '../php.mjs';
 
@@ -12,11 +13,16 @@ export function evaluate(ast) {
     return flags(0, { covers_normalizer: 0, covers_helper: 0, covers_count: 0 }, 'CartNormalizerTest not found');
   }
 
-  const covers = classAttributes(cls).filter((attr) => attributeBasename(attr) === 'CoversClass');
-  const refs = covers.flatMap((attr) => attributeClassRefNames(attr));
-  const coversNormalizer = refs.includes('CartNormalizer') ? 1 : 0;
-  const coversHelper = refs.includes('LineItemHelper') ? 1 : 0;
-  const coversCount = covers.length;
+  const testCovers = classAttributes(cls).filter((attr) => attributeBasename(attr) === 'CoversClass');
+  const testRefs = testCovers.flatMap((attr) => attributeClassRefNames(attr));
+  const coversNormalizer = testRefs.includes('CartNormalizer') ? 1 : 0;
+
+  const fileCovers = findClasses(ast).flatMap((classNode) =>
+    classAttributes(classNode).filter((attr) => attributeBasename(attr) === 'CoversClass'),
+  );
+  const fileRefs = fileCovers.flatMap((attr) => attributeClassRefNames(attr));
+  const coversHelper = fileRefs.includes('LineItemHelper') ? 1 : 0;
+  const coversCount = fileCovers.length;
   const score = coversNormalizer === 1 && coversHelper === 0 && coversCount === 1 ? 1 : 0;
 
   return flags(score, {

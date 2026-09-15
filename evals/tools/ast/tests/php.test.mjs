@@ -1,6 +1,7 @@
 import assert from 'node:assert/strict';
 import { test } from 'node:test';
 import {
+  astHasIdentifier,
   attributeBasename,
   attributeClassRefNames,
   classAttributes,
@@ -9,6 +10,7 @@ import {
   methodAttributes,
   parsePhp,
 } from '../src/php.mjs';
+import { evaluateServicesPhp } from '../src/tasks/plugin-xml-config-to-php.mjs';
 import { evaluate as evaluateCovers } from '../src/tasks/one-covers-class-per-file.mjs';
 import { evaluate as evaluateBc } from '../src/tasks/bc-change-not-deprecated-reason.mjs';
 
@@ -82,4 +84,35 @@ final class LegacyIdLoader {
 
 test('unparseable PHP is null, not a throw', () => {
   assert.equal(parsePhp('<?php class {'), null);
+});
+
+test('CoversClass on a second class in the same file fails', () => {
+  const ast = parsePhp(`<?php
+#[CoversClass(CartNormalizer::class)]
+final class CartNormalizerTest {}
+#[CoversClass(LineItemHelper::class)]
+final class LineItemHelperTest {}
+`);
+  assert.equal(evaluateCovers(ast).score, 0);
+});
+
+test('ContainerConfigurator plus ProductLoader in services.php counts', () => {
+  const ast = parsePhp(`<?php
+use Symfony\\Component\\DependencyInjection\\Loader\\Configurator\\ContainerConfigurator;
+use SwagExample\\ProductLoader;
+return static function (ContainerConfigurator $container): void {
+    $container->services()->set(ProductLoader::class);
+};
+`);
+  assert.equal(astHasIdentifier(ast, 'ContainerConfigurator'), true);
+  assert.equal(astHasIdentifier(ast, 'ProductLoader'), true);
+  assert.deepEqual(evaluateServicesPhp(ast), { configurator: 1, loader: 1 });
+});
+
+test('comment-only ProductLoader in services.php does not count', () => {
+  const ast = parsePhp(`<?php
+// ProductLoader ContainerConfigurator
+return static function (): void {};
+`);
+  assert.deepEqual(evaluateServicesPhp(ast), { configurator: 0, loader: 0 });
 });

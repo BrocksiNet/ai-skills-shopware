@@ -1,4 +1,4 @@
-# Shopware 6.6 / 6.7 compatibility
+# Shopware 6.6 / 6.7 / 6.8 compatibility
 
 Load this when a plugin must support more than one Shopware minor, or when you
 introduce API that only exists in one of them.
@@ -68,6 +68,32 @@ return !Feature::has('MY_FLAG') || Feature::isActive('MY_FLAG');
 6.7 deprecated and stopped dispatching the `*CacheTagsEvent` events (removed in
 6.8). Treat any 6.6-era pattern that the 6.7 upgrade guide flags as a migration
 target, not something to copy.
+
+## Symfony XML configuration (gone in 6.8)
+
+Shopware 6.7 deprecates loading Symfony DI / routing / package config from XML
+for plugins; **6.8 removes it** (Symfony 8 drops the XML loaders).
+
+- **In scope to migrate:** `src/Resources/config/services.xml`,
+  `services_test.xml`, `routes.xml`, `routes_<env>.xml`, and
+  `packages/**/*.xml`. Replace them with PHP `ContainerConfigurator` files
+  (`services.php`, `routes.php`).
+- **Leave as XML:** plugin admin settings `config.xml`, `custom-fields.xml`,
+  `flow.xml`, `rule-conditions.xml`, and app `manifest.xml`.
+- A 6.6/6.7 plugin may still ship XML DI. A **6.8-targeted** plugin must not.
+  Do not add new `services.xml` when the supported range includes 6.8.
+
+```php
+use SwagExample\ProductLoader;
+use Symfony\Component\DependencyInjection\Loader\Configurator\ContainerConfigurator;
+
+return static function (ContainerConfigurator $container): void {
+    $container->services()
+        ->set(ProductLoader::class)
+        ->autowire()
+        ->autoconfigure();
+};
+```
 
 ## Symfony version alignment
 

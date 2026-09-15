@@ -10,7 +10,7 @@ use Shopware\Core\Framework\Log\Package;
  * @internal
  */
 #[Package('checkout.cart')]
-// #[CoversClass(CartNormalizer::class)]
+#[CoversClass(CartNormalizer::class)]
 final class CartNormalizerTest extends TestCase
 {
     public function testNormalizeReturnsIdShape(): void
@@ -18,5 +18,18 @@ final class CartNormalizerTest extends TestCase
         $result = (new CartNormalizer())->normalize('line-1');
 
         $this->assertSame(['id' => 'line-1'], $result);
+    }
+}
+
+/**
+ * @internal
+ */
+#[Package('checkout.cart')]
+#[CoversClass(LineItemHelper::class)]
+final class LineItemHelperTest extends TestCase
+{
+    public function testHelperExists(): void
+    {
+        $this->assertTrue(class_exists(LineItemHelper::class));
     }
 }

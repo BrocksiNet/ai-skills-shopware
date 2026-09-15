@@ -15,3 +15,4 @@
 - This console test calls exit() after Application::run() — fix it.
 - Stub this product repository with StaticEntityRepository instead of a mock.
 - This @codeCoverageIgnore method branches and throws; that is not pass-through.
+- This unit test asserts 6.8 behaviour while 6.9 is also active — disable the newer major.

@@ -10,6 +10,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- Copilot leftover holes: JS-to-TS matches basename `product-card.ts` and
+  an exact import path segment; `CoversClass` is counted per file; PluginManager
+  listeners must sit on the module registered as `ScrollHint`.
+- Dual-major feature flags (#20117): unit tests disable the newer major;
+  `integration-major` is one lane per `FEATURE_ALL=<major>`. Last mined
+  trunk 2026-09-14.
+- Plugin DI: 6.8-targeted plugins use PHP `ContainerConfigurator`, not
+  `services.xml`. `config.xml` stays XML.
+- Local execution: Podman on linked shopware-dev; `shopware-cli` on CLI
+  projects. MCP never blocks a fallback. Tooling-stack docs drop hook-enforced
+  ai-coding-tools as the default.
 - PHP method flatten strips comments first; ACL mapping shape is read
   from the `addPrivilegeMappingEntry()` argument; `CoversClass` ignores
   commented-out attributes.
@@ -76,7 +87,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   `storefront-twig-block-snippet`, `test-no-exit-die`,
   `static-entity-repository-stub`, `code-coverage-ignore-passthrough`,
   `mwg-only-after-shopware-primitive`, `admin-js-implementation-to-ts`,
-  `storefront-no-sw-csrf`.
+  `storefront-no-sw-csrf`, `admin-no-cross-module-import`,
+  `storefront-media-thumbnails`, `unit-test-disable-newer-major`,
+  `plugin-xml-config-to-php`.
 - Skills: `shopware-storefront`, `shopware-admin-js`.
 - Use-case: `use-cases/storefront-development.md`.
 - Modern Web Guidance as an optional CLI lookup (not a vendored skill).

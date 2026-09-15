@@ -1,1 +1,1 @@
-// import './module/swag-example/product-card/product-card';
+import './module/swag-example/product-card/not-product-card';

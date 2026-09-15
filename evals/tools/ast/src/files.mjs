@@ -1,5 +1,5 @@
 import { readdirSync } from 'node:fs';
-import { join } from 'node:path';
+import { basename, join } from 'node:path';
 
 const SKIP = new Set(['node_modules', 'vendor', '.git']);
 
@@ -39,4 +39,8 @@ export function findFiles(root, match) {
 
 export function pathEndsWith(path, suffix) {
   return path.endsWith(suffix) || path.endsWith(suffix.replaceAll('/', '\\'));
+}
+
+export function pathBasename(path) {
+  return basename(path.replaceAll('\\', '/'));
 }

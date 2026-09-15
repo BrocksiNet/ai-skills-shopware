@@ -32,7 +32,7 @@ release tag, and run `npx skills update` to pull improvements.
 | [`shopware-architecture`](skills/shopware-architecture/SKILL.md) | any PHP refactor | Patterns, DAL boundaries, progressive enhancement, anti-patterns; defers to core on trunk. |
 | [`shopware-security`](skills/shopware-security/SKILL.md) | any PHP/API/config | Secrets, access keys, ACL, app least privilege — not covered by core skills. |
 | [`shopware-core-development`](skills/shopware-core-development/SKILL.md) | platform (`shopware/shopware`, `src/`) | Strict rules for changing the platform: deprecation policy, release notes (RELEASE_INFO/UPGRADE) + ADRs, PHPStan baseline discipline, Symfony modernization behind feature flags, `@internal` boundaries. |
-| [`shopware-plugin-development`](skills/shopware-plugin-development/SKILL.md) | plugin / project (`custom/plugins`) | Pragmatic PHP-extension rules: smallest safe change, 6.6/6.7 compat, DAL usage, HTTP cache tags (6.7+), migrations, Symfony-first components, decoration. |
+| [`shopware-plugin-development`](skills/shopware-plugin-development/SKILL.md) | plugin / project (`custom/plugins`) | Pragmatic PHP-extension rules: smallest safe change, 6.6–6.8 compat, DAL usage, HTTP cache tags (6.7+), migrations, PHP DI on 6.8, Symfony-first components, decoration. |
 | [`shopware-app-development`](skills/shopware-app-development/SKILL.md) | app (`custom/apps`, `manifest.xml`) | Declarative app rules: manifest, least-privilege permissions, sandboxed Twig app scripts, webhooks + Admin API, Meteor Admin SDK. |
 | [`shopware-testing`](skills/shopware-testing/SKILL.md) | any test | PHPUnit standards: unit vs integration placement, `IntegrationTestBehaviour`, data providers, no real I/O in unit tests. |
 | [`shopware-storefront`](skills/shopware-storefront/SKILL.md) | storefront (Twig/theme/JS) | PluginManager, Twig/theme inheritance, Bootstrap SCSS, cache-safe AJAX; Modern Web Guidance only after Shopware primitives. |
@@ -42,7 +42,7 @@ release tag, and run `npx skills update` to pull improvements.
 | [`shopware-pr-description`](skills/shopware-pr-description/SKILL.md) | core PR workflow | GitHub PR body template for `shopware/shopware` contributions (copy-paste ready). |
 | [`shopware-assistant-style`](skills/shopware-assistant-style/SKILL.md) | any communication | Plain, concise answers; support-ticket replies in one copy block. |
 | [`shopware-pr-review`](skills/shopware-pr-review/SKILL.md) | PR review | Triage GitHub review threads; fix, reply, or push back with confidence. |
-| [`shopware-podman-dev`](skills/shopware-podman-dev/SKILL.md) | linked Podman checkout | **Optional.** Never host php/composer/phpunit — MCP or `podman compose exec web`; for `~/shopware-dev` + Mutagen setups. |
+| [`shopware-podman-dev`](skills/shopware-podman-dev/SKILL.md) | linked Podman or CLI project | **Optional.** Podman on `~/shopware-dev`; `shopware-cli` when `.shopware-project.yml` exists; MCP never blocks a fallback. |
 
 See [`docs/tooling-stack.md`](docs/tooling-stack.md) for how this repo fits with
 shopware-ai-coding-tools and a multi-instance proxy setup.

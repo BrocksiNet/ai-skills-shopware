@@ -1,14 +1,17 @@
 import { readFileSync } from 'node:fs';
-import { findFiles, pathEndsWith } from '../files.mjs';
+import { findFiles, pathBasename, pathEndsWith } from '../files.mjs';
 import {
   exportDefaultHasStringProp,
   hasExportDefault,
-  hasImportSourceContaining,
+  hasImportSourceMatching,
+  importSourceEndsWithSegment,
   parseJs,
 } from '../js.mjs';
 
 export function evaluateMain(ast) {
-  return hasImportSourceContaining(ast, 'product-card') ? 1 : 0;
+  return hasImportSourceMatching(ast, (source) => importSourceEndsWithSegment(source, 'product-card'))
+    ? 1
+    : 0;
 }
 
 export function evaluateImpl(ast) {
@@ -21,8 +24,8 @@ export function evaluateImpl(ast) {
 }
 
 export function grade({ workdir }) {
-  const implTs = findFiles(workdir, (path) => pathEndsWith(path, '/product-card.ts') || pathEndsWith(path, 'product-card.ts'));
-  const implJs = findFiles(workdir, (path) => pathEndsWith(path, '/product-card.js') || pathEndsWith(path, 'product-card.js'));
+  const implTs = findFiles(workdir, (path) => pathBasename(path) === 'product-card.ts');
+  const implJs = findFiles(workdir, (path) => pathBasename(path) === 'product-card.js');
   const mainJs = findFiles(workdir, (path) => pathEndsWith(path, '/administration/src/main.js'));
   const mainTs = findFiles(workdir, (path) => pathEndsWith(path, '/administration/src/main.ts'));
 

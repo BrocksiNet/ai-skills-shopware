@@ -17,7 +17,27 @@ has_window_unlisten=0
 has_raw_listener=0
 has_plugin_class=0
 
-plugin_file="$(grep -rlE --include='*.js' 'extends[[:space:]]+Plugin' "$WORKDIR" 2>/dev/null | head -n1 || true)"
+main_js="$(find "$WORKDIR" -path '*/storefront/src/main.js' | head -n1 || true)"
+plugin_file=""
+if [[ -n "$main_js" ]]; then
+  plugin_spec="$(perl -0777 -ne '
+    if (m/PluginManager\.register\s*\(\s*['\''"]ScrollHint['\''"][\s\S]*?import\s*\(\s*['\''"]([^'\''"]+)['\''"]/) {
+      print $1;
+    }
+  ' "$main_js")"
+  if [[ -n "$plugin_spec" ]]; then
+    plugin_spec="${plugin_spec#./}"
+    case "$plugin_spec" in
+      *.js|*.ts) plugin_rel="$plugin_spec" ;;
+      *) plugin_rel="${plugin_spec}.js" ;;
+    esac
+    candidate="$(cd "$(dirname "$main_js")" && pwd)/${plugin_rel}"
+    if [[ -f "$candidate" ]]; then
+      plugin_file="$candidate"
+    fi
+  fi
+fi
+
 js_flat="$(find "$WORKDIR" -name '*.js' -print0 | xargs -0 cat | tr '\n' ' ')"
 
 printf '%s' "$js_flat" | grep -qE 'window\.PluginManager\.register\s*\(' && has_window_register=1
@@ -27,7 +47,7 @@ fi
 if grep -rqE --include='*.twig' --include='*.html' 'data-scroll-hint' "$WORKDIR"; then
   has_host=1
 fi
-# Listeners must live on the Plugin subclass, not on a global main.js leftover.
+# Listeners must live on the registered ScrollHint plugin module.
 if [[ -n "$plugin_file" ]]; then
   has_plugin_class=1
   if grep -qE -- 'window\.addEventListener\s*\(\s*['\''"]scroll['\''"]' "$plugin_file"; then

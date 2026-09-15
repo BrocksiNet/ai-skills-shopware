@@ -6,12 +6,12 @@ source of truth for plugins, older core branches, and eval-backed rules
 (`sw-dev link`, install profiles in [`skill-resolution.md`](skill-resolution.md)).
 
 Seed PR: [#17657](https://github.com/shopware/shopware/pull/17657) (merged
-2026-06-26). **Last mined:** trunk 2026-09-01. Canonical path:
-`.agents/skills/`; `.claude/skills` → symlink.
+2026-06-26). **Last mined:** trunk 2026-09-14 ([#20117](https://github.com/shopware/shopware/pull/20117)).
+Canonical path: `.agents/skills/`; `.claude/skills` → symlink.
 
 Catalog since #17657 is unchanged (no new skill names, still no storefront
-skill). Content drift is in `shopware-php-code`, `shopware-phpunit-tests`, and
-`shopware-release-docs`.
+skill). Content drift is in `shopware-phpunit-tests` (dual-major feature-flag
+lanes) plus earlier `shopware-php-code` and `shopware-release-docs` deltas.
 
 Status key: **done** | **partial** | **skip** | **eval:TBD** | **defer-on-trunk**
 
@@ -46,8 +46,9 @@ Status key: **done** | **partial** | **skip** | **eval:TBD** | **defer-on-trunk*
 | `@codeCoverageIgnore` pass-through only (`CodeCoverageIgnoreEvaluationRule`) | `core-platform-patterns.md` | defer-on-trunk (documented) |
 | `expectExceptionObject` via domain factory (already covered) | `exception-assertions.md` | done |
 | No DBAL `Connection` behavior-mock in unit tests | `test-shape-and-flags.md` | defer-on-trunk |
-| Unit legacy flags: `#[DisabledFeatures]`; not `Feature::fake()` for current major | `test-shape-and-flags.md` | defer-on-trunk |
-| Integration flags: `Feature::skipTestIfActive()` / `skipTestIfInActive()`; not `#[DisabledFeatures]` | `test-shape-and-flags.md` | **done** (runtime-enforced #18350) |
+| Unit legacy flags: `#[DisabledFeatures]`; not `Feature::fake()` for current major | `test-shape-and-flags.md` | **done** → `unit-test-disable-newer-major` |
+| Dual-major unit tests disable the newer major (`#[DisabledFeatures(['v6.9.0.0'])]`) | same | **done** → `unit-test-disable-newer-major` |
+| Integration flags: `Feature::skipTestIfActive()` / `skipTestIfInActive()`; not `#[DisabledFeatures]` | `test-shape-and-flags.md` | **done** (runtime-enforced #18350; dual-major lanes #20117) |
 | `@codeCoverageIgnore` on production class uses FQCN `@see` on trunk | `core-platform-patterns.md` | defer-on-trunk |
 | No `#[CoversClass]` on integration tests (PHPStan) | `core-platform-patterns.md` | **done** → `integration-no-covers-class` |
 | Cross-test docblock uses `@see` + import, not FQCN prose | `core-platform-patterns.md` | **done** → `test-docblock-use-see` |

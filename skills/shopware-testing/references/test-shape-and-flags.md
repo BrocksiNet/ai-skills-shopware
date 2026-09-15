@@ -93,14 +93,23 @@ A test must never let production or framework code call `exit()`, `die()`, or
 - To test **legacy/off** behavior, disable flags with PHPUnit
   `#[DisabledFeatures(['FLAG_NAME'])]`.
 - Do **not** use `Feature::fake()` only to activate the current major flag.
+- While **two majors are in flight**, the unit bootstrap activates both. A test
+  that asserts the older major's behaviour must disable the newer one, e.g.
+  `#[DisabledFeatures(['v6.9.0.0'])]` ([#20117](https://github.com/shopware/shopware/pull/20117)).
 
 ### Integration tests
 
-- Feature-flag state comes from the job configuration (`FEATURE_ALL`, integration-major, etc.).
+- Feature-flag state comes from the job configuration (`FEATURE_ALL`,
+  integration-major, etc.).
+- While more than one major is in flight, `integration-major` runs **one lane
+  per major** with `FEATURE_ALL=<major>` (for example `v6.8.0.0`), not
+  `FEATURE_ALL=major`. Reproducing a failing job with `major` would mix the
+  next major in.
 - **`#[DisabledFeatures]` is rejected at runtime** in the integration suite — the attribute has no effect there and the test runner **fails the run** if a test carries it ([#18350](https://github.com/shopware/shopware/pull/18350)).
 - Skip tests explicitly with `Feature::skipTestIfActive('FLAG')` or
   `Feature::skipTestIfInActive('FLAG')` when the current flag value is not what
-  the scenario expects.
+  the scenario expects. Pin against the extra in-flight major with
+  `Feature::skipTestIfActive('v6.9.0.0', $this)` rather than `#[DisabledFeatures]`.
 - Keep **legacy flag behavior** in dedicated tests that are easy to delete when
   the flag is removed.
 

@@ -1,42 +1,57 @@
 ---
 name: shopware-podman-dev
 description: >-
-  Run Shopware dev commands inside Podman, never on the host. Use when working
-  in a linked shopware-dev checkout (shopware-trunk, shopware-6-6-branch,
-  shopware-commercial, etc.): php, composer, phpunit, bin/console, phpstan, ecs,
-  npm, node, or "run tests". Triggers on "composer install", "run phpunit",
-  "phpstan", "bin/console", "podman compose", "shopware-dev", "use the
-  container", "mutagen", "trunk.localhost". Do NOT use for CI log interpretation,
+  Run Shopware dev commands in the right environment. Use for linked
+  shopware-dev checkouts (Podman/Mutagen: php, composer, phpunit, bin/console,
+  phpstan, ecs, npm) and for Shopware CLI projects (.shopware-project.yml:
+  shopware-cli project console/validate, extension validate). Triggers on
+  "composer install", "run phpunit", "phpstan", "bin/console", "podman compose",
+  "shopware-dev", "shopware-cli project validate", "project console",
+  "mutagen", "trunk.localhost". Do NOT use for CI log interpretation,
   PR descriptions, or PHPUnit test structure rules (shopware-testing).
 ---
 
-# Shopware Podman dev environment
+# Shopware local execution (Podman and CLI)
 
-Shopware runs in **Podman** with **Mutagen** sync. Host PHP/Composer/PHPUnit/Node
-are wrong for linked projects — code and `vendor/` live in the container volume.
+Use the **project's** runner. Linked `shopware-dev` trees run inside **Podman**
+with **Mutagen** sync — host PHP/Composer/PHPUnit/Node are wrong because code
+and `vendor/` live in the container volume. Shopware CLI projects
+(`.shopware-project.yml`) should go through **shopware-cli**, not reconstructed
+composer/`bin/console`/npm. MCP is optional and must never block a fallback.
 
-## Hard rules (refuse host execution)
+## Hard rules
 
 1. **Never** run `php`, `composer`, `phpunit`, `bin/console`, `phpstan`,
    `ecs`, `rector`, or Shopware `npm`/`node` scripts on the **host** for a
-   linked project unless the user explicitly says native/no-container.
+   linked shopware-dev project unless the user explicitly says native/no-container.
 2. **Never** assume `vendor/`, `var/`, or `node_modules/` on the host are
-   current — Mutagen syncs into the container named volume.
-3. **Always** `cd` to the **project root** (where `compose.yaml` lives) before
-   compose/MCP commands so `.env` `COMPOSE_FILE` and MCP configs apply.
+   current on a linked project — Mutagen syncs into the container named volume.
+3. **Always** `cd` to the **project root** (where `compose.yaml` or
+   `.shopware-project.yml` lives) before compose, CLI, or MCP commands.
+4. **Do not block** on missing MCP. If php-tooling MCP is down, use Podman or
+   `shopware-cli` instead of stalling.
 
 ## Command priority
 
-Use the **first** option that works in the session:
+Match the project, then use the first option that works:
 
-| Priority | How | When |
-| -------- | --- | ---- |
-| 1 | **MCP dev-tooling** | `phpstan_analyze`, `ecs_check`, `phpunit_run`, `console_run`, js-admin/storefront lint tools |
-| 2 | **`podman compose exec web …`** | MCP missing, subagent without MCP, or one-off shell |
-| 3 | Host CLI | Only if user confirms native setup |
+| Detect | Prefer | Fallback |
+| ------ | ------ | -------- |
+| `.env` contains `shopware-dev (managed by sw-dev)` | `podman compose exec web …` (MCP php-tooling if it is actually callable) | Host CLI only if the user confirms native |
+| `.shopware-project.yml` and **not** a linked shopware-dev tree | `shopware-cli` (`project console`, `project validate`, `extension validate`, `project dev`) | CLI Docker skill if the project is Docker-backed |
+| User said native | Host CLI | — |
 
-MCP configs are symlinked from `~/shopware-dev` (`.mcp-php-tooling.json`, etc.).
-They target compose service `web`, workdir `/var/www/html`.
+Do **not** route a linked `shopware-dev` trunk through `shopware-cli` by default
+(Docker vs Podman mismatch). Install the CLI skills separately; do not copy them:
+
+```bash
+npx skills add shopware/shopware-cli
+```
+
+MCP configs for linked projects are symlinked from `~/shopware-dev`
+(`.mcp-php-tooling.json`, etc.). They target compose service `web`, workdir
+`/var/www/html`. Set `enforce_mcp_tools: false` if that plugin is installed so
+hooks cannot veto Podman or `shopware-cli`.
 
 ## Detect a linked project
 
@@ -170,9 +185,11 @@ sw-dev validate --static-only   # no podman exec / no HTTP
 
 | Wrong | Right |
 | ----- | ----- |
-| `php bin/console …` on host | `podman compose exec web bin/console …` |
-| `composer install` on host | `podman compose exec web composer install` |
-| `./vendor/bin/phpunit` on host | MCP `phpunit_run` or exec in `web` |
+| `php bin/console …` on host (linked) | `podman compose exec web bin/console …` |
+| `composer install` on host (linked) | `podman compose exec web composer install` |
+| `./vendor/bin/phpunit` on host (linked) | MCP `phpunit_run` if callable, else exec in `web` |
+| Reconstruct validate with phpstan/eslint by hand (CLI project) | `shopware-cli project validate` / `extension validate` |
+| `shopware-cli` against a linked shopware-dev trunk | `podman compose exec web …` |
 | Read host `vendor/` for symbols | Search source or use LSP/MCP in container |
 | Edit `compose.override.yaml` in project | Edit `~/shopware-dev/instances/*.yaml` |
 

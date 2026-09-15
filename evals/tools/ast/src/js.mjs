@@ -73,30 +73,47 @@ function objectHasOwnStringProp(objectExpr, key, value) {
   return false;
 }
 
-export function hasImportSourceContaining(ast, needle) {
+export function collectImportSources(ast) {
+  const sources = [];
   if (!ast) {
-    return false;
+    return sources;
   }
-  let found = false;
   traverse(ast, {
     ImportDeclaration(path) {
-      const source = path.node.source?.value ?? '';
-      if (source.includes(needle)) {
-        found = true;
+      const source = path.node.source?.value;
+      if (typeof source === 'string') {
+        sources.push(source);
       }
     },
     CallExpression(path) {
       if (path.node.callee.type !== 'Import') {
         return;
       }
-      const first = path.node.arguments[0];
-      const source = stringLiteralValue(first) ?? '';
-      if (source.includes(needle)) {
-        found = true;
+      const source = stringLiteralValue(path.node.arguments[0]);
+      if (source) {
+        sources.push(source);
       }
     },
   });
-  return found;
+  return sources;
+}
+
+export function hasImportSourceContaining(ast, needle) {
+  return collectImportSources(ast).some((source) => source.includes(needle));
+}
+
+export function hasImportSourceMatching(ast, match) {
+  return collectImportSources(ast).some(match);
+}
+
+export function importSourceEndsWithSegment(source, segment) {
+  const normalized = String(source).replaceAll('\\', '/').split('?')[0];
+  return (
+    normalized === segment ||
+    normalized.endsWith(`/${segment}`) ||
+    normalized.endsWith(`/${segment}.js`) ||
+    normalized.endsWith(`/${segment}.ts`)
+  );
 }
 
 function objectKeyName(node) {

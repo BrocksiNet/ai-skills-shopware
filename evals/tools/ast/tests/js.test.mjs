@@ -4,9 +4,12 @@ import {
   exportDefaultHasStringProp,
   hasExportDefault,
   hasImportSourceContaining,
+  hasImportSourceMatching,
+  importSourceEndsWithSegment,
   parseJs,
 } from '../src/js.mjs';
 import { evaluateImpl, evaluateMain } from '../src/tasks/admin-js-implementation-to-ts.mjs';
+import { evaluateOrders } from '../src/tasks/admin-no-cross-module-import.mjs';
 
 test('commented import is not an ImportDeclaration', () => {
   const ast = parseJs("// import './module/swag-example/product-card/product-card';\n");
@@ -58,4 +61,31 @@ test('defineComponent object argument still counts as the export shape', () => {
 
 test('unparseable JS is null, not a throw', () => {
   assert.equal(parseJs('export default {'), null);
+});
+
+test('substring product-card in another filename is not a segment match', () => {
+  assert.equal(importSourceEndsWithSegment('./not-product-card', 'product-card'), false);
+  assert.equal(importSourceEndsWithSegment('./module/swag-example/product-card/product-card', 'product-card'), true);
+  const ast = parseJs("import './module/swag-example/product-card/not-product-card';\n");
+  assert.equal(hasImportSourceContaining(ast, 'product-card'), true);
+  assert.equal(evaluateMain(ast), 0);
+});
+
+test('exact product-card path segment still counts', () => {
+  const ast = parseJs("import './module/swag-example/product-card/product-card.ts';\n");
+  assert.equal(evaluateMain(ast), 1);
+  assert.equal(
+    hasImportSourceMatching(ast, (source) => importSourceEndsWithSegment(source, 'product-card')),
+    true,
+  );
+});
+
+test('cross-module import from swag-example-products is detected', () => {
+  const ast = parseJs("import OrderLine from '../swag-example-products/order-line';\n");
+  assert.equal(evaluateOrders(ast).cross, 1);
+});
+
+test('Shopware.Component lookup is not a cross-module import', () => {
+  const ast = parseJs("const OrderLine = Shopware.Component.get('swag-example-products-order-line');\n");
+  assert.equal(evaluateOrders(ast).cross, 0);
 });
