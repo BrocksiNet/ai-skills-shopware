@@ -24,6 +24,7 @@ when you still support an older minor ([`version-compatibility.md`](version-comp
 | `curl` / `file_get_contents` for HTTP | `Symfony\Contracts\HttpClient\HttpClientInterface` |
 | Hand-rolled retry/backoff loops | Messenger retries, or HttpClient retry config where appropriate |
 | `time()` / `date()` for business logic | `Psr\Clock\ClockInterface` (`php-foundation`) |
+| Raw `mkdir` / `file_put_contents` / `unlink` | `Symfony\Component\Filesystem\Filesystem` |
 | Ad-hoc validation in controllers | Symfony Validator + constraints / `#[MapRequestPayload]` where the stack allows |
 | Custom job queue glue | `MessageBusInterface` + message handlers |
 | String UUIDs from `uniqid` / random | `Symfony\Component\Uid\Uuid` when available on pinned Symfony |

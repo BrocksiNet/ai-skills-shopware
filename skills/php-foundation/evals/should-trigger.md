@@ -8,3 +8,4 @@ Prompts where this skill is expected to activate. One prompt per bullet.
 - Make this value object immutable with constructor property promotion.
 - PHPStan complains about a mixed type here; how should I type this collection?
 - Convert this `array<int, ProductEntity>` to a `list<>` and add proper generics.
+- This helper call passes true, 0, and null — name those arguments.

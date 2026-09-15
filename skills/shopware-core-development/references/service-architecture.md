@@ -13,6 +13,10 @@ migrations).
 - Services must **not** perform direct infrastructure work or depend on framework
   objects. Depend on narrow abstractions: repositories, filesystem interfaces,
   HTTP clients, gateways.
+- Where code legitimately touches the local filesystem, inject Symfony
+  `Filesystem` instead of raw `mkdir`, `file_put_contents`, `copy`, `unlink`,
+  or `rmdir`. It throws `IOException` instead of warnings plus `false`, handles
+  recursive operations, and stays mockable.
 - Services must be **unit-testable without external systems**; test infrastructure
   adapters with integration tests.
 - Mark infrastructure adapters **`@internal` by default**.

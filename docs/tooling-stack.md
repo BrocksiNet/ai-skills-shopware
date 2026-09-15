@@ -1,35 +1,15 @@
-# Tooling stack: ai-skills-shopware vs shopware-ai-coding-tools
+# Tooling stack: skills, Shopware CLI, MCP
 
 Guide for **personal / multi-instance** setups (proxy, several Shopware URLs,
 not every MCP server available to every model).
 
-## The problem
+## Layers
 
-[shopware-ai-coding-tools](https://github.com/shopwareLabs/ai-coding-tools) bundles:
-
-| Piece | What it does | MCP? |
-| ----- | ------------ | ---- |
-| dev-tooling | phpstan, ecs, phpunit, console, eslint, jest | Yes (php / js-admin / js-storefront) |
-| gh-tooling | PR, issues, CI logs | Yes |
-| test-writing | UNIT-* rules, test generator/reviewer agents | Yes (test-rules) + heavy skills |
-| contributor-writing | PR descriptions, ADRs, release notes | Skills only |
-| chunkhound | Semantic code search | Yes |
-
-Hooks can **enforce** MCP usage (`enforce_mcp_tools: true` in
-`.mcp-php-tooling.json`). That breaks when:
-
-- A model/agent has no MCP access (CLI, cloud, subagent).
-- php-tooling cannot reach the right container (wrong compose project, proxy host).
-- Only **one** Shopware HTTP MCP instance should be active per workspace.
-- test-writing skills expect test-rules + phpunit MCP in a fixed loop.
-
-## Recommendation: lean personal stack
-
-**Keep skills portable. Keep MCP minimal. Drop enforcement when it fights you.**
+**Keep skills portable. Keep MCP optional. Never let hooks block a fallback.**
 
 ### Layer 1 — Always (no MCP)
 
-Install from this repo:
+Install from this repo (profiles in [`skill-resolution.md`](skill-resolution.md)):
 
 ```bash
 npx skills add BrocksiNet/ai-skills-shopware \
@@ -47,15 +27,21 @@ npx skills add BrocksiNet/ai-skills-shopware \
   -a cursor
 ```
 
-`shopware-podman-dev` tells every model to use **Podman/MCP**, not host
-`php`/`composer`/`phpunit`, when the checkout is linked via `~/shopware-dev`.
+`shopware-podman-dev` picks the runner: **Podman** on a linked `~/shopware-dev`
+tree, **shopware-cli** when `.shopware-project.yml` exists.
 
 If you use the `~/shopware-dev` hub, you do **not** need `npx skills add` per
 project — `sw-dev link` symlinks skills from **this repo's** `skills/` into
-`.cursor/`, `.claude/`, `.codex/`, and `.agents/` for all three tools. Omit
-`shopware-podman-dev` from `instances.json` if you do not use Podman.
+`.cursor/`, `.claude/`, `.codex/`, and `.agents/`. Omit `shopware-podman-dev`
+from `instances.json` if you do not use Podman.
 
-Optional plugin work:
+Install the CLI's own skills next to ours (do not copy them into this repo):
+
+```bash
+npx skills add shopware/shopware-cli
+```
+
+Optional plugin PHPUnit extras:
 
 ```bash
 npx skills add FriendsOfShopware/agent-skills --skill shopware-phpunit -a cursor
@@ -63,9 +49,15 @@ npx skills add FriendsOfShopware/agent-skills --skill shopware-phpunit -a cursor
 
 These work in **any** agent that loads skills — no docker, no proxy, no MCP.
 
-### Layer 2 — Project MCP (pick per repo)
+### Layer 2 — Execution (pick per repo)
 
-**shopware-trunk** example (proxy + Docker):
+| Detect | Runner |
+| ------ | ------ |
+| Linked shopware-dev (`.env` marker) | `podman compose exec web …` |
+| `.shopware-project.yml` (not shopware-dev) | `shopware-cli project console` / `project validate` / `extension validate` |
+| Shopware HTTP MCP | **One** URL per workspace for shop data (Admin/Store API), not phpstan |
+
+**shopware-trunk** HTTP MCP example (proxy + container):
 
 ```json
 // .mcp.json — ONE Shopware HTTP endpoint for this workspace
@@ -80,6 +72,8 @@ These work in **any** agent that loads skills — no docker, no proxy, no MCP.
 }
 ```
 
+php-tooling MCP (phpstan/phpunit/console) is optional. If you keep it:
+
 ```json
 // .mcp-php-tooling.json
 {
@@ -89,33 +83,32 @@ These work in **any** agent that loads skills — no docker, no proxy, no MCP.
 }
 ```
 
-Set `enforce_mcp_tools: false` so agents can fall back to
-`docker compose exec web …` when php-tooling MCP is missing.
-
-Enable **only** the dev-tooling + gh-tooling plugin MCP servers you actually use.
-Skip js-admin / js-storefront if you are not touching those trees in that session.
+`enforce_mcp_tools` must stay **false**. PreToolUse hooks that exit 2 block
+`vendor/bin/phpunit`, `bin/console`, composer, and `shopware-cli` when MCP is
+down, which breaks Cursor, Codex, cloud agents, and subagents.
 
 ### Layer 3 — Optional (heavy)
 
-| Add when… | Skip when… |
-| --------- | ---------- |
-| test-writing plugin + phpunit-unit-test-writing skill | You only need `shopware-testing` + manual phpunit runs |
-| chunkhound | ripgrep + LSP is enough |
-| contributor-writing skills in plugin | You already have `shopware-pr-description` + `shopware-core-development` |
+[shopwareLabs/ai-coding-tools](https://github.com/shopwareLabs/ai-coding-tools)
+is a **Claude Code plugin marketplace**, not a portable skill library. Hooks
+default to `enforce_mcp_tools: true`. Prefer uninstalling hook-bearing plugins
+over porting their MCP servers into this repo.
 
-## Fix the plugin vs replace it
+| Piece | Keep? |
+| ----- | ----- |
+| `dev-tooling` / `shopware-env` PreToolUse blockers | Uninstall (or `enforce_mcp_tools: false`) |
+| Cached `gh-tooling` (moved to shopwareLabs/github-agent-tools) | Uninstall; same bash-block pattern |
+| `test-writing` auto-review loop | Only if you want that generator; needs MCP |
+| Skills-only plugins (contributor-writing, code-migration) | Optional; mine rules here instead of copying |
+| chunkhound | Skip when ripgrep + LSP is enough |
+| [Modern Web Guidance](https://github.com/GoogleChrome/modern-web-guidance) CLI | Generic CSS/HTML/JS after Shopware primitives. Do **not** install their `SKILL.md` next to ours. `DISABLE_TELEMETRY=1`. |
 
-| Approach | Pros | Cons |
-| -------- | ---- | ---- |
-| **Lean subset (recommended)** | Predictable; skills work everywhere; one Shopware URL per project | No auto test-review loop; you run phpunit yourself |
-| **Fix upstream** | Team-aligned; full test-writing pipeline | Needs shopwareLabs changes for proxy multi-instance, optional MCP, `enforce_mcp_tools` soft-fail |
+Do **not** reimplement php-tooling MCP here. Core already has HTTP MCP;
+`shopware-cli` is the planned connector; Podman/`project console` already run
+phpstan, phpunit, and console.
 
-Worth upstreaming if you stay on the plugin:
-
-1. `enforce_mcp_tools: false` as default for non-CI dev.
-2. Per-server enable flags in `.mcp-php-tooling.json`.
-3. HTTP MCP base URL from env (e.g. `SHOPWARE_MCP_URL`) per instance.
-4. Skills that do not hard-require test-rules MCP when phpunit MCP works.
+A small upstream patch (fail-open when MCP is missing; allow `shopware-cli` and
+`compose exec`) is optional and not required to use this library.
 
 ## Multi-instance proxy pattern
 
@@ -129,10 +122,15 @@ Worth upstreaming if you stay on the plugin:
 ## Quick decision
 
 ```text
+Linked ~/shopware-dev checkout?
+  → this repo + Podman (MCP optional, never enforced)
+
+.shopware-project.yml / extension validate?
+  → this repo + npx skills add shopware/shopware-cli
+
 Need auto-generated unit tests with 20+ UNIT-* rule reviews?
-  → keep test-writing plugin + php-tooling MCP
+  → test-writing plugin, with hooks off
 
 Mostly core contribution, PR reviews, manual phpunit?
-  → ai-skills-shopware + php-tooling (no enforce) + gh-tooling
-  → drop test-writing plugin hooks
+  → this repo + Podman or shopware-cli; skip ai-coding-tools hooks
 ```

@@ -1,0 +1,12 @@
+{% sw_extends '@Storefront/storefront/page/checkout/confirm.html.twig' %}
+
+{% block page_checkout_confirm %}
+    {{ parent() }}
+    <script type="speculationrules">
+        {
+            "prerender": [
+                { "where": { "href_matches": "/checkout/*" } }
+            ]
+        }
+    </script>
+{% endblock %}

@@ -7,5 +7,6 @@
 - Decorate the core product route in my plugin.
 - Make this plugin work on both Shopware 6.6 and 6.7.
 - Subscribe to the checkout order placed event in my plugin.
-- Add a service in custom/plugins/SwagExample/src and register it in services.xml.
+- Add a service in custom/plugins/SwagExample/src and register it in services.php.
+- Migrate this plugin's services.xml to PHP before Shopware 6.8.
 - Call an external API from my plugin — should I use curl or Symfony HttpClient?

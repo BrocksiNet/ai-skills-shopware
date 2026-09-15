@@ -10,3 +10,5 @@
 - "Update compose.override.yaml ports" (should redirect to shopware-dev)
 - "Run npm lint in Administration"
 - "After reboot mutagen is not syncing"
+- "shopware-cli project validate this plugin"
+- "Run cache:clear through shopware-cli project console"

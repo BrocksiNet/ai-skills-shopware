@@ -1,0 +1,6 @@
+{% sw_extends '@Storefront/storefront/page/checkout/confirm.html.twig' %}
+
+{% block page_checkout_confirm %}
+    {{ parent() }}
+    <link rel="prefetch" href="/checkout/finish">
+{% endblock %}

@@ -37,6 +37,8 @@ Load the skeleton on demand:
   `fix(Checkout): allow TestBootstrapper to activate Composer plugins`).
 - After review feedback or CI failures, add a **follow-up commit** explaining that
   fix — do not amend or force-push unless the user explicitly asks.
+- Never add AI-agent attribution trailers such as `Co-authored-by`,
+  `Co-committed-by`, or `Signed-off-by`.
 - Check applicable checklist items; leave unchecked items that do not apply.
 - Keep descriptions factual and concise — no hype.
 - Pair with `shopware-core-development` when the change needs RELEASE_INFO or

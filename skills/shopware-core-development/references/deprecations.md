@@ -5,16 +5,62 @@ might be public. When **replacing an internal implementation** with Symfony or a
 newer service, see also
 [`modernization-and-flags.md`](modernization-and-flags.md).
 
+**Applies to shopware/shopware platform code.** Plugins still deprecate with a
+normal `@deprecated` + replacement; they do not use the BC-change attributes
+below.
+
 ## The rule
 
-Public API is **deprecated in one minor and removed in the next major**. You
+Public API is **announced in one minor and removed in the next major**. You
 never delete or change a public symbol's contract in place. If you are not sure
 whether a symbol is public, assume it is.
 
-## Deprecating code
+There are two different tools. Do not mix them.
 
-Annotate the symbol and gate the old behavior behind the feature flag system so
-the new behavior is testable before the major:
+| Situation | Tool |
+| --------- | ---- |
+| Planned major-version contract change, **no replacement today** | A `BCChange` attribute. Keep the current API usable. |
+| Functionality is **removed or has a replacement callers must use now** | `@deprecated` plus `Feature::triggerDeprecationOrThrow()` on executable paths. |
+
+Do **not** use `@deprecated reason:*` as a planning marker. Third-party static
+analysis treats those as actionable deprecations even when nothing should change
+yet. PHPStan on trunk rejects them.
+
+## Planning a future break (`BCChange`)
+
+Use an attribute from `Shopware\Core\Framework\Deprecation\BCChange`. It is
+planning metadata, not a deprecation.
+
+```php
+use Shopware\Core\Framework\Deprecation\BCChange\ParameterTypeNarrowing;
+
+#[ParameterTypeNarrowing(version: 'v6.8.0', parameterName: 'id', newType: 'string')]
+public function load(string|int $id): void
+{
+    // current contract stays callable until v6.8.0
+}
+```
+
+Pick the most specific attribute. Audience:
+
+- **`CallSiteCompatibilityChange`** — calling the method can break, including
+  `parent::` from a subclass (`ParameterTypeNarrowing`, `ParameterRemoval`,
+  `NewRequiredParameter`, `ReturnTypeNarrowing`, …).
+- **`ExtenderCompatibilityChange`** — an override or inheritance relationship
+  can break (`BecomesAbstract`, `BecomesFinal`, `ClassHierarchyChange`, …).
+- Some attributes implement both.
+
+Values must stay machine-readable: `vX.Y.Z` version, parameter names **without**
+`$`, `::class` for class references, the real default for `NewOptionalParameter`.
+PHPStan rejects attributes that do not describe a structurally possible change.
+
+When legacy use is detectable at runtime (`BecomesAbstract`,
+`NewRequiredParameter`, `ParameterRemoval`, `ParameterTypeNarrowing`), keep the
+old behavior and call `Feature::triggerDeprecationOrThrow()` **only for that
+incompatible use**, unless the method is framework-invoked (the framework would
+warn on legitimate calls).
+
+## Deprecating code that already has a replacement
 
 ```php
 /**
@@ -56,31 +102,38 @@ public function oldHandle(Context $context): void
   are easy to remove with the deprecation; guard with the relevant major feature
   flag when needed.
 
-## Which annotation, when (BC lifecycle)
+## DI service tags
 
-Shopware's backward-compatibility workflow uses different annotations depending
-on where the change is in its lifecycle. Pick the right one:
+Do **not** mark a DI service definition `<deprecated>` while Shopware core still
+references that service id anywhere. Internal references still fire container
+deprecations and spam compile/warmup logs. Deprecate the PHP API or class if
+needed; add the DI tag only after core no longer uses the id.
 
-| Situation | Annotation | Notes |
-| --------- | ---------- | ----- |
-| New public API still being stabilised | `@internal` | Mark new public API `@internal` until release; remove the tag when it goes public. |
-| Obsolete code, replacement shipping **now** behind a feature flag | `@feature-deprecated` | During development; becomes a plain `@deprecated` when the feature is released. |
-| Obsolete public code, removal scheduled for the **next major** | `@deprecated tag:v6.x.0` | The standard deprecation; old code removed in the major. |
-| Breaking change hidden behind a **major** feature flag | `@major-deprecated` | Hide breaking behaviour behind the major flag; document it in `UPGRADE`. |
+## Which marker, when
 
-Always name the replacement and the target tag, and keep both code paths alive
-until the major lands. See the developer-docs
+| Situation | Marker |
+| --------- | ------ |
+| New public API still being stabilised | `@internal` until it is released |
+| Planned major contract change, no replacement yet | `#[…]` from `BCChange` (see above) |
+| Obsolete public code with a replacement **shipping now** | `@deprecated tag:v6.x.0` + `Feature::triggerDeprecationOrThrow()` |
+| Private cleanup reminder | `// @deprecated tag:vX.Y.Z` next to the branch |
+
+Always name the replacement (or the future contract) and the target version.
+Keep both code paths alive until the major lands. See the developer-docs
 [Backward Compatibility](https://developer.shopware.com/docs/resources/guidelines/code/backward-compatibility.html)
 guide for the full matrix.
 
 ## Breaking-change checklist
 
 - [ ] Is there a non-breaking alternative (add new, deprecate old)? Prefer it.
-- [ ] Deprecation annotation with `tag:` and a named replacement.
-- [ ] `Feature::triggerDeprecationOrThrow()` (or the appropriate dispatch) in place.
-- [ ] `RELEASE_INFO-6.x.md` entry describing the deprecation, its replacement and the timeline.
-- [ ] `UPGRADE-6.x.md` entry when the break actually lands (in the major).
-- [ ] Tests cover both the deprecated path (until major) and the new path.
+- [ ] Planned break uses a `BCChange` attribute, not `@deprecated reason:*`.
+- [ ] Real removal/replacement uses `@deprecated tag:` plus
+      `Feature::triggerDeprecationOrThrow()` on executable paths.
+- [ ] `RELEASE_INFO-6.x.md` describes the replacement (or the announced change)
+      and who is affected.
+- [ ] `UPGRADE-6.x.md` describes what will break and the concrete migration steps.
+- [ ] Tests cover the current path, the incompatible legacy use (when signaled),
+      and the new path.
 
 ## What counts as breaking
 

@@ -13,6 +13,11 @@ versions, and the project may not be on the latest.
 Good Context7 targets: "Symfony Messenger handler configuration", "Doctrine DBAL
 query builder parameter binding", "Vue 3 composition API for an admin module".
 
+For **generic modern CSS / HTML / client-JS APIs** (not a Shopware component),
+search [Modern Web Guidance](modern-web-guidance.md) after confirming
+storefront/Admin has no primitive. Adapt the guide; do not replace Bootstrap,
+`PluginManager`, or Meteor `mt-*`.
+
 ## Version-detection policy (do this first)
 
 1. Read the project's `composer.json` to get the declared ranges

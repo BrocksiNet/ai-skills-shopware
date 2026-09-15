@@ -46,7 +46,7 @@ Host directory syncs into container volume `shopware-src` via Mutagen.
 
 ## MCP defaults (central)
 
-- `enforce_mcp_tools: false` — MCP preferred, `podman compose exec` allowed
+- `enforce_mcp_tools: false` — MCP is optional; `podman compose exec` must always be allowed
 - PHP: docker-compose `web`, PHPStan memory 2G, ECS `.php-cs-fixer.dist.php`
 - JS: admin + storefront scopes under `src/.../administration` and `storefront`
 - GH: default `shopware/shopware` (trunk patch: `lacknere/shopware`)

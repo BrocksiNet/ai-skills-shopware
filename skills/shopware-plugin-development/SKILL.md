@@ -5,12 +5,11 @@ description: >-
   project's own backend code. Use when the target lives on top of the platform:
   paths like custom/plugins, custom/static-plugins, vendor/store.shopware.com, a
   standalone plugin repo (a class extending Shopware\Core\Framework\Plugin\Plugin),
-  or project src/ services. Covers services and DI, DAL reads/writes, HTTP cache
-  tags (6.7+), database migrations, event subscribers, decoration, and 6.6/6.7
-  compatibility. Triggers on "build a Shopware plugin", "add a service", "query
-  with the DAL", "add a migration", "cache this route", "decorate a core
-  service", "subscribe to an event", "make this 6.7 compatible", "use Symfony
-  HttpClient", "replace custom HTTP with Symfony". Do NOT use for
+  or project src/ services. Covers services and DI (PHP on 6.8, XML on 6.6/6.7),
+  DAL, HTTP cache tags, migrations, decoration, and 6.6–6.8 compatibility.
+  Triggers on "build a Shopware plugin", "add a service", "query with the DAL",
+  "add a migration", "decorate a core service", "make this 6.7 compatible",
+  "migrate services.xml to PHP", "use Symfony HttpClient". Do NOT use for
   the platform itself (shopware-core-development), for declarative apps with a
   manifest.xml (shopware-app-development), generic PHP style (php-foundation),
   or test authoring (shopware-testing).
@@ -60,7 +59,9 @@ Inherits all **`php-foundation` trunk habits** (`empty()`, interface injection,
 
 - **Extend, do not modify.** Use service **decoration** (`decorates:`), event
   **subscribers/listeners**, and the entity-extension / custom-field system.
-  Register services in `services.xml`/`services.yaml` with explicit ids.
+  Register new services in PHP (`services.php` with `ContainerConfigurator`)
+  when the plugin targets 6.8+. XML `services.xml` / `routes.xml` still load
+  on 6.6/6.7; migrate them before 6.8. Keep plugin `config.xml` as XML.
 - **Thin controllers** — delegate to services; see `shopware-architecture` and
   `shopware-review-learnings`. New Store-API routes need OpenAPI (see
   `api-contracts.md`) and ACL (`shopware-security`).
@@ -89,6 +90,7 @@ Inherits all **`php-foundation` trunk habits** (`empty()`, interface injection,
 - [ ] No core/vendor modification; extension done via decoration/events/extensions.
 - [ ] DAL used for entity data; associations added before filtering; no obvious N+1.
 - [ ] No deprecated API where a stable one exists; 6.6 compat preserved or the bump flagged.
+- [ ] 6.8-targeted plugins register Symfony DI in PHP, not `services.xml`.
 - [ ] Migrations idempotent and split destructive/non-destructive; lifecycle handled.
 - [ ] Static analysis (project PHPStan/ECS) passes; tests added where behavior changed (see shopware-testing).
 - [ ] Custom HTTP/time/queue/validation justified, or replaced with Symfony on the pinned version; platform APIs used for DAL/cache/routes.

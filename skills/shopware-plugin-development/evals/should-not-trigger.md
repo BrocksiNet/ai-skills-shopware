@@ -7,3 +7,5 @@
 - Refactor this plain PHP class to use readonly properties. (-> php-foundation)
 - Write a unit test for this calculator. (-> shopware-testing)
 - Which Symfony Messenger version does this project use? (-> shopware-research-and-escalation)
+- Write a storefront JS plugin and register it with PluginManager. (-> shopware-storefront)
+- Add an Administration Vue module that opens mt-modal. (-> shopware-admin-js)

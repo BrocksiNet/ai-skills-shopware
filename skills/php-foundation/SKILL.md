@@ -48,6 +48,10 @@ PRs — apply in core, plugins, and project PHP alike:
 - **No `@var` on properties** when a native property type or method-level
   `@return`/`@param` generic suffices. PHPDoc is for shapes PHP cannot express,
   not a shortcut around typing.
+- **Name the arguments** when a call passes several values that do not describe
+  themselves — `true`, `false`, `0`, `1`, `[]`, `null` — or when naming lets you
+  skip defaults you only passed in order to reach a later argument. Leave a
+  short, self-explaining call positional.
 
 ## Use the right shape for data
 
@@ -119,6 +123,7 @@ intent clearer — not for their own sake.
 - [ ] `#[\Override]` on overrides/implementations; classes referenced via `use`.
 - [ ] `list<T>` used for sequential collections; PHPDoc only where language types cannot express the shape.
 - [ ] No `empty()`; interfaces injected where available; `ClockInterface` for time; no redundant `@var` on properties.
+- [ ] Named arguments used for bare literals or skipped defaults; short self-explaining calls stay positional.
 - [ ] ECS passes (PER-CS). For Shopware specifics (DAL, cache, migrations, tests) defer to the surface / testing skills.
 
 ## Further reading (optional, non-load-bearing)

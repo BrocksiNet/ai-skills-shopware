@@ -28,7 +28,8 @@ As a contributor you maintain two curated, in-repo files instead:
   guidelines, quality-of-life improvements.
 - Critical bugs (especially ones driving a patch release).
 
-Ask: "What does a developer need to know to benefit from this?"
+Ask: "What does a developer (including theme / custom storefront authors) need
+to know to benefit from this?"
 
 Sections: `Features`, `API`, `Core`, `Administration`, `Storefront`, `App System`,
 `Hosting & Configuration`, `Critical fixes`. Each minor version gets its own
@@ -36,11 +37,15 @@ section.
 
 ### `UPGRADE-6.x.md` (breaking changes)
 
-- Anything that can break projects, extensions, or integrations — every break
-  covered by the backward-compatibility promise.
-- **Deprecations** — document the planned removal for the next major version.
-- Must include: what changed, why/benefit, when developers need to care, how to
-  adjust (code snippet or exact steps when needed).
+`UPGRADE` answers one question: must existing third-party code or configuration
+(extension, app, integration, theme, hosting setup) change to keep working
+after the next major? If yes, add an entry. If no, add nothing — however large
+the change is. A bug fix that restores intended behaviour needs no entry.
+
+- Write in **past tense**. Developers read this only after the next major shipped.
+- Describe the concrete before and after, not the internals of how it works.
+- For deprecations, the old path still works until the major; the entry tells
+  developers what to change before it stops.
 
 ### Update neither (GitHub changelog only)
 
@@ -95,6 +100,13 @@ changelog.
 - Wrap filenames, config keys, class names, and code elements in backticks.
 - Keep only changes visible or relevant to the section audience. Omit
   implementation details that do not affect API or behavior.
+- Put a blank line before and after every heading, and between paragraphs.
+- Put the entry under the matching category heading of the upcoming version
+  section; add that heading only if the section does not have it yet.
+- **Never repeat a heading** inside one version section: no second
+  `## Features` under the same `# X.Y.Z.P`, and no entry title the section
+  already documents. The `release-info/section` check rejects a repetition the
+  pull request adds.
 
 ## Style guidelines
 

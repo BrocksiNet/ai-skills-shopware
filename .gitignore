@@ -4,8 +4,9 @@ evals/**/.out/
 evals/smoke/smoke.env
 *.log
 
-# Node (skills.sh runner helpers, markdown lint)
+# Node (skills.sh runner helpers, markdown lint, eval AST toolchain)
 node_modules/
+evals/tools/ast/node_modules/
 .npm/
 
 # OS

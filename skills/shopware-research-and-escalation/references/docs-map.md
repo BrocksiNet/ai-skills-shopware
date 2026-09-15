@@ -27,8 +27,9 @@ or the matching release tag — docs are the starting point, not the final word.
 | Migrations | docs "Database migrations"; `Core/Framework/Migration` |
 | Plugin fundamentals & lifecycle | docs "Plugin base guide"; `Core/Framework/Plugin` |
 | Apps & app scripts | docs "App base guide", "App scripts" |
-| Storefront (Twig, JS plugins, theme) | docs "Storefront"; `src/Storefront` |
-| Administration (Vue, modules, components) | docs "Administration"; `src/Administration` |
+| Storefront (Twig, JS plugins, theme) | docs "Storefront"; `src/Storefront`; skill `shopware-storefront` |
+| Administration (Vue, modules, components) | docs "Administration"; `src/Administration`; skill `shopware-admin-js` |
+| Generic modern CSS/HTML/JS APIs | Modern Web Guidance CLI — see `modern-web-guidance.md` |
 | Flow Builder / business events | docs "Flow Builder"; `Core/Content/Flow` |
 | Testing | docs "Testing"; `IntegrationTestBehaviour`, `tests/` in core |
 

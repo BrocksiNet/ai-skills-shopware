@@ -72,4 +72,5 @@ Install at **project level** (the default). Pin with `BrocksiNet/ai-skills-shopw
 ## Mixing use-cases
 
 Surface skills route by path. Add [`plugin-development.md`](plugin-development.md)
-when you also build extensions.
+when you also build extensions;
+[`storefront-development.md`](storefront-development.md) for Twig/theme/Admin JS.

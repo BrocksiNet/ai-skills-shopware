@@ -66,9 +66,10 @@ Load a reference file only when the task needs it:
 - **`@internal` discipline.** New classes that are not meant for extension are
   marked `@internal`. Respect existing `@internal` — do not call or extend it
   from outside its bundle.
-- **Deprecation, not deletion.** Use `Feature::triggerDeprecationOrThrow()` and
-  annotate with `@deprecated tag:v6.x.0 - reason and replacement`. See the
-  reference for the exact pattern and the `if (!Feature::isActive(...))` gates.
+- **Deprecation, not deletion.** Planned major contract changes use a
+  `BCChange` attribute (not `@deprecated reason:*`). Real removals or
+  replacements use `@deprecated tag:` plus `Feature::triggerDeprecationOrThrow()`.
+  See the reference for `Feature::silent()`, DI service tags, and dual paths.
 - **Release notes where they matter.** Add a `RELEASE_INFO-6.x.md` entry for
   developer-facing changes (features, extension points, new best practices,
   deprecations) and an `UPGRADE-6.x.md` entry for breaking changes. Non-critical
@@ -95,7 +96,7 @@ Load a reference file only when the task needs it:
 
 - [ ] `php-foundation` baseline satisfied (strict types, enums/DTOs, PER-CS).
 - [ ] No public-API break without a completed deprecation cycle; `@internal` respected.
-- [ ] Deprecations use `Feature::triggerDeprecationOrThrow()` + `@deprecated tag:` annotation; core BC callers to deprecated APIs use `Feature::silent()` when required.
+- [ ] Planned breaks use `BCChange` attributes; removals/replacements use `@deprecated tag:` + `Feature::triggerDeprecationOrThrow()`; core BC callers use `Feature::silent()` when required.
 - [ ] Developer-facing change documented in `RELEASE_INFO-6.x.md`; breaking change in `UPGRADE-6.x.md`; ADR added if the decision is architectural. (Internal refactor / small bug fix: nothing needed.)
 - [ ] PHPStan passes with no new baseline entries; if the level changed, the baseline was regenerated and committed.
 - [ ] Unit/integration tests added and green; ECS clean; conventional commit message.

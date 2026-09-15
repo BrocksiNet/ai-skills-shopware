@@ -32,7 +32,15 @@ npx skills add BrocksiNet/ai-skills-shopware \
 
 Install at **project level** (the default). Pin with `BrocksiNet/ai-skills-shopware@vX.Y.Z`.
 
+For project create/validate/package workflows, also install Shopware CLI skills
+(do not copy them into this repo):
+
+```bash
+npx skills add shopware/shopware-cli
+```
+
 ## Mixing use-cases
 
 Surface skills route by what you edit. Add [`core-development.md`](core-development.md)
-for platform work; [`app-development.md`](app-development.md) for declarative apps.
+for platform work; [`app-development.md`](app-development.md) for declarative apps;
+[`storefront-development.md`](storefront-development.md) for Twig/theme/Admin JS.

@@ -7,6 +7,9 @@
   // readability. Wrapping is a stylistic choice, not a correctness issue.
   "MD013": false,
 
+  // Eval fixture Markdown is ignored (see .markdownlintignore): fail goldens
+  // may repeat headings or copy the official PR template punctuation.
+  //
   // MD024 (duplicate headings): only flag duplicates that are siblings under
   // the same parent. Repeating per-tool sub-headings (Cursor / Claude Code /
   // Codex / OpenCode) under different use-case sections is intentional.

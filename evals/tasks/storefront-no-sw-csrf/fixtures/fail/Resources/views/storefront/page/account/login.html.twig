@@ -1,0 +1,5 @@
+<form action="{{ path('frontend.account.login') }}" method="post">
+    <input type="hidden" name="_csrf_token" value="legacy">
+    <input type="email" name="email">
+    <button type="submit">{{ 'account.loginSubmit'|trans }}</button>
+</form>
