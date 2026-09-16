@@ -8,6 +8,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+
+- Trunk overlay: `sw-dev link` must not replace git-tracked core skills
+  (same-named `shopware-admin-js`) or `.claude/skills` when it aliases
+  `.agents/skills`. Cursor/Codex still get our Admin JS overlay.
+  `shopware-storefront` stays on the core-overlay preset (no core equivalent).
+
 ### Changed
 
 - Copilot leftover holes: JS-to-TS matches basename `product-card.ts` and

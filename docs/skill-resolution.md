@@ -60,8 +60,12 @@ npx skills add BrocksiNet/ai-skills-shopware \
   --skill shopware-review-learnings \
   --skill shopware-pr-review \
   --skill shopware-podman-dev \
+  --skill shopware-storefront \
   -a claude-code -a codex -a cursor
 ```
+
+Do **not** `npx skills add --skill shopware-admin-js` into a trunk `.agents/skills/`
+tree. Core already owns that name. Cursor/Codex overlay is fine.
 
 Add `shopware-plugin-development` when editing `custom/plugins` in the monorepo.
 
@@ -93,13 +97,23 @@ npx skills add BrocksiNet/ai-skills-shopware \
 **Always ours (no core equivalent):** `shopware-security`, `shopware-architecture`
 (decision layer), `shopware-plugin-development`, `shopware-app-development`,
 `shopware-storefront`, `shopware-review-learnings`, eval tasks.
-`shopware-admin-js` overlays core's short skill when present.
+
+`shopware-admin-js` on trunk: keep core's tracked
+`.agents/skills/shopware-admin-js/` (including `agents/openai.yaml`). Overlay
+our richer skill into `.cursor/skills/` and `.codex/skills/` only. Core's
+`.claude/skills` is a git symlink to `.agents/skills` — do not replace it.
 
 ## sw-dev link
 
-`sw-dev link` symlinks this repo's `skills/` into `.agents/skills/` and
-`.claude/skills/`. For trunk instances, configure `instances.json` skills list
-to match `core-overlay` or `full` per lane.
+`sw-dev link` overlays this repo's `skills/` into `.cursor/skills/` and
+`.codex/skills/`. It overlays into `.agents/skills/` only when that skill name
+is **not already git-tracked**. Skip `.claude/skills` when it aliases
+`.agents/skills` (trunk / 6.7 / 6.8). Replacing a tracked core skill with a
+symlink shows up as a deletion in `git status` (`SKILL.md`, `openai.yaml`) and
+must not be committed.
+
+For trunk instances, configure `instances.json` to the `core-overlay` preset.
+`shopware-storefront` has no core equivalent, so it is safe on every provider.
 
 ## Sync ritual
 
