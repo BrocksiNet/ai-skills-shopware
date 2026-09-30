@@ -129,13 +129,21 @@ A bare `shopware/shopware` clone ships **no built assets and no `install.lock`**
 The shared tooling handles the traps, but know them:
 
 - **Never build on the host.** Admin/storefront builds run in the `web` container.
-- **`install.lock` + build output are not git-ignored** and a `two-way-resolved`
-  Mutagen session (host wins) deletes container-created copies the host lacks —
-  which loops a fresh instance back to `/installer` and wipes the admin bundle.
-  `lib/mutagen.sh` ignores `install.lock`, `public/bundles`, `public/theme`,
-  `public/administration`, `public/storefront`,
-  `src/{Administration,Storefront}/Resources/public` and the storefront `vendor/`.
-  If you add such a path, add it there too.
+- **Check the Mutagen mode when container-created files vanish.** Lanes use
+  `two-way-resolved` (container output syncs back to the host). A
+  `one-way-replica` session mirrors host to container and deletes anything created
+  only in the container within seconds (webpack `dist/`, `.env.local`,
+  `install.lock`), which leads to `/installer` loops and a storefront without JS.
+  `sw-dev sync` uses the `mode` from `instances.json` (older `lib/mutagen.sh`
+  forced `one-way-replica` for non-agentic lanes). Verify with
+  `mutagen sync list <session> -l | grep "Synchronization mode"`.
+- **Generated output is Mutagen-ignored.** `lib/mutagen.sh` ignores
+  `install.lock`, `public/bundles`, `public/theme`, `public/administration`,
+  `public/storefront`, `src/{Administration,Storefront}/Resources/public` and the
+  storefront `vendor/`. If you add such a path, add it there too.
+- **Storefront without CSS on a fresh lane:** `system:install` cannot compile the
+  theme before the storefront npm deps exist. After `npm run production` and
+  `node copy-to-vendor.js`, run `bin/console theme:change Storefront --all --sync`.
 - **`PROJECT_ROOT` is set on `web`** by `overrides/shared.podman-mutagen.yaml`; the
   admin Vite build needs it or dies with `paths[0] must be of type string`.
 - After changing `lib/mutagen.sh` ignores or the shared override:

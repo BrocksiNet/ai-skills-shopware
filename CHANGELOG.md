@@ -10,6 +10,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+- Podman dev skill: container-created files (webpack `dist/`, `.env.local`,
+  `install.lock`) vanish because the lane's Mutagen session runs as
+  `one-way-replica`, not because of `two-way-resolved` host wins. Documents how
+  to check the session mode and the `theme:change Storefront --all --sync` step
+  for fresh lanes whose storefront renders without CSS.
 - Trunk overlay: `sw-dev link` must not replace git-tracked core skills
   (same-named `shopware-admin-js`) or `.claude/skills` when it aliases
   `.agents/skills`. Cursor/Codex still get our Admin JS overlay.
