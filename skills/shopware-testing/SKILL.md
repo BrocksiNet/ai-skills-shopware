@@ -41,8 +41,11 @@ Load references on demand:
 clock, filesystem. No real DB unless documenting a Codecov placement exception
 (see core-platform-patterns).
 
-**Integration** (`tests/integration/...`): `IntegrationTestBehaviour`, real
-container + DAL, transaction rollback per test.
+**Integration** (`tests/integration/...`): real container + DAL, transaction
+rollback per test. Use only the traits the scenario needs. A repository test
+that only needs the container and rollback uses `KernelTestBehaviour` and
+`DatabaseTransactionBehaviour`, not the broad `IntegrationTestBehaviour`
+bundle. See `integration-repository.md`.
 
 **Migration** (`tests/migration/...`): run migration steps against real schema;
 assert columns, data transforms, idempotency.

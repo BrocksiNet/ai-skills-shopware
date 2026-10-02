@@ -6,12 +6,17 @@ source of truth for plugins, older core branches, and eval-backed rules
 (`sw-dev link`, install profiles in [`skill-resolution.md`](skill-resolution.md)).
 
 Seed PR: [#17657](https://github.com/shopware/shopware/pull/17657) (merged
-2026-06-26). **Last mined:** trunk 2026-09-14 ([#20117](https://github.com/shopware/shopware/pull/20117)).
+2026-06-26). **Last mined:** trunk 2026-09-28
+([#20879](https://github.com/shopware/shopware/pull/20879),
+[#20652](https://github.com/shopware/shopware/pull/20652),
+[#20575](https://github.com/shopware/shopware/pull/20575)).
 Canonical path: `.agents/skills/`; `.claude/skills` → symlink.
 
 Catalog since #17657 is unchanged (no new skill names, still no storefront
-skill). Content drift is in `shopware-phpunit-tests` (dual-major feature-flag
-lanes) plus earlier `shopware-php-code` and `shopware-release-docs` deltas.
+skill). Later drift: new Store API routes use extension events
+(`shopware-php-code`, #20879); integration tests take only the traits they
+need (#20575); a test that asserts a throw while a major flag is active is
+`@deprecated` on that method (#20652).
 
 Status key: **done** | **partial** | **skip** | **eval:TBD** | **defer-on-trunk**
 
@@ -49,6 +54,8 @@ Status key: **done** | **partial** | **skip** | **eval:TBD** | **defer-on-trunk*
 | Unit legacy flags: `#[DisabledFeatures]`; not `Feature::fake()` for current major | `test-shape-and-flags.md` | **done** → `unit-test-disable-newer-major` |
 | Dual-major unit tests disable the newer major (`#[DisabledFeatures(['v6.9.0.0'])]`) | same | **done** → `unit-test-disable-newer-major` |
 | Integration flags: `Feature::skipTestIfActive()` / `skipTestIfInActive()`; not `#[DisabledFeatures]` | `test-shape-and-flags.md` | **done** (runtime-enforced #18350; dual-major lanes #20117) |
+| Integration traits: only what the scenario needs (`KernelTestBehaviour` + `DatabaseTransactionBehaviour` for repository rollback) | `integration-repository.md` | **done** → `integration-narrow-test-traits` |
+| Test method `@deprecated tag:` when it asserts a throw while a major flag is active | `test-shape-and-flags.md` | **done** → `flag-active-throw-is-deprecated` |
 | `@codeCoverageIgnore` on production class uses FQCN `@see` on trunk | `core-platform-patterns.md` | defer-on-trunk |
 | No `#[CoversClass]` on integration tests (PHPStan) | `core-platform-patterns.md` | **done** → `integration-no-covers-class` |
 | Cross-test docblock uses `@see` + import, not FQCN prose | `core-platform-patterns.md` | **done** → `test-docblock-use-see` |
@@ -70,6 +77,7 @@ Status key: **done** | **partial** | **skip** | **eval:TBD** | **defer-on-trunk*
 | Bounded DAL reads (setLimit) | `shopware-architecture` → `dal-contracts.md` | **done** → `dal-search-without-limit` |
 | Repository not Connection for entity reads | `dal-contracts.md` | **done** → `no-dal-connection-for-entity-read` |
 | New Admin/Store API routes → OpenAPI JSON under `Schema/.../paths` | `api-schema.md` (core) | skip (fixture-heavy) |
+| New core Store API routes use extension events, not a new abstract route class | `shopware-architecture` → `extension-mechanisms.md` | **done** → `store-api-route-extension-event` |
 | Plugin/extension OpenAPI for custom routes | `shopware-plugin-development` → `api-contracts.md` | **done** → `store-api-openapi-required` |
 | Run `ApiRoutesHaveASchemaTest` for new/changed core API routes | `api-schema.md` | skip |
 | `Feature::silent()` when core must call deprecated API for BC | `deprecations.md` | **done** → `deprecation-silent-wrapper` |

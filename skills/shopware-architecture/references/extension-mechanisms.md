@@ -10,6 +10,7 @@ Load when adding extensibility or integrating with core.
 | Replace core service behaviour | **Decoration** (`decorates:` in DI) |
 | Add fields to existing entity | Entity extension / custom fields |
 | New HTTP surface for headless | Store-API or Admin route + OpenAPI (see plugin api-contracts) |
+| New **core** Store API route | Typed extension event (`ExtensionDispatcher`), not a new abstract route class |
 | Template-only customization | Twig inheritance / blocks (Storefront) |
 | New provider-style hook already in core | Existing registry (do not invent parallel provider interfaces) |
 
@@ -18,6 +19,11 @@ Load when adding extensibility or integrating with core.
 - **Plugins:** extend, do not modify core/vendor files.
 - **Core:** prefer existing extension mechanisms over new provider interfaces
   when they already express the contract.
+- **New core Store API routes** publish a typed extension event so plugins can
+  change inputs, enrich the result, or replace the operation. Do not add a new
+  `Abstract*Route` plus `getDecorated()` for that. Abstract route classes that
+  are already public stay; they are a backward-compatible contract, and plugins
+  still decorate those.
 - **One listener** for one event → `#[AsEventListener]` over full subscriber
   boilerplate.
 
