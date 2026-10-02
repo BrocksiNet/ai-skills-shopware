@@ -260,7 +260,7 @@ exclusively and accept that trade-off.
 
 ```bash
 # Pin to a release tag for reproducibility
-npx skills add BrocksiNet/ai-skills-shopware@v0.6.0 --skill php-foundation -a cursor
+npx skills add BrocksiNet/ai-skills-shopware@v0.7.0 --skill php-foundation -a cursor
 ```
 
 ## Update
