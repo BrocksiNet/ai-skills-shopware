@@ -33,6 +33,43 @@ Put the cost next to the audience.
 
 Performance of a shared path outranks completeness of a single feature.
 
+## Asset loading
+
+Local green is the local filesystem. Production often is not.
+
+- Theme assets, media, and compiled storefront files are stored on an external
+  filesystem (S3, Google Cloud Storage, another object store). A change to how
+  those files are resolved, copied, moved, or turned into URLs reaches every
+  shop on that storage, not only the shop you booted locally.
+- `file_exists` on `public/`, a folder rename, or a URL built from the local
+  document root passes when the adapter is local. Object storage has no real
+  folders: a "move directory" is one request per object, and it is not atomic.
+  See the theme-compilation ADR for that constraint. Do not restate the copy
+  algorithm here. Decide whether this change still works when the filesystem
+  is remote.
+- A test that only writes the local public directory has not reviewed the
+  change. If the new loading path works only on local disk, the verdict is
+  `do not ship` or `narrow the design` until the same path is the one remote
+  storage will run.
+
+## One container
+
+SaaS compiles one Symfony container and serves every shop from it. There is
+no container per feature flag, sales channel, or other condition.
+
+- An `if` in `services.php`, XML, a compiler pass, or a `when@` / env split
+  that registers different services depending on a flag produces a different
+  container. The container that was compiled is the only one that runs. Shops
+  on the other side of that `if` do not get their own container later.
+- A runtime `Feature::isActive` inside a service that always exists is the
+  acceptable shape. A service that is missing because the flag was off at
+  compile time is not.
+- Local PHPUnit boots one kernel. That does not prove a second container
+  shape exists in production. Production will not build it.
+- Verdict `do not ship` when the feature only works by forking the container.
+  `narrow the design` when the same feature can live as a runtime branch in
+  the one container.
+
 ## Easier, not more complex
 
 - Making the feature work by adding a header the caller must now send, a new
@@ -49,7 +86,7 @@ Performance of a shared path outranks completeness of a single feature.
 | ------- | ---- |
 | `ship` | Blast radius stays on the feature's own users, shared paths are not slower, and the shop is easier or unchanged. |
 | `narrow the design` | The feature is worth having, but the current shape taxes other requests, other shops, or cache. Say what to cut or gate. |
-| `do not ship` | The only way to meet the ticket harms the shared shop (cache split, slower checkout for non-users, a new required ritual). |
+| `do not ship` | The only way to meet the ticket harms the shared shop (cache split, slower checkout for non-users, assets that only resolve on local disk, a second container per flag, a new required ritual). |
 
 Do not soften `do not ship` into a list of nits. The point of this review is
 the shop after the change, not the style of the patch.

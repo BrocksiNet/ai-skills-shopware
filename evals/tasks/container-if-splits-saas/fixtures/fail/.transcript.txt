@@ -1,0 +1,2 @@
+Ship it. We have one container and the feature flag is compiled in our build.
+Shops that need the other container can wait.

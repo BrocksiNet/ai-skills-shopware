@@ -1,0 +1,10 @@
+Do not ship this as-is. Narrow the design.
+
+Blast radius: theme and storefront assets on S3 (remote object storage) follow
+this loading change, not only the local public directory the tests wrote.
+
+Who pays: every shop whose assets are not on local disk. A local PHPUnit run
+never executed the remote filesystem path.
+
+The shop got more complex if URLs and copies assume a local folder. Object
+storage has no atomic directory move. The feature working locally is not enough.

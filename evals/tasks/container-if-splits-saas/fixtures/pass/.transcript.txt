@@ -1,0 +1,10 @@
+Do not ship. Narrow the design.
+
+Blast radius: the Symfony if compiles a different container per feature flag.
+SaaS has one container for every shop, not a container per flag.
+
+Who pays: every shop that does not match the flag that was on at compile time.
+They never get a second container. Local PHPUnit only booted the flag-on kernel.
+
+The shop got more complex: a compile-time split instead of a runtime check
+inside the single container. The feature working in that one test kernel is not enough.

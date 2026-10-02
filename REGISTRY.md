@@ -24,7 +24,7 @@ the surface skills can all be installed together without contradicting (see
 | `shopware-security` | maintainer | any PHP/API/config | Secrets, access keys, ACL, app permissions, webhooks | Generic security lectures, OpenAPI-only docs |
 | `shopware-testing` | maintainer | any test | Writing/fixing PHPUnit tests for Shopware code | Storefront E2E/Playwright, Jest, manual QA |
 | `shopware-review-learnings` | maintainer + contributors | any review | Reviewing Shopware code, "is this idiomatic", recurring pitfalls | Greenfield generic PHP, non-Shopware review |
-| `shopware-change-impact` | maintainer | after a feature works | Blast radius, who pays, easier vs more complex, ship / narrow / do not ship | Implementing the feature, line-level idioms, GitHub thread triage |
+| `shopware-change-impact` | maintainer | after a feature works | Blast radius, who pays, easier vs more complex, remote assets, one container, ship / narrow / do not ship | Implementing the feature, line-level idioms, GitHub thread triage |
 | `shopware-research-and-escalation` | maintainer | any | Uncertainty about Shopware behavior/symbols, "should I research", being stuck | Tasks the model is confident about |
 | `shopware-pr-description` | maintainer | core PR workflow | Creating/updating shopware/shopware PR bodies, filling the GitHub PR template | Release-note file edits, plugin/app PRs |
 | `shopware-assistant-style` | maintainer | any communication | Support ticket replies, short/plain answers, copy-ready customer text | Code rules, PR templates, release notes |
@@ -73,7 +73,7 @@ the surface skills can all be installed together without contradicting (see
 | Tests must not `exit()` / `die()`; `setAutoExit(false)` on console `Application` | `shopware-testing` |
 | `StaticEntityRepository` stubbing and generic inference | `shopware-testing` |
 | Recurring review findings (cross-cutting, delta-only) | `shopware-review-learnings` |
-| Blast radius after a feature works (shared cache, who pays, easier vs more complex) | `shopware-change-impact` |
+| Blast radius after a feature works (shared cache, who pays, easier vs more complex, remote asset loading, one compiled container) | `shopware-change-impact` |
 | Bug-fix scope and boyscouting (root cause vs drive-by refactors) | `shopware-review-learnings` |
 | When to research vs proceed; docs map; Context7 | `shopware-research-and-escalation` |
 | What to do when stuck (escalation ladder) | `shopware-research-and-escalation` |
