@@ -112,6 +112,10 @@ A test must never let production or framework code call `exit()`, `die()`, or
   `Feature::skipTestIfActive('v6.9.0.0', $this)` rather than `#[DisabledFeatures]`.
 - Keep **legacy flag behavior** in dedicated tests that are easy to delete when
   the flag is removed.
+- When a test **asserts that behavior throws while a major feature flag is
+  active**, mark that test method `@deprecated tag:vX.Y.0` and say it is
+  removed with the flag. The tag sits on the method, not only on the class,
+  so the temporary assertion is findable when the flag goes.
 
 ## Data providers (unit tests)
 

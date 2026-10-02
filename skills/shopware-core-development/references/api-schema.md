@@ -15,6 +15,11 @@ src/Core/Framework/Api/ApiDefinition/Generator/Schema/<AdminApi|StoreApi>/paths
 The HTTP route contract can be public even when the PHP controller class is
 `@internal` — document route and schema separately from the PHP surface.
 
+New core Store API routes extend through a typed extension event, not a new
+abstract route class. That choice is owned by `shopware-architecture`
+(`references/extension-mechanisms.md`). Existing public `Abstract*Route`
+contracts stay backward compatible.
+
 ## Verification
 
 Run (or ensure CI runs):

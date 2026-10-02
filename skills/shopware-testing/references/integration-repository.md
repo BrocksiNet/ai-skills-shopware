@@ -3,7 +3,11 @@
 Inspired by [FriendsOfShopware shopware-phpunit](https://github.com/FriendsOfShopware/agent-skills/tree/main/skills/shopware-phpunit)
 (`integration-repository-testing`); rewritten for this repo.
 
-- Use `IntegrationTestBehaviour` — each test runs in a rolled-back transaction.
+- Use only the integration traits the scenario needs. A repository test that
+  only needs the service container and a rolled-back transaction uses
+  `KernelTestBehaviour` and `DatabaseTransactionBehaviour`. Do not pull in
+  `IntegrationTestBehaviour` when sales channel, cache, or the request stack
+  are unused. Use the broader bundle when the scenario actually needs it.
 - Create **your own** entities with `Uuid::randomHex()`; never assert against
   "whatever is already in the DB".
 - Use `Context::createDefaultContext()` unless the test needs a sales channel /
@@ -13,7 +17,8 @@ Inspired by [FriendsOfShopware shopware-phpunit](https://github.com/FriendsOfSho
 ```php
 final class ProductRepositoryTest extends TestCase
 {
-    use IntegrationTestBehaviour;
+    use KernelTestBehaviour;
+    use DatabaseTransactionBehaviour;
 
     public function testCreateAndRead(): void
     {
