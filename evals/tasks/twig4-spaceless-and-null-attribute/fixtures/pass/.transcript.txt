@@ -1,0 +1,9 @@
+Remove the spaceless filter. Twig 4 does not include it. The tag that
+calls that filter is the same removal, not a workaround. Use whitespace
+control only where the space itself matters.
+
+Optional macro arguments need defaults. currency has none, so it is required
+until you give it a default.
+
+A null HTML attribute throws. Omit the attribute, or remove it with
+attributes.remove(). Do not pass null through.

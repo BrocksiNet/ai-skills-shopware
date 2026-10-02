@@ -1,0 +1,3 @@
+Remove the spaceless filter and give optional macro arguments defaults.
+A null HTML attribute throws, so use {% apply spaceless %} for the wrapping
+whitespace. attributes.remove() can wait.

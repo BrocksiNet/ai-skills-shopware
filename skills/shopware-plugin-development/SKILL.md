@@ -9,7 +9,8 @@ description: >-
   DAL, HTTP cache tags, migrations, decoration, and 6.6–6.8 compatibility.
   Triggers on "build a Shopware plugin", "add a service", "query with the DAL",
   "add a migration", "decorate a core service", "make this 6.7 compatible",
-  "migrate services.xml to PHP", "use Symfony HttpClient". Do NOT use for
+  "migrate services.xml to PHP", "use Symfony HttpClient",
+  "prepare this plugin for Shopware 6.8". Do NOT use for
   the platform itself (shopware-core-development), for declarative apps with a
   manifest.xml (shopware-app-development), generic PHP style (php-foundation),
   or test authoring (shopware-testing).
@@ -83,6 +84,12 @@ Inherits all **`php-foundation` trunk habits** (`empty()`, interface injection,
   For cross-version migrations and modernization, reach for **Rector**
   (`frosh/shopware-rector` set) and review the dry-run — do not hand-edit blindly
   (see the compatibility reference).
+- **Preparing for 6.8 is not a rewrite onto 6.8-only APIs.** Keep the
+  `composer.json` range unless the user asked to drop a minor. Run the suite
+  as it is, and again with `V6_8_0_0=1`. `FEATURE_ALL` is not that run. Code
+  that still compiles can still be wrong (cache, cart cents, documents, flows).
+  The separate container behind that flag is a test switch, not a design to
+  ship. Details are in the compatibility reference.
 
 ## Definition of done
 
@@ -90,6 +97,7 @@ Inherits all **`php-foundation` trunk habits** (`empty()`, interface injection,
 - [ ] No core/vendor modification; extension done via decoration/events/extensions.
 - [ ] DAL used for entity data; associations added before filtering; no obvious N+1.
 - [ ] No deprecated API where a stable one exists; 6.6 compat preserved or the bump flagged.
+- [ ] 6.8 preparation kept the supported range, and named behavior that still compiles.
 - [ ] 6.8-targeted plugins register Symfony DI in PHP, not `services.xml`.
 - [ ] Migrations idempotent and split destructive/non-destructive; lifecycle handled.
 - [ ] Static analysis (project PHPStan/ECS) passes; tests added where behavior changed (see shopware-testing).

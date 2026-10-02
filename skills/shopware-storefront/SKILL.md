@@ -4,8 +4,9 @@ description: >-
   Shopware 6 Storefront (Twig, theme, Bootstrap/SCSS, PluginManager JS). Use
   when editing storefront templates, themes, storefront JavaScript plugins, or
   storefront SCSS — paths like src/Storefront, Resources/views/storefront,
-  Resources/app/storefront. Triggers on "storefront JS plugin", "PluginManager",
-  "Twig block", "theme inheritance", "storefront SCSS", "Bootstrap storefront".
+  Resources/app/storefront.   Triggers on "storefront JS plugin", "PluginManager",
+  "Twig block", "theme inheritance", "storefront SCSS", "Bootstrap storefront",
+  "Twig 4 spaceless filter", "null HTML attribute".
   Do NOT use for Administration Vue/Jest (shopware-admin-js), PHP DAL/services
   (surface PHP skills), or generic modern CSS lectures (research + Modern Web
   Guidance after Shopware primitives are checked).
@@ -52,6 +53,10 @@ Load a reference only when needed:
 - Storefront forms post to the existing storefront controller or a Store-API
   route. Do **not** add `sw_csrf` or a CSRF hidden field — Shopware 6.5+
   dropped storefront CSRF for SameSite cookies.
+- **Twig 4 (Shopware 6.8) is stricter, not a new theme.** Remove the
+  `spaceless` filter, give optional macro arguments defaults, and do not pass
+  `null` as an HTML attribute. Details are in the Twig reference. PHP behind
+  the template (cache, documents, flows) stays with `shopware-plugin-development`.
 
 ## When to consult Modern Web Guidance
 

@@ -1,0 +1,14 @@
+Do not narrow composer.json. The contract stays shopware/core ~6.6.0 || ~6.7.0
+until you choose to drop a minor.
+
+Run the existing suite, then the same suite with V6_8_0_0=1. FEATURE_ALL is a
+different switch and is not this test. An explicit feature override can keep
+a linked flag off.
+
+Code that still compiles can still be wrong. HTTP cache can stay on for
+logged-in customers and filled carts. Discount and split-quantity taxes can
+move by cents. Document generation v2 becomes the default. Flows run after
+the business process finishes.
+
+The separate container selected by that flag is only the test run, not a
+container the plugin should ship.

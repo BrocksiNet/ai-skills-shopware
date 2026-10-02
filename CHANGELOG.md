@@ -88,6 +88,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- Plugin 6.8 preparation stays on the supported `composer.json` range. Test
+  with `V6_8_0_0=1`, not `FEATURE_ALL`. Call out behavior that still compiles
+  (cache rework, cart tax cents, document generation v2, flows after the
+  business process). The flag's separate container is a test switch.
+  Storefront Twig 4 drops `spaceless` and null HTML attributes. Administration
+  Twig overrides are not rewritten to the experimental Vue SFC API
+  ([shopware/shopware#21162](https://github.com/shopware/shopware/discussions/21162)).
+  Evals: `prepare-plugin-for-6-8`, `twig4-spaceless-and-null-attribute`,
+  `admin-sfc-not-a-6-8-migration`.
 - `shopware-change-impact`: after a feature works, review blast radius before
   calling it done (shared HTTP cache, checkout cost for shops that do not use
   the feature, asset loading tested only against the local disk while

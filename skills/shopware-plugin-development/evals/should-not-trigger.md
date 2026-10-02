@@ -9,3 +9,5 @@
 - Which Symfony Messenger version does this project use? (-> shopware-research-and-escalation)
 - Write a storefront JS plugin and register it with PluginManager. (-> shopware-storefront)
 - Add an Administration Vue module that opens mt-modal. (-> shopware-admin-js)
+- Rewrite my Administration sw-order-card Twig override as a Vue single file component. (-> shopware-admin-js)
+- Remove the spaceless filter from this storefront Twig template. (-> shopware-storefront)
