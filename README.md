@@ -38,7 +38,7 @@ release tag, and run `npx skills update` to pull improvements.
 | [`shopware-storefront`](skills/shopware-storefront/SKILL.md) | storefront (Twig/theme/JS) | PluginManager, Twig/theme inheritance, Bootstrap SCSS, cache-safe AJAX; Modern Web Guidance only after Shopware primitives. |
 | [`shopware-admin-js`](skills/shopware-admin-js/SKILL.md) | Administration JS/TS/Vue | TypeScript, Meteor `mt-*`, Jest next to code, Admin ACL; defers to core `shopware-admin-js` on trunk. |
 | [`shopware-review-learnings`](skills/shopware-review-learnings/SKILL.md) | any review | Recurring findings from real plugin/app/PR reviews. Grows over time. |
-| [`shopware-change-impact`](skills/shopware-change-impact/SKILL.md) | after a feature works | Blast radius: shared cache, who pays for the feature, easier vs more complex. Not a line-level review. |
+| [`shopware-change-impact`](skills/shopware-change-impact/SKILL.md) | after a feature works | Blast radius: shared cache, who pays, easier vs more complex, assets only tested locally, one compiled container. Not a line-level review. |
 | [`shopware-research-and-escalation`](skills/shopware-research-and-escalation/SKILL.md) | any | When to research vs. proceed, the Shopware docs map, Context7 for libraries, and the when-stuck ladder. |
 | [`shopware-pr-description`](skills/shopware-pr-description/SKILL.md) | core PR workflow | GitHub PR body template for `shopware/shopware` contributions (copy-paste ready). |
 | [`shopware-assistant-style`](skills/shopware-assistant-style/SKILL.md) | any communication | Plain, concise answers; support-ticket replies in one copy block. |

@@ -1,0 +1,2 @@
+Ship it. Local tests passed, so S3 is fine.
+The public directory copy is the asset loading path.
