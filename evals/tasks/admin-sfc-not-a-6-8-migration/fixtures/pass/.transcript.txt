@@ -1,0 +1,7 @@
+Do not rewrite this as the 6.8 upgrade. swDefinePublic, swDefineOverride, and
+useSwPreviousState() are experimental and still in discussion. The
+documentation is a preview and will change.
+
+The Twig and Options API override still works. Trying the new form later is
+optional. It is not required, and the two styles can be mixed once you choose
+to try it.

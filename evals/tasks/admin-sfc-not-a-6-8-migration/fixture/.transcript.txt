@@ -1,0 +1,1 @@
+Yes. Shopware 6.8 requires the single file component. Rewrite the override.

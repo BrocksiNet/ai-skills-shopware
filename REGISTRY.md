@@ -57,7 +57,7 @@ the surface skills can all be installed together without contradicting (see
 | DAL usage (Criteria, associations, write/sync, avoid N+1) | `shopware-plugin-development` |
 | HTTP cache & cache tags (6.7 `CacheTagCollector`) | `shopware-plugin-development` |
 | Database migrations (`MigrationStep`, destructive/non-destructive) | `shopware-plugin-development` |
-| Version compatibility (6.6 / 6.7 / 6.8; Symfony XML DI → PHP) | `shopware-plugin-development` |
+| Version compatibility (6.6 / 6.7 / 6.8; Symfony XML DI → PHP; `V6_8_0_0=1`; behavior that still compiles) | `shopware-plugin-development` |
 | Symfony-first (HttpClient, Messenger, Validator, Filesystem vs custom code) | `shopware-plugin-development` |
 | Service decoration & DI registration (PHP `ContainerConfigurator` on 6.8) | `shopware-plugin-development` |
 | App manifest, permissions & lifecycle (`manifest.xml`, `app:install`, requirements) | `shopware-app-development` |
@@ -84,9 +84,9 @@ the surface skills can all be installed together without contradicting (see
 | Migration tests, Codecov `#[CoversClass]`, core platform test placement | `shopware-testing` |
 | Container execution (Podman on shopware-dev; shopware-cli on CLI projects; MCP never blocking) | `shopware-podman-dev` |
 | shopware-dev hub (`~/shopware-dev`, `sw-dev link`, Mutagen, multi-lane proxy) | `shopware-podman-dev` |
-| Storefront Twig/theme inheritance, PluginManager JS, Bootstrap storefront components | `shopware-storefront` |
+| Storefront Twig/theme inheritance, PluginManager JS, Bootstrap storefront components, Twig 4 (`spaceless`, null attributes) | `shopware-storefront` |
 | Storefront HTTP cache vs AJAX; no speculation/prerender on cart/checkout/account | `shopware-storefront` |
-| Administration Vue/TS, Meteor `mt-*`, Jest next to code, Admin ACL + privilege migrations | `shopware-admin-js` |
+| Administration Vue/TS, Meteor `mt-*`, Jest next to code, Admin ACL + privilege migrations; experimental SFC is not the 6.8 upgrade | `shopware-admin-js` |
 | Generic modern CSS/HTML/JS lookup (Modern Web Guidance CLI) after Shopware primitives | `shopware-research-and-escalation` |
 
 ### Precedence (when more than one applies)

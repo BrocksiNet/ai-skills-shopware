@@ -69,6 +69,10 @@ no container per feature flag, sales channel, or other condition.
 - Verdict `do not ship` when the feature only works by forking the container.
   `narrow the design` when the same feature can live as a runtime branch in
   the one container.
+- Shopware's 6.8 test flag (`V6_8_0_0=1`, planned from 6.7.16) compiles a
+  separate container so removed services fail in that run. That is a test
+  switch. It is not a plugin design, and it is not this review. Preparing the
+  plugin is `shopware-plugin-development`.
 
 ## Easier, not more complex
 

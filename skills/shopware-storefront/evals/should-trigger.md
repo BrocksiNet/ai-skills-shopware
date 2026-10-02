@@ -8,3 +8,4 @@
 - Should I put fetchpriority on the product cover image?
 - Replace this hardcoded CDN product image with Shopware thumbnails.
 - Should I add sw_csrf to this storefront login form?
+- Remove the spaceless filter and fix null HTML attributes for Twig 4.

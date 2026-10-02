@@ -4,8 +4,9 @@ description: >-
   Shopware 6 Administration JS/TS/Vue and Jest. Use when editing Admin UI
   under src/Administration or a plugin Resources/app/administration — Vue
   modules, Meteor mt-* components, Pinia stores, Admin TypeScript, Jest
-  specs. Triggers on "Administration Vue", "Admin TypeScript", "mt-modal",
-  "Jest spec next to the component", "Admin ACL privileges". Do NOT use for
+  specs.   Triggers on "Administration Vue", "Admin TypeScript", "mt-modal",
+  "Jest spec next to the component", "Admin ACL privileges",
+  "Vue single file component override for 6.8". Do NOT use for
   storefront Twig/PluginManager (shopware-storefront), PHPUnit (shopware-testing),
   or PHP DAL/services (surface PHP skills).
 ---
@@ -40,6 +41,12 @@ Load a reference only when needed:
 4. **ACL in the same change** as UI that reads or writes a DAL entity.
    Existing roles need a privileges migration; mapping-only fixes future
    roles.
+5. **Do not rewrite a working Twig / Options API override into a Vue SFC
+   because of 6.8.** `swDefinePublic`, `swDefineOverride`, and
+   `useSwPreviousState()` are an experimental Composition API
+   ([shopware/shopware#21162](https://github.com/shopware/shopware/discussions/21162)).
+   The docs are a preview and will change. Twig and the Options API still
+   work. Trying the new form later is optional; it is not the upgrade.
 
 ## Admin deltas
 

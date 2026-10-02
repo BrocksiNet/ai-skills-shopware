@@ -1,0 +1,3 @@
+It is experimental and still in discussion, and the docs are a preview.
+Twig still works, but 6.8 requires the rewrite, so replace the override
+with swDefineOverride({ total }).

@@ -8,3 +8,4 @@
 - This Admin UI reads products — add privilege mapping and migrate existing roles.
 - Put the Jest spec next to this new TypeScript component, not under tests/.
 - This orders module imports a component from the products module — stop the cross-module import.
+- Rewrite this Administration Twig override as a Vue single file component for 6.8.
