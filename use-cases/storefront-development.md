@@ -15,6 +15,7 @@ paths and would be noise on a DAL-only change.
 | `shopware-admin-js` | Admin TypeScript, Meteor `mt-*`, Jest, Admin ACL. |
 | `shopware-research-and-escalation` | Versioned docs + Modern Web Guidance CLI after primitives. |
 | `shopware-review-learnings` | Recurring frontend findings (uncached listing AJAX, …). |
+| `shopware-change-impact` | After a feature works: shared cache and checkout cost, not only the new UI. |
 
 PHP behind a storefront controller or Admin route still needs the plugin /
 core / app surface skill from the other use-cases.
@@ -27,6 +28,7 @@ npx skills add BrocksiNet/ai-skills-shopware \
   --skill shopware-admin-js \
   --skill shopware-research-and-escalation \
   --skill shopware-review-learnings \
+  --skill shopware-change-impact \
   -a claude-code -a codex -a cursor
 ```
 

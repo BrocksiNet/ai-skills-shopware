@@ -14,6 +14,7 @@ DI container and no DAL in the shop process.
 | `shopware-security` | App secrets, least-privilege manifest, webhook verification. |
 | `shopware-research-and-escalation` | Verify against installed source; escalate instead of guessing. |
 | `shopware-review-learnings` | Recurring real-world findings. |
+| `shopware-change-impact` | After a feature works: blast radius, who pays, easier vs more complex. |
 
 ## Install (one-liner)
 
@@ -25,6 +26,7 @@ npx skills add BrocksiNet/ai-skills-shopware \
   --skill shopware-security \
   --skill shopware-research-and-escalation \
   --skill shopware-review-learnings \
+  --skill shopware-change-impact \
   -a claude-code -a codex -a cursor
 ```
 
