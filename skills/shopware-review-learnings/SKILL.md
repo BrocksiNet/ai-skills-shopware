@@ -48,6 +48,9 @@ Detailed, growing lists live in references (load on demand):
 - **PR size** — aim for &lt;400 lines changed; if larger, split the PR or explain in the
   description why it must stay together (pair with `shopware-pr-description`).
 - **Self-review** — scan seeded findings and red flags below against your diff.
+- **Impact of a finished feature** — shared cache, who pays, and whether the
+  shop got easier are owned by `shopware-change-impact`. Do not restate that
+  checklist here.
 
 ## Seeded findings (high-frequency)
 

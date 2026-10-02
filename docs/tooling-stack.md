@@ -20,6 +20,7 @@ npx skills add BrocksiNet/ai-skills-shopware \
   --skill shopware-testing \
   --skill shopware-research-and-escalation \
   --skill shopware-review-learnings \
+  --skill shopware-change-impact \
   --skill shopware-pr-description \
   --skill shopware-assistant-style \
   --skill shopware-pr-review \

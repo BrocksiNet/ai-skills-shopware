@@ -24,6 +24,7 @@ the surface skills can all be installed together without contradicting (see
 | `shopware-security` | maintainer | any PHP/API/config | Secrets, access keys, ACL, app permissions, webhooks | Generic security lectures, OpenAPI-only docs |
 | `shopware-testing` | maintainer | any test | Writing/fixing PHPUnit tests for Shopware code | Storefront E2E/Playwright, Jest, manual QA |
 | `shopware-review-learnings` | maintainer + contributors | any review | Reviewing Shopware code, "is this idiomatic", recurring pitfalls | Greenfield generic PHP, non-Shopware review |
+| `shopware-change-impact` | maintainer | after a feature works | Blast radius, who pays, easier vs more complex, ship / narrow / do not ship | Implementing the feature, line-level idioms, GitHub thread triage |
 | `shopware-research-and-escalation` | maintainer | any | Uncertainty about Shopware behavior/symbols, "should I research", being stuck | Tasks the model is confident about |
 | `shopware-pr-description` | maintainer | core PR workflow | Creating/updating shopware/shopware PR bodies, filling the GitHub PR template | Release-note file edits, plugin/app PRs |
 | `shopware-assistant-style` | maintainer | any communication | Support ticket replies, short/plain answers, copy-ready customer text | Code rules, PR templates, release notes |
@@ -72,6 +73,7 @@ the surface skills can all be installed together without contradicting (see
 | Tests must not `exit()` / `die()`; `setAutoExit(false)` on console `Application` | `shopware-testing` |
 | `StaticEntityRepository` stubbing and generic inference | `shopware-testing` |
 | Recurring review findings (cross-cutting, delta-only) | `shopware-review-learnings` |
+| Blast radius after a feature works (shared cache, who pays, easier vs more complex) | `shopware-change-impact` |
 | Bug-fix scope and boyscouting (root cause vs drive-by refactors) | `shopware-review-learnings` |
 | When to research vs proceed; docs map; Context7 | `shopware-research-and-escalation` |
 | What to do when stuck (escalation ladder) | `shopware-research-and-escalation` |
@@ -102,7 +104,8 @@ the right one activates. There is no project-level "core vs plugin" choice.
 3. A surface skill extends `php-foundation` with stricter deltas, but must state
    any intentional override explicitly — never silently contradict the base.
 4. `shopware-review-learnings` records findings; it points at the owning skill
-   rather than re-defining a topic.
+   rather than re-defining a topic. Blast radius of a finished feature is
+   `shopware-change-impact`, not a finding list.
 5. **Frontend is a second axis.** Twig/theme/storefront JS → `shopware-storefront`;
    Administration Vue/TS → `shopware-admin-js`. Those can sit next to a PHP
    surface skill in the same plugin. Generic modern CSS/JS lookup after

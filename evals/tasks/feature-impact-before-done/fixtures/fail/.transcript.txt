@@ -1,0 +1,4 @@
+Ship it. The feature works.
+This does not change the HTTP cache key.
+Checkout stays fast for shops that do not use analytics because we only added a field.
+The flow is not more complex.

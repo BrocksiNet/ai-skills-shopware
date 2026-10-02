@@ -32,6 +32,7 @@ npx skills add BrocksiNet/ai-skills-shopware \
   --skill shopware-testing \
   --skill shopware-research-and-escalation \
   --skill shopware-review-learnings \
+  --skill shopware-change-impact \
   -a cursor    # or -a claude-code / -a codex / -a opencode
 ```
 

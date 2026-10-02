@@ -29,6 +29,9 @@ Load on demand:
 5. **Generalize** — if the finding will recur, propose a rule in
    `coding-guidelines/` or in `ai-skills-shopware` (not a one-off `.cursor/rules`
    file).
+6. **Feature impact** — if the change is a finished feature, not only a
+   thread reply, the blast-radius review belongs to `shopware-change-impact`.
+   Do not duplicate that checklist here.
 
 ## PR reply format
 

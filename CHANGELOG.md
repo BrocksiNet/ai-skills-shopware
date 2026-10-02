@@ -88,6 +88,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- `shopware-change-impact`: after a feature works, review blast radius before
+  calling it done (shared HTTP cache, checkout cost for shops that do not use
+  the feature, easier vs more complex). Verdict is ship, narrow the design,
+  or do not ship.
 - Mined trunk skills through 2026-09-28: new Store API routes use a typed
   extension event instead of a new abstract route class; repository integration
   tests use `KernelTestBehaviour` and `DatabaseTransactionBehaviour` when that

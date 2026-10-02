@@ -15,6 +15,7 @@ and customer-project code. In-repo core skills are usually **absent** — use th
 | `shopware-testing` | PHPUnit unit/integration standards. |
 | `shopware-research-and-escalation` | Verify against installed source. |
 | `shopware-review-learnings` | Recurring real-world findings. |
+| `shopware-change-impact` | After a feature works: blast radius, who pays, easier vs more complex. |
 
 ## Install (one-liner)
 
@@ -27,6 +28,7 @@ npx skills add BrocksiNet/ai-skills-shopware \
   --skill shopware-testing \
   --skill shopware-research-and-escalation \
   --skill shopware-review-learnings \
+  --skill shopware-change-impact \
   -a claude-code -a codex -a cursor
 ```
 

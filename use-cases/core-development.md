@@ -17,6 +17,7 @@ etc. Install **delta overlay** from this repo:
 | `shopware-security` | Secrets, ACL — not in core skills |
 | `shopware-research-and-escalation` | Verify against installed source |
 | `shopware-review-learnings` | Recurring review deltas |
+| `shopware-change-impact` | After a feature works: blast radius before ship |
 | `shopware-pr-review` | GitHub review thread triage |
 | `shopware-podman-dev` | Podman/MCP execution |
 
@@ -28,6 +29,7 @@ npx skills add BrocksiNet/ai-skills-shopware \
   --skill shopware-security \
   --skill shopware-research-and-escalation \
   --skill shopware-review-learnings \
+  --skill shopware-change-impact \
   --skill shopware-pr-review \
   --skill shopware-podman-dev \
   -a claude-code -a codex -a cursor
@@ -46,6 +48,7 @@ Full platform skill set — core in-repo skills are **not** present:
 | `shopware-testing` | PHPUnit standards. |
 | `shopware-research-and-escalation` | Research ladder. |
 | `shopware-review-learnings` | Recurring findings. |
+| `shopware-change-impact` | After a feature works: blast radius before ship. |
 | `shopware-pr-description` | GitHub PR body for shopware/shopware. |
 | `shopware-assistant-style` | Communication style. |
 | `shopware-pr-review` | Review comment triage. |
@@ -60,6 +63,7 @@ npx skills add BrocksiNet/ai-skills-shopware \
   --skill shopware-testing \
   --skill shopware-research-and-escalation \
   --skill shopware-review-learnings \
+  --skill shopware-change-impact \
   --skill shopware-pr-description \
   --skill shopware-assistant-style \
   --skill shopware-pr-review \

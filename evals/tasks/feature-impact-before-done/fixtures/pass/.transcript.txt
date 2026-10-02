@@ -1,0 +1,11 @@
+Do not ship this as-is. Narrow the design.
+
+Blast radius: a required Store-API header becomes part of the HTTP cache key
+or Vary for every product-listing response, not only analytics clients.
+
+Who pays: loading analytics config and extra line-item payload on checkout
+runs for all customers, including shops that do not use analytics. Gate that
+work so it runs only when analytics is enabled.
+
+The shop got more complex: a new required header and a slower shared checkout.
+The feature working is not enough.
