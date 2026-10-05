@@ -6,3 +6,5 @@
 - Is it safe to commit this sales channel access key to git? (shopware-security)
 - Build a Shopware plugin with a migration (shopware-plugin-development).
 - Run phpunit inside podman (shopware-podman-dev).
+- The cart total is wrong for a percentage discount. Fix it in CartProcessor. (-> shopware-php-code)
+- Run phpunit for CartProcessor. (-> shopware-podman-dev)

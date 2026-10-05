@@ -5,3 +5,4 @@
 - We logged the sw-access-key in the request — is that safe?
 - App manifest permissions — are we over-permissioned?
 - Verify webhook signature on this app endpoint.
+- Add a Store-API route for this custom field.

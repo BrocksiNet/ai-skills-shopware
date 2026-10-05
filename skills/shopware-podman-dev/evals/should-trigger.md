@@ -1,6 +1,7 @@
 # Should trigger
 
 - "Run phpunit for this test class"
+- Run phpunit for CartProcessor.
 - "composer install in shopware-trunk"
 - "Clear the Shopware cache"
 - "Run PHPStan on this file"

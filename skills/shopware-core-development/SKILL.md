@@ -1,19 +1,12 @@
 ---
 name: shopware-core-development
 description: >-
-  Strict rules for changing the Shopware platform itself — code that ships in
-  shopware/shopware or first-party bundles. Use when the target is the platform
-  source: paths like src/Core, src/Storefront, src/Administration, the
-  shopware/shopware repo, or shopware-core Composer packages. Covers backward
-  compatibility and deprecation cycles, @internal boundaries, PHPStan baseline
-  discipline, RELEASE_INFO / UPGRADE notes, ADRs, and conventional commits.
-  Triggers on "contribute to Shopware core", "change platform code", "deprecate
-  a public symbol", "add a release note", "write an ADR", "raise the PHPStan
-  level", "is this a breaking change", "modernize core to Symfony", "feature flag
-  for new behavior". Do NOT use when the target is an
-  extension on top of Shopware: a plugin (custom/plugins ->
-  shopware-plugin-development), an app (custom/apps, manifest.xml ->
-  shopware-app-development), or for generic PHP style (php-foundation).
+  Use when a shopware/shopware diff touches a public API, a deprecation,
+  the PHPStan baseline, or RELEASE_INFO. The question is whether the change
+  breaks extensions. A private bugfix in src/Core stays with shopware-php-code
+  when that skill is installed. Do NOT use for a plugin
+  (shopware-plugin-development), an app (shopware-app-development), or generic
+  PHP style (php-foundation).
 ---
 
 # Shopware platform / core development (strict surface)

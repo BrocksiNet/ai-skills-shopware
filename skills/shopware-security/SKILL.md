@@ -1,13 +1,11 @@
 ---
 name: shopware-security
 description: >-
-  Shopware security hygiene — secrets, ACL, and safe API exposure. Use when
-  handling access keys, app secrets, webhooks, Store-API or Admin routes, or
-  reviewing code for credential leaks. Triggers on "sales channel access key",
-  "sw-access-key", "hardcoded secret", "API credentials in code", "Store-API ACL",
-  "route privilege", "webhook signature", "least privilege manifest". Do NOT use
-  for generic OWASP lectures, PHPUnit structure (shopware-testing), or OpenAPI
-  shape docs without a security angle (shopware-plugin-development api-contracts).
+  Use when adding or changing a controller, Store-API route, Admin route,
+  ACL privilege, webhook, or anything that reads a secret or an access key.
+  Do NOT use for generic OWASP lectures, PHPUnit structure
+  (shopware-testing), or OpenAPI shape without a privilege or credential
+  (shopware-plugin-development).
 ---
 
 # Shopware security

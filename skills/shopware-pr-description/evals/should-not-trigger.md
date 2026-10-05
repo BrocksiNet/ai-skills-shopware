@@ -5,3 +5,4 @@
 - Create a PR for my custom plugin repo. (not shopware/shopware core template)
 - Deprecate this public core method correctly. (-> shopware-core-development)
 - Give me a short answer about Shopware caching. (-> shopware-assistant-style)
+- Tests are green. Open the PR. (-> shopware-pr-hygiene)

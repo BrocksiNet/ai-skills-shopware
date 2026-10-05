@@ -5,3 +5,4 @@
 - Decouple this core service with a feature flag (shopware-architecture).
 - Refactor empty() to explicit checks (php-foundation).
 - Fill the GitHub PR template for shopware/shopware (shopware-pr-description).
+- The cart total is wrong for a percentage discount. Fix it in CartProcessor. (-> shopware-php-code)

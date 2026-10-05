@@ -7,3 +7,5 @@
 - "Explain PHP enum syntax" (php-foundation)
 - "Interpret this GitHub Actions CI log" (ci-failure-interpretation / gh-tooling context)
 - User explicitly says "run on host native PHP without container"
+- Tests are green. Open the PR. (-> shopware-pr-hygiene, then shopware-change-impact)
+- The cart total is wrong for a percentage discount. Fix it in CartProcessor. (-> shopware-php-code)

@@ -68,9 +68,13 @@ for dir in "$SKILLS_DIR"/*/; do
   done < <(grep -oE '\]\(references/[A-Za-z0-9_./-]+\.md\)' "$md" | sed -E 's/^\]\(//; s/\)$//' | sort -u)
 
   # collect double-quoted trigger phrases for cross-skill overlap detection
-  echo "$desc" | grep -oE '"[^"]+"' | sed 's/"//g' | while IFS= read -r phrase; do
-    [ -n "$phrase" ] && printf '%s\t%s\n' "$phrase" "$skill" >> "$triggers_tmp"
-  done
+  # grep exits 1 when a description has no quotes; that is a valid description
+  phrases="$(echo "$desc" | grep -oE '"[^"]+"' || true)"
+  if [ -n "$phrases" ]; then
+    echo "$phrases" | sed 's/"//g' | while IFS= read -r phrase; do
+      [ -n "$phrase" ] && printf '%s\t%s\n' "$phrase" "$skill" >> "$triggers_tmp"
+    done
+  fi
 done
 
 # ---- conflict: overlapping trigger phrases ----------------------------------

@@ -7,3 +7,4 @@
 - Prepare this plugin's PHP for Shopware 6.8 without dropping 6.6. (-> shopware-plugin-development)
 - Remove the spaceless filter from this storefront price macro. (-> shopware-storefront)
 - Refactor this PHP helper to a backed enum. (-> php-foundation)
+- Add a Store-API route for this custom field. (-> shopware-security)

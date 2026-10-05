@@ -17,16 +17,16 @@ the surface skills can all be installed together without contradicting (see
 | Skill | Owner | Surface | Triggers on | Stays quiet for |
 | ----- | ----- | ------- | ----------- | --------------- |
 | `php-foundation` | maintainer | any PHP | Writing/refactoring PHP for Shopware: types, enums, DTOs, coding style | Non-PHP, generic JS/Vue/Twig-only work |
-| `shopware-core-development` | maintainer (platform-controlled) | platform (`shopware/shopware`, `src/`) | Changing platform code: ADRs, release notes (RELEASE_INFO/UPGRADE), deprecations, PHPStan baseline | Plugins, apps, project code |
+| `shopware-core-development` | maintainer (platform-controlled) | platform (`shopware/shopware`, `src/`) | Public API, deprecation, PHPStan baseline, RELEASE_INFO. A private bugfix stays with shopware-php-code | Plugins, apps, a private CartProcessor fix |
 | `shopware-plugin-development` | maintainer | plugin / project (`custom/plugins`, project `src/`) | PHP extensions on top of Shopware: DAL, services, cache, migrations, decoration, 6.6–6.8 compat, XML DI → PHP | Platform code, declarative apps, generic PHP libraries |
 | `shopware-app-development` | maintainer | app (`custom/apps`, `manifest.xml`) | Declarative apps: manifest, permissions, app scripts, webhooks, Admin API | Plugin PHP (DI/DAL/decoration), platform code |
-| `shopware-architecture` | maintainer | any PHP refactor / design | Architecture decisions, DAL boundaries, progressive enhancement, anti-patterns | PHPUnit-only tasks, secrets-only tasks, generic PHP style |
-| `shopware-security` | maintainer | any PHP/API/config | Secrets, access keys, ACL, app permissions, webhooks | Generic security lectures, OpenAPI-only docs |
-| `shopware-testing` | maintainer | any test | Writing/fixing PHPUnit tests for Shopware code | Storefront E2E/Playwright, Jest, manual QA |
+| `shopware-architecture` | maintainer | any PHP refactor / design | Choosing an event, a decoration, or a core edit; a repository search with no limit | Writing the test, secrets, a private bugfix |
+| `shopware-security` | maintainer | any PHP/API/config | A new or changed controller, Store-API or Admin route, ACL privilege, webhook, secret, or access key | Generic security lectures, OpenAPI shape without a privilege |
+| `shopware-testing` | maintainer | any test | PHPUnit in a plugin or project; on trunk, wrong suite, missing Package, flaky, or Codecov. A plain add-a-test on trunk stays with shopware-phpunit-tests | Storefront E2E, Jest, running the suite |
 | `shopware-review-learnings` | maintainer + contributors | any review | Reviewing Shopware code, "is this idiomatic", recurring pitfalls | Greenfield generic PHP, non-Shopware review |
-| `shopware-change-impact` | maintainer | after a feature works | Blast radius, who pays, easier vs more complex, remote assets, one container, ship / narrow / do not ship | Implementing the feature, line-level idioms, GitHub thread triage |
+| `shopware-change-impact` | maintainer | after a feature works | The change works and the next step is a commit or PR: shared cache, who pays, remote assets, one container | Still writing the fix, running phpunit, GitHub thread triage |
 | `shopware-research-and-escalation` | maintainer | any | Uncertainty about Shopware behavior/symbols, "should I research", being stuck | Tasks the model is confident about |
-| `shopware-pr-description` | maintainer | core PR workflow | Creating/updating shopware/shopware PR bodies, filling the GitHub PR template | Release-note file edits, plugin/app PRs |
+| `shopware-pr-description` | maintainer | core PR workflow | The shopware/shopware PR template sections. Opening the PR stays with shopware-pr-hygiene on trunk | Plugin PRs, RELEASE_INFO files, "tests are green, open the PR" |
 | `shopware-assistant-style` | maintainer | any communication | Support ticket replies, short/plain answers, copy-ready customer text | Code rules, PR templates, release notes |
 | `shopware-pr-review` | maintainer | PR review threads | Reacting to GitHub review comments, fix vs reply vs push back | Initial PR body, generic idiomatic review |
 | `shopware-podman-dev` | maintainer | linked Podman checkout or Shopware CLI project | Running php/composer/phpunit/console/npm in shopware-dev, or shopware-cli project/extension validate | Test structure, PR text, release notes |

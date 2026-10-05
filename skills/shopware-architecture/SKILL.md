@@ -1,16 +1,13 @@
 ---
 name: shopware-architecture
 description: >-
-  Shopware and Symfony architecture decisions — patterns, anti-patterns, and
-  BC-safe progressive enhancement. Use when refactoring, decoupling components,
-  choosing extension mechanisms, or modernizing without breaking extensions.
-  Triggers on "decouple this component", "make it more independent",
-  "progressive enhancement", "architectural refactor", "repository without limit",
-  "DAL internals", "choose event vs decoration", "dual path behind feature flag".
-  Do NOT use for PHPUnit tests (shopware-testing), secrets/ACL (shopware-security),
-  OpenAPI route docs (shopware-plugin-development api-contracts), or static PHP
-  style (php-foundation). On shopware/shopware trunk, defer static hexagonal rules
-  to in-repo shopware-php-code when present.
+  Use when a Shopware fix could be an event, a decoration, or a core edit,
+  and the task is to choose. Also when a repository search has no limit or
+  code reaches into DAL internals. Do NOT use for writing the test
+  (shopware-testing), secrets or route privileges (shopware-security), or a
+  private bugfix that does not change the extension point
+  (shopware-php-code or shopware-plugin-development). On trunk, defer static
+  hexagonal rules to shopware-php-code when that skill is present.
 ---
 
 # Shopware architecture (patterns + evolution)

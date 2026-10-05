@@ -7,3 +7,4 @@
 - Before we call this done, who else pays for this change?
 - Asset loading only tested locally. Does this still work when assets are on S3?
 - This Symfony container if is per feature flag. Do we still have one container?
+- Tests are green. Open the PR.

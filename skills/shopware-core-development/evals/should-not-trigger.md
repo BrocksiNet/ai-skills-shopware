@@ -6,3 +6,4 @@
 - Refactor this generic PHP helper to use enums. (-> php-foundation)
 - Write a unit test for my plugin service. (-> shopware-testing)
 - How do I register a service in my plugin's services.php? (-> shopware-plugin-development)
+- The cart total is wrong for a percentage discount. Fix it in CartProcessor. (-> shopware-php-code)

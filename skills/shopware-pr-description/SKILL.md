@@ -1,13 +1,12 @@
 ---
 name: shopware-pr-description
 description: >-
-  Pull request body format for shopware/shopware contributions. Use when
-  creating or updating a PR description, drafting a contribution for the Shopware
-  core repo, or when asked to fill in the GitHub PR template. Triggers on
-  "write a PR description", "create a pull request for shopware", "fill the PR
-  template", "@pr-template", "update the PR body". Do NOT use for release-note
-  file content (shopware-core-development) or plugin/app PRs outside
-  shopware/shopware.
+  Shopware/shopware pull request section skeleton. Use when the PR body must
+  follow the GitHub template sections, or when shopware-pr-hygiene is not
+  installed. On trunk, shopware-pr-hygiene owns the decision to write the PR.
+  Do NOT use for a plugin PR, for RELEASE_INFO file content
+  (shopware-core-development), or when the request is only that the tests
+  are green and the PR should be opened.
 ---
 
 # Shopware core PR descriptions
@@ -17,9 +16,10 @@ Migrated from the former `.cursor/rules/pr-template.mdc` in `shopware-trunk`.
 When creating a pull request against `shopware/shopware`, use the GitHub PR
 template from `.github/PULL_REQUEST_TEMPLATE.md` and fill every section.
 
-> **Upstream (trunk):** If `.agents/skills/shopware-pr-hygiene/` exists, defer
-> PR template and follow-up commit rules to core; this skill keeps the copy-paste
-> skeleton in `references/pr-body-template.md`.
+> **Upstream (trunk):** `shopware-pr-hygiene` owns opening for "write the PR".
+> This skill is the section skeleton it should read. When hygiene is absent,
+> this skill owns the template itself. The skeleton is
+> `references/pr-body-template.md`.
 
 Load the skeleton on demand:
 [`references/pr-body-template.md`](references/pr-body-template.md)

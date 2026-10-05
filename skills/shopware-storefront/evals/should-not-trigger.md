@@ -7,3 +7,5 @@
 - Prepare this plugin's PHP for Shopware 6.8 without dropping 6.6. (-> shopware-plugin-development)
 - Rewrite my Administration override as a Vue single file component. (-> shopware-admin-js)
 - Refactor this PHP helper to a backed enum. (-> php-foundation)
+- Add a test for that CartProcessor change in shopware/shopware. (-> shopware-phpunit-tests)
+- Add a Store-API route for this custom field. (-> shopware-security)
