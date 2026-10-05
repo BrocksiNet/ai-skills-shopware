@@ -8,3 +8,4 @@
 - Run phpunit inside podman (shopware-podman-dev).
 - The cart total is wrong for a percentage discount. Fix it in CartProcessor. (-> shopware-php-code)
 - Run phpunit for CartProcessor. (-> shopware-podman-dev)
+- Add the ADR and the RELEASE_INFO entry for this. (-> shopware-core-development)

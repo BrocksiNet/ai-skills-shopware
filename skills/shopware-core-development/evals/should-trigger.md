@@ -9,6 +9,7 @@
 - Do not mark this DI service deprecated while core still injects the id.
 - Add a changelog entry for this core change.
 - Should I write an ADR for switching the cart persistence strategy?
+- Add the ADR and the RELEASE_INFO entry for this.
 - I want to raise the PHPStan level in the core repo, what do I need to do?
 - Is removing this public service a breaking change?
 - This public method is changing shape. Is this a breaking change, and does it need RELEASE_INFO?

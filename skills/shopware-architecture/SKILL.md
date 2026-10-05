@@ -1,13 +1,14 @@
 ---
 name: shopware-architecture
 description: >-
-  Use when a Shopware fix could be an event, a decoration, or a core edit,
-  and the task is to choose. Also when a repository search has no limit or
-  code reaches into DAL internals. Do NOT use for writing the test
-  (shopware-testing), secrets or route privileges (shopware-security), or a
-  private bugfix that does not change the extension point
-  (shopware-php-code or shopware-plugin-development). On trunk, defer static
-  hexagonal rules to shopware-php-code when that skill is present.
+  Use when a Shopware change has two ways to do it, or the new behavior
+  can fail silently for callers still on the old path. That includes an
+  event versus a decoration versus a core edit, a feature-flag dual path,
+  one layer importing another, and a repository search with no limit.
+  Do NOT use to write the ADR or RELEASE_INFO
+  (shopware-core-development), for route privileges
+  (shopware-security), or for a private bugfix with one obvious edit
+  (shopware-php-code or shopware-plugin-development).
 ---
 
 # Shopware architecture (patterns + evolution)

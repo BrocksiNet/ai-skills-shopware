@@ -7,3 +7,4 @@
 - Write a unit test for my plugin service. (-> shopware-testing)
 - How do I register a service in my plugin's services.php? (-> shopware-plugin-development)
 - The cart total is wrong for a percentage discount. Fix it in CartProcessor. (-> shopware-php-code)
+- These session features keep working today and fail silently when the session is gone. Is this the right shape? (-> shopware-architecture)
