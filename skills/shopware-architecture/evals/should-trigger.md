@@ -3,6 +3,7 @@
 - Decouple ProductListingLoader from Storefront — make core components more independent.
 - Refactor this service with progressive enhancement and keep backwards compatibility.
 - Should I use an event or decoration for this extension point?
+- Should this be an event, a decoration, or a core edit?
 - New core Store API route: extension event or a new abstract route class?
 - This repository search has no limit — fix the Criteria usage.
 - We are reaching into DAL internals — is there a public API instead?

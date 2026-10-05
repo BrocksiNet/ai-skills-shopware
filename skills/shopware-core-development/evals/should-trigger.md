@@ -11,6 +11,7 @@
 - Should I write an ADR for switching the cart persistence strategy?
 - I want to raise the PHPStan level in the core repo, what do I need to do?
 - Is removing this public service a breaking change?
+- This public method is changing shape. Is this a breaking change, and does it need RELEASE_INFO?
 - Mark this new internal class correctly and document it in the release notes.
 - Replace file_get_contents in core with Symfony HttpClient behind a feature flag.
 - Replace file_put_contents in this core service with Symfony Filesystem.

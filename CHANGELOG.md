@@ -8,6 +8,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- Skill descriptions match the sentence that starts the work. A private
+  core bugfix stays with `shopware-php-code`. `shopware-core-development`
+  opens for a public API, a deprecation, the PHPStan baseline, or
+  RELEASE_INFO. `shopware-change-impact` opens when the next step is a
+  commit or a PR. `shopware-security` opens for a route, controller, ACL,
+  webhook, or secret. `shopware-architecture` opens when the choice is an
+  event, a decoration, or a core edit. On trunk, a plain "add a test" stays
+  with `shopware-phpunit-tests`, and "open the PR" stays with
+  `shopware-pr-hygiene`. `validate-skills.sh` accepts a description
+  that quotes no trigger phrase.
+
 ## [0.7.0] - 2026-10-02
 
 ### Fixed

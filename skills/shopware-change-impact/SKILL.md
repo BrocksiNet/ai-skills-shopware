@@ -1,20 +1,13 @@
 ---
 name: shopware-change-impact
 description: >-
-  After a Shopware feature works, review its blast radius before calling it
-  done. Use when a change is implemented and you are deciding whether to ship
-  it: shared HTTP cache, checkout or listing cost, asset loading that was only
-  tested locally, a Symfony container split, and whether the shop got easier.
-  Triggers on "feature is done, review the impact", "blast radius of
-  this change", "who else does this header affect", "does this slow checkout
-  for everyone", "is the shop easier after this feature",
-  "asset loading only tested locally",
-  "symfony container if per feature flag". Do NOT use for
-  line-level Shopware idioms (shopware-review-learnings), GitHub thread triage
-  (shopware-pr-review), implementing DAL or cache tags
-  (shopware-plugin-development), storefront AJAX cache rules
-  (shopware-storefront), or replacing raw PHP filesystem calls
-  (shopware-core-development).
+  Use when a Shopware change works and the next step is a commit or a pull
+  request. Check shared HTTP cache, who pays when the feature is off, asset
+  loading tested only on local disk, and a Symfony container split. Do NOT
+  use while the fix is still being written, for line-level idioms
+  (shopware-review-learnings), GitHub thread triage (shopware-pr-review),
+  implementing the change (shopware-php-code or shopware-plugin-development),
+  or running the test suite (shopware-podman-dev).
 ---
 
 # Change impact (after the feature works)

@@ -1,13 +1,11 @@
 ---
 name: shopware-testing
 description: >-
-  PHPUnit standards for Shopware 6 code (unit, integration, migration). Use when
-  writing, fixing, or reviewing PHPUnit tests for a Shopware service, DAL flow,
-  subscriber, controller, migration, or DTO. Triggers on "write a unit test",
-  "generate tests for this class", "integration test for this route", "migration
-  test", "add test coverage", "Codecov patch", "this test is flaky", "mock this
-  dependency". Do NOT use for storefront E2E/Playwright, Administration Jest,
-  manual QA, or non-Shopware PHP testing.
+  Use when writing a Shopware PHPUnit test in a plugin or project, or when a
+  trunk test is in the wrong suite, missing a Package attribute, flaky, or
+  failing Codecov. On shopware/shopware, shopware-phpunit-tests owns a plain
+  add-a-test request. Do NOT use for storefront E2E, Administration Jest, or
+  running the suite (shopware-podman-dev).
 ---
 
 # Shopware testing (PHPUnit)
