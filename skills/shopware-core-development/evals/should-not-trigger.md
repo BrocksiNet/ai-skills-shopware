@@ -8,3 +8,5 @@
 - How do I register a service in my plugin's services.php? (-> shopware-plugin-development)
 - The cart total is wrong for a percentage discount. Fix it in CartProcessor. (-> shopware-php-code)
 - These session features keep working today and fail silently when the session is gone. Is this the right shape? (-> shopware-architecture)
+- We are introducing a new way for extensions to plug into this flow. What structure should they follow? (-> shopware-architecture)
+- This cart change might break the existing calculation path without the diff saying so. (-> shopware-architecture)

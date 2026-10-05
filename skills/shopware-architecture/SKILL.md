@@ -1,14 +1,15 @@
 ---
 name: shopware-architecture
 description: >-
-  Use when a Shopware change has two ways to do it, or the new behavior
-  can fail silently for callers still on the old path. That includes an
-  event versus a decoration versus a core edit, a feature-flag dual path,
-  one layer importing another, and a repository search with no limit.
-  Do NOT use to write the ADR or RELEASE_INFO
-  (shopware-core-development), for route privileges
-  (shopware-security), or for a private bugfix with one obvious edit
-  (shopware-php-code or shopware-plugin-development).
+  Use when introducing a new Shopware architecture, or when a change can
+  break an existing one without the diff saying so. That includes a new
+  extension structure, a boundary between Core and Storefront or
+  Administration, a second path that fails silently for callers on the old
+  one, an event versus a decoration versus a core edit, and a repository
+  search with no limit. Do NOT use to write the ADR or RELEASE_INFO
+  (shopware-core-development), for route privileges (shopware-security),
+  or for a private bugfix with one obvious edit (shopware-php-code or
+  shopware-plugin-development).
 ---
 
 # Shopware architecture (patterns + evolution)

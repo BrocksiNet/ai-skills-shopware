@@ -20,9 +20,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   with `shopware-phpunit-tests`, and "open the PR" stays with
   `shopware-pr-hygiene`. `validate-skills.sh` accepts a description
   that quotes no trigger phrase.
-- `shopware-architecture` also opens when a second path can fail silently
-  for callers still on the old one. Writing the ADR or `RELEASE_INFO` stays
-  with `shopware-core-development`.
+- `shopware-architecture` opens when a change introduces a new structure,
+  or can break an existing one without the diff saying so. A silent second
+  path is one case, not the whole skill. Writing the ADR or `RELEASE_INFO`
+  stays with `shopware-core-development`.
 
 ## [0.7.0] - 2026-10-02
 
