@@ -9,6 +9,7 @@ description: >-
   a generic PHP linter (use php-foundation), for test rules (use
   shopware-testing), or to re-define topics already owned by the surface skills
   — this skill records findings and points at the owning skill.
+license: MIT
 ---
 
 # Shopware review learnings

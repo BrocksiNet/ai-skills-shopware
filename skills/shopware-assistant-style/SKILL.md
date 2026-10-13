@@ -8,6 +8,7 @@ description: >-
   Triggers on "support ticket answer", "reply to the customer", "keep it short",
   "simple language", "no em dashes". Do NOT use for code rules, PR templates,
   or release-note content — those belong to the surface and workflow skills.
+license: MIT
 ---
 
 # Shopware assistant communication style

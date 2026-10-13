@@ -4,12 +4,13 @@ description: >-
   Shopware 6 Storefront (Twig, theme, Bootstrap/SCSS, PluginManager JS). Use
   when editing storefront templates, themes, storefront JavaScript plugins, or
   storefront SCSS — paths like src/Storefront, Resources/views/storefront,
-  Resources/app/storefront.   Triggers on "storefront JS plugin", "PluginManager",
+  Resources/app/storefront. Triggers on "storefront JS plugin", "PluginManager",
   "Twig block", "theme inheritance", "storefront SCSS", "Bootstrap storefront",
   "Twig 4 spaceless filter", "null HTML attribute".
   Do NOT use for Administration Vue/Jest (shopware-admin-js), PHP DAL/services
   (surface PHP skills), or generic modern CSS lectures (research + Modern Web
   Guidance after Shopware primitives are checked).
+license: MIT
 ---
 
 # Shopware Storefront

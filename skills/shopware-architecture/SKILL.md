@@ -10,6 +10,7 @@ description: >-
   (shopware-core-development), for route privileges (shopware-security),
   or for a private bugfix with one obvious edit (shopware-php-code or
   shopware-plugin-development).
+license: MIT
 ---
 
 # Shopware architecture (patterns + evolution)

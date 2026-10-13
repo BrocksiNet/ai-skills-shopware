@@ -9,6 +9,7 @@ description: >-
   changing", "I'm stuck / it keeps failing". Do NOT use for topics you are
   confident about, or as a substitute for the surface-skill rules (DAL, cache,
   testing) — it tells you when and how to verify, not the rules themselves.
+license: MIT
 ---
 
 # Shopware research & escalation

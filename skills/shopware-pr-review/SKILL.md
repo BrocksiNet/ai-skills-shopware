@@ -8,6 +8,7 @@ description: >-
   comments", "what should I answer", "review comment", "code review feedback".
   Do NOT use for writing the initial PR body (shopware-pr-description) or
   idiomatic code review without GitHub threads (shopware-review-learnings).
+license: MIT
 ---
 
 # Shopware PR review reactions

@@ -7,6 +7,7 @@ description: >-
   when that skill is installed. Do NOT use for a plugin
   (shopware-plugin-development), an app (shopware-app-development), or generic
   PHP style (php-foundation).
+license: MIT
 ---
 
 # Shopware platform / core development (strict surface)

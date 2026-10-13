@@ -9,6 +9,7 @@ description: >-
   PHPStan type errors. Do NOT use for non-PHP work (Twig-only, Vue/JS/SCSS),
   for PHPUnit test authoring (use shopware-testing), or for Shopware-specific
   framework topics like DAL, cache, or migrations (use the surface skills).
+license: MIT
 ---
 
 # PHP foundation (Shopware-aligned)

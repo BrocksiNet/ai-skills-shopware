@@ -8,8 +8,28 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+
+- `docs/local-validation.md` no longer tells you to run
+  `npx skills disable` / `enable`. The skills CLI (v1.7) has no such
+  commands; the A/B step now uses `npx skills remove` plus the pinned
+  `add`, or `evals/runner/ab.sh` for eval tasks.
+- CHANGELOG sections and compare links for v0.4.0, v0.5.0 and v0.6.0 were
+  missing; `[Unreleased]` compared against v0.3.0.
+- Stray triple spaces in the `shopware-admin-js` and `shopware-storefront`
+  descriptions.
+
 ### Changed
 
+- Every skill declares `license: MIT` in its frontmatter, as core trunk
+  skills do.
+- `docs/core-pr-17657-alignment.md`: new mining pass against trunk
+  2026-10-13 (PRs merged after 2026-09-28, plus open PRs to watch). The
+  three rows marked "documented" that already have evals now link them.
+  `AGENTS.md` and the alignment doc agree on the last mined date.
+- README skill index describes `shopware-core-development` the way its
+  description does now: public API, deprecation, PHPStan baseline,
+  RELEASE_INFO.
 - Skill descriptions match the sentence that starts the work. A private
   core bugfix stays with `shopware-php-code`. `shopware-core-development`
   opens for a public API, a deprecation, the PHPStan baseline, or
@@ -147,6 +167,45 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Use-case: `use-cases/storefront-development.md`.
 - Modern Web Guidance as an optional CLI lookup (not a vendored skill).
 
+## [0.6.0] - 2026-07-28
+
+### Added
+
+- `shopware-architecture` and `shopware-security` skills, with the trunk
+  skill-resolution model (`docs/skill-resolution.md`): core `.agents/skills/`
+  is primary on trunk, this repo is the overlay.
+- Core testing rules from PR review feedback, and a test-class `#[Package]`
+  eval.
+
+### Changed
+
+- Testing rules synced with core trunk.
+- Smoke eval defaults refreshed; markdown lint fixes.
+- README install example pinned to v0.6.0.
+
+## [0.5.0] - 2026-06-23
+
+### Added
+
+- Alignment with core PR #17657 (`docs/core-pr-17657-alignment.md`) and eval
+  tasks for the mined rules.
+- `shopware-review-learnings`: pre-submit quality checks, an interface
+  refactor checklist, and `Feature` flag patterns.
+
+## [0.4.0] - 2026-06-19
+
+### Added
+
+- Symfony modernization guidance and a core eval task.
+- Local smoke eval harness (`evals/smoke/`) and harder behavioral tasks.
+- Shellcheck CI job and golden grader fixtures.
+
+### Fixed
+
+- CI shellcheck and grader-golden jobs restored.
+- Cursor smoke evals via browser login.
+- markdownlint MD040 and MD034.
+
 ## [0.3.0] - 2026-06-18
 
 ### Added
@@ -211,7 +270,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   (`actions/checkout@v5`, `markdownlint-cli2-action@v23`).
 - `docs/local-validation.md` and GitHub issue templates for feedback.
 
-[Unreleased]: https://github.com/BrocksiNet/ai-skills-shopware/compare/v0.3.0...main
+[Unreleased]: https://github.com/BrocksiNet/ai-skills-shopware/compare/v0.7.0...main
+[0.7.0]: https://github.com/BrocksiNet/ai-skills-shopware/compare/v0.6.0...v0.7.0
+[0.6.0]: https://github.com/BrocksiNet/ai-skills-shopware/compare/v0.5.0...v0.6.0
+[0.5.0]: https://github.com/BrocksiNet/ai-skills-shopware/compare/v0.4.0...v0.5.0
+[0.4.0]: https://github.com/BrocksiNet/ai-skills-shopware/compare/v0.3.0...v0.4.0
 [0.3.0]: https://github.com/BrocksiNet/ai-skills-shopware/compare/v0.2.0...v0.3.0
 [0.2.0]: https://github.com/BrocksiNet/ai-skills-shopware/compare/v0.1.0...v0.2.0
 [0.1.0]: https://github.com/BrocksiNet/ai-skills-shopware/releases/tag/v0.1.0

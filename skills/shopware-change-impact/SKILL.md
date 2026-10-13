@@ -8,6 +8,7 @@ description: >-
   (shopware-review-learnings), GitHub thread triage (shopware-pr-review),
   implementing the change (shopware-php-code or shopware-plugin-development),
   or running the test suite (shopware-podman-dev).
+license: MIT
 ---
 
 # Change impact (after the feature works)

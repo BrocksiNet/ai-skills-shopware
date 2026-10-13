@@ -6,6 +6,7 @@ description: >-
   failing Codecov. On shopware/shopware, shopware-phpunit-tests owns a plain
   add-a-test request. Do NOT use for storefront E2E, Administration Jest, or
   running the suite (shopware-podman-dev).
+license: MIT
 ---
 
 # Shopware testing (PHPUnit)

@@ -77,9 +77,12 @@ Or ask the agent to run them via the dev-tooling MCP and report results.
 
 ## 5. A/B by hand
 
-Disable the skills without uninstalling them (`npx skills disable <name>`, or
-`npx skills disable --all`) and run the **same** task on a clean copy. Re-enable
-afterwards with `npx skills enable <name>`. Compare:
+Run the **same** task twice on a clean copy: once with the skill installed, once
+without. The skills CLI has no disable switch, so remove the skill
+(`npx skills remove <name>`, or `npx skills remove --all`), run the task, and
+reinstall it with the same pinned `npx skills add …@<tag>` command from the
+[use-case recipe](../use-cases/). For a repeatable, graded comparison of an eval
+task, use `evals/runner/ab.sh <task> [repeats]` instead. Compare:
 
 - Did the skill-on version avoid a mistake the skill-off version made?
 - Did it produce code that passes PHPStan/ECS/PHPUnit on the first try?

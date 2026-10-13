@@ -9,6 +9,7 @@ description: >-
   "shopware-dev", "shopware-cli project validate", "project console",
   "mutagen", "trunk.localhost". Do NOT use for CI log interpretation,
   PR descriptions, or PHPUnit test structure rules (shopware-testing).
+license: MIT
 ---
 
 # Shopware local execution (Podman and CLI)

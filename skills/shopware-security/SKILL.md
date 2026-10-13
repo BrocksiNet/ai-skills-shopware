@@ -6,6 +6,7 @@ description: >-
   Do NOT use for generic OWASP lectures, PHPUnit structure
   (shopware-testing), or OpenAPI shape without a privilege or credential
   (shopware-plugin-development).
+license: MIT
 ---
 
 # Shopware security

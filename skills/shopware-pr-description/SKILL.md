@@ -7,6 +7,7 @@ description: >-
   Do NOT use for a plugin PR, for RELEASE_INFO file content
   (shopware-core-development), or when the request is only that the tests
   are green and the PR should be opened.
+license: MIT
 ---
 
 # Shopware core PR descriptions

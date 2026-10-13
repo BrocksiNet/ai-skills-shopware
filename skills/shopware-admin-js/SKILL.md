@@ -4,11 +4,12 @@ description: >-
   Shopware 6 Administration JS/TS/Vue and Jest. Use when editing Admin UI
   under src/Administration or a plugin Resources/app/administration — Vue
   modules, Meteor mt-* components, Pinia stores, Admin TypeScript, Jest
-  specs.   Triggers on "Administration Vue", "Admin TypeScript", "mt-modal",
+  specs. Triggers on "Administration Vue", "Admin TypeScript", "mt-modal",
   "Jest spec next to the component", "Admin ACL privileges",
   "Vue single file component override for 6.8". Do NOT use for
   storefront Twig/PluginManager (shopware-storefront), PHPUnit (shopware-testing),
   or PHP DAL/services (surface PHP skills).
+license: MIT
 ---
 
 # Shopware Admin JS

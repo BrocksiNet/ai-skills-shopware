@@ -13,6 +13,7 @@ description: >-
   from my app", "Meteor Admin SDK module". Do NOT use for PHP plugins
   (custom/plugins -> shopware-plugin-development), for the platform itself
   (shopware-core-development), or for generic PHP style (php-foundation).
+license: MIT
 ---
 
 # Shopware app development (declarative extension surface)

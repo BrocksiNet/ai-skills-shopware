@@ -14,6 +14,7 @@ description: >-
   the platform itself (shopware-core-development), for declarative apps with a
   manifest.xml (shopware-app-development), generic PHP style (php-foundation),
   or test authoring (shopware-testing).
+license: MIT
 ---
 
 # Shopware plugin / project development (pragmatic surface)
