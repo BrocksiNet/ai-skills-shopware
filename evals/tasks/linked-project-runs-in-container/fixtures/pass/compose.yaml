@@ -1,0 +1,10 @@
+services:
+  web:
+    image: ghcr.io/shopware/docker-dev:php8.3-node22-caddy
+    volumes:
+      - code:/var/www/html
+  database:
+    image: mariadb:11.4
+
+volumes:
+  code:

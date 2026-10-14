@@ -10,6 +10,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+- Activation prompts no longer expose quoted routing notes to the model.
+- The Claude activation adapter and runner fail on CLI/API errors instead of
+  scoring them as silent skill selection.
+
 - `docs/local-validation.md` no longer tells you to run
   `npx skills disable` / `enable`. The skills CLI (v1.7) has no such
   commands; the A/B step now uses `npx skills remove` plus the pinned
@@ -20,6 +24,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   descriptions.
 
 ### Changed
+
+- Skill descriptions use prose trigger conditions; reference indexes explain
+  when to read each file. Every skill has Codex interface metadata.
+- Added a Claude activation adapter and three behavioral evals:
+  `support-reply-single-block`, `review-triage-with-confidence`, and
+  `linked-project-runs-in-container`. All three helped in two saved Claude
+  A/B rounds. The activation comparison needs a rerun because the original
+  adapter suppressed session-limit errors.
 
 - Every skill declares `license: MIT` in its frontmatter, as core trunk
   skills do.

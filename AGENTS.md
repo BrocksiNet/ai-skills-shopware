@@ -26,7 +26,7 @@ evals/tasks/<task-name>/
   skills                      # optional: extra skills for smoke A/B (one name per line)
 
 evals/smoke/                  # local A/B harness (Claude, Codex, Cursor CLI)
-evals/runner/                 # generic A/B runner (SKILLS_AGENT_CMD)
+evals/runner/                 # generic A/B runner (SKILLS_AGENT_CMD), Claude activation adapter
 evals/harbor/                 # containerized Harbor wiring (optional)
 evals/test-graders.sh         # golden tests for all grade.sh scripts
 evals/tools/ast/              # Node AST graders (php-parser + @babel/parser)

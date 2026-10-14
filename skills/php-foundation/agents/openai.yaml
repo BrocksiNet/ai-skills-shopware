@@ -1,0 +1,4 @@
+interface:
+  display_name: "PHP Foundation"
+  short_description: "Apply the strict PHP 8.x baseline for Shopware code."
+  default_prompt: "Use $php-foundation to write or refactor this PHP code for a Shopware project."

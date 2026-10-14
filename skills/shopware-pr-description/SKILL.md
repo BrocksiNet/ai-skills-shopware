@@ -1,12 +1,12 @@
 ---
 name: shopware-pr-description
 description: >-
-  Shopware/shopware pull request section skeleton. Use when the PR body must
-  follow the GitHub template sections, or when shopware-pr-hygiene is not
-  installed. On trunk, shopware-pr-hygiene owns the decision to write the PR.
-  Do NOT use for a plugin PR, for RELEASE_INFO file content
-  (shopware-core-development), or when the request is only that the tests
-  are green and the PR should be opened.
+  Fill the shopware/shopware pull request section skeleton. Use when the PR
+  body must follow the GitHub template sections, or when shopware-pr-hygiene
+  is not installed. On trunk, shopware-pr-hygiene owns the decision to write
+  the PR. Do NOT use for a plugin PR, for RELEASE_INFO file content
+  (shopware-core-development), or when the request is only that the tests are
+  green and the PR should be opened.
 license: MIT
 ---
 
@@ -22,8 +22,7 @@ template from `.github/PULL_REQUEST_TEMPLATE.md` and fill every section.
 > this skill owns the template itself. The skeleton is
 > `references/pr-body-template.md`.
 
-Load the skeleton on demand:
-[`references/pr-body-template.md`](references/pr-body-template.md)
+Read [`references/pr-body-template.md`](references/pr-body-template.md) when you write the PR body.
 
 ## Rules
 

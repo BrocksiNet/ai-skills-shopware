@@ -1,13 +1,12 @@
 ---
 name: shopware-pr-review
 description: >-
-  React to GitHub pull request review comments on shopware/shopware (or your
-  forks). Use when triaging reviewer feedback, deciding fix vs reply vs push
-  back, drafting PR comment answers, or turning a review finding into a lasting
-  rule. Triggers on "react to review", "reply to reviewer", "address PR
-  comments", "what should I answer", "review comment", "code review feedback".
-  Do NOT use for writing the initial PR body (shopware-pr-description) or
-  idiomatic code review without GitHub threads (shopware-review-learnings).
+  Triage and answer GitHub pull request review comments on shopware/shopware
+  (or your forks). Use when reacting to a review, replying to a reviewer,
+  addressing PR comments, deciding fix vs reply vs push back, drafting what to
+  answer, or turning a review finding into a lasting rule. Do NOT use for
+  writing the initial PR body (shopware-pr-description) or idiomatic code
+  review without GitHub threads (shopware-review-learnings).
 license: MIT
 ---
 
@@ -15,8 +14,7 @@ license: MIT
 
 Migrated from the former `.cursor/rules/review.mdc` in `shopware-trunk`.
 
-Load on demand:
-[`references/review-workflow.md`](references/review-workflow.md)
+Read [`references/review-workflow.md`](references/review-workflow.md) when you triage review threads or draft replies.
 
 ## Workflow
 

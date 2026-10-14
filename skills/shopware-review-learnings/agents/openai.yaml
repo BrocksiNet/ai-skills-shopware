@@ -1,0 +1,4 @@
+interface:
+  display_name: "Shopware Review Learnings"
+  short_description: "Review Shopware code for mistakes reviewers keep flagging."
+  default_prompt: "Use $shopware-review-learnings to review this Shopware code before I submit it."

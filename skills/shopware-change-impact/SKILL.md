@@ -16,8 +16,7 @@ license: MIT
 The ticket passing is not the review. Models stop once the new behavior exists.
 This skill is the step after that: look at the shop, not the diff.
 
-Load the checklist only when you are judging a finished change:
-[`references/impact-review.md`](references/impact-review.md).
+Read [`references/impact-review.md`](references/impact-review.md) when you judge a finished change.
 
 Do not restate cache-tag mechanics, DAL limits, or storefront AJAX rules here.
 Those stay with their owning skills. This skill only decides whether the

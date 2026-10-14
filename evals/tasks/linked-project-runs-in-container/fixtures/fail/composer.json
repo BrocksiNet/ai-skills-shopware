@@ -1,0 +1,7 @@
+{
+    "name": "shopware/platform",
+    "type": "project",
+    "scripts": {
+        "phpstan": "phpstan analyze --memory-limit=4G"
+    }
+}

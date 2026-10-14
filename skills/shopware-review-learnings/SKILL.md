@@ -1,14 +1,14 @@
 ---
 name: shopware-review-learnings
 description: >-
-  Recurring, real-world findings from Shopware plugin, app, and PR reviews —
-  the mistakes that keep coming back. Use when reviewing Shopware code, asking
-  "is this idiomatic / will reviewers flag this", or hardening a change before
-  submission. Triggers on "review this Shopware code", "what would a reviewer
-  say", "is this headless/API-aware", "common Shopware mistakes". Do NOT use as
-  a generic PHP linter (use php-foundation), for test rules (use
-  shopware-testing), or to re-define topics already owned by the surface skills
-  — this skill records findings and points at the owning skill.
+  Review Shopware code for the findings that keep coming back in plugin, app,
+  and PR reviews. Use when reviewing Shopware code, asking whether it is
+  idiomatic or what a reviewer would flag, checking that it is
+  headless/API-aware, looking for common Shopware mistakes, or hardening a
+  change before submission. Do NOT use as a generic PHP linter (use
+  php-foundation), for test rules (use shopware-testing), or to re-define
+  topics already owned by the surface skills; this skill records findings and
+  points at the owning skill.
 license: MIT
 ---
 
@@ -27,11 +27,11 @@ redefining the rule. New entries come through the
 > boyscouting and root-cause scope to core. This skill keeps **delta findings**
 > that recur in real reviews (API-aware, security, DAL).
 
-Detailed, growing lists live in references (load on demand):
+Detailed, growing lists live in references. Read only the one that matches the code under review:
 
-- API-aware / headless findings -> [`references/api-aware.md`](references/api-aware.md)
-- DAL & performance findings -> [`references/dal-and-performance.md`](references/dal-and-performance.md)
-- Bug-fix scope & boyscouting -> [`references/change-scope.md`](references/change-scope.md)
+- Read [`references/api-aware.md`](references/api-aware.md) when the code serves Store-API or headless clients.
+- Read [`references/dal-and-performance.md`](references/dal-and-performance.md) when the code queries the DAL or runs on a hot path.
+- Read [`references/change-scope.md`](references/change-scope.md) when a fix grows beyond the bug.
 
 ## Pre-submit (before opening or requesting review)
 

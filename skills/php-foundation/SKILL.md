@@ -1,13 +1,11 @@
 ---
 name: php-foundation
 description: >-
-  Strict, modern PHP 8.x baseline for Shopware code. Use when writing or
-  refactoring PHP in a Shopware project (plugin, app, or core) and deciding
-  types, enums, DTOs, immutability, or coding style. Triggers on "write a PHP
-  class", "refactor this service", "add types", "should this be an enum",
-  "return a DTO instead of an array", PER-CS / coding-style questions, and
-  PHPStan type errors. Do NOT use for non-PHP work (Twig-only, Vue/JS/SCSS),
-  for PHPUnit test authoring (use shopware-testing), or for Shopware-specific
+  Apply the strict, modern PHP 8.x baseline to Shopware code. Use when writing
+  or refactoring PHP in a Shopware plugin, app, or core and choosing types,
+  enums, DTOs, immutability, or coding style (PER-CS), or when fixing PHPStan
+  type errors. Do NOT use for non-PHP work (Twig-only, Vue/JS/SCSS), for
+  PHPUnit test authoring (use shopware-testing), or for Shopware-specific
   framework topics like DAL, cache, or migrations (use the surface skills).
 license: MIT
 ---

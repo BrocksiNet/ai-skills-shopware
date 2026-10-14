@@ -1,13 +1,12 @@
 ---
 name: shopware-assistant-style
 description: >-
-  Communication style when helping with Shopware work: plain language, concise
-  answers, no AI filler, honest uncertainty, and copy-ready support-ticket
-  replies. Use when drafting customer/support answers, asking for short
-  explanations, or whenever Shopware assistance should read human and direct.
-  Triggers on "support ticket answer", "reply to the customer", "keep it short",
-  "simple language", "no em dashes". Do NOT use for code rules, PR templates,
-  or release-note content — those belong to the surface and workflow skills.
+  Answer Shopware questions in plain, concise, human language, and write
+  support-ticket replies as one copy-ready block. Use when drafting a customer
+  or support answer, when the user asks for a short or simple explanation, or
+  whenever Shopware help should read direct, with honest uncertainty, no AI
+  filler, and no em dashes. Do NOT use for code rules, PR templates, or
+  release-note content; those belong to the surface and workflow skills.
 license: MIT
 ---
 

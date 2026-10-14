@@ -24,15 +24,15 @@ or rolling out new behaviour without breaking plugins.
 > migration timestamps. This skill adds **decision trees**, **anti-patterns**,
 > and **progressive enhancement** playbooks.
 
-Load references on demand:
+Read only the reference that matches the task:
 
-- BC-safe rollout → [`references/progressive-enhancement.md`](references/progressive-enhancement.md)
-- Decoupling / independence → [`references/component-independence.md`](references/component-independence.md)
-- DAL public contract vs internals → [`references/dal-contracts.md`](references/dal-contracts.md)
-- Symfony inside Shopware → [`references/symfony-in-shopware.md`](references/symfony-in-shopware.md)
-- Event vs decorate vs extend → [`references/extension-mechanisms.md`](references/extension-mechanisms.md)
-- Recurring mistakes → [`references/anti-patterns.md`](references/anti-patterns.md)
-- Established + candidate patterns → [`references/pattern-catalog.md`](references/pattern-catalog.md)
+- Read [`references/progressive-enhancement.md`](references/progressive-enhancement.md) when a change must roll out without breaking existing callers.
+- Read [`references/component-independence.md`](references/component-independence.md) when a change couples two components or bundles.
+- Read [`references/dal-contracts.md`](references/dal-contracts.md) when you touch a DAL definition, entity or repository contract.
+- Read [`references/symfony-in-shopware.md`](references/symfony-in-shopware.md) when you reach for a Symfony component or container feature.
+- Read [`references/extension-mechanisms.md`](references/extension-mechanisms.md) when you choose between an event, a decoration and a core edit.
+- Read [`references/anti-patterns.md`](references/anti-patterns.md) when you check a design against known mistakes.
+- Read [`references/pattern-catalog.md`](references/pattern-catalog.md) when you need an established pattern or want to propose one.
 
 ## Decision flow (start here)
 

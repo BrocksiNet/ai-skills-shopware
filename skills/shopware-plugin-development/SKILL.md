@@ -1,19 +1,16 @@
 ---
 name: shopware-plugin-development
 description: >-
-  Pragmatic rules for extending Shopware 6 with PHP — plugins and a shop
-  project's own backend code. Use when the target lives on top of the platform:
-  paths like custom/plugins, custom/static-plugins, vendor/store.shopware.com, a
-  standalone plugin repo (a class extending Shopware\Core\Framework\Plugin\Plugin),
-  or project src/ services. Covers services and DI (PHP on 6.8, XML on 6.6/6.7),
-  DAL, HTTP cache tags, migrations, decoration, and 6.6–6.8 compatibility.
-  Triggers on "build a Shopware plugin", "add a service", "query with the DAL",
-  "add a migration", "decorate a core service", "make this 6.7 compatible",
-  "migrate services.xml to PHP", "use Symfony HttpClient",
-  "prepare this plugin for Shopware 6.8". Do NOT use for
-  the platform itself (shopware-core-development), for declarative apps with a
-  manifest.xml (shopware-app-development), generic PHP style (php-foundation),
-  or test authoring (shopware-testing).
+  Extend Shopware 6 with PHP plugins and a shop project's own backend code.
+  Use when the target lives on top of the platform: custom/plugins,
+  custom/static-plugins, vendor/store.shopware.com, a standalone plugin repo
+  (a class extending Shopware\Core\Framework\Plugin\Plugin), or project src/
+  services. Covers services and DI (PHP on 6.8, XML on 6.6/6.7, migrating
+  services.xml to PHP), DAL queries, HTTP cache tags, migrations, decorating
+  core services, Symfony HttpClient, and 6.6 to 6.8 compatibility. Do NOT use
+  for the platform itself (shopware-core-development), for declarative apps
+  with a manifest.xml (shopware-app-development), generic PHP style
+  (php-foundation), or test authoring (shopware-testing).
 license: MIT
 ---
 
@@ -31,14 +28,14 @@ not defensive ceremony without a concrete failure mode. Inherits
 > `custom/apps`, app scripts, webhooks) is `shopware-app-development` — apps have
 > no plugin DI/DAL at runtime, so do not apply these rules there.
 
-Load a reference only when the task needs it:
+Read only the reference that matches the task:
 
-- DAL reads/writes -> [`references/dal-usage.md`](references/dal-usage.md)
-- Store-API / Admin OpenAPI & headless -> [`references/api-contracts.md`](references/api-contracts.md)
-- HTTP cache tags (6.7+) -> [`references/cache-tags.md`](references/cache-tags.md)
-- Database migrations -> [`references/migrations.md`](references/migrations.md)
-- 6.6 / 6.7 compatibility -> [`references/version-compatibility.md`](references/version-compatibility.md)
-- Symfony-first (prefer components over custom code) -> [`references/symfony-first.md`](references/symfony-first.md)
+- Read [`references/dal-usage.md`](references/dal-usage.md) when you read or write data through the DAL.
+- Read [`references/api-contracts.md`](references/api-contracts.md) when you add a Store-API or Admin route, or its OpenAPI schema.
+- Read [`references/cache-tags.md`](references/cache-tags.md) when a change affects cached pages or needs cache tags (6.7+).
+- Read [`references/migrations.md`](references/migrations.md) when you add or change a database migration.
+- Read [`references/version-compatibility.md`](references/version-compatibility.md) when the plugin must support more than one Shopware minor.
+- Read [`references/symfony-first.md`](references/symfony-first.md) when you are about to write code a Symfony component already provides.
 - Architecture choices (events vs decoration) -> `shopware-architecture`
 
 ## Hard guardrails (refuse rather than violate)

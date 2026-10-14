@@ -159,7 +159,13 @@ no rule without a demonstrated miss and an eval).
 ### Layout conventions seen on trunk
 
 - Frontmatter `name`, `description`, `license: MIT` (adopted here in this pass).
-- `agents/openai.yaml` per skill with a Codex display name and short
-  description (not adopted yet).
+- `agents/openai.yaml` per skill with a Codex display name, short
+  description and default prompt (adopted here in this pass).
 - Links to guidelines are conditional ("Read `coding-guidelines/…` when …"),
-  not see-also lists (not adopted yet).
+  not see-also lists. Adopted here for every `references/` index: each line
+  says when to read the file.
+- Descriptions start with an imperative or "Use when", followed by "Use when
+  …" and "Do NOT use …". Adopted here for all skills; the quoted trigger
+  lists are gone. The before/after activation comparison is inconclusive:
+  the original adapter suppressed session-limit errors. Rerun it with the
+  adapter that propagates errors before drawing an activation conclusion.

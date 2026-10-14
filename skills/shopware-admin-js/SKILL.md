@@ -1,14 +1,14 @@
 ---
 name: shopware-admin-js
 description: >-
-  Shopware 6 Administration JS/TS/Vue and Jest. Use when editing Admin UI
-  under src/Administration or a plugin Resources/app/administration — Vue
-  modules, Meteor mt-* components, Pinia stores, Admin TypeScript, Jest
-  specs. Triggers on "Administration Vue", "Admin TypeScript", "mt-modal",
-  "Jest spec next to the component", "Admin ACL privileges",
-  "Vue single file component override for 6.8". Do NOT use for
-  storefront Twig/PluginManager (shopware-storefront), PHPUnit (shopware-testing),
-  or PHP DAL/services (surface PHP skills).
+  Apply Shopware 6 Administration rules for JS, TypeScript, Vue, and Jest. Use
+  when editing Admin UI under src/Administration or a plugin's
+  Resources/app/administration: Vue modules and single file component
+  overrides, Meteor mt-* components such as mt-modal, Pinia stores, Admin ACL
+  privileges, Admin TypeScript, Jest specs next to the component, or Admin
+  changes for 6.8. Do NOT use for storefront Twig/PluginManager
+  (shopware-storefront), PHPUnit (shopware-testing), or PHP DAL/services
+  (surface PHP skills).
 license: MIT
 ---
 
@@ -24,11 +24,11 @@ copied.
 > it for the short mandatory list. This skill keeps the plugin/project
 > deltas and the Meteor / modern-web gate.
 
-Load a reference only when needed:
+Read only the reference that matches the task:
 
-- Architecture, modules, ACL -> [`references/architecture.md`](references/architecture.md)
-- Jest -> [`references/testing.md`](references/testing.md)
-- Flags, deprecations, MWG gate -> [`references/flags-and-modern-web.md`](references/flags-and-modern-web.md)
+- Read [`references/architecture.md`](references/architecture.md) when you add a module, component override or ACL privilege.
+- Read [`references/testing.md`](references/testing.md) when you write or fix a Jest spec.
+- Read [`references/flags-and-modern-web.md`](references/flags-and-modern-web.md) when a change needs a feature flag, a deprecation or a modern web API.
 
 ## Hard guardrails
 

@@ -19,14 +19,14 @@ not by claiming compliance.
 > prefer it for test shape, providers, and feature flags. This skill keeps
 > plugin/integration patterns and eval-backed trunk rules below.
 
-Load references on demand:
+Read only the reference that matches the task:
 
-- Unit vs integration placement, assertions, data → this file (below)
-- Exception assertions (`expectExceptionObject`) → [`references/exception-assertions.md`](references/exception-assertions.md)
-- Test shape, providers, feature flags, coverage attrs → [`references/test-shape-and-flags.md`](references/test-shape-and-flags.md)
-- DAL / repository integration → [`references/integration-repository.md`](references/integration-repository.md)
-- shopware/shopware: migrations, Codecov, `#[CoversClass]` → [`references/core-platform-patterns.md`](references/core-platform-patterns.md)
-- FoS shopware-phpunit + plugin patterns → [`references/external-inspiration.md`](references/external-inspiration.md)
+- Unit vs integration placement, assertions and test data are covered below.
+- Read [`references/exception-assertions.md`](references/exception-assertions.md) when a test asserts an exception.
+- Read [`references/test-shape-and-flags.md`](references/test-shape-and-flags.md) when you need data providers, feature flags or coverage attributes.
+- Read [`references/integration-repository.md`](references/integration-repository.md) when an integration test reads or writes through a repository.
+- Read [`references/core-platform-patterns.md`](references/core-platform-patterns.md) when the test lives in shopware/shopware (migrations, Codecov, `#[CoversClass]`).
+- Read [`references/external-inspiration.md`](references/external-inspiration.md) when you want plugin test patterns from FriendsOfShopware.
 
 ## Unit vs integration vs migration
 
