@@ -6,6 +6,7 @@ description: >-
   Do NOT use for generic OWASP lectures, PHPUnit structure
   (shopware-testing), or OpenAPI shape without a privilege or credential
   (shopware-plugin-development).
+license: MIT
 ---
 
 # Shopware security
@@ -14,11 +15,11 @@ Delta rules for **Shopware-specific** security mistakes — not a general securi
 course. Pair with `shopware-plugin-development` / `shopware-app-development` for
 surface-specific wiring.
 
-Load references on demand:
+Read only the reference that matches the task:
 
-- Secrets and keys → [`references/secrets-and-config.md`](references/secrets-and-config.md)
-- Store-API / Admin ACL → [`references/api-acl-and-input.md`](references/api-acl-and-input.md)
-- Apps and webhooks → [`references/apps-and-webhooks.md`](references/apps-and-webhooks.md)
+- Read [`references/secrets-and-config.md`](references/secrets-and-config.md) when code reads a secret, an access key or a config value.
+- Read [`references/api-acl-and-input.md`](references/api-acl-and-input.md) when you add a route, an ACL privilege or user input handling.
+- Read [`references/apps-and-webhooks.md`](references/apps-and-webhooks.md) when an app or webhook sends or receives data.
 
 ## Hard guardrails
 

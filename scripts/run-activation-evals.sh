@@ -13,8 +13,8 @@
 #   names of the skills it activated (one per line, or space/comma separated).
 #   The skill name is the folder name (== SKILL.md `name`).
 #
-# Example (pseudo):
-#   export SKILLS_AGENT_CMD='my-agent --print-activated-skills'
+# Example (Claude Code CLI, see evals/runner/claude-activation.sh):
+#   export SKILLS_AGENT_CMD="$PWD/evals/runner/claude-activation.sh"
 #   ./scripts/run-activation-evals.sh
 #
 # Without SKILLS_AGENT_CMD set, the script runs in --dry mode: it validates that
@@ -28,14 +28,20 @@ SKILLS_DIR="$ROOT/skills"
 pass=0
 fail=0
 missing=0
+errors=0
 
 run_prompt() { # $1 = prompt ; prints activated skill names
   printf '%s' "$1" | eval "$SKILLS_AGENT_CMD"
 }
 
 extract_prompts() { # $1 = file ; prints one prompt per line
-  # Prompts are markdown list items beginning with "- ".
-  grep -E '^- ' "$1" 2>/dev/null | sed -E 's/^- //' || true
+  # Prompts are markdown list items beginning with "- ". Surrounding quotes and
+  # trailing reviewer notes such as "(-> shopware-testing)" are stripped, so the
+  # agent never sees the expected skill name in the prompt.
+  grep -E '^- ' "$1" 2>/dev/null |
+    sed -E -e 's/^- //' \
+      -e 's/^"([^"]*)".*$/\1/' \
+      -e 's/[[:space:]]*\((->|should|redirect|[a-z-]*shopware[a-z-]*|php-foundation)[^)]*\)\.?[[:space:]]*$//' || true
 }
 
 check() { # $1 = skill ; $2 = file ; $3 = expectation (trigger|no-trigger)
@@ -49,7 +55,11 @@ check() { # $1 = skill ; $2 = file ; $3 = expectation (trigger|no-trigger)
       continue
     fi
     local activated
-    activated="$(run_prompt "$prompt" || true)"
+    if ! activated="$(run_prompt "$prompt")"; then
+      errors=$((errors+1))
+      echo "  ERROR ($expect) $skill <- $prompt (agent failed; no score recorded)"
+      return 1
+    fi
     if echo "$activated" | grep -qw "$skill"; then
       got="triggered"
     else
@@ -79,7 +89,7 @@ for dir in "$SKILLS_DIR"/*/; do
 done
 
 echo
-echo "Activation evals: pass=$pass fail=$fail missing-files=$missing"
-if [ "$fail" -gt 0 ] || [ "$missing" -gt 0 ]; then
+echo "Activation evals: pass=$pass fail=$fail missing-files=$missing errors=$errors"
+if [ "$fail" -gt 0 ] || [ "$missing" -gt 0 ] || [ "$errors" -gt 0 ]; then
   exit 1
 fi

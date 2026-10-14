@@ -11,6 +11,23 @@ right skill loads (and the wrong ones stay quiet). Cheap; runs on every PR via C
 in `--dry` mode (file presence + prompt parsing) and for real when an agent
 command is configured.
 
+Quotes around a prompt and a trailing note such as `(-> shopware-testing)` are
+stripped before the prompt is sent, so the agent never sees the expected skill.
+
+For Claude Code, [`runner/claude-activation.sh`](runner/claude-activation.sh)
+is a ready adapter. It runs each prompt in a fresh, empty workspace that only
+sees this repo's skills, with read-only tools, and prints the invoked skills:
+
+```bash
+SKILLS_AGENT_CMD="$PWD/evals/runner/claude-activation.sh" \
+  ./scripts/run-activation-evals.sh
+```
+
+Run it before and after you change a `description`. One pass is roughly 260
+short sessions. CLI/API errors abort the run without recording a score;
+rerun once the provider is available. A failed session must not count as a
+successful no-trigger result.
+
 ## Layer 2 — behavioral (`tasks/`)
 
 Each `tasks/<rule>/` is a fixture task:

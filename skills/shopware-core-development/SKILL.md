@@ -7,6 +7,7 @@ description: >-
   when that skill is installed. Do NOT use for a plugin
   (shopware-plugin-development), an app (shopware-app-development), or generic
   PHP style (php-foundation).
+license: MIT
 ---
 
 # Shopware platform / core development (strict surface)
@@ -26,15 +27,15 @@ are mandatory, not optional. Inherits `php-foundation`; adds the deltas below.
 > keeps PHPStan baseline, release-note guardrails, and eval-linked deltas. Refactor
 > decisions → `shopware-architecture`.
 
-Load a reference file only when the task needs it:
+Read only the reference that matches the task:
 
-- Deprecations & breaking changes -> [`references/deprecations.md`](references/deprecations.md)
-- Service architecture & public surface -> [`references/service-architecture.md`](references/service-architecture.md)
-- Admin/Store API OpenAPI schemas -> [`references/api-schema.md`](references/api-schema.md)
-- Symfony / modernization behind feature flags -> [`references/modernization-and-flags.md`](references/modernization-and-flags.md)
-- Release notes (RELEASE_INFO / UPGRADE) & ADRs -> [`references/release-notes-and-adr.md`](references/release-notes-and-adr.md) (includes migrated `changelog.mdc` detail)
-- PHPStan baseline discipline -> [`references/static-analysis-baseline.md`](references/static-analysis-baseline.md)
-- Bundle boundaries, listeners, migrations -> [`references/platform-architecture.md`](references/platform-architecture.md)
+- Read [`references/deprecations.md`](references/deprecations.md) when you deprecate or break a public API.
+- Read [`references/service-architecture.md`](references/service-architecture.md) when you add a service or change what is public.
+- Read [`references/api-schema.md`](references/api-schema.md) when you add or change an Admin or Store API route.
+- Read [`references/modernization-and-flags.md`](references/modernization-and-flags.md) when you modernize code behind a feature flag.
+- Read [`references/release-notes-and-adr.md`](references/release-notes-and-adr.md) when the change needs RELEASE_INFO, UPGRADE or an ADR.
+- Read [`references/static-analysis-baseline.md`](references/static-analysis-baseline.md) when you touch the PHPStan baseline.
+- Read [`references/platform-architecture.md`](references/platform-architecture.md) when you cross a bundle boundary or add a listener or migration.
 
 ## Hard guardrails (refuse rather than violate)
 

@@ -1,0 +1,4 @@
+interface:
+  display_name: "Shopware PR Description"
+  short_description: "Write the shopware/shopware pull request description."
+  default_prompt: "Use $shopware-pr-description to write the pull request description for this shopware/shopware change."

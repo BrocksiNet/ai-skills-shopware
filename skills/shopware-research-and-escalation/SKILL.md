@@ -1,14 +1,14 @@
 ---
 name: shopware-research-and-escalation
 description: >-
-  Decide when to research Shopware behavior instead of guessing, where to look,
-  and what to do when stuck. Use when unsure about a Shopware/Symfony API,
-  whether a class/method/service exists or behaves as assumed, which version
-  applies, or when an approach keeps failing. Triggers on "I'm not sure how
-  Shopware does X", "does this method exist", "which version", "verify before
-  changing", "I'm stuck / it keeps failing". Do NOT use for topics you are
-  confident about, or as a substitute for the surface-skill rules (DAL, cache,
-  testing) — it tells you when and how to verify, not the rules themselves.
+  Research Shopware behavior instead of guessing, know where to look, and
+  escalate when stuck. Use when unsure how Shopware or Symfony does something,
+  whether a class, method, or service exists or behaves as assumed, which
+  version applies, when a change should be verified first, or when an approach
+  keeps failing. Do NOT use for topics you are confident about, or as a
+  substitute for the surface-skill rules (DAL, cache, testing): it tells you
+  when and how to verify, not the rules themselves.
+license: MIT
 ---
 
 # Shopware research & escalation
@@ -17,12 +17,12 @@ A small meta-skill: it does not contain Shopware rules, it governs *how the agen
 behaves under uncertainty* so it verifies instead of hallucinating and escalates
 instead of thrashing.
 
-Load a reference only when relevant:
+Read only the reference that matches the task:
 
-- Where to look in the docs -> [`references/docs-map.md`](references/docs-map.md)
-- Library docs + source verification policy -> [`references/context7-and-libraries.md`](references/context7-and-libraries.md)
-- Generic modern CSS/HTML/JS APIs -> [`references/modern-web-guidance.md`](references/modern-web-guidance.md)
-- What to do when stuck -> [`references/when-stuck.md`](references/when-stuck.md)
+- Read [`references/docs-map.md`](references/docs-map.md) when you need to know where Shopware documents a topic.
+- Read [`references/context7-and-libraries.md`](references/context7-and-libraries.md) when you check library docs or verify against source.
+- Read [`references/modern-web-guidance.md`](references/modern-web-guidance.md) when the question is about a generic CSS, HTML or JS API.
+- Read [`references/when-stuck.md`](references/when-stuck.md) when an approach keeps failing.
 
 ## When does research pay off?
 

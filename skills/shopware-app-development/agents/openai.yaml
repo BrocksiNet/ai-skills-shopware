@@ -1,0 +1,4 @@
+interface:
+  display_name: "Shopware App Development"
+  short_description: "Build Shopware apps with manifest, app scripts and webhooks."
+  default_prompt: "Use $shopware-app-development to implement this change in my Shopware app."

@@ -1,0 +1,4 @@
+interface:
+  display_name: "Shopware PR Review"
+  short_description: "Triage and answer review comments on Shopware pull requests."
+  default_prompt: "Use $shopware-pr-review to go through the review comments on this pull request."

@@ -6,14 +6,17 @@ source of truth for plugins, older core branches, and eval-backed rules
 (`sw-dev link`, install profiles in [`skill-resolution.md`](skill-resolution.md)).
 
 Seed PR: [#17657](https://github.com/shopware/shopware/pull/17657) (merged
-2026-06-26). **Last mined:** trunk 2026-09-28
-([#20879](https://github.com/shopware/shopware/pull/20879),
+2026-06-26). **Last mined:** trunk 2026-10-13 (see
+[Mining pass 2026-10-13](#mining-pass-2026-10-13); previous pass 2026-09-28 via
+[#20879](https://github.com/shopware/shopware/pull/20879),
 [#20652](https://github.com/shopware/shopware/pull/20652),
 [#20575](https://github.com/shopware/shopware/pull/20575)).
 Canonical path: `.agents/skills/`; `.claude/skills` → symlink.
 
-Catalog since #17657 is unchanged (no new skill names, still no storefront
-skill). Later drift: new Store API routes use extension events
+The guidance-skill catalog since #17657 is unchanged: no new `shopware-*`
+names, still no storefront skill (a `shopware-storefront-component` skill is
+WIP in [#20437](https://github.com/shopware/shopware/pull/20437)). The CI-only
+skills were renamed to `sw-*` and gained `nightly-triage`. Later drift: new Store API routes use extension events
 (`shopware-php-code`, #20879); integration tests take only the traits they
 need (#20575); a test that asserts a throw while a major flag is active is
 `@deprecated` on that method (#20652).
@@ -91,7 +94,7 @@ Status key: **done** | **partial** | **skip** | **eval:TBD** | **defer-on-trunk*
 | Migration class/file/`getCreationTimestamp()` = exact current Unix timestamp | `platform-architecture.md` | **done** → `migration-timestamp-format` |
 | No tests for empty/no-op `updateDestructive()` | `platform-architecture.md` | defer-on-trunk |
 | Release docs: external perspective; separate API vs Core sections | `release-notes-and-adr.md` | **done** (documented) |
-| `UPGRADE` = must third-party code change?; past tense; no repeated headings | `release-notes-and-adr.md` | **done** (documented) |
+| `UPGRADE` = must third-party code change?; past tense; no repeated headings | `release-notes-and-adr.md` | **done** → `upgrade-entry-past-tense`, `release-info-no-duplicate-heading` |
 
 ## Security (`shopware-security`) — ours only
 
@@ -108,7 +111,7 @@ Status key: **done** | **partial** | **skip** | **eval:TBD** | **defer-on-trunk*
 | Follow `.github/PULL_REQUEST_TEMPLATE.md`; no extra PR sections | `shopware-pr-description` | defer-on-trunk |
 | Conventional PR title when requested | `pr-body-template.md` | defer-on-trunk |
 | Review/CI fixes → new commit; no amend/force-push unless asked | `shopware-pr-description` + `shopware-pr-review` | defer-on-trunk |
-| No AI-agent attribution trailers (`Co-authored-by`, …) | `shopware-pr-description` | **done** (documented) |
+| No AI-agent attribution trailers (`Co-authored-by`, …) | `shopware-pr-description` | **done** → `pr-no-ai-trailers` |
 
 ## Review scope (`shopware-review-learnings`)
 
@@ -124,4 +127,45 @@ Status key: **done** | **partial** | **skip** | **eval:TBD** | **defer-on-trunk*
 | --------------- | ------ |
 | `shopware-admin-js` | mined into our `shopware-admin-js`; defer short list on trunk |
 | `shopware-knowledge-capture` | Overlaps our `AGENTS.md` / REGISTRY curation |
-| `triage`, `sw-review` | Core gh-aw / internal review workflow |
+| `sw-triage`, `sw-bugfixer`, `sw-review`, `nightly-triage` | Core gh-aw CI workflows; explicit invocation only since [#18365](https://github.com/shopware/shopware/pull/18365) |
+
+## Mining pass 2026-10-13
+
+Trunk PRs merged after the 2026-09-28 pass that changed guidance, and what
+they mean here. "eval:TBD" means a candidate rule for our surface skills that
+needs a failing model run on a real shop before it gets in (curation rule:
+no rule without a demonstrated miss and an eval).
+
+| Core PR | Rule | Our target | Status |
+| ------- | ---- | ---------- | ------ |
+| [#20840](https://github.com/shopware/shopware/pull/20840) | No helper traits composed into unit test classes; use a static fixture class or a stub under `Stub/` (lifecycle behaviours allowed) | `shopware-testing` → `core-platform-patterns.md` | defer-on-trunk |
+| [#20863](https://github.com/shopware/shopware/pull/20863) | Sub-features link to their parent major; explicit env values and persisted toggles win over `FEATURE_ALL` and the parent major; set `V6_8_0_0=1` directly | `shopware-plugin-development` → `version-compatibility.md` | **done** (already consistent: we say `V6_8_0_0=1`, not `FEATURE_ALL`) |
+| [#21157](https://github.com/shopware/shopware/pull/21157) | Every new compiler pass gets its own class-level `@internal` | `shopware-core-development` | defer-on-trunk |
+| [#21026](https://github.com/shopware/shopware/pull/21026) | Twig-only template changes get no PHP integration test that renders Twig; a render without a Storefront request can cache empty request-dependent Twig globals | `shopware-storefront` (plugin storefront tests) | eval:TBD (root `AGENTS.md` covers trunk) |
+| [#21166](https://github.com/shopware/shopware/pull/21166) | German snippets: "Du" in the Administration, "Sie" in the Storefront; core snippet files named by language (`storefront.de.json`), not locale | — | skip (core translation files; plugin naming not verified) |
+| [#20482](https://github.com/shopware/shopware/pull/20482) | Admin deprecations: `Shopware.Feature.triggerDeprecationOrThrow` or the `deprecated: { version, comment }` option | `shopware-admin-js` | defer-on-trunk (core components only) |
+| [#18740](https://github.com/shopware/shopware/pull/18740), [#18684](https://github.com/shopware/shopware/pull/18684) | `CompletionGuard` / `setAutoExit(false)`; `StaticEntityRepository::of(...)` | `shopware-testing` | defer-on-trunk (already listed above) |
+| [#21445](https://github.com/shopware/shopware/pull/21445) | gh aw bump, CI engines on Sonnet 5.5 / Opus 5.5 | — | skip (CI) |
+
+### Watch (open on 2026-10-13)
+
+| Core PR | Why it matters here |
+| ------- | ------------------- |
+| [#21541](https://github.com/shopware/shopware/pull/21541) | Adds `coding-guidelines/core/backward-compatibility.md` and `http-cache-and-assets.md`. Overlaps `shopware-change-impact` (shared cache key, assets) and `shopware-core-development` (deprecation + UPGRADE in the same PR). Re-mine and add defer pointers once merged. |
+| [#20437](https://github.com/shopware/shopware/pull/20437) | `shopware-storefront-component` skill. Would end "core has no storefront skill" and change the `core-overlay` profile in `skill-resolution.md`. |
+| [#21455](https://github.com/shopware/shopware/pull/21455) | `sw-review` topic guides with catch/ignore evals; a model for evals on `shopware-pr-review` and `shopware-review-learnings`. |
+| [#21502](https://github.com/shopware/shopware/pull/21502) | `composer skills:enable` / `skills:disable` in the core checkout only. Plugin projects still use `npx skills remove` / `add`. |
+
+### Layout conventions seen on trunk
+
+- Frontmatter `name`, `description`, `license: MIT` (adopted here in this pass).
+- `agents/openai.yaml` per skill with a Codex display name, short
+  description and default prompt (adopted here in this pass).
+- Links to guidelines are conditional ("Read `coding-guidelines/…` when …"),
+  not see-also lists. Adopted here for every `references/` index: each line
+  says when to read the file.
+- Descriptions start with an imperative or "Use when", followed by "Use when
+  …" and "Do NOT use …". Adopted here for all skills; the quoted trigger
+  lists are gone. The before/after activation comparison is inconclusive:
+  the original adapter suppressed session-limit errors. Rerun it with the
+  adapter that propagates errors before drawing an activation conclusion.

@@ -2,13 +2,13 @@
 name: shopware-podman-dev
 description: >-
   Run Shopware dev commands in the right environment. Use for linked
-  shopware-dev checkouts (Podman/Mutagen: php, composer, phpunit, bin/console,
-  phpstan, ecs, npm) and for Shopware CLI projects (.shopware-project.yml:
-  shopware-cli project console/validate, extension validate). Triggers on
-  "composer install", "run phpunit", "phpstan", "bin/console", "podman compose",
-  "shopware-dev", "shopware-cli project validate", "project console",
-  "mutagen", "trunk.localhost". Do NOT use for CI log interpretation,
-  PR descriptions, or PHPUnit test structure rules (shopware-testing).
+  shopware-dev checkouts (Podman and Mutagen: php, composer install, phpunit,
+  bin/console, phpstan, ecs, npm, podman compose, mutagen sync,
+  trunk.localhost lanes) and for Shopware CLI projects with
+  .shopware-project.yml (shopware-cli project console, project validate,
+  extension validate). Do NOT use for CI log interpretation, PR descriptions,
+  or PHPUnit test structure rules (shopware-testing).
+license: MIT
 ---
 
 # Shopware local execution (Podman and CLI)
@@ -214,4 +214,4 @@ sw-dev validate --static-only   # no podman exec / no HTTP
   bin/sw-dev
 ```
 
-Details: [`references/shopware-dev-hub.md`](references/shopware-dev-hub.md)
+Read [`references/shopware-dev-hub.md`](references/shopware-dev-hub.md) when you need the hub layout or a command not listed above.

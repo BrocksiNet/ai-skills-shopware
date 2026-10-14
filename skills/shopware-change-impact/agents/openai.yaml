@@ -1,0 +1,4 @@
+interface:
+  display_name: "Shopware Change Impact"
+  short_description: "Check cache, cost and container impact before committing."
+  default_prompt: "Use $shopware-change-impact to check the impact of this Shopware change before I commit it."

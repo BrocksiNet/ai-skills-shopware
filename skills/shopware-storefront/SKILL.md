@@ -1,15 +1,15 @@
 ---
 name: shopware-storefront
 description: >-
-  Shopware 6 Storefront (Twig, theme, Bootstrap/SCSS, PluginManager JS). Use
-  when editing storefront templates, themes, storefront JavaScript plugins, or
-  storefront SCSS — paths like src/Storefront, Resources/views/storefront,
-  Resources/app/storefront.   Triggers on "storefront JS plugin", "PluginManager",
-  "Twig block", "theme inheritance", "storefront SCSS", "Bootstrap storefront",
-  "Twig 4 spaceless filter", "null HTML attribute".
-  Do NOT use for Administration Vue/Jest (shopware-admin-js), PHP DAL/services
-  (surface PHP skills), or generic modern CSS lectures (research + Modern Web
-  Guidance after Shopware primitives are checked).
+  Apply Shopware 6 Storefront rules for Twig, themes, Bootstrap/SCSS, and
+  PluginManager JS. Use when editing storefront templates, Twig blocks, theme
+  inheritance, storefront JavaScript plugins, or storefront SCSS under
+  src/Storefront, Resources/views/storefront, or Resources/app/storefront,
+  including Twig 4 changes such as the removed spaceless filter and null HTML
+  attributes. Do NOT use for Administration Vue/Jest (shopware-admin-js), PHP
+  DAL/services (surface PHP skills), or generic modern CSS lectures (research
+  + Modern Web Guidance after Shopware primitives are checked).
+license: MIT
 ---
 
 # Shopware Storefront
@@ -22,11 +22,11 @@ the PHP surface skills.
 > **Upstream:** core has no storefront skill. Prefer this skill on every
 > surface (plugin theme, project theme, `src/Storefront`).
 
-Load a reference only when needed:
+Read only the reference that matches the task:
 
-- JS plugins -> [`references/js-plugins.md`](references/js-plugins.md)
-- Twig / theme / assets -> [`references/twig-and-theme.md`](references/twig-and-theme.md)
-- HTTP cache vs AJAX; MWG gate -> [`references/cache-and-modern-web.md`](references/cache-and-modern-web.md)
+- Read [`references/js-plugins.md`](references/js-plugins.md) when you write or register a storefront JS plugin.
+- Read [`references/twig-and-theme.md`](references/twig-and-theme.md) when you edit Twig blocks, the theme or assets.
+- Read [`references/cache-and-modern-web.md`](references/cache-and-modern-web.md) when content depends on the user or cache, or you need a modern web API.
 
 ## Hard guardrails
 

@@ -1,0 +1,4 @@
+interface:
+  display_name: "Shopware Plugin Development"
+  short_description: "Build Shopware plugins and project PHP code."
+  default_prompt: "Use $shopware-plugin-development to implement this change in my Shopware plugin."

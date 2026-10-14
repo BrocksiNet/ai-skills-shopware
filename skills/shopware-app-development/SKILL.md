@@ -1,18 +1,16 @@
 ---
 name: shopware-app-development
 description: >-
-  Rules for building Shopware apps — declarative extensions defined by a
-  manifest.xml, not PHP services. Use when the target is an app: paths like
-  custom/apps, a manifest.xml, app scripts (Resources/scripts/<hook>/*.twig),
-  webhooks, Admin API access, or app registration / backend setup. Apps run
-  sandboxed: there is no plugin DI container and no direct DAL / EntityRepository
-  in the shop process — logic is declarative (manifest), sandboxed Twig app
-  scripts, or an external backend reached via webhooks and the Admin API.
-  Triggers on "build a Shopware app", "add a manifest.xml", "write an app
-  script", "register a webhook", "app permissions", "app vs plugin", "Admin API
-  from my app", "Meteor Admin SDK module". Do NOT use for PHP plugins
-  (custom/plugins -> shopware-plugin-development), for the platform itself
-  (shopware-core-development), or for generic PHP style (php-foundation).
+  Build Shopware apps: declarative extensions defined by a manifest.xml, not
+  PHP services. Use when the target is an app: custom/apps, a manifest.xml,
+  app scripts (Resources/scripts/<hook>/*.twig), webhooks, app permissions,
+  Admin API access from an app backend, app registration, Meteor Admin SDK
+  modules, or deciding app vs plugin. Apps run sandboxed: no plugin DI
+  container and no direct DAL / EntityRepository in the shop process. Do NOT
+  use for PHP plugins (custom/plugins -> shopware-plugin-development), for the
+  platform itself (shopware-core-development), or for generic PHP style
+  (php-foundation).
+license: MIT
 ---
 
 # Shopware app development (declarative extension surface)
@@ -24,10 +22,10 @@ needs the full PHP runtime (custom DI services, PHP DAL entities, route
 decoration), it is a **plugin** — use `shopware-plugin-development` instead.
 Inherits `php-foundation` only for any backend code you write outside the shop.
 
-Load a reference only when the task needs it:
+Read only the reference that matches the task:
 
-- Manifest, permissions & lifecycle -> [`references/manifest-and-permissions.md`](references/manifest-and-permissions.md)
-- App scripts (sandboxed Twig hooks) -> [`references/app-scripts.md`](references/app-scripts.md)
+- Read [`references/manifest-and-permissions.md`](references/manifest-and-permissions.md) when you edit the manifest, permissions or app lifecycle.
+- Read [`references/app-scripts.md`](references/app-scripts.md) when you write an app script.
 
 ## Hard guardrails (refuse rather than violate)
 
