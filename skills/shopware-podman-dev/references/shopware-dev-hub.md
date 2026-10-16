@@ -50,6 +50,48 @@ sw-dev unlink <instance>
 Host directory syncs into container volume `shopware-src` via Mutagen.
 `~/scripts/dev-startup.sh` ensures lane + commercial sessions after reboot.
 
+## OpenSearch (opt-in per lane)
+
+`overrides/shared.podman-mutagen.yaml` puts the upstream `opensearch` service
+behind the compose profile `opensearch`, so lanes start **without** it. Shopware
+then searches via MySQL. Seven idle OpenSearch containers (1 GB heap each)
+exhausted the 16 GB Podman VM and OOM-killed admin builds, so keep it off
+unless the task needs it.
+
+The task needs it when any of these hold:
+
+- `SHOPWARE_ES_ENABLED` or `SHOPWARE_ADMIN_ES_ENABLED` is (or must be) true
+- you run `es:*` console commands, touch `src/Elasticsearch/`, or run tests
+  under `tests/integration/Elasticsearch/`
+- the bug only reproduces with OpenSearch (search, listing, admin search)
+
+Enable it for **this workspace's lane only**:
+
+1. Persist the profile: add `COMPOSE_PROFILES=opensearch` to the project `.env`
+   **below** the `# --- /shopware-dev ---` marker. `sw-dev link` keeps lines
+   outside its block, and `sw-dev startup` then starts OpenSearch too.
+2. Persist the Shopware flags in `~/shopware-dev/instances/<lane>.yaml` under
+   `services.web.environment`: `SHOPWARE_ES_ENABLED: '1'`,
+   `SHOPWARE_ES_INDEXING_ENABLED: '1'`, plus `SHOPWARE_ADMIN_ES_ENABLED: '1'`
+   for admin search. `OPENSEARCH_URL` / `ADMIN_OPENSEARCH_URL`
+   (`http://opensearch:9200`) are already set by the upstream compose file.
+3. Apply and index from the project root:
+
+   ```bash
+   podman compose up -d
+   podman compose exec web bin/console es:status
+   podman compose exec web bin/console es:index --no-queue
+   podman compose exec web bin/console es:admin:index --no-queue  # admin search
+   ```
+
+One-off (server only, no flags, nothing persisted):
+`podman compose --profile opensearch up -d opensearch`.
+
+Disable: remove the `.env` line and the flags, then
+`podman compose --profile opensearch stop opensearch` and `podman compose up -d`.
+Do not enable it on lanes the task does not touch, and tell the user when you
+leave it running.
+
 ## MCP defaults (central)
 
 - `enforce_mcp_tools: false` — MCP is optional; `podman compose exec` must always be allowed
