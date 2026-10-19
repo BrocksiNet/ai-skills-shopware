@@ -4,8 +4,8 @@ description: >-
   Run Shopware dev commands in the right environment. Use for linked
   shopware-dev checkouts (Podman and Mutagen: php, composer install, phpunit,
   bin/console, phpstan, ecs, npm, podman compose, mutagen sync,
-  trunk.localhost lanes) and for Shopware CLI projects with
-  .shopware-project.yml (shopware-cli project console, project validate,
+  trunk.localhost lanes, enabling OpenSearch on a lane) and for Shopware CLI
+  projects with .shopware-project.yml (shopware-cli project console, project validate,
   extension validate). Do NOT use for CI log interpretation, PR descriptions,
   or PHPUnit test structure rules (shopware-testing).
 license: MIT
@@ -151,6 +151,12 @@ The shared tooling handles the traps, but know them:
   `podman compose up -d --force-recreate web` (applies env).
 - For API/Admin-only work (e.g. MCP), you do **not** need the storefront theme;
   skip `theme:compile`.
+- **OpenSearch is off by default** (compose profile `opensearch` in the shared
+  override). If the task sets `SHOPWARE_ES_ENABLED` / `SHOPWARE_ADMIN_ES_ENABLED`,
+  runs `es:*` commands, or touches `src/Elasticsearch/` or its integration tests,
+  enable it for this lane only. Steps: [`references/shopware-dev-hub.md`](references/shopware-dev-hub.md#opensearch-opt-in-per-lane).
+  Do not remove the profile from the shared override; the VM cannot run one
+  OpenSearch per lane.
 
 ## Before running tools
 
@@ -200,6 +206,7 @@ sw-dev validate --static-only   # no podman exec / no HTTP
 | `shopware-cli` against a linked shopware-dev trunk | `podman compose exec web …` |
 | Read host `vendor/` for symbols | Search source or use LSP/MCP in container |
 | Edit `compose.override.yaml` in project | Edit `~/shopware-dev/instances/*.yaml` |
+| `es:index` fails with no OpenSearch host, so remove the profile from the shared override | Enable OpenSearch for this lane only (`COMPOSE_PROFILES=opensearch` in `.env`), see the hub reference |
 
 ## Hub layout (edit once)
 

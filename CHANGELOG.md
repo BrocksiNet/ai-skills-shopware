@@ -10,6 +10,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- `shopware-podman-dev`: OpenSearch is opt-in per lane (compose profile
+  `opensearch`). The skill says when a task needs it and how to enable it for
+  one lane without starving the shared Podman VM.
 - `shopware-testing`: observing events in tests. Use an owned
   `CollectingEventDispatcher` in unit tests or `EventHookDispatcher::on()` in
   integration tests. Capture in the hook and assert afterwards, and never add
