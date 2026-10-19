@@ -13,3 +13,5 @@
 - "After reboot mutagen is not syncing"
 - "shopware-cli project validate this plugin"
 - "Run cache:clear through shopware-cli project console"
+- "es:index says no OpenSearch host is reachable on trunk"
+- "Enable Elasticsearch for the 6.7 lane so I can test product search"

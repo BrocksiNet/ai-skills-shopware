@@ -8,6 +8,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- `shopware-podman-dev`: OpenSearch is opt-in per lane (compose profile
+  `opensearch`). The skill says when a task needs it and how to enable it for
+  one lane without starving the shared Podman VM.
+
 ## [0.8.0] - 2026-10-14
 
 ### Fixed
