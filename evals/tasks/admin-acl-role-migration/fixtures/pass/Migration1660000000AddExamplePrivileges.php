@@ -7,6 +7,12 @@ use Shopware\Core\Framework\Migration\MigrationStep;
 
 final class Migration1660000000AddExamplePrivileges extends MigrationStep
 {
+    private const NEW_PRIVILEGES = [
+        'swag_example.viewer' => [
+            'product:read',
+        ],
+    ];
+
     public function getCreationTimestamp(): int
     {
         return 1660000000;
@@ -14,14 +20,6 @@ final class Migration1660000000AddExamplePrivileges extends MigrationStep
 
     public function update(Connection $connection): void
     {
-        $connection->executeStatement(
-            <<<'SQL'
-UPDATE acl_role
-SET privileges = JSON_ARRAY_APPEND(privileges, '$', :privilege)
-WHERE JSON_CONTAINS(privileges, JSON_QUOTE('swag_example.viewer'))
-  AND NOT JSON_CONTAINS(privileges, JSON_QUOTE('product:read'))
-SQL,
-            ['privilege' => 'product:read']
-        );
+        $this->addAdditionalPrivileges($connection, self::NEW_PRIVILEGES);
     }
 }

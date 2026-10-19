@@ -60,6 +60,57 @@ A test must never let production or framework code call `exit()`, `die()`, or
   `Connection` double's `transactional()` must invoke its closure or the test
   passes vacuously.
 
+## Observing events in tests
+
+Two shapes, in this order of preference:
+
+1. **Unit test with a dispatcher the test owns.** When the contract is "this
+   service dispatches this event with this payload", build the service with a
+   `Shopware\Core\Test\Stub\EventDispatcher\CollectingEventDispatcher` (or a
+   mock dispatcher) and assert on what was dispatched. For "nothing was
+   dispatched", assert on `getEvents()` after the call.
+2. **Integration test with a hook.** When the point is the wiring (a real
+   write, request or flow dispatches the event), capture the event in a hook.
+
+On trunk, the hook is `EventHookDispatcher::fromContainer(static::getContainer())->on()`
+(`Shopware\Core\Test\Integration\EventDispatcher`, added October 2026):
+
+```php
+$written = null;
+EventHookDispatcher::fromContainer(static::getContainer())->on(
+    ProductEvents::PRODUCT_WRITTEN_EVENT,
+    function (EntityWrittenEvent $event) use (&$written): void {
+        $written = $event;
+    },
+);
+
+$this->productRepository->create([$product], $this->context);
+
+static::assertNotNull($written);
+static::assertSame([$id], $written->getIds());
+```
+
+Rules for both shapes, on trunk and in plugins:
+
+- **Capture in the hook, assert after the code under test ran.** Never call
+  `static::assert*()`, `$this->assert*()` or `fail()` inside the hook. Code that
+  catches and logs exceptions around a dispatch (mail sending, flow actions,
+  message handlers) swallows the failed assertion and the test stays green.
+- **Assert that the hook fired.** A captured value that stays `null` must fail
+  the test (`assertNotNull`, `assertCount`). Otherwise a renamed event passes.
+- **Do not add or remove listeners on the shared `event_dispatcher`** at test
+  runtime. Symfony 8.2 deprecates runtime changes to the compiled dispatcher.
+  On trunk, `NoRuntimeListenerOnSharedEventDispatcherRule` and
+  `NoAssertionInEventHookRule` report both mistakes. In a plugin on a release
+  without `EventHookDispatcher`, prefer the unit shape; when an integration
+  test must listen, still capture first and assert afterwards.
+- **A hook that changes behaviour** (alters the event, stops propagation,
+  throws) is a last resort. Say why in a comment.
+- **Wrong level signal:** an integration test that only uses a hook to check a
+  payload a unit test could check belongs in the unit suite.
+
+Eval: `event-hook-capture-then-assert`.
+
 ## No reflection into Shopware internals
 
 - Do not invoke private or protected methods of Shopware classes via

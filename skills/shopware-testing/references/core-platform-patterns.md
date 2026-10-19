@@ -32,8 +32,9 @@ Rules:
 - Add `#[CoversClass(Foo::class)]` on **unit and migration** tests that should count
   toward patch coverage for `src/**` under the `phpunit-unit` flag.
 - **Exactly one** `#[CoversClass]` per test file — the covered class owns the
-  test. A second class needs a second test file. Danger fails new test files
-  that cover more than one class.
+  test. A second class needs a second test file. Danger fails every added or
+  modified test file that covers more than one class, so touching a legacy
+  multi-covers file means splitting it first.
 - **Do not** add `#[CoversClass]`, `#[CoversFunction]`, or `#[CoversNothing]` to
   **integration** tests — Shopware PHPStan allows those attributes only on unit and
   migration tests.

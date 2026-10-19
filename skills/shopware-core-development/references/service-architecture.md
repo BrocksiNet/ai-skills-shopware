@@ -30,6 +30,8 @@ migrations).
   or framework mechanics may still need to subclass/mock them.
 - Do **not** add `@final` to classes already marked `@internal` — internal is
   enough for implementation details.
+- A new public API whose design may still change gets
+  `@experimental stableVersion:v6.X.0` instead of shipping as stable surface.
 - Do **not** repeat `@internal` on constructors or methods inside an
   `@internal` class.
 

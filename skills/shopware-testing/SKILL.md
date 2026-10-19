@@ -91,6 +91,10 @@ These match PHPStan rules and reviewer expectations on core PRs:
   `Application::run()`.
 - **Stub DAL with `StaticEntityRepository`**, infer the generic (or `::of()`).
 - **`#[CoversNothing]` safeguard tests** — `tests/devops/` on core, not `tests/unit/`.
+- **Events** — no runtime listeners on the shared `event_dispatcher`; observe
+  through `CollectingEventDispatcher` (unit) or `EventHookDispatcher::on()`
+  (integration), capture in the hook and assert afterwards, never inside it.
+  See `test-shape-and-flags.md`.
 
 ## Rules
 
@@ -120,6 +124,7 @@ These match PHPStan rules and reviewer expectations on core PRs:
 - [ ] Test classes carry `#[Package('…')]` and `@internal` when contributing to shopware/shopware.
 - [ ] One `#[CoversClass]` per unit/migration file; no reflection into Shopware privates.
 - [ ] Own fixtures in integration tests; clock mocked where time matters.
+- [ ] Events captured in a hook or owned dispatcher and asserted after the call, never inside the listener.
 - [ ] `vendor/bin/phpunit` (or php-tooling MCP / `docker compose exec web …`) green.
 
 ## Further reading

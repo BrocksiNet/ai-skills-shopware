@@ -13,6 +13,7 @@ import {
 import { evaluateServicesPhp } from '../src/tasks/plugin-xml-config-to-php.mjs';
 import { evaluate as evaluateCovers } from '../src/tasks/one-covers-class-per-file.mjs';
 import { evaluate as evaluateBc } from '../src/tasks/bc-change-not-deprecated-reason.mjs';
+import { evaluate as evaluateEventHook } from '../src/tasks/event-hook-capture-then-assert.mjs';
 
 test('commented CoversClass is not an attribute node', () => {
   const ast = parsePhp(`<?php
@@ -115,4 +116,96 @@ test('comment-only ProductLoader in services.php does not count', () => {
 return static function (): void {};
 `);
   assert.deepEqual(evaluateServicesPhp(ast), { configurator: 0, loader: 0 });
+});
+
+const eventHookTest = (body) => parsePhp(`<?php
+final class ProductRestockNotifierTest extends TestCase
+{
+    public function testNotifyDispatchesRestockedEvent(): void
+    {
+${body}
+    }
+}
+`);
+
+test('event hook: unit test with an owned CollectingEventDispatcher passes', () => {
+  const ast = eventHookTest(`
+        $dispatcher = new CollectingEventDispatcher();
+        $notifier = new ProductRestockNotifier($dispatcher, new NullLogger());
+        $notifier->notify('p1', 5, Context::createDefaultContext());
+        static::assertCount(1, $dispatcher->getEventsOfClass(ProductRestockedEvent::class));
+`);
+  assert.equal(evaluateEventHook([ast]).score, 1);
+});
+
+test('event hook: unit test with a mock expectation on dispatch passes', () => {
+  const ast = eventHookTest(`
+        $dispatcher = $this->createMock(EventDispatcherInterface::class);
+        $dispatcher->expects(static::once())->method('dispatch')
+            ->with(static::callback(fn (ProductRestockedEvent $e): bool => $e->productId === 'p1'));
+        $notifier = new ProductRestockNotifier($dispatcher, new NullLogger());
+        $notifier->notify('p1', 5, Context::createDefaultContext());
+`);
+  assert.equal(evaluateEventHook([ast]).score, 1);
+});
+
+test('event hook: addListener on the shared event_dispatcher fails', () => {
+  const ast = eventHookTest(`
+        $restocked = null;
+        $dispatcher = static::getContainer()->get('event_dispatcher');
+        $dispatcher->addListener(ProductRestockedEvent::class, function ($e) use (&$restocked): void { $restocked = $e; });
+        static::getContainer()->get(ProductRestockNotifier::class)->notify('p1', 5, Context::createDefaultContext());
+        static::assertNotNull($restocked);
+`);
+  const result = evaluateEventHook([ast]);
+  assert.equal(result.score, 0);
+  assert.match(result.detail, /shared_listener=1/);
+});
+
+test('event hook: inline container lookup with addListener fails', () => {
+  const ast = eventHookTest(`
+        $restocked = null;
+        static::getContainer()->get(EventDispatcherInterface::class)
+            ->addListener(ProductRestockedEvent::class, function ($e) use (&$restocked): void { $restocked = $e; });
+        static::getContainer()->get(ProductRestockNotifier::class)->notify('p1', 5, Context::createDefaultContext());
+        static::assertNotNull($restocked);
+`);
+  assert.equal(evaluateEventHook([ast]).score, 0);
+});
+
+test('event hook: hook whose capture is never asserted fails', () => {
+  const ast = eventHookTest(`
+        $restocked = null;
+        EventHookDispatcher::fromContainer(static::getContainer())->on(ProductRestockedEvent::class, function ($e) use (&$restocked): void { $restocked = $e; });
+        static::getContainer()->get(ProductRestockNotifier::class)->notify('p1', 5, Context::createDefaultContext());
+        static::assertTrue(true);
+`);
+  assert.equal(evaluateEventHook([ast]).score, 0);
+});
+
+test('event hook: assertion inside an arrow function hook fails', () => {
+  const ast = eventHookTest(`
+        $restocked = null;
+        $hooks = EventHookDispatcher::fromContainer(static::getContainer());
+        $hooks->on(ProductRestockedEvent::class, function ($e) use (&$restocked): void { $restocked = $e; });
+        $hooks->on(ProductRestockedEvent::class, fn ($e) => static::assertSame('p1', $e->productId));
+        static::getContainer()->get(ProductRestockNotifier::class)->notify('p1', 5, Context::createDefaultContext());
+        static::assertNotNull($restocked);
+`);
+  const result = evaluateEventHook([ast]);
+  assert.equal(result.score, 0);
+  assert.match(result.detail, /assert_in_hook=1/);
+});
+
+test('event hook: commented-out assertion inside the hook still passes', () => {
+  const ast = eventHookTest(`
+        $restocked = null;
+        EventHookDispatcher::fromContainer(static::getContainer())->on(ProductRestockedEvent::class, function ($e) use (&$restocked): void {
+            // static::assertSame('p1', $e->productId);
+            $restocked = $e;
+        });
+        static::getContainer()->get(ProductRestockNotifier::class)->notify('p1', 5, Context::createDefaultContext());
+        static::assertSame('p1', $restocked?->productId);
+`);
+  assert.equal(evaluateEventHook([ast]).score, 1);
 });

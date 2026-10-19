@@ -6,8 +6,9 @@ source of truth for plugins, older core branches, and eval-backed rules
 (`sw-dev link`, install profiles in [`skill-resolution.md`](skill-resolution.md)).
 
 Seed PR: [#17657](https://github.com/shopware/shopware/pull/17657) (merged
-2026-06-26). **Last mined:** trunk 2026-10-13 (see
-[Mining pass 2026-10-13](#mining-pass-2026-10-13); previous pass 2026-09-28 via
+2026-06-26). **Last mined:** trunk 2026-10-19 (see
+[Mining pass 2026-10-19](#mining-pass-2026-10-19); before that
+[2026-10-13](#mining-pass-2026-10-13) and 2026-09-28 via
 [#20879](https://github.com/shopware/shopware/pull/20879),
 [#20652](https://github.com/shopware/shopware/pull/20652),
 [#20575](https://github.com/shopware/shopware/pull/20575)).
@@ -128,6 +129,42 @@ Status key: **done** | **partial** | **skip** | **eval:TBD** | **defer-on-trunk*
 | `shopware-admin-js` | mined into our `shopware-admin-js`; defer short list on trunk |
 | `shopware-knowledge-capture` | Overlaps our `AGENTS.md` / REGISTRY curation |
 | `sw-triage`, `sw-bugfixer`, `sw-review`, `nightly-triage` | Core gh-aw CI workflows; explicit invocation only since [#18365](https://github.com/shopware/shopware/pull/18365) |
+
+## Mining pass 2026-10-19
+
+Trunk commits after the 2026-10-13 pass that changed `.agents/`,
+`coding-guidelines/` or enforcement. Work package WP0 of
+[`plans/2026-10-skills-evolution.md`](plans/2026-10-skills-evolution.md).
+
+| Core PR | Rule | Our target | Status |
+| ------- | ---- | ---------- | ------ |
+| [#21438](https://github.com/shopware/shopware/pull/21438) (f2bf3794), [#21343](https://github.com/shopware/shopware/pull/21343) (190d734b) | Observe events through an owned dispatcher (unit) or `EventHookDispatcher::on()` (integration); capture in the hook, assert afterwards; no runtime listeners on the shared `event_dispatcher` (`NoAssertionInEventHookRule`, `NoRuntimeListenerOnSharedEventDispatcherRule`) | `shopware-testing` → `test-shape-and-flags.md` | **done** → `event-hook-capture-then-assert` |
+| [#21572](https://github.com/shopware/shopware/pull/21572) (75b0a495) | Danger one-covers-class rule now checks every added or modified test file | `shopware-testing` → `core-platform-patterns.md` | **done** (wording; existing `one-covers-class-per-file`) |
+| [#21400](https://github.com/shopware/shopware/pull/21400) (8dc74f24), [#21139](https://github.com/shopware/shopware/pull/21139) (7ad011f1) | `Feature::throwIfActive()` for deprecated exception classes and framework callbacks; discovery methods return neutral values when the removal flag is active | `shopware-core-development` → `deprecations.md` | defer-on-trunk (documented; PHPStan-enforced) |
+| [#21599](https://github.com/shopware/shopware/pull/21599) (d10e3c4f) | Store API extension events may use arrow functions | `store-api-route-extension-event` | no change (skill text and grader do not constrain the callable) |
+| [#21177](https://github.com/shopware/shopware/pull/21177), [#21660](https://github.com/shopware/shopware/pull/21660), [#21444](https://github.com/shopware/shopware/pull/21444) | Regex `D` modifier fixes, DAL accessor notice guard, telemetry | — | skip (no guidance change) |
+| [#21541](https://github.com/shopware/shopware/pull/21541) | `backward-compatibility.md` and `http-cache-and-assets.md` guidelines (merged 2026-10-19) | WP7 phase B | unblocked; rules land with evals |
+
+Contradictions with the `sw-review` guides in
+[#21455](https://github.com/shopware/shopware/pull/21455), fixed in this pass:
+
+| Guide rule | Was | Now |
+| ---------- | --- | --- |
+| MIG-007 | Admin roles migrated with SQL on `acl_role.privileges` | `MigrationStep::addAdditionalPrivileges()`; eval `admin-acl-role-migration` rewritten so the raw SQL migration is the near-miss |
+| ADMF-001 (retired) | Admin flag names must be uppercase | Both spellings resolve; follow the surrounding code |
+| MIG-004, MIG-005 | Heavy backfills go to `update()` or a command | Batched with deterministic order; derived data via indexer or `PostUpdateIndexer` |
+| BCPHP-010 | "Prefer `final` over `@internal`" | One marker per surface: `@internal`, `@experimental`, `@final` or `final class` |
+
+### Watch (open on 2026-10-19)
+
+| Core PR | Why it matters here |
+| ------- | ------------------- |
+| [#21455](https://github.com/shopware/shopware/pull/21455) | `sw-review` guides with rule IDs; source of WP2 `core_guide_ids` and WP7. |
+| [#21627](https://github.com/shopware/shopware/pull/21627) | New PR template sections (What and why, How, Testing, Additional notes, Checklist); rewrite `shopware-pr-description/references/pr-body-template.md` on merge. |
+| [#21730](https://github.com/shopware/shopware/pull/21730) | Admin lint: no `.js` in `src`, no new mixins, `wrapComponentConfig()` required. WP0 item 7 waits for it. |
+| [#21722](https://github.com/shopware/shopware/pull/21722) | Admin reference implementations named in `AGENTS.md`; point `shopware-admin-js` at them on merge. |
+| [#21502](https://github.com/shopware/shopware/pull/21502) | `composer skills:enable` / `skills:disable`; document in `skill-resolution.md` on merge. |
+| [#20437](https://github.com/shopware/shopware/pull/20437) | Storefront component skill (still WIP). |
 
 ## Mining pass 2026-10-13
 
