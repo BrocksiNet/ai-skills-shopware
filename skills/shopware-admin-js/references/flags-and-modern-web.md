@@ -3,8 +3,9 @@
 ## Feature flags
 
 - Flags are temporary rollout/deprecation branches, not permanent config.
-- Administration JS flag names are uppercase (`V6_8_0_0`,
-  `ADMIN_COMPOSITION_API_EXTENSION_SYSTEM`).
+- Flag name spelling is not a rule. `Shopware.Feature.isActive()` resolves
+  both `V6_8_0_0` and `v6.8.0.0`, so follow the surrounding code and do not
+  flag or rewrite the other spelling.
 - One behavior per flag. No nested flags.
 - Keep the old behavior in the branch that will be deleted with the flag.
 - Test both relevant flag states while both branches exist.

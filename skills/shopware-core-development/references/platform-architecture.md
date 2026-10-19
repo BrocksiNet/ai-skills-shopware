@@ -29,9 +29,20 @@ patterns (2025–2026).
 
 ## Sealing classes
 
-- New classes **not meant for extension**: prefer `final` over relying on `@internal`
-  alone. `@internal` documents intent; `final` enforces it.
+Decide the surface first, then pick one marker. From its first release an
+unmarked class is public API, and every later change to its shape needs a full
+deprecation cycle.
+
+- **Not for third parties** (controllers, subscribers, loaders, adapters, DTOs with
+  one internal caller): `@internal`. Do not add `@final` on top.
+- **New public API whose shape may still change**: `@experimental stableVersion:v6.X.0`.
+- **Supported public class, not meant for extension**: `@final`, so tests and
+  framework mechanics can still subclass or mock it.
+- **Simple value objects and structs** nobody needs to decorate or mock: a real
+  `final class`.
 - Do not call or extend `@internal` symbols from outside their bundle.
+
+Details: [`service-architecture.md`](service-architecture.md#classes-final-and-internal).
 
 ## HTTP / session
 

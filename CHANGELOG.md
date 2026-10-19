@@ -13,6 +13,38 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `shopware-podman-dev`: OpenSearch is opt-in per lane (compose profile
   `opensearch`). The skill says when a task needs it and how to enable it for
   one lane without starving the shared Podman VM.
+- `shopware-testing`: observing events in tests. Use an owned
+  `CollectingEventDispatcher` in unit tests or `EventHookDispatcher::on()` in
+  integration tests. Capture in the hook and assert afterwards, and never add
+  listeners to the shared `event_dispatcher`. New eval
+  `event-hook-capture-then-assert`, with an AST grader and snippet tests.
+- `shopware-core-development`: `Feature::throwIfActive()` for deprecated
+  exception classes and framework callbacks, and neutral return values for
+  discovery methods.
+- `docs/plans/2026-10-skills-evolution.md`: the accepted roadmap. It covers
+  rule IDs, real model evals, path routing, review evals and an extension
+  review skill.
+
+### Changed
+
+- `admin-acl-role-migration` now requires
+  `MigrationStep::addAdditionalPrivileges()`. A raw SQL update of `acl_role`
+  is the near-miss fail fixture.
+- `shopware-plugin-development` migrations: large data changes run in
+  ordered batches, and derived data goes to an indexer or `PostUpdateIndexer`.
+  Before, heavy work was sent to `update()` or a command.
+- `shopware-core-development`: one marker per surface (`@internal`,
+  `@experimental`, `@final` or `final class`) replaces "prefer `final` over
+  `@internal`".
+- `shopware-testing`: Danger's one-covers-class rule applies to every added
+  or modified test file.
+- Alignment doc: mining pass 2026-10-19 and an updated watchlist.
+
+### Fixed
+
+- `shopware-admin-js` no longer tells you to write `acl_role.privileges` with
+  SQL, and no longer claims that Admin flag names must be uppercase. Both
+  contradicted the core review guides.
 
 ## [0.8.0] - 2026-10-14
 

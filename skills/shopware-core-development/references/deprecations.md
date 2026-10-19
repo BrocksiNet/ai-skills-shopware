@@ -15,12 +15,19 @@ Public API is **announced in one minor and removed in the next major**. You
 never delete or change a public symbol's contract in place. If you are not sure
 whether a symbol is public, assume it is.
 
-There are two different tools. Do not mix them.
+Pick the tool by situation. Do not mix them.
 
 | Situation | Tool |
 | --------- | ---- |
 | Planned major-version contract change, **no replacement today** | A `BCChange` attribute. Keep the current API usable. |
 | Functionality is **removed or has a replacement callers must use now** | `@deprecated` plus `Feature::triggerDeprecationOrThrow()` on executable paths. |
+| Deprecated **exception class** constructor or factory, or a deprecated **framework callback** the framework still calls normally (subscriber, listener, DAL exception handler, rule method) | `Feature::throwIfActive($majorFlag, $message)` as the first statement. It stays silent before removal, so callers who cannot migrate get no noise, and throws once the flag is active, even inside `Feature::silent()`. |
+
+On trunk, discovery methods return a neutral value when the removal flag is
+active instead of throwing: `getSubscribedEvents()` and Twig `getFilters()` /
+`getFunctions()` return `[]`, DAL `matchException()` and rule `getConfig()`
+return `null`. PHPStan checks these contracts. Deprecated factories on
+**retained** domain exception classes keep `triggerDeprecationOrThrow()`.
 
 Do **not** use `@deprecated reason:*` as a planning marker. Third-party static
 analysis treats those as actionable deprecations even when nothing should change

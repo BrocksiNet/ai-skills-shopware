@@ -25,8 +25,12 @@ Load when adding modules, components, services, or ACL-backed UI.
   `roles: { viewer: { privileges: [...], dependencies: [...] } }`. A flat
   `privileges: { viewer: [...] }` fails `isPrivilegeMapping` and never
   registers the key.
-- Privileges that must apply to **existing** roles need a migration on
-  `acl_role.privileges`. Mapping-only changes fix future evaluations.
+- Privileges that must apply to **existing** roles need a migration.
+  Mapping-only changes fix future evaluations. In that migration call
+  `$this->addAdditionalPrivileges($connection, ['swag_example.viewer' => ['product:read']])`
+  from `MigrationStep`. It only extends roles that already hold the key, so
+  roles a merchant restricted gain nothing. Never write `acl_role` with raw
+  SQL or `$connection->update()`.
 - Business logic stays out of templates. Prefer composables over new
   mixins.
 - Use BEM class names and Meteor design tokens. Avoid inline styles.
