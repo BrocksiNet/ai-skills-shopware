@@ -26,7 +26,7 @@ evals/tasks/<task-name>/
   skills                      # optional: extra skills for smoke A/B (one name per line)
 
 evals/smoke/                  # local A/B harness (Claude, Codex, Cursor CLI)
-evals/runner/                 # generic A/B runner (SKILLS_AGENT_CMD), Claude activation adapter
+evals/runner/                 # A/B runner, Claude task/profile/activation adapters, fake-agent self-test
 evals/harbor/                 # containerized Harbor wiring (optional)
 evals/test-graders.sh         # golden tests for all grade.sh scripts
 evals/tools/ast/              # Node AST graders (php-parser + @babel/parser)
@@ -56,6 +56,7 @@ bash scripts/validate-skills.sh
 bash scripts/run-activation-evals.sh
 ( cd evals/tools/ast && npm ci && npm test )
 bash evals/test-graders.sh
+bash evals/runner/selftest.sh
 ```
 
 ShellCheck (optional locally; required in CI):

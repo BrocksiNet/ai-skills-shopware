@@ -9,21 +9,25 @@
 # Activation detection is provider-specific, so this script delegates to an
 # agent command you configure. Contract:
 #
-#   SKILLS_AGENT_CMD must read a prompt on stdin and print, to stdout, the
+#   SKILLS_ACTIVATION_CMD must read a prompt on stdin and print, to stdout, the
 #   names of the skills it activated (one per line, or space/comma separated).
 #   The skill name is the folder name (== SKILL.md `name`).
+#   SKILLS_AGENT_CMD is the fallback for older setups. Layer 2/3 tasks use
+#   SKILLS_AGENT_CMD for an editing agent, so set SKILLS_ACTIVATION_CMD when
+#   both run in one environment.
 #
 # Example (Claude Code CLI, see evals/runner/claude-activation.sh):
-#   export SKILLS_AGENT_CMD="$PWD/evals/runner/claude-activation.sh"
+#   export SKILLS_ACTIVATION_CMD="$PWD/evals/runner/claude-activation.sh"
 #   ./scripts/run-activation-evals.sh
 #
-# Without SKILLS_AGENT_CMD set, the script runs in --dry mode: it validates that
+# Without an activation command, the script runs in --dry mode: it validates that
 # every skill has both eval files and counts the prompts, without calling a model.
 
 set -euo pipefail
 
 ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 SKILLS_DIR="$ROOT/skills"
+ACTIVATION_CMD="${SKILLS_ACTIVATION_CMD:-${SKILLS_AGENT_CMD:-}}"
 
 pass=0
 fail=0
@@ -31,7 +35,7 @@ missing=0
 errors=0
 
 run_prompt() { # $1 = prompt ; prints activated skill names
-  printf '%s' "$1" | eval "$SKILLS_AGENT_CMD"
+  printf '%s' "$1" | eval "$ACTIVATION_CMD"
 }
 
 extract_prompts() { # $1 = file ; prints one prompt per line
@@ -50,7 +54,7 @@ check() { # $1 = skill ; $2 = file ; $3 = expectation (trigger|no-trigger)
 
   while IFS= read -r prompt; do
     [ -z "$prompt" ] && continue
-    if [ -z "${SKILLS_AGENT_CMD:-}" ]; then
+    if [ -z "$ACTIVATION_CMD" ]; then
       echo "  [dry] ($expect) $skill <- ${prompt:0:60}..."
       continue
     fi
@@ -75,8 +79,8 @@ check() { # $1 = skill ; $2 = file ; $3 = expectation (trigger|no-trigger)
   done < <(extract_prompts "$file")
 }
 
-if [ -z "${SKILLS_AGENT_CMD:-}" ]; then
-  echo "SKILLS_AGENT_CMD not set -> running in --dry mode (no model calls)."
+if [ -z "$ACTIVATION_CMD" ]; then
+  echo "SKILLS_ACTIVATION_CMD not set -> running in --dry mode (no model calls)."
   echo "Set it to an agent that prints activated skill names to validate for real."
   echo
 fi

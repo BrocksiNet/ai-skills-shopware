@@ -84,6 +84,14 @@ review guides before adding anything new.
 Goal: the weekly `evals.yml` run must produce real numbers and must be able
 to fail.
 
+Status: **implemented 2026-10-19**. The runner, gate, plan and diff scripts
+are covered by `evals/runner/selftest.sh` without model calls. The acceptance
+runs need the repository secret `ANTHROPIC_API_KEY`. The baseline PR needs
+"Allow GitHub Actions to create and approve pull requests". Beyond the spec,
+`ab.sh` also reports `held` (exit 11, on = off = repeats) and `error` (exit 5).
+The gate also fails when more than 25 % of runs are agent errors, and A/B jobs
+run as parallel shards picked by `scripts/eval-plan.sh`.
+
 ### Problems found
 
 1. The `SKILLS_AGENT_CMD` and `AGENT_API_KEY` secrets are not set, so every

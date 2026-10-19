@@ -60,6 +60,14 @@ jobs:
       - name: Golden grader tests (no model calls)
         run: bash evals/test-graders.sh
 
+  eval-runner-selftest:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+
+      - name: Model-eval pipeline self-test (fake agent, no model calls)
+        run: bash evals/runner/selftest.sh
+
   markdown-lint:
     runs-on: ubuntu-latest
     steps:

@@ -10,6 +10,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- Real model evals in CI (`evals.yml`). It shards A/B runs across parallel
+  jobs and gates them with `scripts/eval-gate.sh`. A weekly bot PR records
+  each baseline under `evals/baselines/`. Labeled PRs run only the tasks
+  they touch.
+- Claude Code adapters for behavioral tasks: `evals/runner/claude-task.sh`,
+  and `evals/runner/claude-profile.sh` to switch skills on or off per workdir.
+- `scripts/eval-plan.sh`, `scripts/eval-gate.sh` and `scripts/eval-diff.sh`.
+- `evals/runner/selftest.sh` with `fake-agent.sh`. It checks the whole eval
+  pipeline without model calls on every push.
 - `shopware-podman-dev`: OpenSearch is opt-in per lane (compose profile
   `opensearch`). The skill says when a task needs it and how to enable it for
   one lane without starving the shared Podman VM.
@@ -27,6 +36,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- `evals/runner/ab.sh` writes one JSON line per task. Its exit code is the
+  verdict: improved, held, no difference, worse or error. It refuses to run
+  without a skill profile command, because "on" and "off" would otherwise
+  load the same skills.
+- `evals/runner/run-task.sh` exits 4 on an agent error instead of counting it
+  as a failed task. It removes the skill profile before grading.
+- Layer 1 reads `SKILLS_ACTIVATION_CMD`, with `SKILLS_AGENT_CMD` as fallback,
+  so activation and task agents can share one environment.
 - `admin-acl-role-migration` now requires
   `MigrationStep::addAdditionalPrivileges()`. A raw SQL update of `acl_role`
   is the near-miss fail fixture.
@@ -42,6 +59,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+- The weekly eval workflow reported success while skipping every model step,
+  and its pass-rate gate could never fail. Missing `ANTHROPIC_API_KEY` now
+  fails scheduled and dispatched runs.
 - `shopware-admin-js` no longer tells you to write `acl_role.privileges` with
   SQL, and no longer claims that Admin flag names must be uppercase. Both
   contradicted the core review guides.

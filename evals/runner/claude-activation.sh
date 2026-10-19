@@ -1,12 +1,12 @@
 #!/usr/bin/env bash
 #
-# SKILLS_AGENT_CMD adapter for Layer 1 activation evals with the Claude Code CLI.
+# SKILLS_ACTIVATION_CMD adapter for Layer 1 activation evals with the Claude Code CLI.
 #
 # Reads a prompt on stdin, runs it in a fresh, empty workspace whose only
 # project skills are this repo's skills/ (symlinked as .claude/skills), and
 # prints the name of every skill the model invoked, one per line.
 #
-#   export SKILLS_AGENT_CMD="$PWD/evals/runner/claude-activation.sh"
+#   export SKILLS_ACTIVATION_CMD="$PWD/evals/runner/claude-activation.sh"
 #   ./scripts/run-activation-evals.sh
 #
 # Isolation: --setting-sources project skips your user settings, user skills
