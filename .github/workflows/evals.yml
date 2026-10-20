@@ -84,6 +84,10 @@ jobs:
         with:
           fetch-depth: 0
 
+      - uses: actions/setup-node@v5
+        with:
+          node-version: '24'
+
       - name: Guard - agent credentials
         id: guard
         env:
@@ -202,6 +206,10 @@ jobs:
     steps:
       - uses: actions/checkout@v5
 
+      - uses: actions/setup-node@v5
+        with:
+          node-version: '24'
+
       - uses: actions/download-artifact@v4
         with:
           pattern: eval-ab-*
@@ -244,6 +252,10 @@ jobs:
       pull-requests: write
     steps:
       - uses: actions/checkout@v5
+
+      - uses: actions/setup-node@v5
+        with:
+          node-version: '24'
 
       - uses: actions/download-artifact@v4
         with:

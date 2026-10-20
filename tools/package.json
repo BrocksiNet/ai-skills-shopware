@@ -2,7 +2,7 @@
   "name": "ai-skills-shopware-tools",
   "private": true,
   "type": "module",
-  "description": "Repo tooling for the skills library (rule catalog checks, renderers). Runs on Node's built-in TypeScript type stripping; no build step.",
+  "description": "Repo tooling for the skills library (rule catalog checks, renderers, eval plan/gate/diff). Runs on Node's built-in TypeScript type stripping; no build step.",
   "engines": {
     "node": ">=24"
   },
@@ -13,7 +13,10 @@
     "render-enforced": "node bin/render-enforced.ts",
     "render-routes": "node bin/render-routes.ts",
     "validate-routes": "node bin/validate-routes.ts",
-    "route": "node bin/route.ts"
+    "route": "node bin/route.ts",
+    "eval-plan": "node bin/eval-plan.ts",
+    "eval-gate": "node bin/eval-gate.ts",
+    "eval-diff": "node bin/eval-diff.ts"
   },
   "devDependencies": {
     "@types/node": "24.19.2",
