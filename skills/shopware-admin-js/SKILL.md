@@ -32,17 +32,17 @@ Read only the reference that matches the task:
 
 ## Hard guardrails
 
-1. **TypeScript for new code.** Do not add new `.js` Admin sources except the
+1. **ADM-001** **TypeScript for new code.** Do not add new `.js` Admin sources except the
    required `Resources/app/administration/src/main.js` entry Shopware
    discovers and scaffolds. Implementation modules stay `.ts`.
-2. **Do not break public Admin extension APIs** without prior discussion.
-3. **Use Meteor / existing Admin components** (`mt-modal`, `mt-banner`,
+2. **ADM-002** **Do not break public Admin extension APIs** without prior discussion.
+3. **ADM-003** **Use Meteor / existing Admin components** (`mt-modal`, `mt-banner`,
    `mt-*`, or the local `sw-*` already in the file). Do not replace them
    with raw `<dialog>`, Popover API, or a custom select.
-4. **ACL in the same change** as UI that reads or writes a DAL entity.
+4. **ADM-004** **ACL in the same change** as UI that reads or writes a DAL entity.
    Existing roles need a privileges migration; mapping-only fixes future
    roles.
-5. **Do not rewrite a working Twig / Options API override into a Vue SFC
+5. **ADM-005** **Do not rewrite a working Twig / Options API override into a Vue SFC
    because of 6.8.** `swDefinePublic`, `swDefineOverride`, and
    `useSwPreviousState()` are an experimental Composition API
    ([shopware/shopware#21162](https://github.com/shopware/shopware/discussions/21162)).
@@ -51,27 +51,27 @@ Read only the reference that matches the task:
 
 ## Admin deltas
 
-- Follow the patterns in the area you touch: component factory / Twig.JS
+- **ADM-006** Follow the patterns in the area you touch: component factory / Twig.JS
   blocks on core, Vue SFC where the extension system already uses it.
 - Prefer `Shopware.Component`, `Shopware.Service()`, `Shopware.Store` over
   importing factory internals.
 - Modules stay independent — no direct import from another module.
 - Core (`src/core`) stays Vue-free. Shared non-Vue helpers can be imported
   from `core`.
-- Prefer composables for new shared Vue logic. Do not add new mixins unless
+- **ADM-007** Prefer composables for new shared Vue logic. Do not add new mixins unless
   extending legacy code.
-- BEM + Meteor design tokens. No inline styles. Snippets for visible text.
+- **ADM-008** BEM + Meteor design tokens. No inline styles. Snippets for visible text.
 - Reload an entity after a repository save so origin / change-set stay in
   sync.
-- 6.7+ Admin build is Vite. Do not add a new `webpack.config.js`.
+- **ADM-009** 6.7+ Admin build is Vite. Do not add a new `webpack.config.js`.
 
 ## Tests
 
-- Jest for new features and bug fixes. New TS tests sit next to the code as
+- **ADM-010** Jest for new features and bug fixes. New TS tests sit next to the code as
   `*.spec.ts`. Split large specs into `*.spec/` by behavior.
 - `shallowMount` unless child rendering is the behavior. Clean up wrappers
   in `afterEach()`. `flushPromises()` after async repository/UI work.
-- On trunk, run via composer wrappers (`composer eslint:admin`,
+- **ADM-011** On trunk, run via composer wrappers (`composer eslint:admin`,
   `composer admin:unit`) or `shopware-podman-dev` — not a random host Node.
 
 ## Definition of done
@@ -81,3 +81,14 @@ Read only the reference that matches the task:
 - [ ] ACL mapping (+ role migration when needed) matches the DAL entities.
 - [ ] Jest spec next to new TS; behavior tested, not Vue internals.
 - [ ] Snippets for user-facing text; Meteor tokens for styling.
+
+## Already enforced by CI (do not repeat)
+
+<!-- enforced:start: generated from rules/catalog.json by `node tools/bin/render-enforced.ts`; do not edit -->
+CI already fails the build on these, so do not repeat them in reviews or
+checklists. Flag only what each check misses.
+Checks marked *trunk only* are not active in plugin or app projects by
+default; there the rule still needs a reviewer.
+
+- `ADM-003` `no-deprecated-components` (ESLint, trunk only) reports listed deprecated `sw-*` components in Administration `.html.twig` templates and autofixes them to `mt-*`. It misses `.vue` templates, templates in JS or TS strings, raw `<dialog>` or popover markup, and `sw-*` components not in the configured list, such as `sw-loader` and `sw-popover`; flag those.
+<!-- enforced:end -->

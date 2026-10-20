@@ -9,7 +9,8 @@
   "scripts": {
     "typecheck": "tsc -p .",
     "test": "node --test \"test/**/*.test.ts\"",
-    "validate-rules": "node bin/validate-rules.ts"
+    "validate-rules": "node bin/validate-rules.ts",
+    "render-enforced": "node bin/render-enforced.ts"
   },
   "devDependencies": {
     "@types/node": "24.19.2",

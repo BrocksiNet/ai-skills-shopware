@@ -48,8 +48,19 @@
             "commit": { "type": "string" },
             "enforced_by": {
               "type": "array",
-              "items": { "type": "string" },
-              "description": "CI tool that already catches the rule."
+              "description": "CI checks that already catch the rule; rendered into the skill's 'Already enforced by CI' section.",
+              "items": {
+                "type": "object",
+                "required": ["tool", "kind", "catches", "misses", "trunk_only"],
+                "additionalProperties": false,
+                "properties": {
+                  "tool": { "type": "string", "minLength": 1, "description": "Rule class, rule id or test name." },
+                  "kind": { "enum": ["phpstan", "danger", "eslint", "ecs", "php-cs-fixer", "phpunit", "test"] },
+                  "catches": { "type": "string", "minLength": 1, "description": "What the check reports, without the tool name." },
+                  "misses": { "type": "string", "minLength": 1, "description": "What a reviewer still has to flag." },
+                  "trunk_only": { "type": "boolean", "description": "Not active in a plugin or app project by default." }
+                }
+              }
             }
           }
         },

@@ -15,7 +15,7 @@ Public API is **announced in one minor and removed in the next major**. You
 never delete or change a public symbol's contract in place. If you are not sure
 whether a symbol is public, assume it is.
 
-Pick the tool by situation. Do not mix them.
+**CORE-011** Pick the tool by situation. Do not mix them.
 
 | Situation | Tool |
 | --------- | ---- |
@@ -23,13 +23,13 @@ Pick the tool by situation. Do not mix them.
 | Functionality is **removed or has a replacement callers must use now** | `@deprecated` plus `Feature::triggerDeprecationOrThrow()` on executable paths. |
 | Deprecated **exception class** constructor or factory, or a deprecated **framework callback** the framework still calls normally (subscriber, listener, DAL exception handler, rule method) | `Feature::throwIfActive($majorFlag, $message)` as the first statement. It stays silent before removal, so callers who cannot migrate get no noise, and throws once the flag is active, even inside `Feature::silent()`. |
 
-On trunk, discovery methods return a neutral value when the removal flag is
+**CORE-012** On trunk, discovery methods return a neutral value when the removal flag is
 active instead of throwing: `getSubscribedEvents()` and Twig `getFilters()` /
 `getFunctions()` return `[]`, DAL `matchException()` and rule `getConfig()`
 return `null`. PHPStan checks these contracts. Deprecated factories on
 **retained** domain exception classes keep `triggerDeprecationOrThrow()`.
 
-Do **not** use `@deprecated reason:*` as a planning marker. Third-party static
+**CORE-013** Do **not** use `@deprecated reason:*` as a planning marker. Third-party static
 analysis treats those as actionable deprecations even when nothing should change
 yet. PHPStan on trunk rejects them.
 
@@ -48,7 +48,7 @@ public function load(string|int $id): void
 }
 ```
 
-Pick the most specific attribute. Audience:
+**CORE-014** Pick the most specific attribute. Audience:
 
 - **`CallSiteCompatibilityChange`** — calling the method can break, including
   `parent::` from a subclass (`ParameterTypeNarrowing`, `ParameterRemoval`,
@@ -57,11 +57,11 @@ Pick the most specific attribute. Audience:
   can break (`BecomesAbstract`, `BecomesFinal`, `ClassHierarchyChange`, …).
 - Some attributes implement both.
 
-Values must stay machine-readable: `vX.Y.Z` version, parameter names **without**
+**CORE-015** Values must stay machine-readable: `vX.Y.Z` version, parameter names **without**
 `$`, `::class` for class references, the real default for `NewOptionalParameter`.
 PHPStan rejects attributes that do not describe a structurally possible change.
 
-When legacy use is detectable at runtime (`BecomesAbstract`,
+**CORE-016** When legacy use is detectable at runtime (`BecomesAbstract`,
 `NewRequiredParameter`, `ParameterRemoval`, `ParameterTypeNarrowing`), keep the
 old behavior and call `Feature::triggerDeprecationOrThrow()` **only for that
 incompatible use**, unless the method is framework-invoked (the framework would
@@ -83,35 +83,35 @@ public function oldHandle(Context $context): void
 }
 ```
 
-- Use `@deprecated tag:v6.x.0 - <reason and replacement>`. Always name the
+- **CORE-017** Use `@deprecated tag:v6.x.0 - <reason and replacement>`. Always name the
   replacement.
-- Wrap removed-in-major behavior changes in `if (Feature::isActive('v6.x.0')) { … }`
+- **CORE-018** Wrap removed-in-major behavior changes in `if (Feature::isActive('v6.x.0')) { … }`
   so both paths exist until the major.
-- Deprecate the whole surface: class, method, parameter, constant, public
+- **CORE-019** Deprecate the whole surface: class, method, parameter, constant, public
   property, service id, event, and route as applicable.
 
 ## Calling deprecated code from core (BC)
 
-- **Core must not trigger self-deprecation notices** when it still calls deprecated
+- **CORE-020** **Core must not trigger self-deprecation notices** when it still calls deprecated
   behavior for BC. Wrap that call with
   `Feature::silent($majorFlag, static fn () => …)` so the notice is suppressed,
   the path is tied to the major flag, and the branch disappears when the flag is
   removed.
-- **Do not add new code paths** that call deprecated functionality. Move internal
+- **CORE-021** **Do not add new code paths** that call deprecated functionality. Move internal
   callers to the replacement API and keep legacy behavior only in focused BC tests.
-- When adding `@deprecated` on executable PHP, add matching
+- **CORE-022** When adding `@deprecated` on executable PHP, add matching
   `Feature::triggerDeprecationOrThrow()` unless the deprecation uses an explicit
   exception reason allowed by the PHPStan deprecation rule.
-- For **private implementation cleanup** (not a public deprecation cycle), use a
+- **CORE-023** For **private implementation cleanup** (not a public deprecation cycle), use a
   short inline comment: `// @deprecated tag:vX.Y.Z - …` near the branch to remove
   later — not a method-level `@deprecated` annotation.
-- If a deprecated API remains for BC, add or keep **dedicated legacy tests** that
+- **CORE-024** If a deprecated API remains for BC, add or keep **dedicated legacy tests** that
   are easy to remove with the deprecation; guard with the relevant major feature
   flag when needed.
 
 ## DI service tags
 
-Do **not** mark a DI service definition `<deprecated>` while Shopware core still
+**CORE-025** Do **not** mark a DI service definition `<deprecated>` while Shopware core still
 references that service id anywhere. Internal references still fire container
 deprecations and spam compile/warmup logs. Deprecate the PHP API or class if
 needed; add the DI tag only after core no longer uses the id.
@@ -144,7 +144,7 @@ guide for the full matrix.
 
 ## What counts as breaking
 
-Changing a method signature, return type, or thrown exception; removing a
+**CORE-026** Changing a method signature, return type, or thrown exception; removing a
 service/event/route; tightening a parameter type; changing default behavior;
 renaming a public property or constant. Internal-only (`@internal`) symbols are
 exempt — but verify the `@internal` was there before your change, not added by

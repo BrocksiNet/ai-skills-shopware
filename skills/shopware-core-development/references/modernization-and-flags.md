@@ -54,10 +54,10 @@ final class RemoteSnippetFetcher
 ```
 
 - Register `HttpClientInterface` in the **owning bundle** only.
-- No silent behavior change: if callers could observe the swap, add
+- **CORE-027** No silent behavior change: if callers could observe the swap, add
   `@feature-deprecated` / `@deprecated tag:` and `RELEASE_INFO` per
   [`deprecations.md`](deprecations.md).
-- Do **not** copy legacy workarounds into new core code — add the modern path and
+- **CORE-028** Do **not** copy legacy workarounds into new core code — add the modern path and
   flag; delete the old path only in the major.
 
 ## When the public surface must change

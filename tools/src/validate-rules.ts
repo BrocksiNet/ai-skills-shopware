@@ -12,10 +12,13 @@
 //      nor `eval_reason`
 //   5. a retired or superseded ID still appears inline, or a code-span
 //      reference or `see` entry names an unknown or inactive ID
+//   6. a skill's "Already enforced by CI" section or references/enforced-by-ci.md
+//      does not match the catalog (run tools/bin/render-enforced.ts)
 // It also checks the field types, since the catalog is hand-edited JSON.
 import { existsSync, readdirSync, readFileSync, statSync } from 'node:fs';
 import { join, relative, sep } from 'node:path';
-import { AUDIENCES, type Catalog, type Rule, isActive, loadCatalog, prefixOf } from './catalog.ts';
+import { enforcedChanges } from './enforced-files.ts';
+import { AUDIENCES, ENFORCEMENT_KINDS, type Catalog, type Rule, isActive, loadCatalog, prefixOf } from './catalog.ts';
 
 export interface Mention {
   id: string;
@@ -84,6 +87,20 @@ function evalTasks(root: string): Set<string> {
 const isString = (v: unknown): v is string => typeof v === 'string';
 const isStringArray = (v: unknown): v is string[] => Array.isArray(v) && v.every(isString);
 
+function enforcementErrors(label: string, value: unknown): string[] {
+  if (typeof value !== 'object' || value === null || Array.isArray(value)) return [`${label} must be an object`];
+  const e = value as Record<string, unknown>;
+  const errors: string[] = [];
+  for (const key of ['tool', 'catches', 'misses'] as const) {
+    if (!isString(e[key]) || e[key] === '') errors.push(`${label}.${key} must be a non-empty string`);
+  }
+  if (!(ENFORCEMENT_KINDS as readonly unknown[]).includes(e.kind)) {
+    errors.push(`${label}.kind must be one of ${ENFORCEMENT_KINDS.join(', ')}`);
+  }
+  if (typeof e.trunk_only !== 'boolean') errors.push(`${label}.trunk_only must be true or false`);
+  return errors;
+}
+
 /** Type errors for one entry; the semantic checks assume these passed. */
 function shapeErrors(rule: Rule): string[] {
   const r = rule as unknown as Record<string, unknown>;
@@ -101,8 +118,9 @@ function shapeErrors(rule: Rule): string[] {
   if (r.trunk !== undefined) {
     const t = r.trunk as Record<string, unknown> | null;
     if (typeof t !== 'object' || t === null || Array.isArray(t)) errors.push(`${label}: trunk must be an object`);
-    else if (t.enforced_by !== undefined && !isStringArray(t.enforced_by)) {
-      errors.push(`${label}: trunk.enforced_by must be a list of strings`);
+    else if (t.enforced_by !== undefined) {
+      if (!Array.isArray(t.enforced_by)) errors.push(`${label}: trunk.enforced_by must be a list`);
+      else t.enforced_by.forEach((e: unknown, i: number) => errors.push(...enforcementErrors(`${label}: trunk.enforced_by[${i}]`, e)));
     }
   }
   return errors;
@@ -177,6 +195,8 @@ export function validateRules(root: string, catalog: Catalog = loadCatalog(root)
     if (!activeId(r.id)) errors.push(`${r.file}:${r.line}: reference to unknown or inactive ${r.id}`);
   }
 
+  errors.push(...enforcedSectionErrors(root, { ...catalog, rules: [...byId.values()] }));
+
   const active = [...byId.values()].filter(isActive);
   const skills = [...new Set(active.map((r) => r.skill))].sort();
   return {
@@ -189,4 +209,16 @@ export function validateRules(root: string, catalog: Catalog = loadCatalog(root)
       return { skill, active: own.length, withEval: own.filter((r) => r.eval !== null).length };
     }),
   };
+}
+
+/** WP3: the generated sections and references match the catalog. */
+export function enforcedSectionErrors(root: string, catalog: Catalog): string[] {
+  try {
+    return enforcedChanges(root, catalog).map(
+      ({ file, next }) =>
+        `${file}: ${next === null ? 'no longer generated, delete it' : 'out of date'}; run node tools/bin/render-enforced.ts`,
+    );
+  } catch (e) {
+    return [(e as Error).message];
+  }
 }

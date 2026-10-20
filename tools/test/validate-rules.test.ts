@@ -111,6 +111,16 @@ describe('validateRules', () => {
     ],
     ['orphan inline ID', (f) => (f[REF] += '- **TEST-999** Orphan.\n'), `${REF}:4: TEST-999 has no catalog entry`],
     ['dangling reference', (f) => (f[REF] += 'See `PLG-404`.\n'), `${REF}:4: reference to unknown or inactive PLG-404`],
+    [
+      'incomplete enforcement',
+      (_, c) => (c.rules[0]!.trunk = { enforced_by: [{ tool: 'X', kind: 'grep', catches: '', misses: 'y', trunk_only: true } as never] }),
+      'TEST-001: trunk.enforced_by[0].catches must be a non-empty string',
+    ],
+    [
+      'stale enforced section',
+      (_, c) => (c.rules[0]!.trunk = { enforced_by: [{ tool: 'X', kind: 'phpstan', catches: 'catches x', misses: 'y', trunk_only: true }] }),
+      `${SKILL}: out of date; run node tools/bin/render-enforced.ts`,
+    ],
     ['wrong field type', (_, c) => ((c.rules[0] as unknown as Record<string, unknown>).defer_on_trunk = 'no'), 'TEST-001: defer_on_trunk must be true or false'],
   ];
   for (const [name, edit, expected] of cases) {

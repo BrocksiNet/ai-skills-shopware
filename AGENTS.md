@@ -36,8 +36,9 @@ rules/
   catalog.schema.json         # field reference for catalog.json
 
 tools/                        # repo tooling in TypeScript (Node 24, no build step)
-  src/                        # typed modules (catalog, rule validator)
+  src/                        # typed modules (catalog, rule validator, renderers)
   bin/validate-rules.ts       # inline rule IDs vs rules/catalog.json
+  bin/render-enforced.ts      # "Already enforced by CI" sections from the catalog
   test/*.test.ts              # node --test
 
 scripts/
@@ -154,6 +155,11 @@ the same holes):
    with an `eval_reason`, and `trunk` / `defer_on_trunk` when core has the
    rule. Never reuse an ID; a dropped rule becomes `retired` or
    `superseded:<ID>` and leaves the skill text.
+   When a CI check already catches the rule, add it to `trunk.enforced_by`
+   (`tool`, `kind`, `catches`, `misses`, `trunk_only`) from the check's source,
+   then run `node tools/bin/render-enforced.ts`. It writes the skill's
+   `## Already enforced by CI (do not repeat)` section; never edit that
+   block by hand.
 6. Add activation prompts under `skills/<skill>/evals/`.
 7. Add a behavioral task under `evals/tasks/<rule>/` with `grade.sh` and golden
    fixtures (`fixtures/pass/` required when the rule is gradable). For PHP/JS
@@ -163,7 +169,7 @@ the same holes):
    snippet tests, and `evals/test-graders.sh`.
 
 Tagged so far: `shopware-testing`, `shopware-plugin-development`,
-`shopware-review-learnings`. Tag a skill's remaining rules when you next touch it.
+`shopware-review-learnings`, `shopware-core-development`, `shopware-admin-js`. Tag a skill's remaining rules when you next touch it.
 
 For recurring real-world findings, prefer `shopware-review-learnings` and point
 at the owning skill rather than re-defining the topic.
