@@ -16,7 +16,13 @@ license: MIT
 The ticket passing is not the review. Models stop once the new behavior exists.
 This skill is the step after that: look at the shop, not the diff.
 
-Read [`references/impact-review.md`](references/impact-review.md) when you judge a finished change.
+Read the reference that matches the task or the files it changes:
+
+<!-- routes:start: generated from routes.json by `node tools/bin/render-routes.ts`; do not edit -->
+| Read | When | Or the change touches |
+| ---- | ---- | --------------------- |
+| [`impact-review.md`](references/impact-review.md) | You judge a finished change. | any change |
+<!-- routes:end -->
 
 Do not restate cache-tag mechanics, DAL limits, or storefront AJAX rules here.
 Those stay with their owning skills. This skill only decides whether the

@@ -14,6 +14,8 @@
 #   - the same double-quoted trigger phrase claimed by two skills' descriptions
 # Rule IDs:
 #   - tools/bin/validate-rules.ts (inline IDs vs rules/catalog.json; needs Node 24+)
+# Reference routing:
+#   - tools/bin/validate-routes.ts (skills/*/routes.json and the generated tables)
 set -euo pipefail
 
 ROOT="$(cd "$(dirname "$0")/.." && pwd)"
@@ -115,6 +117,13 @@ if command -v node >/dev/null; then
   node "$ROOT/tools/bin/validate-rules.ts" "$ROOT" || err "rule catalog check failed (see above)"
 else
   err "node not found; the rule catalog check needs Node 24+"
+fi
+
+# ---- reference routing -------------------------------------------------------
+echo
+echo "Checking reference routes"
+if command -v node >/dev/null; then
+  node "$ROOT/tools/bin/validate-routes.ts" "$ROOT" || err "reference routing check failed (see above)"
 fi
 
 echo

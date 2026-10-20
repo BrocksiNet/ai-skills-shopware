@@ -22,7 +22,13 @@ template from `.github/PULL_REQUEST_TEMPLATE.md` and fill every section.
 > this skill owns the template itself. The skeleton is
 > `references/pr-body-template.md`.
 
-Read [`references/pr-body-template.md`](references/pr-body-template.md) when you write the PR body.
+Read the reference that matches the task or the files it changes:
+
+<!-- routes:start: generated from routes.json by `node tools/bin/render-routes.ts`; do not edit -->
+| Read | When | Or the change touches |
+| ---- | ---- | --------------------- |
+| [`pr-body-template.md`](references/pr-body-template.md) | You write the PR body. | any change |
+<!-- routes:end -->
 
 ## Rules
 

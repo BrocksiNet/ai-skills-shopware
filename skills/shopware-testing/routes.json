@@ -1,0 +1,39 @@
+{
+  "$comment": "Which reference to read for a change (plan WP4). paths_any: globs on changed files; anchors_any: regexes on added or removed lines. Render the SKILL.md table with node tools/bin/render-routes.ts.",
+  "routes": [
+    {
+      "reference": "references/exception-assertions.md",
+      "when": "A test asserts an exception.",
+      "anchors_any": ["->expectException(Object|Message|Code)?\\("]
+    },
+    {
+      "reference": "references/test-shape-and-flags.md",
+      "when": "You need data providers, feature flags or coverage attributes.",
+      "anchors_any": [
+        "#\\[DataProvider\\(",
+        "Feature::(fake|skipTestIf(In)?Active)\\(",
+        "#\\[Covers(Class|Function|Nothing)[(\\]]",
+        "new \\\\?Reflection(Class|Property|Method)\\(",
+        "StaticEntityRepository"
+      ]
+    },
+    {
+      "reference": "references/integration-repository.md",
+      "when": "An integration test reads or writes through a repository.",
+      "paths_any": ["**/tests/integration/**/*Test.php"],
+      "anchors_any": ["IntegrationTestBehaviour"]
+    },
+    {
+      "reference": "references/core-platform-patterns.md",
+      "when": "The test lives in shopware/shopware (migrations, Codecov, `#[CoversClass]`).",
+      "paths_any": ["tests/migration/**", "tests/{unit,integration}/{Core,Storefront,Administration,Elasticsearch}/**"],
+      "anchors_any": ["@codeCoverageIgnore"]
+    },
+    {
+      "reference": "references/external-inspiration.md",
+      "when": "You want plugin test patterns from FriendsOfShopware.",
+      "paths_any": ["**/custom/plugins/*/tests/**", "**/custom/static-plugins/*/tests/**"],
+      "anchors_any": ["StaticSystemConfigService"]
+    }
+  ]
+}

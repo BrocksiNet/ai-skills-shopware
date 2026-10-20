@@ -10,6 +10,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- Path-based reference routing. Each skill with references has a
+  `routes.json` that maps changed-file globs and diff-line regexes to the
+  reference to read. The routing list in `SKILL.md` is now a generated table
+  (`tools/bin/render-routes.ts`), `tools/bin/route.ts` prints what a diff
+  selects, and `evals/routing/` holds eight diff cases that `npm test` checks
+  on every push. `validate-skills.sh` fails on a missing target, an unrouted
+  reference or a stale table.
 - "Already enforced by CI (do not repeat)" sections in `shopware-testing`,
   `shopware-core-development`, `shopware-plugin-development`,
   `shopware-admin-js` and `shopware-review-learnings`. Each bullet names the

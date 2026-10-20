@@ -14,7 +14,13 @@ license: MIT
 
 Migrated from the former `.cursor/rules/review.mdc` in `shopware-trunk`.
 
-Read [`references/review-workflow.md`](references/review-workflow.md) when you triage review threads or draft replies.
+Read the reference that matches the task or the files it changes:
+
+<!-- routes:start: generated from routes.json by `node tools/bin/render-routes.ts`; do not edit -->
+| Read | When | Or the change touches |
+| ---- | ---- | --------------------- |
+| [`review-workflow.md`](references/review-workflow.md) | You triage review threads or draft replies. | any change |
+<!-- routes:end -->
 
 ## Workflow
 

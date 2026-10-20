@@ -1,0 +1,11 @@
+{
+  "$comment": "Which reference to read for a change (plan WP4). paths_any: globs on changed files; anchors_any: regexes on added or removed lines. Render the SKILL.md table with node tools/bin/render-routes.ts.",
+  "routes": [
+    {
+      "reference": "references/shopware-dev-hub.md",
+      "when": "You need the hub layout or a command not listed above.",
+      "paths_any": ["**/compose*.y*ml", "**/docker-compose*.y*ml", "**/Containerfile", "**/.devcontainer/**", "**/mutagen*.y*ml"],
+      "anchors_any": ["COMPOSE_(FILE|PROFILES)=", "SHOPWARE_(ADMIN_)?ES_ENABLED", "podman compose", "sw-dev\\b"]
+    }
+  ]
+}

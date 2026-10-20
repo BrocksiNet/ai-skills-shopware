@@ -1,0 +1,24 @@
+diff --git a/tests/integration/Core/Content/Loyalty/LoyaltyRepositoryTest.php b/tests/integration/Core/Content/Loyalty/LoyaltyRepositoryTest.php
+new file mode 100644
+--- /dev/null
++++ b/tests/integration/Core/Content/Loyalty/LoyaltyRepositoryTest.php
+@@ -0,0 +1,24 @@
++<?php declare(strict_types=1);
++
++namespace Shopware\Tests\Integration\Core\Content\Loyalty;
++
++use PHPUnit\Framework\TestCase;
++use Shopware\Core\Framework\Test\TestCaseBase\IntegrationTestBehaviour;
++
++class LoyaltyRepositoryTest extends TestCase
++{
++    use IntegrationTestBehaviour;
++
++    public function testWritesPoints(): void
++    {
++        $repository = static::getContainer()->get('customer.repository');
++        $repository->upsert([['id' => $this->customerId, 'customFields' => ['loyalty' => 5]]], Context::createDefaultContext());
++
++        static::assertSame(5, $this->loadPoints());
++    }
++}

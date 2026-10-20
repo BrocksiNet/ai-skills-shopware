@@ -1,0 +1,22 @@
+{
+  "$comment": "Which reference to read for a change (plan WP4). paths_any: globs on changed files; anchors_any: regexes on added or removed lines. Render the SKILL.md table with node tools/bin/render-routes.ts.",
+  "routes": [
+    {
+      "reference": "references/js-plugins.md",
+      "when": "You write or register a storefront JS plugin.",
+      "paths_any": ["**/Resources/app/storefront/src/**/*.{js,ts}"],
+      "anchors_any": ["PluginManager\\.register\\(", "extends Plugin\\b"]
+    },
+    {
+      "reference": "references/twig-and-theme.md",
+      "when": "You edit Twig blocks, the theme or assets.",
+      "paths_any": ["**/Resources/views/storefront/**/*.twig", "**/Resources/app/storefront/src/scss/**", "**/theme.json", "**/Resources/app/storefront/dist/**"],
+      "anchors_any": ["\\{% sw_extends"]
+    },
+    {
+      "reference": "references/cache-and-modern-web.md",
+      "when": "Content depends on the user or cache, or you need a modern web API.",
+      "anchors_any": ["CacheTagCollector", "new (HttpClient|StoreApiClient)\\(", "speculationrules", "startViewTransition\\(|@view-transition"]
+    }
+  ]
+}

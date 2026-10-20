@@ -27,15 +27,19 @@ are mandatory, not optional. Inherits `php-foundation`; adds the deltas below.
 > keeps PHPStan baseline, release-note guardrails, and eval-linked deltas. Refactor
 > decisions → `shopware-architecture`.
 
-Read only the reference that matches the task:
+Read only the reference that matches the task or the files it changes:
 
-- Read [`references/deprecations.md`](references/deprecations.md) when you deprecate or break a public API.
-- Read [`references/service-architecture.md`](references/service-architecture.md) when you add a service or change what is public.
-- Read [`references/api-schema.md`](references/api-schema.md) when you add or change an Admin or Store API route.
-- Read [`references/modernization-and-flags.md`](references/modernization-and-flags.md) when you modernize code behind a feature flag.
-- Read [`references/release-notes-and-adr.md`](references/release-notes-and-adr.md) when the change needs RELEASE_INFO, UPGRADE or an ADR.
-- Read [`references/static-analysis-baseline.md`](references/static-analysis-baseline.md) when you touch the PHPStan baseline.
-- Read [`references/platform-architecture.md`](references/platform-architecture.md) when you cross a bundle boundary or add a listener or migration.
+<!-- routes:start: generated from routes.json by `node tools/bin/render-routes.ts`; do not edit -->
+| Read | When | Or the change touches |
+| ---- | ---- | --------------------- |
+| [`deprecations.md`](references/deprecations.md) | You deprecate or break a public API. | `@deprecated tag:v`, `@major-deprecated`, `Feature::triggerDeprecationOrThrow(`, `(CompatibilityChange\|TypeNarrowing)(` |
+| [`service-architecture.md`](references/service-architecture.md) | You add a service or change what is public. | `src/**/DependencyInjection/*.{xml,php}`, `src/**/Resources/config/services*.{xml,php}`, `* @(internal\|final)$`, `@experimental stableVersion` |
+| [`api-schema.md`](references/api-schema.md) | You add or change an Admin or Store API route. | `src/Core/Framework/Api/ApiDefinition/Generator/Schema/**`, `#[Route(` |
+| [`modernization-and-flags.md`](references/modernization-and-flags.md) | You modernize code behind a feature flag. | `src/Core/Framework/Resources/config/packages/feature.yaml`, `Feature::isActive(`, `HttpClientInterface`, `ClockInterface` |
+| [`release-notes-and-adr.md`](references/release-notes-and-adr.md) | The change needs RELEASE_INFO, UPGRADE or an ADR. | `RELEASE_INFO-*.md`, `UPGRADE-*.md`, `adr/**`, `changelog/_unreleased/*.md` |
+| [`static-analysis-baseline.md`](references/static-analysis-baseline.md) | You touch the PHPStan baseline. | `phpstan-baseline.neon`, `phpstan*.neon`, `phpstan*.neon.dist` |
+| [`platform-architecture.md`](references/platform-architecture.md) | You cross a bundle boundary or add a listener or migration. | `src/Core/Migration/**/Migration*.php`, `use Shopware\(Storefront\|Administration)\`, `#[AsEventListener`, `getSubscribedEvents(`, `->getSession(` |
+<!-- routes:end -->
 
 ## Hard guardrails (refuse rather than violate)
 

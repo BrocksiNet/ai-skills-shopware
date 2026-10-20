@@ -355,6 +355,24 @@ Those rules keep needing a reviewer.
 
 ## WP4: Path-based reference routing
 
+Status: **done 2026-10-20**, except the token check, which waits for the next
+WP1 run. All 14 skills with references have a `routes.json`, not only the
+five largest. Changes from the spec below:
+
+- Each route also has `when`, the task in words. The generated table has the
+  columns "Read | When | Or the change touches" and replaces the prose list
+  of references, so `SKILL.md` does not grow.
+- Anchors match changed lines in every file, test files included, because
+  `shopware-testing` routes on test code.
+- Globs use Node's `path.matchesGlob`, not minimatch, so the tools keep zero
+  runtime dependencies.
+- `validate-routes.ts` also fails when a reference has no route. The
+  generated `enforced-by-ci.md` is exempt.
+- Four references are `always: true`: the single procedure reference of
+  `shopware-change-impact`, `shopware-pr-description` and `shopware-pr-review`,
+  and `change-scope.md` in `shopware-review-learnings`, which has no file or
+  line signal.
+
 Goal: load only the reference that matches the files being changed, instead
 of relying on the model to pick from prose.
 

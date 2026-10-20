@@ -1,0 +1,18 @@
+{
+  "shopware-change-impact": [
+    "references/impact-review.md"
+  ],
+  "shopware-core-development": [
+    "references/release-notes-and-adr.md"
+  ],
+  "shopware-pr-description": [
+    "references/pr-body-template.md"
+  ],
+  "shopware-pr-review": [
+    "references/review-workflow.md"
+  ],
+  "shopware-review-learnings": [
+    "references/api-aware.md",
+    "references/change-scope.md"
+  ]
+}

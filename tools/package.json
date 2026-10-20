@@ -10,7 +10,10 @@
     "typecheck": "tsc -p .",
     "test": "node --test \"test/**/*.test.ts\"",
     "validate-rules": "node bin/validate-rules.ts",
-    "render-enforced": "node bin/render-enforced.ts"
+    "render-enforced": "node bin/render-enforced.ts",
+    "render-routes": "node bin/render-routes.ts",
+    "validate-routes": "node bin/validate-routes.ts",
+    "route": "node bin/route.ts"
   },
   "devDependencies": {
     "@types/node": "24.19.2",

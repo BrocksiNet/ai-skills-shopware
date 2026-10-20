@@ -17,12 +17,16 @@ A small meta-skill: it does not contain Shopware rules, it governs *how the agen
 behaves under uncertainty* so it verifies instead of hallucinating and escalates
 instead of thrashing.
 
-Read only the reference that matches the task:
+Read only the reference that matches the task or the files it changes:
 
-- Read [`references/docs-map.md`](references/docs-map.md) when you need to know where Shopware documents a topic.
-- Read [`references/context7-and-libraries.md`](references/context7-and-libraries.md) when you check library docs or verify against source.
-- Read [`references/modern-web-guidance.md`](references/modern-web-guidance.md) when the question is about a generic CSS, HTML or JS API.
-- Read [`references/when-stuck.md`](references/when-stuck.md) when an approach keeps failing.
+<!-- routes:start: generated from routes.json by `node tools/bin/render-routes.ts`; do not edit -->
+| Read | When | Or the change touches |
+| ---- | ---- | --------------------- |
+| [`docs-map.md`](references/docs-map.md) | You need to know where Shopware documents a topic. | `developer.shopware.com/docs` |
+| [`context7-and-libraries.md`](references/context7-and-libraries.md) | You check library docs or verify against source. | `composer.json`, `composer.lock`, `package.json`, `package-lock.json` |
+| [`modern-web-guidance.md`](references/modern-web-guidance.md) | The question is about a generic CSS, HTML or JS API. | `speculationrules`, `startViewTransition(\|@view-transition`, `<dialog[ >]`, `\bpopover=`, `container-type:\|@container\b` |
+| [`when-stuck.md`](references/when-stuck.md) | An approach keeps failing. | `phpstan-baseline.neon`, `@phpstan-ignore`, `@ts-(ignore\|expect-error)`, `markTestSkipped(`, `catch ([^)]*) { *}` |
+<!-- routes:end -->
 
 ## When does research pay off?
 
