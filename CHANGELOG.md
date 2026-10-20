@@ -33,6 +33,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- `shopware-pr-description` follows the five-section core PR template from
+  shopware/shopware#21627: "What and why?", "How?" with an optional
+  "Impact" sub-section, "Testing", "Additional notes" and the new
+  checklist. The template's agent block on trunk wins over the skill. Its
+  rules are tagged PRD-001 to PRD-009. The `pr-no-ai-trailers` grader
+  checks trailers in any capitalisation and each kept text under its own
+  section.
 - WP6 acceptance: the skills must win on at least four review catch tasks
   for plugin and app rules, not four of the six WP5 tasks, which Haiku
   catches without the skill.
