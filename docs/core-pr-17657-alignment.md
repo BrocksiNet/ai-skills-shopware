@@ -35,8 +35,8 @@ row to the next mining pass.
 | -- | ----- | ----- | ---------- | --------------- |
 | [#21455](https://github.com/shopware/shopware/pull/21455) | `sw-review` topic guides with rule IDs | open | WP2 `core_guide_ids`, WP7 | none yet |
 | [#21541](https://github.com/shopware/shopware/pull/21541) | Backward-compatibility and HTTP cache guidelines | merged 2026-10-19 | WP7 phase B rules link to the guidelines; unblocked | not needed |
-| [#21627](https://github.com/shopware/shopware/pull/21627) | PR template: What and why / How / Testing / Additional notes / Checklist | open | rewrite `shopware-pr-description/references/pr-body-template.md` and the `pr-no-ai-trailers` fixtures | prepare now |
-| [#21730](https://github.com/shopware/shopware/pull/21730) | Admin lint: no new `.js` in `src`, no new mixins; agent docs point at reference implementations, examples use `wrapComponentConfig()` | open | WP0 item 7, `admin-js-implementation-to-ts` grader; point `shopware-admin-js` at the named component, composable and store | prepare now |
+| [#21627](https://github.com/shopware/shopware/pull/21627) | PR template: What and why / How / Testing / Additional notes / Checklist | open | rewrite `shopware-pr-description/references/pr-body-template.md` and the `pr-no-ai-trailers` fixtures | draft [#23](https://github.com/BrocksiNet/ai-skills-shopware/pull/23) |
+| [#21730](https://github.com/shopware/shopware/pull/21730) | Admin lint: no new `.js` in `src`, no new mixins; agent docs point at reference implementations, examples use `wrapComponentConfig()` | open | WP0 item 7, `admin-js-implementation-to-ts` grader; point `shopware-admin-js` at the named component, composable and store | draft [#24](https://github.com/BrocksiNet/ai-skills-shopware/pull/24) |
 | [#21725](https://github.com/shopware/shopware/pull/21725) | Admin lint baselines that may only shrink (foundation of #21730) | open | none directly; merges before #21730 | not needed |
 | [#21502](https://github.com/shopware/shopware/pull/21502) | `composer skills:enable` / `skills:disable` | open | `docs/skill-resolution.md`: the official way to hide core skills in a full install | after merge |
 
