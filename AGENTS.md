@@ -45,6 +45,7 @@ tools/                        # repo tooling in TypeScript (Node 24, no build st
   bin/validate-routes.ts      # routes.json shape, targets and table drift
   bin/route.ts                # references each skill selects for a diff
   bin/eval-{plan,gate,diff}.ts  # eval task plan, A/B gate, baseline diff
+  bin/{ab,run-task}.ts        # A/B runner behind evals/runner/{ab,run-task}.sh
   test/*.test.ts              # node --test
 
 scripts/

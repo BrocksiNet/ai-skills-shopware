@@ -763,14 +763,23 @@ WP8 using `gh pr view --json state,mergedAt`:
 
 ## WP10: Eval runner in TypeScript
 
-Status: **step 1 done 2026-10-20**. Plan, gate and diff live in
-`tools/src/eval-{plan,gate,diff}.ts` over the typed records in
-`tools/src/eval-results.ts`. The `scripts/eval-*.sh` files are wrappers. On
-the WP1 and WP4 result files and a set of edge cases, the new tools print the
-same output and exit codes as the bash versions. Two deliberate changes: a
-non-numeric `EVAL_GATE_*` setting is a usage error (exit 2) instead of a
-crash halfway through the summary, and setting errors carry the tool name.
-`selftest.sh` keeps its end-to-end checks until step 2 ports `ab.sh`.
+Status: **steps 1 and 2 done 2026-10-20**.
+
+- Step 1: plan, gate and diff live in `tools/src/eval-{plan,gate,diff}.ts`
+  over the typed records in `tools/src/eval-results.ts`. On the WP1 and WP4
+  result files and a set of edge cases they print the same output and exit
+  codes as the bash versions. A non-numeric `EVAL_GATE_*` setting is now a
+  usage error instead of a crash halfway through the summary.
+- Step 2: `tools/src/run-task.ts` and `tools/src/ab.ts`. In 34 side-by-side
+  runs with the fake agent (every verdict, retries, partial errors, skill
+  loads, tokens, usage errors) the JSONL, stdout, stderr and exit codes match
+  the bash runner. New: `EVAL_AGENT_TIMEOUT_SECONDS` kills the agent's process
+  group, and a background child holding the agent's output no longer blocks
+  grading. That is what step 3 needs to drop the watchdog in
+  `opencode-task.sh`.
+
+The `scripts/eval-*.sh` and `evals/runner/{ab,run-task}.sh` files are
+wrappers. `selftest.sh` still checks the adapters end to end until step 3.
 
 Goal: one typed codebase for the eval pipeline, so result records, verdicts
 and gate rules are checked by the compiler instead of by `jq` filters and

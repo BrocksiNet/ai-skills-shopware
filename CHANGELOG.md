@@ -17,6 +17,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   `tools/bin/eval-*.ts`. They need Node 24, which the `evals.yml` jobs and the
   runner self-test job now set up. A non-numeric `EVAL_GATE_*` setting is now
   a usage error (exit 2) instead of a crash.
+- A/B runner in TypeScript (plan WP10 step 2). `evals/runner/ab.sh` and
+  `run-task.sh` now call `tools/bin/ab.ts` and `run-task.ts`; arguments,
+  environment, JSONL lines and exit codes are unchanged. New
+  `EVAL_AGENT_TIMEOUT_SECONDS` stops a hung agent and every process it
+  started, and an agent that leaves a background process holding its output
+  no longer blocks grading.
 
 - Path-based reference routing. Each skill with references has a
   `routes.json` that maps changed-file globs and diff-line regexes to the
