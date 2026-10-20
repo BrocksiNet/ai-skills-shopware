@@ -79,10 +79,15 @@ Tasks without a `skills` file use the default `SMOKE_SKILLS` only.
 
 Other eval tasks (not in default suite): `no-contradiction-full-profile`.
 
-## CI (later)
+## CI
 
-Set provider keys and `SMOKE_CI=1`. Agents without auth are skipped; the job
-fails if **zero** agents run.
+CI does not run the smoke harness. Model evals in CI use `evals/runner/ab.sh`
+through [`evals.yml`](../.github/workflows/evals.yml), with OpenCode and a free
+model by default (no key). See
+[`evals/README.md`](../evals/README.md#model-evals-in-ci-evalsyml).
+
+To run the smoke harness in your own CI, set provider keys and `SMOKE_CI=1`.
+Agents without auth are skipped; the job fails if **zero** agents run.
 
 ```yaml
 env:
@@ -91,8 +96,6 @@ env:
   SMOKE_CI: "1"
 run: bash evals/smoke/smoke.sh suite --agent claude
 ```
-
-Start local-first; wire a scheduled workflow once keys and cost limits are agreed.
 
 ## Debug
 

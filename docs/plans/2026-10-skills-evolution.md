@@ -81,7 +81,7 @@ review guides before adding anything new.
 
 ## WP1: Make model evals real
 
-Goal: the weekly `evals.yml` run must produce real numbers and must be able
+Goal: the scheduled `evals.yml` run must produce real numbers and must be able
 to fail.
 
 Status: **implemented 2026-10-19**. The runner, gate, plan and diff scripts
@@ -147,7 +147,7 @@ run as parallel shards picked by `scripts/eval-plan.sh`.
 
 #### Baseline tracking
 
-- Commit a weekly baseline to `evals/baselines/<YYYY-MM-DD>.jsonl` through a
+- Commit a monthly baseline to `evals/baselines/<YYYY-MM-DD>.jsonl` through a
   bot PR. A reviewable history beats a 90-day artifact (decision 1).
 - `scripts/eval-diff.sh <old.jsonl> <new.jsonl>` prints the tasks whose verdict changed.
 
@@ -648,7 +648,7 @@ WP8 using `gh pr view --json state,mergedAt`:
 
 | Risk | Mitigation |
 | ---- | ---------- |
-| Model eval cost grows with the task count | `max_tasks` and `tasks` inputs, 3 repeats only weekly, label-triggered PR runs on changed tasks only |
+| Model eval cost grows with the task count | `max_tasks` and `tasks` inputs, 3 repeats only on the monthly run, label-triggered PR runs on changed tasks only |
 | Rule IDs drift from core IDs after renumbering | Core IDs live only in `core_guide_ids`; ours are stable |
 | Generated sections in SKILL.md confuse contributors | Clear start and end markers, and a validator error that names the render command |
 | Review evals reward ID recall instead of detection | The keyword fallback in `grade_has_finding`, and `-ignore` twins |
@@ -659,7 +659,7 @@ WP8 using `gh pr view --json state,mergedAt`:
 
 All three were accepted as recommended on 2026-10-19.
 
-1. **Eval baselines are committed** to `evals/baselines/` through a weekly bot
+1. **Eval baselines are committed** to `evals/baselines/` through a monthly bot
    PR, not kept as artifacts only (WP1).
 2. **`routes.json` ships inside installed skills.** The rendered table in
    `SKILL.md` is the main mechanism; the JSON is small and lets tools route
