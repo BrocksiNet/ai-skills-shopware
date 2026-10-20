@@ -7,7 +7,7 @@ Abstraction Layer.
 
 - Inject the `EntityRepository` for the entity (e.g. `product.repository`), not
   the connection.
-- **Add an association before you filter or sort on it.** Filtering on a nested
+- **PLG-014** **Add an association before you filter or sort on it.** Filtering on a nested
   field without `addAssociation()` is the single most common DAL mistake.
 
 ```php
@@ -21,9 +21,9 @@ $products = $this->productRepository->search($criteria, $context)->getEntities()
 
 - Request only what you need: limit fields/associations; use `addFilter`,
   `addSorting`, pagination. Avoid loading whole association trees "just in case".
-- Avoid N+1: load associations in the criteria instead of looping and fetching
+- **PLG-015** Avoid N+1: load associations in the criteria instead of looping and fetching
   per row.
-- Use the **sales-channel** repository/context (`SalesChannelContext`) for
+- **PLG-016** Use the **sales-channel** repository/context (`SalesChannelContext`) for
   storefront/store-API reads so rules, availability, and pricing apply.
 
 ## Writes

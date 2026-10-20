@@ -16,7 +16,7 @@ When an API exists only in 6.7 (e.g. `CacheTagCollector`) but you still support
 
 - Prefer requiring 6.7+ and bumping `composer.json` *if* the project allows it —
   and state the bump explicitly.
-- Otherwise gate at runtime. Use capability checks (class/method/service exists)
+- **PLG-024** Otherwise gate at runtime. Use capability checks (class/method/service exists)
   rather than version-string parsing where possible:
 
 ```php
@@ -51,7 +51,7 @@ use Shopware\Core\Framework\Feature;
 return !Feature::has('MY_FLAG') || Feature::isActive('MY_FLAG');
 ```
 
-- **Never read `$_SERVER['MY_FLAG']` or `getenv('MY_FLAG')` directly** — that
+- **PLG-025** **Never read `$_SERVER['MY_FLAG']` or `getenv('MY_FLAG')` directly** — that
   bypasses Shopware's feature registry, breaks in prod mode, and reviewers will
   flag it.
 - `Feature::has()` returns false when the flag is not registered (e.g. it was
@@ -80,7 +80,7 @@ for plugins; **6.8 removes it** (Symfony 8 drops the XML loaders).
   (`services.php`, `routes.php`).
 - **Leave as XML:** plugin admin settings `config.xml`, `custom-fields.xml`,
   `flow.xml`, `rule-conditions.xml`, and app `manifest.xml`.
-- A 6.6/6.7 plugin may still ship XML DI. A **6.8-targeted** plugin must not.
+- **PLG-026** A 6.6/6.7 plugin may still ship XML DI. A **6.8-targeted** plugin must not.
   Do not add new `services.xml` when the supported range includes 6.8.
 
 ```php

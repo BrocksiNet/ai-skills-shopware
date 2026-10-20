@@ -1,0 +1,1503 @@
+{
+  "$schema": "./catalog.schema.json",
+  "prefixes": {
+    "PHP": "php-foundation",
+    "CORE": "shopware-core-development",
+    "PLG": "shopware-plugin-development",
+    "APP": "shopware-app-development",
+    "ARCH": "shopware-architecture",
+    "SEC": "shopware-security",
+    "TEST": "shopware-testing",
+    "REV": "shopware-review-learnings",
+    "IMP": "shopware-change-impact",
+    "SF": "shopware-storefront",
+    "ADM": "shopware-admin-js",
+    "PRD": "shopware-pr-description",
+    "PRR": "shopware-pr-review",
+    "DEV": "shopware-podman-dev",
+    "XR": "shopware-extension-review"
+  },
+  "rules": [
+    {
+      "id": "TEST-001",
+      "skill": "shopware-testing",
+      "file": "skills/shopware-testing/SKILL.md",
+      "title": "Assert exceptions with expectExceptionObject",
+      "status": "active",
+      "since": "2026-10-20",
+      "eval": "unit-test-exception-object",
+      "core_guide_ids": [],
+      "audience": [
+        "core",
+        "plugin"
+      ],
+      "defer_on_trunk": false
+    },
+    {
+      "id": "TEST-002",
+      "skill": "shopware-testing",
+      "file": "skills/shopware-testing/SKILL.md",
+      "title": "No #[Depends] on integration tests or with data providers",
+      "status": "active",
+      "since": "2026-10-20",
+      "eval": null,
+      "eval_reason": "Documented only; no eval yet.",
+      "core_guide_ids": [],
+      "audience": [
+        "core",
+        "plugin"
+      ],
+      "defer_on_trunk": false
+    },
+    {
+      "id": "TEST-003",
+      "skill": "shopware-testing",
+      "file": "skills/shopware-testing/SKILL.md",
+      "title": "No catch-all matchers in mocks; prefer createStub()",
+      "status": "active",
+      "since": "2026-10-20",
+      "eval": null,
+      "eval_reason": "Documented only; no eval yet.",
+      "core_guide_ids": [],
+      "audience": [
+        "core",
+        "plugin"
+      ],
+      "defer_on_trunk": false
+    },
+    {
+      "id": "TEST-004",
+      "skill": "shopware-testing",
+      "file": "skills/shopware-testing/SKILL.md",
+      "title": "Mock ClockInterface instead of fuzzy time() assertions",
+      "status": "active",
+      "since": "2026-10-20",
+      "eval": null,
+      "eval_reason": "Documented only; no eval yet.",
+      "core_guide_ids": [],
+      "audience": [
+        "core",
+        "plugin"
+      ],
+      "defer_on_trunk": false
+    },
+    {
+      "id": "TEST-005",
+      "skill": "shopware-testing",
+      "file": "skills/shopware-testing/SKILL.md",
+      "title": "Unit data providers use named yield cases",
+      "status": "active",
+      "since": "2026-10-20",
+      "eval": "unit-test-yield-provider",
+      "core_guide_ids": [],
+      "audience": [
+        "core",
+        "plugin"
+      ],
+      "defer_on_trunk": false
+    },
+    {
+      "id": "TEST-006",
+      "skill": "shopware-testing",
+      "file": "skills/shopware-testing/SKILL.md",
+      "title": "Unit tests disable flags with #[DisabledFeatures]; integration tests skip with Feature::skipTestIf*",
+      "status": "active",
+      "since": "2026-10-20",
+      "eval": "unit-test-disable-newer-major",
+      "trunk": {
+        "enforced_by": [
+          "Integration test runner rejects #[DisabledFeatures] (#18350)"
+        ]
+      },
+      "core_guide_ids": [],
+      "audience": [
+        "core",
+        "plugin"
+      ],
+      "defer_on_trunk": false
+    },
+    {
+      "id": "TEST-007",
+      "skill": "shopware-testing",
+      "file": "skills/shopware-testing/SKILL.md",
+      "title": "No #[CoversClass] on integration tests",
+      "status": "active",
+      "since": "2026-10-20",
+      "eval": "integration-no-covers-class",
+      "core_guide_ids": [],
+      "audience": [
+        "core"
+      ],
+      "defer_on_trunk": false
+    },
+    {
+      "id": "TEST-008",
+      "skill": "shopware-testing",
+      "file": "skills/shopware-testing/SKILL.md",
+      "title": "Cross-test docblocks use @see with a use import",
+      "status": "active",
+      "since": "2026-10-20",
+      "eval": "test-docblock-use-see",
+      "core_guide_ids": [],
+      "audience": [
+        "core"
+      ],
+      "defer_on_trunk": false
+    },
+    {
+      "id": "TEST-009",
+      "skill": "shopware-testing",
+      "file": "skills/shopware-testing/SKILL.md",
+      "title": "Every test class has a #[Package] matching the covered class",
+      "status": "active",
+      "since": "2026-10-20",
+      "eval": "test-class-has-package-attribute",
+      "trunk": {
+        "enforced_by": [
+          "PHPStan TestPackageMatchRule"
+        ]
+      },
+      "core_guide_ids": [],
+      "audience": [
+        "core"
+      ],
+      "defer_on_trunk": false
+    },
+    {
+      "id": "TEST-010",
+      "skill": "shopware-testing",
+      "file": "skills/shopware-testing/SKILL.md",
+      "title": "Every test class is @internal",
+      "status": "active",
+      "since": "2026-10-20",
+      "eval": "test-class-marked-internal",
+      "core_guide_ids": [],
+      "audience": [
+        "core"
+      ],
+      "defer_on_trunk": false
+    },
+    {
+      "id": "TEST-011",
+      "skill": "shopware-testing",
+      "file": "skills/shopware-testing/SKILL.md",
+      "title": "Exactly one #[CoversClass] per unit or migration test file",
+      "status": "active",
+      "since": "2026-10-20",
+      "eval": "one-covers-class-per-file",
+      "trunk": {
+        "enforced_by": [
+          "Danger one-covers-class check"
+        ]
+      },
+      "core_guide_ids": [],
+      "audience": [
+        "core"
+      ],
+      "defer_on_trunk": false
+    },
+    {
+      "id": "TEST-012",
+      "skill": "shopware-testing",
+      "file": "skills/shopware-testing/SKILL.md",
+      "title": "No reflection into private or protected Shopware methods",
+      "status": "active",
+      "since": "2026-10-20",
+      "eval": "no-reflection-on-shopware-method",
+      "core_guide_ids": [],
+      "audience": [
+        "core",
+        "plugin"
+      ],
+      "defer_on_trunk": false
+    },
+    {
+      "id": "TEST-013",
+      "skill": "shopware-testing",
+      "file": "skills/shopware-testing/SKILL.md",
+      "title": "Never exit() or die() in a test; setAutoExit(false)",
+      "status": "active",
+      "since": "2026-10-20",
+      "eval": "test-no-exit-die",
+      "trunk": {
+        "enforced_by": [
+          "CompletionGuard (trunk)"
+        ]
+      },
+      "core_guide_ids": [],
+      "audience": [
+        "core",
+        "plugin"
+      ],
+      "defer_on_trunk": true
+    },
+    {
+      "id": "TEST-014",
+      "skill": "shopware-testing",
+      "file": "skills/shopware-testing/SKILL.md",
+      "title": "Stub DAL repositories with StaticEntityRepository",
+      "status": "active",
+      "since": "2026-10-20",
+      "eval": "static-entity-repository-stub",
+      "core_guide_ids": [],
+      "audience": [
+        "core",
+        "plugin"
+      ],
+      "defer_on_trunk": true
+    },
+    {
+      "id": "TEST-015",
+      "skill": "shopware-testing",
+      "file": "skills/shopware-testing/SKILL.md",
+      "title": "#[CoversNothing] safeguard tests live in tests/devops/",
+      "status": "active",
+      "since": "2026-10-20",
+      "eval": "safeguard-test-not-in-unit-suite",
+      "core_guide_ids": [],
+      "audience": [
+        "core"
+      ],
+      "defer_on_trunk": false
+    },
+    {
+      "id": "TEST-016",
+      "skill": "shopware-testing",
+      "file": "skills/shopware-testing/SKILL.md",
+      "title": "Observe events through a hook or an owned dispatcher; assert afterwards",
+      "status": "active",
+      "since": "2026-10-20",
+      "eval": "event-hook-capture-then-assert",
+      "trunk": {
+        "source": "coding-guidelines/core/unit-tests.md#observing-events-in-tests",
+        "commit": "f2bf3794",
+        "enforced_by": [
+          "PHPStan NoAssertionInEventHookRule",
+          "PHPStan NoRuntimeListenerOnSharedEventDispatcherRule"
+        ]
+      },
+      "core_guide_ids": [],
+      "audience": [
+        "core",
+        "plugin"
+      ],
+      "defer_on_trunk": false
+    },
+    {
+      "id": "TEST-017",
+      "skill": "shopware-testing",
+      "file": "skills/shopware-testing/SKILL.md",
+      "title": "No real I/O in unit tests without a documented exception",
+      "status": "active",
+      "since": "2026-10-20",
+      "eval": null,
+      "eval_reason": "Documented only; no eval yet.",
+      "core_guide_ids": [],
+      "audience": [
+        "core",
+        "plugin"
+      ],
+      "defer_on_trunk": false
+    },
+    {
+      "id": "TEST-018",
+      "skill": "shopware-testing",
+      "file": "skills/shopware-testing/SKILL.md",
+      "title": "assertSame over assertEquals for scalars",
+      "status": "active",
+      "since": "2026-10-20",
+      "eval": null,
+      "eval_reason": "Documented only; no eval yet.",
+      "core_guide_ids": [],
+      "audience": [
+        "core",
+        "plugin"
+      ],
+      "defer_on_trunk": false
+    },
+    {
+      "id": "TEST-019",
+      "skill": "shopware-testing",
+      "file": "skills/shopware-testing/SKILL.md",
+      "title": "No behavior-mocking of the DBAL Connection in unit tests",
+      "status": "active",
+      "since": "2026-10-20",
+      "eval": null,
+      "eval_reason": "Documented only; no eval yet.",
+      "core_guide_ids": [],
+      "audience": [
+        "core",
+        "plugin"
+      ],
+      "defer_on_trunk": true
+    },
+    {
+      "id": "TEST-020",
+      "skill": "shopware-testing",
+      "file": "skills/shopware-testing/SKILL.md",
+      "title": "Integration tests create their own data",
+      "status": "active",
+      "since": "2026-10-20",
+      "eval": null,
+      "eval_reason": "Documented only; no eval yet.",
+      "core_guide_ids": [],
+      "audience": [
+        "core",
+        "plugin"
+      ],
+      "defer_on_trunk": false
+    },
+    {
+      "id": "TEST-021",
+      "skill": "shopware-testing",
+      "file": "skills/shopware-testing/SKILL.md",
+      "title": "One behavior per test, arrange-act-assert",
+      "status": "active",
+      "since": "2026-10-20",
+      "eval": null,
+      "eval_reason": "Documented only; no eval yet.",
+      "core_guide_ids": [],
+      "audience": [
+        "core",
+        "plugin"
+      ],
+      "defer_on_trunk": false
+    },
+    {
+      "id": "TEST-022",
+      "skill": "shopware-testing",
+      "file": "skills/shopware-testing/SKILL.md",
+      "title": "No sleep or unordered shared state",
+      "status": "active",
+      "since": "2026-10-20",
+      "eval": null,
+      "eval_reason": "Documented only; no eval yet.",
+      "core_guide_ids": [],
+      "audience": [
+        "core",
+        "plugin"
+      ],
+      "defer_on_trunk": false
+    },
+    {
+      "id": "TEST-023",
+      "skill": "shopware-testing",
+      "file": "skills/shopware-testing/references/integration-repository.md",
+      "title": "Integration tests use only the traits the scenario needs",
+      "status": "active",
+      "since": "2026-10-20",
+      "eval": "integration-narrow-test-traits",
+      "core_guide_ids": [],
+      "audience": [
+        "core",
+        "plugin"
+      ],
+      "defer_on_trunk": false
+    },
+    {
+      "id": "TEST-024",
+      "skill": "shopware-testing",
+      "file": "skills/shopware-testing/references/test-shape-and-flags.md",
+      "title": "A test asserting a flag-active throw is @deprecated on the method",
+      "status": "active",
+      "since": "2026-10-20",
+      "eval": "flag-active-throw-is-deprecated",
+      "core_guide_ids": [],
+      "audience": [
+        "core"
+      ],
+      "defer_on_trunk": false
+    },
+    {
+      "id": "TEST-025",
+      "skill": "shopware-testing",
+      "file": "skills/shopware-testing/references/test-shape-and-flags.md",
+      "title": "Tests read as executable examples",
+      "status": "active",
+      "since": "2026-10-20",
+      "eval": null,
+      "eval_reason": "Style rule; core shopware-phpunit-tests owns it on trunk.",
+      "core_guide_ids": [],
+      "audience": [
+        "core",
+        "plugin"
+      ],
+      "defer_on_trunk": true
+    },
+    {
+      "id": "TEST-026",
+      "skill": "shopware-testing",
+      "file": "skills/shopware-testing/references/test-shape-and-flags.md",
+      "title": "Stable boilerplate goes to setUp() and tearDown()",
+      "status": "active",
+      "since": "2026-10-20",
+      "eval": null,
+      "eval_reason": "Style rule; core shopware-phpunit-tests owns it on trunk.",
+      "core_guide_ids": [],
+      "audience": [
+        "core",
+        "plugin"
+      ],
+      "defer_on_trunk": true
+    },
+    {
+      "id": "TEST-027",
+      "skill": "shopware-testing",
+      "file": "skills/shopware-testing/references/test-shape-and-flags.md",
+      "title": "Name bare literal arguments in test helpers",
+      "status": "active",
+      "since": "2026-10-20",
+      "eval": null,
+      "eval_reason": "Documented only; no eval yet.",
+      "core_guide_ids": [],
+      "audience": [
+        "core",
+        "plugin"
+      ],
+      "defer_on_trunk": false
+    },
+    {
+      "id": "TEST-028",
+      "skill": "shopware-testing",
+      "file": "skills/shopware-testing/references/test-shape-and-flags.md",
+      "title": "Unit filesystem access goes through an injected Symfony Filesystem",
+      "status": "active",
+      "since": "2026-10-20",
+      "eval": null,
+      "eval_reason": "Documented only; no eval yet.",
+      "core_guide_ids": [],
+      "audience": [
+        "core",
+        "plugin"
+      ],
+      "defer_on_trunk": false
+    },
+    {
+      "id": "TEST-029",
+      "skill": "shopware-testing",
+      "file": "skills/shopware-testing/references/test-shape-and-flags.md",
+      "title": "Provider case names describe the scenario",
+      "status": "active",
+      "since": "2026-10-20",
+      "eval": null,
+      "eval_reason": "Style rule; core shopware-phpunit-tests owns it on trunk.",
+      "core_guide_ids": [],
+      "audience": [
+        "core",
+        "plugin"
+      ],
+      "defer_on_trunk": true
+    },
+    {
+      "id": "TEST-030",
+      "skill": "shopware-testing",
+      "file": "skills/shopware-testing/references/test-shape-and-flags.md",
+      "title": "Keep distinct edge cases when deduplicating providers",
+      "status": "active",
+      "since": "2026-10-20",
+      "eval": null,
+      "eval_reason": "Style rule; core shopware-phpunit-tests owns it on trunk.",
+      "core_guide_ids": [],
+      "audience": [
+        "core",
+        "plugin"
+      ],
+      "defer_on_trunk": true
+    },
+    {
+      "id": "TEST-031",
+      "skill": "shopware-testing",
+      "file": "skills/shopware-testing/references/test-shape-and-flags.md",
+      "title": "Legacy flag tests are easy to delete with the flag",
+      "status": "active",
+      "since": "2026-10-20",
+      "eval": null,
+      "eval_reason": "Style rule; core shopware-phpunit-tests owns it on trunk.",
+      "core_guide_ids": [],
+      "audience": [
+        "core"
+      ],
+      "defer_on_trunk": true
+    },
+    {
+      "id": "TEST-032",
+      "skill": "shopware-testing",
+      "file": "skills/shopware-testing/references/core-platform-patterns.md",
+      "title": "@codeCoverageIgnore only on pass-through code",
+      "status": "active",
+      "since": "2026-10-20",
+      "eval": "code-coverage-ignore-passthrough",
+      "trunk": {
+        "enforced_by": [
+          "PHPStan CodeCoverageIgnoreEvaluationRule"
+        ]
+      },
+      "core_guide_ids": [],
+      "audience": [
+        "core"
+      ],
+      "defer_on_trunk": true
+    },
+    {
+      "id": "TEST-033",
+      "skill": "shopware-testing",
+      "file": "skills/shopware-testing/references/core-platform-patterns.md",
+      "title": "@codeCoverageIgnore points @see at the integration test by FQCN",
+      "status": "active",
+      "since": "2026-10-20",
+      "eval": null,
+      "eval_reason": "Style rule; core shopware-phpunit-tests owns it on trunk.",
+      "core_guide_ids": [],
+      "audience": [
+        "core"
+      ],
+      "defer_on_trunk": true
+    },
+    {
+      "id": "TEST-034",
+      "skill": "shopware-testing",
+      "file": "skills/shopware-testing/SKILL.md",
+      "title": "Tests that need no kernel live in tests/unit/",
+      "status": "active",
+      "since": "2026-10-20",
+      "eval": null,
+      "eval_reason": "Documented only; no eval yet.",
+      "core_guide_ids": [],
+      "audience": [
+        "core",
+        "plugin"
+      ],
+      "defer_on_trunk": false
+    },
+    {
+      "id": "PLG-001",
+      "skill": "shopware-plugin-development",
+      "file": "skills/shopware-plugin-development/SKILL.md",
+      "title": "Do not break the supported Shopware range silently",
+      "status": "active",
+      "since": "2026-10-20",
+      "eval": null,
+      "eval_reason": "Documented only; no eval yet.",
+      "core_guide_ids": [],
+      "audience": [
+        "plugin"
+      ],
+      "defer_on_trunk": false
+    },
+    {
+      "id": "PLG-002",
+      "skill": "shopware-plugin-development",
+      "file": "skills/shopware-plugin-development/SKILL.md",
+      "title": "No deprecated API when a stable replacement exists",
+      "status": "active",
+      "since": "2026-10-20",
+      "eval": "cache-tag-no-deprecated-event",
+      "core_guide_ids": [],
+      "audience": [
+        "plugin"
+      ],
+      "defer_on_trunk": false
+    },
+    {
+      "id": "PLG-003",
+      "skill": "shopware-plugin-development",
+      "file": "skills/shopware-plugin-development/SKILL.md",
+      "title": "Entity data goes through the DAL, not raw SQL",
+      "status": "active",
+      "since": "2026-10-20",
+      "eval": "no-dal-connection-for-entity-read",
+      "core_guide_ids": [],
+      "audience": [
+        "plugin"
+      ],
+      "defer_on_trunk": false
+    },
+    {
+      "id": "PLG-004",
+      "skill": "shopware-plugin-development",
+      "file": "skills/shopware-plugin-development/SKILL.md",
+      "title": "Never modify core or vendor code",
+      "status": "active",
+      "since": "2026-10-20",
+      "eval": null,
+      "eval_reason": "Documented only; no eval yet.",
+      "core_guide_ids": [],
+      "audience": [
+        "plugin"
+      ],
+      "defer_on_trunk": false
+    },
+    {
+      "id": "PLG-005",
+      "skill": "shopware-plugin-development",
+      "file": "skills/shopware-plugin-development/SKILL.md",
+      "title": "Extend through decoration, events and entity extensions",
+      "status": "active",
+      "since": "2026-10-20",
+      "eval": null,
+      "eval_reason": "Documented only; no eval yet.",
+      "core_guide_ids": [],
+      "audience": [
+        "plugin"
+      ],
+      "defer_on_trunk": false
+    },
+    {
+      "id": "PLG-006",
+      "skill": "shopware-plugin-development",
+      "file": "skills/shopware-plugin-development/SKILL.md",
+      "title": "Controllers delegate to services",
+      "status": "active",
+      "since": "2026-10-20",
+      "eval": "business-logic-in-controller",
+      "core_guide_ids": [],
+      "audience": [
+        "plugin"
+      ],
+      "defer_on_trunk": false
+    },
+    {
+      "id": "PLG-007",
+      "skill": "shopware-plugin-development",
+      "file": "skills/shopware-plugin-development/SKILL.md",
+      "title": "Cache tags through CacheTagCollector, not *CacheTagsEvent",
+      "status": "active",
+      "since": "2026-10-20",
+      "eval": "cache-tag-no-deprecated-event",
+      "core_guide_ids": [],
+      "audience": [
+        "plugin"
+      ],
+      "defer_on_trunk": false
+    },
+    {
+      "id": "PLG-008",
+      "skill": "shopware-plugin-development",
+      "file": "skills/shopware-plugin-development/SKILL.md",
+      "title": "Handle the plugin lifecycle and keepUserData",
+      "status": "active",
+      "since": "2026-10-20",
+      "eval": null,
+      "eval_reason": "Documented only; no eval yet.",
+      "core_guide_ids": [],
+      "audience": [
+        "plugin"
+      ],
+      "defer_on_trunk": false
+    },
+    {
+      "id": "PLG-009",
+      "skill": "shopware-plugin-development",
+      "file": "skills/shopware-plugin-development/SKILL.md",
+      "title": "Stay inside the pinned Shopware and Symfony range; modernize with Rector",
+      "status": "active",
+      "since": "2026-10-20",
+      "eval": null,
+      "eval_reason": "Documented only; no eval yet.",
+      "core_guide_ids": [],
+      "audience": [
+        "plugin"
+      ],
+      "defer_on_trunk": false
+    },
+    {
+      "id": "PLG-010",
+      "skill": "shopware-plugin-development",
+      "file": "skills/shopware-plugin-development/SKILL.md",
+      "title": "Prepare for 6.8 without dropping the supported range",
+      "status": "active",
+      "since": "2026-10-20",
+      "eval": "prepare-plugin-for-6-8",
+      "core_guide_ids": [],
+      "audience": [
+        "plugin"
+      ],
+      "defer_on_trunk": false
+    },
+    {
+      "id": "PLG-011",
+      "skill": "shopware-plugin-development",
+      "file": "skills/shopware-plugin-development/references/api-contracts.md",
+      "title": "New Store-API and Admin routes ship an OpenAPI schema",
+      "status": "active",
+      "since": "2026-10-20",
+      "eval": "store-api-openapi-required",
+      "core_guide_ids": [],
+      "audience": [
+        "plugin",
+        "app"
+      ],
+      "defer_on_trunk": false
+    },
+    {
+      "id": "PLG-012",
+      "skill": "shopware-plugin-development",
+      "file": "skills/shopware-plugin-development/references/api-contracts.md",
+      "title": "Routes return a typed, documented response shape",
+      "status": "active",
+      "since": "2026-10-20",
+      "eval": null,
+      "eval_reason": "Documented only; no eval yet.",
+      "core_guide_ids": [],
+      "audience": [
+        "plugin",
+        "app"
+      ],
+      "defer_on_trunk": false
+    },
+    {
+      "id": "PLG-013",
+      "skill": "shopware-plugin-development",
+      "file": "skills/shopware-plugin-development/references/api-contracts.md",
+      "title": "Data shown in Twig also has a Store-API route",
+      "status": "active",
+      "since": "2026-10-20",
+      "eval": null,
+      "eval_reason": "Documented only; no eval yet.",
+      "core_guide_ids": [],
+      "audience": [
+        "plugin",
+        "app"
+      ],
+      "defer_on_trunk": false
+    },
+    {
+      "id": "PLG-014",
+      "skill": "shopware-plugin-development",
+      "file": "skills/shopware-plugin-development/references/dal-usage.md",
+      "title": "Add an association before filtering or sorting on it",
+      "status": "active",
+      "since": "2026-10-20",
+      "eval": null,
+      "eval_reason": "Documented only; no eval yet.",
+      "core_guide_ids": [],
+      "audience": [
+        "plugin"
+      ],
+      "defer_on_trunk": false
+    },
+    {
+      "id": "PLG-015",
+      "skill": "shopware-plugin-development",
+      "file": "skills/shopware-plugin-development/references/dal-usage.md",
+      "title": "Load associations in the Criteria, not per row",
+      "status": "active",
+      "since": "2026-10-20",
+      "eval": null,
+      "eval_reason": "Documented only; no eval yet.",
+      "core_guide_ids": [],
+      "audience": [
+        "plugin"
+      ],
+      "defer_on_trunk": false
+    },
+    {
+      "id": "PLG-016",
+      "skill": "shopware-plugin-development",
+      "file": "skills/shopware-plugin-development/references/dal-usage.md",
+      "title": "Storefront and Store-API reads use the sales channel context",
+      "status": "active",
+      "since": "2026-10-20",
+      "eval": null,
+      "eval_reason": "Documented only; no eval yet.",
+      "core_guide_ids": [],
+      "audience": [
+        "plugin"
+      ],
+      "defer_on_trunk": false
+    },
+    {
+      "id": "PLG-017",
+      "skill": "shopware-plugin-development",
+      "file": "skills/shopware-plugin-development/references/migrations.md",
+      "title": "Split destructive from non-destructive migration steps",
+      "status": "active",
+      "since": "2026-10-20",
+      "eval": null,
+      "eval_reason": "Documented only; no eval yet.",
+      "core_guide_ids": [],
+      "audience": [
+        "plugin"
+      ],
+      "defer_on_trunk": false
+    },
+    {
+      "id": "PLG-018",
+      "skill": "shopware-plugin-development",
+      "file": "skills/shopware-plugin-development/references/migrations.md",
+      "title": "No heavy work in updateDestructive()",
+      "status": "active",
+      "since": "2026-10-20",
+      "eval": null,
+      "eval_reason": "Documented only; no eval yet.",
+      "core_guide_ids": [],
+      "audience": [
+        "plugin"
+      ],
+      "defer_on_trunk": false
+    },
+    {
+      "id": "PLG-019",
+      "skill": "shopware-plugin-development",
+      "file": "skills/shopware-plugin-development/references/migrations.md",
+      "title": "Large data changes run in ordered batches",
+      "status": "active",
+      "since": "2026-10-20",
+      "eval": null,
+      "eval_reason": "Documented only; no eval yet.",
+      "core_guide_ids": [],
+      "audience": [
+        "plugin"
+      ],
+      "defer_on_trunk": false
+    },
+    {
+      "id": "PLG-020",
+      "skill": "shopware-plugin-development",
+      "file": "skills/shopware-plugin-development/references/migrations.md",
+      "title": "Derived data comes from an indexer, not migration SQL",
+      "status": "active",
+      "since": "2026-10-20",
+      "eval": null,
+      "eval_reason": "Documented only; no eval yet.",
+      "core_guide_ids": [],
+      "audience": [
+        "plugin"
+      ],
+      "defer_on_trunk": false
+    },
+    {
+      "id": "PLG-021",
+      "skill": "shopware-plugin-development",
+      "file": "skills/shopware-plugin-development/references/migrations.md",
+      "title": "Migrations are idempotent",
+      "status": "active",
+      "since": "2026-10-20",
+      "eval": null,
+      "eval_reason": "Documented only; no eval yet.",
+      "core_guide_ids": [],
+      "audience": [
+        "plugin"
+      ],
+      "defer_on_trunk": false
+    },
+    {
+      "id": "PLG-022",
+      "skill": "shopware-plugin-development",
+      "file": "skills/shopware-plugin-development/references/migrations.md",
+      "title": "Never edit a released migration",
+      "status": "active",
+      "since": "2026-10-20",
+      "eval": null,
+      "eval_reason": "Documented only; no eval yet.",
+      "core_guide_ids": [],
+      "audience": [
+        "plugin"
+      ],
+      "defer_on_trunk": false
+    },
+    {
+      "id": "PLG-023",
+      "skill": "shopware-plugin-development",
+      "file": "skills/shopware-plugin-development/references/migrations.md",
+      "title": "Bind parameters in migration SQL",
+      "status": "active",
+      "since": "2026-10-20",
+      "eval": null,
+      "eval_reason": "Documented only; no eval yet.",
+      "core_guide_ids": [],
+      "audience": [
+        "plugin"
+      ],
+      "defer_on_trunk": false
+    },
+    {
+      "id": "PLG-024",
+      "skill": "shopware-plugin-development",
+      "file": "skills/shopware-plugin-development/references/version-compatibility.md",
+      "title": "Gate version-specific API with capability checks",
+      "status": "active",
+      "since": "2026-10-20",
+      "eval": null,
+      "eval_reason": "Documented only; no eval yet.",
+      "core_guide_ids": [],
+      "audience": [
+        "plugin"
+      ],
+      "defer_on_trunk": false
+    },
+    {
+      "id": "PLG-025",
+      "skill": "shopware-plugin-development",
+      "file": "skills/shopware-plugin-development/references/version-compatibility.md",
+      "title": "Read feature flags through Feature::has() and Feature::isActive()",
+      "status": "active",
+      "since": "2026-10-20",
+      "eval": null,
+      "eval_reason": "Documented only; no eval yet.",
+      "core_guide_ids": [],
+      "audience": [
+        "plugin"
+      ],
+      "defer_on_trunk": false
+    },
+    {
+      "id": "PLG-026",
+      "skill": "shopware-plugin-development",
+      "file": "skills/shopware-plugin-development/references/version-compatibility.md",
+      "title": "6.8-targeted plugins register Symfony DI in PHP",
+      "status": "active",
+      "since": "2026-10-20",
+      "eval": "plugin-xml-config-to-php",
+      "core_guide_ids": [],
+      "audience": [
+        "plugin"
+      ],
+      "defer_on_trunk": false
+    },
+    {
+      "id": "REV-001",
+      "skill": "shopware-review-learnings",
+      "file": "skills/shopware-review-learnings/SKILL.md",
+      "title": "Fix the root cause, not the symptom",
+      "status": "active",
+      "since": "2026-10-20",
+      "eval": null,
+      "eval_reason": "Process rule; core shopware-change-scope owns it on trunk.",
+      "core_guide_ids": [],
+      "audience": [
+        "core",
+        "plugin"
+      ],
+      "defer_on_trunk": true
+    },
+    {
+      "id": "REV-002",
+      "skill": "shopware-review-learnings",
+      "file": "skills/shopware-review-learnings/SKILL.md",
+      "title": "Run ECS and PHPStan before every push",
+      "status": "active",
+      "since": "2026-10-20",
+      "eval": null,
+      "eval_reason": "Process rule; not gradable from a diff.",
+      "core_guide_ids": [],
+      "audience": [
+        "core",
+        "plugin"
+      ],
+      "defer_on_trunk": false
+    },
+    {
+      "id": "REV-003",
+      "skill": "shopware-review-learnings",
+      "file": "skills/shopware-review-learnings/SKILL.md",
+      "title": "Grep src/ and tests/ before changing an interface signature",
+      "status": "active",
+      "since": "2026-10-20",
+      "eval": null,
+      "eval_reason": "Process rule; not gradable from a diff.",
+      "core_guide_ids": [],
+      "audience": [
+        "core",
+        "plugin"
+      ],
+      "defer_on_trunk": false
+    },
+    {
+      "id": "REV-004",
+      "skill": "shopware-review-learnings",
+      "file": "skills/shopware-review-learnings/SKILL.md",
+      "title": "CI is green before asking for review",
+      "status": "active",
+      "since": "2026-10-20",
+      "eval": null,
+      "eval_reason": "Process rule; not gradable from a diff.",
+      "core_guide_ids": [],
+      "audience": [
+        "core",
+        "plugin"
+      ],
+      "defer_on_trunk": false
+    },
+    {
+      "id": "REV-005",
+      "skill": "shopware-review-learnings",
+      "file": "skills/shopware-review-learnings/SKILL.md",
+      "title": "Keep PRs under about 400 changed lines or explain why",
+      "status": "active",
+      "since": "2026-10-20",
+      "eval": null,
+      "eval_reason": "Process rule; not gradable from a diff.",
+      "core_guide_ids": [],
+      "audience": [
+        "core",
+        "plugin"
+      ],
+      "defer_on_trunk": false
+    },
+    {
+      "id": "REV-006",
+      "skill": "shopware-review-learnings",
+      "file": "skills/shopware-review-learnings/SKILL.md",
+      "title": "Custom data has a Store-API route",
+      "status": "active",
+      "since": "2026-10-20",
+      "eval": null,
+      "eval_reason": "Documented only; no eval yet.",
+      "core_guide_ids": [],
+      "audience": [
+        "plugin",
+        "app"
+      ],
+      "defer_on_trunk": false,
+      "see": [
+        "PLG-013"
+      ]
+    },
+    {
+      "id": "REV-007",
+      "skill": "shopware-review-learnings",
+      "file": "skills/shopware-review-learnings/SKILL.md",
+      "title": "Load an association before filtering on it",
+      "status": "active",
+      "since": "2026-10-20",
+      "eval": null,
+      "eval_reason": "Documented only; no eval yet.",
+      "core_guide_ids": [],
+      "audience": [
+        "plugin"
+      ],
+      "defer_on_trunk": false,
+      "see": [
+        "PLG-014"
+      ]
+    },
+    {
+      "id": "REV-008",
+      "skill": "shopware-review-learnings",
+      "file": "skills/shopware-review-learnings/SKILL.md",
+      "title": "No deprecated *CacheTagsEvent in 6.7 code",
+      "status": "active",
+      "since": "2026-10-20",
+      "eval": "cache-tag-no-deprecated-event",
+      "core_guide_ids": [],
+      "audience": [
+        "plugin"
+      ],
+      "defer_on_trunk": false,
+      "see": [
+        "PLG-007"
+      ]
+    },
+    {
+      "id": "REV-009",
+      "skill": "shopware-review-learnings",
+      "file": "skills/shopware-review-learnings/SKILL.md",
+      "title": "Every new public route has an OpenAPI schema",
+      "status": "active",
+      "since": "2026-10-20",
+      "eval": "store-api-openapi-required",
+      "core_guide_ids": [],
+      "audience": [
+        "core",
+        "plugin"
+      ],
+      "defer_on_trunk": false,
+      "see": [
+        "PLG-011"
+      ]
+    },
+    {
+      "id": "REV-010",
+      "skill": "shopware-review-learnings",
+      "file": "skills/shopware-review-learnings/SKILL.md",
+      "title": "No business logic in controllers",
+      "status": "active",
+      "since": "2026-10-20",
+      "eval": "business-logic-in-controller",
+      "core_guide_ids": [],
+      "audience": [
+        "core",
+        "plugin"
+      ],
+      "defer_on_trunk": false,
+      "see": [
+        "PLG-006"
+      ]
+    },
+    {
+      "id": "REV-011",
+      "skill": "shopware-review-learnings",
+      "file": "skills/shopware-review-learnings/SKILL.md",
+      "title": "Admin route ACL follows the existing privilege key form",
+      "status": "active",
+      "since": "2026-10-20",
+      "eval": null,
+      "eval_reason": "Documented only; no eval yet.",
+      "core_guide_ids": [],
+      "audience": [
+        "core"
+      ],
+      "defer_on_trunk": false
+    },
+    {
+      "id": "REV-012",
+      "skill": "shopware-review-learnings",
+      "file": "skills/shopware-review-learnings/SKILL.md",
+      "title": "No heavy work in updateDestructive(); never edit shipped migrations",
+      "status": "active",
+      "since": "2026-10-20",
+      "eval": null,
+      "eval_reason": "Documented only; no eval yet.",
+      "core_guide_ids": [],
+      "audience": [
+        "core",
+        "plugin"
+      ],
+      "defer_on_trunk": false,
+      "see": [
+        "PLG-018",
+        "PLG-022"
+      ]
+    },
+    {
+      "id": "REV-013",
+      "skill": "shopware-review-learnings",
+      "file": "skills/shopware-review-learnings/SKILL.md",
+      "title": "Cross-test docblocks use @see with an import",
+      "status": "active",
+      "since": "2026-10-20",
+      "eval": "test-docblock-use-see",
+      "core_guide_ids": [],
+      "audience": [
+        "core"
+      ],
+      "defer_on_trunk": false,
+      "see": [
+        "TEST-008"
+      ]
+    },
+    {
+      "id": "REV-014",
+      "skill": "shopware-review-learnings",
+      "file": "skills/shopware-review-learnings/SKILL.md",
+      "title": "Safeguard tests do not live in tests/unit/",
+      "status": "active",
+      "since": "2026-10-20",
+      "eval": "safeguard-test-not-in-unit-suite",
+      "core_guide_ids": [],
+      "audience": [
+        "core"
+      ],
+      "defer_on_trunk": false,
+      "see": [
+        "TEST-015"
+      ]
+    },
+    {
+      "id": "REV-015",
+      "skill": "shopware-review-learnings",
+      "file": "skills/shopware-review-learnings/SKILL.md",
+      "title": "Guard only API added inside the supported range",
+      "status": "active",
+      "since": "2026-10-20",
+      "eval": null,
+      "eval_reason": "Documented only; no eval yet.",
+      "core_guide_ids": [],
+      "audience": [
+        "plugin"
+      ],
+      "defer_on_trunk": false,
+      "see": [
+        "PLG-024"
+      ]
+    },
+    {
+      "id": "REV-016",
+      "skill": "shopware-review-learnings",
+      "file": "skills/shopware-review-learnings/SKILL.md",
+      "title": "Read feature flags through the Feature API",
+      "status": "active",
+      "since": "2026-10-20",
+      "eval": null,
+      "eval_reason": "Documented only; no eval yet.",
+      "core_guide_ids": [],
+      "audience": [
+        "core",
+        "plugin"
+      ],
+      "defer_on_trunk": false,
+      "see": [
+        "PLG-025"
+      ]
+    },
+    {
+      "id": "REV-017",
+      "skill": "shopware-review-learnings",
+      "file": "skills/shopware-review-learnings/SKILL.md",
+      "title": "Import classes instead of inline FQCNs",
+      "status": "active",
+      "since": "2026-10-20",
+      "eval": null,
+      "eval_reason": "Caught by ECS.",
+      "trunk": {
+        "enforced_by": [
+          "ECS"
+        ]
+      },
+      "core_guide_ids": [],
+      "audience": [
+        "core",
+        "plugin"
+      ],
+      "defer_on_trunk": false
+    },
+    {
+      "id": "REV-018",
+      "skill": "shopware-review-learnings",
+      "file": "skills/shopware-review-learnings/references/api-aware.md",
+      "title": "Storefront actions have a Store-API equivalent",
+      "status": "active",
+      "since": "2026-10-20",
+      "eval": null,
+      "eval_reason": "Documented only; no eval yet.",
+      "core_guide_ids": [],
+      "audience": [
+        "plugin",
+        "app"
+      ],
+      "defer_on_trunk": false
+    },
+    {
+      "id": "REV-019",
+      "skill": "shopware-review-learnings",
+      "file": "skills/shopware-review-learnings/references/api-aware.md",
+      "title": "Return data, not storefront URLs or markup",
+      "status": "active",
+      "since": "2026-10-20",
+      "eval": null,
+      "eval_reason": "Documented only; no eval yet.",
+      "core_guide_ids": [],
+      "audience": [
+        "plugin",
+        "app"
+      ],
+      "defer_on_trunk": false
+    },
+    {
+      "id": "REV-020",
+      "skill": "shopware-review-learnings",
+      "file": "skills/shopware-review-learnings/references/api-aware.md",
+      "title": "Custom routes return a consistent, documented shape",
+      "status": "active",
+      "since": "2026-10-20",
+      "eval": null,
+      "eval_reason": "Documented only; no eval yet.",
+      "core_guide_ids": [],
+      "audience": [
+        "plugin",
+        "app"
+      ],
+      "defer_on_trunk": false,
+      "see": [
+        "PLG-012"
+      ]
+    },
+    {
+      "id": "REV-021",
+      "skill": "shopware-review-learnings",
+      "file": "skills/shopware-review-learnings/references/dal-and-performance.md",
+      "title": "No per-row association loads",
+      "status": "active",
+      "since": "2026-10-20",
+      "eval": null,
+      "eval_reason": "Documented only; no eval yet.",
+      "core_guide_ids": [],
+      "audience": [
+        "plugin"
+      ],
+      "defer_on_trunk": false,
+      "see": [
+        "PLG-015"
+      ]
+    },
+    {
+      "id": "REV-022",
+      "skill": "shopware-review-learnings",
+      "file": "skills/shopware-review-learnings/references/dal-and-performance.md",
+      "title": "Request only the fields and associations a hot path uses",
+      "status": "active",
+      "since": "2026-10-20",
+      "eval": null,
+      "eval_reason": "Documented only; no eval yet.",
+      "core_guide_ids": [],
+      "audience": [
+        "plugin"
+      ],
+      "defer_on_trunk": false
+    },
+    {
+      "id": "REV-023",
+      "skill": "shopware-review-learnings",
+      "file": "skills/shopware-review-learnings/references/dal-and-performance.md",
+      "title": "Storefront reads use the sales channel context",
+      "status": "active",
+      "since": "2026-10-20",
+      "eval": null,
+      "eval_reason": "Documented only; no eval yet.",
+      "core_guide_ids": [],
+      "audience": [
+        "plugin"
+      ],
+      "defer_on_trunk": false,
+      "see": [
+        "PLG-016"
+      ]
+    },
+    {
+      "id": "REV-024",
+      "skill": "shopware-review-learnings",
+      "file": "skills/shopware-review-learnings/references/dal-and-performance.md",
+      "title": "No raw SQL for ordinary entity reads and writes",
+      "status": "active",
+      "since": "2026-10-20",
+      "eval": "no-dal-connection-for-entity-read",
+      "core_guide_ids": [],
+      "audience": [
+        "plugin"
+      ],
+      "defer_on_trunk": false,
+      "see": [
+        "PLG-003"
+      ]
+    },
+    {
+      "id": "REV-025",
+      "skill": "shopware-review-learnings",
+      "file": "skills/shopware-review-learnings/references/change-scope.md",
+      "title": "Treat issue suggestions as hypotheses",
+      "status": "active",
+      "since": "2026-10-20",
+      "eval": null,
+      "eval_reason": "Process rule; core shopware-change-scope owns it on trunk.",
+      "core_guide_ids": [],
+      "audience": [
+        "core",
+        "plugin"
+      ],
+      "defer_on_trunk": true
+    },
+    {
+      "id": "REV-026",
+      "skill": "shopware-review-learnings",
+      "file": "skills/shopware-review-learnings/references/change-scope.md",
+      "title": "Grep callers before changing shared behavior",
+      "status": "active",
+      "since": "2026-10-20",
+      "eval": null,
+      "eval_reason": "Process rule; core shopware-change-scope owns it on trunk.",
+      "core_guide_ids": [],
+      "audience": [
+        "core",
+        "plugin"
+      ],
+      "defer_on_trunk": true
+    },
+    {
+      "id": "REV-027",
+      "skill": "shopware-review-learnings",
+      "file": "skills/shopware-review-learnings/references/change-scope.md",
+      "title": "Fix the bug where it lives",
+      "status": "active",
+      "since": "2026-10-20",
+      "eval": null,
+      "eval_reason": "Process rule; core shopware-change-scope owns it on trunk.",
+      "core_guide_ids": [],
+      "audience": [
+        "core",
+        "plugin"
+      ],
+      "defer_on_trunk": true
+    },
+    {
+      "id": "REV-028",
+      "skill": "shopware-review-learnings",
+      "file": "skills/shopware-review-learnings/references/change-scope.md",
+      "title": "Smallest root-cause fix",
+      "status": "active",
+      "since": "2026-10-20",
+      "eval": null,
+      "eval_reason": "Process rule; core shopware-change-scope owns it on trunk.",
+      "core_guide_ids": [],
+      "audience": [
+        "core",
+        "plugin"
+      ],
+      "defer_on_trunk": true
+    },
+    {
+      "id": "REV-029",
+      "skill": "shopware-review-learnings",
+      "file": "skills/shopware-review-learnings/references/change-scope.md",
+      "title": "Apply obvious safe cleanups across the touched file",
+      "status": "active",
+      "since": "2026-10-20",
+      "eval": null,
+      "eval_reason": "Process rule; core shopware-change-scope owns it on trunk.",
+      "core_guide_ids": [],
+      "audience": [
+        "core",
+        "plugin"
+      ],
+      "defer_on_trunk": true
+    },
+    {
+      "id": "REV-030",
+      "skill": "shopware-review-learnings",
+      "file": "skills/shopware-review-learnings/references/change-scope.md",
+      "title": "Mention broader cleanup instead of expanding scope",
+      "status": "active",
+      "since": "2026-10-20",
+      "eval": null,
+      "eval_reason": "Process rule; core shopware-change-scope owns it on trunk.",
+      "core_guide_ids": [],
+      "audience": [
+        "core",
+        "plugin"
+      ],
+      "defer_on_trunk": true
+    },
+    {
+      "id": "REV-031",
+      "skill": "shopware-review-learnings",
+      "file": "skills/shopware-review-learnings/references/change-scope.md",
+      "title": "Add cheap related coverage when touching tests",
+      "status": "active",
+      "since": "2026-10-20",
+      "eval": null,
+      "eval_reason": "Process rule; core shopware-change-scope owns it on trunk.",
+      "core_guide_ids": [],
+      "audience": [
+        "core",
+        "plugin"
+      ],
+      "defer_on_trunk": true
+    },
+    {
+      "id": "REV-032",
+      "skill": "shopware-review-learnings",
+      "file": "skills/shopware-review-learnings/references/change-scope.md",
+      "title": "Do not turn a focused fix into a refactor",
+      "status": "active",
+      "since": "2026-10-20",
+      "eval": null,
+      "eval_reason": "Process rule; core shopware-change-scope owns it on trunk.",
+      "core_guide_ids": [],
+      "audience": [
+        "core",
+        "plugin"
+      ],
+      "defer_on_trunk": true
+    }
+  ]
+}

@@ -350,6 +350,9 @@ This is a curated library, not a dumping ground. A rule is included only if it:
 2. **Value/frequency** — maps to a recurring review finding or high-impact area.
 3. **Single home** — belongs to exactly one skill (enforced by the coverage matrix).
 4. **Testable** — has an eval; if we cannot test it, it is documentation, not a rule.
+   Every rule has a stable ID (`TEST-014`) in [`rules/catalog.json`](rules/catalog.json),
+   which links it to its eval. A rule without an eval records why, so the
+   untested ones are a visible backlog.
 5. **License-clean** — written in our own words. Upstream is inspiration, not a
    dependency. MIT content may be vendored as a pinned, attributed snapshot;
    CC-BY-SA content is rewritten.

@@ -51,7 +51,7 @@ assert columns, data transforms, idempotency.
 
 ## Unit-first placement
 
-If the test **does not need** the kernel, container, DAL, or HTTP: it belongs in
+**TEST-034** If the test **does not need** the kernel, container, DAL, or HTTP: it belongs in
 `tests/unit/`, not `tests/integration/`. Reviewers routinely request moving pure
 logic tests out of the integration suite.
 
@@ -63,51 +63,51 @@ for **Codecov patch coverage** — document why in the class docblock (see
 
 These match PHPStan rules and reviewer expectations on core PRs:
 
-- **`expectExceptionObject` only** — not `expectExceptionMessage()`,
+- **TEST-001** **`expectExceptionObject` only** — not `expectExceptionMessage()`,
   `expectExceptionCode()`, or string matching on exception text.
-- **No `#[Depends]`** on integration tests; never combine `#[Depends]` with
+- **TEST-002** **No `#[Depends]`** on integration tests; never combine `#[Depends]` with
   `#[DataProvider]` (shuffle-unsafe).
-- **No `$this->anything()`** (or other catch-all matchers) in PHPUnit mocks —
+- **TEST-003** **No `$this->anything()`** (or other catch-all matchers) in PHPUnit mocks —
   use `createStub()` / `createMock()` with explicit expectations, or typed
   callbacks. Prefer `createStub()` when no interaction verification is needed.
-- **Deterministic time** — mock `ClockInterface`; avoid `time()` + fuzzy
+- **TEST-004** **Deterministic time** — mock `ClockInterface`; avoid `time()` + fuzzy
   `assertGreaterThanOrEqual($startTime, …)`.
-- **Data providers** — use named **`yield`** cases in unit tests (not `return []`);
+- **TEST-005** **Data providers** — use named **`yield`** cases in unit tests (not `return []`);
   case names describe the scenario; see `test-shape-and-flags.md`.
-- **Feature flags** — unit: `#[DisabledFeatures]` for legacy/off paths (while two
+- **TEST-006** **Feature flags** — unit: `#[DisabledFeatures]` for legacy/off paths (while two
   majors are in flight, disable the **newer** major to assert the older one);
   integration: `Feature::skipTestIfActive()` / `skipTestIfInActive()` —
   **`#[DisabledFeatures]` is rejected at runtime** in the integration suite.
   See reference.
-- **Coverage attrs** — no `#[CoversClass]` on integration tests; production-class
+- **TEST-007** **Coverage attrs** — no `#[CoversClass]` on integration tests; production-class
   `@codeCoverageIgnore` uses FQCN `@see` on trunk (defer to core skill). See reference.
-- **Cross-test docblocks** (test → test) — `@see OtherTest` with `use` import; no FQCN in prose.
-- **`#[Package('…')]`** on every test class — must match the covered class or a
+- **TEST-008** **Cross-test docblocks** (test → test) — `@see OtherTest` with `use` import; no FQCN in prose.
+- **TEST-009** **`#[Package('…')]`** on every test class — must match the covered class or a
   package in the mirrored `src/` tree (`TestPackageMatchRule`).
-- **`@internal`** on every test class docblock.
-- **Exactly one `#[CoversClass]`** per unit/migration test file.
-- **No `ReflectionMethod::invoke`** on private/protected Shopware methods.
-- **Never `exit()` / `die()`** in a test path; `setAutoExit(false)` on
+- **TEST-010** **`@internal`** on every test class docblock.
+- **TEST-011** **Exactly one `#[CoversClass]`** per unit/migration test file.
+- **TEST-012** **No `ReflectionMethod::invoke`** on private/protected Shopware methods.
+- **TEST-013** **Never `exit()` / `die()`** in a test path; `setAutoExit(false)` on
   `Application::run()`.
-- **Stub DAL with `StaticEntityRepository`**, infer the generic (or `::of()`).
-- **`#[CoversNothing]` safeguard tests** — `tests/devops/` on core, not `tests/unit/`.
-- **Events** — no runtime listeners on the shared `event_dispatcher`; observe
+- **TEST-014** **Stub DAL with `StaticEntityRepository`**, infer the generic (or `::of()`).
+- **TEST-015** **`#[CoversNothing]` safeguard tests** — `tests/devops/` on core, not `tests/unit/`.
+- **TEST-016** **Events** — no runtime listeners on the shared `event_dispatcher`; observe
   through `CollectingEventDispatcher` (unit) or `EventHookDispatcher::on()`
   (integration), capture in the hook and assert afterwards, never inside it.
   See `test-shape-and-flags.md`.
 
 ## Rules
 
-- **No real I/O in unit tests** unless the class docblock documents a deliberate
+- **TEST-017** **No real I/O in unit tests** unless the class docblock documents a deliberate
   platform/Codecov exception.
-- **`assertSame` over `assertEquals`** for scalars; **`expectExceptionObject`**
+- **TEST-018** **`assertSame` over `assertEquals`** for scalars; **`expectExceptionObject`**
   over split exception assertions (see reference).
-- **No behavior-mocking Doctrine DBAL `Connection`** in unit tests — stub
+- **TEST-019** **No behavior-mocking Doctrine DBAL `Connection`** in unit tests — stub
   collaborators; cover SQL adapters in integration tests.
-- **Create your own test data** — `Uuid::randomHex()`, `Context::createDefaultContext()`;
+- **TEST-020** **Create your own test data** — `Uuid::randomHex()`, `Context::createDefaultContext()`;
   never depend on pre-existing DB rows in integration tests.
-- **One behavior per test**; arrange-act-assert; cover the public contract.
-- **Deterministic** — no `sleep`, no unordered shared state.
+- **TEST-021** **One behavior per test**; arrange-act-assert; cover the public contract.
+- **TEST-022** **Deterministic** — no `sleep`, no unordered shared state.
 
 ## Platform core extras
 

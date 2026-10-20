@@ -133,7 +133,8 @@ the right one activates. There is no project-level "core vs plugin" choice.
 1. Confirm it passes the five inclusion criteria (see [README](README.md#curation--governance)).
 2. Assign it to exactly one topic row above (or add a new row — never a second owner).
 3. Write the rule in the owning skill, self-contained, in our own words.
-4. Add an eval (`evals/tasks/` for behavior, `skills/<skill>/evals/should-*.md` for activation).
-5. Run `./scripts/validate-skills.sh` — it must pass (no conflicts, within budgets).
+4. Give it a rule ID (`**TEST-035**`) and an entry in [`rules/catalog.json`](rules/catalog.json).
+5. Add an eval (`evals/tasks/` for behavior, `skills/<skill>/evals/should-*.md` for activation).
+6. Run `./scripts/validate-skills.sh` — it must pass (no conflicts, within budgets, rule IDs match the catalog).
 
 See [`AGENTS.md`](AGENTS.md) for repo layout and the full validation workflow.
