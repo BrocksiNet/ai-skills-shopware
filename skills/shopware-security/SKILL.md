@@ -20,9 +20,9 @@ Read only the reference that matches the task or the files it changes:
 <!-- routes:start: generated from routes.json by `node tools/bin/render-routes.ts`; do not edit -->
 | Read | When | Or the change touches |
 | ---- | ---- | --------------------- |
-| [`secrets-and-config.md`](references/secrets-and-config.md) | Code reads a secret, an access key or a config value. | `.env`, `.env.*`, `auth.json`, `.mcp.json`, `sw-access-key\|SW_ACCESS_KEY`, `getenv(\|%env(`, `SystemConfigService`, `[Aa]pp[Ss]ecret\|APP_SECRET\|[Aa]pi[Kk]ey\|API_KEY` |
-| [`api-acl-and-input.md`](references/api-acl-and-input.md) | You add a route, an ACL privilege or user input handling. | `#[Route(`, `_acl`, `_loginRequired`, `addPrivilegeMappingEntry(`, `$request->(get(\|query->\|request->)` |
-| [`apps-and-webhooks.md`](references/apps-and-webhooks.md) | An app or webhook sends or receives data. | `manifest.xml`, `shopware-(shop\|app)-signature`, `<webhook\b`, `hash_hmac(` |
+| [`secrets-and-config.md`](references/secrets-and-config.md) | Code reads a secret, an access key or a config value. | `.env`, `.env.*`, `sw-access-key\|SW_ACCESS_KEY`, … |
+| [`api-acl-and-input.md`](references/api-acl-and-input.md) | You add a route, an ACL privilege or user input handling. | `#[Route(`, … |
+| [`apps-and-webhooks.md`](references/apps-and-webhooks.md) | An app or webhook sends or receives data. | `manifest.xml`, `shopware-(shop\|app)-signature`, … |
 <!-- routes:end -->
 
 ## Hard guardrails

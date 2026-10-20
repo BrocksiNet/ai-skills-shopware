@@ -226,5 +226,5 @@ Read the reference that matches the task or the files it changes:
 <!-- routes:start: generated from routes.json by `node tools/bin/render-routes.ts`; do not edit -->
 | Read | When | Or the change touches |
 | ---- | ---- | --------------------- |
-| [`shopware-dev-hub.md`](references/shopware-dev-hub.md) | You need the hub layout or a command not listed above. | `compose*.y*ml`, `docker-compose*.y*ml`, `Containerfile`, `.devcontainer/**`, `mutagen*.y*ml`, `COMPOSE_(FILE\|PROFILES)=`, `SHOPWARE_(ADMIN_)?ES_ENABLED`, `podman compose`, `sw-dev\b` |
+| [`shopware-dev-hub.md`](references/shopware-dev-hub.md) | You need the hub layout or a command not listed above. | `compose*.y*ml`, `docker-compose*.y*ml`, `COMPOSE_(FILE\|PROFILES)=`, … |
 <!-- routes:end -->

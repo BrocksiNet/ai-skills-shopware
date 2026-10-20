@@ -1,16 +1,4 @@
 {
-  "shopware-change-impact": [
-    "references/impact-review.md"
-  ],
-  "shopware-pr-description": [
-    "references/pr-body-template.md"
-  ],
-  "shopware-pr-review": [
-    "references/review-workflow.md"
-  ],
-  "shopware-review-learnings": [
-    "references/change-scope.md"
-  ],
   "shopware-storefront": [
     "references/twig-and-theme.md"
   ]

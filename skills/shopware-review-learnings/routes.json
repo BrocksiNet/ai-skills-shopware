@@ -1,5 +1,5 @@
 {
-  "$comment": "Which reference to read for a change (plan WP4). paths_any: globs on changed files; anchors_any: regexes on added or removed lines. Render the SKILL.md table with node tools/bin/render-routes.ts.",
+  "$comment": "Which reference to read for a change (plan WP4). paths_any: globs on changed files; anchors_any: regexes on added or removed lines; always: every change; on_demand: the task decides, the diff cannot. Render the SKILL.md table with node tools/bin/render-routes.ts.",
   "routes": [
     {
       "reference": "references/api-aware.md",
@@ -24,7 +24,7 @@
     {
       "reference": "references/change-scope.md",
       "when": "A fix grows beyond the bug.",
-      "always": true
+      "on_demand": true
     }
   ]
 }

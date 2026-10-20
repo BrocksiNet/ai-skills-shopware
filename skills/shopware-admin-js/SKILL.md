@@ -29,9 +29,9 @@ Read only the reference that matches the task or the files it changes:
 <!-- routes:start: generated from routes.json by `node tools/bin/render-routes.ts`; do not edit -->
 | Read | When | Or the change touches |
 | ---- | ---- | --------------------- |
-| [`architecture.md`](references/architecture.md) | You add a module, component override or ACL privilege. | `Resources/app/administration/src/module/**`, `Resources/app/administration/src/**/acl/index.{js,ts}`, `Shopware.Module.register(`, `Shopware.Component.(override\|extend\|register)(`, `addPrivilegeMappingEntry(` |
-| [`testing.md`](references/testing.md) | You write or fix a Jest spec. | `Resources/app/administration/**/*.spec.{js,ts}`, `shallowMount(`, `flushPromises(` |
-| [`flags-and-modern-web.md`](references/flags-and-modern-web.md) | A change needs a feature flag, a deprecation or a modern web API. | `Shopware.Feature.isActive(`, `Shopware.Utils.debug.warn(`, `<dialog[ >]`, `\bpopover=` |
+| [`architecture.md`](references/architecture.md) | You add a module, component override or ACL privilege. | `Resources/app/administration/src/module/**`, `Resources/app/administration/src/**/acl/index.{js,ts}`, `Shopware.Module.register(`, … |
+| [`testing.md`](references/testing.md) | You write or fix a Jest spec. | `Resources/app/administration/**/*.spec.{js,ts}`, `shallowMount(`, … |
+| [`flags-and-modern-web.md`](references/flags-and-modern-web.md) | A change needs a feature flag, a deprecation or a modern web API. | `Shopware.Feature.isActive(`, … |
 <!-- routes:end -->
 
 ## Hard guardrails

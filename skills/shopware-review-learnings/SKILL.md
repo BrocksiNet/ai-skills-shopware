@@ -32,9 +32,9 @@ Detailed, growing lists live in references. Read only the one that matches the c
 <!-- routes:start: generated from routes.json by `node tools/bin/render-routes.ts`; do not edit -->
 | Read | When | Or the change touches |
 | ---- | ---- | --------------------- |
-| [`api-aware.md`](references/api-aware.md) | The code serves Store-API or headless clients. | `StoreApi/**/*.php`, `SalesChannel/**/*Route.php`, `store-api`, `StoreApiResponse`, `extends Abstract[A-Za-z]+Route\b` |
-| [`dal-and-performance.md`](references/dal-and-performance.md) | The code queries the DAL or runs on a hot path. | `new Criteria(`, `->addAssociation(`, `EqualsFilter(`, `->fetch(All\|One\|Associative\|FirstColumn)[A-Za-z]*(` |
-| [`change-scope.md`](references/change-scope.md) | A fix grows beyond the bug. | any change |
+| [`api-aware.md`](references/api-aware.md) | The code serves Store-API or headless clients. | `StoreApi/**/*.php`, `SalesChannel/**/*Route.php`, `store-api`, … |
+| [`dal-and-performance.md`](references/dal-and-performance.md) | The code queries the DAL or runs on a hot path. | `new Criteria(`, … |
+| [`change-scope.md`](references/change-scope.md) | A fix grows beyond the bug. | on demand |
 <!-- routes:end -->
 
 ## Pre-submit (before opening or requesting review)
