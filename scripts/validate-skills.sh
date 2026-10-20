@@ -13,7 +13,7 @@
 #   - duplicate topic ownership in REGISTRY.md coverage matrix
 #   - the same double-quoted trigger phrase claimed by two skills' descriptions
 # Rule IDs:
-#   - scripts/validate-rules.sh (inline IDs vs rules/catalog.json)
+#   - tools/bin/validate-rules.ts (inline IDs vs rules/catalog.json; needs Node 24+)
 set -euo pipefail
 
 ROOT="$(cd "$(dirname "$0")/.." && pwd)"
@@ -111,7 +111,11 @@ fi
 # ---- rule IDs ----------------------------------------------------------------
 echo
 echo "Checking rule IDs"
-"$ROOT/scripts/validate-rules.sh" || err "rule catalog check failed (see above)"
+if command -v node >/dev/null; then
+  node "$ROOT/tools/bin/validate-rules.ts" "$ROOT" || err "rule catalog check failed (see above)"
+else
+  err "node not found; the rule catalog check needs Node 24+"
+fi
 
 echo
 if [ "$errors" -eq 0 ]; then

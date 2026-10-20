@@ -17,6 +17,10 @@ jobs:
     steps:
       - uses: actions/checkout@v5
 
+      - uses: actions/setup-node@v5
+        with:
+          node-version: '24'
+
       - name: Validate skill structure, budgets and conflicts
         run: bash scripts/validate-skills.sh
 
@@ -59,6 +63,29 @@ jobs:
 
       - name: Golden grader tests (no model calls)
         run: bash evals/test-graders.sh
+
+  tools:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+
+      - uses: actions/setup-node@v5
+        with:
+          node-version: '24'
+          cache: npm
+          cache-dependency-path: tools/package-lock.json
+
+      - name: Install repo tooling
+        working-directory: tools
+        run: npm ci
+
+      - name: Type check
+        working-directory: tools
+        run: npm run typecheck
+
+      - name: Unit tests
+        working-directory: tools
+        run: npm test
 
   eval-runner-selftest:
     runs-on: ubuntu-latest

@@ -8,6 +8,7 @@ evals/smoke/smoke.env
 # Node (skills.sh runner helpers, markdown lint, eval AST toolchain)
 node_modules/
 evals/tools/ast/node_modules/
+tools/node_modules/
 .npm/
 
 # OS
