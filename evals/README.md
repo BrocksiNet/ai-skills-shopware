@@ -73,6 +73,9 @@ New graders must ship `fixtures/fail/` as an almost-correct sneak.
   turn the skill set on or off for that workdir, invoke the agent, capture the
   transcript, remove the skill profile, then run `grade.sh`. Exit `0` pass,
   `1` fail, `4` agent error (never counted as a fail), `3` no agent configured.
+  An agent error, such as "Rate limit exceeded" on a free model, is retried
+  `EVAL_AGENT_RETRIES` times (default 2), `EVAL_AGENT_RETRY_WAIT` seconds apart
+  (default 60), on a fresh copy of the fixture. The reason is logged.
 - `runner/ab.sh <task> [repeats]` — run both modes `repeats` times, print the
   comparison and append one JSON line to `$EVAL_RESULTS`
   (default `evals/.results/ab.jsonl`):

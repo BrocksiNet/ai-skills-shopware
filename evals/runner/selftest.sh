@@ -24,6 +24,8 @@ export SKILLS_AGENT_CMD="$HERE/fake-agent.sh"
 export SKILLS_PROFILE_CMD="$HERE/skills-profile.sh"
 export EVAL_RESULTS="$tmp/ab.jsonl"
 export EVAL_AGENT=fake TASK_MODEL=none
+# No retries unless a check asks for them; retries are tested on their own.
+export EVAL_AGENT_RETRIES=0 EVAL_AGENT_RETRY_WAIT=0
 
 failures=0
 check() { # $1 = label ; $2 = expected ; $3 = actual
@@ -56,6 +58,14 @@ rc=0; SKILLS_AGENT_CMD='' "$HERE/run-task.sh" "$TASK_A" on >/dev/null 2>&1 || rc
 check "no agent exits 3" 3 "$rc"
 rc=0; FAKE_AGENT_MODE=skill-helps "$HERE/run-task.sh" "$TASK_A" off >/dev/null 2>&1 || rc=$?
 check "profile off really removes skills" 1 "$rc"
+
+rc=0; EVAL_AGENT_RETRIES=1 FAKE_AGENT_MODE=always-pass FAKE_AGENT_ERROR_ONCE="$tmp/retry-once" \
+  "$HERE/run-task.sh" "$TASK_A" on >/dev/null 2>"$tmp/retry.err" || rc=$?
+check "agent error is retried on a fresh workdir" 0 "$rc"
+check "retry reason is logged" 1 "$(grep -c 'retrying' "$tmp/retry.err" || true)"
+rc=0; EVAL_AGENT_RETRIES=1 FAKE_AGENT_MODE=error "$HERE/run-task.sh" "$TASK_A" on >/dev/null 2>"$tmp/retry.err" || rc=$?
+check "persistent agent error still exits 4" 4 "$rc"
+check "final error names the reason" 1 "$(grep -c 'simulated API error; not graded' "$tmp/retry.err" || true)"
 
 echo "skills-profile.sh"
 wd="$tmp/profile"; mkdir -p "$wd"

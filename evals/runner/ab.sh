@@ -78,7 +78,9 @@ run_n() {
   for i in $(seq 1 "$REPEATS"); do
     rc=0
     log="$logs/$mode-$i"
-    EVAL_SKILLS_LOG="$log" "$HERE/run-task.sh" "$TASK" "$mode" >/dev/null 2>&1 || rc=$?
+    EVAL_SKILLS_LOG="$log" "$HERE/run-task.sh" "$TASK" "$mode" >/dev/null 2>"$logs/$mode-$i.err" || rc=$?
+    # Agent errors and retries go to stderr (CI log); stdout stays the summary.
+    grep -h -- '----- agent error' "$logs/$mode-$i.err" >&2 || true
     case "$rc" in
       0) pass=$((pass + 1)) ;;
       1) ;;
