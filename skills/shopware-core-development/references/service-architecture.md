@@ -7,13 +7,13 @@ migrations).
 
 ## Hexagonal layout
 
-- Keep **application/domain services hexagonal**: controllers, CLI commands,
+- **CORE-053** Keep **application/domain services hexagonal**: controllers, CLI commands,
   subscribers, and handlers translate infrastructure (`Request`, IO, database,
   filesystem, HTTP) into plain inputs before calling services.
 - Services must **not** perform direct infrastructure work or depend on framework
   objects. Depend on narrow abstractions: repositories, filesystem interfaces,
   HTTP clients, gateways.
-- Where code legitimately touches the local filesystem, inject Symfony
+- **CORE-054** Where code legitimately touches the local filesystem, inject Symfony
   `Filesystem` instead of raw `mkdir`, `file_put_contents`, `copy`, `unlink`,
   or `rmdir`. It throws `IOException` instead of warnings plus `false`, handles
   recursive operations, and stays mockable.
@@ -32,28 +32,28 @@ migrations).
   enough for implementation details.
 - A new public API whose design may still change gets
   `@experimental stableVersion:v6.X.0` instead of shipping as stable surface.
-- Do **not** repeat `@internal` on constructors or methods inside an
+- **CORE-055** Do **not** repeat `@internal` on constructors or methods inside an
   `@internal` class.
 
 ## Extension vs new abstractions
 
-- Prefer **existing Shopware extension mechanisms** over new provider interfaces
+- **CORE-056** Prefer **existing Shopware extension mechanisms** over new provider interfaces
   when they already express the contract: Twig inheritance, DAL entities, Admin
   API routes, explicit Twig blocks.
 
 ## DTOs and value objects
 
-- Be **conservative with DTOs/value objects**. Add one only when it expresses a
+- **CORE-057** Be **conservative with DTOs/value objects**. Add one only when it expresses a
   meaningful domain concept, crosses a real boundary, or simplifies a public
   contract.
 - Prefer scalars or arrays for simple internal data; do **not** create DTOs solely
   to model private handoffs inside one class.
-- For transparent struct-style value objects, prefer **public readonly properties**
+- **CORE-058** For transparent struct-style value objects, prefer **public readonly properties**
   over private properties plus trivial getters.
 
 ## Public BC surface
 
-For new feature designs, explicitly separate the **BC-promised public surface**
+**CORE-059** For new feature designs, explicitly separate the **BC-promised public surface**
 from internal implementation:
 
 - Document public REST/Admin/Store API contracts, DAL entities, template context,

@@ -10,6 +10,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- "Already enforced by CI (do not repeat)" sections in `shopware-testing`,
+  `shopware-core-development`, `shopware-plugin-development`,
+  `shopware-admin-js` and `shopware-review-learnings`. Each bullet names the
+  CI check, what it catches and what it misses, so reviews flag only the
+  gaps. `tools/bin/render-enforced.ts` generates them from the new
+  `trunk.enforced_by` objects in `rules/catalog.json`; the validator fails
+  on drift.
+- Rule IDs for `shopware-core-development` (CORE-001 to CORE-062) and
+  `shopware-admin-js` (ADM-001 to ADM-038).
 - `tools/`: repo tooling in TypeScript, run by Node 24 without a build step,
   type-checked with `tsc` and tested with `node --test` in a new `tools` CI
   job. The rule validator below lives there and also checks catalog field

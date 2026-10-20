@@ -78,28 +78,28 @@ not tagged yet.
 
 | ID | Rule (from PR) | Target | Eval |
 | -- | -------------- | ------ | ---- |
-| — | Hexagonal services: infra at edge; services unit-testable without I/O | `shopware-architecture` + `service-architecture.md` | defer-on-trunk / **done** → `business-logic-in-controller` |
-| — | `@internal` adapters; `@final` on supported non-extension classes | same + `deprecations.md` | defer-on-trunk |
-| — | Conservative DTOs; public readonly value objects for simple structs | `service-architecture.md` | defer-on-trunk |
-| — | Public BC surface vs internal controllers/subscribers/loaders | same | defer-on-trunk |
+| CORE-053 | Hexagonal services: infra at edge; services unit-testable without I/O | `shopware-architecture` + `service-architecture.md` | defer-on-trunk / **done** → `business-logic-in-controller` |
+| CORE-033 | `@internal` adapters; `@final` on supported non-extension classes | same + `deprecations.md` | defer-on-trunk |
+| CORE-057, CORE-058 | Conservative DTOs; public readonly value objects for simple structs | `service-architecture.md` | defer-on-trunk |
+| CORE-059 | Public BC surface vs internal controllers/subscribers/loaders | same | defer-on-trunk |
 | — | Bounded DAL reads (setLimit) | `shopware-architecture` → `dal-contracts.md` | **done** → `dal-search-without-limit` |
 | — | Repository not Connection for entity reads | `dal-contracts.md` | **done** → `no-dal-connection-for-entity-read` |
-| — | New Admin/Store API routes → OpenAPI JSON under `Schema/.../paths` | `api-schema.md` (core) | skip (fixture-heavy) |
+| CORE-008 | New Admin/Store API routes → OpenAPI JSON under `Schema/.../paths` | `api-schema.md` (core) | skip (fixture-heavy) |
 | — | New core Store API routes use extension events, not a new abstract route class | `shopware-architecture` → `extension-mechanisms.md` | **done** → `store-api-route-extension-event` |
 | PLG-011 | Plugin/extension OpenAPI for custom routes | `shopware-plugin-development` → `api-contracts.md` | **done** → `store-api-openapi-required` |
-| — | Run `ApiRoutesHaveASchemaTest` for new/changed core API routes | `api-schema.md` | skip |
-| — | `Feature::silent()` when core must call deprecated API for BC | `deprecations.md` | **done** → `deprecation-silent-wrapper` |
-| — | Plan major breaks with `BCChange` attributes, not `@deprecated reason:*` | `deprecations.md` | **done** → `bc-change-not-deprecated-reason` |
-| — | Do not `<deprecated>` a DI service id core still references | `deprecations.md` | **done** (documented) |
-| — | Symfony `Filesystem` instead of raw PHP file functions | `service-architecture.md` | **done** → `symfony-filesystem-over-raw-php` |
-| — | Progressive enhancement / dual path behind flag | `shopware-architecture` → `progressive-enhancement.md` | **done** → `core-http-client-behind-flag` |
-| — | No new code paths calling deprecated APIs; move callers to replacement | `deprecations.md` | defer-on-trunk |
-| — | Inline `// @deprecated tag:` for private cleanup (not method `@deprecated`) | `deprecations.md` | defer-on-trunk |
-| — | Legacy tests for deprecated APIs; removable with flag/deprecation | `deprecations.md` | defer-on-trunk |
-| — | Migration class/file/`getCreationTimestamp()` = exact current Unix timestamp | `platform-architecture.md` | **done** → `migration-timestamp-format` |
-| — | No tests for empty/no-op `updateDestructive()` | `platform-architecture.md` | defer-on-trunk |
-| — | Release docs: external perspective; separate API vs Core sections | `release-notes-and-adr.md` | **done** (documented) |
-| — | `UPGRADE` = must third-party code change?; past tense; no repeated headings | `release-notes-and-adr.md` | **done** → `upgrade-entry-past-tense`, `release-info-no-duplicate-heading` |
+| CORE-009 | Run `ApiRoutesHaveASchemaTest` for new/changed core API routes | `api-schema.md` | skip |
+| CORE-020 | `Feature::silent()` when core must call deprecated API for BC | `deprecations.md` | **done** → `deprecation-silent-wrapper` |
+| CORE-013 | Plan major breaks with `BCChange` attributes, not `@deprecated reason:*` | `deprecations.md` | **done** → `bc-change-not-deprecated-reason` |
+| CORE-025 | Do not `<deprecated>` a DI service id core still references | `deprecations.md` | **done** (documented) |
+| CORE-054 | Symfony `Filesystem` instead of raw PHP file functions | `service-architecture.md` | **done** → `symfony-filesystem-over-raw-php` |
+| CORE-007 | Progressive enhancement / dual path behind flag | `shopware-architecture` → `progressive-enhancement.md` | **done** → `core-http-client-behind-flag` |
+| CORE-021 | No new code paths calling deprecated APIs; move callers to replacement | `deprecations.md` | defer-on-trunk |
+| CORE-023 | Inline `// @deprecated tag:` for private cleanup (not method `@deprecated`) | `deprecations.md` | defer-on-trunk |
+| CORE-024 | Legacy tests for deprecated APIs; removable with flag/deprecation | `deprecations.md` | defer-on-trunk |
+| CORE-037 | Migration class/file/`getCreationTimestamp()` = exact current Unix timestamp | `platform-architecture.md` | **done** → `migration-timestamp-format` |
+| CORE-040 | No tests for empty/no-op `updateDestructive()` | `platform-architecture.md` | defer-on-trunk |
+| CORE-010 | Release docs: external perspective; separate API vs Core sections | `release-notes-and-adr.md` | **done** (documented) |
+| CORE-041, CORE-042, CORE-048 | `UPGRADE` = must third-party code change?; past tense; no repeated headings | `release-notes-and-adr.md` | **done** → `upgrade-entry-past-tense`, `release-info-no-duplicate-heading` |
 
 ## Security (`shopware-security`) — ours only
 

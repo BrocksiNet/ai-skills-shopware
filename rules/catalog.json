@@ -31,7 +31,18 @@
         "core",
         "plugin"
       ],
-      "defer_on_trunk": false
+      "defer_on_trunk": false,
+      "trunk": {
+        "enforced_by": [
+          {
+            "tool": "NoExpectExceptionMessageRule",
+            "kind": "phpstan",
+            "catches": "reports `expectExceptionMessage()` in a test case",
+            "misses": "`expectExceptionMessageMatches()`, `expectExceptionCode()`, calls in traits or helpers, and it does not ask for `expectExceptionObject()`",
+            "trunk_only": true
+          }
+        ]
+      }
     },
     {
       "id": "TEST-002",
@@ -47,7 +58,18 @@
         "core",
         "plugin"
       ],
-      "defer_on_trunk": false
+      "defer_on_trunk": false,
+      "trunk": {
+        "enforced_by": [
+          {
+            "tool": "NoDependsWithDataProviderRule",
+            "kind": "phpstan",
+            "catches": "reports a test method with both `#[Depends]` and `#[DataProvider]`",
+            "misses": "`#[Depends]` on its own and `@depends` annotations",
+            "trunk_only": true
+          }
+        ]
+      }
     },
     {
       "id": "TEST-003",
@@ -63,7 +85,18 @@
         "core",
         "plugin"
       ],
-      "defer_on_trunk": false
+      "defer_on_trunk": false,
+      "trunk": {
+        "enforced_by": [
+          {
+            "tool": "NoAnyInvocationMatcherRule",
+            "kind": "phpstan",
+            "catches": "reports `->expects($this->any())` on a mock",
+            "misses": "`$this->anything()` inside `with()` and other constraints",
+            "trunk_only": true
+          }
+        ]
+      }
     },
     {
       "id": "TEST-004",
@@ -106,7 +139,13 @@
       "eval": "unit-test-disable-newer-major",
       "trunk": {
         "enforced_by": [
-          "Integration test runner rejects #[DisabledFeatures] (#18350)"
+          {
+            "tool": "TestPreparationStartedSubscriber",
+            "kind": "phpunit",
+            "catches": "fails the run when an integration test method or its class carries `#[DisabledFeatures]`",
+            "misses": "the attribute on a parent class or trait, and plugin test namespaces",
+            "trunk_only": true
+          }
         ]
       },
       "core_guide_ids": [],
@@ -128,7 +167,18 @@
       "audience": [
         "core"
       ],
-      "defer_on_trunk": false
+      "defer_on_trunk": false,
+      "trunk": {
+        "enforced_by": [
+          {
+            "tool": "CoversAttributeRule",
+            "kind": "phpstan",
+            "catches": "reports `#[CoversClass]`, `#[CoversFunction]` or `#[CoversNothing]` outside unit and migration tests, and unit tests without a covers attribute",
+            "misses": "a covers attribute that is not first in its `#[...]` group, such as `#[Package('x'), CoversClass(Foo::class)]`",
+            "trunk_only": true
+          }
+        ]
+      }
     },
     {
       "id": "TEST-008",
@@ -154,7 +204,20 @@
       "eval": "test-class-has-package-attribute",
       "trunk": {
         "enforced_by": [
-          "PHPStan TestPackageMatchRule"
+          {
+            "tool": "TestPackageMatchRule",
+            "kind": "phpstan",
+            "catches": "reports a unit test whose `#[Package]` differs from the covered class, and an integration test whose package occurs nowhere in the mirrored `src/` folder",
+            "misses": "tests without `#[Package]` or with a non-literal value, and covered classes without `#[Package]`",
+            "trunk_only": true
+          },
+          {
+            "tool": "MissingPackageAttributeInTests",
+            "kind": "danger",
+            "catches": "fails a PR that adds a `*Test.php` class without `#[Package(`",
+            "misses": "modified test files, and a `#[Package(` that only appears in a comment",
+            "trunk_only": true
+          }
         ]
       },
       "core_guide_ids": [],
@@ -175,7 +238,18 @@
       "audience": [
         "core"
       ],
-      "defer_on_trunk": false
+      "defer_on_trunk": false,
+      "trunk": {
+        "enforced_by": [
+          {
+            "tool": "InternalClassRule",
+            "kind": "phpstan",
+            "catches": "reports a test class without `@internal` in its docblock",
+            "misses": "a docblock that only mentions `@internal` in prose, and test classes outside test namespaces whose parent is not `TestCase`",
+            "trunk_only": true
+          }
+        ]
+      }
     },
     {
       "id": "TEST-011",
@@ -187,7 +261,13 @@
       "eval": "one-covers-class-per-file",
       "trunk": {
         "enforced_by": [
-          "Danger one-covers-class check"
+          {
+            "tool": "SingleCoversClassInTests",
+            "kind": "danger",
+            "catches": "fails a PR that adds or changes a test file with more than one `CoversClass(`",
+            "misses": "extra `#[CoversTrait]` and `#[CoversFunction]` attributes, and it counts `CoversClass(` in comments",
+            "trunk_only": true
+          }
         ]
       },
       "core_guide_ids": [],
@@ -209,7 +289,18 @@
         "core",
         "plugin"
       ],
-      "defer_on_trunk": false
+      "defer_on_trunk": false,
+      "trunk": {
+        "enforced_by": [
+          {
+            "tool": "NoReflectionOnNonPublicMethodsRule",
+            "kind": "phpstan",
+            "catches": "reports `ReflectionMethod` access to a non-public Shopware method, and any `setAccessible()`",
+            "misses": "`ReflectionProperty`, `Closure::bind`, method names that are not constant strings, and a `ReflectionClass` built from a variable",
+            "trunk_only": true
+          }
+        ]
+      }
     },
     {
       "id": "TEST-013",
@@ -221,7 +312,13 @@
       "eval": "test-no-exit-die",
       "trunk": {
         "enforced_by": [
-          "CompletionGuard (trunk)"
+          {
+            "tool": "CompletionGuard",
+            "kind": "phpunit",
+            "catches": "fails the run when code under test calls `exit()` or `die()`",
+            "misses": "which call exited, exits before PHPUnit starts executing, and projects that do not bootstrap through `TestBootstrapper`",
+            "trunk_only": false
+          }
         ]
       },
       "core_guide_ids": [],
@@ -272,8 +369,20 @@
         "source": "coding-guidelines/core/unit-tests.md#observing-events-in-tests",
         "commit": "f2bf3794",
         "enforced_by": [
-          "PHPStan NoAssertionInEventHookRule",
-          "PHPStan NoRuntimeListenerOnSharedEventDispatcherRule"
+          {
+            "tool": "NoAssertionInEventHookRule",
+            "kind": "phpstan",
+            "catches": "reports assertions inside a hook passed to `EventHookDispatcher::on()` or a subscriber passed to `subscribe()`",
+            "misses": "hooks passed as variables or first-class callables, and listeners added to a plain dispatcher",
+            "trunk_only": true
+          },
+          {
+            "tool": "NoRuntimeListenerOnSharedEventDispatcherRule",
+            "kind": "phpstan",
+            "catches": "reports `addListener()`, `addSubscriber()` and their `remove*` twins on the shared dispatcher in integration tests",
+            "misses": "unit tests, and a dispatcher whose native type is the concrete `EventDispatcher`",
+            "trunk_only": true
+          }
         ]
       },
       "core_guide_ids": [],
@@ -529,7 +638,13 @@
       "eval": "code-coverage-ignore-passthrough",
       "trunk": {
         "enforced_by": [
-          "PHPStan CodeCoverageIgnoreEvaluationRule"
+          {
+            "tool": "CodeCoverageIgnoreEvaluationRule",
+            "kind": "phpstan",
+            "catches": "reports `@codeCoverageIgnore` on a class or method that branches, loops, throws or mutates, unless `@see` points at an integration or devops test",
+            "misses": "`??`, `&&`, `||`, calls made for their effect, traits and enums, and `@codeCoverageIgnoreStart`/`End` blocks",
+            "trunk_only": true
+          }
         ]
       },
       "core_guide_ids": [],
@@ -596,7 +711,18 @@
       "audience": [
         "plugin"
       ],
-      "defer_on_trunk": false
+      "defer_on_trunk": false,
+      "trunk": {
+        "enforced_by": [
+          {
+            "tool": "phpstan/phpstan-deprecation-rules",
+            "kind": "phpstan",
+            "catches": "reports uses of `@deprecated` classes and methods, such as a subscriber for a `*CacheTagsEvent`, when the plugin installs it",
+            "misses": "projects that do not install it, and deprecations announced only in UPGRADE notes",
+            "trunk_only": false
+          }
+        ]
+      }
     },
     {
       "id": "PLG-003",
@@ -1242,7 +1368,13 @@
       "eval_reason": "Caught by ECS.",
       "trunk": {
         "enforced_by": [
-          "ECS"
+          {
+            "tool": "fully_qualified_strict_types",
+            "kind": "php-cs-fixer",
+            "catches": "rewrites namespaced FQCNs in code and in `@param`, `@return`, `@var` and `@throws` tags to `use` imports",
+            "misses": "`@see` tags, global classes such as `\\Exception`, and class names inside strings",
+            "trunk_only": true
+          }
         ]
       },
       "core_guide_ids": [],
@@ -1496,6 +1628,1681 @@
       "audience": [
         "core",
         "plugin"
+      ],
+      "defer_on_trunk": true
+    },
+    {
+      "id": "CORE-001",
+      "skill": "shopware-core-development",
+      "file": "skills/shopware-core-development/SKILL.md",
+      "title": "Never raise the PHPStan level without committing the regenerated baseline",
+      "status": "active",
+      "since": "2026-10-20",
+      "eval": "phpstan-baseline-guardrail",
+      "core_guide_ids": [],
+      "audience": [
+        "core"
+      ],
+      "defer_on_trunk": false
+    },
+    {
+      "id": "CORE-002",
+      "skill": "shopware-core-development",
+      "file": "skills/shopware-core-development/SKILL.md",
+      "title": "No public-API removal or change without a deprecation cycle",
+      "status": "active",
+      "since": "2026-10-20",
+      "eval": null,
+      "eval_reason": "Documented only; no eval yet.",
+      "core_guide_ids": [],
+      "audience": [
+        "core"
+      ],
+      "defer_on_trunk": false
+    },
+    {
+      "id": "CORE-003",
+      "skill": "shopware-core-development",
+      "file": "skills/shopware-core-development/SKILL.md",
+      "title": "Developer-facing changes get a RELEASE_INFO entry; breaks get UPGRADE",
+      "status": "active",
+      "since": "2026-10-20",
+      "eval": null,
+      "eval_reason": "Documented only; no eval yet.",
+      "core_guide_ids": [],
+      "audience": [
+        "core"
+      ],
+      "defer_on_trunk": false
+    },
+    {
+      "id": "CORE-004",
+      "skill": "shopware-core-development",
+      "file": "skills/shopware-core-development/SKILL.md",
+      "title": "Never edit generated files; regenerate them",
+      "status": "active",
+      "since": "2026-10-20",
+      "eval": null,
+      "eval_reason": "Documented only; no eval yet.",
+      "core_guide_ids": [],
+      "audience": [
+        "core"
+      ],
+      "defer_on_trunk": false
+    },
+    {
+      "id": "CORE-005",
+      "skill": "shopware-core-development",
+      "file": "skills/shopware-core-development/SKILL.md",
+      "title": "Scoped conventional commits",
+      "status": "active",
+      "since": "2026-10-20",
+      "eval": null,
+      "eval_reason": "Process rule; not gradable from a diff.",
+      "core_guide_ids": [],
+      "audience": [
+        "core"
+      ],
+      "defer_on_trunk": false
+    },
+    {
+      "id": "CORE-006",
+      "skill": "shopware-core-development",
+      "file": "skills/shopware-core-development/SKILL.md",
+      "title": "Tests ship with the change, not as a follow-up",
+      "status": "active",
+      "since": "2026-10-20",
+      "eval": null,
+      "eval_reason": "Documented only; no eval yet.",
+      "core_guide_ids": [],
+      "audience": [
+        "core"
+      ],
+      "defer_on_trunk": false
+    },
+    {
+      "id": "CORE-007",
+      "skill": "shopware-core-development",
+      "file": "skills/shopware-core-development/SKILL.md",
+      "title": "Modernize behind Feature::isActive() and keep the legacy path until the major",
+      "status": "active",
+      "since": "2026-10-20",
+      "eval": "core-http-client-behind-flag",
+      "core_guide_ids": [],
+      "audience": [
+        "core"
+      ],
+      "defer_on_trunk": false
+    },
+    {
+      "id": "CORE-008",
+      "skill": "shopware-core-development",
+      "file": "skills/shopware-core-development/references/api-schema.md",
+      "title": "New core Admin/Store API routes ship an OpenAPI JSON schema",
+      "status": "active",
+      "since": "2026-10-20",
+      "eval": null,
+      "eval_reason": "Style rule; core shopware-php-code owns it on trunk.",
+      "core_guide_ids": [],
+      "audience": [
+        "core"
+      ],
+      "defer_on_trunk": true,
+      "trunk": {
+        "enforced_by": [
+          {
+            "tool": "ApiRoutesHaveASchemaTest",
+            "kind": "test",
+            "catches": "fails when a core Store API route has no path in the generated OpenAPI schema, or a schema path has no route",
+            "misses": "routes of Storefront or plugin controllers, routes marked `openapi: false`, request and response shapes that do not match the code, and Admin API gaps already in its snapshot",
+            "trunk_only": true
+          }
+        ]
+      }
+    },
+    {
+      "id": "CORE-009",
+      "skill": "shopware-core-development",
+      "file": "skills/shopware-core-development/references/api-schema.md",
+      "title": "Cover new or changed core API routes with ApiRoutesHaveASchemaTest",
+      "status": "active",
+      "since": "2026-10-20",
+      "eval": null,
+      "eval_reason": "Process rule; core shopware-php-code owns it on trunk.",
+      "core_guide_ids": [],
+      "audience": [
+        "core"
+      ],
+      "defer_on_trunk": true
+    },
+    {
+      "id": "CORE-010",
+      "skill": "shopware-core-development",
+      "file": "skills/shopware-core-development/references/api-schema.md",
+      "title": "Document API contract changes from the external consumer's view",
+      "status": "active",
+      "since": "2026-10-20",
+      "eval": null,
+      "eval_reason": "Documented only; no eval yet.",
+      "core_guide_ids": [],
+      "audience": [
+        "core"
+      ],
+      "defer_on_trunk": false
+    },
+    {
+      "id": "CORE-011",
+      "skill": "shopware-core-development",
+      "file": "skills/shopware-core-development/references/deprecations.md",
+      "title": "Pick one deprecation tool per situation; do not mix them",
+      "status": "active",
+      "since": "2026-10-20",
+      "eval": null,
+      "eval_reason": "Documented only; no eval yet.",
+      "core_guide_ids": [],
+      "audience": [
+        "core"
+      ],
+      "defer_on_trunk": false
+    },
+    {
+      "id": "CORE-012",
+      "skill": "shopware-core-development",
+      "file": "skills/shopware-core-development/references/deprecations.md",
+      "title": "Discovery methods return a neutral value once the removal flag is active",
+      "status": "active",
+      "since": "2026-10-20",
+      "eval": null,
+      "eval_reason": "Style rule; core shopware-php-code owns it on trunk.",
+      "core_guide_ids": [],
+      "audience": [
+        "core"
+      ],
+      "defer_on_trunk": true,
+      "trunk": {
+        "enforced_by": [
+          {
+            "tool": "DeprecatedMethodsThrowDeprecationRule",
+            "kind": "phpstan",
+            "catches": "reports discovery methods such as `getSubscribedEvents()` of a deprecated class that do not return a literal `[]` or `null` when the removal flag is active",
+            "misses": "discovery methods it does not know, and values computed in other methods",
+            "trunk_only": true
+          }
+        ]
+      }
+    },
+    {
+      "id": "CORE-013",
+      "skill": "shopware-core-development",
+      "file": "skills/shopware-core-development/references/deprecations.md",
+      "title": "Plan major breaks with BCChange attributes, not @deprecated reason:*",
+      "status": "active",
+      "since": "2026-10-20",
+      "eval": "bc-change-not-deprecated-reason",
+      "core_guide_ids": [],
+      "audience": [
+        "core"
+      ],
+      "defer_on_trunk": false,
+      "trunk": {
+        "enforced_by": [
+          {
+            "tool": "NoBCPlanningDeprecationRule",
+            "kind": "phpstan",
+            "catches": "reports `@deprecated` docblocks on classes, methods, properties and constants that contain a `reason:*` planning token",
+            "misses": "free-text planning notes without those tokens, and docblocks on functions or enum cases",
+            "trunk_only": true
+          }
+        ]
+      }
+    },
+    {
+      "id": "CORE-014",
+      "skill": "shopware-core-development",
+      "file": "skills/shopware-core-development/references/deprecations.md",
+      "title": "Pick the most specific BCChange attribute",
+      "status": "active",
+      "since": "2026-10-20",
+      "eval": null,
+      "eval_reason": "Documented only; no eval yet.",
+      "core_guide_ids": [],
+      "audience": [
+        "core"
+      ],
+      "defer_on_trunk": false
+    },
+    {
+      "id": "CORE-015",
+      "skill": "shopware-core-development",
+      "file": "skills/shopware-core-development/references/deprecations.md",
+      "title": "BCChange attribute values stay machine-readable",
+      "status": "active",
+      "since": "2026-10-20",
+      "eval": null,
+      "eval_reason": "Documented only; no eval yet.",
+      "core_guide_ids": [],
+      "audience": [
+        "core"
+      ],
+      "defer_on_trunk": false,
+      "trunk": {
+        "enforced_by": [
+          {
+            "tool": "BCChangeAttributeUsageRule",
+            "kind": "phpstan",
+            "catches": "reports `BCChange` attributes with a bad version, or that describe a change that is already true or not structurally possible",
+            "misses": "an attribute that is valid but does not describe the change that is actually planned",
+            "trunk_only": true
+          }
+        ]
+      }
+    },
+    {
+      "id": "CORE-016",
+      "skill": "shopware-core-development",
+      "file": "skills/shopware-core-development/references/deprecations.md",
+      "title": "Trigger a deprecation only for the incompatible legacy use",
+      "status": "active",
+      "since": "2026-10-20",
+      "eval": null,
+      "eval_reason": "Documented only; no eval yet.",
+      "core_guide_ids": [],
+      "audience": [
+        "core"
+      ],
+      "defer_on_trunk": false
+    },
+    {
+      "id": "CORE-017",
+      "skill": "shopware-core-development",
+      "file": "skills/shopware-core-development/references/deprecations.md",
+      "title": "@deprecated tag:vX.Y.Z always names the replacement",
+      "status": "active",
+      "since": "2026-10-20",
+      "eval": null,
+      "eval_reason": "Documented only; no eval yet.",
+      "core_guide_ids": [],
+      "audience": [
+        "core"
+      ],
+      "defer_on_trunk": false,
+      "trunk": {
+        "enforced_by": [
+          {
+            "tool": "AnnotationTagTest",
+            "kind": "test",
+            "catches": "fails when an `@deprecated` in `src/` or `tests/` lacks a valid `tag:` or `manifest:` version, or names a future version",
+            "misses": "a missing reason or replacement, and whitelisted paths such as `DevOps/StaticAnalyze`",
+            "trunk_only": true
+          }
+        ]
+      }
+    },
+    {
+      "id": "CORE-018",
+      "skill": "shopware-core-development",
+      "file": "skills/shopware-core-development/references/deprecations.md",
+      "title": "Keep both paths behind Feature::isActive() until the major",
+      "status": "active",
+      "since": "2026-10-20",
+      "eval": null,
+      "eval_reason": "Documented only; no eval yet.",
+      "core_guide_ids": [],
+      "audience": [
+        "core"
+      ],
+      "defer_on_trunk": false
+    },
+    {
+      "id": "CORE-019",
+      "skill": "shopware-core-development",
+      "file": "skills/shopware-core-development/references/deprecations.md",
+      "title": "Deprecate the whole public surface",
+      "status": "active",
+      "since": "2026-10-20",
+      "eval": null,
+      "eval_reason": "Documented only; no eval yet.",
+      "core_guide_ids": [],
+      "audience": [
+        "core"
+      ],
+      "defer_on_trunk": false
+    },
+    {
+      "id": "CORE-020",
+      "skill": "shopware-core-development",
+      "file": "skills/shopware-core-development/references/deprecations.md",
+      "title": "Core calls deprecated code for BC inside Feature::silent()",
+      "status": "active",
+      "since": "2026-10-20",
+      "eval": "deprecation-silent-wrapper",
+      "core_guide_ids": [],
+      "audience": [
+        "core"
+      ],
+      "defer_on_trunk": false
+    },
+    {
+      "id": "CORE-021",
+      "skill": "shopware-core-development",
+      "file": "skills/shopware-core-development/references/deprecations.md",
+      "title": "No new code paths that call deprecated functionality",
+      "status": "active",
+      "since": "2026-10-20",
+      "eval": null,
+      "eval_reason": "Style rule; core shopware-php-code owns it on trunk.",
+      "core_guide_ids": [],
+      "audience": [
+        "core"
+      ],
+      "defer_on_trunk": true
+    },
+    {
+      "id": "CORE-022",
+      "skill": "shopware-core-development",
+      "file": "skills/shopware-core-development/references/deprecations.md",
+      "title": "@deprecated on executable PHP pairs with triggerDeprecationOrThrow()",
+      "status": "active",
+      "since": "2026-10-20",
+      "eval": null,
+      "eval_reason": "Documented only; no eval yet.",
+      "core_guide_ids": [],
+      "audience": [
+        "core"
+      ],
+      "defer_on_trunk": false,
+      "trunk": {
+        "enforced_by": [
+          {
+            "tool": "DeprecatedMethodsThrowDeprecationRule",
+            "kind": "phpstan",
+            "catches": "reports public and protected methods of `@deprecated` classes, and `@deprecated` methods, whose body lacks `Feature::triggerDeprecationOrThrow(`",
+            "misses": "private methods, a wrong flag argument, a call that is commented out, and entity or collection classes",
+            "trunk_only": true
+          }
+        ]
+      }
+    },
+    {
+      "id": "CORE-023",
+      "skill": "shopware-core-development",
+      "file": "skills/shopware-core-development/references/deprecations.md",
+      "title": "Private cleanup uses an inline // @deprecated tag: comment",
+      "status": "active",
+      "since": "2026-10-20",
+      "eval": null,
+      "eval_reason": "Style rule; core shopware-php-code owns it on trunk.",
+      "core_guide_ids": [],
+      "audience": [
+        "core"
+      ],
+      "defer_on_trunk": true
+    },
+    {
+      "id": "CORE-024",
+      "skill": "shopware-core-development",
+      "file": "skills/shopware-core-development/references/deprecations.md",
+      "title": "Keep dedicated legacy tests that are removable with the deprecation",
+      "status": "active",
+      "since": "2026-10-20",
+      "eval": null,
+      "eval_reason": "Style rule; core shopware-php-code owns it on trunk.",
+      "core_guide_ids": [],
+      "audience": [
+        "core"
+      ],
+      "defer_on_trunk": true
+    },
+    {
+      "id": "CORE-025",
+      "skill": "shopware-core-development",
+      "file": "skills/shopware-core-development/references/deprecations.md",
+      "title": "No DI <deprecated> on a service id core still references",
+      "status": "active",
+      "since": "2026-10-20",
+      "eval": "di-tag-not-while-referenced",
+      "core_guide_ids": [],
+      "audience": [
+        "core"
+      ],
+      "defer_on_trunk": false
+    },
+    {
+      "id": "CORE-026",
+      "skill": "shopware-core-development",
+      "file": "skills/shopware-core-development/references/deprecations.md",
+      "title": "Treat contract changes as breaking; a newly added @internal is no exemption",
+      "status": "active",
+      "since": "2026-10-20",
+      "eval": null,
+      "eval_reason": "Documented only; no eval yet.",
+      "core_guide_ids": [],
+      "audience": [
+        "core"
+      ],
+      "defer_on_trunk": false
+    },
+    {
+      "id": "CORE-027",
+      "skill": "shopware-core-development",
+      "file": "skills/shopware-core-development/references/modernization-and-flags.md",
+      "title": "An observable implementation swap gets a deprecation and release note",
+      "status": "active",
+      "since": "2026-10-20",
+      "eval": null,
+      "eval_reason": "Documented only; no eval yet.",
+      "core_guide_ids": [],
+      "audience": [
+        "core"
+      ],
+      "defer_on_trunk": false
+    },
+    {
+      "id": "CORE-028",
+      "skill": "shopware-core-development",
+      "file": "skills/shopware-core-development/references/modernization-and-flags.md",
+      "title": "Do not copy legacy workarounds into new core code",
+      "status": "active",
+      "since": "2026-10-20",
+      "eval": null,
+      "eval_reason": "Documented only; no eval yet.",
+      "core_guide_ids": [],
+      "audience": [
+        "core"
+      ],
+      "defer_on_trunk": false
+    },
+    {
+      "id": "CORE-029",
+      "skill": "shopware-core-development",
+      "file": "skills/shopware-core-development/references/platform-architecture.md",
+      "title": "Register services in the bundle that owns the domain",
+      "status": "active",
+      "since": "2026-10-20",
+      "eval": null,
+      "eval_reason": "Documented only; no eval yet.",
+      "core_guide_ids": [],
+      "audience": [
+        "core"
+      ],
+      "defer_on_trunk": false
+    },
+    {
+      "id": "CORE-030",
+      "skill": "shopware-core-development",
+      "file": "skills/shopware-core-development/references/platform-architecture.md",
+      "title": "Core does not depend on Storefront or Administration",
+      "status": "active",
+      "since": "2026-10-20",
+      "eval": null,
+      "eval_reason": "Documented only; no eval yet.",
+      "core_guide_ids": [],
+      "audience": [
+        "core"
+      ],
+      "defer_on_trunk": false
+    },
+    {
+      "id": "CORE-031",
+      "skill": "shopware-core-development",
+      "file": "skills/shopware-core-development/references/platform-architecture.md",
+      "title": "One event: prefer #[AsEventListener] over a subscriber",
+      "status": "active",
+      "since": "2026-10-20",
+      "eval": null,
+      "eval_reason": "Documented only; no eval yet.",
+      "core_guide_ids": [],
+      "audience": [
+        "core"
+      ],
+      "defer_on_trunk": false
+    },
+    {
+      "id": "CORE-032",
+      "skill": "shopware-core-development",
+      "file": "skills/shopware-core-development/references/platform-architecture.md",
+      "title": "getSubscribedEvents() declares an explicit return type",
+      "status": "active",
+      "since": "2026-10-20",
+      "eval": null,
+      "eval_reason": "Documented only; no eval yet.",
+      "core_guide_ids": [],
+      "audience": [
+        "core"
+      ],
+      "defer_on_trunk": false
+    },
+    {
+      "id": "CORE-033",
+      "skill": "shopware-core-development",
+      "file": "skills/shopware-core-development/references/platform-architecture.md",
+      "title": "One sealing marker per class: @internal, @experimental, @final or final",
+      "status": "active",
+      "since": "2026-10-20",
+      "eval": null,
+      "eval_reason": "Style rule; core shopware-php-code owns it on trunk.",
+      "core_guide_ids": [],
+      "audience": [
+        "core"
+      ],
+      "defer_on_trunk": true
+    },
+    {
+      "id": "CORE-034",
+      "skill": "shopware-core-development",
+      "file": "skills/shopware-core-development/references/platform-architecture.md",
+      "title": "Do not call or extend @internal symbols from outside their bundle",
+      "status": "active",
+      "since": "2026-10-20",
+      "eval": null,
+      "eval_reason": "Documented only; no eval yet.",
+      "core_guide_ids": [],
+      "audience": [
+        "core"
+      ],
+      "defer_on_trunk": false
+    },
+    {
+      "id": "CORE-035",
+      "skill": "shopware-core-development",
+      "file": "skills/shopware-core-development/references/platform-architecture.md",
+      "title": "Thin controllers delegate to services",
+      "status": "active",
+      "since": "2026-10-20",
+      "eval": "business-logic-in-controller",
+      "core_guide_ids": [],
+      "audience": [
+        "core"
+      ],
+      "defer_on_trunk": false,
+      "see": [
+        "PLG-006"
+      ]
+    },
+    {
+      "id": "CORE-036",
+      "skill": "shopware-core-development",
+      "file": "skills/shopware-core-development/references/platform-architecture.md",
+      "title": "Avoid lazy session access on read paths",
+      "status": "active",
+      "since": "2026-10-20",
+      "eval": null,
+      "eval_reason": "Documented only; no eval yet.",
+      "core_guide_ids": [],
+      "audience": [
+        "core"
+      ],
+      "defer_on_trunk": false
+    },
+    {
+      "id": "CORE-037",
+      "skill": "shopware-core-development",
+      "file": "skills/shopware-core-development/references/platform-architecture.md",
+      "title": "Migrations use the exact current Unix timestamp",
+      "status": "active",
+      "since": "2026-10-20",
+      "eval": "migration-timestamp-format",
+      "core_guide_ids": [],
+      "audience": [
+        "core"
+      ],
+      "defer_on_trunk": false,
+      "trunk": {
+        "enforced_by": [
+          {
+            "tool": "MigrationNameAndTimestampTest",
+            "kind": "test",
+            "catches": "fails when a core migration class is not named `Migration<digits>…` or `getCreationTimestamp()` differs from those digits",
+            "misses": "an implausible or out-of-order timestamp, the file name, and the namespace and folder",
+            "trunk_only": true
+          }
+        ]
+      }
+    },
+    {
+      "id": "CORE-038",
+      "skill": "shopware-core-development",
+      "file": "skills/shopware-core-development/references/platform-architecture.md",
+      "title": "No long-running work in updateDestructive()",
+      "status": "active",
+      "since": "2026-10-20",
+      "eval": null,
+      "eval_reason": "Documented only; no eval yet.",
+      "core_guide_ids": [],
+      "audience": [
+        "core"
+      ],
+      "defer_on_trunk": false,
+      "see": [
+        "PLG-018"
+      ]
+    },
+    {
+      "id": "CORE-039",
+      "skill": "shopware-core-development",
+      "file": "skills/shopware-core-development/references/platform-architecture.md",
+      "title": "Never edit a shipped migration",
+      "status": "active",
+      "since": "2026-10-20",
+      "eval": null,
+      "eval_reason": "Documented only; no eval yet.",
+      "core_guide_ids": [],
+      "audience": [
+        "core"
+      ],
+      "defer_on_trunk": false,
+      "see": [
+        "PLG-022"
+      ]
+    },
+    {
+      "id": "CORE-040",
+      "skill": "shopware-core-development",
+      "file": "skills/shopware-core-development/references/platform-architecture.md",
+      "title": "No tests for an empty updateDestructive()",
+      "status": "active",
+      "since": "2026-10-20",
+      "eval": null,
+      "eval_reason": "Style rule; core shopware-phpunit-tests owns it on trunk.",
+      "core_guide_ids": [],
+      "audience": [
+        "core"
+      ],
+      "defer_on_trunk": true
+    },
+    {
+      "id": "CORE-041",
+      "skill": "shopware-core-development",
+      "file": "skills/shopware-core-development/references/release-notes-and-adr.md",
+      "title": "UPGRADE entry only when third-party code or config must change",
+      "status": "active",
+      "since": "2026-10-20",
+      "eval": null,
+      "eval_reason": "Documented only; no eval yet.",
+      "core_guide_ids": [],
+      "audience": [
+        "core"
+      ],
+      "defer_on_trunk": false
+    },
+    {
+      "id": "CORE-042",
+      "skill": "shopware-core-development",
+      "file": "skills/shopware-core-development/references/release-notes-and-adr.md",
+      "title": "Write UPGRADE entries in past tense",
+      "status": "active",
+      "since": "2026-10-20",
+      "eval": "upgrade-entry-past-tense",
+      "core_guide_ids": [],
+      "audience": [
+        "core"
+      ],
+      "defer_on_trunk": false
+    },
+    {
+      "id": "CORE-043",
+      "skill": "shopware-core-development",
+      "file": "skills/shopware-core-development/references/release-notes-and-adr.md",
+      "title": "UPGRADE entries describe the concrete before and after",
+      "status": "active",
+      "since": "2026-10-20",
+      "eval": null,
+      "eval_reason": "Documented only; no eval yet.",
+      "core_guide_ids": [],
+      "audience": [
+        "core"
+      ],
+      "defer_on_trunk": false
+    },
+    {
+      "id": "CORE-044",
+      "skill": "shopware-core-development",
+      "file": "skills/shopware-core-development/references/release-notes-and-adr.md",
+      "title": "Wrap code elements in release notes in backticks",
+      "status": "active",
+      "since": "2026-10-20",
+      "eval": null,
+      "eval_reason": "Documented only; no eval yet.",
+      "core_guide_ids": [],
+      "audience": [
+        "core"
+      ],
+      "defer_on_trunk": false
+    },
+    {
+      "id": "CORE-045",
+      "skill": "shopware-core-development",
+      "file": "skills/shopware-core-development/references/release-notes-and-adr.md",
+      "title": "Release notes omit implementation details",
+      "status": "active",
+      "since": "2026-10-20",
+      "eval": null,
+      "eval_reason": "Documented only; no eval yet.",
+      "core_guide_ids": [],
+      "audience": [
+        "core"
+      ],
+      "defer_on_trunk": false
+    },
+    {
+      "id": "CORE-046",
+      "skill": "shopware-core-development",
+      "file": "skills/shopware-core-development/references/release-notes-and-adr.md",
+      "title": "Blank lines around headings and between paragraphs",
+      "status": "active",
+      "since": "2026-10-20",
+      "eval": null,
+      "eval_reason": "Documented only; no eval yet.",
+      "core_guide_ids": [],
+      "audience": [
+        "core"
+      ],
+      "defer_on_trunk": false
+    },
+    {
+      "id": "CORE-047",
+      "skill": "shopware-core-development",
+      "file": "skills/shopware-core-development/references/release-notes-and-adr.md",
+      "title": "Put the entry under the existing category heading",
+      "status": "active",
+      "since": "2026-10-20",
+      "eval": "release-info-no-duplicate-heading",
+      "core_guide_ids": [],
+      "audience": [
+        "core"
+      ],
+      "defer_on_trunk": false
+    },
+    {
+      "id": "CORE-048",
+      "skill": "shopware-core-development",
+      "file": "skills/shopware-core-development/references/release-notes-and-adr.md",
+      "title": "Never repeat a heading inside one version section",
+      "status": "active",
+      "since": "2026-10-20",
+      "eval": "release-info-no-duplicate-heading",
+      "core_guide_ids": [],
+      "audience": [
+        "core"
+      ],
+      "defer_on_trunk": false
+    },
+    {
+      "id": "CORE-049",
+      "skill": "shopware-core-development",
+      "file": "skills/shopware-core-development/references/release-notes-and-adr.md",
+      "title": "No bold labels in RELEASE_INFO entries",
+      "status": "active",
+      "since": "2026-10-20",
+      "eval": null,
+      "eval_reason": "Documented only; no eval yet.",
+      "core_guide_ids": [],
+      "audience": [
+        "core"
+      ],
+      "defer_on_trunk": false
+    },
+    {
+      "id": "CORE-050",
+      "skill": "shopware-core-development",
+      "file": "skills/shopware-core-development/references/release-notes-and-adr.md",
+      "title": "No bold labels in UPGRADE entries",
+      "status": "active",
+      "since": "2026-10-20",
+      "eval": null,
+      "eval_reason": "Documented only; no eval yet.",
+      "core_guide_ids": [],
+      "audience": [
+        "core"
+      ],
+      "defer_on_trunk": false
+    },
+    {
+      "id": "CORE-051",
+      "skill": "shopware-core-development",
+      "file": "skills/shopware-core-development/references/release-notes-and-adr.md",
+      "title": "RELEASE_INFO and UPGRADE entries stand alone without cross-references",
+      "status": "active",
+      "since": "2026-10-20",
+      "eval": null,
+      "eval_reason": "Documented only; no eval yet.",
+      "core_guide_ids": [],
+      "audience": [
+        "core"
+      ],
+      "defer_on_trunk": false
+    },
+    {
+      "id": "CORE-052",
+      "skill": "shopware-core-development",
+      "file": "skills/shopware-core-development/references/release-notes-and-adr.md",
+      "title": "Add an ADR for architectural decisions",
+      "status": "active",
+      "since": "2026-10-20",
+      "eval": null,
+      "eval_reason": "Process rule; not gradable from a diff.",
+      "core_guide_ids": [],
+      "audience": [
+        "core"
+      ],
+      "defer_on_trunk": false
+    },
+    {
+      "id": "CORE-053",
+      "skill": "shopware-core-development",
+      "file": "skills/shopware-core-development/references/service-architecture.md",
+      "title": "Keep services hexagonal; infrastructure stays at the edge",
+      "status": "active",
+      "since": "2026-10-20",
+      "eval": null,
+      "eval_reason": "Style rule; core shopware-php-code owns it on trunk.",
+      "core_guide_ids": [],
+      "audience": [
+        "core"
+      ],
+      "defer_on_trunk": true
+    },
+    {
+      "id": "CORE-054",
+      "skill": "shopware-core-development",
+      "file": "skills/shopware-core-development/references/service-architecture.md",
+      "title": "Inject Symfony Filesystem instead of raw PHP file functions",
+      "status": "active",
+      "since": "2026-10-20",
+      "eval": "symfony-filesystem-over-raw-php",
+      "core_guide_ids": [],
+      "audience": [
+        "core"
+      ],
+      "defer_on_trunk": false,
+      "trunk": {
+        "enforced_by": [
+          {
+            "tool": "NoFileExistsRule",
+            "kind": "phpstan",
+            "catches": "reports direct `file_exists()` calls",
+            "misses": "every other raw filesystem function, such as `file_put_contents()`, `unlink()` and `mkdir()`; it does not ask for Symfony `Filesystem`",
+            "trunk_only": true
+          }
+        ]
+      }
+    },
+    {
+      "id": "CORE-055",
+      "skill": "shopware-core-development",
+      "file": "skills/shopware-core-development/references/service-architecture.md",
+      "title": "Do not repeat @internal on members of an @internal class",
+      "status": "active",
+      "since": "2026-10-20",
+      "eval": null,
+      "eval_reason": "Style rule; core shopware-php-code owns it on trunk.",
+      "core_guide_ids": [],
+      "audience": [
+        "core"
+      ],
+      "defer_on_trunk": true
+    },
+    {
+      "id": "CORE-056",
+      "skill": "shopware-core-development",
+      "file": "skills/shopware-core-development/references/service-architecture.md",
+      "title": "Prefer existing extension mechanisms over new provider interfaces",
+      "status": "active",
+      "since": "2026-10-20",
+      "eval": null,
+      "eval_reason": "Documented only; no eval yet.",
+      "core_guide_ids": [],
+      "audience": [
+        "core"
+      ],
+      "defer_on_trunk": false
+    },
+    {
+      "id": "CORE-057",
+      "skill": "shopware-core-development",
+      "file": "skills/shopware-core-development/references/service-architecture.md",
+      "title": "Add a DTO only for a meaningful domain concept or boundary",
+      "status": "active",
+      "since": "2026-10-20",
+      "eval": null,
+      "eval_reason": "Style rule; core shopware-php-code owns it on trunk.",
+      "core_guide_ids": [],
+      "audience": [
+        "core"
+      ],
+      "defer_on_trunk": true
+    },
+    {
+      "id": "CORE-058",
+      "skill": "shopware-core-development",
+      "file": "skills/shopware-core-development/references/service-architecture.md",
+      "title": "Struct-style value objects use public readonly properties",
+      "status": "active",
+      "since": "2026-10-20",
+      "eval": null,
+      "eval_reason": "Style rule; core shopware-php-code owns it on trunk.",
+      "core_guide_ids": [],
+      "audience": [
+        "core"
+      ],
+      "defer_on_trunk": true
+    },
+    {
+      "id": "CORE-059",
+      "skill": "shopware-core-development",
+      "file": "skills/shopware-core-development/references/service-architecture.md",
+      "title": "Separate the BC-promised public surface from internal implementation",
+      "status": "active",
+      "since": "2026-10-20",
+      "eval": null,
+      "eval_reason": "Style rule; core shopware-php-code owns it on trunk.",
+      "core_guide_ids": [],
+      "audience": [
+        "core"
+      ],
+      "defer_on_trunk": true
+    },
+    {
+      "id": "CORE-060",
+      "skill": "shopware-core-development",
+      "file": "skills/shopware-core-development/references/static-analysis-baseline.md",
+      "title": "Never add baseline entries to silence new code",
+      "status": "active",
+      "since": "2026-10-20",
+      "eval": null,
+      "eval_reason": "Documented only; no eval yet.",
+      "core_guide_ids": [],
+      "audience": [
+        "core"
+      ],
+      "defer_on_trunk": false,
+      "trunk": {
+        "enforced_by": [
+          {
+            "tool": "PhpstanBaselineGrowth",
+            "kind": "danger",
+            "catches": "fails a PR that adds net lines to `phpstan-baseline.php`",
+            "misses": "a swap of one entry for another, inline `@phpstan-ignore`, and PRs labeled `skip-danger-phpstan-baseline`",
+            "trunk_only": true
+          }
+        ]
+      }
+    },
+    {
+      "id": "CORE-061",
+      "skill": "shopware-core-development",
+      "file": "skills/shopware-core-development/references/static-analysis-baseline.md",
+      "title": "Remove baseline entries in files you touch",
+      "status": "active",
+      "since": "2026-10-20",
+      "eval": null,
+      "eval_reason": "Documented only; no eval yet.",
+      "core_guide_ids": [],
+      "audience": [
+        "core"
+      ],
+      "defer_on_trunk": false,
+      "trunk": {
+        "enforced_by": [
+          {
+            "tool": "IgnoredPhpstanErrorsInTouchedFiles",
+            "kind": "danger",
+            "catches": "fails a PR that touches a file listed in the PHPStan baseline",
+            "misses": "inline `@phpstan-ignore` in touched files, and PRs labeled `skip-danger-phpstan-baseline`",
+            "trunk_only": true
+          }
+        ]
+      }
+    },
+    {
+      "id": "CORE-062",
+      "skill": "shopware-core-development",
+      "file": "skills/shopware-core-development/references/static-analysis-baseline.md",
+      "title": "Satisfy phpstan-shopware rules instead of suppressing them",
+      "status": "active",
+      "since": "2026-10-20",
+      "eval": null,
+      "eval_reason": "Documented only; no eval yet.",
+      "core_guide_ids": [],
+      "audience": [
+        "core"
+      ],
+      "defer_on_trunk": false
+    },
+    {
+      "id": "ADM-001",
+      "skill": "shopware-admin-js",
+      "file": "skills/shopware-admin-js/SKILL.md",
+      "title": "New Admin code is TypeScript; main.js is the only .js entry",
+      "status": "active",
+      "since": "2026-10-20",
+      "eval": "admin-js-implementation-to-ts",
+      "core_guide_ids": [],
+      "audience": [
+        "core",
+        "plugin",
+        "admin"
+      ],
+      "defer_on_trunk": false
+    },
+    {
+      "id": "ADM-002",
+      "skill": "shopware-admin-js",
+      "file": "skills/shopware-admin-js/SKILL.md",
+      "title": "Do not break public Admin extension APIs without discussion",
+      "status": "active",
+      "since": "2026-10-20",
+      "eval": null,
+      "eval_reason": "Process rule; core shopware-admin-js owns it on trunk.",
+      "core_guide_ids": [],
+      "audience": [
+        "core",
+        "admin"
+      ],
+      "defer_on_trunk": true
+    },
+    {
+      "id": "ADM-003",
+      "skill": "shopware-admin-js",
+      "file": "skills/shopware-admin-js/SKILL.md",
+      "title": "Use Meteor mt-* or existing Admin components, not raw dialog or popover",
+      "status": "active",
+      "since": "2026-10-20",
+      "eval": "admin-use-mt-modal",
+      "core_guide_ids": [],
+      "audience": [
+        "core",
+        "plugin",
+        "admin"
+      ],
+      "defer_on_trunk": false,
+      "trunk": {
+        "enforced_by": [
+          {
+            "tool": "no-deprecated-components",
+            "kind": "eslint",
+            "catches": "reports listed deprecated `sw-*` components in Administration `.html.twig` templates and autofixes them to `mt-*`",
+            "misses": "`.vue` templates, templates in JS or TS strings, raw `<dialog>` or popover markup, and `sw-*` components not in the configured list, such as `sw-loader` and `sw-popover`",
+            "trunk_only": true
+          }
+        ]
+      }
+    },
+    {
+      "id": "ADM-004",
+      "skill": "shopware-admin-js",
+      "file": "skills/shopware-admin-js/SKILL.md",
+      "title": "ACL mapping ships with DAL-backed UI; existing roles get a migration",
+      "status": "active",
+      "since": "2026-10-20",
+      "eval": "admin-acl-role-migration",
+      "core_guide_ids": [],
+      "audience": [
+        "core",
+        "plugin",
+        "admin"
+      ],
+      "defer_on_trunk": false
+    },
+    {
+      "id": "ADM-005",
+      "skill": "shopware-admin-js",
+      "file": "skills/shopware-admin-js/SKILL.md",
+      "title": "Do not rewrite a working Twig/Options API override into a Vue SFC for 6.8",
+      "status": "active",
+      "since": "2026-10-20",
+      "eval": "admin-sfc-not-a-6-8-migration",
+      "core_guide_ids": [],
+      "audience": [
+        "core",
+        "plugin",
+        "admin"
+      ],
+      "defer_on_trunk": false
+    },
+    {
+      "id": "ADM-006",
+      "skill": "shopware-admin-js",
+      "file": "skills/shopware-admin-js/SKILL.md",
+      "title": "Follow the patterns of the area you touch",
+      "status": "active",
+      "since": "2026-10-20",
+      "eval": null,
+      "eval_reason": "Documented only; no eval yet.",
+      "core_guide_ids": [],
+      "audience": [
+        "core",
+        "plugin",
+        "admin"
+      ],
+      "defer_on_trunk": false
+    },
+    {
+      "id": "ADM-007",
+      "skill": "shopware-admin-js",
+      "file": "skills/shopware-admin-js/SKILL.md",
+      "title": "Composables for new shared Vue logic; no new mixins",
+      "status": "active",
+      "since": "2026-10-20",
+      "eval": null,
+      "eval_reason": "Documented only; no eval yet.",
+      "core_guide_ids": [],
+      "audience": [
+        "core",
+        "plugin",
+        "admin"
+      ],
+      "defer_on_trunk": false
+    },
+    {
+      "id": "ADM-008",
+      "skill": "shopware-admin-js",
+      "file": "skills/shopware-admin-js/SKILL.md",
+      "title": "BEM and Meteor tokens, no inline styles, snippets for visible text",
+      "status": "active",
+      "since": "2026-10-20",
+      "eval": null,
+      "eval_reason": "Documented only; no eval yet.",
+      "core_guide_ids": [],
+      "audience": [
+        "core",
+        "plugin",
+        "admin"
+      ],
+      "defer_on_trunk": false
+    },
+    {
+      "id": "ADM-009",
+      "skill": "shopware-admin-js",
+      "file": "skills/shopware-admin-js/SKILL.md",
+      "title": "Admin build is Vite; no new webpack.config.js",
+      "status": "active",
+      "since": "2026-10-20",
+      "eval": null,
+      "eval_reason": "Documented only; no eval yet.",
+      "core_guide_ids": [],
+      "audience": [
+        "core",
+        "plugin",
+        "admin"
+      ],
+      "defer_on_trunk": false
+    },
+    {
+      "id": "ADM-010",
+      "skill": "shopware-admin-js",
+      "file": "skills/shopware-admin-js/SKILL.md",
+      "title": "Jest spec for new features and fixes, colocated as *.spec.ts",
+      "status": "active",
+      "since": "2026-10-20",
+      "eval": "admin-jest-colocated-spec",
+      "core_guide_ids": [],
+      "audience": [
+        "core",
+        "plugin",
+        "admin"
+      ],
+      "defer_on_trunk": false
+    },
+    {
+      "id": "ADM-011",
+      "skill": "shopware-admin-js",
+      "file": "skills/shopware-admin-js/SKILL.md",
+      "title": "On trunk, run Admin lint and Jest through the composer wrappers",
+      "status": "active",
+      "since": "2026-10-20",
+      "eval": null,
+      "eval_reason": "Process rule; core shopware-admin-js owns it on trunk.",
+      "core_guide_ids": [],
+      "audience": [
+        "core",
+        "admin"
+      ],
+      "defer_on_trunk": true
+    },
+    {
+      "id": "ADM-012",
+      "skill": "shopware-admin-js",
+      "file": "skills/shopware-admin-js/references/architecture.md",
+      "title": "Modules do not import each other; core stays Vue-free",
+      "status": "active",
+      "since": "2026-10-20",
+      "eval": "admin-no-cross-module-import",
+      "core_guide_ids": [],
+      "audience": [
+        "core",
+        "plugin",
+        "admin"
+      ],
+      "defer_on_trunk": false
+    },
+    {
+      "id": "ADM-013",
+      "skill": "shopware-admin-js",
+      "file": "skills/shopware-admin-js/references/architecture.md",
+      "title": "Keep the init-pre, init, init-post boot order",
+      "status": "active",
+      "since": "2026-10-20",
+      "eval": null,
+      "eval_reason": "Style rule; core shopware-admin-js owns it on trunk.",
+      "core_guide_ids": [],
+      "audience": [
+        "core",
+        "admin"
+      ],
+      "defer_on_trunk": true
+    },
+    {
+      "id": "ADM-014",
+      "skill": "shopware-admin-js",
+      "file": "skills/shopware-admin-js/references/architecture.md",
+      "title": "Prefer extension-aware Shopware globals over factory internals",
+      "status": "active",
+      "since": "2026-10-20",
+      "eval": null,
+      "eval_reason": "Documented only; no eval yet.",
+      "core_guide_ids": [],
+      "audience": [
+        "core",
+        "plugin",
+        "admin"
+      ],
+      "defer_on_trunk": false
+    },
+    {
+      "id": "ADM-015",
+      "skill": "shopware-admin-js",
+      "file": "skills/shopware-admin-js/references/architecture.md",
+      "title": "Preserve extension points on the global Shopware object",
+      "status": "active",
+      "since": "2026-10-20",
+      "eval": null,
+      "eval_reason": "Style rule; core shopware-admin-js owns it on trunk.",
+      "core_guide_ids": [],
+      "audience": [
+        "core",
+        "admin"
+      ],
+      "defer_on_trunk": true
+    },
+    {
+      "id": "ADM-016",
+      "skill": "shopware-admin-js",
+      "file": "skills/shopware-admin-js/references/architecture.md",
+      "title": "Protect routes, navigation and templates with ACL privileges",
+      "status": "active",
+      "since": "2026-10-20",
+      "eval": null,
+      "eval_reason": "Documented only; no eval yet.",
+      "core_guide_ids": [],
+      "audience": [
+        "core",
+        "plugin",
+        "admin"
+      ],
+      "defer_on_trunk": false
+    },
+    {
+      "id": "ADM-017",
+      "skill": "shopware-admin-js",
+      "file": "skills/shopware-admin-js/references/architecture.md",
+      "title": "Keep business logic out of templates",
+      "status": "active",
+      "since": "2026-10-20",
+      "eval": null,
+      "eval_reason": "Documented only; no eval yet.",
+      "core_guide_ids": [],
+      "audience": [
+        "core",
+        "plugin",
+        "admin"
+      ],
+      "defer_on_trunk": false
+    },
+    {
+      "id": "ADM-018",
+      "skill": "shopware-admin-js",
+      "file": "skills/shopware-admin-js/references/architecture.md",
+      "title": "Data goes through repositories and Criteria, not ad-hoc HTTP",
+      "status": "active",
+      "since": "2026-10-20",
+      "eval": null,
+      "eval_reason": "Documented only; no eval yet.",
+      "core_guide_ids": [],
+      "audience": [
+        "core",
+        "plugin",
+        "admin"
+      ],
+      "defer_on_trunk": false
+    },
+    {
+      "id": "ADM-019",
+      "skill": "shopware-admin-js",
+      "file": "skills/shopware-admin-js/references/architecture.md",
+      "title": "Bounded page sizes, no unneeded total counts or associations",
+      "status": "active",
+      "since": "2026-10-20",
+      "eval": null,
+      "eval_reason": "Documented only; no eval yet.",
+      "core_guide_ids": [],
+      "audience": [
+        "core",
+        "plugin",
+        "admin"
+      ],
+      "defer_on_trunk": false
+    },
+    {
+      "id": "ADM-020",
+      "skill": "shopware-admin-js",
+      "file": "skills/shopware-admin-js/references/architecture.md",
+      "title": "Batch related writes into one save",
+      "status": "active",
+      "since": "2026-10-20",
+      "eval": null,
+      "eval_reason": "Documented only; no eval yet.",
+      "core_guide_ids": [],
+      "audience": [
+        "core",
+        "plugin",
+        "admin"
+      ],
+      "defer_on_trunk": false
+    },
+    {
+      "id": "ADM-021",
+      "skill": "shopware-admin-js",
+      "file": "skills/shopware-admin-js/references/architecture.md",
+      "title": "Reload the entity after a repository save",
+      "status": "active",
+      "since": "2026-10-20",
+      "eval": null,
+      "eval_reason": "Documented only; no eval yet.",
+      "core_guide_ids": [],
+      "audience": [
+        "core",
+        "plugin",
+        "admin"
+      ],
+      "defer_on_trunk": false
+    },
+    {
+      "id": "ADM-022",
+      "skill": "shopware-admin-js",
+      "file": "skills/shopware-admin-js/references/flags-and-modern-web.md",
+      "title": "Feature flags are temporary branches, not permanent config",
+      "status": "active",
+      "since": "2026-10-20",
+      "eval": null,
+      "eval_reason": "Style rule; core shopware-admin-js owns it on trunk.",
+      "core_guide_ids": [],
+      "audience": [
+        "core",
+        "admin"
+      ],
+      "defer_on_trunk": true
+    },
+    {
+      "id": "ADM-023",
+      "skill": "shopware-admin-js",
+      "file": "skills/shopware-admin-js/references/flags-and-modern-web.md",
+      "title": "Follow the surrounding flag name spelling; both resolve",
+      "status": "active",
+      "since": "2026-10-20",
+      "eval": null,
+      "eval_reason": "Documented only; no eval yet.",
+      "core_guide_ids": [],
+      "audience": [
+        "core",
+        "plugin",
+        "admin"
+      ],
+      "defer_on_trunk": false
+    },
+    {
+      "id": "ADM-024",
+      "skill": "shopware-admin-js",
+      "file": "skills/shopware-admin-js/references/flags-and-modern-web.md",
+      "title": "One behavior per flag; no nested flags",
+      "status": "active",
+      "since": "2026-10-20",
+      "eval": null,
+      "eval_reason": "Style rule; core shopware-admin-js owns it on trunk.",
+      "core_guide_ids": [],
+      "audience": [
+        "core",
+        "admin"
+      ],
+      "defer_on_trunk": true
+    },
+    {
+      "id": "ADM-025",
+      "skill": "shopware-admin-js",
+      "file": "skills/shopware-admin-js/references/flags-and-modern-web.md",
+      "title": "Keep the old behavior in the branch deleted with the flag",
+      "status": "active",
+      "since": "2026-10-20",
+      "eval": null,
+      "eval_reason": "Style rule; core shopware-admin-js owns it on trunk.",
+      "core_guide_ids": [],
+      "audience": [
+        "core",
+        "admin"
+      ],
+      "defer_on_trunk": true
+    },
+    {
+      "id": "ADM-026",
+      "skill": "shopware-admin-js",
+      "file": "skills/shopware-admin-js/references/flags-and-modern-web.md",
+      "title": "Test both flag states while both branches exist",
+      "status": "active",
+      "since": "2026-10-20",
+      "eval": null,
+      "eval_reason": "Style rule; core shopware-admin-js owns it on trunk.",
+      "core_guide_ids": [],
+      "audience": [
+        "core",
+        "admin"
+      ],
+      "defer_on_trunk": true
+    },
+    {
+      "id": "ADM-027",
+      "skill": "shopware-admin-js",
+      "file": "skills/shopware-admin-js/references/flags-and-modern-web.md",
+      "title": "Admin @deprecated tag names the replacement",
+      "status": "active",
+      "since": "2026-10-20",
+      "eval": null,
+      "eval_reason": "Style rule; core shopware-admin-js owns it on trunk.",
+      "core_guide_ids": [],
+      "audience": [
+        "core",
+        "admin"
+      ],
+      "defer_on_trunk": true
+    },
+    {
+      "id": "ADM-028",
+      "skill": "shopware-admin-js",
+      "file": "skills/shopware-admin-js/references/flags-and-modern-web.md",
+      "title": "Runtime deprecation warnings for developer-facing Admin APIs",
+      "status": "active",
+      "since": "2026-10-20",
+      "eval": null,
+      "eval_reason": "Style rule; core shopware-admin-js owns it on trunk.",
+      "core_guide_ids": [],
+      "audience": [
+        "core",
+        "admin"
+      ],
+      "defer_on_trunk": true
+    },
+    {
+      "id": "ADM-029",
+      "skill": "shopware-admin-js",
+      "file": "skills/shopware-admin-js/references/flags-and-modern-web.md",
+      "title": "No new internal callers of deprecated Admin APIs",
+      "status": "active",
+      "since": "2026-10-20",
+      "eval": null,
+      "eval_reason": "Style rule; core shopware-admin-js owns it on trunk.",
+      "core_guide_ids": [],
+      "audience": [
+        "core",
+        "admin"
+      ],
+      "defer_on_trunk": true
+    },
+    {
+      "id": "ADM-030",
+      "skill": "shopware-admin-js",
+      "file": "skills/shopware-admin-js/references/flags-and-modern-web.md",
+      "title": "Removing a flag removes its legacy branch, config, tests and docs",
+      "status": "active",
+      "since": "2026-10-20",
+      "eval": null,
+      "eval_reason": "Style rule; core shopware-admin-js owns it on trunk.",
+      "core_guide_ids": [],
+      "audience": [
+        "core",
+        "admin"
+      ],
+      "defer_on_trunk": true
+    },
+    {
+      "id": "ADM-031",
+      "skill": "shopware-admin-js",
+      "file": "skills/shopware-admin-js/references/testing.md",
+      "title": "Jest tests behavior, not Vue internals",
+      "status": "active",
+      "since": "2026-10-20",
+      "eval": null,
+      "eval_reason": "Documented only; no eval yet.",
+      "core_guide_ids": [],
+      "audience": [
+        "core",
+        "plugin",
+        "admin"
+      ],
+      "defer_on_trunk": false
+    },
+    {
+      "id": "ADM-032",
+      "skill": "shopware-admin-js",
+      "file": "skills/shopware-admin-js/references/testing.md",
+      "title": "shallowMount unless child rendering is the behavior",
+      "status": "active",
+      "since": "2026-10-20",
+      "eval": null,
+      "eval_reason": "Documented only; no eval yet.",
+      "core_guide_ids": [],
+      "audience": [
+        "core",
+        "plugin",
+        "admin"
+      ],
+      "defer_on_trunk": false
+    },
+    {
+      "id": "ADM-033",
+      "skill": "shopware-admin-js",
+      "file": "skills/shopware-admin-js/references/testing.md",
+      "title": "Clean up mounted wrappers in afterEach()",
+      "status": "active",
+      "since": "2026-10-20",
+      "eval": null,
+      "eval_reason": "Documented only; no eval yet.",
+      "core_guide_ids": [],
+      "audience": [
+        "core",
+        "plugin",
+        "admin"
+      ],
+      "defer_on_trunk": false
+    },
+    {
+      "id": "ADM-034",
+      "skill": "shopware-admin-js",
+      "file": "skills/shopware-admin-js/references/testing.md",
+      "title": "flushPromises() after async UI or repository work",
+      "status": "active",
+      "since": "2026-10-20",
+      "eval": null,
+      "eval_reason": "Documented only; no eval yet.",
+      "core_guide_ids": [],
+      "audience": [
+        "core",
+        "plugin",
+        "admin"
+      ],
+      "defer_on_trunk": false
+    },
+    {
+      "id": "ADM-035",
+      "skill": "shopware-admin-js",
+      "file": "skills/shopware-admin-js/references/testing.md",
+      "title": "Small scenario setup with the existing Admin helpers and mocks",
+      "status": "active",
+      "since": "2026-10-20",
+      "eval": null,
+      "eval_reason": "Documented only; no eval yet.",
+      "core_guide_ids": [],
+      "audience": [
+        "core",
+        "plugin",
+        "admin"
+      ],
+      "defer_on_trunk": false
+    },
+    {
+      "id": "ADM-036",
+      "skill": "shopware-admin-js",
+      "file": "skills/shopware-admin-js/references/testing.md",
+      "title": "Register global framework components through config.global.stubs",
+      "status": "active",
+      "since": "2026-10-20",
+      "eval": null,
+      "eval_reason": "Style rule; core shopware-admin-js owns it on trunk.",
+      "core_guide_ids": [],
+      "audience": [
+        "core",
+        "admin"
+      ],
+      "defer_on_trunk": true
+    },
+    {
+      "id": "ADM-037",
+      "skill": "shopware-admin-js",
+      "file": "skills/shopware-admin-js/references/testing.md",
+      "title": "Cover error paths of API services and save/load flows",
+      "status": "active",
+      "since": "2026-10-20",
+      "eval": null,
+      "eval_reason": "Documented only; no eval yet.",
+      "core_guide_ids": [],
+      "audience": [
+        "core",
+        "plugin",
+        "admin"
+      ],
+      "defer_on_trunk": false
+    },
+    {
+      "id": "ADM-038",
+      "skill": "shopware-admin-js",
+      "file": "skills/shopware-admin-js/references/testing.md",
+      "title": "Feature-flagged Jest uses the ADR helpers, no local FEATURE_NEXT stub",
+      "status": "active",
+      "since": "2026-10-20",
+      "eval": null,
+      "eval_reason": "Style rule; core shopware-admin-js owns it on trunk.",
+      "core_guide_ids": [],
+      "audience": [
+        "core",
+        "admin"
       ],
       "defer_on_trunk": true
     }

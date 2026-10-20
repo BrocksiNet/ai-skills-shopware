@@ -8,9 +8,9 @@ hit baseline entries.
 The PHPStan baseline (`phpstan-baseline.neon`) is a record of *accepted legacy
 debt*. It only ever gets smaller. Concretely:
 
-- **Never add new entries to the baseline to silence your own new code.** Fix the
+- **CORE-060** **Never add new entries to the baseline to silence your own new code.** Fix the
   code instead. New code must pass at the configured level cleanly.
-- **When you touch a file that has baseline entries**, try to resolve them and
+- **CORE-061** **When you touch a file that has baseline entries**, try to resolve them and
   remove those lines. Leave the file better than you found it.
 - **Raising the level** (`level: X` in `phpstan.neon`) requires regenerating the
   baseline and committing it in the *same* change:
@@ -29,7 +29,7 @@ truth. Key reminders for core:
 
 - Narrow types with runtime checks or `assert()` before reaching for `@var`.
 - `list<T>` over `array<int, T>`; precise generics on collections.
-- The `shopwarelabs/phpstan-shopware` custom rules enforce platform-specific
+- **CORE-062** The `shopwarelabs/phpstan-shopware` custom rules enforce platform-specific
   patterns — do not suppress them; satisfy them.
 
 ## Done

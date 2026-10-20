@@ -5,7 +5,7 @@ shopware/shopware.
 
 ## Schema files
 
-When adding core Admin API or Store API action routes, add the matching OpenAPI
+**CORE-008** When adding core Admin API or Store API action routes, add the matching OpenAPI
 JSON schema under:
 
 ```text
@@ -22,7 +22,7 @@ contracts stay backward compatible.
 
 ## Verification
 
-Run (or ensure CI runs):
+**CORE-009** Run (or ensure CI runs):
 
 ```text
 tests/integration/Core/Framework/ApiRoutesHaveASchemaTest.php
@@ -33,7 +33,7 @@ and stale schema entries.
 
 ## Release documentation
 
-When REST/Admin/Store API contracts change, document them in release notes from
+**CORE-010** When REST/Admin/Store API contracts change, document them in release notes from
 the **external consumer’s perspective** — what changed, who is affected, what to
 do. If both HTTP contracts and PHP extension points change, use separate entries
 (e.g. API vs Core sections) when that prevents migration mistakes.

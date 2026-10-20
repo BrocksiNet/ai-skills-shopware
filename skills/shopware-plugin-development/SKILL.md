@@ -109,3 +109,12 @@ Inherits all **`php-foundation` trunk habits** (`empty()`, interface injection,
   ([reading data](https://developer.shopware.com/docs/guides/plugins/plugins/framework/data-handling/reading-data.html)),
   [Migrations](https://developer.shopware.com/docs/concepts/framework/migrations.html).
 - brocksi.net: API-aware guidelines; 6.7 cache tags migration guide.
+
+## Already enforced by CI (do not repeat)
+
+<!-- enforced:start: generated from rules/catalog.json by `node tools/bin/render-enforced.ts`; do not edit -->
+CI already fails the build on these, so do not repeat them in reviews or
+checklists. Flag only what each check misses.
+
+- `PLG-002` `phpstan/phpstan-deprecation-rules` (PHPStan) reports uses of `@deprecated` classes and methods, such as a subscriber for a `*CacheTagsEvent`, when the plugin installs it. It misses projects that do not install it, and deprecations announced only in UPGRADE notes; flag those.
+<!-- enforced:end -->

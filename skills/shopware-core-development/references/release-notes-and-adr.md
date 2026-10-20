@@ -37,13 +37,13 @@ section.
 
 ### `UPGRADE-6.x.md` (breaking changes)
 
-`UPGRADE` answers one question: must existing third-party code or configuration
+**CORE-041** `UPGRADE` answers one question: must existing third-party code or configuration
 (extension, app, integration, theme, hosting setup) change to keep working
 after the next major? If yes, add an entry. If no, add nothing — however large
 the change is. A bug fix that restores intended behaviour needs no entry.
 
-- Write in **past tense**. Developers read this only after the next major shipped.
-- Describe the concrete before and after, not the internals of how it works.
+- **CORE-042** Write in **past tense**. Developers read this only after the next major shipped.
+- **CORE-043** Describe the concrete before and after, not the internals of how it works.
 - For deprecations, the old path still works until the major; the entry tells
   developers what to change before it stops.
 
@@ -97,13 +97,13 @@ changelog.
 
 ## Formatting rules
 
-- Wrap filenames, config keys, class names, and code elements in backticks.
-- Keep only changes visible or relevant to the section audience. Omit
+- **CORE-044** Wrap filenames, config keys, class names, and code elements in backticks.
+- **CORE-045** Keep only changes visible or relevant to the section audience. Omit
   implementation details that do not affect API or behavior.
-- Put a blank line before and after every heading, and between paragraphs.
-- Put the entry under the matching category heading of the upcoming version
+- **CORE-046** Put a blank line before and after every heading, and between paragraphs.
+- **CORE-047** Put the entry under the matching category heading of the upcoming version
   section; add that heading only if the section does not have it yet.
-- **Never repeat a heading** inside one version section: no second
+- **CORE-048** **Never repeat a heading** inside one version section: no second
   `## Features` under the same `# X.Y.Z.P`, and no entry title the section
   already documents. The `release-info/section` check rejects a repetition the
   pull request adds.
@@ -115,18 +115,18 @@ changelog.
 - Simple paragraphs; no bold headers or bullet lists in entries.
 - State what is new and what it does; mention new extensibility points if added.
 - Usually 1–3 short paragraphs.
-- **Never** use bold labels like `**API Change:**`, `**Note:**`, `**Breaking:**`.
+- **CORE-049** **Never** use bold labels like `**API Change:**`, `**Note:**`, `**Breaking:**`.
 
 ### UPGRADE
 
-- No bold labels like "What changed:", "Why:", "Impact:", "How to adjust:".
+- **CORE-050** No bold labels like "What changed:", "Why:", "Impact:", "How to adjust:".
 - Plain paragraphs: what changed → who is affected → new extensibility points.
 - Code examples only when necessary for clarity.
 
 ### Avoid duplication
 
 - Deprecations go only in UPGRADE, not RELEASE_INFO.
-- Each file stands alone — no cross-references needed.
+- **CORE-051** Each file stands alone — no cross-references needed.
 
 ## Deprecations across the lifecycle
 
@@ -135,7 +135,7 @@ in RELEASE_INFO. When the break lands (major), document migration in UPGRADE.
 
 ## ADRs
 
-Add an Architecture Decision Record under `adr/` for decisions future maintainers
+**CORE-052** Add an Architecture Decision Record under `adr/` for decisions future maintainers
 should understand: a new pattern, a trade-off, or a deviation from convention.
 State context, options, decision, consequences. Mechanical changes do not need
 an ADR.

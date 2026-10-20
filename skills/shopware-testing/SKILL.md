@@ -131,3 +131,11 @@ These match PHPStan rules and reviewer expectations on core PRs:
 
 - [Shopware testing docs](https://developer.shopware.com/docs/guides/plugins/plugins/testing)
 - [FriendsOfShopware shopware-phpunit](https://github.com/FriendsOfShopware/agent-skills/tree/main/skills/shopware-phpunit) for plugin-heavy patterns
+
+## Already enforced by CI (do not repeat)
+
+<!-- enforced:start: generated from rules/catalog.json by `node tools/bin/render-enforced.ts`; do not edit -->
+CI already fails the build on 14 checks for this skill's rules. Before you
+flag a finding or write a checklist, read [`references/enforced-by-ci.md`](references/enforced-by-ci.md)
+and flag only what each check misses.
+<!-- enforced:end -->

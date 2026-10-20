@@ -308,6 +308,28 @@ documented only.
 Goal: stop agents from spending context on what CI already enforces, and
 stop review output from repeating CI.
 
+Status: **done 2026-10-20**. `tools/bin/render-enforced.ts` writes the
+section into the four skills of the acceptance plus `shopware-review-learnings`,
+from 25 checks read in trunk source at 1283747 (PHPStan, Danger, ESLint,
+PHP-CS-Fixer, PHPUnit runtime and devops tests). `shopware-core-development`
+and `shopware-admin-js` were tagged for this (62 and 38 rules). Changes from
+the spec:
+
+- `enforced_by` entries are objects (`tool`, `kind`, `catches`, `misses`,
+  `trunk_only`), so the bullet text comes from data, not from a tool name.
+- `trunk_only` means "not active in a plugin or app project by default".
+  Shopware's opt-in PHPStan rules (`rules.neon`) count as trunk only,
+  because their default namespaces are `Shopware\Tests\...`.
+- Above ten checks the list moves to a generated
+  `references/enforced-by-ci.md` and `SKILL.md` keeps a pointer
+  (`shopware-testing` has 14).
+- The validator reports drift instead of a separate check script.
+
+No CI check exists for named `yield` providers, `#[CoversNothing]` tests in
+`tests/unit/`, repository versus `Connection`, Symfony `Filesystem` (only
+`file_exists()`), or any Admin rule except deprecated `sw-*` components.
+Those rules keep needing a reviewer.
+
 ### WP3 spec
 
 - Each skill with review or checklist content gets a final section

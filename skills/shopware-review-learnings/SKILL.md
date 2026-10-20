@@ -124,3 +124,14 @@ Detailed, growing lists live in references. Read only the one that matches the c
 - Storefront: blocking/uncached AJAX on listing/product/home — own in
   `shopware-storefront` (`references/cache-and-modern-web.md`).
 - Apps: TODO - app-script vs plugin boundary mistakes.
+
+## Already enforced by CI (do not repeat)
+
+<!-- enforced:start: generated from rules/catalog.json by `node tools/bin/render-enforced.ts`; do not edit -->
+CI already fails the build on these, so do not repeat them in reviews or
+checklists. Flag only what each check misses.
+Checks marked *trunk only* are not active in plugin or app projects by
+default; there the rule still needs a reviewer.
+
+- `REV-017` `fully_qualified_strict_types` (PHP-CS-Fixer, trunk only) rewrites namespaced FQCNs in code and in `@param`, `@return`, `@var` and `@throws` tags to `use` imports. It misses `@see` tags, global classes such as `\Exception`, and class names inside strings; flag those.
+<!-- enforced:end -->
