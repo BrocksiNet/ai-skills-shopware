@@ -24,6 +24,26 @@ need (#20575); a test that asserts a throw while a major flag is active is
 
 Status key: **done** | **partial** | **skip** | **eval:TBD** | **defer-on-trunk**
 
+## Watchlist
+
+Open core PRs that will change our skills (plan WP9). Checked 2026-10-20 with
+`gh pr view <n> -R shopware/shopware --json state,mergedAt`; WP8 will update
+this table weekly. When a PR merges, do its "Our impact" work and move the
+row to the next mining pass.
+
+| PR | Topic | State | Our impact | Prepared branch |
+| -- | ----- | ----- | ---------- | --------------- |
+| [#21455](https://github.com/shopware/shopware/pull/21455) | `sw-review` topic guides with rule IDs | open | WP2 `core_guide_ids`, WP7 | none yet |
+| [#21541](https://github.com/shopware/shopware/pull/21541) | Backward-compatibility and HTTP cache guidelines | merged 2026-10-19 | WP7 phase B rules link to the guidelines; unblocked | not needed |
+| [#21627](https://github.com/shopware/shopware/pull/21627) | PR template: What and why / How / Testing / Additional notes / Checklist | open | rewrite `shopware-pr-description/references/pr-body-template.md` and the `pr-no-ai-trailers` fixtures | prepare now |
+| [#21730](https://github.com/shopware/shopware/pull/21730) | Admin lint: no new `.js` in `src`, no new mixins; agent docs point at reference implementations, examples use `wrapComponentConfig()` | open | WP0 item 7, `admin-js-implementation-to-ts` grader; point `shopware-admin-js` at the named component, composable and store | prepare now |
+| [#21725](https://github.com/shopware/shopware/pull/21725) | Admin lint baselines that may only shrink (foundation of #21730) | open | none directly; merges before #21730 | not needed |
+| [#21502](https://github.com/shopware/shopware/pull/21502) | `composer skills:enable` / `skills:disable` | open | `docs/skill-resolution.md`: the official way to hide core skills in a full install | after merge |
+
+[#21722](https://github.com/shopware/shopware/pull/21722), the first home of
+the Administration agent docs, was closed on 2026-10-20. The docs moved to
+PR #21725 and then to #21730.
+
 ## Core skill mapping
 
 | Core skill | Our owner | On trunk |

@@ -80,6 +80,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- Model evals record token use. The Claude and OpenCode adapters write each
+  session's input and output tokens, `ab.sh` stores the averages per mode as
+  `tokens_on` and `tokens_off`, the gate summary shows them per task, and
+  `eval-diff.sh` compares skill-on tokens between two result files. The
+  runner self-test now covers the Claude adapter with a fake `claude` binary.
 - Reference routes can be `on_demand`: the task decides, not the diff, and
   the router never selects them. `when-stuck.md`, `docs-map.md` and
   `change-scope.md` use it instead of proxy triggers such as

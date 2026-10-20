@@ -66,6 +66,9 @@ check "retry reason is logged" 1 "$(grep -c 'retrying' "$tmp/retry.err" || true)
 rc=0; EVAL_AGENT_RETRIES=1 FAKE_AGENT_MODE=error "$HERE/run-task.sh" "$TASK_A" on >/dev/null 2>"$tmp/retry.err" || rc=$?
 check "persistent agent error still exits 4" 4 "$rc"
 check "final error names the reason" 1 "$(grep -c 'simulated API error; not graded' "$tmp/retry.err" || true)"
+rc=0; EVAL_AGENT_RETRIES=1 EVAL_USAGE_LOG="$tmp/retry.usage" FAKE_AGENT_MODE=always-pass FAKE_AGENT_ERROR_ONCE="$tmp/retry-usage-once" \
+  "$HERE/run-task.sh" "$TASK_A" on >/dev/null 2>&1 || rc=$?
+check "retry drops the failed attempt's tokens" "0 1" "$rc $(wc -l <"$tmp/retry.usage" | tr -d ' ')"
 
 echo "skills-profile.sh"
 wd="$tmp/profile"; mkdir -p "$wd"
@@ -82,6 +85,8 @@ check "skill-helps exit" 0 "$(ab skill-helps "$TASK_A")"
 check "skill-helps verdict" improved "$(last_field verdict)"
 check "skill-helps on/off" "2/0" "$(last_field on)/$(last_field off)"
 check "skill loads counted per mode" "2/0" "$(last_field loaded_on)/$(last_field loaded_off)"
+check "tokens averaged per mode" "1200/200/2 1000/100/2" \
+  "$(tail -n1 "$EVAL_RESULTS" | jq -r '"\(.tokens_on.input)/\(.tokens_on.output)/\(.tokens_on.runs) \(.tokens_off.input)/\(.tokens_off.output)/\(.tokens_off.runs)"')"
 check "always-pass exit" 11 "$(ab always-pass "$TASK_B")"
 check "always-pass verdict" held "$(last_field verdict)"
 check "always-fail exit" 10 "$(ab always-fail "$TASK_B")"
@@ -91,6 +96,7 @@ check "skill-hurts verdict" worse "$(last_field verdict)"
 check "error exit" 5 "$(ab error "$TASK_A")"
 check "error verdict" error "$(last_field verdict)"
 check "error count" 4 "$(last_field errors)"
+check "agent errors report no tokens" "null null" "$(last_field tokens_on) $(last_field tokens_off)"
 rc=0; SKILLS_PROFILE_CMD='' "$HERE/ab.sh" "$TASK_A" 1 >/dev/null 2>&1 || rc=$?
 check "no profile command is refused" 2 "$rc"
 check "one JSON line per A/B" 5 "$(wc -l <"$EVAL_RESULTS" | tr -d ' ')"
@@ -100,6 +106,10 @@ rc=0; EVAL_RESULTS="$tmp/partial.jsonl" FAKE_AGENT_MODE=skill-helps FAKE_AGENT_E
   "$HERE/ab.sh" "$TASK_A" 3 >/dev/null 2>&1 || rc=$?
 check "one agent error still gives a verdict" "0 improved" "$rc $(jq -r .verdict "$tmp/partial.jsonl")"
 check "completed runs are counted" "2/3" "$(jq -r '"\(.on_done)/\(.off_done)"' "$tmp/partial.jsonl")"
+check "tokens count completed runs only" 2 "$(jq -r '.tokens_on.runs' "$tmp/partial.jsonl")"
+rc=0; EVAL_RESULTS="$tmp/no-usage.jsonl" FAKE_AGENT_MODE=always-pass FAKE_AGENT_USAGE=none \
+  "$HERE/ab.sh" "$TASK_B" 1 >/dev/null 2>&1 || rc=$?
+check "adapter without token reporting gives null" "null null" "$(jq -r '"\(.tokens_on) \(.tokens_off)"' "$tmp/no-usage.jsonl")"
 rc=0; EVAL_RESULTS="$tmp/noise.jsonl" FAKE_AGENT_MODE=always-pass FAKE_AGENT_FAIL_ONCE="$tmp/fail-once" \
   "$HERE/ab.sh" "$TASK_B" 3 >/dev/null 2>&1 || rc=$?
 check "one-run gap is noise, not worse" "10 no_difference" "$rc $(jq -r .verdict "$tmp/noise.jsonl")"
@@ -114,6 +124,8 @@ cat >"$fakebin/opencode" <<'FAKE'
 case "${FAKE_OPENCODE:-ok}" in
   ok)    echo '{"type":"tool_use","part":{"tool":"skill","state":{"input":{"id":"shopware-testing"}}}}'
          echo '{"type":"tool_use","part":{"tool":"edit"}}'
+         echo '{"type":"step_finish","part":{"tokens":{"input":100,"output":20,"reasoning":5,"cache":{"read":1000,"write":50}}}}'
+         echo '{"type":"step_finish","part":{"tokens":{"input":300,"output":40,"reasoning":5,"cache":{"read":50,"write":0}}}}'
          echo '{"type":"text","part":{"text":"DONE"}}' ;;
   error) echo '{"type":"error","error":{"message":"Model unavailable"}}'; exit 1 ;;
   empty) echo '{"type":"step_start"}' ;;
@@ -131,17 +143,40 @@ start=$SECONDS
 check "finished session exits 0 and prints text" "0 DONE" "$(oc ok 20)"
 check "finished session does not wait for the watchdog" yes "$([[ $((SECONDS - start)) -lt 10 ]] && echo yes || echo no)"
 check "skill loads are logged" shopware-testing "$(EVAL_SKILLS_LOG="$tmp/oc-skills" oc ok >/dev/null; cat "$tmp/oc-skills")"
+check "tokens are summed over steps" "1500 70" "$(EVAL_USAGE_LOG="$tmp/oc-usage" oc ok >/dev/null; cat "$tmp/oc-usage")"
 check "error event is an agent error" "4 " "$(oc error)"
 check "no text and no tool call is an agent error" "4 " "$(oc empty)"
 start=$SECONDS
 check "timeout is an agent error" "4 " "$(oc hang)"
 check "timeout returns promptly through a pipe" yes "$([[ $((SECONDS - start)) -lt 10 ]] && echo yes || echo no)"
 
+echo "claude-task.sh (fake claude binary)"
+cat >"$fakebin/claude" <<'FAKE'
+#!/usr/bin/env bash
+cat >/dev/null
+echo '{"type":"assistant","message":{"content":[{"type":"tool_use","name":"Skill","input":{"skill":"shopware-testing"}},{"type":"text","text":"DONE"}]}}'
+case "${FAKE_CLAUDE:-ok}" in
+  ok)        echo '{"type":"result","subtype":"success","is_error":false,"usage":{"input_tokens":10,"cache_read_input_tokens":3000,"cache_creation_input_tokens":500,"output_tokens":250}}' ;;
+  no-result) ;;
+esac
+FAKE
+chmod +x "$fakebin/claude"
+cl() { # $1 = fake mode ; prints "<exit> <stdout>"
+  local out rc=0
+  out="$(printf 'x' | PATH="$fakebin:$PATH" FAKE_CLAUDE="$1" "$HERE/claude-task.sh" 2>/dev/null)" || rc=$?
+  echo "$rc ${out//$'\n'/ }"
+}
+check "finished session exits 0 and prints text" "0 DONE" "$(cl ok)"
+check "skill loads are logged" shopware-testing "$(EVAL_SKILLS_LOG="$tmp/cl-skills" cl ok >/dev/null; cat "$tmp/cl-skills")"
+check "tokens include cache reads and writes" "3510 250" "$(EVAL_USAGE_LOG="$tmp/cl-usage" cl ok >/dev/null; cat "$tmp/cl-usage")"
+check "no result is an agent error" "4 DONE" "$(cl no-result)"
+
 echo "eval-gate.sh"
 good="$tmp/good.jsonl"
 grep -E '"verdict":"(improved|held)"' "$EVAL_RESULTS" >"$good"
 rc=0; "$ROOT/scripts/eval-gate.sh" "$good" >/dev/null || rc=$?
 check "improved + held passes" 0 "$rc"
+check "per-task table shows skill-on tokens" 1 "$("$ROOT/scripts/eval-gate.sh" "$good" | grep -c "| 2/2 | 1200/200 | improved |" || true)"
 worse="$tmp/worse.jsonl"
 { grep '"verdict":"held"' "$EVAL_RESULTS"; grep '"verdict":"worse"' "$EVAL_RESULTS"; } >"$worse"
 rc=0; EVAL_GATE_MIN_PASS_PCT=0 "$ROOT/scripts/eval-gate.sh" "$worse" >"$tmp/summary.md" || rc=$?
@@ -200,6 +235,10 @@ echo "eval-diff.sh"
 diff_out="$("$ROOT/scripts/eval-diff.sh" "$good" "$EVAL_RESULTS")"
 check "diff lists the changed task" 1 "$(grep -c "^| \`$TASK_A\` | improved 2/2 | error" <<<"$diff_out" || true)"
 check "identical files report no change" 1 "$("$ROOT/scripts/eval-diff.sh" "$good" "$good" | grep -c 'No task changed' || true)"
+pricier="$tmp/pricier.jsonl"
+jq -c 'if .tokens_on then .tokens_on.input += 140 else . end' "$good" >"$pricier"
+check "token change is reported per task" 1 \
+  "$("$ROOT/scripts/eval-diff.sh" "$good" "$pricier" | grep -c "^| \`$TASK_A\` | 1200 / 200 | 1340 / 200 | 10 % |" || true)"
 
 echo
 if [[ "$failures" -gt 0 ]]; then

@@ -36,6 +36,10 @@
 # skills; "loaded_off" counts skill-off runs that loaded any repo skill, which
 # means skills leaked into the baseline. Both are null for adapters that do
 # not report.
+#
+# Tokens: every run also gets EVAL_USAGE_LOG. Adapters write "<input> <output>"
+# there. "tokens_on" / "tokens_off" are the averages over completed runs that
+# reported, {"input":N,"output":N,"runs":N}, or null when none did.
 set -euo pipefail
 
 TASK="${1:?usage: ab.sh <task-name> [repeats]}"
@@ -68,17 +72,21 @@ all_skills="$(find "$ROOT/skills" -mindepth 1 -maxdepth 1 -type d -exec basename
 logs="$(mktemp -d "${TMPDIR:-/tmp}/ab-skills.XXXXXX")"
 trap 'rm -rf "$logs"' EXIT
 
-# $1 = mode ; prints "<passes> <agent errors> <runs that loaded a skill> <runs reported>"
+# $1 = mode ; prints "<passes> <agent errors> <runs that loaded a skill> <runs reported>
+#                     <input tokens> <output tokens> <runs with tokens>"
 # "on" counts runs that loaded one of the task's skills; "off" counts runs that
 # loaded any repo skill, which means skills leaked into the baseline.
 run_n() {
   local mode="$1" pass=0 err=0 loaded=0 reported=0 i rc log match
+  local tok_in=0 tok_out=0 tok_runs=0 usage u_in u_out
   match="$expected"
   [ "$mode" = off ] && match="$all_skills"
   for i in $(seq 1 "$REPEATS"); do
     rc=0
     log="$logs/$mode-$i"
-    EVAL_SKILLS_LOG="$log" "$HERE/run-task.sh" "$TASK" "$mode" >/dev/null 2>"$logs/$mode-$i.err" || rc=$?
+    usage="$logs/$mode-$i.usage"
+    EVAL_SKILLS_LOG="$log" EVAL_USAGE_LOG="$usage" \
+      "$HERE/run-task.sh" "$TASK" "$mode" >/dev/null 2>"$logs/$mode-$i.err" || rc=$?
     # Agent errors and retries go to stderr (CI log); stdout stays the summary.
     grep -h -- '----- agent error' "$logs/$mode-$i.err" >&2 || true
     case "$rc" in
@@ -86,6 +94,11 @@ run_n() {
       1) ;;
       *) err=$((err + 1)) ;;
     esac
+    # Tokens of completed runs only; an agent error says nothing about the skill.
+    if [ "$rc" -le 1 ] && [ -s "$usage" ]; then
+      read -r u_in u_out < <(awk '{ i += $1; o += $2 } END { printf "%d %d\n", i, o }' "$usage")
+      tok_in=$((tok_in + u_in)); tok_out=$((tok_out + u_out)); tok_runs=$((tok_runs + 1))
+    fi
     if [ -f "$log" ]; then
       reported=$((reported + 1))
       if [ -n "$match" ] && grep -qxF -f <(printf '%s\n' "$match") "$log"; then
@@ -93,11 +106,26 @@ run_n() {
       fi
     fi
   done
-  echo "$pass $err $loaded $reported"
+  echo "$pass $err $loaded $reported $tok_in $tok_out $tok_runs"
 }
 
-read -r on_pass on_err on_loaded on_reported < <(run_n on)
-read -r off_pass off_err off_loaded off_reported < <(run_n off)
+# $1 input sum ; $2 output sum ; $3 runs -> JSON average or null
+tokens_json() {
+  if [ "$3" -gt 0 ]; then
+    printf '{"input":%d,"output":%d,"runs":%d}' $(( ($1 + $3 / 2) / $3 )) $(( ($2 + $3 / 2) / $3 )) "$3"
+  else
+    printf null
+  fi
+}
+# $1 = tokens JSON -> "input/output" or n/a
+tokens_text() {
+  if [ "$1" = null ]; then echo n/a; else jq -r '"\(.input)/\(.output)"' <<<"$1"; fi
+}
+
+read -r on_pass on_err on_loaded on_reported on_tin on_tout on_truns < <(run_n on)
+read -r off_pass off_err off_loaded off_reported off_tin off_tout off_truns < <(run_n off)
+tokens_on="$(tokens_json "$on_tin" "$on_tout" "$on_truns")"
+tokens_off="$(tokens_json "$off_tin" "$off_tout" "$off_truns")"
 errors=$((on_err + off_err))
 # null when the adapter does not report skill loads (no EVAL_SKILLS_LOG support)
 if [ "$on_reported" -gt 0 ]; then loaded_on="$on_loaded"; else loaded_on=null; fi
@@ -127,14 +155,15 @@ agent="${EVAL_AGENT:-$(basename "${SKILLS_AGENT_CMD%% *}" .sh)}"
 agent="${agent%-task}"
 sha="$(git -C "$ROOT" rev-parse --short HEAD 2>/dev/null || echo unknown)"
 ts="$(date -u +%Y-%m-%dT%H:%M:%SZ)"
-printf '{"task":"%s","repeats":%d,"on":%d,"off":%d,"on_done":%d,"off_done":%d,"errors":%d,"delta":%d,"verdict":"%s","loaded_on":%s,"loaded_off":%s,"agent":"%s","model":"%s","sha":"%s","ts":"%s"}\n' \
-  "$TASK" "$REPEATS" "$on_pass" "$off_pass" "$on_done" "$off_done" "$errors" "$((on_pass - off_pass))" "$verdict" "$loaded_on" "$loaded_off" \
+printf '{"task":"%s","repeats":%d,"on":%d,"off":%d,"on_done":%d,"off_done":%d,"errors":%d,"delta":%d,"verdict":"%s","loaded_on":%s,"loaded_off":%s,"tokens_on":%s,"tokens_off":%s,"agent":"%s","model":"%s","sha":"%s","ts":"%s"}\n' \
+  "$TASK" "$REPEATS" "$on_pass" "$off_pass" "$on_done" "$off_done" "$errors" "$((on_pass - off_pass))" "$verdict" "$loaded_on" "$loaded_off" "$tokens_on" "$tokens_off" \
   "$agent" "${TASK_MODEL:-default}" "$sha" "$ts" >>"$RESULTS"
 
 echo "Task: $TASK  (repeats=$REPEATS)"
 echo "  skill ON : $on_pass/$on_done completed runs passed ($on_err agent error(s))"
 echo "  skill OFF: $off_pass/$off_done completed runs passed ($off_err agent error(s))"
 echo "  skill loaded: on $loaded_on/$REPEATS, off $loaded_off/$REPEATS"
+echo "  tokens per run (input/output): on $(tokens_text "$tokens_on"), off $(tokens_text "$tokens_off")"
 case "$verdict" in
   improved)      echo "  => skill IMPROVES the result (earns its budget)." ;;
   held)          echo "  => both pass every run. The model may not need this rule." ;;

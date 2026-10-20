@@ -92,12 +92,13 @@ echo "<details><summary>Per task</summary>"
 echo
 echo "On and Off count passed / completed runs."
 echo
-echo "| Task | On | Off | Skill loaded (on) | Verdict |"
-echo "| ---- | -- | --- | ----------------- | ------- |"
+echo "| Task | On | Off | Skill loaded (on) | Tokens on (in/out) | Verdict |"
+echo "| ---- | -- | --- | ----------------- | ------------------ | ------- |"
 jq -r '
   def rank: {"worse":0,"error":1,"no_difference":2,"held":3,"improved":4}[.verdict] // 5;
   def loaded: if (.loaded_on | type) == "number" then "\(.loaded_on)/\(.repeats)" else "n/a" end;
-  sort_by(rank, .task)[] | "| `\(.task)` | \(.on)/\(.on_done // .repeats) | \(.off)/\(.off_done // .repeats) | \(loaded) | \(.verdict) |"
+  def tokens: if (.tokens_on | type) == "object" then "\(.tokens_on.input)/\(.tokens_on.output)" else "n/a" end;
+  sort_by(rank, .task)[] | "| `\(.task)` | \(.on)/\(.on_done // .repeats) | \(.off)/\(.off_done // .repeats) | \(loaded) | \(tokens) | \(.verdict) |"
 ' <<<"$results"
 echo
 echo "</details>"

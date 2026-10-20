@@ -359,8 +359,18 @@ Those rules keep needing a reviewer.
 
 ## WP4: Path-based reference routing
 
-Status: **done 2026-10-20**, except the token check, which waits for the next
-WP1 run. All 14 skills with references have a `routes.json`, not only the
+Status: **done 2026-10-20**, except the token check. The runner records
+token use since 2026-10-20 (`tokens_on` / `tokens_off`, compared by
+`eval-diff.sh`). The commit before #20 (`ad0723a`) has no token logging,
+so the check keeps the current runner and swaps only `skills/`:
+
+```bash
+git checkout ad0723a -- skills && EVAL_RESULTS=/tmp/before.jsonl bash scripts/eval-local.sh
+git checkout HEAD -- skills && EVAL_RESULTS=/tmp/after.jsonl bash scripts/eval-local.sh
+bash scripts/eval-diff.sh /tmp/before.jsonl /tmp/after.jsonl
+```
+
+Both runs use `EVAL_TASKS=prepare-plugin-for-6-8 REPEATS=3`. All 14 skills with references have a `routes.json`, not only the
 five largest. Changes from the spec below:
 
 - Each route also has `when`, the task in words. The generated table has the
@@ -707,6 +717,14 @@ deltas.
 ---
 
 ## WP9: Upstream watchlist
+
+Status: **table done 2026-10-20** in
+[`core-pr-17657-alignment.md`](../core-pr-17657-alignment.md#watchlist).
+Changes since this plan was written: #21541 merged on 2026-10-19, so WP7
+phase B is unblocked. #21722 was closed; its Administration agent docs are
+now part of #21730, and #21725 is the lint-baseline PR #21730 builds on.
+The prepared branches for #21627 and #21730 are still open; the weekly
+update waits for WP8.
 
 Goal: prepare for open core PRs before they merge.
 

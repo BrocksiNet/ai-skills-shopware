@@ -110,6 +110,7 @@ while :; do
   fresh_workdir
   profile "$MODE"
   if [ -n "${EVAL_SKILLS_LOG:-}" ]; then rm -f "$EVAL_SKILLS_LOG"; fi
+  if [ -n "${EVAL_USAGE_LOG:-}" ]; then rm -f "$EVAL_USAGE_LOG"; fi
 done
 
 # Graders must see the agent's work only, not the symlinked skills.
