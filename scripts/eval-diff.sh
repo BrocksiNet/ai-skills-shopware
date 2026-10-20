@@ -5,8 +5,11 @@
 #   scripts/eval-diff.sh <old.jsonl> <new.jsonl>
 #
 # Prints a Markdown table of tasks whose verdict or skill-on pass count
-# changed, plus tasks that were added or removed. Exit 0 always; this is a
-# report, not a gate (eval-gate.sh is the gate).
+# changed, plus tasks that were added or removed. When both files have token
+# counts for a task (`tokens_on`), a second table compares the average
+# skill-on tokens per run: the check that a skill change does not make runs
+# more expensive. Exit 0 always; this is a report, not a gate (eval-gate.sh
+# is the gate).
 set -euo pipefail
 
 [[ $# -eq 2 ]] || { echo "usage: eval-diff.sh <old.jsonl> <new.jsonl>" >&2; exit 2; }
@@ -27,12 +30,33 @@ rows="$(jq -n -r --argjson old "$old" --argjson new "$new" '
     else empty end
 ')"
 
+tokens="$(jq -n -r --argjson old "$old" --argjson new "$new" '
+  def total: .input + .output;
+  def show: "\(.input) / \(.output)";
+  ([$old, $new] | map(keys) | add | unique)[] as $t
+  | ($old[$t].tokens_on) as $o | ($new[$t].tokens_on) as $n
+  | if ($o | type) == "object" and ($n | type) == "object" and ($o | total) > 0
+      then "| `\($t)` | \($o | show) | \($n | show) | \(((($n | total) - ($o | total)) * 1000 / ($o | total) | round) / 10) % |"
+    else empty end
+')"
+
 echo "### Changes since baseline"
 echo
 if [[ -z "$rows" ]]; then
   echo "No task changed its verdict or skill-on pass rate."
-  exit 0
+else
+  echo "| Task | Before | After |"
+  echo "| ---- | ------ | ----- |"
+  printf '%s\n' "$rows"
 fi
-echo "| Task | Before | After |"
-echo "| ---- | ------ | ----- |"
-printf '%s\n' "$rows"
+
+if [[ -n "$tokens" ]]; then
+  echo
+  echo "### Tokens per skill-on run"
+  echo
+  echo "Average input / output tokens. Input includes cache reads and writes."
+  echo
+  echo "| Task | Before | After | Change (total) |"
+  echo "| ---- | ------ | ----- | -------------- |"
+  printf '%s\n' "$tokens"
+fi

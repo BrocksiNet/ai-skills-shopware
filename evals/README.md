@@ -81,7 +81,7 @@ New graders must ship `fixtures/fail/` as an almost-correct sneak.
   (default `evals/.results/ab.jsonl`):
 
   ```json
-  {"task":"dal-search-without-limit","repeats":3,"on":3,"off":1,"on_done":3,"off_done":3,"errors":0,"delta":2,"verdict":"improved","loaded_on":3,"loaded_off":0,"agent":"opencode","model":"opencode/longcat-2.5-preview-free","sha":"c641789","ts":"2026-10-20T06:00:00Z"}
+  {"task":"dal-search-without-limit","repeats":3,"on":3,"off":1,"on_done":3,"off_done":3,"errors":0,"delta":2,"verdict":"improved","loaded_on":3,"loaded_off":0,"tokens_on":{"input":41230,"output":2104,"runs":3},"tokens_off":{"input":28770,"output":1950,"runs":3},"agent":"opencode","model":"opencode/longcat-2.5-preview-free","sha":"c641789","ts":"2026-10-20T06:00:00Z"}
   ```
 
 Pass rates count completed runs only; an agent error is not a failed task. A
@@ -129,6 +129,27 @@ ignore available skills unless the prompt names them; then "on" and "off" are
 the same run and every task comes out `held`. Both adapters therefore report
 the skills they loaded (`EVAL_SKILLS_LOG`), `ab.sh` records `loaded_on` and
 `loaded_off`, and the gate fails when too few skill-on runs load a task skill.
+
+### Token use
+
+Both adapters also write each session's tokens to `EVAL_USAGE_LOG`. Input
+counts cache reads and writes too, because that is the context the model
+processed. `ab.sh` records the average per completed run as `tokens_on` and
+`tokens_off`; agent errors and failed retry attempts are left out. Adapters
+that cannot report give `null`.
+
+To check that a skill change does not make runs more expensive, run the same
+tasks on `main` and on the branch, then compare:
+
+```bash
+git checkout main && EVAL_RESULTS=/tmp/main.jsonl REPEATS=3 EVAL_TASKS=prepare-plugin-for-6-8 bash scripts/eval-local.sh
+git checkout - && EVAL_RESULTS=/tmp/branch.jsonl REPEATS=3 EVAL_TASKS=prepare-plugin-for-6-8 bash scripts/eval-local.sh
+bash scripts/eval-diff.sh /tmp/main.jsonl /tmp/branch.jsonl
+```
+
+`eval-diff.sh` prints a "Tokens per skill-on run" table with the change in
+percent. Three runs per mode are noisy; read a change under about 10 % as no
+change.
 
 Free OpenCode models measured on 2026-10-20 (8 tasks, skill on, one run each):
 

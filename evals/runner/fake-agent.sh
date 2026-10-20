@@ -25,6 +25,10 @@
 #   none         create the log but load nothing (model ignores skills)
 #   leak         log php-foundation even when no skills are present
 #   unsupported  never create the log (adapter cannot report)
+#
+# Token reporting (EVAL_USAGE_LOG, set by ab.sh) writes FAKE_AGENT_USAGE, an
+# "<input> <output>" line. Default: "1200 200" with skills present, "1000 100"
+# without. FAKE_AGENT_USAGE=none writes nothing (adapter cannot report).
 set -euo pipefail
 
 : "${EVAL_TASK:?EVAL_TASK not set (run through run-task.sh)}"
@@ -52,6 +56,14 @@ if [[ -n "${EVAL_SKILLS_LOG:-}" ]]; then
     unsupported) ;;
     *) echo "fake-agent: unknown FAKE_AGENT_LOAD" >&2; exit 2 ;;
   esac
+fi
+
+if [[ -n "${EVAL_USAGE_LOG:-}" ]]; then
+  usage="${FAKE_AGENT_USAGE:-}"
+  if [[ -z "${usage}" ]]; then
+    if [[ "${skills_loaded}" -eq 1 ]]; then usage="1200 200"; else usage="1000 100"; fi
+  fi
+  [[ "${usage}" == none ]] || echo "${usage}" >>"${EVAL_USAGE_LOG}"
 fi
 
 solve() {

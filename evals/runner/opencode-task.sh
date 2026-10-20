@@ -31,6 +31,9 @@
 #                         OpenAI, ...) work while skills stay isolated
 #   EVAL_SKILLS_LOG       when set, this file is created and gets one line per
 #                         skill the agent loaded (set by ab.sh)
+#   EVAL_USAGE_LOG        when set, gets one line "<input> <output>" with the
+#                         tokens summed over all steps; input includes cache
+#                         reads and writes, output includes reasoning
 #   Provider keys such as OPENROUTER_API_KEY pass through when you pick a
 #   non-free TASK_MODEL.
 #
@@ -96,9 +99,10 @@ wait "$watchdog" 2>/dev/null
 set -e
 
 parse_rc=0
-python3 -I - "$events" "${EVAL_SKILLS_LOG:-}" <<'PY' || parse_rc=$?
+python3 -I - "$events" "${EVAL_SKILLS_LOG:-}" "${EVAL_USAGE_LOG:-}" <<'PY' || parse_rc=$?
 import json, sys
 texts, tools, errors, skills = [], 0, [], []
+tokens_in, tokens_out, steps = 0, 0, 0
 with open(sys.argv[1], encoding="utf-8", errors="replace") as fh:
     for line in fh:
         try:
@@ -118,6 +122,13 @@ with open(sys.argv[1], encoding="utf-8", errors="replace") as fh:
                 name = str(args.get("id") or args.get("name") or "").strip()
                 if name and name not in skills:
                     skills.append(name)
+        elif kind == "step_finish":
+            tok = (ev.get("part") or {}).get("tokens") or {}
+            cache = tok.get("cache") or {}
+            if tok:
+                steps += 1
+                tokens_in += int(tok.get("input") or 0) + int(cache.get("read") or 0) + int(cache.get("write") or 0)
+                tokens_out += int(tok.get("output") or 0) + int(tok.get("reasoning") or 0)
         elif kind == "error":
             err = ev.get("error") or {}
             errors.append(err.get("message") or err.get("type") or "unknown error")
@@ -125,6 +136,9 @@ print("\n\n".join(texts))
 if len(sys.argv) > 2 and sys.argv[2]:
     with open(sys.argv[2], "a", encoding="utf-8") as log:
         log.writelines(s + "\n" for s in skills)
+if len(sys.argv) > 3 and sys.argv[3] and steps:
+    with open(sys.argv[3], "a", encoding="utf-8") as log:
+        log.write("%d %d\n" % (tokens_in, tokens_out))
 if errors:
     sys.stderr.write("opencode-task: %s\n" % errors[0])
     sys.exit(4)
