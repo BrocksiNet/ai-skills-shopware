@@ -1,0 +1,26 @@
+diff --git a/manifest.xml b/manifest.xml
+new file mode 100644
+--- /dev/null
++++ b/manifest.xml
+@@ -0,0 +1,22 @@
++<?xml version="1.0" encoding="UTF-8"?>
++<manifest xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
++          xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/shopware/shopware/trunk/src/Core/Framework/App/Manifest/Schema/manifest-2.0.xsd">
++    <meta>
++        <name>AcmeLoyaltyApp</name>
++        <label>Acme Loyalty</label>
++        <author>Acme</author>
++        <version>1.0.0</version>
++        <license>MIT</license>
++    </meta>
++    <setup>
++        <registrationUrl>https://loyalty.example.com/register</registrationUrl>
++    </setup>
++    <permissions>
++        <read>customer</read>
++        <update>customer</update>
++    </permissions>
++    <webhooks>
++        <webhook name="orderPlaced" url="https://loyalty.example.com/hooks/order" event="checkout.order.placed"/>
++    </webhooks>
++</manifest>

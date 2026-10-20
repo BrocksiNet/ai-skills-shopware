@@ -22,10 +22,14 @@ needs the full PHP runtime (custom DI services, PHP DAL entities, route
 decoration), it is a **plugin** — use `shopware-plugin-development` instead.
 Inherits `php-foundation` only for any backend code you write outside the shop.
 
-Read only the reference that matches the task:
+Read only the reference that matches the task or the files it changes:
 
-- Read [`references/manifest-and-permissions.md`](references/manifest-and-permissions.md) when you edit the manifest, permissions or app lifecycle.
-- Read [`references/app-scripts.md`](references/app-scripts.md) when you write an app script.
+<!-- routes:start: generated from routes.json by `node tools/bin/render-routes.ts`; do not edit -->
+| Read | When | Or the change touches |
+| ---- | ---- | --------------------- |
+| [`manifest-and-permissions.md`](references/manifest-and-permissions.md) | You edit the manifest, permissions or app lifecycle. | `manifest.xml`, `app:(install\|refresh\|activate\|validate)` |
+| [`app-scripts.md`](references/app-scripts.md) | You write an app script. | `Resources/scripts/**/*.twig` |
+<!-- routes:end -->
 
 ## Hard guardrails (refuse rather than violate)
 

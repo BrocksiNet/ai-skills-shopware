@@ -28,14 +28,19 @@ not defensive ceremony without a concrete failure mode. Inherits
 > `custom/apps`, app scripts, webhooks) is `shopware-app-development` — apps have
 > no plugin DI/DAL at runtime, so do not apply these rules there.
 
-Read only the reference that matches the task:
+Read only the reference that matches the task or the files it changes:
 
-- Read [`references/dal-usage.md`](references/dal-usage.md) when you read or write data through the DAL.
-- Read [`references/api-contracts.md`](references/api-contracts.md) when you add a Store-API or Admin route, or its OpenAPI schema.
-- Read [`references/cache-tags.md`](references/cache-tags.md) when a change affects cached pages or needs cache tags (6.7+).
-- Read [`references/migrations.md`](references/migrations.md) when you add or change a database migration.
-- Read [`references/version-compatibility.md`](references/version-compatibility.md) when the plugin must support more than one Shopware minor.
-- Read [`references/symfony-first.md`](references/symfony-first.md) when you are about to write code a Symfony component already provides.
+<!-- routes:start: generated from routes.json by `node tools/bin/render-routes.ts`; do not edit -->
+| Read | When | Or the change touches |
+| ---- | ---- | --------------------- |
+| [`dal-usage.md`](references/dal-usage.md) | You read or write data through the DAL. | `*Definition.php`, `*Entity.php`, `*Collection.php`, `new Criteria(`, `EntityRepository`, `->search(`, `->upsert(` |
+| [`api-contracts.md`](references/api-contracts.md) | You add a Store-API or Admin route, or its OpenAPI schema. | `StoreApi/**/*.php`, `Resources/Schema/**`, `Api/**/*Route.php`, `#[Route(`, `_routeScope` |
+| [`cache-tags.md`](references/cache-tags.md) | A change affects cached pages or needs cache tags (6.7+). | `CacheTagCollector`, `CacheTagsEvent`, `CacheInvalidator` |
+| [`migrations.md`](references/migrations.md) | You add or change a database migration. | `Migration/Migration*.php`, `extends MigrationStep`, `updateDestructive(` |
+| [`version-compatibility.md`](references/version-compatibility.md) | The plugin must support more than one Shopware minor. | `composer.json`, `"shopware/core"`, `Feature::isActive(` |
+| [`symfony-first.md`](references/symfony-first.md) | You are about to write code a Symfony component already provides. | `file_put_contents(`, `curl_init(`, `mkdir(` |
+<!-- routes:end -->
+
 - Architecture choices (events vs decoration) -> `shopware-architecture`
 
 ## Hard guardrails (refuse rather than violate)

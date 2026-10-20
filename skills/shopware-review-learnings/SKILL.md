@@ -27,11 +27,15 @@ redefining the rule. New entries come through the
 > boyscouting and root-cause scope to core. This skill keeps **delta findings**
 > that recur in real reviews (API-aware, security, DAL).
 
-Detailed, growing lists live in references. Read only the one that matches the code under review:
+Detailed, growing lists live in references. Read only the one that matches the code under review or the files it changes:
 
-- Read [`references/api-aware.md`](references/api-aware.md) when the code serves Store-API or headless clients.
-- Read [`references/dal-and-performance.md`](references/dal-and-performance.md) when the code queries the DAL or runs on a hot path.
-- Read [`references/change-scope.md`](references/change-scope.md) when a fix grows beyond the bug.
+<!-- routes:start: generated from routes.json by `node tools/bin/render-routes.ts`; do not edit -->
+| Read | When | Or the change touches |
+| ---- | ---- | --------------------- |
+| [`api-aware.md`](references/api-aware.md) | The code serves Store-API or headless clients. | `StoreApi/**/*.php`, `SalesChannel/**/*Route.php`, `store-api`, `StoreApiResponse`, `extends Abstract[A-Za-z]+Route\b` |
+| [`dal-and-performance.md`](references/dal-and-performance.md) | The code queries the DAL or runs on a hot path. | `new Criteria(`, `->addAssociation(`, `EqualsFilter(`, `->fetch(All\|One\|Associative\|FirstColumn)[A-Za-z]*(` |
+| [`change-scope.md`](references/change-scope.md) | A fix grows beyond the bug. | any change |
+<!-- routes:end -->
 
 ## Pre-submit (before opening or requesting review)
 

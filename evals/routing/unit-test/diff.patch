@@ -1,0 +1,29 @@
+diff --git a/tests/unit/Core/Content/Loyalty/LoyaltyCalculatorTest.php b/tests/unit/Core/Content/Loyalty/LoyaltyCalculatorTest.php
+new file mode 100644
+--- /dev/null
++++ b/tests/unit/Core/Content/Loyalty/LoyaltyCalculatorTest.php
+@@ -0,0 +1,26 @@
++<?php declare(strict_types=1);
++
++namespace Shopware\Tests\Unit\Core\Content\Loyalty;
++
++use PHPUnit\Framework\Attributes\CoversClass;
++use PHPUnit\Framework\Attributes\DataProvider;
++use PHPUnit\Framework\TestCase;
++use Shopware\Core\Content\Loyalty\LoyaltyCalculator;
++
++#[CoversClass(LoyaltyCalculator::class)]
++class LoyaltyCalculatorTest extends TestCase
++{
++    #[DataProvider('totals')]
++    public function testPointsForTotal(float $total, int $expected): void
++    {
++        static::assertSame($expected, (new LoyaltyCalculator())->points($total));
++    }
++
++    public static function totals(): \Generator
++    {
++        yield 'zero total' => [0.0, 0];
++        yield 'rounds down' => [19.99, 1];
++    }
++}

@@ -1,0 +1,81 @@
+{
+  "$comment": "Which reference to read for a change (plan WP4). paths_any: globs on changed files; anchors_any: regexes on added or removed lines. Render the SKILL.md table with node tools/bin/render-routes.ts.",
+  "routes": [
+    {
+      "reference": "references/deprecations.md",
+      "when": "You deprecate or break a public API.",
+      "anchors_any": [
+        "@deprecated tag:v",
+        "@major-deprecated",
+        "Feature::triggerDeprecationOrThrow\\(",
+        "(CompatibilityChange|TypeNarrowing)\\("
+      ]
+    },
+    {
+      "reference": "references/service-architecture.md",
+      "when": "You add a service or change what is public.",
+      "paths_any": [
+        "src/**/DependencyInjection/*.{xml,php}",
+        "src/**/Resources/config/services*.{xml,php}"
+      ],
+      "anchors_any": [
+        "\\* @(internal|final)$",
+        "@experimental stableVersion"
+      ]
+    },
+    {
+      "reference": "references/api-schema.md",
+      "when": "You add or change an Admin or Store API route.",
+      "paths_any": [
+        "src/Core/Framework/Api/ApiDefinition/Generator/Schema/**"
+      ],
+      "anchors_any": [
+        "#\\[Route\\("
+      ]
+    },
+    {
+      "reference": "references/modernization-and-flags.md",
+      "when": "You modernize code behind a feature flag.",
+      "paths_any": [
+        "src/Core/Framework/Resources/config/packages/feature.yaml"
+      ],
+      "anchors_any": [
+        "Feature::isActive\\(",
+        "HttpClientInterface",
+        "ClockInterface"
+      ]
+    },
+    {
+      "reference": "references/release-notes-and-adr.md",
+      "when": "The change needs RELEASE_INFO, UPGRADE or an ADR.",
+      "paths_any": [
+        "RELEASE_INFO-*.md",
+        "UPGRADE-*.md",
+        "adr/**",
+        "changelog/_unreleased/*.md"
+      ]
+    },
+    {
+      "reference": "references/static-analysis-baseline.md",
+      "when": "You touch the PHPStan baseline.",
+      "paths_any": [
+        "**/phpstan-baseline.neon",
+        "**/phpstan*.neon",
+        "**/phpstan*.neon.dist"
+      ]
+    },
+    {
+      "reference": "references/platform-architecture.md",
+      "when": "You cross a bundle boundary or add a listener or migration.",
+      "paths_any": [
+        "src/Core/Migration/**/Migration*.php"
+      ],
+      "anchors_any": [
+        "use Shopware\\\\(Storefront|Administration)\\\\",
+        "#\\[AsEventListener",
+        "getSubscribedEvents\\(",
+        "->getSession\\("
+      ]
+    }
+  ]
+}

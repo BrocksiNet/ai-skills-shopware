@@ -1,0 +1,27 @@
+{
+  "$comment": "Which reference to read for a change (plan WP4). paths_any: globs on changed files; anchors_any: regexes on added or removed lines. Render the SKILL.md table with node tools/bin/render-routes.ts.",
+  "routes": [
+    {
+      "reference": "references/architecture.md",
+      "when": "You add a module, component override or ACL privilege.",
+      "paths_any": ["**/Resources/app/administration/src/module/**", "**/Resources/app/administration/src/**/acl/index.{js,ts}"],
+      "anchors_any": ["Shopware\\.Module\\.register\\(", "Shopware\\.Component\\.(override|extend|register)\\(", "addPrivilegeMappingEntry\\("]
+    },
+    {
+      "reference": "references/testing.md",
+      "when": "You write or fix a Jest spec.",
+      "paths_any": ["**/Resources/app/administration/**/*.spec.{js,ts}"],
+      "anchors_any": ["shallowMount\\(", "flushPromises\\("]
+    },
+    {
+      "reference": "references/flags-and-modern-web.md",
+      "when": "A change needs a feature flag, a deprecation or a modern web API.",
+      "anchors_any": [
+        "Shopware\\.Feature\\.isActive\\(",
+        "Shopware\\.Utils\\.debug\\.warn\\(",
+        "<dialog[ >]",
+        "\\bpopover="
+      ]
+    }
+  ]
+}

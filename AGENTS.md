@@ -14,6 +14,7 @@ Human onboarding: [`README.md`](README.md). Skill ownership and topic boundaries
 skills/<skill-name>/
   SKILL.md                    # frontmatter + progressive-disclosure body
   references/*.md             # loaded on demand from SKILL.md links
+  routes.json                 # which reference a change needs (globs + line regexes)
   evals/should-trigger.md       # activation eval prompts (must trigger)
   evals/should-not-trigger.md   # activation eval prompts (must stay quiet)
 
@@ -30,6 +31,7 @@ evals/runner/                 # A/B runner, OpenCode (free) and Claude adapters,
 evals/harbor/                 # containerized Harbor wiring (optional)
 evals/test-graders.sh         # golden tests for all grade.sh scripts
 evals/tools/ast/              # Node AST graders (php-parser + @babel/parser)
+evals/routing/<case>/         # diff.patch + expected.json for reference routing
 
 rules/
   catalog.json                # rule IDs: owning skill, file, eval, trunk source
@@ -39,6 +41,9 @@ tools/                        # repo tooling in TypeScript (Node 24, no build st
   src/                        # typed modules (catalog, rule validator, renderers)
   bin/validate-rules.ts       # inline rule IDs vs rules/catalog.json
   bin/render-enforced.ts      # "Already enforced by CI" sections from the catalog
+  bin/render-routes.ts        # SKILL.md routing tables from routes.json
+  bin/validate-routes.ts      # routes.json shape, targets and table drift
+  bin/route.ts                # references each skill selects for a diff
   test/*.test.ts              # node --test
 
 scripts/
@@ -182,6 +187,22 @@ at the owning skill rather than re-defining the topic.
 4. Register the skill and its topics in [`REGISTRY.md`](REGISTRY.md).
 5. Add install lines to README / relevant `use-cases/*.md` if it is a new
    use-case surface skill.
+
+## Adding or changing a reference
+
+Every `references/*.md` file needs a route in the skill's `routes.json`:
+`reference`, `when` (the task in words), and `paths_any` globs and/or
+`anchors_any` regexes on added and removed diff lines (`always: true` only
+when every change needs it). Keep triggers specific; a route that fires on
+any PHP file defeats the point. Then:
+
+```bash
+node tools/bin/render-routes.ts        # rewrites the table between the routes markers
+git diff main | node tools/bin/route.ts  # what a real diff would select
+```
+
+When a change alters what a case in `evals/routing/` should select, update
+its `expected.json`; add a case for a new kind of change.
 
 ## Repo tooling
 

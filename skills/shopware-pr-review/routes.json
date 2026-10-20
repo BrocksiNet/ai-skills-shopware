@@ -1,0 +1,10 @@
+{
+  "$comment": "Which reference to read for a change (plan WP4). paths_any: globs on changed files; anchors_any: regexes on added or removed lines. Render the SKILL.md table with node tools/bin/render-routes.ts.",
+  "routes": [
+    {
+      "reference": "references/review-workflow.md",
+      "when": "You triage review threads or draft replies.",
+      "always": true
+    }
+  ]
+}

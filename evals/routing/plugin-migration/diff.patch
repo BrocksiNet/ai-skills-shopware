@@ -1,0 +1,24 @@
+diff --git a/src/Migration/Migration1729400000AddLoyaltyPoints.php b/src/Migration/Migration1729400000AddLoyaltyPoints.php
+new file mode 100644
+--- /dev/null
++++ b/src/Migration/Migration1729400000AddLoyaltyPoints.php
+@@ -0,0 +1,22 @@
++<?php declare(strict_types=1);
++
++namespace Acme\Loyalty\Migration;
++
++use Doctrine\DBAL\Connection;
++use Shopware\Core\Framework\Migration\MigrationStep;
++
++class Migration1729400000AddLoyaltyPoints extends MigrationStep
++{
++    public function getCreationTimestamp(): int
++    {
++        return 1729400000;
++    }
++
++    public function update(Connection $connection): void
++    {
++        $connection->executeStatement('ALTER TABLE `customer` ADD COLUMN `loyalty_points` INT NULL');
++    }
++}

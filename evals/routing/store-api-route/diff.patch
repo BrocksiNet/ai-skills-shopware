@@ -1,0 +1,20 @@
+diff --git a/src/Core/Content/Loyalty/SalesChannel/LoyaltyPointsRoute.php b/src/Core/Content/Loyalty/SalesChannel/LoyaltyPointsRoute.php
+new file mode 100644
+--- /dev/null
++++ b/src/Core/Content/Loyalty/SalesChannel/LoyaltyPointsRoute.php
+@@ -0,0 +1,20 @@
++<?php declare(strict_types=1);
++
++namespace Acme\Loyalty\Core\Content\Loyalty\SalesChannel;
++
++use Symfony\Component\Routing\Attribute\Route;
++
++#[Route(defaults: ['_routeScope' => ['store-api']])]
++class LoyaltyPointsRoute extends AbstractLoyaltyPointsRoute
++{
++    #[Route(path: '/store-api/loyalty/points', name: 'store-api.loyalty.points', methods: ['GET'])]
++    public function load(SalesChannelContext $context): LoyaltyPointsRouteResponse
++    {
++        return new LoyaltyPointsRouteResponse($this->points->forCustomer($context->getCustomerId()));
++    }
++}

@@ -1,0 +1,30 @@
+{
+  "$comment": "Which reference to read for a change (plan WP4). paths_any: globs on changed files; anchors_any: regexes on added or removed lines. Render the SKILL.md table with node tools/bin/render-routes.ts.",
+  "routes": [
+    {
+      "reference": "references/api-aware.md",
+      "when": "The code serves Store-API or headless clients.",
+      "paths_any": ["**/StoreApi/**/*.php", "**/SalesChannel/**/*Route.php"],
+      "anchors_any": [
+        "store-api",
+        "StoreApiResponse",
+        "extends Abstract[A-Za-z]+Route\\b"
+      ]
+    },
+    {
+      "reference": "references/dal-and-performance.md",
+      "when": "The code queries the DAL or runs on a hot path.",
+      "anchors_any": [
+        "new Criteria\\(",
+        "->addAssociation\\(",
+        "EqualsFilter\\(",
+        "->fetch(All|One|Associative|FirstColumn)[A-Za-z]*\\("
+      ]
+    },
+    {
+      "reference": "references/change-scope.md",
+      "when": "A fix grows beyond the bug.",
+      "always": true
+    }
+  ]
+}

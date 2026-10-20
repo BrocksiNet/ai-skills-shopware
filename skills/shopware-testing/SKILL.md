@@ -19,14 +19,19 @@ not by claiming compliance.
 > prefer it for test shape, providers, and feature flags. This skill keeps
 > plugin/integration patterns and eval-backed trunk rules below.
 
-Read only the reference that matches the task:
+Read only the reference that matches the task or the files it changes:
+
+<!-- routes:start: generated from routes.json by `node tools/bin/render-routes.ts`; do not edit -->
+| Read | When | Or the change touches |
+| ---- | ---- | --------------------- |
+| [`exception-assertions.md`](references/exception-assertions.md) | A test asserts an exception. | `->expectException(Object\|Message\|Code)?(` |
+| [`test-shape-and-flags.md`](references/test-shape-and-flags.md) | You need data providers, feature flags or coverage attributes. | `#[DataProvider(`, `Feature::(fake\|skipTestIf(In)?Active)(`, `#[Covers(Class\|Function\|Nothing)[(]]`, `new \?Reflection(Class\|Property\|Method)(`, `StaticEntityRepository` |
+| [`integration-repository.md`](references/integration-repository.md) | An integration test reads or writes through a repository. | `tests/integration/**/*Test.php`, `IntegrationTestBehaviour` |
+| [`core-platform-patterns.md`](references/core-platform-patterns.md) | The test lives in shopware/shopware (migrations, Codecov, `#[CoversClass]`). | `tests/migration/**`, `tests/{unit,integration}/{Core,Storefront,Administration,Elasticsearch}/**`, `@codeCoverageIgnore` |
+| [`external-inspiration.md`](references/external-inspiration.md) | You want plugin test patterns from FriendsOfShopware. | `custom/plugins/*/tests/**`, `custom/static-plugins/*/tests/**`, `StaticSystemConfigService` |
+<!-- routes:end -->
 
 - Unit vs integration placement, assertions and test data are covered below.
-- Read [`references/exception-assertions.md`](references/exception-assertions.md) when a test asserts an exception.
-- Read [`references/test-shape-and-flags.md`](references/test-shape-and-flags.md) when you need data providers, feature flags or coverage attributes.
-- Read [`references/integration-repository.md`](references/integration-repository.md) when an integration test reads or writes through a repository.
-- Read [`references/core-platform-patterns.md`](references/core-platform-patterns.md) when the test lives in shopware/shopware (migrations, Codecov, `#[CoversClass]`).
-- Read [`references/external-inspiration.md`](references/external-inspiration.md) when you want plugin test patterns from FriendsOfShopware.
 
 ## Unit vs integration vs migration
 
