@@ -105,7 +105,10 @@ If Claude prints a model-unavailable error, retry later or set a working model i
 
 ## Relation to `evals/runner/`
 
-- `evals/runner/run-task.sh` — generic; set `SKILLS_AGENT_CMD` yourself.
+- `evals/runner/ab.sh` — the CI path. Ships OpenCode adapters (free models, no
+  key) and Claude Code adapters, plus `skills-profile.sh`. It writes JSONL
+  results and feeds `scripts/eval-gate.sh`. Other agents plug in through
+  `SKILLS_AGENT_CMD` and `SKILLS_PROFILE_CMD`.
 - `evals/smoke/smoke.sh` — batteries-included wrappers for Claude/Codex/Cursor,
   skill symlinks, and A/B reporting.
 

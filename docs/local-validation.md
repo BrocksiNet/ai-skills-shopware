@@ -82,7 +82,8 @@ without. The skills CLI has no disable switch, so remove the skill
 (`npx skills remove <name>`, or `npx skills remove --all`), run the task, and
 reinstall it with the same pinned `npx skills add …@<tag>` command from the
 [use-case recipe](../use-cases/). For a repeatable, graded comparison of an eval
-task, use `evals/runner/ab.sh <task> [repeats]` instead. Compare:
+task, use `evals/runner/ab.sh <task> [repeats]` with the Claude adapters from
+[`evals/README.md`](../evals/README.md#layer-3--ab-ablation-runner) instead. Compare:
 
 - Did the skill-on version avoid a mistake the skill-off version made?
 - Did it produce code that passes PHPStan/ECS/PHPUnit on the first try?
