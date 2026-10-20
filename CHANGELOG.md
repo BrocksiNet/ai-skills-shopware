@@ -10,10 +10,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- `tools/`: repo tooling in TypeScript, run by Node 24 without a build step,
+  type-checked with `tsc` and tested with `node --test` in a new `tools` CI
+  job. The rule validator below lives there and also checks catalog field
+  types. Plan WP10 moves the eval runner next.
 - Rule IDs and a rule catalog. Every rule in `shopware-testing`,
   `shopware-plugin-development` and `shopware-review-learnings` starts with a
   stable ID such as `**TEST-016**`, and `rules/catalog.json` links it to its
-  file, eval task, trunk source and audience. `scripts/validate-rules.sh`
+  file, eval task, trunk source and audience. `tools/bin/validate-rules.ts`
   (run by `validate-skills.sh`) fails on unknown, duplicated, misplaced or
   retired IDs, missing eval tasks, and rules with neither an eval nor a
   reason, and prints eval coverage per skill.

@@ -1,0 +1,18 @@
+{
+  "name": "ai-skills-shopware-tools",
+  "private": true,
+  "type": "module",
+  "description": "Repo tooling for the skills library (rule catalog checks, renderers). Runs on Node's built-in TypeScript type stripping; no build step.",
+  "engines": {
+    "node": ">=24"
+  },
+  "scripts": {
+    "typecheck": "tsc -p .",
+    "test": "node --test \"test/**/*.test.ts\"",
+    "validate-rules": "node bin/validate-rules.ts"
+  },
+  "devDependencies": {
+    "@types/node": "24.19.2",
+    "typescript": "7.0.2"
+  }
+}

@@ -25,11 +25,13 @@ criteria. Packages are ordered so that each one only depends on earlier ones.
 | WP7 | Rule backlog from the core guides | WP2, WP5 | L | yes |
 | WP8 | Automated trunk mining | WP2 | M | none |
 | WP9 | Upstream watchlist | none | S | none |
+| WP10 | Eval runner in TypeScript | none | M | none |
 
 Suggested milestones:
 
 1. **v0.9.0**: WP0, WP1, WP2, WP9. Truthful evals and stable rule IDs.
 2. **v0.10.0**: WP3, WP4, WP5, WP8. Cheaper context, review evals, automated mining.
+   WP10 runs alongside and lands before WP5 adds review-shaped tasks to the runner.
 3. **v0.11.0**: WP6, WP7. Extension review skill and the new rule backlog.
 
 ---
@@ -183,14 +185,16 @@ ID sets.
 Status: **done 2026-10-20**. `shopware-testing` (34 rules),
 `shopware-plugin-development` (26) and `shopware-review-learnings` (32) are
 tagged; 29 of the 92 rules have an eval, the rest record an `eval_reason`.
-`scripts/validate-rules.sh` runs inside `validate-skills.sh`, so CI checks it
-on every push. Changes from the spec: the prefix table lives in the catalog
+The validator runs inside `validate-skills.sh`, so CI checks it on every
+push. It first shipped as `scripts/validate-rules.sh` (bash and `jq`) and was
+ported to TypeScript as `tools/bin/validate-rules.ts` on 2026-10-20, see
+[Repo tooling](#repo-tooling-typescript). Changes from the spec: the prefix table lives in the catalog
 (`prefixes`), so the validator needs no copy of it; a rule is defined inline
 exactly once, and other text points at it with a code span (`` `PLG-011` ``),
 which the validator also resolves; review findings that restate another
 skill's rule list it in a new `see` field. The three skills were tagged by
-hand, so `rules-bootstrap.mjs` was not needed, and the alignment doc's ID
-column is hand-written until `render-alignment.mjs` exists. The other skills
+hand, so `rules-bootstrap` was not needed, and the alignment doc's ID
+column is hand-written until `tools/bin/render-alignment.ts` exists. The other skills
 are tagged when they are next touched; WP3, WP4 and WP5 can start now.
 
 ### ID format
@@ -267,9 +271,9 @@ Field rules:
 - `enforced_by` names the CI tool that already catches the rule. WP3 uses it.
 - `audience` is any of `core`, `plugin`, `app`, `storefront`, `admin`. WP6 uses it.
 
-### Validator: `scripts/validate-rules.sh`
+### Validator: `tools/bin/validate-rules.ts`
 
-Uses bash and `jq`. It is called from `validate-skills.sh` and fails when:
+It is called from `validate-skills.sh` and fails when:
 
 1. An inline `**PREFIX-NNN**` in `skills/**.md` has no catalog entry, or the reverse.
 2. An ID is duplicated, or its prefix does not match the owning skill.
@@ -282,19 +286,19 @@ documented only.
 
 ### Migration of existing rules
 
-- `scripts/rules-bootstrap.mjs` is a one-off. It walks the alignment doc
+- `tools/bin/rules-bootstrap.ts` is a one-off. It walks the alignment doc
   tables and the `Definition of done` lists, proposes IDs, and writes a draft
   catalog for human review.
 - Roll it out one skill at a time, starting with `shopware-testing`, which
   has the most mapped rules.
 - The alignment doc tables gain an `ID` column. Later they can be generated
-  from the catalog with `scripts/render-alignment.mjs`.
+  from the catalog with `tools/bin/render-alignment.ts`.
 
 ### WP2 acceptance
 
 - At least `shopware-testing`, `shopware-plugin-development` and
   `shopware-review-learnings` are fully tagged.
-- `validate-rules.sh` runs in `validate.yml` and is ShellCheck-clean.
+- The rule validator runs in `validate.yml`, with unit tests for every error.
 - The README and `AGENTS.md` "Adding or changing a rule" steps mention the ID and the catalog.
 
 ---
@@ -309,7 +313,7 @@ stop review output from repeating CI.
 - Each skill with review or checklist content gets a final section
   `## Already enforced by CI (do not repeat)`, with at most ten bullets.
 - Generate the section from catalog entries with a non-empty `enforced_by`,
-  using `scripts/render-enforced.mjs`. The validator checks that the rendered
+  using `tools/bin/render-enforced.ts`. The validator checks that the rendered
   block between `<!-- enforced:start -->` and `<!-- enforced:end -->` matches
   the catalog.
 - Each bullet names the tool and what it misses, following core's pattern.
@@ -369,7 +373,7 @@ Between `<!-- routes:start -->` and `<!-- routes:end -->`:
 | `Migration*.php`, `extends MigrationStep` | [migrations](references/migrations.md) |
 ```
 
-`scripts/render-routes.mjs` generates the table. `validate-skills.sh` fails
+`tools/bin/render-routes.ts` generates the table. `validate-skills.sh` fails
 when it is out of sync or when a route points to a missing reference.
 
 ### Routing tests: `evals/routing/<case>/`
@@ -380,8 +384,8 @@ evals/routing/plugin-migration-and-cache/
   expected.json    # {"shopware-plugin-development": ["references/migrations.md", "references/cache-tags.md"]}
 ```
 
-- `evals/tools/route/route.mjs <diff>` prints the selected references per skill.
-- `evals/tools/route/route.test.mjs` runs every case with `node --test`.
+- `tools/bin/route.ts <diff>` prints the selected references per skill.
+- `tools/test/route.test.ts` runs every case with `node --test`.
   It is free and runs on every push.
 - Start with eight cases: plugin migration, Store API route, storefront Twig,
   Admin component, app manifest, unit test, integration test, release notes.
@@ -603,7 +607,7 @@ reference grows past that, split it by angle, the way core splits
 Goal: replace the manual mining pass with a weekly issue that lists new
 deltas.
 
-### Script: `scripts/mine-trunk.sh`
+### Script: `tools/bin/mine-trunk.ts`
 
 - **State**: `docs/.mining-state.json` holds
   `{"last_sha": "<trunk sha>", "last_date": "2026-10-19"}`.
@@ -636,7 +640,7 @@ deltas.
 
 - Run against the window 2026-10-13..2026-10-19, it reports the five commits
   found by hand: f2bf3794, 75b0a495, 190d734b, 8dc74f24, 7ad011f1.
-- ShellCheck passes.
+- The type check and unit tests in `tools/` pass; the GitHub API is stubbed in tests.
 
 ---
 
@@ -660,6 +664,51 @@ WP8 using `gh pr view --json state,mergedAt`:
 
 - The table exists. WP8 flips a row to merged and opens a `trunk-drift` item
   in the same week.
+
+---
+
+## WP10: Eval runner in TypeScript
+
+Goal: one typed codebase for the eval pipeline, so result records, verdicts
+and gate rules are checked by the compiler instead of by `jq` filters and
+inline Python.
+
+### Repo tooling (TypeScript)
+
+Since 2026-10-20 the repo tooling lives in `tools/`: TypeScript run directly
+by Node 24 (built-in type stripping, no build step), `tsc --noEmit` with
+`strict`, and `node --test`. CI runs it in the `tools` job of `validate.yml`.
+New tooling goes there; the WP2 validator was the first port. Shell stays
+for two things only: `grade.sh` graders (the grader contract is a script
+that exits 0 or 1) and thin one-line wrappers where a tool must be called
+from a shell step.
+
+### WP10 spec
+
+Port these to `tools/`, one PR each, keeping CLI names, environment
+variables and the JSONL format so `evals.yml` and baselines keep working:
+
+1. `scripts/eval-plan.sh`, `eval-gate.sh`, `eval-diff.sh`: pure functions
+   over typed `AbResult` records, with the selftest cases as unit tests.
+2. `evals/runner/ab.sh` and `run-task.sh`: fixture copy, skills profile,
+   retries and verdicts. `child_process` with a timeout replaces the
+   portable watchdog.
+3. Agent adapters (`opencode-task.sh`, `claude-task.sh`,
+   `opencode-activation.sh`) and `skills-profile.sh`: event-stream parsing
+   moves from inline Python into typed parsers with recorded fixtures.
+4. `scripts/run-activation-evals.sh` and `scripts/eval-local.sh`.
+5. `scripts/validate-skills.sh`, last, once nothing else needs bash.
+
+`evals/smoke/` is not ported; it is retired once `eval-local` covers its
+agents (Codex and Cursor adapters are added in step 3 if still used).
+
+### WP10 acceptance
+
+- `evals/runner/selftest.sh` is replaced by unit tests in `tools/` that cover
+  the same cases, plus parser tests on recorded agent output.
+- A local `eval-local` run and a CI `evals.yml` run produce the same JSONL
+  fields as before, and the gate gives the same verdict on the WP1 baseline.
+- Only `grade.sh` files and documented wrappers remain as shell scripts.
 
 ---
 

@@ -35,9 +35,13 @@ rules/
   catalog.json                # rule IDs: owning skill, file, eval, trunk source
   catalog.schema.json         # field reference for catalog.json
 
+tools/                        # repo tooling in TypeScript (Node 24, no build step)
+  src/                        # typed modules (catalog, rule validator)
+  bin/validate-rules.ts       # inline rule IDs vs rules/catalog.json
+  test/*.test.ts              # node --test
+
 scripts/
   validate-skills.sh          # structure, budgets, REGISTRY conflicts, rule IDs
-  validate-rules.sh           # inline rule IDs vs rules/catalog.json
   run-activation-evals.sh     # Layer 1 activation checks
   check-update.sh             # compare pinned version vs latest release tag
 
@@ -59,6 +63,7 @@ Run the deterministic checks (same as CI):
 ```bash
 bash scripts/validate-skills.sh
 bash scripts/run-activation-evals.sh
+( cd tools && npm ci && npm run typecheck && npm test )
 ( cd evals/tools/ast && npm ci && npm test )
 bash evals/test-graders.sh
 bash evals/runner/selftest.sh
@@ -154,7 +159,7 @@ the same holes):
    fixtures (`fixtures/pass/` required when the rule is gradable). For PHP/JS
    structure, add `evals/tools/ast/src/tasks/<rule>.mjs` and thin-wrap `grade.sh`.
    Then set the rule's `eval` to the task.
-8. Re-run `validate-skills.sh` (it runs `validate-rules.sh`), `evals/tools/ast`
+8. Re-run `validate-skills.sh` (it runs `tools/bin/validate-rules.ts`), `evals/tools/ast`
    snippet tests, and `evals/test-graders.sh`.
 
 Tagged so far: `shopware-testing`, `shopware-plugin-development`,
@@ -171,6 +176,15 @@ at the owning skill rather than re-defining the topic.
 4. Register the skill and its topics in [`REGISTRY.md`](REGISTRY.md).
 5. Add install lines to README / relevant `use-cases/*.md` if it is a new
    use-case surface skill.
+
+## Repo tooling
+
+New tooling is TypeScript in [`tools/`](tools/): Node 24 runs the `.ts` files
+directly (type stripping, so only erasable syntax: no `enum`, no parameter
+properties, no namespaces). `npm run typecheck` runs `tsc` with `strict`;
+`npm test` runs `node --test`. Keep runtime dependencies at zero where you
+can, so `node tools/bin/<tool>.ts` works without `npm ci`. The eval runner
+scripts move here step by step (plan WP10); `grade.sh` graders stay shell.
 
 ## Smoke eval defaults
 
