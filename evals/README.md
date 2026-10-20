@@ -78,7 +78,7 @@ New graders must ship `fixtures/fail/` as an almost-correct sneak.
   (default `evals/.results/ab.jsonl`):
 
   ```json
-  {"task":"dal-search-without-limit","repeats":3,"on":3,"off":1,"errors":0,"delta":2,"verdict":"improved","agent":"opencode","model":"opencode/nemotron-3-ultra-free","sha":"c641789","ts":"2026-10-20T06:00:00Z"}
+  {"task":"dal-search-without-limit","repeats":3,"on":3,"off":1,"errors":0,"delta":2,"verdict":"improved","loaded_on":3,"loaded_off":0,"agent":"opencode","model":"opencode/longcat-2.5-preview-free","sha":"c641789","ts":"2026-10-20T06:00:00Z"}
   ```
 
 | Verdict | Meaning | `ab.sh` exit |
@@ -96,7 +96,7 @@ Ready adapters:
 
 | Adapter | Agent | Needs | Default `TASK_MODEL` |
 | ------- | ----- | ----- | -------------------- |
-| `runner/opencode-task.sh` | OpenCode CLI v2 | nothing for free models | `opencode/nemotron-3-ultra-free` |
+| `runner/opencode-task.sh` | OpenCode CLI v2 | nothing for free models | `opencode/longcat-2.5-preview-free` |
 | `runner/claude-task.sh` | Claude Code CLI | `ANTHROPIC_API_KEY` or `claude auth login` | `sonnet` |
 
 ```bash
@@ -115,9 +115,30 @@ Both adapters keep machine-wide skills out of the "off" run:
 spend with `TASK_MAX_BUDGET_USD` (default 0.75). Hitting a turn or budget cap
 is graded like any attempt.
 
-OpenCode's free models are offered for a limited time and change. List the
-current ones with `opencode models --standalone`. Some free providers log
-prompts to improve their models; the eval fixtures are public code.
+### Pick a model that loads skills
+
+An A/B only measures a skill when the model actually loads it. Many models
+ignore available skills unless the prompt names them; then "on" and "off" are
+the same run and every task comes out `held`. Both adapters therefore report
+the skills they loaded (`EVAL_SKILLS_LOG`), `ab.sh` records `loaded_on` and
+`loaded_off`, and the gate fails when too few skill-on runs load a task skill.
+
+Free OpenCode models measured on 2026-10-20 (8 tasks, skill on, one run each):
+
+| Model | Loaded a task skill | Passed | Avg. session |
+| ----- | ------------------- | ------ | ------------ |
+| `opencode/longcat-2.5-preview-free` (default) | 5/8 | 5/8 | ~115 s |
+| `opencode/mimo-v2.6-flash-free` | 5/8 | 5/8 | ~115 s |
+| `opencode/big-pickle` | 2/8 | 5/8 | ~115 s |
+| `opencode/nemotron-3-ultra-free` | 1/8 | 6/8 | ~35 s |
+| `opencode/nemotron-3.5-lightning-free` | 0/8 | 4/8 | ~35 s |
+
+The other listed free models answered "Model unavailable". Free models are
+offered for a limited time and change; list the current ones with
+`opencode models --standalone` and re-measure before you switch. MiMo, Big
+Pickle and the Nemotron endpoints log prompts to improve their models; LongCat
+is not on OpenCode's list of exceptions to zero retention. The eval fixtures
+are public code either way.
 
 Other agents work through the same contract: `SKILLS_AGENT_CMD` reads the prompt
 on stdin, works in the current directory, prints its transcript, and exits
@@ -128,8 +149,10 @@ non-zero only on a CLI/API failure. The legacy `SKILLS_PROFILE_ON_CMD` /
 
 - `scripts/eval-gate.sh <ab.jsonl>` prints a Markdown summary and fails when a
   task got `worse`, when fewer than 70 % of graded tasks pass every skill-on
-  run, or when more than 25 % ended in agent errors. Override with
-  `EVAL_GATE_MIN_PASS_PCT` and `EVAL_GATE_MAX_ERROR_PCT`.
+  run, when more than 25 % ended in agent errors, when fewer than 50 % of
+  skill-on runs loaded a task skill, or when a skill-off run loaded a repo
+  skill. Override with `EVAL_GATE_MIN_PASS_PCT`, `EVAL_GATE_MAX_ERROR_PCT` and
+  `EVAL_GATE_MIN_LOAD_PCT`.
 - `scripts/eval-diff.sh <old.jsonl> <new.jsonl>` lists tasks whose verdict or
   skill-on pass rate changed.
 - `scripts/eval-plan.sh` picks tasks (`EVAL_TASKS`, `EVAL_CHANGED_FILES`,
@@ -179,8 +202,8 @@ Layers 2-3 call real models. They run in CI only behind a label, the monthly
 schedule or a manual dispatch (see `../.github/workflows/evals.yml`), never on
 every push. A full run is about 64 tasks x 2 modes x 3 repeats, so roughly 380
 short sessions plus about 260 activation prompts. With the default free
-OpenCode model this costs nothing; a free-model session took about 25 seconds
-in testing. With `agent=claude`, CI caps each task session at USD 0.50
+OpenCode model this costs nothing; a session takes about two minutes, so CI
+splits a full run across 8 parallel jobs. With `agent=claude`, CI caps each task session at USD 0.50
 (`TASK_MAX_BUDGET_USD`). Use `max_tasks` or `tasks` on dispatch for smaller
 runs.
 

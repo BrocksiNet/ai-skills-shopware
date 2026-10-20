@@ -39,9 +39,9 @@ on:
         default: "0"
       shards:
         description: "Parallel A/B jobs"
-        default: "4"
+        default: "8"
       model:
-        description: "Model (empty = opencode/nemotron-3-ultra-free, or sonnet for claude)"
+        description: "Model (empty = opencode/longcat-2.5-preview-free, or sonnet for claude)"
         default: ""
       activation:
         description: "Run Layer 1 activation evals (~260 short sessions)"
@@ -63,8 +63,8 @@ env:
   EVAL_AGENT: ${{ inputs.agent || 'opencode' }}
   OPENCODE_VERSION: "2.0.27"
   CLAUDE_CODE_VERSION: "2.1.301"
-  TASK_MODEL: ${{ inputs.model || (inputs.agent == 'claude' && 'sonnet' || 'opencode/nemotron-3-ultra-free') }}
-  ACTIVATION_MODEL: ${{ inputs.model || (inputs.agent == 'claude' && 'sonnet' || 'opencode/nemotron-3-ultra-free') }}
+  TASK_MODEL: ${{ inputs.model || (inputs.agent == 'claude' && 'sonnet' || 'opencode/longcat-2.5-preview-free') }}
+  ACTIVATION_MODEL: ${{ inputs.model || (inputs.agent == 'claude' && 'sonnet' || 'opencode/longcat-2.5-preview-free') }}
   TASK_MAX_BUDGET_USD: "0.50"
   REPEATS: ${{ inputs.repeats || '3' }}
 
@@ -108,7 +108,7 @@ jobs:
         env:
           EVAL_TASKS: ${{ inputs.tasks || '' }}
           EVAL_MAX_TASKS: ${{ inputs.max_tasks || '0' }}
-          EVAL_SHARDS: ${{ inputs.shards || '4' }}
+          EVAL_SHARDS: ${{ inputs.shards || '8' }}
           BASE_SHA: ${{ github.event.pull_request.base.sha }}
         run: |
           if [ "${{ github.event_name }}" = "pull_request" ] && [ -z "$EVAL_TASKS" ]; then
@@ -149,7 +149,7 @@ jobs:
     needs: plan
     if: needs.plan.outputs.run == 'true' && needs.plan.outputs.count != '0'
     runs-on: ubuntu-latest
-    timeout-minutes: 150
+    timeout-minutes: 240
     strategy:
       fail-fast: false
       matrix:

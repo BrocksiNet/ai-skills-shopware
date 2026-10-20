@@ -14,6 +14,13 @@
 #     run with the skill on (default 70)
 #   - at most EVAL_GATE_MAX_ERROR_PCT % of tasks ended in agent errors
 #     (default 25); more means the provider failed, not the skills
+#   - at least EVAL_GATE_MIN_LOAD_PCT % of skill-on runs loaded one of the
+#     task's skills (default 50). Below that the model ignores the skills and
+#     "on" equals "off", so the A/B measures nothing. Pick a model that uses
+#     skills.
+#   - no skill-off run loaded a repo skill (skills leaked into the baseline)
+#   The two skill-load gates only count lines whose adapter reports loads
+#   (`loaded_on` / `loaded_off` not null).
 #
 # "held" and "no_difference" tasks are listed as warnings: candidates for a
 # sharper eval or for removing the rule.
@@ -24,6 +31,7 @@ command -v jq >/dev/null || { echo "eval-gate: jq is required" >&2; exit 2; }
 
 MIN_PASS_PCT="${EVAL_GATE_MIN_PASS_PCT:-70}"
 MAX_ERROR_PCT="${EVAL_GATE_MAX_ERROR_PCT:-25}"
+MIN_LOAD_PCT="${EVAL_GATE_MIN_LOAD_PCT:-50}"
 
 results="$(cat "$@" | jq -s -c 'map(select(type == "object" and has("task"))) | group_by(.task) | map(last)')"
 
@@ -50,6 +58,15 @@ if [[ "$graded" -gt 0 ]]; then
 fi
 error_pct=$((errors * 100 / total))
 
+# Skill loads over graded tasks whose adapter reported them.
+load_runs="$(jq '[.[] | select(.verdict != "error" and (.loaded_on | type) == "number") | .repeats] | add // 0' <<<"$results")"
+loaded_runs="$(jq '[.[] | select(.verdict != "error" and (.loaded_on | type) == "number") | .loaded_on] | add // 0' <<<"$results")"
+leaked="$(jq '[.[] | select((.loaded_off | type) == "number" and .loaded_off > 0)] | length' <<<"$results")"
+load_pct=-1
+if [[ "$load_runs" -gt 0 ]]; then
+  load_pct=$((loaded_runs * 100 / load_runs))
+fi
+
 meta="$(jq -r 'first | "\(.agent) / \(.model) @ \(.sha), \(.repeats) repeat(s)"' <<<"$results")"
 
 echo "## A/B eval results"
@@ -65,14 +82,19 @@ echo "| worse | $worse |"
 echo "| error | $errors |"
 echo
 echo "Skill-on full pass: **$full_on / $graded** ($pass_pct %, gate $MIN_PASS_PCT %)."
+if [[ "$load_pct" -ge 0 ]]; then
+  echo
+  echo "Skill-on runs that loaded a task skill: **$loaded_runs / $load_runs** ($load_pct %, gate $MIN_LOAD_PCT %)."
+fi
 echo
 echo "<details><summary>Per task</summary>"
 echo
-echo "| Task | On | Off | Verdict |"
-echo "| ---- | -- | --- | ------- |"
+echo "| Task | On | Off | Skill loaded (on) | Verdict |"
+echo "| ---- | -- | --- | ----------------- | ------- |"
 jq -r '
   def rank: {"worse":0,"error":1,"no_difference":2,"held":3,"improved":4}[.verdict] // 5;
-  sort_by(rank, .task)[] | "| `\(.task)` | \(.on)/\(.repeats) | \(.off)/\(.repeats) | \(.verdict) |"
+  def loaded: if (.loaded_on | type) == "number" then "\(.loaded_on)/\(.repeats)" else "n/a" end;
+  sort_by(rank, .task)[] | "| `\(.task)` | \(.on)/\(.repeats) | \(.off)/\(.repeats) | \(loaded) | \(.verdict) |"
 ' <<<"$results"
 echo
 echo "</details>"
@@ -92,9 +114,19 @@ if [[ "$error_pct" -gt "$MAX_ERROR_PCT" ]]; then
   echo "- **FAIL**: $error_pct % of tasks ended in agent errors (limit $MAX_ERROR_PCT %). Check the provider, then rerun."
   failed=1
 fi
+if [[ "$load_pct" -ge 0 && "$load_pct" -lt "$MIN_LOAD_PCT" ]]; then
+  echo "- **FAIL**: only $load_pct % of skill-on runs loaded a task skill (gate $MIN_LOAD_PCT %). The model ignores the skills, so on and off are the same run. Use a model that loads skills."
+  failed=1
+fi
+if [[ "$leaked" -gt 0 ]]; then
+  echo "- **FAIL**: $leaked task(s) loaded a repo skill with skills off; the baseline is not skill-free:"
+  jq -r '.[] | select((.loaded_off | type) == "number" and .loaded_off > 0) | "  - `\(.task)`"' <<<"$results"
+  failed=1
+fi
 if [[ $((held + nodiff)) -gt 0 ]]; then
   echo "- Warning: $((held + nodiff)) task(s) show no difference between skill on and off:"
-  jq -r '.[] | select(.verdict == "held" or .verdict == "no_difference") | "  - `\(.task)` (\(.verdict))"' <<<"$results"
+  jq -r '.[] | select(.verdict == "held" or .verdict == "no_difference")
+    | "  - `\(.task)` (\(.verdict)\(if .loaded_on == 0 then ", skill never loaded" else "" end))"' <<<"$results"
 fi
 if [[ "$failed" -eq 0 ]]; then
   echo "- Gate: **PASS**"

@@ -21,10 +21,12 @@
 # an agent error, never as a failed task.
 #
 # Env:
-#   TASK_MODEL            provider/model (default: opencode/nemotron-3-ultra-free)
+#   TASK_MODEL            provider/model (default: opencode/longcat-2.5-preview-free)
 #   TASK_MAX_TURNS        agent steps per task (default: 12)
 #   TASK_TIMEOUT_SECONDS  wall clock per session (default: 600)
 #   OPENCODE_ISOLATE      1 = throwaway HOME/XDG (default); 0 = your own config
+#   EVAL_SKILLS_LOG       when set, this file is created and gets one line per
+#                         skill the agent loaded (set by ab.sh)
 #   Provider keys such as OPENROUTER_API_KEY pass through when you pick a
 #   non-free TASK_MODEL.
 #
@@ -37,7 +39,7 @@
 # a fixture. Do not point this adapter at a real checkout.
 set -euo pipefail
 
-MODEL="${TASK_MODEL:-opencode/nemotron-3-ultra-free}"
+MODEL="${TASK_MODEL:-opencode/longcat-2.5-preview-free}"
 MAX_TURNS="${TASK_MAX_TURNS:-12}"
 TIMEOUT="${TASK_TIMEOUT_SECONDS:-600}"
 
@@ -84,9 +86,9 @@ wait "$watchdog" 2>/dev/null
 set -e
 
 parse_rc=0
-python3 -I - "$events" <<'PY' || parse_rc=$?
+python3 -I - "$events" "${EVAL_SKILLS_LOG:-}" <<'PY' || parse_rc=$?
 import json, sys
-texts, tools, errors = [], 0, []
+texts, tools, errors, skills = [], 0, [], []
 with open(sys.argv[1], encoding="utf-8", errors="replace") as fh:
     for line in fh:
         try:
@@ -100,10 +102,19 @@ with open(sys.argv[1], encoding="utf-8", errors="replace") as fh:
                 texts.append(text)
         elif kind == "tool_use":
             tools += 1
+            part = ev.get("part") or {}
+            if part.get("tool") == "skill":
+                args = (part.get("state") or {}).get("input") or {}
+                name = str(args.get("id") or args.get("name") or "").strip()
+                if name and name not in skills:
+                    skills.append(name)
         elif kind == "error":
             err = ev.get("error") or {}
             errors.append(err.get("message") or err.get("type") or "unknown error")
 print("\n\n".join(texts))
+if len(sys.argv) > 2 and sys.argv[2]:
+    with open(sys.argv[2], "a", encoding="utf-8") as log:
+        log.writelines(s + "\n" for s in skills)
 if errors:
     sys.stderr.write("opencode-task: %s\n" % errors[0])
     sys.exit(4)

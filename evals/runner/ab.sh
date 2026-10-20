@@ -24,6 +24,13 @@
 #   EVAL_AGENT    label for the agent column (default: adapter name, e.g.
 #                 `opencode` for opencode-task.sh)
 #   TASK_MODEL    recorded as the model column (default: "default")
+#
+# Skill loads: ab.sh gives every run its own EVAL_SKILLS_LOG file. Adapters
+# that support it (opencode-task.sh, claude-task.sh) list the skills they
+# loaded there. "loaded_on" counts skill-on runs that loaded one of the task's
+# skills; "loaded_off" counts skill-off runs that loaded any repo skill, which
+# means skills leaked into the baseline. Both are null for adapters that do
+# not report.
 set -euo pipefail
 
 TASK="${1:?usage: ab.sh <task-name> [repeats]}"
@@ -46,23 +53,48 @@ fi
 RESULTS="${EVAL_RESULTS:-$ROOT/evals/.results/ab.jsonl}"
 mkdir -p "$(dirname "$RESULTS")"
 
-run_n() { # $1 = mode ; prints "<passes> <agent errors>"
-  local mode="$1" pass=0 err=0 i rc
+# Skills a run counts as "loaded" for: the task's `skills` file, else all.
+if [ -f "$ROOT/evals/tasks/$TASK/skills" ]; then
+  expected="$(grep -v '^#' "$ROOT/evals/tasks/$TASK/skills" | grep -v '^[[:space:]]*$' || true)"
+else
+  expected="$(find "$ROOT/skills" -mindepth 1 -maxdepth 1 -type d -exec basename {} \; | sort)"
+fi
+all_skills="$(find "$ROOT/skills" -mindepth 1 -maxdepth 1 -type d -exec basename {} \; | sort)"
+logs="$(mktemp -d "${TMPDIR:-/tmp}/ab-skills.XXXXXX")"
+trap 'rm -rf "$logs"' EXIT
+
+# $1 = mode ; prints "<passes> <agent errors> <runs that loaded a skill> <runs reported>"
+# "on" counts runs that loaded one of the task's skills; "off" counts runs that
+# loaded any repo skill, which means skills leaked into the baseline.
+run_n() {
+  local mode="$1" pass=0 err=0 loaded=0 reported=0 i rc log match
+  match="$expected"
+  [ "$mode" = off ] && match="$all_skills"
   for i in $(seq 1 "$REPEATS"); do
     rc=0
-    "$HERE/run-task.sh" "$TASK" "$mode" >/dev/null 2>&1 || rc=$?
+    log="$logs/$mode-$i"
+    EVAL_SKILLS_LOG="$log" "$HERE/run-task.sh" "$TASK" "$mode" >/dev/null 2>&1 || rc=$?
     case "$rc" in
       0) pass=$((pass + 1)) ;;
       1) ;;
       *) err=$((err + 1)) ;;
     esac
+    if [ -f "$log" ]; then
+      reported=$((reported + 1))
+      if [ -n "$match" ] && grep -qxF -f <(printf '%s\n' "$match") "$log"; then
+        loaded=$((loaded + 1))
+      fi
+    fi
   done
-  echo "$pass $err"
+  echo "$pass $err $loaded $reported"
 }
 
-read -r on_pass on_err < <(run_n on)
-read -r off_pass off_err < <(run_n off)
+read -r on_pass on_err on_loaded on_reported < <(run_n on)
+read -r off_pass off_err off_loaded off_reported < <(run_n off)
 errors=$((on_err + off_err))
+# null when the adapter does not report skill loads (no EVAL_SKILLS_LOG support)
+if [ "$on_reported" -gt 0 ]; then loaded_on="$on_loaded"; else loaded_on=null; fi
+if [ "$off_reported" -gt 0 ]; then loaded_off="$off_loaded"; else loaded_off=null; fi
 
 if [ "$errors" -gt 0 ]; then
   verdict=error; code=5
@@ -80,13 +112,14 @@ agent="${EVAL_AGENT:-$(basename "${SKILLS_AGENT_CMD%% *}" .sh)}"
 agent="${agent%-task}"
 sha="$(git -C "$ROOT" rev-parse --short HEAD 2>/dev/null || echo unknown)"
 ts="$(date -u +%Y-%m-%dT%H:%M:%SZ)"
-printf '{"task":"%s","repeats":%d,"on":%d,"off":%d,"errors":%d,"delta":%d,"verdict":"%s","agent":"%s","model":"%s","sha":"%s","ts":"%s"}\n' \
-  "$TASK" "$REPEATS" "$on_pass" "$off_pass" "$errors" "$((on_pass - off_pass))" "$verdict" \
+printf '{"task":"%s","repeats":%d,"on":%d,"off":%d,"errors":%d,"delta":%d,"verdict":"%s","loaded_on":%s,"loaded_off":%s,"agent":"%s","model":"%s","sha":"%s","ts":"%s"}\n' \
+  "$TASK" "$REPEATS" "$on_pass" "$off_pass" "$errors" "$((on_pass - off_pass))" "$verdict" "$loaded_on" "$loaded_off" \
   "$agent" "${TASK_MODEL:-default}" "$sha" "$ts" >>"$RESULTS"
 
 echo "Task: $TASK  (repeats=$REPEATS)"
 echo "  skill ON : $on_pass/$REPEATS passed"
 echo "  skill OFF: $off_pass/$REPEATS passed"
+echo "  skill loaded: on $loaded_on/$REPEATS, off $loaded_off/$REPEATS"
 case "$verdict" in
   improved)      echo "  => skill IMPROVES the result (earns its budget)." ;;
   held)          echo "  => both pass every run. The model may not need this rule." ;;

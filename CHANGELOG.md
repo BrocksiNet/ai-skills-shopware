@@ -21,6 +21,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   `evals/runner/skills-profile.sh` to switch skills on or off per workdir.
   `evals/runner/install-agent.sh` installs a pinned CLI in CI.
 - `scripts/eval-plan.sh`, `scripts/eval-gate.sh` and `scripts/eval-diff.sh`.
+- Skill-load tracking for A/B runs. The adapters report which skills they
+  loaded, `ab.sh` records `loaded_on` and `loaded_off`, and the gate fails
+  when fewer than half of the skill-on runs load a task skill, or when a
+  skill leaks into a skill-off run. A model that ignores skills can no longer
+  produce a green run that measured nothing.
 - `evals/runner/selftest.sh` with `fake-agent.sh`. It checks the whole eval
   pipeline without model calls on every push.
 - `shopware-podman-dev`: OpenSearch is opt-in per lane (compose profile
@@ -39,6 +44,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   review skill.
 
 ### Changed
+
+- The default eval model is `opencode/longcat-2.5-preview-free`. It loaded a
+  task skill in 5 of 8 tasks; the previous default, Nemotron 3 Ultra, in 1 of 8.
+  CI uses 8 parallel A/B jobs.
 
 - `evals/runner/ab.sh` writes one JSON line per task. Its exit code is the
   verdict: improved, held, no difference, worse or error. It refuses to run
