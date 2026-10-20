@@ -19,6 +19,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - The README is short and says why to use the library. Installation,
   architecture with diagrams, results and maintenance moved to their own
   pages under `docs/`.
+- `sw-admin-js` follows the Administration lint gate from
+  shopware/shopware#21730. New rule ADM-041: new components export
+  `wrapComponentConfig({ ... })`, use composables instead of mixins and, on
+  trunk, copy the reference implementations named in the Administration
+  `AGENTS.md` rather than the neighbouring code. It supersedes ADM-006
+  ("follow the patterns in the area you touch"). New eval
+  `admin-component-wrap-config` with an AST grader. The two new ESLint
+  rules are listed under "Already enforced by CI" for ADM-001 and ADM-007.
 
 ### Added
 

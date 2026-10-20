@@ -89,3 +89,33 @@ test('Shopware.Component lookup is not a cross-module import', () => {
   const ast = parseJs("const OrderLine = Shopware.Component.get('swag-example-products-order-line');\n");
   assert.equal(evaluateOrders(ast).cross, 0);
 });
+
+test('admin-component-wrap-config: plain object export is not wrapped', async () => {
+  const { evaluateWrap } = await import('../src/tasks/admin-component-wrap-config.mjs');
+  assert.equal(evaluateWrap(parseJs('export default { template };\n')), 0);
+});
+
+test('admin-component-wrap-config: wrapComponentConfig with mixins fails', async () => {
+  const { evaluateWrap } = await import('../src/tasks/admin-component-wrap-config.mjs');
+  const ast = parseJs("export default Shopware.Component.wrapComponentConfig({ mixins: [Mixin.getByName('notification')] });\n");
+  assert.equal(evaluateWrap(ast), 0);
+});
+
+test('admin-component-wrap-config: destructured wrapComponentConfig counts', async () => {
+  const { evaluateWrap } = await import('../src/tasks/admin-component-wrap-config.mjs');
+  const ast = parseJs('const { wrapComponentConfig } = Shopware.Component;\nexport default wrapComponentConfig({ template });\n');
+  assert.equal(evaluateWrap(ast), 1);
+});
+
+test('admin-component-wrap-config: Shopware.Mixin call is a mixin', async () => {
+  const { evaluateNoMixin } = await import('../src/tasks/admin-component-wrap-config.mjs');
+  assert.equal(evaluateNoMixin(parseJs("const n = Shopware.Mixin.getByName('notification');\n")), 0);
+  assert.equal(evaluateNoMixin(parseJs("// Mixin.getByName('notification')\n")), 1);
+});
+
+test('admin-component-wrap-config: composable call counts, a comment does not', async () => {
+  const { evaluateComposable } = await import('../src/tasks/admin-component-wrap-config.mjs');
+  assert.equal(evaluateComposable(parseJs('// useNotification()\nexport default {};\n')), 0);
+  const aliased = "import notify from 'src/app/composables/use-notification';\nnotify().createNotificationSuccess({ message: 'x' });\n";
+  assert.equal(evaluateComposable(parseJs(aliased)), 1);
+});
