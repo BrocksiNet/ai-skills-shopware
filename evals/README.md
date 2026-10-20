@@ -14,12 +14,15 @@ command is configured.
 Quotes around a prompt and a trailing note such as `(-> shopware-testing)` are
 stripped before the prompt is sent, so the agent never sees the expected skill.
 
-For Claude Code, [`runner/claude-activation.sh`](runner/claude-activation.sh)
-is a ready adapter. It runs each prompt in a fresh, empty workspace that only
-sees this repo's skills, with read-only tools, and prints the invoked skills:
+Two ready adapters run each prompt in a fresh, empty workspace that only sees
+this repo's skills, with read-only tools, and print the invoked skills:
+
+- [`runner/opencode-activation.sh`](runner/opencode-activation.sh) uses
+  OpenCode with a free model. It needs no account and no API key.
+- [`runner/claude-activation.sh`](runner/claude-activation.sh) uses Claude Code.
 
 ```bash
-SKILLS_ACTIVATION_CMD="$PWD/evals/runner/claude-activation.sh" \
+SKILLS_ACTIVATION_CMD="$PWD/evals/runner/opencode-activation.sh" \
   ./scripts/run-activation-evals.sh
 ```
 
@@ -75,7 +78,7 @@ New graders must ship `fixtures/fail/` as an almost-correct sneak.
   (default `evals/.results/ab.jsonl`):
 
   ```json
-  {"task":"dal-search-without-limit","repeats":3,"on":3,"off":1,"errors":0,"delta":2,"verdict":"improved","agent":"claude","model":"sonnet","sha":"c641789","ts":"2026-10-20T06:00:00Z"}
+  {"task":"dal-search-without-limit","repeats":3,"on":3,"off":1,"errors":0,"delta":2,"verdict":"improved","agent":"opencode","model":"opencode/nemotron-3-ultra-free","sha":"c641789","ts":"2026-10-20T06:00:00Z"}
   ```
 
 | Verdict | Meaning | `ab.sh` exit |
@@ -89,20 +92,32 @@ New graders must ship `fixtures/fail/` as an almost-correct sneak.
 `ab.sh` refuses to run without a profile command, because "on" and "off" would
 otherwise load the same skills.
 
-Ready Claude Code adapters:
+Ready adapters:
+
+| Adapter | Agent | Needs | Default `TASK_MODEL` |
+| ------- | ----- | ----- | -------------------- |
+| `runner/opencode-task.sh` | OpenCode CLI v2 | nothing for free models | `opencode/nemotron-3-ultra-free` |
+| `runner/claude-task.sh` | Claude Code CLI | `ANTHROPIC_API_KEY` or `claude auth login` | `sonnet` |
 
 ```bash
-export SKILLS_AGENT_CMD="$PWD/evals/runner/claude-task.sh"       # edits the workdir
-export SKILLS_PROFILE_CMD="$PWD/evals/runner/claude-profile.sh"  # on|off <workdir> <task>
-export TASK_MODEL=sonnet                                         # optional
+export SKILLS_AGENT_CMD="$PWD/evals/runner/opencode-task.sh"     # edits the workdir
+export SKILLS_PROFILE_CMD="$PWD/evals/runner/skills-profile.sh"  # on|off <workdir> <task>
 ./evals/runner/ab.sh dal-search-without-limit 3
 ```
 
-`claude-profile.sh` symlinks the task's `skills` file entries (all skills when
-the file is missing) into the workdir. `claude-task.sh` runs with
-`--setting-sources project`, so skills installed on your machine do not leak
-into the "off" run. It caps each session with `TASK_MAX_TURNS` (default 12) and
-`TASK_MAX_BUDGET_USD` (default 0.75); hitting a cap is graded like any attempt.
+`skills-profile.sh` symlinks the task's `skills` file entries (all skills when
+the file is missing) into `.claude/skills` and `.agents/skills` of the workdir.
+Both adapters keep machine-wide skills out of the "off" run:
+`opencode-task.sh` runs with a throwaway `HOME`, and `claude-task.sh` passes
+`--setting-sources project`. Both cap each session at `TASK_MAX_TURNS`
+(default 12). `opencode-task.sh` also stops after `TASK_TIMEOUT_SECONDS`
+(default 600) and records that as an agent error. `claude-task.sh` also caps
+spend with `TASK_MAX_BUDGET_USD` (default 0.75). Hitting a turn or budget cap
+is graded like any attempt.
+
+OpenCode's free models are offered for a limited time and change. List the
+current ones with `opencode models --standalone`. Some free providers log
+prompts to improve their models; the eval fixtures are public code.
 
 Other agents work through the same contract: `SKILLS_AGENT_CMD` reads the prompt
 on stdin, works in the current directory, prints its transcript, and exits
@@ -127,16 +142,17 @@ non-zero only on a CLI/API failure. The legacy `SKILLS_PROFILE_ON_CMD` /
 
 | Trigger | Tasks | Activation | Baseline PR |
 | ------- | ----- | ---------- | ----------- |
-| Weekly schedule (Mon 06:00 UTC) | all, 3 repeats | yes | yes |
+| Monthly schedule (1st, 06:00 UTC) | all, 3 repeats | yes | yes |
 | PR labeled `run-evals` | tasks whose folder changed or that load a changed skill | no | no |
-| Manual dispatch | `tasks`, `repeats`, `max_tasks`, `shards`, `model` inputs | `activation` input | `baseline` input |
+| Manual dispatch | `agent`, `tasks`, `repeats`, `max_tasks`, `shards`, `model` inputs | `activation` input | `baseline` input |
 
-Setup once:
+The default agent is OpenCode with a free model, so the workflow needs no
+secret. `agent=claude` on dispatch uses Claude Code and needs the repository
+secret `ANTHROPIC_API_KEY`; without it that run fails on purpose.
 
-1. Add the repository secret `ANTHROPIC_API_KEY`. Without it, scheduled and
-   dispatched runs fail on purpose; labeled PRs from forks are skipped.
-2. For baseline PRs, enable *Settings > Actions > General > Allow GitHub Actions
-   to create and approve pull requests*.
+For baseline PRs, enable *Settings > Actions > General > Allow GitHub Actions to
+create and approve pull requests*. Without it, the baseline job fails and the
+results stay available as the `eval-results` artifact.
 
 Baselines land in `evals/baselines/<YYYY-MM-DD>.jsonl` through a bot PR. Each
 run's summary shows the diff against the newest committed baseline.
@@ -159,12 +175,14 @@ Guide: [`docs/smoke-evals.md`](../docs/smoke-evals.md).
 
 ## Cost note
 
-Layers 2-3 call real models and cost money. They run in CI only behind a label,
-the weekly schedule or a manual dispatch (see `../.github/workflows/evals.yml`),
-never on every push. A full weekly run is about 64 tasks x 2 modes x 3 repeats,
-so roughly 380 short sessions plus about 260 activation prompts. CI caps each
-task session at USD 0.50 (`TASK_MAX_BUDGET_USD`); use `max_tasks` or `tasks`
-on dispatch for cheaper runs.
+Layers 2-3 call real models. They run in CI only behind a label, the monthly
+schedule or a manual dispatch (see `../.github/workflows/evals.yml`), never on
+every push. A full run is about 64 tasks x 2 modes x 3 repeats, so roughly 380
+short sessions plus about 260 activation prompts. With the default free
+OpenCode model this costs nothing; a free-model session took about 25 seconds
+in testing. With `agent=claude`, CI caps each task session at USD 0.50
+(`TASK_MAX_BUDGET_USD`). Use `max_tasks` or `tasks` on dispatch for smaller
+runs.
 
 ## CI on every push (no model calls)
 

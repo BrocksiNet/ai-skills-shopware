@@ -21,7 +21,7 @@ tmp="$(mktemp -d "${TMPDIR:-/tmp}/eval-selftest.XXXXXX")"
 trap 'rm -rf "$tmp"' EXIT
 
 export SKILLS_AGENT_CMD="$HERE/fake-agent.sh"
-export SKILLS_PROFILE_CMD="$HERE/claude-profile.sh"
+export SKILLS_PROFILE_CMD="$HERE/skills-profile.sh"
 export EVAL_RESULTS="$tmp/ab.jsonl"
 export EVAL_AGENT=fake TASK_MODEL=none
 
@@ -57,13 +57,13 @@ check "no agent exits 3" 3 "$rc"
 rc=0; FAKE_AGENT_MODE=skill-helps "$HERE/run-task.sh" "$TASK_A" off >/dev/null 2>&1 || rc=$?
 check "profile off really removes skills" 1 "$rc"
 
-echo "claude-profile.sh"
+echo "skills-profile.sh"
 wd="$tmp/profile"; mkdir -p "$wd"
-"$HERE/claude-profile.sh" on "$wd" "$TASK_A"
+"$HERE/skills-profile.sh" on "$wd" "$TASK_A"
 check "task skills file selects its skills" 2 "$(find "$wd/.claude/skills" -mindepth 1 -maxdepth 1 | wc -l | tr -d ' ')"
-"$HERE/claude-profile.sh" off "$wd" "$TASK_A"
+"$HERE/skills-profile.sh" off "$wd" "$TASK_A"
 check "off removes the folder" absent "$([[ -e "$wd/.claude/skills" ]] && echo present || echo absent)"
-"$HERE/claude-profile.sh" on "$wd" "$TASK_B"
+"$HERE/skills-profile.sh" on "$wd" "$TASK_B"
 all="$(find "$ROOT/skills" -mindepth 1 -maxdepth 1 -type d | wc -l | tr -d ' ')"
 check "no skills file loads all skills" "$all" "$(find "$wd/.claude/skills" -mindepth 1 -maxdepth 1 | wc -l | tr -d ' ')"
 
@@ -83,6 +83,38 @@ check "error count" 4 "$(last_field errors)"
 rc=0; SKILLS_PROFILE_CMD='' "$HERE/ab.sh" "$TASK_A" 1 >/dev/null 2>&1 || rc=$?
 check "no profile command is refused" 2 "$rc"
 check "one JSON line per A/B" 5 "$(wc -l <"$EVAL_RESULTS" | tr -d ' ')"
+
+rc=0; ( unset EVAL_AGENT; FAKE_AGENT_MODE=always-pass "$HERE/ab.sh" "$TASK_B" 1 >/dev/null 2>&1 ) || rc=$?
+check "agent label defaults to the adapter name" fake-agent "$(last_field agent)"
+sed -i.bak '$d' "$EVAL_RESULTS" && rm -f "$EVAL_RESULTS.bak"
+
+echo "opencode-task.sh (fake opencode binary)"
+fakebin="$tmp/bin"; mkdir -p "$fakebin"
+cat >"$fakebin/opencode" <<'FAKE'
+#!/usr/bin/env bash
+case "${FAKE_OPENCODE:-ok}" in
+  ok)    echo '{"type":"tool_use","part":{"tool":"edit"}}'
+         echo '{"type":"text","part":{"text":"DONE"}}' ;;
+  error) echo '{"type":"error","error":{"message":"Model unavailable"}}'; exit 1 ;;
+  empty) echo '{"type":"step_start"}' ;;
+  hang)  sleep 30 ;;
+esac
+FAKE
+chmod +x "$fakebin/opencode"
+oc() { # $1 = fake mode ; $2 = timeout (default 2) ; prints "<exit> <stdout>"
+  local out rc=0
+  out="$(printf 'x' | PATH="$fakebin:$PATH" FAKE_OPENCODE="$1" TASK_TIMEOUT_SECONDS="${2:-2}" \
+    "$HERE/opencode-task.sh" 2>/dev/null)" || rc=$?
+  echo "$rc ${out//$'\n'/ }"
+}
+start=$SECONDS
+check "finished session exits 0 and prints text" "0 DONE" "$(oc ok 20)"
+check "finished session does not wait for the watchdog" yes "$([[ $((SECONDS - start)) -lt 10 ]] && echo yes || echo no)"
+check "error event is an agent error" "4 " "$(oc error)"
+check "no text and no tool call is an agent error" "4 " "$(oc empty)"
+start=$SECONDS
+check "timeout is an agent error" "4 " "$(oc hang)"
+check "timeout returns promptly through a pipe" yes "$([[ $((SECONDS - start)) -lt 10 ]] && echo yes || echo no)"
 
 echo "eval-gate.sh"
 good="$tmp/good.jsonl"

@@ -11,11 +11,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 - Real model evals in CI (`evals.yml`). It shards A/B runs across parallel
-  jobs and gates them with `scripts/eval-gate.sh`. A weekly bot PR records
+  jobs and gates them with `scripts/eval-gate.sh`. A monthly bot PR records
   each baseline under `evals/baselines/`. Labeled PRs run only the tasks
-  they touch.
-- Claude Code adapters for behavioral tasks: `evals/runner/claude-task.sh`,
-  and `evals/runner/claude-profile.sh` to switch skills on or off per workdir.
+  they touch. The default agent is OpenCode with a free model, so CI needs
+  no API key or secret.
+- OpenCode adapters `evals/runner/opencode-task.sh` and
+  `opencode-activation.sh` (free models, isolated `HOME`, step cap and
+  timeout), Claude Code adapter `evals/runner/claude-task.sh`, and
+  `evals/runner/skills-profile.sh` to switch skills on or off per workdir.
+  `evals/runner/install-agent.sh` installs a pinned CLI in CI.
 - `scripts/eval-plan.sh`, `scripts/eval-gate.sh` and `scripts/eval-diff.sh`.
 - `evals/runner/selftest.sh` with `fake-agent.sh`. It checks the whole eval
   pipeline without model calls on every push.
@@ -60,8 +64,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 
 - The weekly eval workflow reported success while skipping every model step,
-  and its pass-rate gate could never fail. Missing `ANTHROPIC_API_KEY` now
-  fails scheduled and dispatched runs.
+  and its pass-rate gate could never fail. It now runs on free models, and
+  `agent=claude` without `ANTHROPIC_API_KEY` fails instead of skipping.
 - `shopware-admin-js` no longer tells you to write `acl_role.privileges` with
   SQL, and no longer claims that Admin flag names must be uppercase. Both
   contradicted the core review guides.

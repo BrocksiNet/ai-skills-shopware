@@ -1,24 +1,33 @@
 name: evals
 
-# Layers 1-3 against real models. These cost money, so they are gated:
-#   - weekly schedule: all tasks, activation evals, baseline PR
+# Layers 1-3 against real models. Gated so they run rarely:
+#   - monthly schedule: all tasks, activation evals, baseline PR
 #   - a PR labeled `run-evals`: only tasks touched by the PR (changed task
 #     folder, or a changed skill the task loads)
 #   - manual dispatch with inputs
 #
-# Requires the repository secret ANTHROPIC_API_KEY. Without it, scheduled and
-# dispatched runs FAIL (a silent skip looked green for weeks). Labeled PRs from
-# forks, which never see secrets, are skipped with a warning.
+# Default agent: OpenCode with a free model. It needs no account, no API key
+# and no repository secret. Free models change; pick another with the `model`
+# input (`opencode models --standalone` lists them).
+#
+# agent=claude uses Claude Code and needs the secret ANTHROPIC_API_KEY. Without
+# it the run FAILS (a silent skip looked green for weeks), except on labeled
+# PRs from forks, which never see secrets and skip with a warning.
 #
 # Self-test of the runner and gate (no model calls) runs in validate.yml.
 
 on:
   schedule:
-    - cron: "0 6 * * 1" # Mondays 06:00 UTC
+    - cron: "0 6 1 * *" # 1st of the month, 06:00 UTC
   pull_request:
     types: [labeled]
   workflow_dispatch:
     inputs:
+      agent:
+        description: "Agent CLI (opencode = free model, no key; claude = needs ANTHROPIC_API_KEY)"
+        type: choice
+        options: [opencode, claude]
+        default: opencode
       tasks:
         description: "Comma-separated task names (empty = all tasks)"
         default: ""
@@ -32,8 +41,8 @@ on:
         description: "Parallel A/B jobs"
         default: "4"
       model:
-        description: "Claude model alias for tasks and activation"
-        default: "sonnet"
+        description: "Model (empty = opencode/nemotron-3-ultra-free, or sonnet for claude)"
+        default: ""
       activation:
         description: "Run Layer 1 activation evals (~260 short sessions)"
         type: boolean
@@ -51,9 +60,11 @@ concurrency:
   cancel-in-progress: false
 
 env:
+  EVAL_AGENT: ${{ inputs.agent || 'opencode' }}
+  OPENCODE_VERSION: "2.0.27"
   CLAUDE_CODE_VERSION: "2.1.301"
-  TASK_MODEL: ${{ inputs.model || 'sonnet' }}
-  ACTIVATION_MODEL: ${{ inputs.model || 'sonnet' }}
+  TASK_MODEL: ${{ inputs.model || (inputs.agent == 'claude' && 'sonnet' || 'opencode/nemotron-3-ultra-free') }}
+  ACTIVATION_MODEL: ${{ inputs.model || (inputs.agent == 'claude' && 'sonnet' || 'opencode/nemotron-3-ultra-free') }}
   TASK_MAX_BUDGET_USD: "0.50"
   REPEATS: ${{ inputs.repeats || '3' }}
 
@@ -73,19 +84,22 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Guard - require ANTHROPIC_API_KEY
+      - name: Guard - agent credentials
         id: guard
         env:
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
           IS_FORK: ${{ github.event.pull_request.head.repo.fork || false }}
         run: |
-          if [ -n "${ANTHROPIC_API_KEY:-}" ]; then
+          if [ "$EVAL_AGENT" = "opencode" ]; then
+            # Free OpenCode models need no key.
+            echo "run=true" >> "$GITHUB_OUTPUT"
+          elif [ -n "${ANTHROPIC_API_KEY:-}" ]; then
             echo "run=true" >> "$GITHUB_OUTPUT"
           elif [ "$IS_FORK" = "true" ]; then
             echo "::warning::Fork PRs get no secrets; skipping model evals."
             echo "run=false" >> "$GITHUB_OUTPUT"
           else
-            echo "::error::ANTHROPIC_API_KEY is not set. Add it under Settings > Secrets and variables > Actions."
+            echo "::error::agent=claude needs ANTHROPIC_API_KEY. Add it under Settings > Secrets and variables > Actions, or use agent=opencode."
             exit 1
           fi
 
@@ -105,7 +119,7 @@ jobs:
           echo "$plan" | jq .
           echo "count=$(jq '.count' <<<"$plan")" >> "$GITHUB_OUTPUT"
           echo "shards=$(jq -c '.shards' <<<"$plan")" >> "$GITHUB_OUTPUT"
-          echo "Selected $(jq '.count' <<<"$plan") task(s) in $(jq '.shards | length' <<<"$plan") shard(s)." >> "$GITHUB_STEP_SUMMARY"
+          echo "Agent \`$EVAL_AGENT\`, model \`$TASK_MODEL\`: $(jq '.count' <<<"$plan") task(s) in $(jq '.shards | length' <<<"$plan") shard(s)." >> "$GITHUB_STEP_SUMMARY"
 
   activation:
     needs: plan
@@ -123,12 +137,12 @@ jobs:
         with:
           node-version: '22'
 
-      - name: Install Claude Code CLI
-        run: npm install -g "@anthropic-ai/claude-code@${CLAUDE_CODE_VERSION}"
+      - name: Install agent CLI
+        run: bash evals/runner/install-agent.sh "$EVAL_AGENT"
 
       - name: Layer 1 - activation evals
         env:
-          SKILLS_ACTIVATION_CMD: ${{ github.workspace }}/evals/runner/claude-activation.sh
+          SKILLS_ACTIVATION_CMD: ${{ github.workspace }}/evals/runner/${{ inputs.agent || 'opencode' }}-activation.sh
         run: bash scripts/run-activation-evals.sh
 
   ab:
@@ -142,8 +156,8 @@ jobs:
         shard: ${{ fromJSON(needs.plan.outputs.shards) }}
     env:
       ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
-      SKILLS_AGENT_CMD: ${{ github.workspace }}/evals/runner/claude-task.sh
-      SKILLS_PROFILE_CMD: ${{ github.workspace }}/evals/runner/claude-profile.sh
+      SKILLS_AGENT_CMD: ${{ github.workspace }}/evals/runner/${{ inputs.agent || 'opencode' }}-task.sh
+      SKILLS_PROFILE_CMD: ${{ github.workspace }}/evals/runner/skills-profile.sh
       EVAL_RESULTS: ${{ github.workspace }}/evals/.results/ab-${{ matrix.shard.id }}.jsonl
     steps:
       - uses: actions/checkout@v5
@@ -158,8 +172,8 @@ jobs:
         working-directory: evals/tools/ast
         run: npm ci
 
-      - name: Install Claude Code CLI
-        run: npm install -g "@anthropic-ai/claude-code@${CLAUDE_CODE_VERSION}"
+      - name: Install agent CLI
+        run: bash evals/runner/install-agent.sh "$EVAL_AGENT"
 
       - name: Layers 2-3 - A/B per task
         env:
@@ -247,7 +261,7 @@ jobs:
           cp "$RUNNER_TEMP/results/ab.jsonl" "evals/baselines/${day}.jsonl"
 
           {
-            echo "Weekly A/B baseline from run ${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}/actions/runs/${GITHUB_RUN_ID}."
+            echo "A/B baseline (agent \`${EVAL_AGENT}\`, model \`${TASK_MODEL}\`) from run ${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}/actions/runs/${GITHUB_RUN_ID}."
             echo
             if [ -n "$previous" ]; then
               bash scripts/eval-diff.sh "$previous" "evals/baselines/${day}.jsonl"

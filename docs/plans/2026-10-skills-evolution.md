@@ -85,9 +85,13 @@ Goal: the weekly `evals.yml` run must produce real numbers and must be able
 to fail.
 
 Status: **implemented 2026-10-19**. The runner, gate, plan and diff scripts
-are covered by `evals/runner/selftest.sh` without model calls. The acceptance
-runs need the repository secret `ANTHROPIC_API_KEY`. The baseline PR needs
-"Allow GitHub Actions to create and approve pull requests". Beyond the spec,
+are covered by `evals/runner/selftest.sh` without model calls. Change from the
+spec: CI defaults to OpenCode with a free model (`opencode-task.sh`,
+`opencode-activation.sh`), so no API key or secret is needed; GitHub Models,
+the other keyless option, was retired on 2026-07-30. Claude Code stays
+available with `agent=claude` and `ANTHROPIC_API_KEY`. The schedule is monthly.
+The baseline PR needs "Allow GitHub Actions to create and approve pull
+requests". Beyond the spec,
 `ab.sh` also reports `held` (exit 11, on = off = repeats) and `error` (exit 5).
 The gate also fails when more than 25 % of runs are agent errors, and A/B jobs
 run as parallel shards picked by `scripts/eval-plan.sh`.
@@ -124,7 +128,7 @@ run as parallel shards picked by `scripts/eval-plan.sh`.
   prompt on stdin and runs `claude -p` in the current working directory with
   `--setting-sources project`, edit tools allowed and `--max-turns 12`. It
   prints the transcript.
-- Add `evals/runner/claude-profile.sh on|off <workdir>`. It symlinks the task's
+- Add `evals/runner/skills-profile.sh on|off <workdir>`. It symlinks the task's
   skill set into `<workdir>/.claude/skills` for `on`, and removes it for `off`.
   `run-task.sh` calls it with the workdir instead of `eval`-ing a global command.
 
@@ -150,7 +154,7 @@ run as parallel shards picked by `scripts/eval-plan.sh`.
 ### WP1 files
 
 - `evals/runner/ab.sh`, `evals/runner/run-task.sh`
-- new `evals/runner/claude-task.sh`, `evals/runner/claude-profile.sh`, `scripts/eval-diff.sh`
+- new `evals/runner/claude-task.sh`, `evals/runner/skills-profile.sh`, `scripts/eval-diff.sh`
 - `.github/workflows/evals.yml`
 - `evals/README.md`, `docs/smoke-evals.md`
 

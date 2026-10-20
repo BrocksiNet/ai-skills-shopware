@@ -21,8 +21,9 @@
 #
 # Env:
 #   EVAL_RESULTS  JSONL output (default: <repo>/evals/.results/ab.jsonl)
-#   EVAL_AGENT    label for the agent column (default: claude)
-#   TASK_MODEL    recorded as the model column (default: sonnet)
+#   EVAL_AGENT    label for the agent column (default: adapter name, e.g.
+#                 `opencode` for opencode-task.sh)
+#   TASK_MODEL    recorded as the model column (default: "default")
 set -euo pipefail
 
 TASK="${1:?usage: ab.sh <task-name> [repeats]}"
@@ -38,7 +39,7 @@ if [ -z "${SKILLS_AGENT_CMD:-}" ]; then
 fi
 if [ -z "${SKILLS_PROFILE_CMD:-}" ] && [ -z "${SKILLS_PROFILE_ON_CMD:-}${SKILLS_PROFILE_OFF_CMD:-}" ]; then
   echo "No SKILLS_PROFILE_CMD: 'on' and 'off' would load the same skills. Refusing." >&2
-  echo "Use: SKILLS_PROFILE_CMD=$HERE/claude-profile.sh" >&2
+  echo "Use: SKILLS_PROFILE_CMD=$HERE/skills-profile.sh" >&2
   exit 2
 fi
 
@@ -75,11 +76,13 @@ else
   verdict=no_difference; code=10
 fi
 
+agent="${EVAL_AGENT:-$(basename "${SKILLS_AGENT_CMD%% *}" .sh)}"
+agent="${agent%-task}"
 sha="$(git -C "$ROOT" rev-parse --short HEAD 2>/dev/null || echo unknown)"
 ts="$(date -u +%Y-%m-%dT%H:%M:%SZ)"
 printf '{"task":"%s","repeats":%d,"on":%d,"off":%d,"errors":%d,"delta":%d,"verdict":"%s","agent":"%s","model":"%s","sha":"%s","ts":"%s"}\n' \
   "$TASK" "$REPEATS" "$on_pass" "$off_pass" "$errors" "$((on_pass - off_pass))" "$verdict" \
-  "${EVAL_AGENT:-claude}" "${TASK_MODEL:-sonnet}" "$sha" "$ts" >>"$RESULTS"
+  "$agent" "${TASK_MODEL:-default}" "$sha" "$ts" >>"$RESULTS"
 
 echo "Task: $TASK  (repeats=$REPEATS)"
 echo "  skill ON : $on_pass/$REPEATS passed"

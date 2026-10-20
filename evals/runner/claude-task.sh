@@ -5,10 +5,10 @@
 # Reads the task prompt on stdin, lets Claude edit files in the current working
 # directory (the eval workdir), and prints the assistant's text as the
 # transcript. Only project settings are loaded (--setting-sources project), so
-# the skills present are exactly what claude-profile.sh put into the workdir.
+# the skills present are exactly what skills-profile.sh put into the workdir.
 #
 #   export SKILLS_AGENT_CMD="$PWD/evals/runner/claude-task.sh"
-#   export SKILLS_PROFILE_CMD="$PWD/evals/runner/claude-profile.sh"
+#   export SKILLS_PROFILE_CMD="$PWD/evals/runner/skills-profile.sh"
 #   ./evals/runner/ab.sh dal-search-without-limit 3
 #
 # Exit codes: 0 when the session finished, 4 on a CLI/API error or a session

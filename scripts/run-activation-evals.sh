@@ -16,8 +16,8 @@
 #   SKILLS_AGENT_CMD for an editing agent, so set SKILLS_ACTIVATION_CMD when
 #   both run in one environment.
 #
-# Example (Claude Code CLI, see evals/runner/claude-activation.sh):
-#   export SKILLS_ACTIVATION_CMD="$PWD/evals/runner/claude-activation.sh"
+# Example (OpenCode, free model, no key; or evals/runner/claude-activation.sh):
+#   export SKILLS_ACTIVATION_CMD="$PWD/evals/runner/opencode-activation.sh"
 #   ./scripts/run-activation-evals.sh
 #
 # Without an activation command, the script runs in --dry mode: it validates that

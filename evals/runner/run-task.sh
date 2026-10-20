@@ -11,10 +11,11 @@
 # Required:
 #   SKILLS_AGENT_CMD    reads the prompt on stdin, works in CWD, prints the
 #                       transcript to stdout. Exit 0 when the session finished.
-#                       Ready adapter: evals/runner/claude-task.sh
+#                       Ready adapters: evals/runner/opencode-task.sh (free
+#                       model, no key), evals/runner/claude-task.sh
 # Skill profile (needed for a real A/B):
 #   SKILLS_PROFILE_CMD  called as `<cmd> on|off <workdir> <task>`.
-#                       Ready adapter: evals/runner/claude-profile.sh
+#                       Ready adapter: evals/runner/skills-profile.sh
 #   SKILLS_PROFILE_ON_CMD / SKILLS_PROFILE_OFF_CMD
 #                       legacy global hooks, eval'd without arguments.
 #
