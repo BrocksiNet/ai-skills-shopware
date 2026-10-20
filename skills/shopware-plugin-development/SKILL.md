@@ -40,15 +40,15 @@ Read only the reference that matches the task:
 
 ## Hard guardrails (refuse rather than violate)
 
-1. **Never break Shopware 6.6 compatibility silently.** If the project supports
+1. **PLG-001** **Never break Shopware 6.6 compatibility silently.** If the project supports
    6.6 and your change uses 6.7-only API, gate it or flag the bump explicitly.
-2. **Never use a deprecated API when a stable replacement exists** (e.g. the
+2. **PLG-002** **Never use a deprecated API when a stable replacement exists** (e.g. the
    `*CacheTagsEvent` events in 6.7 — use `CacheTagCollector`). If you must, say so
    and why.
-3. **Never write raw SQL through the DAL layer for entity data** when a `Criteria`
+3. **PLG-003** **Never write raw SQL through the DAL layer for entity data** when a `Criteria`
    read or `EntityRepository` write works. Raw connection SQL is a last resort
    with a stated reason (bulk/performance) and parameter binding.
-4. **Never modify core files or vendor code.** Extend via decoration, events,
+4. **PLG-004** **Never modify core files or vendor code.** Extend via decoration, events,
    and the extension system.
 
 ## Plugin deltas on top of php-foundation
@@ -56,33 +56,33 @@ Read only the reference that matches the task:
 Inherits all **`php-foundation` trunk habits** (`empty()`, interface injection,
 `ClockInterface`, typing). Also:
 
-- **Extend, do not modify.** Use service **decoration** (`decorates:`), event
+- **PLG-005** **Extend, do not modify.** Use service **decoration** (`decorates:`), event
   **subscribers/listeners**, and the entity-extension / custom-field system.
   Register new services in PHP (`services.php` with `ContainerConfigurator`)
   when the plugin targets 6.8+. XML `services.xml` / `routes.xml` still load
   on 6.6/6.7; migrate them before 6.8. Keep plugin `config.xml` as XML.
-- **Thin controllers** — delegate to services; see `shopware-architecture` and
+- **PLG-006** **Thin controllers** — delegate to services; see `shopware-architecture` and
   `shopware-review-learnings`. New Store-API routes need OpenAPI (see
   `api-contracts.md`) and ACL (`shopware-security`).
 - **DAL first.** Read with `Criteria` (add associations before filtering on them;
   avoid N+1; request only the fields/associations you need). Write with
   `EntityRepository::create/update/upsert` and the right `Context`.
-- **Cache (6.7+).** Inject `CacheTagCollector` and call `addTag()`; invalidate
+- **PLG-007** **Cache (6.7+).** Inject `CacheTagCollector` and call `addTag()`; invalidate
   with `CacheInvalidator::invalidate()`. Do not subscribe to deprecated
   `*CacheTagsEvent`.
 - **Migrations** extend `MigrationStep`; separate destructive from
   non-destructive; make them idempotent; never edit a shipped migration after
   release.
-- **Plugin lifecycle:** handle install/update/activate/deactivate/uninstall;
+- **PLG-008** **Plugin lifecycle:** handle install/update/activate/deactivate/uninstall;
   respect `keepUserData` on uninstall; clean up only what you own.
-- **Version awareness:** check the supported Shopware range in `composer.json`,
+- **PLG-009** **Version awareness:** check the supported Shopware range in `composer.json`,
   keep code working across it, and align Symfony usage to the version that range
   pins. Prefer Symfony components over custom HTTP/time/validation when the pinned
   stack allows ([`references/symfony-first.md`](references/symfony-first.md)).
   For cross-version migrations and modernization, reach for **Rector**
   (`frosh/shopware-rector` set) and review the dry-run — do not hand-edit blindly
   (see the compatibility reference).
-- **Preparing for 6.8 is not a rewrite onto 6.8-only APIs.** Keep the
+- **PLG-010** **Preparing for 6.8 is not a rewrite onto 6.8-only APIs.** Keep the
   `composer.json` range unless the user asked to drop a minor. Run the suite
   as it is, and again with `V6_8_0_0=1`. `FEATURE_ALL` is not that run. Code
   that still compiles can still be wrong (cache, cart cents, documents, flows).

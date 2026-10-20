@@ -31,8 +31,13 @@ evals/harbor/                 # containerized Harbor wiring (optional)
 evals/test-graders.sh         # golden tests for all grade.sh scripts
 evals/tools/ast/              # Node AST graders (php-parser + @babel/parser)
 
+rules/
+  catalog.json                # rule IDs: owning skill, file, eval, trunk source
+  catalog.schema.json         # field reference for catalog.json
+
 scripts/
-  validate-skills.sh          # structure, budgets, REGISTRY conflicts
+  validate-skills.sh          # structure, budgets, REGISTRY conflicts, rule IDs
+  validate-rules.sh           # inline rule IDs vs rules/catalog.json
   run-activation-evals.sh     # Layer 1 activation checks
   check-update.sh             # compare pinned version vs latest release tag
 
@@ -135,12 +140,25 @@ the same holes):
    coverage matrix — never duplicate ownership.
 3. Write the rule in the owning `SKILL.md` (or `references/*.md` if long).
    Link references from `SKILL.md`; `validate-skills.sh` checks dead links.
-4. Add activation prompts under `skills/<skill>/evals/`.
-5. Add a behavioral task under `evals/tasks/<rule>/` with `grade.sh` and golden
+4. Give it the next free ID for the skill's prefix (see `prefixes` in
+   [`rules/catalog.json`](rules/catalog.json)) and start the rule's bullet with
+   the bold ID: `- **TEST-035** Never …`. Tag the bullet that states the rule
+   once. A `SKILL.md` summary of a rule tagged in a reference stays untagged;
+   point at another rule with a code span, `` `PLG-011` ``.
+5. Add the catalog entry: `file`, `title`, `eval` (task name) or `eval: null`
+   with an `eval_reason`, and `trunk` / `defer_on_trunk` when core has the
+   rule. Never reuse an ID; a dropped rule becomes `retired` or
+   `superseded:<ID>` and leaves the skill text.
+6. Add activation prompts under `skills/<skill>/evals/`.
+7. Add a behavioral task under `evals/tasks/<rule>/` with `grade.sh` and golden
    fixtures (`fixtures/pass/` required when the rule is gradable). For PHP/JS
    structure, add `evals/tools/ast/src/tasks/<rule>.mjs` and thin-wrap `grade.sh`.
-6. Re-run `validate-skills.sh`, `evals/tools/ast` snippet tests, and
-   `evals/test-graders.sh`.
+   Then set the rule's `eval` to the task.
+8. Re-run `validate-skills.sh` (it runs `validate-rules.sh`), `evals/tools/ast`
+   snippet tests, and `evals/test-graders.sh`.
+
+Tagged so far: `shopware-testing`, `shopware-plugin-development`,
+`shopware-review-learnings`. Tag a skill's remaining rules when you next touch it.
 
 For recurring real-world findings, prefer `shopware-review-learnings` and point
 at the owning skill rather than re-defining the topic.

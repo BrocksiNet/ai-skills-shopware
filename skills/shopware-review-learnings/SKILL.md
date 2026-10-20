@@ -35,18 +35,18 @@ Detailed, growing lists live in references. Read only the one that matches the c
 
 ## Pre-submit (before opening or requesting review)
 
-- **Scope the fix** — address root cause, not symptoms; see `references/change-scope.md`
+- **REV-001** **Scope the fix** — address root cause, not symptoms; see `references/change-scope.md`
   (or core `shopware-change-scope` on trunk).
-- **Run quality tools before every push** — not just before PR review. Run `ecs_check`
+- **REV-002** **Run quality tools before every push** — not just before PR review. Run `ecs_check`
   and `phpstan_analyze` (via MCP or `podman compose exec web`) before each `git push`.
   ECS exit-code-8 means a CS violation. PHPStan catches missing callers when you change
   an interface signature. Catching these locally is free; a CI cycle costs minutes.
-- **Interface refactor checklist** — before changing any method signature on an
+- **REV-003** **Interface refactor checklist** — before changing any method signature on an
   interface, grep all usages across `src/` *and* `tests/`: `grep -rn 'methodName' src/ tests/`.
   PHPStan will catch stragglers too, but only if you run it first.
-- **CI green** — confirm checks pass (`gh-tooling` `pr_checks` or php-tooling MCP) before
+- **REV-004** **CI green** — confirm checks pass (`gh-tooling` `pr_checks` or php-tooling MCP) before
   you ask for review or mark the PR ready.
-- **PR size** — aim for &lt;400 lines changed; if larger, split the PR or explain in the
+- **REV-005** **PR size** — aim for &lt;400 lines changed; if larger, split the PR or explain in the
   description why it must stay together (pair with `shopware-pr-description`).
 - **Self-review** — scan seeded findings and red flags below against your diff.
 - **Impact of a finished feature** — shared cache, who pays, and whether the
@@ -55,47 +55,47 @@ Detailed, growing lists live in references. Read only the one that matches the c
 
 ## Seeded findings (high-frequency)
 
-- **Custom data has no Store-API route.** Plugins add data but expose it only via
+- **REV-006** **Custom data has no Store-API route.** Plugins add data but expose it only via
   Twig, so headless/API clients can't reach it. Provide a Store-API route for
   custom data. (See `references/api-aware.md`; owning topic: plugin development.)
-- **Filtering on an association without loading it.** `addFilter` on
+- **REV-007** **Filtering on an association without loading it.** `addFilter` on
   `manufacturer.name` without `addAssociation('manufacturer')`. (Owning topic:
   `shopware-plugin-development` -> `references/dal-usage.md`.)
-- **Deprecated `*CacheTagsEvent` in 6.7 code.** Migrate to `CacheTagCollector`.
+- **REV-008** **Deprecated `*CacheTagsEvent` in 6.7 code.** Migrate to `CacheTagCollector`.
   (Owning topic: `shopware-plugin-development` -> `references/cache-tags.md`.)
-- **New Store-API / Admin API route without OpenAPI schema.** Endpoints ship with
+- **REV-009** **New Store-API / Admin API route without OpenAPI schema.** Endpoints ship with
   no schema entry — headless clients and API docs drift. Add or extend the OpenAPI
   definition for every new public route. (See `references/api-aware.md`.)
-- **Business logic in controllers.** DAL calls, rules, orchestration, or branching
+- **REV-010** **Business logic in controllers.** DAL calls, rules, orchestration, or branching
   live in a controller instead of an injected service. Thin controllers: validate
   input, delegate, return response. (Owning topic: `shopware-plugin-development`.)
-- **Admin route ACL uses constant-form privilege keys** — match existing
+- **REV-011** **Admin route ACL uses constant-form privilege keys** — match existing
   `Administration::…` / route `_acl` conventions; PHPStan rules flag wrong shapes.
   (Core: `shopware-core-development` -> `platform-architecture.md`.)
-- **`updateDestructive()` misused.** Long-running backfills or heavy work do not
+- **REV-012** **`updateDestructive()` misused.** Long-running backfills or heavy work do not
   belong in destructive migrations; never edit shipped migrations — add a new class.
   (Owning topic: `shopware-plugin-development` -> `references/migrations.md`; core:
   `platform-architecture.md`.)
-- **Cross-test docblock uses FQCN instead of `@see`.** Point at the covering test with
+- **REV-013** **Cross-test docblock uses FQCN instead of `@see`.** Point at the covering test with
   `@see ImportedTestClass` and a `use` statement — not `\Shopware\Tests\…\OtherTest`
   in prose. (Owning topic: `shopware-testing` -> `core-platform-patterns.md`.)
-- **`#[CoversNothing]` safeguard test in `tests/unit/`.** Config/wiring checks that do
+- **REV-014** **`#[CoversNothing]` safeguard test in `tests/unit/`.** Config/wiring checks that do
   not cover production code belong in `tests/devops/` on core — keep the unit suite
   for Codecov. (Owning topic: `shopware-testing` -> `core-platform-patterns.md`.)
 
-- **`class_exists` guard for a core framework class** — `class_exists(Feature::class)`,
+- **REV-015** **`class_exists` guard for a core framework class** — `class_exists(Feature::class)`,
   `class_exists(Context::class)`, etc. are dead code when the minimum supported version
   already ships those classes. Only guard API that was *added within* your supported range
   (e.g. `CacheTagCollector` added in 6.7, when you still support 6.6). Check the minimum
   `shopware/core` version in `composer.json` before adding any defensive class/method check.
   (Owning topic: `shopware-plugin-development` -> `references/version-compatibility.md`.)
-- **Direct `$_SERVER`/`getenv` access for Shopware feature flags** — use
+- **REV-016** **Direct `$_SERVER`/`getenv` access for Shopware feature flags** — use
   `Feature::has('FLAG') && Feature::isActive('FLAG')` (or `!Feature::has() || Feature::isActive()`
   for "assume active when flag is gone"). `Feature::has()` guards against
   `E_USER_WARNING` on unregistered flags; going below the platform API produces
   fragile code reviewers will flag. (Owning topic: `shopware-plugin-development`
   -> `references/version-compatibility.md`.)
-- **FQCN inline instead of `use` import** — `\Shopware\Core\Framework\Feature::isActive()`
+- **REV-017** **FQCN inline instead of `use` import** — `\Shopware\Core\Framework\Feature::isActive()`
   in a method body is a PER-CS/ECS violation. Always add the `use` statement.
   (`php-foundation` baseline rule; ECS catches it automatically.)
 

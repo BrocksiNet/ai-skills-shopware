@@ -54,7 +54,7 @@ mark it on the class docblock:
 final class CartNormalizer { … }
 ```
 
-On **shopware/shopware trunk**, use a **leading-backslash FQCN** in `@see` — do
+**TEST-033** On **shopware/shopware trunk**, use a **leading-backslash FQCN** in `@see` — do
 not add a `use` import for the test class solely for this annotation. The
 referenced test must be a **dedicated** integration test for that production
 class.
@@ -62,7 +62,7 @@ class.
 Simple struct-style classes with only public properties may use
 `@codeCoverageIgnore` without unit tests.
 
-`@codeCoverageIgnore` is for **pass-through** code only. On trunk, PHPStan
+**TEST-032** `@codeCoverageIgnore` is for **pass-through** code only. On trunk, PHPStan
 (`CodeCoverageIgnoreEvaluationRule`) fails annotated methods that branch, throw,
 mutate a value (`unset`, `+=`, `.=`, `++`, a second write to a local), call
 `$this->…()` / `self::…()` for effect, call a method on a parameter for effect

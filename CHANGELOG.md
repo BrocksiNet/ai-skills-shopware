@@ -10,6 +10,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- Rule IDs and a rule catalog. Every rule in `shopware-testing`,
+  `shopware-plugin-development` and `shopware-review-learnings` starts with a
+  stable ID such as `**TEST-016**`, and `rules/catalog.json` links it to its
+  file, eval task, trunk source and audience. `scripts/validate-rules.sh`
+  (run by `validate-skills.sh`) fails on unknown, duplicated, misplaced or
+  retired IDs, missing eval tasks, and rules with neither an eval nor a
+  reason, and prints eval coverage per skill.
 - Real model evals in CI (`evals.yml`). It shards A/B runs across parallel
   jobs and gates them with `scripts/eval-gate.sh`. A monthly bot PR records
   each baseline under `evals/baselines/`. Labeled PRs run only the tasks

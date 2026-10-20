@@ -38,89 +38,93 @@ Status key: **done** | **partial** | **skip** | **eval:TBD** | **defer-on-trunk*
 | `nightly-triage` | — | skip (gh-aw CI sweeps) |
 | `sw-triage`, `sw-review`, `sw-bugfixer` | — | skip (gh-aw; explicit invocation only) |
 
+The ID column links a row to its entry in
+[`rules/catalog.json`](../rules/catalog.json). `—` means the owning skill is
+not tagged yet.
+
 ## Testing (`shopware-testing`)
 
-| Rule (from PR) | Target | Eval |
-| -------------- | ------ | ---- |
-| Tests as executable examples; scenario wiring visible in test body | `references/test-shape-and-flags.md` | defer-on-trunk |
-| Stable boilerplate in `setUp()`; shared collaborators when identity matters | same | defer-on-trunk |
-| Unit filesystem: `Filesystem` mock vs committed `_fixtures`; write disk via `Filesystem` | same | **done** (documented) |
-| Never `exit()` / `die()` in tests; `setAutoExit(false)` | same | defer-on-trunk (documented) |
-| No `ReflectionMethod::invoke` on Shopware privates | same | **done** → `no-reflection-on-shopware-method` |
-| One `#[CoversClass]` per unit/migration file | `core-platform-patterns.md` | **done** → `one-covers-class-per-file` |
-| Test `#[Package]` must match owning class (`TestPackageMatchRule`) | same | **done** (documented; existence eval already) |
-| Every test class `@internal` | same | **done** → `test-class-marked-internal` |
-| `StaticEntityRepository` generic inference / `::of()` | `test-shape-and-flags.md` | defer-on-trunk (documented) |
-| Named arguments on helper/builder literals | same + `php-foundation` | **done** (documented) |
-| `@codeCoverageIgnore` pass-through only (`CodeCoverageIgnoreEvaluationRule`) | `core-platform-patterns.md` | defer-on-trunk (documented) |
-| `expectExceptionObject` via domain factory (already covered) | `exception-assertions.md` | done |
-| No DBAL `Connection` behavior-mock in unit tests | `test-shape-and-flags.md` | defer-on-trunk |
-| Unit legacy flags: `#[DisabledFeatures]`; not `Feature::fake()` for current major | `test-shape-and-flags.md` | **done** → `unit-test-disable-newer-major` |
-| Dual-major unit tests disable the newer major (`#[DisabledFeatures(['v6.9.0.0'])]`) | same | **done** → `unit-test-disable-newer-major` |
-| Integration flags: `Feature::skipTestIfActive()` / `skipTestIfInActive()`; not `#[DisabledFeatures]` | `test-shape-and-flags.md` | **done** (runtime-enforced #18350; dual-major lanes #20117) |
-| Integration traits: only what the scenario needs (`KernelTestBehaviour` + `DatabaseTransactionBehaviour` for repository rollback) | `integration-repository.md` | **done** → `integration-narrow-test-traits` |
-| Test method `@deprecated tag:` when it asserts a throw while a major flag is active | `test-shape-and-flags.md` | **done** → `flag-active-throw-is-deprecated` |
-| `@codeCoverageIgnore` on production class uses FQCN `@see` on trunk | `core-platform-patterns.md` | defer-on-trunk |
-| No `#[CoversClass]` on integration tests (PHPStan) | `core-platform-patterns.md` | **done** → `integration-no-covers-class` |
-| Cross-test docblock uses `@see` + import, not FQCN prose | `core-platform-patterns.md` | **done** → `test-docblock-use-see` |
-| `#[Package('…')]` on every test class | `core-platform-patterns.md` | **done** → `test-class-has-package-attribute` |
-| `#[CoversNothing]` safeguard tests in `tests/devops/`, not `tests/unit/` | `core-platform-patterns.md` | **done** → `safeguard-test-not-in-unit-suite` |
-| Data providers: named `yield`, not `return []`; no `yield from` inline array | `test-shape-and-flags.md` | **done** → `unit-test-yield-provider` |
-| Provider names describe scenario, not raw inputs | same | defer-on-trunk |
-| Keep distinct edge cases in providers; don’t over-deduplicate | same | defer-on-trunk |
-| Legacy flag tests easy to delete when flag removed | same | defer-on-trunk |
+| ID | Rule (from PR) | Target | Eval |
+| -- | -------------- | ------ | ---- |
+| TEST-025 | Tests as executable examples; scenario wiring visible in test body | `references/test-shape-and-flags.md` | defer-on-trunk |
+| TEST-026 | Stable boilerplate in `setUp()`; shared collaborators when identity matters | same | defer-on-trunk |
+| TEST-028 | Unit filesystem: `Filesystem` mock vs committed `_fixtures`; write disk via `Filesystem` | same | **done** (documented) |
+| TEST-013 | Never `exit()` / `die()` in tests; `setAutoExit(false)` | same | defer-on-trunk (documented) |
+| TEST-012 | No `ReflectionMethod::invoke` on Shopware privates | same | **done** → `no-reflection-on-shopware-method` |
+| TEST-011 | One `#[CoversClass]` per unit/migration file | `core-platform-patterns.md` | **done** → `one-covers-class-per-file` |
+| TEST-009 | Test `#[Package]` must match owning class (`TestPackageMatchRule`) | same | **done** (documented; existence eval already) |
+| TEST-010 | Every test class `@internal` | same | **done** → `test-class-marked-internal` |
+| TEST-014 | `StaticEntityRepository` generic inference / `::of()` | `test-shape-and-flags.md` | defer-on-trunk (documented) |
+| TEST-027 | Named arguments on helper/builder literals | same + `php-foundation` | **done** (documented) |
+| TEST-032 | `@codeCoverageIgnore` pass-through only (`CodeCoverageIgnoreEvaluationRule`) | `core-platform-patterns.md` | defer-on-trunk (documented) |
+| TEST-001 | `expectExceptionObject` via domain factory (already covered) | `exception-assertions.md` | done |
+| TEST-019 | No DBAL `Connection` behavior-mock in unit tests | `test-shape-and-flags.md` | defer-on-trunk |
+| TEST-006 | Unit legacy flags: `#[DisabledFeatures]`; not `Feature::fake()` for current major | `test-shape-and-flags.md` | **done** → `unit-test-disable-newer-major` |
+| TEST-006 | Dual-major unit tests disable the newer major (`#[DisabledFeatures(['v6.9.0.0'])]`) | same | **done** → `unit-test-disable-newer-major` |
+| TEST-006 | Integration flags: `Feature::skipTestIfActive()` / `skipTestIfInActive()`; not `#[DisabledFeatures]` | `test-shape-and-flags.md` | **done** (runtime-enforced #18350; dual-major lanes #20117) |
+| TEST-023 | Integration traits: only what the scenario needs (`KernelTestBehaviour` + `DatabaseTransactionBehaviour` for repository rollback) | `integration-repository.md` | **done** → `integration-narrow-test-traits` |
+| TEST-024 | Test method `@deprecated tag:` when it asserts a throw while a major flag is active | `test-shape-and-flags.md` | **done** → `flag-active-throw-is-deprecated` |
+| TEST-033 | `@codeCoverageIgnore` on production class uses FQCN `@see` on trunk | `core-platform-patterns.md` | defer-on-trunk |
+| TEST-007 | No `#[CoversClass]` on integration tests (PHPStan) | `core-platform-patterns.md` | **done** → `integration-no-covers-class` |
+| TEST-008 | Cross-test docblock uses `@see` + import, not FQCN prose | `core-platform-patterns.md` | **done** → `test-docblock-use-see` |
+| TEST-009 | `#[Package('…')]` on every test class | `core-platform-patterns.md` | **done** → `test-class-has-package-attribute` |
+| TEST-015 | `#[CoversNothing]` safeguard tests in `tests/devops/`, not `tests/unit/` | `core-platform-patterns.md` | **done** → `safeguard-test-not-in-unit-suite` |
+| TEST-005 | Data providers: named `yield`, not `return []`; no `yield from` inline array | `test-shape-and-flags.md` | **done** → `unit-test-yield-provider` |
+| TEST-029 | Provider names describe scenario, not raw inputs | same | defer-on-trunk |
+| TEST-030 | Keep distinct edge cases in providers; don’t over-deduplicate | same | defer-on-trunk |
+| TEST-031 | Legacy flag tests easy to delete when flag removed | same | defer-on-trunk |
 
 ## Core platform (`shopware-core-development` + `shopware-architecture`)
 
-| Rule (from PR) | Target | Eval |
-| -------------- | ------ | ---- |
-| Hexagonal services: infra at edge; services unit-testable without I/O | `shopware-architecture` + `service-architecture.md` | defer-on-trunk / **done** → `business-logic-in-controller` |
-| `@internal` adapters; `@final` on supported non-extension classes | same + `deprecations.md` | defer-on-trunk |
-| Conservative DTOs; public readonly value objects for simple structs | `service-architecture.md` | defer-on-trunk |
-| Public BC surface vs internal controllers/subscribers/loaders | same | defer-on-trunk |
-| Bounded DAL reads (setLimit) | `shopware-architecture` → `dal-contracts.md` | **done** → `dal-search-without-limit` |
-| Repository not Connection for entity reads | `dal-contracts.md` | **done** → `no-dal-connection-for-entity-read` |
-| New Admin/Store API routes → OpenAPI JSON under `Schema/.../paths` | `api-schema.md` (core) | skip (fixture-heavy) |
-| New core Store API routes use extension events, not a new abstract route class | `shopware-architecture` → `extension-mechanisms.md` | **done** → `store-api-route-extension-event` |
-| Plugin/extension OpenAPI for custom routes | `shopware-plugin-development` → `api-contracts.md` | **done** → `store-api-openapi-required` |
-| Run `ApiRoutesHaveASchemaTest` for new/changed core API routes | `api-schema.md` | skip |
-| `Feature::silent()` when core must call deprecated API for BC | `deprecations.md` | **done** → `deprecation-silent-wrapper` |
-| Plan major breaks with `BCChange` attributes, not `@deprecated reason:*` | `deprecations.md` | **done** → `bc-change-not-deprecated-reason` |
-| Do not `<deprecated>` a DI service id core still references | `deprecations.md` | **done** (documented) |
-| Symfony `Filesystem` instead of raw PHP file functions | `service-architecture.md` | **done** → `symfony-filesystem-over-raw-php` |
-| Progressive enhancement / dual path behind flag | `shopware-architecture` → `progressive-enhancement.md` | **done** → `core-http-client-behind-flag` |
-| No new code paths calling deprecated APIs; move callers to replacement | `deprecations.md` | defer-on-trunk |
-| Inline `// @deprecated tag:` for private cleanup (not method `@deprecated`) | `deprecations.md` | defer-on-trunk |
-| Legacy tests for deprecated APIs; removable with flag/deprecation | `deprecations.md` | defer-on-trunk |
-| Migration class/file/`getCreationTimestamp()` = exact current Unix timestamp | `platform-architecture.md` | **done** → `migration-timestamp-format` |
-| No tests for empty/no-op `updateDestructive()` | `platform-architecture.md` | defer-on-trunk |
-| Release docs: external perspective; separate API vs Core sections | `release-notes-and-adr.md` | **done** (documented) |
-| `UPGRADE` = must third-party code change?; past tense; no repeated headings | `release-notes-and-adr.md` | **done** → `upgrade-entry-past-tense`, `release-info-no-duplicate-heading` |
+| ID | Rule (from PR) | Target | Eval |
+| -- | -------------- | ------ | ---- |
+| — | Hexagonal services: infra at edge; services unit-testable without I/O | `shopware-architecture` + `service-architecture.md` | defer-on-trunk / **done** → `business-logic-in-controller` |
+| — | `@internal` adapters; `@final` on supported non-extension classes | same + `deprecations.md` | defer-on-trunk |
+| — | Conservative DTOs; public readonly value objects for simple structs | `service-architecture.md` | defer-on-trunk |
+| — | Public BC surface vs internal controllers/subscribers/loaders | same | defer-on-trunk |
+| — | Bounded DAL reads (setLimit) | `shopware-architecture` → `dal-contracts.md` | **done** → `dal-search-without-limit` |
+| — | Repository not Connection for entity reads | `dal-contracts.md` | **done** → `no-dal-connection-for-entity-read` |
+| — | New Admin/Store API routes → OpenAPI JSON under `Schema/.../paths` | `api-schema.md` (core) | skip (fixture-heavy) |
+| — | New core Store API routes use extension events, not a new abstract route class | `shopware-architecture` → `extension-mechanisms.md` | **done** → `store-api-route-extension-event` |
+| PLG-011 | Plugin/extension OpenAPI for custom routes | `shopware-plugin-development` → `api-contracts.md` | **done** → `store-api-openapi-required` |
+| — | Run `ApiRoutesHaveASchemaTest` for new/changed core API routes | `api-schema.md` | skip |
+| — | `Feature::silent()` when core must call deprecated API for BC | `deprecations.md` | **done** → `deprecation-silent-wrapper` |
+| — | Plan major breaks with `BCChange` attributes, not `@deprecated reason:*` | `deprecations.md` | **done** → `bc-change-not-deprecated-reason` |
+| — | Do not `<deprecated>` a DI service id core still references | `deprecations.md` | **done** (documented) |
+| — | Symfony `Filesystem` instead of raw PHP file functions | `service-architecture.md` | **done** → `symfony-filesystem-over-raw-php` |
+| — | Progressive enhancement / dual path behind flag | `shopware-architecture` → `progressive-enhancement.md` | **done** → `core-http-client-behind-flag` |
+| — | No new code paths calling deprecated APIs; move callers to replacement | `deprecations.md` | defer-on-trunk |
+| — | Inline `// @deprecated tag:` for private cleanup (not method `@deprecated`) | `deprecations.md` | defer-on-trunk |
+| — | Legacy tests for deprecated APIs; removable with flag/deprecation | `deprecations.md` | defer-on-trunk |
+| — | Migration class/file/`getCreationTimestamp()` = exact current Unix timestamp | `platform-architecture.md` | **done** → `migration-timestamp-format` |
+| — | No tests for empty/no-op `updateDestructive()` | `platform-architecture.md` | defer-on-trunk |
+| — | Release docs: external perspective; separate API vs Core sections | `release-notes-and-adr.md` | **done** (documented) |
+| — | `UPGRADE` = must third-party code change?; past tense; no repeated headings | `release-notes-and-adr.md` | **done** → `upgrade-entry-past-tense`, `release-info-no-duplicate-heading` |
 
 ## Security (`shopware-security`) — ours only
 
-| Rule | Target | Eval |
-| ---- | ------ | ---- |
-| No hardcoded sales channel access keys in source | `secrets-and-config.md` | **done** → `no-access-key-in-source` |
-| Store-API / Admin routes declare ACL | `api-acl-and-input.md` | **done** → `store-api-route-missing-acl` |
-| App manifest least privilege | `apps-and-webhooks.md` | **done** → `app-manifest-least-privilege` |
+| ID | Rule | Target | Eval |
+| -- | ---- | ------ | ---- |
+| — | No hardcoded sales channel access keys in source | `secrets-and-config.md` | **done** → `no-access-key-in-source` |
+| — | Store-API / Admin routes declare ACL | `api-acl-and-input.md` | **done** → `store-api-route-missing-acl` |
+| — | App manifest least privilege | `apps-and-webhooks.md` | **done** → `app-manifest-least-privilege` |
 
 ## PR workflow
 
-| Rule (from PR) | Target | Eval |
-| -------------- | ------ | ---- |
-| Follow `.github/PULL_REQUEST_TEMPLATE.md`; no extra PR sections | `shopware-pr-description` | defer-on-trunk |
-| Conventional PR title when requested | `pr-body-template.md` | defer-on-trunk |
-| Review/CI fixes → new commit; no amend/force-push unless asked | `shopware-pr-description` + `shopware-pr-review` | defer-on-trunk |
-| No AI-agent attribution trailers (`Co-authored-by`, …) | `shopware-pr-description` | **done** → `pr-no-ai-trailers` |
+| ID | Rule (from PR) | Target | Eval |
+| -- | -------------- | ------ | ---- |
+| — | Follow `.github/PULL_REQUEST_TEMPLATE.md`; no extra PR sections | `shopware-pr-description` | defer-on-trunk |
+| — | Conventional PR title when requested | `pr-body-template.md` | defer-on-trunk |
+| — | Review/CI fixes → new commit; no amend/force-push unless asked | `shopware-pr-description` + `shopware-pr-review` | defer-on-trunk |
+| — | No AI-agent attribution trailers (`Co-authored-by`, …) | `shopware-pr-description` | **done** → `pr-no-ai-trailers` |
 
 ## Review scope (`shopware-review-learnings`)
 
-| Rule (from PR) | Target | Eval |
-| -------------- | ------ | ---- |
-| Root-cause fix; grep callers before shared behavior changes | `references/change-scope.md` | defer-on-trunk |
-| Boyscout safe cleanups in touched file; mention broader cleanup, don’t expand PR | same | defer-on-trunk |
-| Issue suggestions are hypotheses | same | defer-on-trunk |
+| ID | Rule (from PR) | Target | Eval |
+| -- | -------------- | ------ | ---- |
+| REV-026, REV-028 | Root-cause fix; grep callers before shared behavior changes | `references/change-scope.md` | defer-on-trunk |
+| REV-029, REV-030 | Boyscout safe cleanups in touched file; mention broader cleanup, don’t expand PR | same | defer-on-trunk |
+| REV-025 | Issue suggestions are hypotheses | same | defer-on-trunk |
 
 ## Skipped (core-only or out of scope)
 

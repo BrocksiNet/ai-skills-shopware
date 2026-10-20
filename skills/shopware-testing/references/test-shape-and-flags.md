@@ -6,9 +6,9 @@ behavior.
 
 ## Test shape
 
-- Write each test as an **executable example**: scenario setup, action, and
+- **TEST-025** Write each test as an **executable example**: scenario setup, action, and
   assertions should be easy to follow in the test method body.
-- Move **stable boilerplate** (mock services, class under test, command testers,
+- **TEST-026** Move **stable boilerplate** (mock services, class under test, command testers,
   temp project roots) into `setUp()` / `tearDown()` so tests focus on what differs
   per scenario.
 - Put **reusable fixture collaborators** in `setUp()` when helpers may run more
@@ -19,7 +19,7 @@ behavior.
   direct assertions are just as readable.
 - Prefer **one focused test per distinct exception or behavior** over a broad data
   provider when each case has its own meaning.
-- Name arguments when a test helper or data builder is called with bare literals
+- **TEST-027** Name arguments when a test helper or data builder is called with bare literals
   (`true`, `false`, `0`, `1`, `[]`, `null`) or when naming lets you skip defaults
   you only passed to reach a later argument.
 - A dummy entity definition, stub subscriber, or other fixture class used by
@@ -39,7 +39,7 @@ A test must never let production or framework code call `exit()`, `die()`, or
 
 ## Filesystem in unit tests
 
-- Simple single-file reads/writes: Symfony `Filesystem` injected into the class,
+- **TEST-028** Simple single-file reads/writes: Symfony `Filesystem` injected into the class,
   mocked in the test.
 - Several consecutive filesystem calls, realistic paths, or directory structure:
   prefer committed `_fixtures` over building temp files at runtime or over-mocking
@@ -161,9 +161,9 @@ Eval: `event-hook-capture-then-assert`.
   `Feature::skipTestIfInActive('FLAG')` when the current flag value is not what
   the scenario expects. Pin against the extra in-flight major with
   `Feature::skipTestIfActive('v6.9.0.0', $this)` rather than `#[DisabledFeatures]`.
-- Keep **legacy flag behavior** in dedicated tests that are easy to delete when
+- **TEST-031** Keep **legacy flag behavior** in dedicated tests that are easy to delete when
   the flag is removed.
-- When a test **asserts that behavior throws while a major feature flag is
+- **TEST-024** When a test **asserts that behavior throws while a major feature flag is
   active**, mark that test method `@deprecated tag:vX.Y.0` and say it is
   removed with the flag. The tag sits on the method, not only on the class,
   so the temporary assertion is findable when the flag goes.
@@ -174,9 +174,9 @@ Eval: `event-hook-capture-then-assert`.
   providers.
 - Do **not** use `yield from` with an inline array; prefer explicit
   `yield 'human readable case' => [...]` per scenario.
-- Case names should explain the **rule being proven** (priority, normalization,
+- **TEST-029** Case names should explain the **rule being proven** (priority, normalization,
   boundary), not mechanically restate raw input values.
-- When removing “duplicate” provider rows, delete only **exact semantic**
+- **TEST-030** When removing “duplicate” provider rows, delete only **exact semantic**
   duplicates; keep similar-looking cases that cover distinct edge behavior.
 
 ## Package attribute and `@internal`

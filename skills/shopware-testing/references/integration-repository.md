@@ -3,7 +3,7 @@
 Inspired by [FriendsOfShopware shopware-phpunit](https://github.com/FriendsOfShopware/agent-skills/tree/main/skills/shopware-phpunit)
 (`integration-repository-testing`); rewritten for this repo.
 
-- Use only the integration traits the scenario needs. A repository test that
+- **TEST-023** Use only the integration traits the scenario needs. A repository test that
   only needs the service container and a rolled-back transaction uses
   `KernelTestBehaviour` and `DatabaseTransactionBehaviour`. Do not pull in
   `IntegrationTestBehaviour` when sales channel, cache, or the request stack

@@ -5,16 +5,16 @@ Seeded from real reviews; grow as findings recur.
 
 ## Recurring findings
 
-- **N+1 via per-row association loads.** Looping over results and fetching an
+- **REV-021** **N+1 via per-row association loads.** Looping over results and fetching an
   association per row instead of adding it to the `Criteria` up front.
 - **Filtering on an unloaded association.** `EqualsFilter('foo.bar', …)` without
   `addAssociation('foo')`. Works sometimes, surprises often.
-- **Over-fetching.** Loading entire association trees "to be safe" on a hot path.
+- **REV-022** **Over-fetching.** Loading entire association trees "to be safe" on a hot path.
   Request only the fields/associations actually used.
-- **Wrong context for storefront reads.** Using the plain `Context` /
+- **REV-023** **Wrong context for storefront reads.** Using the plain `Context` /
   `product.repository` instead of the sales-channel context, so rules/pricing/
   availability are wrong.
-- **Raw SQL where the DAL would do.** Dropping to the connection for ordinary
+- **REV-024** **Raw SQL where the DAL would do.** Dropping to the connection for ordinary
   entity reads/writes, losing events, extensions, and indexing.
 
 ## TODO

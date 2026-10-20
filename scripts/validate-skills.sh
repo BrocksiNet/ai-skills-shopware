@@ -12,6 +12,8 @@
 # Conflict detection:
 #   - duplicate topic ownership in REGISTRY.md coverage matrix
 #   - the same double-quoted trigger phrase claimed by two skills' descriptions
+# Rule IDs:
+#   - scripts/validate-rules.sh (inline IDs vs rules/catalog.json)
 set -euo pipefail
 
 ROOT="$(cd "$(dirname "$0")/.." && pwd)"
@@ -105,6 +107,11 @@ if [ -f "$REGISTRY" ]; then
 else
   err "REGISTRY.md not found"
 fi
+
+# ---- rule IDs ----------------------------------------------------------------
+echo
+echo "Checking rule IDs"
+"$ROOT/scripts/validate-rules.sh" || err "rule catalog check failed (see above)"
 
 echo
 if [ "$errors" -eq 0 ]; then

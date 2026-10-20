@@ -6,12 +6,12 @@ Load when adding or changing HTTP endpoints in plugins or project code.
 
 Every **new public** Store-API or Admin API route must ship:
 
-1. **OpenAPI documentation** — attributes (`OpenApi\…`) and/or schema files under
+1. **PLG-011** **OpenAPI documentation** — attributes (`OpenApi\…`) and/or schema files under
    `Resources/Schema/` (follow existing plugin/core conventions in the project).
-2. **Stable response shape** — typed struct/DTO or documented fields; avoid ad-hoc
+2. **PLG-012** **Stable response shape** — typed struct/DTO or documented fields; avoid ad-hoc
    untyped arrays for public responses.
 3. **ACL / scope** — see `shopware-security` → `api-acl-and-input.md`.
-4. **Headless parity** — data shown only in Twig should also have a Store-API route
+4. **PLG-013** **Headless parity** — data shown only in Twig should also have a Store-API route
    when headless clients need it (`shopware-review-learnings` → `api-aware.md`).
 
 ## Core vs extension

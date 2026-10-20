@@ -1,0 +1,74 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "ai-skills-shopware rule catalog",
+  "description": "Stable rule IDs. Checked by scripts/validate-rules.sh.",
+  "type": "object",
+  "required": ["prefixes", "rules"],
+  "additionalProperties": false,
+  "properties": {
+    "$schema": { "type": "string" },
+    "prefixes": {
+      "description": "ID prefix -> owning skill.",
+      "type": "object",
+      "propertyNames": { "pattern": "^[A-Z]+$" },
+      "additionalProperties": { "type": "string" }
+    },
+    "rules": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/rule" }
+    }
+  },
+  "$defs": {
+    "id": { "type": "string", "pattern": "^[A-Z]+-[0-9]{3}$" },
+    "rule": {
+      "type": "object",
+      "required": ["id", "skill", "file", "title", "status", "since", "eval", "core_guide_ids", "audience", "defer_on_trunk"],
+      "additionalProperties": false,
+      "properties": {
+        "id": { "$ref": "#/$defs/id" },
+        "skill": { "type": "string", "description": "Owning skill; must match the ID prefix." },
+        "file": { "type": "string", "description": "Markdown file under skills/<skill>/ that defines the rule inline as **ID**." },
+        "title": { "type": "string", "minLength": 1 },
+        "status": {
+          "type": "string",
+          "pattern": "^(active|retired|superseded:[A-Z]+-[0-9]{3})$",
+          "description": "Retired IDs stay in the catalog and are never reused."
+        },
+        "since": { "type": "string", "format": "date" },
+        "eval": {
+          "type": ["string", "null"],
+          "description": "Task name under evals/tasks/, or null with eval_reason."
+        },
+        "eval_reason": { "type": "string", "minLength": 1 },
+        "trunk": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "source": { "type": "string", "description": "Path#anchor in shopware/shopware." },
+            "commit": { "type": "string" },
+            "enforced_by": {
+              "type": "array",
+              "items": { "type": "string" },
+              "description": "CI tool that already catches the rule."
+            }
+          }
+        },
+        "core_guide_ids": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "Matching rule IDs in core's sw-review guides."
+        },
+        "audience": {
+          "type": "array",
+          "items": { "enum": ["core", "plugin", "app", "storefront", "admin"] }
+        },
+        "defer_on_trunk": { "type": "boolean" },
+        "see": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/id" },
+          "description": "Related rules, usually the owning rule a review finding points at."
+        }
+      }
+    }
+  }
+}

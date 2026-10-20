@@ -180,6 +180,19 @@ Goal: every rule has a stable ID that links it to its skill, its eval, its
 trunk source and the matching core guide ID. Mining then becomes a diff of
 ID sets.
 
+Status: **done 2026-10-20**. `shopware-testing` (34 rules),
+`shopware-plugin-development` (26) and `shopware-review-learnings` (32) are
+tagged; 29 of the 92 rules have an eval, the rest record an `eval_reason`.
+`scripts/validate-rules.sh` runs inside `validate-skills.sh`, so CI checks it
+on every push. Changes from the spec: the prefix table lives in the catalog
+(`prefixes`), so the validator needs no copy of it; a rule is defined inline
+exactly once, and other text points at it with a code span (`` `PLG-011` ``),
+which the validator also resolves; review findings that restate another
+skill's rule list it in a new `see` field. The three skills were tagged by
+hand, so `rules-bootstrap.mjs` was not needed, and the alignment doc's ID
+column is hand-written until `render-alignment.mjs` exists. The other skills
+are tagged when they are next touched; WP3, WP4 and WP5 can start now.
+
 ### ID format
 
 `<PREFIX>-<NNN>`, zero-padded to three digits, never reused. Retired IDs stay
