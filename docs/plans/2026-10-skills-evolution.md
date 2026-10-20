@@ -359,10 +359,9 @@ Those rules keep needing a reviewer.
 
 ## WP4: Path-based reference routing
 
-Status: **done 2026-10-20**, except the token check. The runner records
-token use since 2026-10-20 (`tokens_on` / `tokens_off`, compared by
-`eval-diff.sh`). The commit before #20 (`ad0723a`) has no token logging,
-so the check keeps the current runner and swaps only `skills/`:
+Status: **done 2026-10-20**, token check included. The check kept the
+current runner (commit `7cda4e3`) and swapped only `skills/` back to
+`ad0723a`, the commit before #20, because that commit has no token logging:
 
 ```bash
 git checkout ad0723a -- skills && EVAL_RESULTS=/tmp/before.jsonl bash scripts/eval-local.sh
@@ -370,7 +369,22 @@ git checkout HEAD -- skills && EVAL_RESULTS=/tmp/after.jsonl bash scripts/eval-l
 bash scripts/eval-diff.sh /tmp/before.jsonl /tmp/after.jsonl
 ```
 
-Both runs use `EVAL_TASKS=prepare-plugin-for-6-8 REPEATS=3`. All 14 skills with references have a `routes.json`, not only the
+Both runs: `prepare-plugin-for-6-8`, Claude Haiku, `REPEATS=3`. Average
+tokens per skill-on run:
+
+| Skills | Input | Output | Pass |
+| ------ | ----- | ------ | ---- |
+| before routing (`ad0723a`) | 106,578 | 2,429 | 3/3 |
+| after routing and `on_demand` | 107,844 | 2,629 | 3/3 |
+
+Total tokens rose 1.3 %, inside the noise: the skill-off runs, which load
+no skills in either case, averaged 230,640 and 100,405 input tokens. So
+the larger tables cost no measurable tokens, and the task does not show a
+saving either. Pass rate and skill loading are unchanged. The task mostly
+touches `shopware-plugin-development`, so it says little about the
+references that moved to `on_demand`.
+
+All 14 skills with references have a `routes.json`, not only the
 five largest. Changes from the spec below:
 
 - Each route also has `when`, the task in words. The generated table has the
