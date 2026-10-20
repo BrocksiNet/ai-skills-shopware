@@ -44,10 +44,12 @@ tools/                        # repo tooling in TypeScript (Node 24, no build st
   bin/render-routes.ts        # SKILL.md routing tables from routes.json
   bin/validate-routes.ts      # routes.json shape, targets and table drift
   bin/route.ts                # references each skill selects for a diff
+  bin/eval-{plan,gate,diff}.ts  # eval task plan, A/B gate, baseline diff
   test/*.test.ts              # node --test
 
 scripts/
   validate-skills.sh          # structure, budgets, REGISTRY conflicts, rule IDs
+  eval-{plan,gate,diff}.sh    # wrappers for tools/bin/eval-*.ts (Node 24)
   run-activation-evals.sh     # Layer 1 activation checks
   check-update.sh             # compare pinned version vs latest release tag
 

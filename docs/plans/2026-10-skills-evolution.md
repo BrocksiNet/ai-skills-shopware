@@ -763,6 +763,15 @@ WP8 using `gh pr view --json state,mergedAt`:
 
 ## WP10: Eval runner in TypeScript
 
+Status: **step 1 done 2026-10-20**. Plan, gate and diff live in
+`tools/src/eval-{plan,gate,diff}.ts` over the typed records in
+`tools/src/eval-results.ts`. The `scripts/eval-*.sh` files are wrappers. On
+the WP1 and WP4 result files and a set of edge cases, the new tools print the
+same output and exit codes as the bash versions. Two deliberate changes: a
+non-numeric `EVAL_GATE_*` setting is a usage error (exit 2) instead of a
+crash halfway through the summary, and setting errors carry the tool name.
+`selftest.sh` keeps its end-to-end checks until step 2 ports `ab.sh`.
+
 Goal: one typed codebase for the eval pipeline, so result records, verdicts
 and gate rules are checked by the compiler instead of by `jq` filters and
 inline Python.

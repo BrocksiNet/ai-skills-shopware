@@ -10,6 +10,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- Eval plan, gate and diff in TypeScript (plan WP10 step 1). The logic lives
+  in `tools/src/` as pure functions over typed A/B records, with unit tests.
+  `scripts/eval-plan.sh`, `eval-gate.sh` and `eval-diff.sh` keep their
+  arguments, environment variables and output, and now call
+  `tools/bin/eval-*.ts`. They need Node 24, which the `evals.yml` jobs and the
+  runner self-test job now set up. A non-numeric `EVAL_GATE_*` setting is now
+  a usage error (exit 2) instead of a crash.
+
 - Path-based reference routing. Each skill with references has a
   `routes.json` that maps changed-file globs and diff-line regexes to the
   reference to read. The routing list in `SKILL.md` is now a generated table

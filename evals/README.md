@@ -207,6 +207,8 @@ wrong rule in `shopware-plugin-development`, which turned the gate red.
   skill-on pass rate changed.
 - `scripts/eval-plan.sh` picks tasks (`EVAL_TASKS`, `EVAL_CHANGED_FILES`,
   `EVAL_MAX_TASKS`) and splits them into `EVAL_SHARDS` shards for CI.
+- The three scripts are wrappers for `tools/bin/eval-*.ts` and need Node 24.
+  The logic and its unit tests live in `tools/src/` and `tools/test/`.
 - `evals/runner/selftest.sh` drives all of the above with
   [`runner/fake-agent.sh`](runner/fake-agent.sh) instead of a model. It runs on
   every push, so a runner change that would turn a broken eval green fails first.
