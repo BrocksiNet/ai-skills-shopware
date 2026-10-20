@@ -22,10 +22,10 @@ Read only the reference that matches the task or the files it changes:
 <!-- routes:start: generated from routes.json by `node tools/bin/render-routes.ts`; do not edit -->
 | Read | When | Or the change touches |
 | ---- | ---- | --------------------- |
-| [`docs-map.md`](references/docs-map.md) | You need to know where Shopware documents a topic. | `developer.shopware.com/docs` |
-| [`context7-and-libraries.md`](references/context7-and-libraries.md) | You check library docs or verify against source. | `composer.json`, `composer.lock`, `package.json`, `package-lock.json` |
-| [`modern-web-guidance.md`](references/modern-web-guidance.md) | The question is about a generic CSS, HTML or JS API. | `speculationrules`, `startViewTransition(\|@view-transition`, `<dialog[ >]`, `\bpopover=`, `container-type:\|@container\b` |
-| [`when-stuck.md`](references/when-stuck.md) | An approach keeps failing. | `phpstan-baseline.neon`, `@phpstan-ignore`, `@ts-(ignore\|expect-error)`, `markTestSkipped(`, `catch ([^)]*) { *}` |
+| [`docs-map.md`](references/docs-map.md) | You need to know where Shopware documents a topic. | on demand |
+| [`context7-and-libraries.md`](references/context7-and-libraries.md) | You check library docs or verify against source. | `composer.json`, `composer.lock`, … |
+| [`modern-web-guidance.md`](references/modern-web-guidance.md) | The question is about a generic CSS, HTML or JS API. | `speculationrules`, … |
+| [`when-stuck.md`](references/when-stuck.md) | An approach keeps failing. | on demand |
 <!-- routes:end -->
 
 ## When does research pay off?

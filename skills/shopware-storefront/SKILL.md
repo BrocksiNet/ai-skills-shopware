@@ -27,9 +27,9 @@ Read only the reference that matches the task or the files it changes:
 <!-- routes:start: generated from routes.json by `node tools/bin/render-routes.ts`; do not edit -->
 | Read | When | Or the change touches |
 | ---- | ---- | --------------------- |
-| [`js-plugins.md`](references/js-plugins.md) | You write or register a storefront JS plugin. | `Resources/app/storefront/src/**/*.{js,ts}`, `PluginManager.register(`, `extends Plugin\b` |
-| [`twig-and-theme.md`](references/twig-and-theme.md) | You edit Twig blocks, the theme or assets. | `Resources/views/storefront/**/*.twig`, `Resources/app/storefront/src/scss/**`, `theme.json`, `Resources/app/storefront/dist/**`, `{% sw_extends` |
-| [`cache-and-modern-web.md`](references/cache-and-modern-web.md) | Content depends on the user or cache, or you need a modern web API. | `CacheTagCollector`, `new (HttpClient\|StoreApiClient)(`, `speculationrules`, `startViewTransition(\|@view-transition` |
+| [`js-plugins.md`](references/js-plugins.md) | You write or register a storefront JS plugin. | `Resources/app/storefront/src/**/*.{js,ts}`, `PluginManager.register(`, … |
+| [`twig-and-theme.md`](references/twig-and-theme.md) | You edit Twig blocks, the theme or assets. | `Resources/views/storefront/**/*.twig`, `Resources/app/storefront/src/scss/**`, `{% sw_extends`, … |
+| [`cache-and-modern-web.md`](references/cache-and-modern-web.md) | Content depends on the user or cache, or you need a modern web API. | `CacheTagCollector`, … |
 <!-- routes:end -->
 
 ## Hard guardrails

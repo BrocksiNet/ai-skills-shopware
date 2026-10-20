@@ -1,5 +1,7 @@
 // Routing cases (plan WP4): every evals/routing/<case>/diff.patch must select
 // exactly the references in its expected.json, across all skills with routes.
+// Only diff-selected references count; always and on_demand routes are not
+// triggered by a diff, so they stay out of expected.json.
 import assert from 'node:assert/strict';
 import { existsSync, readFileSync, readdirSync } from 'node:fs';
 import { join, resolve } from 'node:path';
@@ -16,6 +18,6 @@ for (const name of cases) {
   test(`routing: ${name}`, () => {
     const diff = readFileSync(join(casesDir, name, 'diff.patch'), 'utf8');
     const expected = JSON.parse(readFileSync(join(casesDir, name, 'expected.json'), 'utf8')) as Record<string, string[]>;
-    assert.deepEqual(routeDiff(root, diff), expected);
+    assert.deepEqual(routeDiff(root, diff).selected, expected);
   });
 }

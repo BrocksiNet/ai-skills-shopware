@@ -1,22 +1,12 @@
 {
-  "shopware-change-impact": [
-    "references/impact-review.md"
-  ],
   "shopware-core-development": [
     "references/api-schema.md"
   ],
   "shopware-plugin-development": [
     "references/api-contracts.md"
   ],
-  "shopware-pr-description": [
-    "references/pr-body-template.md"
-  ],
-  "shopware-pr-review": [
-    "references/review-workflow.md"
-  ],
   "shopware-review-learnings": [
-    "references/api-aware.md",
-    "references/change-scope.md"
+    "references/api-aware.md"
   ],
   "shopware-security": [
     "references/api-acl-and-input.md"

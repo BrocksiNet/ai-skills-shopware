@@ -32,13 +32,13 @@ Read only the reference that matches the task or the files it changes:
 <!-- routes:start: generated from routes.json by `node tools/bin/render-routes.ts`; do not edit -->
 | Read | When | Or the change touches |
 | ---- | ---- | --------------------- |
-| [`deprecations.md`](references/deprecations.md) | You deprecate or break a public API. | `@deprecated tag:v`, `@major-deprecated`, `Feature::triggerDeprecationOrThrow(`, `(CompatibilityChange\|TypeNarrowing)(` |
-| [`service-architecture.md`](references/service-architecture.md) | You add a service or change what is public. | `src/**/DependencyInjection/*.{xml,php}`, `src/**/Resources/config/services*.{xml,php}`, `* @(internal\|final)$`, `@experimental stableVersion` |
+| [`deprecations.md`](references/deprecations.md) | You deprecate or break a public API. | `@deprecated tag:v`, … |
+| [`service-architecture.md`](references/service-architecture.md) | You add a service or change what is public. | `src/**/DependencyInjection/*.{xml,php}`, `src/**/Resources/config/services*.{xml,php}`, `* @(internal\|final)$`, … |
 | [`api-schema.md`](references/api-schema.md) | You add or change an Admin or Store API route. | `src/Core/Framework/Api/ApiDefinition/Generator/Schema/**`, `#[Route(` |
-| [`modernization-and-flags.md`](references/modernization-and-flags.md) | You modernize code behind a feature flag. | `src/Core/Framework/Resources/config/packages/feature.yaml`, `Feature::isActive(`, `HttpClientInterface`, `ClockInterface` |
-| [`release-notes-and-adr.md`](references/release-notes-and-adr.md) | The change needs RELEASE_INFO, UPGRADE or an ADR. | `RELEASE_INFO-*.md`, `UPGRADE-*.md`, `adr/**`, `changelog/_unreleased/*.md` |
-| [`static-analysis-baseline.md`](references/static-analysis-baseline.md) | You touch the PHPStan baseline. | `phpstan-baseline.neon`, `phpstan*.neon`, `phpstan*.neon.dist` |
-| [`platform-architecture.md`](references/platform-architecture.md) | You cross a bundle boundary or add a listener or migration. | `src/Core/Migration/**/Migration*.php`, `use Shopware\(Storefront\|Administration)\`, `#[AsEventListener`, `getSubscribedEvents(`, `->getSession(` |
+| [`modernization-and-flags.md`](references/modernization-and-flags.md) | You modernize code behind a feature flag. | `src/Core/Framework/Resources/config/packages/feature.yaml`, `Feature::isActive(`, … |
+| [`release-notes-and-adr.md`](references/release-notes-and-adr.md) | The change needs RELEASE_INFO, UPGRADE or an ADR. | `RELEASE_INFO-*.md`, `UPGRADE-*.md`, … |
+| [`static-analysis-baseline.md`](references/static-analysis-baseline.md) | You touch the PHPStan baseline. | `phpstan-baseline.neon`, `phpstan*.neon`, … |
+| [`platform-architecture.md`](references/platform-architecture.md) | You cross a bundle boundary or add a listener or migration. | `src/Core/Migration/**/Migration*.php`, `use Shopware\(Storefront\|Administration)\`, … |
 <!-- routes:end -->
 
 ## Hard guardrails (refuse rather than violate)

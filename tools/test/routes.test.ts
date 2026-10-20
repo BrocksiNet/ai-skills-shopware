@@ -7,6 +7,7 @@ import {
   END,
   START,
   applyTable,
+  fixedReferences,
   parseDiff,
   renderTable,
   routeErrors,
@@ -42,6 +43,7 @@ const ROUTES: RouteFile = {
     { reference: 'references/dal.md', when: 'DAL | data.', anchors_any: ['new Criteria\\('] },
     { reference: 'references/symfony.md', when: 'Symfony.', anchors_any: ['curl_init\\('] },
     { reference: 'references/style.md', when: 'Always.', always: true },
+    { reference: 'references/stuck.md', when: 'Keeps failing.', on_demand: true },
   ],
 };
 
@@ -58,12 +60,12 @@ describe('parseDiff', () => {
 });
 
 describe('selectReferences', () => {
-  test('matches globs, anchors on removed lines and always; ignores context lines', () => {
-    assert.deepEqual(selectReferences(ROUTES, parseDiff(DIFF)), [
-      'references/migrations.md',
-      'references/dal.md',
-      'references/style.md',
-    ]);
+  test('matches globs and anchors on removed lines; ignores context lines, always and on_demand', () => {
+    assert.deepEqual(selectReferences(ROUTES, parseDiff(DIFF)), ['references/migrations.md', 'references/dal.md']);
+  });
+  test('fixedReferences lists always and on_demand routes apart from the diff', () => {
+    assert.deepEqual(fixedReferences(ROUTES, 'always'), ['references/style.md']);
+    assert.deepEqual(fixedReferences(ROUTES, 'on_demand'), ['references/stuck.md']);
   });
   test('lists a reference once when several routes select it', () => {
     const twice: RouteFile = { routes: [ROUTES.routes[0]!, { ...ROUTES.routes[0]!, paths_any: ['**/*.php'] }] };
@@ -78,6 +80,15 @@ describe('renderTable', () => {
     assert.match(table, /\| \[`migrations\.md`\]\(references\/migrations\.md\) \| Migrations\. \| `Migration\/Migration\*\.php` \|/);
     assert.match(table, /DAL \\\| data\. \| `new Criteria\(` \|/);
     assert.match(table, /\| Always\. \| any change \|/);
+    assert.match(table, /\| Keeps failing\. \| on demand \|/);
+  });
+  test('shows at most two globs and one anchor, then an ellipsis', () => {
+    const many: RouteFile = {
+      routes: [{ reference: 'references/a.md', when: 'A.', paths_any: ['**/a', '**/b', '**/c'], anchors_any: ['x', 'y'] }],
+    };
+    assert.match(renderTable(many), /\| A\. \| `a`, `b`, `x`, … \|/);
+    const few: RouteFile = { routes: [{ reference: 'references/a.md', when: 'A.', paths_any: ['**/a'], anchors_any: ['x'] }] };
+    assert.match(renderTable(few), /\| A\. \| `a`, `x` \|/);
   });
   test('applyTable replaces the block and is idempotent; needs markers', () => {
     const once = applyTable(`intro\n<!-- routes:start -->\nold\n${END}\noutro`, ROUTES);
@@ -110,7 +121,14 @@ describe('routeErrors', () => {
     assert.equal(errors.length, 3);
     assert.match(errors.join('\n'), /nope\.md not found/);
     assert.match(errors.join('\n'), /bad regex \(/);
-    assert.match(errors.join('\n'), /needs paths_any, anchors_any or always/);
+    assert.match(errors.join('\n'), /needs paths_any, anchors_any, always or on_demand/);
+  });
+  test('accepts on_demand alone; rejects it next to triggers or always', () => {
+    assert.deepEqual(routeErrors(skill({ routes: [{ reference: 'references/a.md', when: 'A.', on_demand: true }] }), 's'), []);
+    for (const extra of [{ paths_any: ['**/*.php'] }, { always: true }]) {
+      const errors = routeErrors(skill({ routes: [{ reference: 'references/a.md', when: 'A.', on_demand: true, ...extra }] }), 's');
+      assert.match(errors.join(), /not more than one/);
+    }
   });
   test('reports an unrouted reference but not enforced-by-ci.md', () => {
     const errors = routeErrors(skill(ok, undefined, ['a.md', 'b.md', 'enforced-by-ci.md']), 's');

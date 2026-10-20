@@ -80,6 +80,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- Reference routes can be `on_demand`: the task decides, not the diff, and
+  the router never selects them. `when-stuck.md`, `docs-map.md` and
+  `change-scope.md` use it instead of proxy triggers such as
+  `@phpstan-ignore` or an `always` route. `tools/bin/route.ts` now reports
+  `selected`, `always` and `on_demand` apart, and the routing cases check
+  only what the diff selects. The tables in `SKILL.md` show at most two
+  globs and one regex per row, which cuts them by about 15 %.
 - The default eval model is `opencode/longcat-2.5-preview-free`. It loaded a
   task skill in 5 of 8 tasks; the previous default, Nemotron 3 Ultra, in 1 of 8.
   CI uses 8 parallel A/B jobs.

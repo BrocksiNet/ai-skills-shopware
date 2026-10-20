@@ -192,17 +192,21 @@ at the owning skill rather than re-defining the topic.
 
 Every `references/*.md` file needs a route in the skill's `routes.json`:
 `reference`, `when` (the task in words), and `paths_any` globs and/or
-`anchors_any` regexes on added and removed diff lines (`always: true` only
-when every change needs it). Keep triggers specific; a route that fires on
-any PHP file defeats the point. Then:
+`anchors_any` regexes on added and removed diff lines. Two kinds of route
+have no triggers: `always: true` when every change the skill sees needs the
+reference, and `on_demand: true` when the task decides and nothing in a diff
+says so (an approach keeps failing, a fix grows beyond the bug). Keep
+triggers specific; a route that fires on any PHP file defeats the point, and
+a proxy trigger is worse than `on_demand`. Then:
 
 ```bash
 node tools/bin/render-routes.ts        # rewrites the table between the routes markers
-git diff main | node tools/bin/route.ts  # what a real diff would select
+git diff main | node tools/bin/route.ts  # selected by the diff, plus always and on_demand
 ```
 
 When a change alters what a case in `evals/routing/` should select, update
-its `expected.json`; add a case for a new kind of change.
+its `expected.json`; add a case for a new kind of change. `expected.json`
+lists only diff-selected references, never `always` or `on_demand` ones.
 
 ## Repo tooling
 

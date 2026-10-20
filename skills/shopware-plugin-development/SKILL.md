@@ -33,12 +33,12 @@ Read only the reference that matches the task or the files it changes:
 <!-- routes:start: generated from routes.json by `node tools/bin/render-routes.ts`; do not edit -->
 | Read | When | Or the change touches |
 | ---- | ---- | --------------------- |
-| [`dal-usage.md`](references/dal-usage.md) | You read or write data through the DAL. | `*Definition.php`, `*Entity.php`, `*Collection.php`, `new Criteria(`, `EntityRepository`, `->search(`, `->upsert(` |
-| [`api-contracts.md`](references/api-contracts.md) | You add a Store-API or Admin route, or its OpenAPI schema. | `StoreApi/**/*.php`, `Resources/Schema/**`, `Api/**/*Route.php`, `#[Route(`, `_routeScope` |
-| [`cache-tags.md`](references/cache-tags.md) | A change affects cached pages or needs cache tags (6.7+). | `CacheTagCollector`, `CacheTagsEvent`, `CacheInvalidator` |
-| [`migrations.md`](references/migrations.md) | You add or change a database migration. | `Migration/Migration*.php`, `extends MigrationStep`, `updateDestructive(` |
-| [`version-compatibility.md`](references/version-compatibility.md) | The plugin must support more than one Shopware minor. | `composer.json`, `"shopware/core"`, `Feature::isActive(` |
-| [`symfony-first.md`](references/symfony-first.md) | You are about to write code a Symfony component already provides. | `file_put_contents(`, `curl_init(`, `mkdir(` |
+| [`dal-usage.md`](references/dal-usage.md) | You read or write data through the DAL. | `*Definition.php`, `*Entity.php`, `new Criteria(`, … |
+| [`api-contracts.md`](references/api-contracts.md) | You add a Store-API or Admin route, or its OpenAPI schema. | `StoreApi/**/*.php`, `Resources/Schema/**`, `#[Route(`, … |
+| [`cache-tags.md`](references/cache-tags.md) | A change affects cached pages or needs cache tags (6.7+). | `CacheTagCollector`, … |
+| [`migrations.md`](references/migrations.md) | You add or change a database migration. | `Migration/Migration*.php`, `extends MigrationStep`, … |
+| [`version-compatibility.md`](references/version-compatibility.md) | The plugin must support more than one Shopware minor. | `composer.json`, `"shopware/core"`, … |
+| [`symfony-first.md`](references/symfony-first.md) | You are about to write code a Symfony component already provides. | `file_put_contents(`, … |
 <!-- routes:end -->
 
 - Architecture choices (events vs decoration) -> `shopware-architecture`
