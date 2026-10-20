@@ -78,16 +78,20 @@ New graders must ship `fixtures/fail/` as an almost-correct sneak.
   (default `evals/.results/ab.jsonl`):
 
   ```json
-  {"task":"dal-search-without-limit","repeats":3,"on":3,"off":1,"errors":0,"delta":2,"verdict":"improved","loaded_on":3,"loaded_off":0,"agent":"opencode","model":"opencode/longcat-2.5-preview-free","sha":"c641789","ts":"2026-10-20T06:00:00Z"}
+  {"task":"dal-search-without-limit","repeats":3,"on":3,"off":1,"on_done":3,"off_done":3,"errors":0,"delta":2,"verdict":"improved","loaded_on":3,"loaded_off":0,"agent":"opencode","model":"opencode/longcat-2.5-preview-free","sha":"c641789","ts":"2026-10-20T06:00:00Z"}
   ```
+
+Pass rates count completed runs only; an agent error is not a failed task. A
+gap below `EVAL_AB_MIN_DELTA_PCT` points (default 50) is noise: with 3 repeats
+one run is 33 points, so `improved` and `worse` need a two-run difference.
 
 | Verdict | Meaning | `ab.sh` exit |
 | ------- | ------- | ------------ |
-| `improved` | skill on passed more runs than skill off | 0 |
-| `held` | both passed every run; the model may not need the rule | 11 |
-| `no_difference` | equal, but not every run passed | 10 |
-| `worse` | skill on passed fewer runs | 20 |
-| `error` | an agent error in any run; no verdict | 5 |
+| `improved` | skill-on pass rate is at least the minimum gap higher | 0 |
+| `held` | every completed run passed in both modes; the model may not need the rule | 11 |
+| `no_difference` | the gap is below the minimum | 10 |
+| `worse` | skill-on pass rate is at least the minimum gap lower | 20 |
+| `error` | fewer than half of a mode's runs completed; no verdict | 5 |
 
 `ab.sh` refuses to run without a profile command, because "on" and "off" would
 otherwise load the same skills.

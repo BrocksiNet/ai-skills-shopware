@@ -85,6 +85,14 @@ rc=0; SKILLS_PROFILE_CMD='' "$HERE/ab.sh" "$TASK_A" 1 >/dev/null 2>&1 || rc=$?
 check "no profile command is refused" 2 "$rc"
 check "one JSON line per A/B" 5 "$(wc -l <"$EVAL_RESULTS" | tr -d ' ')"
 
+# Separate results file so the line counts above stay exact.
+rc=0; EVAL_RESULTS="$tmp/partial.jsonl" FAKE_AGENT_MODE=skill-helps FAKE_AGENT_ERROR_ONCE="$tmp/err-once" \
+  "$HERE/ab.sh" "$TASK_A" 3 >/dev/null 2>&1 || rc=$?
+check "one agent error still gives a verdict" "0 improved" "$rc $(jq -r .verdict "$tmp/partial.jsonl")"
+check "completed runs are counted" "2/3" "$(jq -r '"\(.on_done)/\(.off_done)"' "$tmp/partial.jsonl")"
+rc=0; EVAL_RESULTS="$tmp/noise.jsonl" FAKE_AGENT_MODE=always-pass FAKE_AGENT_FAIL_ONCE="$tmp/fail-once" \
+  "$HERE/ab.sh" "$TASK_B" 3 >/dev/null 2>&1 || rc=$?
+check "one-run gap is noise, not worse" "10 no_difference" "$rc $(jq -r .verdict "$tmp/noise.jsonl")"
 rc=0; ( unset EVAL_AGENT; FAKE_AGENT_MODE=always-pass "$HERE/ab.sh" "$TASK_B" 1 >/dev/null 2>&1 ) || rc=$?
 check "agent label defaults to the adapter name" fake-agent "$(last_field agent)"
 sed -i.bak '$d' "$EVAL_RESULTS" && rm -f "$EVAL_RESULTS.bak"

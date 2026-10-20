@@ -10,12 +10,17 @@
 # A real A/B needs SKILLS_PROFILE_CMD (or the legacy ON/OFF hooks); without
 # one, "on" and "off" load the same skills and the run is refused.
 #
+# Pass rates count completed runs only; an agent error is not a failed task.
+# A gap smaller than EVAL_AB_MIN_DELTA_PCT points (default 50) is noise: with 3
+# repeats, one run is 33 points, so "improved" and "worse" need two runs.
+#
 # Verdicts and exit codes:
-#   improved       on > off                          exit 0
-#   held           on == off == repeats              exit 11
-#   no_difference  on == off < repeats               exit 10
-#   worse          on < off                          exit 20
-#   error          an agent error in any run         exit 5
+#   improved       on rate - off rate >= min delta   exit 0
+#   held           every completed run passed        exit 11
+#   no_difference  gap below the min delta           exit 10
+#   worse          off rate - on rate >= min delta   exit 20
+#   error          fewer than half of the runs of a
+#                  mode completed                    exit 5
 #   usage error / no profile command                 exit 2
 #   SKILLS_AGENT_CMD not set                         exit 3
 #
@@ -96,13 +101,21 @@ errors=$((on_err + off_err))
 if [ "$on_reported" -gt 0 ]; then loaded_on="$on_loaded"; else loaded_on=null; fi
 if [ "$off_reported" -gt 0 ]; then loaded_off="$off_loaded"; else loaded_off=null; fi
 
-if [ "$errors" -gt 0 ]; then
+MIN_DELTA="${EVAL_AB_MIN_DELTA_PCT:-50}"
+on_done=$((REPEATS - on_err))
+off_done=$((REPEATS - off_err))
+gap=0
+if [ $((on_done * 2)) -ge "$REPEATS" ] && [ $((off_done * 2)) -ge "$REPEATS" ] && [ "$on_done" -gt 0 ] && [ "$off_done" -gt 0 ]; then
+  gap=$(( (on_pass * 100 / on_done) - (off_pass * 100 / off_done) ))
+fi
+
+if [ $((on_done * 2)) -lt "$REPEATS" ] || [ $((off_done * 2)) -lt "$REPEATS" ] || [ "$on_done" -eq 0 ] || [ "$off_done" -eq 0 ]; then
   verdict=error; code=5
-elif [ "$on_pass" -gt "$off_pass" ]; then
+elif [ "$gap" -ge "$MIN_DELTA" ]; then
   verdict=improved; code=0
-elif [ "$on_pass" -lt "$off_pass" ]; then
+elif [ "$gap" -le "-$MIN_DELTA" ]; then
   verdict=worse; code=20
-elif [ "$on_pass" -eq "$REPEATS" ]; then
+elif [ "$on_pass" -eq "$on_done" ] && [ "$off_pass" -eq "$off_done" ]; then
   verdict=held; code=11
 else
   verdict=no_difference; code=10
@@ -112,19 +125,19 @@ agent="${EVAL_AGENT:-$(basename "${SKILLS_AGENT_CMD%% *}" .sh)}"
 agent="${agent%-task}"
 sha="$(git -C "$ROOT" rev-parse --short HEAD 2>/dev/null || echo unknown)"
 ts="$(date -u +%Y-%m-%dT%H:%M:%SZ)"
-printf '{"task":"%s","repeats":%d,"on":%d,"off":%d,"errors":%d,"delta":%d,"verdict":"%s","loaded_on":%s,"loaded_off":%s,"agent":"%s","model":"%s","sha":"%s","ts":"%s"}\n' \
-  "$TASK" "$REPEATS" "$on_pass" "$off_pass" "$errors" "$((on_pass - off_pass))" "$verdict" "$loaded_on" "$loaded_off" \
+printf '{"task":"%s","repeats":%d,"on":%d,"off":%d,"on_done":%d,"off_done":%d,"errors":%d,"delta":%d,"verdict":"%s","loaded_on":%s,"loaded_off":%s,"agent":"%s","model":"%s","sha":"%s","ts":"%s"}\n' \
+  "$TASK" "$REPEATS" "$on_pass" "$off_pass" "$on_done" "$off_done" "$errors" "$((on_pass - off_pass))" "$verdict" "$loaded_on" "$loaded_off" \
   "$agent" "${TASK_MODEL:-default}" "$sha" "$ts" >>"$RESULTS"
 
 echo "Task: $TASK  (repeats=$REPEATS)"
-echo "  skill ON : $on_pass/$REPEATS passed"
-echo "  skill OFF: $off_pass/$REPEATS passed"
+echo "  skill ON : $on_pass/$on_done completed runs passed ($on_err agent error(s))"
+echo "  skill OFF: $off_pass/$off_done completed runs passed ($off_err agent error(s))"
 echo "  skill loaded: on $loaded_on/$REPEATS, off $loaded_off/$REPEATS"
 case "$verdict" in
   improved)      echo "  => skill IMPROVES the result (earns its budget)." ;;
   held)          echo "  => both pass every run. The model may not need this rule." ;;
   no_difference) echo "  => no measurable difference. Re-examine whether this rule is needed/tested." ;;
   worse)         echo "  => skill made it WORSE. Investigate immediately." ;;
-  error)         echo "  => $errors agent error(s); no verdict. Rerun once the provider is available." ;;
+  error)         echo "  => too many agent errors ($errors); no verdict. Rerun once the provider is available." ;;
 esac
 exit "$code"

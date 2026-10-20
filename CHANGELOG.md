@@ -26,6 +26,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   when fewer than half of the skill-on runs load a task skill, or when a
   skill leaks into a skill-off run. A model that ignores skills can no longer
   produce a green run that measured nothing.
+- `ab.sh` scores completed runs only, so one agent error no longer discards
+  a task's verdict, and treats a pass-rate gap below `EVAL_AB_MIN_DELTA_PCT`
+  (50 points) as noise instead of `improved` or `worse`.
 - `evals/runner/selftest.sh` with `fake-agent.sh`. It checks the whole eval
   pipeline without model calls on every push.
 - `shopware-podman-dev`: OpenSearch is opt-in per lane (compose profile

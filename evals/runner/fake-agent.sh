@@ -15,6 +15,10 @@
 #
 # "Solve" means: replace the workdir with the task's golden fixtures/pass/.
 #
+# One-shot faults: FAKE_AGENT_ERROR_ONCE=<file> makes the first call (the one
+# that creates <file>) an agent error; FAKE_AGENT_FAIL_ONCE=<file> makes it a
+# no-change run.
+#
 # Skill-load reporting (EVAL_SKILLS_LOG, set by ab.sh) follows FAKE_AGENT_LOAD:
 #
 #   present      (default) log every skill present in the workdir
@@ -63,6 +67,17 @@ solve() {
 no_change() {
   echo "fake-agent: no change"
 }
+
+if [[ -n "${FAKE_AGENT_ERROR_ONCE:-}" && ! -e "${FAKE_AGENT_ERROR_ONCE}" ]]; then
+  : >"${FAKE_AGENT_ERROR_ONCE}"
+  echo "fake-agent: simulated one-off API error" >&2
+  exit 4
+fi
+if [[ -n "${FAKE_AGENT_FAIL_ONCE:-}" && ! -e "${FAKE_AGENT_FAIL_ONCE}" ]]; then
+  : >"${FAKE_AGENT_FAIL_ONCE}"
+  no_change
+  exit 0
+fi
 
 case "${MODE}" in
   skill-helps) if [[ "${skills_loaded}" -eq 1 ]]; then solve; else no_change; fi ;;

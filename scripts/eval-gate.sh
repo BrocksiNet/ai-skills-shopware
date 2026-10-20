@@ -50,7 +50,8 @@ nodiff="$(count no_difference)"
 worse="$(count worse)"
 errors="$(count error)"
 graded=$((total - errors))
-full_on="$(jq '[.[] | select(.verdict != "error" and .on == .repeats)] | length' <<<"$results")"
+# Older lines have no on_done; then every run counted.
+full_on="$(jq '[.[] | select(.verdict != "error" and .on == (.on_done // .repeats))] | length' <<<"$results")"
 
 pass_pct=0
 if [[ "$graded" -gt 0 ]]; then
@@ -59,7 +60,7 @@ fi
 error_pct=$((errors * 100 / total))
 
 # Skill loads over graded tasks whose adapter reported them.
-load_runs="$(jq '[.[] | select(.verdict != "error" and (.loaded_on | type) == "number") | .repeats] | add // 0' <<<"$results")"
+load_runs="$(jq '[.[] | select(.verdict != "error" and (.loaded_on | type) == "number") | (.on_done // .repeats)] | add // 0' <<<"$results")"
 loaded_runs="$(jq '[.[] | select(.verdict != "error" and (.loaded_on | type) == "number") | .loaded_on] | add // 0' <<<"$results")"
 leaked="$(jq '[.[] | select((.loaded_off | type) == "number" and .loaded_off > 0)] | length' <<<"$results")"
 load_pct=-1
@@ -89,12 +90,14 @@ fi
 echo
 echo "<details><summary>Per task</summary>"
 echo
+echo "On and Off count passed / completed runs."
+echo
 echo "| Task | On | Off | Skill loaded (on) | Verdict |"
 echo "| ---- | -- | --- | ----------------- | ------- |"
 jq -r '
   def rank: {"worse":0,"error":1,"no_difference":2,"held":3,"improved":4}[.verdict] // 5;
   def loaded: if (.loaded_on | type) == "number" then "\(.loaded_on)/\(.repeats)" else "n/a" end;
-  sort_by(rank, .task)[] | "| `\(.task)` | \(.on)/\(.repeats) | \(.off)/\(.repeats) | \(loaded) | \(.verdict) |"
+  sort_by(rank, .task)[] | "| `\(.task)` | \(.on)/\(.on_done // .repeats) | \(.off)/\(.off_done // .repeats) | \(loaded) | \(.verdict) |"
 ' <<<"$results"
 echo
 echo "</details>"
