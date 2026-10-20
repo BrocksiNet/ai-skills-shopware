@@ -723,8 +723,8 @@ Status: **table done 2026-10-20** in
 Changes since this plan was written: #21541 merged on 2026-10-19, so WP7
 phase B is unblocked. #21722 was closed; its Administration agent docs are
 now part of #21730, and #21725 is the lint-baseline PR #21730 builds on.
-The prepared branches for #21627 and #21730 are still open; the weekly
-update waits for WP8.
+Prepared branches: draft PR #23 for #21627 and draft PR #24 for #21730
+(BrocksiNet/ai-skills-shopware). The weekly update waits for WP8.
 
 Goal: prepare for open core PRs before they merge.
 
