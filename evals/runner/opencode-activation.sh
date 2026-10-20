@@ -17,13 +17,13 @@
 #
 # Env:
 #   ACTIVATION_SKILLS_DIR  skills folder to expose (default: <repo>/skills)
-#   ACTIVATION_MODEL       provider/model (default: opencode/nemotron-3-ultra-free)
+#   ACTIVATION_MODEL       provider/model (default: opencode/longcat-2.5-preview-free)
 #   ACTIVATION_MAX_TURNS   agent steps per prompt (default: 3)
 set -euo pipefail
 
 ROOT="$(cd "$(dirname "$0")/../.." && pwd)"
 SKILLS_DIR="${ACTIVATION_SKILLS_DIR:-$ROOT/skills}"
-MODEL="${ACTIVATION_MODEL:-opencode/nemotron-3-ultra-free}"
+MODEL="${ACTIVATION_MODEL:-opencode/longcat-2.5-preview-free}"
 MAX_TURNS="${ACTIVATION_MAX_TURNS:-3}"
 
 command -v opencode >/dev/null || { echo "opencode CLI not found" >&2; exit 2; }

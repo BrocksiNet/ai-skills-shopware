@@ -14,6 +14,17 @@
 #   error        exit 4 like a failed CLI/API session
 #
 # "Solve" means: replace the workdir with the task's golden fixtures/pass/.
+#
+# One-shot faults: FAKE_AGENT_ERROR_ONCE=<file> makes the first call (the one
+# that creates <file>) an agent error; FAKE_AGENT_FAIL_ONCE=<file> makes it a
+# no-change run.
+#
+# Skill-load reporting (EVAL_SKILLS_LOG, set by ab.sh) follows FAKE_AGENT_LOAD:
+#
+#   present      (default) log every skill present in the workdir
+#   none         create the log but load nothing (model ignores skills)
+#   leak         log php-foundation even when no skills are present
+#   unsupported  never create the log (adapter cannot report)
 set -euo pipefail
 
 : "${EVAL_TASK:?EVAL_TASK not set (run through run-task.sh)}"
@@ -26,6 +37,21 @@ cat >/dev/null
 skills_loaded=0
 if [[ -d .claude/skills ]] && [[ -n "$(ls -A .claude/skills 2>/dev/null)" ]]; then
   skills_loaded=1
+fi
+
+if [[ -n "${EVAL_SKILLS_LOG:-}" ]]; then
+  case "${FAKE_AGENT_LOAD:-present}" in
+    present)
+      : >>"${EVAL_SKILLS_LOG}"
+      if [[ -d .claude/skills ]]; then
+        find .claude/skills -mindepth 1 -maxdepth 1 -exec basename {} \; >>"${EVAL_SKILLS_LOG}"
+      fi
+      ;;
+    none) : >>"${EVAL_SKILLS_LOG}" ;;
+    leak) echo php-foundation >>"${EVAL_SKILLS_LOG}" ;;
+    unsupported) ;;
+    *) echo "fake-agent: unknown FAKE_AGENT_LOAD" >&2; exit 2 ;;
+  esac
 fi
 
 solve() {
@@ -41,6 +67,17 @@ solve() {
 no_change() {
   echo "fake-agent: no change"
 }
+
+if [[ -n "${FAKE_AGENT_ERROR_ONCE:-}" && ! -e "${FAKE_AGENT_ERROR_ONCE}" ]]; then
+  : >"${FAKE_AGENT_ERROR_ONCE}"
+  echo "fake-agent: simulated one-off API error" >&2
+  exit 4
+fi
+if [[ -n "${FAKE_AGENT_FAIL_ONCE:-}" && ! -e "${FAKE_AGENT_FAIL_ONCE}" ]]; then
+  : >"${FAKE_AGENT_FAIL_ONCE}"
+  no_change
+  exit 0
+fi
 
 case "${MODE}" in
   skill-helps) if [[ "${skills_loaded}" -eq 1 ]]; then solve; else no_change; fi ;;

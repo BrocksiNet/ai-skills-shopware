@@ -68,6 +68,13 @@ mapfile -t files < <(
 shellcheck "${files[@]}"
 ```
 
+Model A/B with an agent you are logged in to (no API key; costs your plan's
+usage):
+
+```bash
+EVAL_TASKS=prepare-plugin-for-6-8 REPEATS=3 bash scripts/eval-local.sh
+```
+
 Smoke harness — graders only (no API cost):
 
 ```bash

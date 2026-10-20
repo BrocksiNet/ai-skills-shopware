@@ -84,7 +84,13 @@ review guides before adding anything new.
 Goal: the scheduled `evals.yml` run must produce real numbers and must be able
 to fail.
 
-Status: **implemented 2026-10-19**. The runner, gate, plan and diff scripts
+Status: **done 2026-10-20**. Acceptance was met with `scripts/eval-local.sh`
+and Claude Haiku: the clean run passed the gate, and a deliberately wrong rule
+in `shopware-plugin-development` turned `prepare-plugin-for-6-8` from 3/3 to
+0/3 and the gate red. Free CI models proved weak for this: most ignore
+skills, and the best one (LongCat) hits rate limits, so CI runs retry and the
+gate now also fails when skills are not loaded or leak into "off" runs.
+History: implemented 2026-10-19. The runner, gate, plan and diff scripts
 are covered by `evals/runner/selftest.sh` without model calls. Change from the
 spec: CI defaults to OpenCode with a free model (`opencode-task.sh`,
 `opencode-activation.sh`), so no API key or secret is needed; GitHub Models,

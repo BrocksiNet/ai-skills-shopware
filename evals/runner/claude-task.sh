@@ -19,6 +19,8 @@
 #   TASK_MODEL           model alias (default: sonnet)
 #   TASK_MAX_TURNS       turns per task (default: 12)
 #   TASK_MAX_BUDGET_USD  spend cap per session (default: 0.75)
+#   EVAL_SKILLS_LOG      when set, this file is created and gets one line per
+#                        skill the agent loaded (set by ab.sh)
 #
 # Permissions are bypassed because the workdir is a throwaway temp copy of a
 # fixture. Do not point this adapter at a real checkout.
@@ -43,7 +45,7 @@ printf '%s' "${prompt}" | claude -p \
   --output-format stream-json --verbose |
   python3 -I -c '
 import json, sys
-texts = []
+texts, skills = [], []
 result = None
 for line in sys.stdin:
     try:
@@ -57,7 +59,15 @@ for line in sys.stdin:
     for block in msg.get("message", {}).get("content", []):
         if block.get("type") == "text" and block.get("text", "").strip():
             texts.append(block["text"])
+        if block.get("type") == "tool_use" and block.get("name") == "Skill":
+            args = block.get("input") or {}
+            name = (args.get("skill") or args.get("command") or "").lstrip("/").split(":")[-1].strip()
+            if name and name not in skills:
+                skills.append(name)
 print("\n\n".join(texts))
+if len(sys.argv) > 1 and sys.argv[1]:
+    with open(sys.argv[1], "a", encoding="utf-8") as log:
+        log.writelines(s + "\n" for s in skills)
 if result is None:
     sys.stderr.write("claude-task: session ended without a result\n")
     sys.exit(4)
@@ -68,7 +78,7 @@ if result.get("subtype") in ("error_max_turns", "error_max_budget_usd"):
 if result.get("is_error") or result.get("subtype") != "success":
     sys.stderr.write("claude-task: %s\n" % (result.get("result") or result.get("subtype") or "unknown error"))
     sys.exit(4)
-'
+' "${EVAL_SKILLS_LOG:-}"
 status=("${PIPESTATUS[@]}")
 set -e
 

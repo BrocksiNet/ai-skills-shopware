@@ -24,6 +24,8 @@ export SKILLS_AGENT_CMD="$HERE/fake-agent.sh"
 export SKILLS_PROFILE_CMD="$HERE/skills-profile.sh"
 export EVAL_RESULTS="$tmp/ab.jsonl"
 export EVAL_AGENT=fake TASK_MODEL=none
+# No retries unless a check asks for them; retries are tested on their own.
+export EVAL_AGENT_RETRIES=0 EVAL_AGENT_RETRY_WAIT=0
 
 failures=0
 check() { # $1 = label ; $2 = expected ; $3 = actual
@@ -57,6 +59,14 @@ check "no agent exits 3" 3 "$rc"
 rc=0; FAKE_AGENT_MODE=skill-helps "$HERE/run-task.sh" "$TASK_A" off >/dev/null 2>&1 || rc=$?
 check "profile off really removes skills" 1 "$rc"
 
+rc=0; EVAL_AGENT_RETRIES=1 FAKE_AGENT_MODE=always-pass FAKE_AGENT_ERROR_ONCE="$tmp/retry-once" \
+  "$HERE/run-task.sh" "$TASK_A" on >/dev/null 2>"$tmp/retry.err" || rc=$?
+check "agent error is retried on a fresh workdir" 0 "$rc"
+check "retry reason is logged" 1 "$(grep -c 'retrying' "$tmp/retry.err" || true)"
+rc=0; EVAL_AGENT_RETRIES=1 FAKE_AGENT_MODE=error "$HERE/run-task.sh" "$TASK_A" on >/dev/null 2>"$tmp/retry.err" || rc=$?
+check "persistent agent error still exits 4" 4 "$rc"
+check "final error names the reason" 1 "$(grep -c 'simulated API error; not graded' "$tmp/retry.err" || true)"
+
 echo "skills-profile.sh"
 wd="$tmp/profile"; mkdir -p "$wd"
 "$HERE/skills-profile.sh" on "$wd" "$TASK_A"
@@ -71,6 +81,7 @@ echo "ab.sh verdicts"
 check "skill-helps exit" 0 "$(ab skill-helps "$TASK_A")"
 check "skill-helps verdict" improved "$(last_field verdict)"
 check "skill-helps on/off" "2/0" "$(last_field on)/$(last_field off)"
+check "skill loads counted per mode" "2/0" "$(last_field loaded_on)/$(last_field loaded_off)"
 check "always-pass exit" 11 "$(ab always-pass "$TASK_B")"
 check "always-pass verdict" held "$(last_field verdict)"
 check "always-fail exit" 10 "$(ab always-fail "$TASK_B")"
@@ -84,6 +95,14 @@ rc=0; SKILLS_PROFILE_CMD='' "$HERE/ab.sh" "$TASK_A" 1 >/dev/null 2>&1 || rc=$?
 check "no profile command is refused" 2 "$rc"
 check "one JSON line per A/B" 5 "$(wc -l <"$EVAL_RESULTS" | tr -d ' ')"
 
+# Separate results file so the line counts above stay exact.
+rc=0; EVAL_RESULTS="$tmp/partial.jsonl" FAKE_AGENT_MODE=skill-helps FAKE_AGENT_ERROR_ONCE="$tmp/err-once" \
+  "$HERE/ab.sh" "$TASK_A" 3 >/dev/null 2>&1 || rc=$?
+check "one agent error still gives a verdict" "0 improved" "$rc $(jq -r .verdict "$tmp/partial.jsonl")"
+check "completed runs are counted" "2/3" "$(jq -r '"\(.on_done)/\(.off_done)"' "$tmp/partial.jsonl")"
+rc=0; EVAL_RESULTS="$tmp/noise.jsonl" FAKE_AGENT_MODE=always-pass FAKE_AGENT_FAIL_ONCE="$tmp/fail-once" \
+  "$HERE/ab.sh" "$TASK_B" 3 >/dev/null 2>&1 || rc=$?
+check "one-run gap is noise, not worse" "10 no_difference" "$rc $(jq -r .verdict "$tmp/noise.jsonl")"
 rc=0; ( unset EVAL_AGENT; FAKE_AGENT_MODE=always-pass "$HERE/ab.sh" "$TASK_B" 1 >/dev/null 2>&1 ) || rc=$?
 check "agent label defaults to the adapter name" fake-agent "$(last_field agent)"
 sed -i.bak '$d' "$EVAL_RESULTS" && rm -f "$EVAL_RESULTS.bak"
@@ -93,7 +112,8 @@ fakebin="$tmp/bin"; mkdir -p "$fakebin"
 cat >"$fakebin/opencode" <<'FAKE'
 #!/usr/bin/env bash
 case "${FAKE_OPENCODE:-ok}" in
-  ok)    echo '{"type":"tool_use","part":{"tool":"edit"}}'
+  ok)    echo '{"type":"tool_use","part":{"tool":"skill","state":{"input":{"id":"shopware-testing"}}}}'
+         echo '{"type":"tool_use","part":{"tool":"edit"}}'
          echo '{"type":"text","part":{"text":"DONE"}}' ;;
   error) echo '{"type":"error","error":{"message":"Model unavailable"}}'; exit 1 ;;
   empty) echo '{"type":"step_start"}' ;;
@@ -110,6 +130,7 @@ oc() { # $1 = fake mode ; $2 = timeout (default 2) ; prints "<exit> <stdout>"
 start=$SECONDS
 check "finished session exits 0 and prints text" "0 DONE" "$(oc ok 20)"
 check "finished session does not wait for the watchdog" yes "$([[ $((SECONDS - start)) -lt 10 ]] && echo yes || echo no)"
+check "skill loads are logged" shopware-testing "$(EVAL_SKILLS_LOG="$tmp/oc-skills" oc ok >/dev/null; cat "$tmp/oc-skills")"
 check "error event is an agent error" "4 " "$(oc error)"
 check "no text and no tool call is an agent error" "4 " "$(oc empty)"
 start=$SECONDS
@@ -140,6 +161,20 @@ check "pass rate is the reason" 1 "$(grep -c 'full pass rate' "$tmp/summary.md" 
 rc=0; "$ROOT/scripts/eval-gate.sh" /dev/null >/dev/null || rc=$?
 check "no results fails the gate" 1 "$rc"
 # Last line per task wins: TASK_A ends as "error", TASK_B as "no_difference".
+# Skill-load gates, each on its own results file.
+loadcase() { # $1 = FAKE_AGENT_LOAD ; prints the gate exit code, summary in $tmp/load.md
+  local file="$tmp/load-$1.jsonl" rc=0
+  EVAL_RESULTS="$file" FAKE_AGENT_MODE=always-pass FAKE_AGENT_LOAD="$1" "$HERE/ab.sh" "$TASK_B" 1 >/dev/null 2>&1 || true
+  "$ROOT/scripts/eval-gate.sh" "$file" >"$tmp/load.md" || rc=$?
+  echo "$rc"
+}
+check "skills loaded passes the gate" 0 "$(loadcase present)"
+check "model that ignores skills fails the gate" 1 "$(loadcase none)"
+check "ignored skills is the reason" 1 "$(grep -c 'ignores the skills' "$tmp/load.md" || true)"
+check "skill leak into the off run fails the gate" 1 "$(loadcase leak)"
+check "leak is the reason" 1 "$(grep -c 'not skill-free' "$tmp/load.md" || true)"
+check "adapter without load reporting is not gated" 0 "$(loadcase unsupported)"
+check "unreported loads are null" null "$(jq -r '.loaded_on' "$tmp/load-unsupported.jsonl")"
 check "last line per task wins" 2 "$("$ROOT/scripts/eval-gate.sh" "$EVAL_RESULTS" | grep -c '^| `' || true)"
 
 echo "eval-plan.sh"

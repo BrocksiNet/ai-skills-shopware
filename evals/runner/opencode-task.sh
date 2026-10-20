@@ -21,10 +21,16 @@
 # an agent error, never as a failed task.
 #
 # Env:
-#   TASK_MODEL            provider/model (default: opencode/nemotron-3-ultra-free)
+#   TASK_MODEL            provider/model (default: opencode/longcat-2.5-preview-free)
 #   TASK_MAX_TURNS        agent steps per task (default: 12)
 #   TASK_TIMEOUT_SECONDS  wall clock per session (default: 600)
 #   OPENCODE_ISOLATE      1 = throwaway HOME/XDG (default); 0 = your own config
+#                         (0 lets your global skills leak into the "off" run)
+#   OPENCODE_AUTH_FILE    an OpenCode auth.json to copy into the throwaway HOME,
+#                         so providers you are logged in to (GitHub Copilot,
+#                         OpenAI, ...) work while skills stay isolated
+#   EVAL_SKILLS_LOG       when set, this file is created and gets one line per
+#                         skill the agent loaded (set by ab.sh)
 #   Provider keys such as OPENROUTER_API_KEY pass through when you pick a
 #   non-free TASK_MODEL.
 #
@@ -37,7 +43,7 @@
 # a fixture. Do not point this adapter at a real checkout.
 set -euo pipefail
 
-MODEL="${TASK_MODEL:-opencode/nemotron-3-ultra-free}"
+MODEL="${TASK_MODEL:-opencode/longcat-2.5-preview-free}"
 MAX_TURNS="${TASK_MAX_TURNS:-12}"
 TIMEOUT="${TASK_TIMEOUT_SECONDS:-600}"
 
@@ -55,6 +61,12 @@ if [[ "${OPENCODE_ISOLATE:-1}" == "1" ]]; then
   export XDG_CONFIG_HOME="$HOME/.config" XDG_DATA_HOME="$HOME/.local/share"
   export XDG_CACHE_HOME="$HOME/.cache" XDG_STATE_HOME="$HOME/.local/state"
   mkdir -p "$XDG_CONFIG_HOME" "$XDG_DATA_HOME" "$XDG_CACHE_HOME" "$XDG_STATE_HOME"
+  if [[ -n "${OPENCODE_AUTH_FILE:-}" ]]; then
+    [[ -f "$OPENCODE_AUTH_FILE" ]] || { echo "OPENCODE_AUTH_FILE not found: $OPENCODE_AUTH_FILE" >&2; exit 4; }
+    mkdir -p "$XDG_DATA_HOME/opencode"
+    cp "$OPENCODE_AUTH_FILE" "$XDG_DATA_HOME/opencode/auth.json"
+    chmod 600 "$XDG_DATA_HOME/opencode/auth.json"
+  fi
 fi
 export OPENCODE_DISABLE_AUTOUPDATE=1 OPENCODE_DISABLE_LSP_DOWNLOAD=1
 # Cap the agent loop; a headless run must never stop to ask a question.
@@ -84,9 +96,9 @@ wait "$watchdog" 2>/dev/null
 set -e
 
 parse_rc=0
-python3 -I - "$events" <<'PY' || parse_rc=$?
+python3 -I - "$events" "${EVAL_SKILLS_LOG:-}" <<'PY' || parse_rc=$?
 import json, sys
-texts, tools, errors = [], 0, []
+texts, tools, errors, skills = [], 0, [], []
 with open(sys.argv[1], encoding="utf-8", errors="replace") as fh:
     for line in fh:
         try:
@@ -100,10 +112,19 @@ with open(sys.argv[1], encoding="utf-8", errors="replace") as fh:
                 texts.append(text)
         elif kind == "tool_use":
             tools += 1
+            part = ev.get("part") or {}
+            if part.get("tool") == "skill":
+                args = (part.get("state") or {}).get("input") or {}
+                name = str(args.get("id") or args.get("name") or "").strip()
+                if name and name not in skills:
+                    skills.append(name)
         elif kind == "error":
             err = ev.get("error") or {}
             errors.append(err.get("message") or err.get("type") or "unknown error")
 print("\n\n".join(texts))
+if len(sys.argv) > 2 and sys.argv[2]:
+    with open(sys.argv[2], "a", encoding="utf-8") as log:
+        log.writelines(s + "\n" for s in skills)
 if errors:
     sys.stderr.write("opencode-task: %s\n" % errors[0])
     sys.exit(4)
