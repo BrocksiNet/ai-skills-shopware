@@ -29,6 +29,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `ab.sh` scores completed runs only, so one agent error no longer discards
   a task's verdict, and treats a pass-rate gap below `EVAL_AB_MIN_DELTA_PCT`
   (50 points) as noise instead of `improved` or `worse`.
+- `scripts/eval-local.sh` runs the A/B and the gate with a CLI you are
+  already logged in to (Claude Code by default, or OpenCode with your
+  logins via `OPENCODE_AUTH_FILE`), without API keys or free-tier limits.
 - `run-task.sh` retries agent errors (free models answer "Rate limit
   exceeded") on a fresh workdir, and logs the error reason to the CI log.
 - `evals/runner/selftest.sh` with `fake-agent.sh`. It checks the whole eval

@@ -25,6 +25,10 @@
 #   TASK_MAX_TURNS        agent steps per task (default: 12)
 #   TASK_TIMEOUT_SECONDS  wall clock per session (default: 600)
 #   OPENCODE_ISOLATE      1 = throwaway HOME/XDG (default); 0 = your own config
+#                         (0 lets your global skills leak into the "off" run)
+#   OPENCODE_AUTH_FILE    an OpenCode auth.json to copy into the throwaway HOME,
+#                         so providers you are logged in to (GitHub Copilot,
+#                         OpenAI, ...) work while skills stay isolated
 #   EVAL_SKILLS_LOG       when set, this file is created and gets one line per
 #                         skill the agent loaded (set by ab.sh)
 #   Provider keys such as OPENROUTER_API_KEY pass through when you pick a
@@ -57,6 +61,12 @@ if [[ "${OPENCODE_ISOLATE:-1}" == "1" ]]; then
   export XDG_CONFIG_HOME="$HOME/.config" XDG_DATA_HOME="$HOME/.local/share"
   export XDG_CACHE_HOME="$HOME/.cache" XDG_STATE_HOME="$HOME/.local/state"
   mkdir -p "$XDG_CONFIG_HOME" "$XDG_DATA_HOME" "$XDG_CACHE_HOME" "$XDG_STATE_HOME"
+  if [[ -n "${OPENCODE_AUTH_FILE:-}" ]]; then
+    [[ -f "$OPENCODE_AUTH_FILE" ]] || { echo "OPENCODE_AUTH_FILE not found: $OPENCODE_AUTH_FILE" >&2; exit 4; }
+    mkdir -p "$XDG_DATA_HOME/opencode"
+    cp "$OPENCODE_AUTH_FILE" "$XDG_DATA_HOME/opencode/auth.json"
+    chmod 600 "$XDG_DATA_HOME/opencode/auth.json"
+  fi
 fi
 export OPENCODE_DISABLE_AUTOUPDATE=1 OPENCODE_DISABLE_LSP_DOWNLOAD=1
 # Cap the agent loop; a headless run must never stop to ask a question.

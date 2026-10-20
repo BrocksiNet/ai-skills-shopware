@@ -152,6 +152,28 @@ on stdin, works in the current directory, prints its transcript, and exits
 non-zero only on a CLI/API failure. The legacy `SKILLS_PROFILE_ON_CMD` /
 `SKILLS_PROFILE_OFF_CMD` hooks still work.
 
+### Run locally with the agents you are logged in to
+
+`scripts/eval-local.sh` runs the A/B with a CLI you are already logged in to
+and applies the same gate as CI. It needs no API key and no rate-limited free
+tier.
+
+```bash
+# Claude Code with your `claude auth login` session (default model haiku)
+EVAL_TASKS=prepare-plugin-for-6-8 REPEATS=3 scripts/eval-local.sh
+
+# OpenCode with your logins, e.g. GitHub Copilot
+EVAL_LOCAL_AGENT=opencode TASK_MODEL=github-copilot/claude-haiku-4.5 scripts/eval-local.sh
+```
+
+OpenCode still runs with a throwaway `HOME`, so your global skills stay out of
+the "off" run; only your `auth.json` is copied in (`OPENCODE_AUTH_FILE`).
+Results land in `evals/.results/local-<timestamp>.jsonl`.
+
+Measured on 2026-10-20 with Claude Haiku (3 repeats): `prepare-plugin-for-6-8`
+went from 0/3 without the skill to 3/3 with it, and to 0/3 with a deliberately
+wrong rule in `shopware-plugin-development`, which turned the gate red.
+
 ### Gate, diff and plan
 
 - `scripts/eval-gate.sh <ab.jsonl>` prints a Markdown summary and fails when a
