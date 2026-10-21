@@ -486,9 +486,17 @@ evals/routing/plugin-migration-and-cache/
 
 ## WP5: Review-shaped evals
 
-Status: **in progress**. PR A ships the grader and two of six pairs:
-`review-event-hook-assert-*` (TEST-016) and `review-store-api-contract-*`
-(new PLG-027). PR B adds the other four pairs and their rules.
+Status: **done 2026-10-21**. Ten pairs, more than the six planned:
+`review-event-hook-assert-*` (TEST-016), `review-store-api-contract-*`
+(PLG-027), `review-migration-customized-data-*` (PLG-028),
+`review-reset-interface-*` (ARCH-001), `review-queue-inline-fallback-*`
+(REV-033) and `review-twig-block-removed-*` (SF-001), plus four from WP7
+phase A: `review-migration-unbatched-backfill-*` (PLG-019),
+`review-migration-feature-flag-*` (PLG-029),
+`review-migration-narrowing-update-*` (PLG-030) and
+`review-test-cannot-fail-*` (TEST-035). All golden transcripts pass
+`test-graders.sh`; `eval-plan` picks up every task with a `grade.sh`, so the
+`-ignore` tasks run in the WP1 A/B.
 
 Goal: grade review skills on whether they find a planted problem and stay
 quiet on a clean diff. Today the review skills have one or two tasks each,
@@ -642,6 +650,14 @@ WP7 phase A rules.
 ---
 
 ## WP7: Rule backlog from the core guides
+
+Status: **phase A done 2026-10-21**, together with WP5. Each phase A rule
+got a review pair instead of the behavioral or AST task named in the table:
+a pair tests detection and false positives in one go, and the graders are
+shared. Behavioral tasks can follow where A/B shows the review pair is not
+enough. The same PR tagged `shopware-architecture` (ARCH-001..004) and
+`shopware-storefront` (SF-001..010); their existing storefront tasks now
+back SF-002..010. Phases B and C are open.
 
 Goal: adopt the core review-guide rules that matter for plugin and app
 developers, in our own words, each with an eval.

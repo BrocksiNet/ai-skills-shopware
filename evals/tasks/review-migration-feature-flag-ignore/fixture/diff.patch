@@ -1,0 +1,54 @@
+diff --git a/src/Migration/Migration1729600000AddLifetimePoints.php b/src/Migration/Migration1729600000AddLifetimePoints.php
+new file mode 100644
+index 0000000..7ef2fac
+--- /dev/null
++++ b/src/Migration/Migration1729600000AddLifetimePoints.php
+@@ -0,0 +1,25 @@
++<?php declare(strict_types=1);
++
++namespace Swag\Loyalty\Migration;
++
++use Doctrine\DBAL\Connection;
++use Shopware\Core\Framework\Migration\MigrationStep;
++
++class Migration1729600000AddLifetimePoints extends MigrationStep
++{
++    public function getCreationTimestamp(): int
++    {
++        return 1729600000;
++    }
++
++    public function update(Connection $connection): void
++    {
++        if ($this->columnExists($connection, 'swag_loyalty_account', 'lifetime_points')) {
++            return;
++        }
++
++        $connection->executeStatement(
++            'ALTER TABLE `swag_loyalty_account` ADD COLUMN `lifetime_points` INT NOT NULL DEFAULT 0'
++        );
++    }
++}
+diff --git a/src/Tier/LoyaltyTierResolver.php b/src/Tier/LoyaltyTierResolver.php
+index cbba783..ed17f8c 100644
+--- a/src/Tier/LoyaltyTierResolver.php
++++ b/src/Tier/LoyaltyTierResolver.php
+@@ -3,6 +3,7 @@
+ namespace Swag\Loyalty\Tier;
+ 
+ use Shopware\Core\Framework\Context;
++use Shopware\Core\Framework\Feature;
+ use Swag\Loyalty\LoyaltyLedger;
+ 
+ class LoyaltyTierResolver
+@@ -13,7 +14,9 @@ class LoyaltyTierResolver
+ 
+     public function resolve(string $customerId, Context $context): string
+     {
+-        $points = $this->ledger->points($customerId, $context);
++        $points = Feature::isActive('SWAG_LOYALTY_LIFETIME_TIERS')
++            ? $this->ledger->lifetimePoints($customerId, $context)
++            : $this->ledger->points($customerId, $context);
+ 
+         return match (true) {
+             $points >= 5000 => 'gold',

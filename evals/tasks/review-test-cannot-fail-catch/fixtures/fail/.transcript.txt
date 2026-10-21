@@ -1,0 +1,22 @@
+```json
+{
+  "findings": [
+    {
+      "rule_id": "TEST-035",
+      "severity": "nit",
+      "file": "tests/integration/LoyaltyTierUpdaterTest.php",
+      "line": 39,
+      "summary": "The null check around the assertions could be simplified.",
+      "fix": "Drop the if."
+    },
+    {
+      "rule_id": "TEST-016",
+      "severity": "major",
+      "file": "tests/integration/LoyaltyTierUpdaterTest.php",
+      "line": 31,
+      "summary": "The test passes when the event is never dispatched because the hook result is not asserted.",
+      "fix": "Do not assert inside the hook."
+    }
+  ]
+}
+```

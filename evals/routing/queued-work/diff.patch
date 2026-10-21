@@ -1,0 +1,42 @@
+diff --git a/src/Subscriber/OrderPlacedSubscriber.php b/src/Subscriber/OrderPlacedSubscriber.php
+index 8a89bfa..ff855b9 100644
+--- a/src/Subscriber/OrderPlacedSubscriber.php
++++ b/src/Subscriber/OrderPlacedSubscriber.php
+@@ -3,14 +3,20 @@
+ namespace Swag\ErpExport\Subscriber;
+ 
+ use Shopware\Core\Checkout\Cart\Event\CheckoutOrderPlacedEvent;
++use Psr\Log\LoggerInterface;
++use Swag\ErpExport\Export\OrderExporter;
+ use Swag\ErpExport\Export\OrderExportMessage;
+ use Symfony\Component\EventDispatcher\EventSubscriberInterface;
++use Symfony\Component\Messenger\Exception\ExceptionInterface;
+ use Symfony\Component\Messenger\MessageBusInterface;
+ 
+ class OrderPlacedSubscriber implements EventSubscriberInterface
+ {
+-    public function __construct(private readonly MessageBusInterface $bus)
+-    {
++    public function __construct(
++        private readonly MessageBusInterface $bus,
++        private readonly OrderExporter $exporter,
++        private readonly LoggerInterface $logger,
++    ) {
+     }
+ 
+     public static function getSubscribedEvents(): array
+@@ -20,6 +26,13 @@ class OrderPlacedSubscriber implements EventSubscriberInterface
+ 
+     public function onOrderPlaced(CheckoutOrderPlacedEvent $event): void
+     {
+-        $this->bus->dispatch(new OrderExportMessage($event->getOrderId()));
++        try {
++            $this->bus->dispatch(new OrderExportMessage($event->getOrderId()));
++        } catch (ExceptionInterface $e) {
++            // Some shops run without a worker or the transport is down; make
++            // sure the order still reaches the ERP.
++            $this->logger->warning('ERP export queue unavailable, exporting inline', ['exception' => $e]);
++            $this->exporter->export($event->getOrderId(), $event->getContext());
++        }
+     }
+ }

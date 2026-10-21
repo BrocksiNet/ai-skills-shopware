@@ -1,0 +1,14 @@
+```json
+{
+  "findings": [
+    {
+      "rule_id": null,
+      "severity": "nit",
+      "file": "src/Resources/views/storefront/component/loyalty/badge.html.twig",
+      "line": 13,
+      "summary": "The points snippet key could be swag-loyalty.points.count to match the other keys.",
+      "fix": "Rename the snippet key."
+    }
+  ]
+}
+```

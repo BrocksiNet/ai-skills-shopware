@@ -1,0 +1,7 @@
+The hook captures the event, and the test asserts it with assertInstanceOf before checking the fields. Nothing to report.
+
+```json
+{
+  "findings": []
+}
+```

@@ -1,0 +1,50 @@
+diff --git a/src/Migration/Migration1729500000UpdateGiftCardMailTemplate.php b/src/Migration/Migration1729500000UpdateGiftCardMailTemplate.php
+new file mode 100644
+index 0000000..51a6321
+--- /dev/null
++++ b/src/Migration/Migration1729500000UpdateGiftCardMailTemplate.php
+@@ -0,0 +1,44 @@
++<?php declare(strict_types=1);
++
++namespace Swag\GiftCard\Migration;
++
++use Doctrine\DBAL\Connection;
++use Shopware\Core\Defaults;
++use Shopware\Core\Framework\Migration\MigrationStep;
++use Shopware\Core\Framework\Uuid\Uuid;
++
++class Migration1729500000UpdateGiftCardMailTemplate extends MigrationStep
++{
++    private const CONTENT_HTML = <<<'HTML'
++<p>Your gift card code: {{ giftCard.code }}</p>
++<p>Value: {{ giftCard.amount|currency }}, valid until {{ giftCard.validUntil|format_date }}.</p>
++HTML;
++
++    private const CONTENT_PLAIN = <<<'TEXT'
++Your gift card code: {{ giftCard.code }}
++Value: {{ giftCard.amount|currency }}, valid until {{ giftCard.validUntil|format_date }}.
++TEXT;
++
++    public function getCreationTimestamp(): int
++    {
++        return 1729500000;
++    }
++
++    public function update(Connection $connection): void
++    {
++        // Only rows nobody edited yet: a merchant's own template text wins.
++        $connection->executeStatement(
++            'UPDATE mail_template_translation
++            SET content_html = :html, content_plain = :plain
++            WHERE mail_template_id = :id
++              AND language_id = :languageId
++              AND updated_at IS NULL',
++            [
++                'html' => self::CONTENT_HTML,
++                'plain' => self::CONTENT_PLAIN,
++                'id' => Uuid::fromHexToBytes(Migration1700000000CreateGiftCardMailTemplate::MAIL_TEMPLATE_ID),
++                'languageId' => Uuid::fromHexToBytes(Defaults::LANGUAGE_SYSTEM),
++            ],
++        );
++    }
++}

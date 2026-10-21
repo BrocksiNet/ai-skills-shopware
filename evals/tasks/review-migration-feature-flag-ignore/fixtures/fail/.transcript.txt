@@ -1,0 +1,14 @@
+```json
+{
+  "findings": [
+    {
+      "rule_id": null,
+      "severity": "minor",
+      "file": "src/Migration/Migration1729600000AddLifetimePoints.php",
+      "line": 15,
+      "summary": "lifetime_points is only used behind the SWAG_LOYALTY_LIFETIME_TIERS feature flag, so the migration should check the flag before adding the column.",
+      "fix": "Wrap the ALTER TABLE in Feature::isActive()."
+    }
+  ]
+}
+```

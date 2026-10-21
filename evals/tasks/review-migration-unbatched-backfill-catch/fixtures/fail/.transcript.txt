@@ -1,0 +1,22 @@
+```json
+{
+  "findings": [
+    {
+      "rule_id": "PLG-019",
+      "severity": "nit",
+      "file": "src/Migration/Migration1729800000BackfillVerifiedPurchase.php",
+      "line": 24,
+      "summary": "Could run in batches.",
+      "fix": "Batch it."
+    },
+    {
+      "rule_id": "PLG-020",
+      "severity": "major",
+      "file": "src/Migration/Migration1729800000BackfillVerifiedPurchase.php",
+      "line": 24,
+      "summary": "verified_purchase is derived data computed for every row in SQL; it belongs to an indexer.",
+      "fix": "Register an indexer instead."
+    }
+  ]
+}
+```

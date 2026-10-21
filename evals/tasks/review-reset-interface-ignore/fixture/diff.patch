@@ -1,0 +1,46 @@
+diff --git a/src/Loyalty/LoyaltyConfigReader.php b/src/Loyalty/LoyaltyConfigReader.php
+index cc80d91..9e57e10 100644
+--- a/src/Loyalty/LoyaltyConfigReader.php
++++ b/src/Loyalty/LoyaltyConfigReader.php
+@@ -3,20 +3,38 @@
+ namespace Swag\Loyalty\Loyalty;
+ 
+ use Shopware\Core\System\SystemConfig\SystemConfigService;
++use Symfony\Contracts\Service\ResetInterface;
+ 
+-class LoyaltyConfigReader
++class LoyaltyConfigReader implements ResetInterface
+ {
++    /**
++     * @var array<string, float> sales channel id => points per euro
++     */
++    private array $rates = [];
++
++    /**
++     * @var array<string, array<string, int>> sales channel id => tier thresholds
++     */
++    private array $thresholds = [];
++
+     public function __construct(private readonly SystemConfigService $systemConfig)
+     {
+     }
+ 
+     public function pointsPerEuro(string $salesChannelId): float
+     {
+-        return $this->systemConfig->getFloat('SwagLoyalty.config.pointsPerEuro', $salesChannelId);
++        // Called once per line item on every cart calculation; read the config once.
++        return $this->rates[$salesChannelId] ??= $this->systemConfig->getFloat('SwagLoyalty.config.pointsPerEuro', $salesChannelId);
+     }
+ 
+     public function tierThresholds(string $salesChannelId): array
+     {
+-        return (array) $this->systemConfig->get('SwagLoyalty.config.tierThresholds', $salesChannelId);
++        return $this->thresholds[$salesChannelId] ??= (array) $this->systemConfig->get('SwagLoyalty.config.tierThresholds', $salesChannelId);
++    }
++
++    public function reset(): void
++    {
++        $this->rates = [];
++        $this->thresholds = [];
+     }
+ }

@@ -1,0 +1,22 @@
+```json
+{
+  "findings": [
+    {
+      "rule_id": "PLG-029",
+      "severity": "nit",
+      "file": "src/Migration/Migration1729600000AddLifetimePoints.php",
+      "line": 17,
+      "summary": "Prefer no feature flag check in the migration.",
+      "fix": "Drop the Feature::isActive() branch."
+    },
+    {
+      "rule_id": "PLG-025",
+      "severity": "major",
+      "file": "src/Migration/Migration1729600000AddLifetimePoints.php",
+      "line": 17,
+      "summary": "The migration reads the SWAG_LOYALTY_LIFETIME_TIERS feature flag before adding a column.",
+      "fix": "Read flags through Feature::has()."
+    }
+  ]
+}
+```

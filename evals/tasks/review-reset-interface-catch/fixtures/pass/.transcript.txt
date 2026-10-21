@@ -1,0 +1,16 @@
+The new per-sales-channel cache lives as long as the service. On a long-running worker that is the whole process lifetime.
+
+```json
+{
+  "findings": [
+    {
+      "rule_id": null,
+      "severity": "major",
+      "file": "src/Loyalty/LoyaltyConfigReader.php",
+      "line": 15,
+      "summary": "The config memoized in $rates and $thresholds is never reset; without ResetInterface, message queue workers keep serving stale rates after the merchant changes the plugin config.",
+      "fix": "Implement Symfony ResetInterface and clear both arrays in reset(), or tag the service kernel.reset."
+    }
+  ]
+}
+```

@@ -16,11 +16,16 @@ Seeded from real reviews; grow as findings recur.
   availability are wrong.
 - **REV-024** **Raw SQL where the DAL would do.** Dropping to the connection for ordinary
   entity reads/writes, losing events, extensions, and indexing.
+- **REV-033** **Inline fallback for queued work.** A subscriber or controller dispatches a
+  message, and when dispatch fails or no transport is configured it runs the
+  heavy work synchronously in the request instead. The fallback is the path
+  that runs on the shops where the queue is broken, so the request times out
+  exactly where it hurts. Subscribers only dispatch; the handler does the
+  work; a failed dispatch fails loudly or is retried by the transport.
 
 ## TODO
 
 - TODO: indexer misuse (full reindex on small changes) findings.
-- TODO: synchronous heavy work in subscribers that belongs on the message queue.
 - TODO: missing cache invalidation after writes (6.7 cache tags).
 
 Owning topic for fixes: `shopware-plugin-development` -> `references/dal-usage.md`

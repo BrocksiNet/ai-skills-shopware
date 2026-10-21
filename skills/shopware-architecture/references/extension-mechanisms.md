@@ -19,13 +19,13 @@ Load when adding extensibility or integrating with core.
 - **Plugins:** extend, do not modify core/vendor files.
 - **Core:** prefer existing extension mechanisms over new provider interfaces
   when they already express the contract.
-- **New core Store API routes** publish a typed extension event so plugins can
+- **ARCH-004** **New core Store API routes** publish a typed extension event so plugins can
   change inputs, enrich the result, or replace the operation. Do not add a new
   `Abstract*Route` plus `getDecorated()` for that. Abstract route classes that
   are already public stay; they are a backward-compatible contract, and plugins
   still decorate those.
 - **One listener** for one event → `#[AsEventListener]` over full subscriber
-  boilerplate.
+  boilerplate (`CORE-031`).
 
 ## Independence angle
 

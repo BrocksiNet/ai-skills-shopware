@@ -1,0 +1,16 @@
+Big shops have millions of reviews and order line items.
+
+```json
+{
+  "findings": [
+    {
+      "rule_id": null,
+      "severity": "major",
+      "file": "src/Migration/Migration1729800000BackfillVerifiedPurchase.php",
+      "line": 24,
+      "summary": "The backfill updates the whole swag_review table in one UPDATE with a correlated subquery; on large shops it locks the table and hits the update timeout.",
+      "fix": "Update in batches of about 1,000 ids ordered by id, continuing from the last id."
+    }
+  ]
+}
+```

@@ -1,0 +1,16 @@
+The column change runs in update(), so it hits every shop on plugin update.
+
+```json
+{
+  "findings": [
+    {
+      "rule_id": null,
+      "severity": "blocking",
+      "file": "src/Migration/Migration1729700000ChangeExternalRef.php",
+      "line": 20,
+      "summary": "update() narrows external_ref to VARCHAR(64) NOT NULL without a default; existing NULL rows and longer values make the ALTER fail or truncate data.",
+      "fix": "Add a new column in update() and move the narrowing to updateDestructive() after a backfill."
+    }
+  ]
+}
+```

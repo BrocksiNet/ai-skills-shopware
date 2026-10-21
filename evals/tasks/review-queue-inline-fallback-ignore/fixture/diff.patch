@@ -1,0 +1,45 @@
+diff --git a/src/Export/OrderExportHandler.php b/src/Export/OrderExportHandler.php
+index af6e667..8930a76 100644
+--- a/src/Export/OrderExportHandler.php
++++ b/src/Export/OrderExportHandler.php
+@@ -2,18 +2,22 @@
+ 
+ namespace Swag\ErpExport\Export;
+ 
++use Psr\Log\LoggerInterface;
+ use Shopware\Core\Framework\Context;
+ use Symfony\Component\Messenger\Attribute\AsMessageHandler;
+ 
+ #[AsMessageHandler]
+ final class OrderExportHandler
+ {
+-    public function __construct(private readonly OrderExporter $exporter)
+-    {
++    public function __construct(
++        private readonly OrderExporter $exporter,
++        private readonly LoggerInterface $logger,
++    ) {
+     }
+ 
+     public function __invoke(OrderExportMessage $message): void
+     {
++        $this->logger->info('Exporting order to the ERP', ['orderId' => $message->orderId]);
+         $this->exporter->export($message->orderId, Context::createDefaultContext());
+     }
+ }
+diff --git a/src/Subscriber/OrderPlacedSubscriber.php b/src/Subscriber/OrderPlacedSubscriber.php
+index 8a89bfa..dc16915 100644
+--- a/src/Subscriber/OrderPlacedSubscriber.php
++++ b/src/Subscriber/OrderPlacedSubscriber.php
+@@ -20,6 +20,11 @@ class OrderPlacedSubscriber implements EventSubscriberInterface
+ 
+     public function onOrderPlaced(CheckoutOrderPlacedEvent $event): void
+     {
++        if ($event->getOrder()->getAmountTotal() <= 0.0) {
++            // Free orders (100 % vouchers) are booked by the voucher sync.
++            return;
++        }
++
+         $this->bus->dispatch(new OrderExportMessage($event->getOrderId()));
+     }
+ }

@@ -1,0 +1,16 @@
+Block names in a shipped template are public API for themes.
+
+```json
+{
+  "findings": [
+    {
+      "rule_id": null,
+      "severity": "major",
+      "file": "src/Resources/views/storefront/component/loyalty/badge.html.twig",
+      "line": 7,
+      "summary": "Block swag_loyalty_badge_label is renamed to swag_loyalty_badge_text without deprecation; themes that override the old block silently lose their change.",
+      "fix": "Keep swag_loyalty_badge_label wrapping the new block with a deprecation comment until the next major."
+    }
+  ]
+}
+```

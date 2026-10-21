@@ -1,0 +1,16 @@
+Migrations run once. Whatever the flag says at that moment decides the schema for good.
+
+```json
+{
+  "findings": [
+    {
+      "rule_id": null,
+      "severity": "blocking",
+      "file": "src/Migration/Migration1729600000AddLifetimePoints.php",
+      "line": 17,
+      "summary": "The migration branches on Feature::isActive(), so the flag state at install time decides the schema and turning the flag on later never adds lifetime_points.",
+      "fix": "Add the column unconditionally and branch on the flag in the code that reads it."
+    }
+  ]
+}
+```

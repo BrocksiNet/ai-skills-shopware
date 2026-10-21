@@ -32,7 +32,7 @@ Read only the reference that matches the task or the files it changes:
 | [`progressive-enhancement.md`](references/progressive-enhancement.md) | A change must roll out without breaking existing callers. | `Feature::isActive(`, … |
 | [`component-independence.md`](references/component-independence.md) | A change couples two components or bundles. | `use Shopware\(Storefront\|Administration\|Elasticsearch)\` |
 | [`dal-contracts.md`](references/dal-contracts.md) | You touch a DAL definition, entity or repository contract. | `*Definition.php`, `*EntityExtension.php`, `extends (Entity\|EntityTranslation\|MappingEntity)Definition`, … |
-| [`symfony-in-shopware.md`](references/symfony-in-shopware.md) | You reach for a Symfony component or container feature. | `HttpClientInterface`, … |
+| [`symfony-in-shopware.md`](references/symfony-in-shopware.md) | You reach for a Symfony component or container feature, or a service keeps state in a property. | `HttpClientInterface`, … |
 | [`extension-mechanisms.md`](references/extension-mechanisms.md) | You choose between an event, a decoration and a core edit. | `Resources/config/services.{xml,php}`, `decorates`, … |
 | [`anti-patterns.md`](references/anti-patterns.md) | You check a design against known mistakes. | `vendor/shopware/**`, `Doctrine\DBAL\Connection`, … |
 | [`pattern-catalog.md`](references/pattern-catalog.md) | You need an established pattern or want to propose one. | `[ (!]time()`, … |
@@ -53,18 +53,20 @@ Read only the reference that matches the task or the files it changes:
 
 ## Hard guardrails
 
-1. **Never unbounded DAL reads** on large entities — always `setLimit` / pagination
+1. **ARCH-002** **Never unbounded DAL reads** on large entities — always `setLimit` / pagination
    unless a documented admin/export exception.
 2. **Never use Doctrine `Connection` for entity CRUD** when `EntityRepository` +
-   `Criteria` express the query.
-3. **Never import Storefront/Administration from Core** (or core/vendor from plugins).
-4. **Never silent behaviour change** on paths extensions observe — flag, release
+   `Criteria` express the query (`PLG-003`).
+3. **Never import Storefront/Administration from Core** (`CORE-030`), and never
+   edit core or vendor files from a plugin (`PLG-004`).
+4. **ARCH-003** **Never silent behaviour change** on paths extensions observe — flag, release
    note, or explicit BC branch.
 
 ## Definition of done
 
 - [ ] Correct extension mechanism chosen; dependencies flow inward (Core ← bundles).
 - [ ] DAL reads bounded; repositories used for entity data.
+- [ ] Services that memoize in a property reset between requests (`ARCH-001`).
 - [ ] Refactors that change behaviour use progressive enhancement (flag + legacy path) on core.
 - [ ] Large decoupling split into phased PRs when needed; ADR for architectural forks.
 

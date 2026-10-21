@@ -1,0 +1,14 @@
+```json
+{
+  "findings": [
+    {
+      "rule_id": null,
+      "severity": "minor",
+      "file": "src/Migration/Migration1729700000ChangeExternalRef.php",
+      "line": 20,
+      "summary": "Changing the type of external_ref in update() is destructive; it belongs in updateDestructive().",
+      "fix": "Move the MODIFY COLUMN to updateDestructive()."
+    }
+  ]
+}
+```
