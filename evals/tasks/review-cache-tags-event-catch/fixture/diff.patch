@@ -1,0 +1,85 @@
+diff --git a/src/Resources/config/services.xml b/src/Resources/config/services.xml
+index 6a2c4fb..bb6329d 100644
+--- a/src/Resources/config/services.xml
++++ b/src/Resources/config/services.xml
+@@ -5,6 +5,11 @@
+     <services>
+         <service id="Swag\Loyalty\Service\LoyaltyBadgeWriter">
+             <argument type="service" id="swag_loyalty_badge.repository"/>
++            <argument type="service" id="Shopware\Core\Framework\Adapter\Cache\CacheInvalidator"/>
++        </service>
++
++        <service id="Swag\Loyalty\Subscriber\LoyaltyBadgeCacheTagSubscriber">
++            <tag name="kernel.event_subscriber"/>
+         </service>
+     </services>
+ </container>
+diff --git a/src/Service/LoyaltyBadgeWriter.php b/src/Service/LoyaltyBadgeWriter.php
+index 9bbce41..a78078a 100644
+--- a/src/Service/LoyaltyBadgeWriter.php
++++ b/src/Service/LoyaltyBadgeWriter.php
+@@ -2,13 +2,16 @@
+ 
+ namespace Swag\Loyalty\Service;
+ 
++use Shopware\Core\Framework\Adapter\Cache\CacheInvalidator;
+ use Shopware\Core\Framework\Context;
+ use Shopware\Core\Framework\DataAbstractionLayer\EntityRepository;
+ 
+ class LoyaltyBadgeWriter
+ {
+-    public function __construct(private readonly EntityRepository $badgeRepository)
+-    {
++    public function __construct(
++        private readonly EntityRepository $badgeRepository,
++        private readonly CacheInvalidator $cacheInvalidator,
++    ) {
+     }
+ 
+     /**
+@@ -17,5 +20,12 @@ class LoyaltyBadgeWriter
+     public function assign(array $badges, Context $context): void
+     {
+         $this->badgeRepository->upsert($badges, $context);
++
++        $tags = array_map(
++            static fn (array $badge): string => 'swag-loyalty-badge-' . $badge['productId'],
++            $badges,
++        );
++
++        $this->cacheInvalidator->invalidate(array_values(array_unique($tags)));
+     }
+ }
+diff --git a/src/Subscriber/LoyaltyBadgeCacheTagSubscriber.php b/src/Subscriber/LoyaltyBadgeCacheTagSubscriber.php
+new file mode 100644
+index 0000000..9a097d9
+--- /dev/null
++++ b/src/Subscriber/LoyaltyBadgeCacheTagSubscriber.php
+@@ -0,0 +1,27 @@
++<?php declare(strict_types=1);
++
++namespace Swag\Loyalty\Subscriber;
++
++use Shopware\Core\Content\Product\Events\ProductDetailRouteCacheTagsEvent;
++use Shopware\Core\Content\Product\SalesChannel\Detail\ProductDetailRouteResponse;
++use Symfony\Component\EventDispatcher\EventSubscriberInterface;
++
++class LoyaltyBadgeCacheTagSubscriber implements EventSubscriberInterface
++{
++    public static function getSubscribedEvents(): array
++    {
++        return [
++            ProductDetailRouteCacheTagsEvent::class => 'onProductDetailCacheTags',
++        ];
++    }
++
++    public function onProductDetailCacheTags(ProductDetailRouteCacheTagsEvent $event): void
++    {
++        $response = $event->getResponse();
++        if (!$response instanceof ProductDetailRouteResponse) {
++            return;
++        }
++
++        $event->addTags(['swag-loyalty-badge-' . $response->getProduct()->getId()]);
++    }
++}

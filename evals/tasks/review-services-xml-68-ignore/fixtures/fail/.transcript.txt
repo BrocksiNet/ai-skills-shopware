@@ -1,0 +1,14 @@
+```json
+{
+  "findings": [
+    {
+      "rule_id": null,
+      "severity": "major",
+      "file": "src/Resources/config/config.xml",
+      "line": 23,
+      "summary": "Shopware 6.8 removes XML config file loading, so the extended config.xml makes the plugin fail on 6.8.",
+      "fix": "Convert the plugin configuration from config.xml to PHP."
+    }
+  ]
+}
+```

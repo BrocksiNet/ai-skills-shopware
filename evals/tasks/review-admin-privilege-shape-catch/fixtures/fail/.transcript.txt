@@ -1,0 +1,22 @@
+```json
+{
+  "findings": [
+    {
+      "rule_id": "ADM-004",
+      "severity": "nit",
+      "file": "src/Resources/app/administration/src/module/swag-loyalty-tier/acl/index.js",
+      "line": 5,
+      "summary": "The privilege mapping uses a privileges key where other modules use roles.",
+      "fix": "Rename it to roles for consistency."
+    },
+    {
+      "rule_id": "ADM-016",
+      "severity": "major",
+      "file": "src/Resources/app/administration/src/module/swag-loyalty-tier/acl/index.js",
+      "line": 5,
+      "summary": "The flat privileges shape makes the role detail page throw a TypeError, so no role can be given tier access.",
+      "fix": "Declare roles with privileges and dependencies per role."
+    }
+  ]
+}
+```

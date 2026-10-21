@@ -1,0 +1,14 @@
+```json
+{
+  "findings": [
+    {
+      "rule_id": null,
+      "severity": "major",
+      "file": "src/Resources/app/administration/src/module/swag-loyalty-tier/acl/index.js",
+      "line": 5,
+      "summary": "The mapping nests each role under roles with a dependencies list, but addPrivilegeMappingEntry expects a flat privileges object per role, so the role screen throws a TypeError.",
+      "fix": "Pass privileges: { viewer: [...], editor: [...] } instead."
+    }
+  ]
+}
+```

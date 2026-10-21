@@ -1,0 +1,22 @@
+```json
+{
+  "findings": [
+    {
+      "rule_id": "ADM-009",
+      "severity": "nit",
+      "file": "src/Resources/app/administration/build/webpack.config.js",
+      "line": 1,
+      "summary": "A webpack.config.js for one alias adds build config the plugin could do without.",
+      "fix": "Use a relative import instead."
+    },
+    {
+      "rule_id": "ADM-001",
+      "severity": "major",
+      "file": "src/Resources/app/administration/build/webpack.config.js",
+      "line": 1,
+      "summary": "The webpack config is ignored by the Vite build on 6.7, so the @loyalty import does not resolve.",
+      "fix": "Remove the alias and use a relative import."
+    }
+  ]
+}
+```

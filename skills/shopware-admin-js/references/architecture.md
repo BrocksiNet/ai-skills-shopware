@@ -22,9 +22,11 @@ Load when adding modules, components, services, or ACL-backed UI.
   mapping in the **same** change. Limited roles need `read` / `create` /
   `update` / `delete` through viewer/editor/creator/deleter — do not rely
   on super-admin. `addPrivilegeMappingEntry` takes
-  `roles: { viewer: { privileges: [...], dependencies: [...] } }`. A flat
-  `privileges: { viewer: [...] }` fails `isPrivilegeMapping` and never
-  registers the key.
+  `roles: { viewer: { privileges: [...], dependencies: [...] } }`, and every
+  role needs `dependencies`, even `[]`. A flat `privileges: { viewer: [...] }`
+  passes `isPrivilegeMapping`, which checks only `category`, `parent` and
+  `key`, and is registered. The role screens then throw a `TypeError` when
+  they read the missing `roles`.
 - Privileges that must apply to **existing** roles need a migration.
   Mapping-only changes fix future evaluations. In that migration call
   `$this->addAdditionalPrivileges($connection, ['swag_example.viewer' => ['product:read']])`

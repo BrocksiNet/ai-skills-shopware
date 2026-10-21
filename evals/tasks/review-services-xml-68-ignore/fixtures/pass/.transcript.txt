@@ -1,0 +1,16 @@
+The new services are registered in services.php; config.xml is plugin configuration, not DI, and keeps working on 6.8.
+
+```json
+{
+  "findings": [
+    {
+      "rule_id": null,
+      "severity": "nit",
+      "file": "src/Resources/config/config.xml",
+      "line": 35,
+      "summary": "config.xml stays XML on 6.8, but expiryReminderDays has no helpText explaining it counts calendar days.",
+      "fix": "Add a helpText to the field."
+    }
+  ]
+}
+```

@@ -1,0 +1,14 @@
+```json
+{
+  "findings": [
+    {
+      "rule_id": null,
+      "severity": "major",
+      "file": "src/Storefront/Pagelet/TierRecommendation/TierRecommendationPageletLoader.php",
+      "line": 42,
+      "summary": "The search runs in the sales channel context, so tier products that are hidden in this sales channel or inactive are never recommended.",
+      "fix": "Search product.repository with the plain Context so every tagged product is listed."
+    }
+  ]
+}
+```

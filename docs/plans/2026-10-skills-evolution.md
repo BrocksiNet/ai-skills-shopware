@@ -672,8 +672,10 @@ WP7 phase A rules.
 
 - Activation evals reach 90 % or more on should-trigger and 0 false triggers
   for core PR review prompts.
-- In the WP1 A/B, `on` beats `off` on at least four of the six WP5 catch tasks,
-  and false positives on `-ignore` tasks do not increase.
+- In the WP1 A/B, `on` beats `off` on at least four review catch tasks for
+  plugin and app rules, and false positives on `-ignore` tasks do not
+  increase. (Changed 2026-10-21 from "four of the six WP5 catch tasks":
+  Haiku finds those six without the skill, so they cannot show it helping.)
 
 ---
 

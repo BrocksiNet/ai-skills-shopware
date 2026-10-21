@@ -1,0 +1,14 @@
+```json
+{
+  "findings": [
+    {
+      "rule_id": null,
+      "severity": "major",
+      "file": "src/Subscriber/LoyaltyBadgeCacheTagSubscriber.php",
+      "line": 27,
+      "summary": "AddCacheTagEvent is deprecated in 6.7 and never dispatched to the HTTP cache, so the badge tag is lost and the product page is never invalidated.",
+      "fix": "Add the tag with CacheTagCollector::addTag() instead."
+    }
+  ]
+}
+```

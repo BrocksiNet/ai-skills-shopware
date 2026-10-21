@@ -1,0 +1,22 @@
+```json
+{
+  "findings": [
+    {
+      "rule_id": "PLG-026",
+      "severity": "nit",
+      "file": "src/Resources/config/services.xml",
+      "line": 1,
+      "summary": "The new services are in services.xml while the rest of the plugin uses services.php.",
+      "fix": "Move them to services.php for consistency."
+    },
+    {
+      "rule_id": "PLG-011",
+      "severity": "major",
+      "file": "src/Resources/config/services.xml",
+      "line": 1,
+      "summary": "services.xml cannot be loaded on Shopware 6.8, so the plugin does not boot there.",
+      "fix": "Register the services in services.php."
+    }
+  ]
+}
+```

@@ -1,0 +1,22 @@
+```json
+{
+  "findings": [
+    {
+      "rule_id": "PLG-007",
+      "severity": "nit",
+      "file": "src/Subscriber/LoyaltyBadgeCacheTagSubscriber.php",
+      "line": 15,
+      "summary": "ProductDetailRouteCacheTagsEvent is deprecated; AddCacheTagEvent is the newer way to add tags.",
+      "fix": "Dispatch AddCacheTagEvent instead."
+    },
+    {
+      "rule_id": "PLG-002",
+      "severity": "major",
+      "file": "src/Subscriber/LoyaltyBadgeCacheTagSubscriber.php",
+      "line": 15,
+      "summary": "ProductDetailRouteCacheTagsEvent is never dispatched on 6.7, so the badge tag is not added to the cached product page.",
+      "fix": "Dispatch AddCacheTagEvent from a ProductPageLoadedEvent subscriber."
+    }
+  ]
+}
+```

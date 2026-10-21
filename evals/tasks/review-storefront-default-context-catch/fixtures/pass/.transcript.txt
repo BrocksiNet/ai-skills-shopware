@@ -1,0 +1,16 @@
+The existing highlights loader reads through sales_channel.product.repository; the new tier loader does not.
+
+```json
+{
+  "findings": [
+    {
+      "rule_id": "PLG-016",
+      "severity": "major",
+      "file": "src/Storefront/Pagelet/TierRecommendation/TierRecommendationPageletLoader.php",
+      "line": 43,
+      "summary": "The storefront pagelet searches product.repository with Context::createDefaultContext(), so it shows inactive or not visible products, in the system language and default currency, with gross list prices instead of the customer's calculatedPrice.",
+      "fix": "Inject sales_channel.product.repository and search with $salesChannelContext, then render product.calculatedPrice."
+    }
+  ]
+}
+```

@@ -8,6 +8,37 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- Six review pairs for problems that turn on a version or API fact:
+  - PLG-007: a 6.7 subscriber to a `*RouteCacheTagsEvent` that is no longer
+    dispatched (`review-cache-tags-event-*`)
+  - ADM-004: a flat privilege mapping that registers but breaks the role
+    screens (`review-admin-privilege-shape-*`)
+  - ADM-009: a `webpack.config.js` the 6.7 Vite build ignores
+    (`review-admin-webpack-config-*`)
+  - SF-009: `sw_csrf()`, removed in 6.5, in a new storefront form
+    (`review-sw-csrf-*`)
+  - PLG-026: a new `services.xml` in a plugin that targets 6.8
+    (`review-services-xml-68-*`)
+  - PLG-016: `Context::createDefaultContext()` for storefront product data
+    (`review-storefront-default-context-*`)
+- The `version-compatibility.md` route also fires on a plugin
+  `services.xml` or `routes.xml`.
+
+### Changed
+
+- WP6 acceptance: the skills must win on at least four review catch tasks
+  for plugin and app rules, not four of the six WP5 tasks, which Haiku
+  catches without the skill.
+
+### Fixed
+
+- ADM-004: the flat privilege shape passes `isPrivilegeMapping` and then
+  throws in the role screens; every role needs `dependencies`, even `[]`.
+- PLG-007: `addTag()` exists from 6.7.2; 6.7.0 and 6.7.1 dispatch
+  `AddCacheTagEvent`. `cache-tag-no-deprecated-event` accepts that event.
+
 ## [0.10.0] - 2026-10-21
 
 ### Added

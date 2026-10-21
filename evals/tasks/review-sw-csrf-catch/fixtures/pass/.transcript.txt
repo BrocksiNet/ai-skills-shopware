@@ -1,0 +1,16 @@
+composer.json supports 6.6 and 6.7, and the new account template calls a Twig function neither version has.
+
+```json
+{
+  "findings": [
+    {
+      "rule_id": "SF-009",
+      "severity": "blocking",
+      "file": "src/Resources/views/storefront/page/account/loyalty/index.html.twig",
+      "line": 14,
+      "summary": "sw_csrf() was removed in Shopware 6.5, so on 6.6 and 6.7 the template fails to compile with Unknown \"sw_csrf\" function and the loyalty account page returns a 500.",
+      "fix": "Drop the sw_csrf call; storefront forms on 6.5+ post without a CSRF token."
+    }
+  ]
+}
+```

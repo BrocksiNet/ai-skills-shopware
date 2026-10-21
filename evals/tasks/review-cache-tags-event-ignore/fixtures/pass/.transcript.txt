@@ -1,0 +1,16 @@
+The subscriber adds the badge tag through AddCacheTagEvent, which reaches the HTTP cache on 6.7, and the writer invalidates the same tag.
+
+```json
+{
+  "findings": [
+    {
+      "rule_id": null,
+      "severity": "nit",
+      "file": "src/Service/LoyaltyBadgeWriter.php",
+      "line": 25,
+      "summary": "The tag prefix 'swag-loyalty-badge-' is spelled out in both the writer and the subscriber.",
+      "fix": "Move it to a shared constant so the two cannot drift."
+    }
+  ]
+}
+```

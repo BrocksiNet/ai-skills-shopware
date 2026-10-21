@@ -37,7 +37,7 @@ Read only the reference that matches the task or the files it changes:
 | [`api-contracts.md`](references/api-contracts.md) | You add or change a Store-API or Admin route, its response struct, or its OpenAPI schema. | `StoreApi/**/*.php`, `Resources/Schema/**`, `#[Route(`, … |
 | [`cache-tags.md`](references/cache-tags.md) | A change affects cached pages or needs cache tags (6.7+). | `CacheTagCollector`, … |
 | [`migrations.md`](references/migrations.md) | You add or change a database migration. | `Migration/Migration*.php`, `extends MigrationStep`, … |
-| [`version-compatibility.md`](references/version-compatibility.md) | The plugin must support more than one Shopware minor, or runs without a package it only suggests. | `composer.json`, `"shopware/core"`, … |
+| [`version-compatibility.md`](references/version-compatibility.md) | The plugin must support more than one Shopware minor, or runs without a package it only suggests. | `composer.json`, `Resources/config/services.xml`, `"shopware/core"`, … |
 | [`symfony-first.md`](references/symfony-first.md) | You are about to write code a Symfony component already provides. | `file_put_contents(`, … |
 <!-- routes:end -->
 
@@ -72,7 +72,8 @@ Inherits all **`php-foundation` trunk habits** (`empty()`, interface injection,
 - **DAL first.** Read with `Criteria` (add associations before filtering on them;
   avoid N+1; request only the fields/associations you need). Write with
   `EntityRepository::create/update/upsert` and the right `Context`.
-- **PLG-007** **Cache (6.7+).** Inject `CacheTagCollector` and call `addTag()`; invalidate
+- **PLG-007** **Cache (6.7+).** Inject `CacheTagCollector` and call `addTag()` (6.7.2+;
+  dispatch `AddCacheTagEvent` for 6.7.0 and 6.7.1); invalidate
   with `CacheInvalidator::invalidate()`. Do not subscribe to deprecated
   `*CacheTagsEvent`.
 - **Migrations** extend `MigrationStep`; separate destructive from

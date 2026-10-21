@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/shopware/shopware/trunk/src/Core/System/SystemConfig/Schema/config.xsd">
+    <card>
+        <title>Loyalty points</title>
+        <title lang="de-DE">Treuepunkte</title>
+
+        <input-field type="bool">
+            <name>enabled</name>
+            <label>Enable loyalty points</label>
+            <label lang="de-DE">Treuepunkte aktivieren</label>
+            <defaultValue>true</defaultValue>
+        </input-field>
+
+        <input-field type="int">
+            <name>pointsPerEuro</name>
+            <label>Points per euro</label>
+            <label lang="de-DE">Punkte pro Euro</label>
+            <defaultValue>1</defaultValue>
+        </input-field>
+    </card>
+</config>

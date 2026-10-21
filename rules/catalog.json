@@ -941,8 +941,7 @@
       "title": "Storefront and Store-API reads use the sales channel context",
       "status": "active",
       "since": "2026-10-20",
-      "eval": null,
-      "eval_reason": "Documented only; no eval yet.",
+      "eval": "review-storefront-default-context-catch",
       "core_guide_ids": [],
       "audience": [
         "plugin"
@@ -3291,8 +3290,7 @@
       "title": "Admin build is Vite; no new webpack.config.js",
       "status": "active",
       "since": "2026-10-20",
-      "eval": null,
-      "eval_reason": "Documented only; no eval yet.",
+      "eval": "review-admin-webpack-config-catch",
       "core_guide_ids": [],
       "audience": [
         "core",

@@ -1,0 +1,16 @@
+composer.json pins shopware/core ~6.7.0, so Store-API route caching no longer exists on every supported version.
+
+```json
+{
+  "findings": [
+    {
+      "rule_id": "PLG-007",
+      "severity": "major",
+      "file": "src/Subscriber/LoyaltyBadgeCacheTagSubscriber.php",
+      "line": 15,
+      "summary": "ProductDetailRouteCacheTagsEvent is deprecated and never dispatched since 6.7 removed Store-API route caching, so the subscriber never runs, the swag-loyalty-badge tag never reaches the HTTP cache, and the invalidation in LoyaltyBadgeWriter clears nothing.",
+      "fix": "Subscribe to ProductPageLoadedEvent and dispatch new AddCacheTagEvent('swag-loyalty-badge-' . $productId); CacheTagCollector::addTag() is only available from 6.7.2."
+    }
+  ]
+}
+```

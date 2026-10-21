@@ -1,0 +1,16 @@
+composer.json allows ~6.8.0, and the expiry reminder services are registered in a new XML file next to the existing services.php.
+
+```json
+{
+  "findings": [
+    {
+      "rule_id": "PLG-026",
+      "severity": "blocking",
+      "file": "src/Resources/config/services.xml",
+      "line": 1,
+      "summary": "Symfony 8 in Shopware 6.8 drops the XML service loader, so a plugin shipping services.xml fails to boot on 6.8, which composer.json allows.",
+      "fix": "Register ExpiryReminderTask, its handler and ExpiryReminderMailer in services.php and delete services.xml."
+    }
+  ]
+}
+```

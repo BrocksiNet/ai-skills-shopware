@@ -1,0 +1,180 @@
+diff --git a/src/Resources/config/services.php b/src/Resources/config/services.php
+index a750b57..04a7993 100644
+--- a/src/Resources/config/services.php
++++ b/src/Resources/config/services.php
+@@ -5,6 +5,8 @@ namespace Symfony\Component\DependencyInjection\Loader\Configurator;
+ use Swag\Loyalty\Service\LoyaltyPointsService;
+ use Swag\Loyalty\Service\LoyaltyTierResolver;
+ use Swag\Loyalty\Storefront\Pagelet\LoyaltyHighlights\LoyaltyHighlightsPageletLoader;
++use Swag\Loyalty\Storefront\Pagelet\TierRecommendation\TierRecommendationPageletLoader;
++use Swag\Loyalty\Subscriber\AccountOverviewSubscriber;
+ 
+ return static function (ContainerConfigurator $container): void {
+     $services = $container->services()
+@@ -20,4 +22,9 @@ return static function (ContainerConfigurator $container): void {
+ 
+     $services->set(LoyaltyHighlightsPageletLoader::class)
+         ->arg('$productRepository', service('sales_channel.product.repository'));
++
++    $services->set(TierRecommendationPageletLoader::class)
++        ->arg('$productRepository', service('sales_channel.product.repository'));
++
++    $services->set(AccountOverviewSubscriber::class);
+ };
+diff --git a/src/Resources/views/storefront/page/account/index.html.twig b/src/Resources/views/storefront/page/account/index.html.twig
+new file mode 100644
+index 0000000..d123a2e
+--- /dev/null
++++ b/src/Resources/views/storefront/page/account/index.html.twig
+@@ -0,0 +1,30 @@
++{% sw_extends '@Storefront/storefront/page/account/index.html.twig' %}
++
++{% block page_account_overview_newsletter %}
++    {{ parent() }}
++
++    {% set recommendation = page.extensions.swagLoyaltyTierRecommendation %}
++
++    {% if recommendation and recommendation.products|length > 0 %}
++        <div class="card account-loyalty-recommendation">
++            <div class="card-body">
++                <h2 class="card-title">
++                    {{ 'swag-loyalty.account.recommendedForTier'|trans({ '%tier%': recommendation.tierName })|sw_sanitize }}
++                </h2>
++
++                <ul class="list-unstyled account-loyalty-recommendation-list">
++                    {% for product in recommendation.products %}
++                        <li class="account-loyalty-recommendation-item">
++                            <a href="{{ seoUrl('frontend.detail.page', { productId: product.id }) }}">
++                                {{ product.translated.name }}
++                            </a>
++                            <span class="account-loyalty-recommendation-price">
++                                {{ product.calculatedPrice.unitPrice|currency }}
++                            </span>
++                        </li>
++                    {% endfor %}
++                </ul>
++            </div>
++        </div>
++    {% endif %}
++{% endblock %}
+diff --git a/src/Storefront/Pagelet/TierRecommendation/TierRecommendationPagelet.php b/src/Storefront/Pagelet/TierRecommendation/TierRecommendationPagelet.php
+new file mode 100644
+index 0000000..3464d3f
+--- /dev/null
++++ b/src/Storefront/Pagelet/TierRecommendation/TierRecommendationPagelet.php
+@@ -0,0 +1,25 @@
++<?php declare(strict_types=1);
++
++namespace Swag\Loyalty\Storefront\Pagelet\TierRecommendation;
++
++use Shopware\Core\Content\Product\ProductCollection;
++use Shopware\Storefront\Pagelet\Pagelet;
++
++class TierRecommendationPagelet extends Pagelet
++{
++    public function __construct(
++        private readonly string $tierName,
++        private readonly ProductCollection $products,
++    ) {
++    }
++
++    public function getTierName(): string
++    {
++        return $this->tierName;
++    }
++
++    public function getProducts(): ProductCollection
++    {
++        return $this->products;
++    }
++}
+diff --git a/src/Storefront/Pagelet/TierRecommendation/TierRecommendationPageletLoader.php b/src/Storefront/Pagelet/TierRecommendation/TierRecommendationPageletLoader.php
+new file mode 100644
+index 0000000..e814a98
+--- /dev/null
++++ b/src/Storefront/Pagelet/TierRecommendation/TierRecommendationPageletLoader.php
+@@ -0,0 +1,46 @@
++<?php declare(strict_types=1);
++
++namespace Swag\Loyalty\Storefront\Pagelet\TierRecommendation;
++
++use Shopware\Core\Content\Product\ProductCollection;
++use Shopware\Core\Framework\DataAbstractionLayer\Search\Criteria;
++use Shopware\Core\Framework\DataAbstractionLayer\Search\Filter\EqualsFilter;
++use Shopware\Core\Framework\DataAbstractionLayer\Search\Sorting\FieldSorting;
++use Shopware\Core\System\SalesChannel\Entity\SalesChannelRepository;
++use Shopware\Core\System\SalesChannel\SalesChannelContext;
++use Swag\Loyalty\Service\LoyaltyTierResolver;
++
++class TierRecommendationPageletLoader
++{
++    /**
++     * @param SalesChannelRepository<ProductCollection> $productRepository
++     */
++    public function __construct(
++        private readonly SalesChannelRepository $productRepository,
++        private readonly LoyaltyTierResolver $tierResolver,
++    ) {
++    }
++
++    public function load(SalesChannelContext $salesChannelContext): ?TierRecommendationPagelet
++    {
++        $customer = $salesChannelContext->getCustomer();
++        if ($customer === null) {
++            return null;
++        }
++
++        $tier = $this->tierResolver->resolve($customer->getId(), $salesChannelContext->getContext());
++        if ($tier === null || $tier->getTagId() === null) {
++            return null;
++        }
++
++        $criteria = new Criteria();
++        $criteria->addFilter(new EqualsFilter('tags.id', $tier->getTagId()));
++        $criteria->addAssociation('cover.media');
++        $criteria->addSorting(new FieldSorting('sales', FieldSorting::DESCENDING));
++        $criteria->setLimit(4);
++
++        $products = $this->productRepository->search($criteria, $salesChannelContext)->getEntities();
++
++        return new TierRecommendationPagelet($tier->getName(), $products);
++    }
++}
+diff --git a/src/Subscriber/AccountOverviewSubscriber.php b/src/Subscriber/AccountOverviewSubscriber.php
+new file mode 100644
+index 0000000..7a1b0d6
+--- /dev/null
++++ b/src/Subscriber/AccountOverviewSubscriber.php
+@@ -0,0 +1,32 @@
++<?php declare(strict_types=1);
++
++namespace Swag\Loyalty\Subscriber;
++
++use Shopware\Storefront\Page\Account\Overview\AccountOverviewPageLoadedEvent;
++use Swag\Loyalty\Storefront\Pagelet\TierRecommendation\TierRecommendationPageletLoader;
++use Symfony\Component\EventDispatcher\EventSubscriberInterface;
++
++class AccountOverviewSubscriber implements EventSubscriberInterface
++{
++    public function __construct(
++        private readonly TierRecommendationPageletLoader $tierRecommendationLoader,
++    ) {
++    }
++
++    public static function getSubscribedEvents(): array
++    {
++        return [
++            AccountOverviewPageLoadedEvent::class => 'onAccountOverviewLoaded',
++        ];
++    }
++
++    public function onAccountOverviewLoaded(AccountOverviewPageLoadedEvent $event): void
++    {
++        $pagelet = $this->tierRecommendationLoader->load($event->getSalesChannelContext());
++        if ($pagelet === null) {
++            return;
++        }
++
++        $event->getPage()->addExtension('swagLoyaltyTierRecommendation', $pagelet);
++    }
++}

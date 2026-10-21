@@ -19,6 +19,11 @@ public function onProductPageLoaded(ProductPageLoadedEvent $event): void
 }
 ```
 
+`CacheTagCollector::addTag()` exists from 6.7.2. For 6.7.0 and 6.7.1, dispatch
+`new AddCacheTagEvent(...$tags)`
+(`Shopware\Core\Framework\Adapter\Cache\Event\AddCacheTagEvent`, available
+since 6.6); it reaches the same collector.
+
 Invalidate when the underlying data changes:
 
 ```php
@@ -30,8 +35,9 @@ $this->cacheInvalidator->invalidate(['my-plugin-' . $salesChannelId]);
 The `*CacheTagsEvent` events (`ProductDetailRouteCacheTagsEvent`,
 `NavigationRouteCacheTagsEvent`, `CategoryRouteCacheTagsEvent`, …) are deprecated
 in 6.7, no longer dispatched, and removed in 6.8. Do not subscribe to them.
-Migrate any existing subscriber to inject `CacheTagCollector` from a regular
-page-loaded event.
+A subscriber to one of them never runs, so its tags never reach the HTTP cache and
+the invalidation that relies on them misses. Migrate it to a regular page-loaded
+event that adds the tags through `CacheTagCollector` or `AddCacheTagEvent`.
 
 ## Compatibility
 
@@ -40,6 +46,7 @@ If the plugin still supports 6.6, gate the new API behind a version check (see
 
 ## Done
 
-- [ ] Tags added via `CacheTagCollector::addTag()`, not a `*CacheTagsEvent`.
+- [ ] Tags added via `CacheTagCollector::addTag()` (6.7.2+) or `AddCacheTagEvent`,
+  not a `*CacheTagsEvent`.
 - [ ] Invalidation calls `CacheInvalidator::invalidate()` with the same tags.
 - [ ] 6.6 path handled or the 6.7 requirement made explicit.
