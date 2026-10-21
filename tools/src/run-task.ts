@@ -5,11 +5,11 @@
 // for that workdir, runs the agent with the task instruction on stdin, keeps
 // the transcript, removes the skill profile again, then runs grade.sh.
 // The environment variables are documented in evals/runner/run-task.sh.
-import { spawn } from 'node:child_process';
 import { cpSync, createWriteStream, existsSync, mkdtempSync, readFileSync, readdirSync, rmSync, statSync } from 'node:fs';
-import { constants, tmpdir } from 'node:os';
+import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { envInt } from './eval-results.ts';
+import { run } from './proc.ts';
 
 /** run-task exit codes. */
 export const RUN = { pass: 0, fail: 1, usage: 2, noAgent: 3, agentError: 4 } as const;
@@ -29,24 +29,9 @@ export interface RunTaskOptions {
   sleep?: (ms: number) => Promise<void>;
 }
 
-interface AgentRun {
-  status: number;
-  stderr: string;
-  timedOut: boolean;
-}
-
-/** How long to read the agent's output after it exited. */
-const PIPE_DRAIN_MS = 1000;
-
 const wait = (ms: number): Promise<void> => new Promise((done) => setTimeout(done, ms));
 
 const isDir = (path: string): boolean => existsSync(path) && statSync(path).isDirectory();
-
-/** Exit status like a shell reports it: 128 + signal number when killed. */
-function shellStatus(code: number | null, signal: NodeJS.Signals | null): number {
-  if (code !== null) return code;
-  return 128 + (signal !== null ? (constants.signals[signal] ?? 0) : 0);
-}
 
 /** The last three lines of the agent's stderr on one line, the reason we log. */
 export function errorReason(stderr: string): string {
@@ -55,70 +40,9 @@ export function errorReason(stderr: string): string {
   return lines.slice(-3).join(' ').replace(/ +$/, '');
 }
 
-/** Runs `bash -c cmd` in `cwd` with `input` on stdin. Stdout goes to the
- *  transcript file and to `out`; stderr is collected. With a timeout the agent
- *  runs in its own process group, so the kill reaches every child and none
- *  keeps the output pipe open. */
-function runAgent(cmd: string, cwd: string, env: NodeJS.ProcessEnv, input: string, transcript: string, out: (text: string) => void, timeoutSeconds: number): Promise<AgentRun> {
-  return new Promise((resolve) => {
-    const child = spawn('bash', ['-c', cmd], { cwd, env, stdio: ['pipe', 'pipe', 'pipe'], detached: timeoutSeconds > 0 });
-    const file = createWriteStream(transcript);
-    let stderr = '';
-    let timedOut = false;
-    child.stdout.setEncoding('utf8').on('data', (chunk: string) => {
-      file.write(chunk);
-      out(chunk);
-    });
-    child.stderr.setEncoding('utf8').on('data', (chunk: string) => (stderr += chunk));
-    // An agent that never reads stdin closes the pipe early; that is fine.
-    child.stdin.on('error', () => {});
-    child.stdin.end(input);
-    const timer =
-      timeoutSeconds > 0
-        ? setTimeout(() => {
-            timedOut = true;
-            try {
-              process.kill(-child.pid!, 'SIGTERM');
-            } catch {
-              // already gone
-            }
-          }, timeoutSeconds * 1000)
-        : undefined;
-    let done = false;
-    let drain: NodeJS.Timeout | undefined;
-    const finish = (status: number, extra = ''): void => {
-      if (done) return;
-      done = true;
-      clearTimeout(timer);
-      clearTimeout(drain);
-      file.end(() => resolve({ status, stderr: stderr + extra, timedOut }));
-    };
-    child.on('error', (e) => finish(127, `${e.message}\n`));
-    child.on('close', (code, signal) => finish(shellStatus(code, signal)));
-    // A background process the agent left behind can hold the output pipes
-    // open after the agent exited. Read what is there, then stop waiting.
-    child.on('exit', (code, signal) => {
-      drain = setTimeout(() => {
-        child.stdout.destroy();
-        child.stderr.destroy();
-        finish(shellStatus(code, signal));
-      }, PIPE_DRAIN_MS);
-    });
-  });
-}
-
 /** Runs a command to completion, forwarding its output. */
-function forward(cmd: string, args: string[], env: NodeJS.ProcessEnv, out: (t: string) => void, err: (t: string) => void): Promise<number> {
-  return new Promise((resolve) => {
-    const child = spawn(cmd, args, { env, stdio: ['ignore', 'pipe', 'pipe'] });
-    child.stdout.setEncoding('utf8').on('data', out);
-    child.stderr.setEncoding('utf8').on('data', err);
-    child.on('error', (e) => {
-      err(`${e.message}\n`);
-      resolve(127);
-    });
-    child.on('close', (code, signal) => resolve(shellStatus(code, signal)));
-  });
+async function forward(cmd: string, args: string[], env: NodeJS.ProcessEnv, out: (t: string) => void, err: (t: string) => void): Promise<number> {
+  return (await run(cmd, args, { env, onStdout: out, onStderr: err })).status;
 }
 
 export async function runTask(o: RunTaskOptions): Promise<number> {
@@ -181,11 +105,23 @@ export async function runTask(o: RunTaskOptions): Promise<number> {
 
     const agentEnv = { ...env, EVAL_TASK: task };
     for (let attempt = 1; ; attempt++) {
-      const run = await runAgent(agent, workdir, agentEnv, prompt, transcript, out, timeout);
-      if (run.status === 0) break;
-      const reason = (run.timedOut ? `timed out after ${timeout}s` : errorReason(run.stderr)) || 'no detail';
+      // The transcript is the agent's stdout, like `tee` in the bash runner.
+      const file = createWriteStream(transcript);
+      const agentRun = await run('bash', ['-c', agent], {
+        cwd: workdir,
+        env: agentEnv,
+        input: prompt,
+        timeoutSeconds: timeout,
+        onStdout: (chunk) => {
+          file.write(chunk);
+          out(chunk);
+        },
+      });
+      await new Promise<void>((done) => file.end(done));
+      if (agentRun.status === 0) break;
+      const reason = (agentRun.timedOut ? `timed out after ${timeout}s` : errorReason(agentRun.stderr)) || 'no detail';
       if (attempt > retries) {
-        err(`----- agent error (${task}, mode=${mode}, exit ${run.status}, attempt ${attempt}): ${reason}; not graded -----\n`);
+        err(`----- agent error (${task}, mode=${mode}, exit ${agentRun.status}, attempt ${attempt}): ${reason}; not graded -----\n`);
         return RUN.agentError;
       }
       err(`----- agent error (${task}, mode=${mode}, attempt ${attempt}): ${reason}; retrying in ${retryWait}s -----\n`);

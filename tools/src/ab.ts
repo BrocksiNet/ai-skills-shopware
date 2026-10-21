@@ -15,11 +15,11 @@
 //   error          fewer than half of the runs of a
 //                  mode completed                    5
 import { spawnSync } from 'node:child_process';
-import { existsSync, mkdtempSync, readFileSync, readdirSync, rmSync, statSync } from 'node:fs';
+import { existsSync, mkdtempSync, readFileSync, rmSync, statSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { basename, join } from 'node:path';
-import { type AbResult, type Tokens, type Verdict, compareText } from './eval-results.ts';
-import { taskSkills } from './eval-plan.ts';
+import type { AbResult, Tokens, Verdict } from './eval-results.ts';
+import { repoSkills, taskSkills } from './eval-plan.ts';
 import { type Mode, RUN, type RunTaskOptions, runTask } from './run-task.ts';
 
 export const AB_EXIT: Record<Verdict, number> = { improved: 0, held: 11, no_difference: 10, worse: 20, error: 5 };
@@ -155,16 +155,6 @@ export function abSummary(r: AbResult, on: ModeCounts, off: ModeCounts): string 
 export function shortSha(root: string): string {
   const r = spawnSync('git', ['-C', root, 'rev-parse', '--short', 'HEAD'], { encoding: 'utf8' });
   return r.status === 0 ? r.stdout.trim() : 'unknown';
-}
-
-/** Skill folders under skills/, sorted. */
-export function repoSkills(root: string): string[] {
-  const dir = join(root, 'skills');
-  if (!existsSync(dir)) return [];
-  return readdirSync(dir, { withFileTypes: true })
-    .filter((d) => d.isDirectory())
-    .map((d) => d.name)
-    .sort(compareText);
 }
 
 export interface AbOptions {
