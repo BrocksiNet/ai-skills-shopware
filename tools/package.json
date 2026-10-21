@@ -14,8 +14,9 @@
     "eval-plan": "node bin/eval-plan.ts",
     "eval-gate": "node bin/eval-gate.ts",
     "eval-diff": "node bin/eval-diff.ts",
+    "grade": "node bin/grade.ts",
     "mine-trunk": "node bin/mine-trunk.ts",
-    "lint": "oxlint --type-aware --deny-warnings --report-unused-disable-directives src bin test",
+    "lint": "oxlint --type-aware --deny-warnings --report-unused-disable-directives src bin test graders",
     "format": "oxfmt .",
     "format:check": "oxfmt --check ."
   },

@@ -201,6 +201,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- Task graders are TypeScript: `tools/graders/<task>.ts` holds the checks
+  of 98 tasks, and every `grade.sh` is the same wrapper over
+  `tools/bin/grade.ts`. `evals/grade-helpers.sh` and
+  `tools/bin/grade-findings.ts` are gone; `tools/src/grade/` replaces them.
+  The AST graders stay in `evals/tools/ast/`.
 - `evals/runner/selftest.sh` and its `eval-runner-selftest` CI job are
   gone. The unit tests in the `tools` job now cover its cases, including
   the command-line layer and a check that every shell wrapper reaches its
@@ -244,6 +249,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+- `mwg-only-after-shopware-primitive` now fails when the agent adds a
+  modern-web-guidance skill; the shell check could never match.
+- `no-access-key-in-source` counts a key read from `$_ENV`; the shell
+  pattern treated `$` as an anchor.
 - The weekly eval workflow reported success while skipping every model step,
   and its pass-rate gate could never fail. It now runs on free models, and
   `agent=claude` without `ANTHROPIC_API_KEY` fails instead of skipping.

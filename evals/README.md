@@ -45,7 +45,7 @@ tasks/<rule>/
 ├── fixture/           # starting code copied into the agent's working dir
 ├── fixtures/pass/     # golden workdir that must PASS grade.sh (CI)
 ├── fixtures/fail/     # required sneak-FAIL for new graders (almost-pass)
-└── grade.sh           # deterministic grader (exit 0 = pass)
+└── grade.sh           # entry point: runs tools/graders/<task>.ts (exit 0 = pass)
 ```
 
 ```bash
@@ -58,6 +58,16 @@ chmod +x evals/test-graders.sh evals/tasks/*/grade.sh
 - `WORKDIR` — directory with the agent's resulting files (fixture + edits).
 - `TRANSCRIPT` — path to a file containing the agent's textual output.
 
+`grade.sh` is the same wrapper in every task: it runs
+`node tools/bin/grade.ts <task>`. The checks are TypeScript in
+[`tools/graders/<task>.ts`](../tools/graders/), built from the helpers in
+[`tools/src/grade/kit.ts`](../tools/src/grade/kit.ts) (`findFile`, `hasLine`,
+`stripComments`, `phpMethod`, `jsCallArgs`, `verdict`). Run one by hand:
+
+```bash
+WORKDIR=evals/tasks/no-empty-explicit/fixtures/pass node tools/bin/grade.ts no-empty-explicit
+```
+
 Graders prefer deterministic Shopware tooling (PHPStan/ECS/PHPUnit) and
 scoped grep/AST checks over LLM-as-judge. LLM-judge is a documented fallback
 for fuzzy rules only.
@@ -65,10 +75,9 @@ for fuzzy rules only.
 Check the **relationship** the rule cares about (this method, this mapping
 object, this Twig block), not that tokens appear somewhere in the workdir.
 PHP/JS structure graders live in [`tools/ast/`](tools/ast/) (`php-parser` +
-`@babel/parser`); `grade.sh` is a thin wrapper that prints one `score=` line.
-Snippet tests: `cd evals/tools/ast && npm test`. Bash helpers in
-[`grade-helpers.sh`](grade-helpers.sh) stay for comments-as-subject and
-Twig/XML/markdown. A comment, leftover file, or unused call is not a pass.
+`@babel/parser`); their `grade.sh` calls `tools/ast/run-grade.sh` instead.
+Snippet tests: `cd evals/tools/ast && npm test`. A comment, leftover file,
+or unused call is not a pass.
 New graders must ship `fixtures/fail/` as an almost-correct sneak.
 
 ### Review tasks (`review-<rule>-catch` / `-ignore`)
@@ -89,7 +98,7 @@ tasks/review-<rule>-catch/
 ├── fixture/context/            # the touched files before the change
 ├── fixtures/pass/.transcript.txt
 ├── fixtures/fail/.transcript.txt
-├── grade.sh                    # exec node tools/bin/grade-findings.ts catch|ignore ...
+├── grade.sh                    # the wrapper; tools/graders/<task>.ts calls reviewCatch or reviewIgnore
 └── skills
 ```
 
@@ -101,10 +110,10 @@ The agent ends its answer with one fenced `json` block:
 ```
 
 `severity` is `blocking`, `major`, `minor` or `nit`; `rule_id` may be null.
-[`tools/bin/grade-findings.ts`](../tools/bin/grade-findings.ts) reads the last
+[`tools/src/grade/review.ts`](../tools/src/grade/review.ts) reads the last
 such block from `$TRANSCRIPT`. A finding names the rule when its `rule_id`
 starts with the rule's ID, or, when it has no catalog-shaped ID, when its
-`summary` matches the task's `--summary` regex. The regex keeps the eval fair
+`summary` matches the task's `summary` regex. The regex keeps the eval fair
 with the skill off, when the model cannot know our IDs: A/B compares
 detection, not ID recall. A different catalog ID is a wrong rule.
 
