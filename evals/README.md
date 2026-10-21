@@ -216,9 +216,10 @@ wrong rule in `shopware-plugin-development`, which turned the gate red.
   `EVAL_MAX_TASKS`) and splits them into `EVAL_SHARDS` shards for CI.
 - The three scripts are wrappers for `tools/bin/eval-*.ts` and need Node 24.
   The logic and its unit tests live in `tools/src/` and `tools/test/`.
-- `evals/runner/selftest.sh` drives all of the above with
-  [`runner/fake-agent.sh`](runner/fake-agent.sh) instead of a model. It runs on
-  every push, so a runner change that would turn a broken eval green fails first.
+- The unit tests in `tools/test/` drive all of the above, and the shell
+  wrappers, with [`runner/fake-agent.sh`](runner/fake-agent.sh) instead of a
+  model. They run on every push, so a runner change that would turn a broken
+  eval green fails first.
 
 ### Model evals in CI (`evals.yml`)
 
@@ -271,7 +272,7 @@ runs.
 [`../.github/workflows/validate.yml`](../.github/workflows/validate.yml) also runs:
 
 - `bash scripts/validate-skills.sh` + activation evals in dry mode
-- `bash evals/runner/selftest.sh` (eval pipeline with a fake agent)
+- `npm test` in `tools/` (eval pipeline with a fake agent, plus the repo tooling)
 - ShellCheck on repo shell scripts (see workflow for paths)
 - `node --test` in `evals/tools/ast` plus `bash evals/test-graders.sh`
 - Markdown lint on all `*.md` files

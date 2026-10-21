@@ -763,7 +763,7 @@ WP8 using `gh pr view --json state,mergedAt`:
 
 ## WP10: Eval runner in TypeScript
 
-Status: **steps 1 and 2 done 2026-10-20, step 3 done 2026-10-21**.
+Status: **steps 1 and 2 done 2026-10-20, steps 3 and 4 done 2026-10-21**.
 
 - Step 1: plan, gate and diff live in `tools/src/eval-{plan,gate,diff}.ts`
   over the typed records in `tools/src/eval-results.ts`. On the WP1 and WP4
@@ -787,11 +787,23 @@ Status: **steps 1 and 2 done 2026-10-20, step 3 done 2026-10-21**.
   gone: `tools/src/proc.ts` kills the process group on timeout, and the
   adapters no longer need `python3`. No Codex or Cursor adapter was added,
   because `evals/smoke/` still covers those agents.
+- Step 4: activation evals in `tools/src/activation.ts` and the local run in
+  `tools/src/eval-local.ts`. On all 265 activation prompts, dry and with a
+  fake activation command, the output and exit code match the bash script.
+  The A/B command line moved into `runAb` (`tools/src/ab-run.ts`) so that
+  `eval-local` calls it directly. `evals/runner/selftest.sh` is gone: its
+  cases are unit tests, and `tools/test/runner-cli.test.ts` covers the
+  command-line layer and checks that every wrapper reaches its bin. Two
+  behaviour changes, both stricter:
+  - A skill counts as activated only when the output names it as a whole
+    entry; `grep -w` also matched it inside a longer name.
+  - When `eval-local` produced no results file, the gate reports "no results"
+    (exit 1) instead of a read error (exit 2).
 
-The `scripts/eval-*.sh` and `evals/runner/*.sh` files are wrappers, except
-`fake-agent.sh` (a test double) and `install-agent.sh` (CI install).
-`selftest.sh` still runs end to end through the wrappers; step 4 retires it
-once its last cases are unit tests.
+The `scripts/eval-*.sh`, `scripts/run-activation-evals.sh` and
+`evals/runner/*.sh` files are wrappers, except `fake-agent.sh` (a test
+double) and `install-agent.sh` (CI install). Step 5 ports
+`validate-skills.sh`.
 
 Goal: one typed codebase for the eval pipeline, so result records, verdicts
 and gate rules are checked by the compiler instead of by `jq` filters and

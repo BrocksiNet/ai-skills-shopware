@@ -31,7 +31,7 @@
 # goes to stderr.
 #
 # The agent sees EVAL_TASK in its environment. Real agents ignore it; the
-# self-test double (fake-agent.sh) uses it to find the task fixtures.
+# test double (fake-agent.sh) uses it to find the task fixtures.
 #
 # Exit codes:
 #   0  graded PASS

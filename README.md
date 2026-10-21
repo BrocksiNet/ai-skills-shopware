@@ -315,7 +315,7 @@ The [`validate`](.github/workflows/validate.yml) workflow runs on every push/PR:
 | `validate-skills` | Skill structure, budgets, REGISTRY conflicts; activation evals in `--dry` mode |
 | `shellcheck` | Shell scripts under `scripts/`, `evals/smoke/`, `evals/runner/`, top-level `evals/*.sh` |
 | `grader-golden` | `./evals/test-graders.sh` — each task's `fixtures/pass/` must pass and `fixture/` / `fixtures/fail/` must fail |
-| `eval-runner-selftest` | `evals/runner/selftest.sh` — runner, gate, plan and diff driven by a fake agent |
+| `tools` | `tools/`: type check, type-aware oxlint, oxfmt and unit tests, including the eval runner, gate and wrappers driven by a fake agent |
 | `markdown-lint` | All `**/*.md` files |
 
 Run the same checks locally:
@@ -324,7 +324,7 @@ Run the same checks locally:
 bash scripts/validate-skills.sh
 bash scripts/run-activation-evals.sh          # dry by default without an agent
 bash evals/test-graders.sh
-bash evals/runner/selftest.sh                 # eval pipeline with a fake agent
+( cd tools && npm ci && npm test )           # eval pipeline with a fake agent, and the repo tooling
 # shellcheck (see validate.yml for the file list)
 ./evals/smoke/smoke.sh graders               # smoke harness dry-run of graders
 ```

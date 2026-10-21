@@ -14,7 +14,8 @@ name: evals
 # it the run FAILS (a silent skip looked green for weeks), except on labeled
 # PRs from forks, which never see secrets and skip with a warning.
 #
-# Self-test of the runner and gate (no model calls) runs in validate.yml.
+# The runner, gate and wrappers are tested with a fake agent (no model calls)
+# by the tools job in validate.yml.
 
 on:
   schedule:

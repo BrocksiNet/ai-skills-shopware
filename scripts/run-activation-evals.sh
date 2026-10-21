@@ -21,79 +21,15 @@
 #   ./scripts/run-activation-evals.sh
 #
 # Without an activation command, the script runs in --dry mode: it validates that
-# every skill has both eval files and counts the prompts, without calling a model.
+# every skill has both eval files and lists the prompts, without calling a model.
+#
+# A skill counts as activated when the output names it as a whole entry. The
+# first agent error stops the run with exit 1, so a failing provider never
+# reads as "no activation".
+#
+# Wrapper: the logic is TypeScript in tools/src/activation.ts (plan WP10 step
+# 4). Needs Node 24 or newer.
 
 set -euo pipefail
-
 ROOT="$(cd "$(dirname "$0")/.." && pwd)"
-SKILLS_DIR="$ROOT/skills"
-ACTIVATION_CMD="${SKILLS_ACTIVATION_CMD:-${SKILLS_AGENT_CMD:-}}"
-
-pass=0
-fail=0
-missing=0
-errors=0
-
-run_prompt() { # $1 = prompt ; prints activated skill names
-  printf '%s' "$1" | eval "$ACTIVATION_CMD"
-}
-
-extract_prompts() { # $1 = file ; prints one prompt per line
-  # Prompts are markdown list items beginning with "- ". Surrounding quotes and
-  # trailing reviewer notes such as "(-> shopware-testing)" are stripped, so the
-  # agent never sees the expected skill name in the prompt.
-  grep -E '^- ' "$1" 2>/dev/null |
-    sed -E -e 's/^- //' \
-      -e 's/^"([^"]*)".*$/\1/' \
-      -e 's/[[:space:]]*\((->|should|redirect|[a-z-]*shopware[a-z-]*|php-foundation)[^)]*\)\.?[[:space:]]*$//' || true
-}
-
-check() { # $1 = skill ; $2 = file ; $3 = expectation (trigger|no-trigger)
-  local skill="$1" file="$2" expect="$3"
-  [ -f "$file" ] || { echo "  MISSING: $file"; missing=$((missing+1)); return; }
-
-  while IFS= read -r prompt; do
-    [ -z "$prompt" ] && continue
-    if [ -z "$ACTIVATION_CMD" ]; then
-      echo "  [dry] ($expect) $skill <- ${prompt:0:60}..."
-      continue
-    fi
-    local activated
-    if ! activated="$(run_prompt "$prompt")"; then
-      errors=$((errors+1))
-      echo "  ERROR ($expect) $skill <- $prompt (agent failed; no score recorded)"
-      return 1
-    fi
-    if echo "$activated" | grep -qw "$skill"; then
-      got="triggered"
-    else
-      got="quiet"
-    fi
-    if { [ "$expect" = "trigger" ] && [ "$got" = "triggered" ]; } ||
-       { [ "$expect" = "no-trigger" ] && [ "$got" = "quiet" ]; }; then
-      pass=$((pass+1))
-    else
-      fail=$((fail+1))
-      echo "  FAIL ($expect, got $got) $skill <- $prompt"
-    fi
-  done < <(extract_prompts "$file")
-}
-
-if [ -z "$ACTIVATION_CMD" ]; then
-  echo "SKILLS_ACTIVATION_CMD not set -> running in --dry mode (no model calls)."
-  echo "Set it to an agent that prints activated skill names to validate for real."
-  echo
-fi
-
-for dir in "$SKILLS_DIR"/*/; do
-  skill="$(basename "$dir")"
-  echo "Skill: $skill"
-  check "$skill" "$dir/evals/should-trigger.md" "trigger"
-  check "$skill" "$dir/evals/should-not-trigger.md" "no-trigger"
-done
-
-echo
-echo "Activation evals: pass=$pass fail=$fail missing-files=$missing errors=$errors"
-if [ "$fail" -gt 0 ] || [ "$missing" -gt 0 ] || [ "$errors" -gt 0 ]; then
-  exit 1
-fi
+exec node "$ROOT/tools/bin/activation.ts" "$@"

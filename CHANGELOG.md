@@ -30,6 +30,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   OpenCode and a recorded Claude Code session. Output, logs and exit codes
   are unchanged; the adapters no longer need `python3`, and the OpenCode
   timeout no longer needs a watchdog subshell.
+- Activation evals and the local eval run in TypeScript (plan WP10 step 4).
+  `scripts/run-activation-evals.sh` and `scripts/eval-local.sh` now call
+  `tools/bin/activation.ts` and `eval-local.ts`; output and exit codes are
+  unchanged. A skill now counts as activated only when the agent output
+  names it as a whole entry, not inside a longer name. The activation run
+  prints its summary line even when an agent error stops it.
 - Strict lint and format for `tools/`: oxlint with type-aware rules (built on
   typescript-go, so it checks against TypeScript 7) and oxfmt, both in the
   `tools` CI job as `npm run lint` and `npm run format:check`. No `any`, no
@@ -109,6 +115,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- `evals/runner/selftest.sh` and its `eval-runner-selftest` CI job are
+  gone. The unit tests in the `tools` job now cover its cases, including
+  the command-line layer and a check that every shell wrapper reaches its
+  bin.
 - Model evals record token use. The Claude and OpenCode adapters write each
   session's input and output tokens, `ab.sh` stores the averages per mode as
   `tokens_on` and `tokens_off`, the gate summary shows them per task, and

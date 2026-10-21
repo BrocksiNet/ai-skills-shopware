@@ -10,6 +10,7 @@
 // dropped.
 import { existsSync, readFileSync, readdirSync } from 'node:fs';
 import { join } from 'node:path';
+import { envInt, envOr } from './env.ts';
 import { compareText } from './text.ts';
 
 export interface PlanOptions {
@@ -102,4 +103,25 @@ export function plan(tasksRoot: string, opts: PlanOptions): Plan {
     if (mine.length > 0) shards.push({ id: i + 1, tasks: mine.join(',') });
   }
   return { tasks, count: tasks.length, shards };
+}
+
+/** Plan options from the environment, as scripts/eval-plan.sh documents
+ *  them. Throws on a bad number. */
+export function planOptionsFromEnv(env: NodeJS.ProcessEnv): PlanOptions {
+  const opts: PlanOptions = {
+    maxTasks: envInt(env, 'EVAL_MAX_TASKS', 0),
+    shards: envInt(env, 'EVAL_SHARDS', 4, 1),
+  };
+  const tasks = envOr(env, 'EVAL_TASKS', '');
+  const changed = envOr(env, 'EVAL_CHANGED_FILES', '');
+  if (tasks !== '') {
+    opts.tasks = tasks.split(',');
+  } else if (changed !== '') {
+    opts.changedFiles = existsSync(changed)
+      ? readFileSync(changed, 'utf8')
+          .split('\n')
+          .filter((l) => l !== '')
+      : [];
+  }
+  return opts;
 }

@@ -13,32 +13,13 @@
 // Prints one JSON object:
 //   {"tasks":["a","b"],"count":2,"shards":[{"id":1,"tasks":"a"},{"id":2,"tasks":"b"}]}
 // Exit 2 on a bad setting or an unknown task.
-import { existsSync, readFileSync } from 'node:fs';
 import { resolve } from 'node:path';
-import { envInt, envOr } from '../src/env.ts';
 import { errorMessage } from '../src/errors.ts';
-import { type PlanOptions, plan } from '../src/eval-plan.ts';
-
-const root = resolve(import.meta.dirname, '../..');
+import { plan, planOptionsFromEnv } from '../src/eval-plan.ts';
 
 function main(env: NodeJS.ProcessEnv): number {
   try {
-    const opts: PlanOptions = {
-      maxTasks: envInt(env, 'EVAL_MAX_TASKS', 0),
-      shards: envInt(env, 'EVAL_SHARDS', 4, 1),
-    };
-    const tasks = envOr(env, 'EVAL_TASKS', '');
-    const changed = envOr(env, 'EVAL_CHANGED_FILES', '');
-    if (tasks !== '') {
-      opts.tasks = tasks.split(',');
-    } else if (changed !== '') {
-      opts.changedFiles = existsSync(changed)
-        ? readFileSync(changed, 'utf8')
-            .split('\n')
-            .filter((l) => l !== '')
-        : [];
-    }
-    console.log(JSON.stringify(plan(resolve(root, 'evals/tasks'), opts)));
+    console.log(JSON.stringify(plan(resolve(import.meta.dirname, '../../evals/tasks'), planOptionsFromEnv(env))));
     return 0;
   } catch (error) {
     console.error(`eval-plan: ${errorMessage(error)}`);
