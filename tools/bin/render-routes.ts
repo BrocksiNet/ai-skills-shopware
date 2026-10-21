@@ -6,14 +6,15 @@
 // author places once. validate-routes.ts fails when a table is out of date.
 import { readFileSync, readdirSync, writeFileSync } from 'node:fs';
 import { join, resolve } from 'node:path';
+import { errorMessage } from '../src/errors.ts';
+import { compareText } from '../src/text.ts';
 import { applyTable, loadRoutes } from '../src/routes.ts';
 
-const root = resolve(process.argv[2] ?? resolve(import.meta.dirname, '../..'));
-let failed = false;
-for (const skill of readdirSync(join(root, 'skills')).sort()) {
+/** Rewrites the routing table of one skill; false when that failed. */
+function render(root: string, skill: string): boolean {
   const dir = join(root, 'skills', skill);
   const routes = loadRoutes(dir);
-  if (routes === null) continue;
+  if (routes === null) return true;
   const path = join(dir, 'SKILL.md');
   const text = readFileSync(path, 'utf8');
   try {
@@ -22,9 +23,17 @@ for (const skill of readdirSync(join(root, 'skills')).sort()) {
       writeFileSync(path, next);
       console.log(`updated skills/${skill}/SKILL.md`);
     }
-  } catch (e) {
-    console.error(`skills/${skill}/SKILL.md: ${(e as Error).message}`);
-    failed = true;
+    return true;
+  } catch (error) {
+    console.error(`skills/${skill}/SKILL.md: ${errorMessage(error)}`);
+    return false;
   }
 }
-process.exit(failed ? 1 : 0);
+
+function main(root: string): number {
+  const skills = readdirSync(join(root, 'skills')).toSorted(compareText);
+  const failed = skills.filter((skill) => !render(root, skill));
+  return failed.length > 0 ? 1 : 0;
+}
+
+process.exitCode = main(resolve(process.argv[2] ?? resolve(import.meta.dirname, '../..')));

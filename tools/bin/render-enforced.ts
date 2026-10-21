@@ -10,20 +10,24 @@ import { rmSync, writeFileSync } from 'node:fs';
 import { join, resolve } from 'node:path';
 import { loadCatalog } from '../src/catalog.ts';
 import { enforcedChanges } from '../src/enforced-files.ts';
+import { errorMessage } from '../src/errors.ts';
 
-const root = resolve(process.argv[2] ?? resolve(import.meta.dirname, '../..'));
-
-try {
-  for (const { file, next } of enforcedChanges(root, loadCatalog(root))) {
-    if (next === null) {
-      rmSync(join(root, file));
-      console.log(`removed ${file}`);
-    } else {
-      writeFileSync(join(root, file), next);
-      console.log(`updated ${file}`);
+function main(root: string): number {
+  try {
+    for (const { file, next } of enforcedChanges(root, loadCatalog(root))) {
+      if (next === null) {
+        rmSync(join(root, file));
+        console.log(`removed ${file}`);
+      } else {
+        writeFileSync(join(root, file), next);
+        console.log(`updated ${file}`);
+      }
     }
+    return 0;
+  } catch (error) {
+    console.error(`render-enforced: ${errorMessage(error)}`);
+    return 1;
   }
-} catch (e) {
-  console.error(`render-enforced: ${(e as Error).message}`);
-  process.exit(1);
 }
+
+process.exitCode = main(resolve(process.argv[2] ?? resolve(import.meta.dirname, '../..')));

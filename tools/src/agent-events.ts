@@ -40,12 +40,12 @@ export function skillName(input: unknown, keys: readonly string[]): string {
   let raw = '';
   for (const k of keys) {
     const v = args[k];
-    if (v !== undefined && v !== null && v !== '' && v !== 0 && v !== false) {
-      raw = String(v);
+    if (typeof v === 'string' && v !== '') {
+      raw = v;
       break;
     }
   }
-  return (raw.replace(/^\/+/, '').split(':').at(-1) ?? '').trim();
+  return (raw.replace(/^\/+/u, '').split(':').at(-1) ?? '').trim();
 }
 
 const addOnce = (list: string[], name: string): void => {

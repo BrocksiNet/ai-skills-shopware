@@ -2,10 +2,12 @@
 // One place for what the bash scripts did with `&`, `wait`, a watchdog
 // subshell and `tee`: a timeout that reaches every process the child
 // started, and no hang when a leftover background process keeps a pipe open.
-import { spawn } from 'node:child_process';
+import { type ChildProcessWithoutNullStreams, spawn } from 'node:child_process';
 import { accessSync, constants as fsConstants } from 'node:fs';
 import { constants } from 'node:os';
 import { delimiter, join } from 'node:path';
+import type { Readable } from 'node:stream';
+import { text as readAll } from 'node:stream/consumers';
 
 /** How long to read a child's output after it exited. */
 const PIPE_DRAIN_MS = 1000;
@@ -13,7 +15,7 @@ const PIPE_DRAIN_MS = 1000;
 export interface RunOptions {
   cwd?: string;
   env: NodeJS.ProcessEnv;
-  /** Written to stdin, then closed. Without it stdin is /dev/null. */
+  /** Written to stdin, then closed. Without it stdin is closed at once. */
   input?: string;
   /** 0 = no limit. On timeout the child's whole process group gets SIGTERM. */
   timeoutSeconds?: number;
@@ -34,64 +36,75 @@ export interface RunResult {
 
 export function shellStatus(code: number | null, signal: NodeJS.Signals | null): number {
   if (code !== null) return code;
-  return 128 + (signal !== null ? (constants.signals[signal] ?? 0) : 0);
+  return 128 + (signal === null ? 0 : constants.signals[signal]);
+}
+
+/** Collects a child's output stream as text, passing each chunk on. */
+function collect(stream: Readable, onChunk: ((chunk: string) => void) | undefined): () => string {
+  let all = '';
+  stream.setEncoding('utf8').on('data', (chunk: string) => {
+    all += chunk;
+    onChunk?.(chunk);
+  });
+  return () => all;
+}
+
+/** SIGTERM to the child's process group, so its children stop too. */
+function killGroup(child: ChildProcessWithoutNullStreams): void {
+  if (child.pid === undefined) return;
+  try {
+    process.kill(-child.pid, 'SIGTERM');
+  } catch {
+    // already gone
+  }
 }
 
 export function run(cmd: string, args: string[], o: RunOptions): Promise<RunResult> {
   const timeout = o.timeoutSeconds ?? 0;
+  const child = spawn(cmd, args, {
+    cwd: o.cwd,
+    env: o.env,
+    stdio: 'pipe',
+    // Own process group, so the timeout can stop the children too.
+    detached: timeout > 0,
+  });
+  const stdout = collect(child.stdout, o.onStdout);
+  const stderr = collect(child.stderr, o.onStderr);
+  // A child that never reads stdin closes the pipe early; that is fine.
+  child.stdin.on('error', () => {});
+  child.stdin.end(o.input);
+
+  let timedOut = false;
+  const timer =
+    timeout > 0
+      ? setTimeout(() => {
+          timedOut = true;
+          killGroup(child);
+        }, timeout * 1000)
+      : undefined;
+  let drain: NodeJS.Timeout | undefined;
   return new Promise((resolve) => {
-    const child = spawn(cmd, args, {
-      cwd: o.cwd,
-      env: o.env,
-      stdio: [o.input === undefined ? 'ignore' : 'pipe', 'pipe', 'pipe'],
-      // Own process group, so the timeout can stop the children too.
-      detached: timeout > 0,
-    });
-    let stdout = '';
-    let stderr = '';
-    let timedOut = false;
     let done = false;
-    child.stdout!.setEncoding('utf8').on('data', (chunk: string) => {
-      stdout += chunk;
-      o.onStdout?.(chunk);
-    });
-    child.stderr!.setEncoding('utf8').on('data', (chunk: string) => {
-      stderr += chunk;
-      o.onStderr?.(chunk);
-    });
-    if (child.stdin) {
-      // A child that never reads stdin closes the pipe early; that is fine.
-      child.stdin.on('error', () => {});
-      child.stdin.end(o.input);
-    }
-    const timer =
-      timeout > 0
-        ? setTimeout(() => {
-            timedOut = true;
-            try {
-              process.kill(-child.pid!, 'SIGTERM');
-            } catch {
-              // already gone
-            }
-          }, timeout * 1000)
-        : undefined;
-    let drain: NodeJS.Timeout | undefined;
     const finish = (status: number, extra = ''): void => {
       if (done) return;
       done = true;
       clearTimeout(timer);
       clearTimeout(drain);
       if (extra !== '') o.onStderr?.(extra);
-      resolve({ status, stdout, stderr: stderr + extra, timedOut });
+      resolve({ status, stdout: stdout(), stderr: stderr() + extra, timedOut });
     };
-    child.on('error', (e) => finish(127, `${e.message}\n`));
-    child.on('close', (code, signal) => finish(shellStatus(code, signal)));
+    child.on('error', (error) => {
+      finish(127, `${error.message}\n`);
+    });
+    child.on('close', (code, signal) => {
+      finish(shellStatus(code, signal));
+    });
     // A background process the child left behind can hold the output pipes
     // open after the child exited. Read what is there, then stop waiting.
     child.on('exit', (code, signal) => {
       drain = setTimeout(() => {
-        child.stdout!.destroy();
-        child.stderr!.destroy();
+        child.stdout.destroy();
+        child.stderr.destroy();
         finish(shellStatus(code, signal));
       }, PIPE_DRAIN_MS);
     });
@@ -123,8 +136,5 @@ export function tail(text: string, n: number): string {
 
 /** All of stdin as text, with trailing newlines removed like `$(cat)`. */
 export async function readStdin(): Promise<string> {
-  let text = '';
-  process.stdin.setEncoding('utf8');
-  for await (const chunk of process.stdin) text += chunk as string;
-  return text.replace(/\n+$/, '');
+  return (await readAll(process.stdin)).replace(/\n+$/u, '');
 }

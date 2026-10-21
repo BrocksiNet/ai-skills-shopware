@@ -74,7 +74,7 @@ Run the deterministic checks (same as CI):
 ```bash
 bash scripts/validate-skills.sh
 bash scripts/run-activation-evals.sh
-( cd tools && npm ci && npm run typecheck && npm test )
+( cd tools && npm ci && npm run typecheck && npm run lint && npm run format:check && npm test )
 ( cd evals/tools/ast && npm ci && npm test )
 bash evals/test-graders.sh
 bash evals/runner/selftest.sh
@@ -221,6 +221,19 @@ properties, no namespaces). `npm run typecheck` runs `tsc` with `strict`;
 `npm test` runs `node --test`. Keep runtime dependencies at zero where you
 can, so `node tools/bin/<tool>.ts` works without `npm ci`. The eval runner
 scripts move here step by step (plan WP10); `grade.sh` graders stay shell.
+
+`npm run lint` runs oxlint with type-aware rules
+([`tools/.oxlintrc.json`](tools/.oxlintrc.json)), and `npm run format`
+formats with oxfmt. CI fails on any finding or formatting drift, so fix the
+code rather than adding a disable comment. In practice:
+
+- Parse JSON to `unknown` and narrow it with a type guard; no `as` casts and
+  no `!` assertions.
+- Read settings with `envOr` and `envInt` from `src/env.ts`, never with
+  `env.X || default`. Turn caught values into text with `errorMessage` from
+  `src/errors.ts`.
+- A bin sets `process.exitCode` from a `main()` and returns. Run agent work
+  one after another with `inSeries` from `src/series.ts`.
 
 ## Smoke eval defaults
 

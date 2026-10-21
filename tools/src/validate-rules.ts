@@ -17,8 +17,10 @@
 // It also checks the field types, since the catalog is hand-edited JSON.
 import { existsSync, readdirSync, readFileSync, statSync } from 'node:fs';
 import { join, relative, sep } from 'node:path';
+import { type Catalog, type Rule, checkCatalog, isActive, prefixOf, readCatalog } from './catalog.ts';
 import { enforcedChanges } from './enforced-files.ts';
-import { AUDIENCES, ENFORCEMENT_KINDS, type Catalog, type Rule, isActive, loadCatalog, prefixOf } from './catalog.ts';
+import { errorMessage } from './errors.ts';
+import { compareText } from './text.ts';
 
 export interface Mention {
   id: string;
@@ -40,11 +42,10 @@ export interface RulesReport {
   bySkill: Coverage[];
 }
 
-const ID = /^[A-Z]+-[0-9]{3}$/;
-const DEFINITION = /\*\*([A-Z]+-[0-9]+)\*\*/g;
-const REFERENCE = /`([A-Z]+-[0-9]+)`/g;
-const STATUS = /^(active|retired|superseded:[A-Z]+-[0-9]{3})$/;
-const DATE = /^[0-9]{4}-[0-9]{2}-[0-9]{2}$/;
+const ID = /^[A-Z]+-[0-9]{3}$/u;
+const DEFINITION = /\*\*([A-Z]+-[0-9]+)\*\*/gu;
+const REFERENCE = /`([A-Z]+-[0-9]+)`/gu;
+const DATE = /^[0-9]{4}-[0-9]{2}-[0-9]{2}$/u;
 
 function markdownFiles(dir: string): string[] {
   const out: string[] = [];
@@ -61,19 +62,22 @@ function repoPath(root: string, path: string): string {
   return relative(root, path).split(sep).join('/');
 }
 
+/** Every `pattern` match in `text` as a mention of its first group. */
+function mentions(text: string, pattern: RegExp, file: string, line: number): Mention[] {
+  return [...text.matchAll(pattern)].flatMap((m) => (m[1] === undefined ? [] : [{ id: m[1], file, line }]));
+}
+
 export function scanSkills(root: string): { definitions: Mention[]; references: Mention[]; files: Set<string> } {
   const definitions: Mention[] = [];
   const references: Mention[] = [];
   const files = new Set<string>();
-  for (const path of markdownFiles(join(root, 'skills')).sort()) {
+  for (const path of markdownFiles(join(root, 'skills')).toSorted(compareText)) {
     const file = repoPath(root, path);
     files.add(file);
-    readFileSync(path, 'utf8')
-      .split('\n')
-      .forEach((text, i) => {
-        for (const m of text.matchAll(DEFINITION)) definitions.push({ id: m[1]!, file, line: i + 1 });
-        for (const m of text.matchAll(REFERENCE)) references.push({ id: m[1]!, file, line: i + 1 });
-      });
+    for (const [i, text] of readFileSync(path, 'utf8').split('\n').entries()) {
+      definitions.push(...mentions(text, DEFINITION, file, i + 1));
+      references.push(...mentions(text, REFERENCE, file, i + 1));
+    }
   }
   return { definitions, references, files };
 }
@@ -84,126 +88,89 @@ function evalTasks(root: string): Set<string> {
   return new Set(readdirSync(dir).filter((name) => statSync(join(dir, name)).isDirectory()));
 }
 
-const isString = (v: unknown): v is string => typeof v === 'string';
-const isStringArray = (v: unknown): v is string[] => Array.isArray(v) && v.every(isString);
+/** What the per-rule checks look rules, files and tasks up in. */
+interface Context {
+  prefixes: Record<string, string>;
+  byId: Map<string, Rule>;
+  files: Set<string>;
+  tasks: Set<string>;
+  definitions: Mention[];
+}
 
-function enforcementErrors(label: string, value: unknown): string[] {
-  if (typeof value !== 'object' || value === null || Array.isArray(value)) return [`${label} must be an object`];
-  const e = value as Record<string, unknown>;
+const activeId = (ctx: Context, id: string): boolean => {
+  const rule = ctx.byId.get(id);
+  return rule !== undefined && isActive(rule);
+};
+
+/** ID, prefix, status, title, date and file of one rule. */
+function identityErrors(rule: Rule, ctx: Context): string[] {
+  const { id } = rule;
   const errors: string[] = [];
-  for (const key of ['tool', 'catches', 'misses'] as const) {
-    if (!isString(e[key]) || e[key] === '') errors.push(`${label}.${key} must be a non-empty string`);
+  if (!ID.test(id)) errors.push(`${id}: ID must be PREFIX-NNN`);
+  const owner = ctx.prefixes[prefixOf(id)];
+  if (owner === undefined) errors.push(`${id}: unknown prefix`);
+  else if (owner !== rule.skill) errors.push(`${id}: prefix belongs to ${owner}, not ${rule.skill}`);
+  if (rule.status.startsWith('superseded:')) {
+    const by = rule.status.slice('superseded:'.length);
+    if (!ctx.byId.has(by)) errors.push(`${id}: superseded by unknown ${by}`);
   }
-  if (!(ENFORCEMENT_KINDS as readonly unknown[]).includes(e.kind)) {
-    errors.push(`${label}.kind must be one of ${ENFORCEMENT_KINDS.join(', ')}`);
+  if (rule.title === '') errors.push(`${id}: missing title`);
+  if (!DATE.test(rule.since)) errors.push(`${id}: since must be YYYY-MM-DD`);
+  if (!rule.file.startsWith(`skills/${rule.skill}/`)) {
+    errors.push(`${id}: file ${rule.file} is outside skills/${rule.skill}/`);
   }
-  if (typeof e.trunk_only !== 'boolean') errors.push(`${label}.trunk_only must be true or false`);
+  if (!ctx.files.has(rule.file)) errors.push(`${id}: file ${rule.file} not found`);
   return errors;
 }
 
-/** Type errors for one entry; the semantic checks assume these passed. */
-function shapeErrors(rule: Rule): string[] {
-  const r = rule as unknown as Record<string, unknown>;
-  const label = isString(r.id) ? r.id : JSON.stringify(r.id);
+/** Eval, `see` links and the inline definition of one rule. */
+function linkErrors(rule: Rule, ctx: Context): string[] {
+  const { id } = rule;
   const errors: string[] = [];
-  for (const key of ['id', 'skill', 'file', 'title', 'status', 'since'] as const) {
-    if (!isString(r[key])) errors.push(`${label}: ${key} must be a string`);
+  if (rule.eval !== null && !ctx.tasks.has(rule.eval)) errors.push(`${id}: eval task ${rule.eval} not found`);
+  if (isActive(rule) && rule.eval === null && (rule.eval_reason ?? '') === '') {
+    errors.push(`${id}: active rule needs eval or eval_reason`);
   }
-  if (r.eval !== null && !isString(r.eval)) errors.push(`${label}: eval must be a string or null`);
-  if (r.eval_reason !== undefined && !isString(r.eval_reason)) errors.push(`${label}: eval_reason must be a string`);
-  if (!isStringArray(r.core_guide_ids)) errors.push(`${label}: core_guide_ids must be a list of strings`);
-  if (!isStringArray(r.audience)) errors.push(`${label}: audience must be a list of strings`);
-  if (typeof r.defer_on_trunk !== 'boolean') errors.push(`${label}: defer_on_trunk must be true or false`);
-  if (r.see !== undefined && !isStringArray(r.see)) errors.push(`${label}: see must be a list of IDs`);
-  if (r.trunk !== undefined) {
-    const t = r.trunk as Record<string, unknown> | null;
-    if (typeof t !== 'object' || t === null || Array.isArray(t)) errors.push(`${label}: trunk must be an object`);
-    else if (t.enforced_by !== undefined) {
-      if (!Array.isArray(t.enforced_by)) errors.push(`${label}: trunk.enforced_by must be a list`);
-      else t.enforced_by.forEach((e: unknown, i: number) => errors.push(...enforcementErrors(`${label}: trunk.enforced_by[${i}]`, e)));
-    }
+  for (const s of rule.see ?? []) {
+    if (!activeId(ctx, s)) errors.push(`${id}: see ${s} is unknown or inactive`);
   }
+  if (!isActive(rule)) return errors;
+  const inline = ctx.definitions.filter((d) => d.id === id);
+  const [first] = inline;
+  if (first === undefined) errors.push(`${id}: active rule not found inline in skills/`);
+  else if (inline.length > 1) {
+    errors.push(
+      `${id}: defined inline ${inline.length} times (${inline.map((d) => `${d.file}:${d.line}`).join(', ')})`,
+    );
+  } else if (first.file !== rule.file) errors.push(`${id}: inline in ${first.file}, catalog says ${rule.file}`);
   return errors;
 }
 
-export function validateRules(root: string, catalog: Catalog = loadCatalog(root)): RulesReport {
+/** Inline IDs and code-span references that do not match an active rule.
+ *  IDs of malformed entries were reported already and are skipped. */
+function mentionErrors(ctx: Context, references: Mention[], malformed: Set<string>): string[] {
   const errors: string[] = [];
-  const { definitions, references, files } = scanSkills(root);
-  const tasks = evalTasks(root);
-  const rules = Array.isArray(catalog.rules) ? catalog.rules : [];
-  if (!Array.isArray(catalog.rules)) errors.push('catalog: rules must be a list');
-  const prefixes = catalog.prefixes ?? {};
-
-  const byId = new Map<string, Rule>();
-  const seen = new Set<string>();
-  for (const rule of rules) {
-    const shape = shapeErrors(rule);
-    errors.push(...shape);
-    if (shape.length > 0) continue;
-    if (seen.has(rule.id)) errors.push(`${rule.id}: duplicated in the catalog`);
-    seen.add(rule.id);
-    byId.set(rule.id, rule);
-  }
-  const activeId = (id: string): boolean => {
-    const rule = byId.get(id);
-    return rule !== undefined && isActive(rule);
-  };
-
-  for (const rule of byId.values()) {
-    const { id } = rule;
-    if (!ID.test(id)) errors.push(`${id}: ID must be PREFIX-NNN`);
-    const owner = prefixes[prefixOf(id)];
-    if (owner === undefined) errors.push(`${id}: unknown prefix`);
-    else if (owner !== rule.skill) errors.push(`${id}: prefix belongs to ${owner}, not ${rule.skill}`);
-    if (!STATUS.test(rule.status)) errors.push(`${id}: bad status ${rule.status}`);
-    if (rule.status.startsWith('superseded:')) {
-      const by = rule.status.slice('superseded:'.length);
-      if (!byId.has(by)) errors.push(`${id}: superseded by unknown ${by}`);
-    }
-    if (rule.title === '') errors.push(`${id}: missing title`);
-    if (!DATE.test(rule.since)) errors.push(`${id}: since must be YYYY-MM-DD`);
-    if (!rule.file.startsWith(`skills/${rule.skill}/`)) {
-      errors.push(`${id}: file ${rule.file} is outside skills/${rule.skill}/`);
-    }
-    if (!files.has(rule.file)) errors.push(`${id}: file ${rule.file} not found`);
-    if (rule.eval !== null && !tasks.has(rule.eval)) errors.push(`${id}: eval task ${rule.eval} not found`);
-    if (isActive(rule) && rule.eval === null && !rule.eval_reason) {
-      errors.push(`${id}: active rule needs eval or eval_reason`);
-    }
-    for (const a of rule.audience) {
-      if (!(AUDIENCES as readonly string[]).includes(a)) errors.push(`${id}: unknown audience ${a}`);
-    }
-    for (const s of rule.see ?? []) {
-      if (!activeId(s)) errors.push(`${id}: see ${s} is unknown or inactive`);
-    }
-    if (isActive(rule)) {
-      const inline = definitions.filter((d) => d.id === id);
-      const [first] = inline;
-      if (first === undefined) errors.push(`${id}: active rule not found inline in skills/`);
-      else if (inline.length > 1) {
-        errors.push(`${id}: defined inline ${inline.length} times (${inline.map((d) => `${d.file}:${d.line}`).join(', ')})`);
-      } else if (first.file !== rule.file) errors.push(`${id}: inline in ${first.file}, catalog says ${rule.file}`);
-    }
-  }
-
-  for (const d of definitions) {
-    const rule = byId.get(d.id);
+  for (const d of ctx.definitions) {
+    const rule = ctx.byId.get(d.id);
+    if (malformed.has(d.id)) continue;
     if (rule === undefined) errors.push(`${d.file}:${d.line}: ${d.id} has no catalog entry`);
     else if (!isActive(rule)) errors.push(`${d.file}:${d.line}: ${d.id} is ${rule.status} but still inline`);
   }
   for (const r of references) {
-    if (!activeId(r.id)) errors.push(`${r.file}:${r.line}: reference to unknown or inactive ${r.id}`);
+    if (!malformed.has(r.id) && !activeId(ctx, r.id)) {
+      errors.push(`${r.file}:${r.line}: reference to unknown or inactive ${r.id}`);
+    }
   }
+  return errors;
+}
 
-  errors.push(...enforcedSectionErrors(root, { ...catalog, rules: [...byId.values()] }));
-
-  const active = [...byId.values()].filter(isActive);
-  const skills = [...new Set(active.map((r) => r.skill))].sort();
+function coverage(rules: Rule[]): Omit<RulesReport, 'errors'> {
+  const active = rules.filter((r) => isActive(r));
+  const skills = [...new Set(active.map((r) => r.skill))].toSorted(compareText);
   return {
-    errors,
     active: active.length,
     withEval: active.filter((r) => r.eval !== null).length,
-    inactive: byId.size - active.length,
+    inactive: rules.length - active.length,
     bySkill: skills.map((skill) => {
       const own = active.filter((r) => r.skill === skill);
       return { skill, active: own.length, withEval: own.filter((r) => r.eval !== null).length };
@@ -218,7 +185,27 @@ export function enforcedSectionErrors(root: string, catalog: Catalog): string[] 
       ({ file, next }) =>
         `${file}: ${next === null ? 'no longer generated, delete it' : 'out of date'}; run node tools/bin/render-enforced.ts`,
     );
-  } catch (e) {
-    return [(e as Error).message];
+  } catch (error) {
+    return [errorMessage(error)];
   }
+}
+
+/** Checks the catalog (parsed JSON, read from `root` by default) against the
+ *  skills under `root`. Throws only when the catalog cannot be read. */
+export function validateRules(root: string, raw: unknown = readCatalog(root)): RulesReport {
+  const checked = checkCatalog(raw);
+  const errors = [...checked.errors];
+  const { definitions, references, files } = scanSkills(root);
+  const byId = new Map<string, Rule>();
+  for (const rule of checked.catalog.rules) {
+    if (byId.has(rule.id)) errors.push(`${rule.id}: duplicated in the catalog`);
+    byId.set(rule.id, rule);
+  }
+  const ctx: Context = { prefixes: checked.catalog.prefixes, byId, files, tasks: evalTasks(root), definitions };
+  for (const rule of byId.values()) errors.push(...identityErrors(rule, ctx), ...linkErrors(rule, ctx));
+  errors.push(
+    ...mentionErrors(ctx, references, checked.malformed),
+    ...enforcedSectionErrors(root, { ...checked.catalog, rules: [...byId.values()] }),
+  );
+  return { errors, ...coverage([...byId.values()]) };
 }
