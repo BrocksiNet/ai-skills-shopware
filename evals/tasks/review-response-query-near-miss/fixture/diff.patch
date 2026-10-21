@@ -1,0 +1,70 @@
+diff --git a/src/Resources/config/services.php b/src/Resources/config/services.php
+index 6a0f306..78a466f 100644
+--- a/src/Resources/config/services.php
++++ b/src/Resources/config/services.php
+@@ -3,6 +3,7 @@
+ namespace Symfony\Component\DependencyInjection\Loader\Configurator;
+ 
+ use Swag\Loyalty\LoyaltyLedger;
++use Swag\Loyalty\Subscriber\LoyaltyLinkHeaderSubscriber;
+ use Swag\Loyalty\Subscriber\LoyaltyPageSubscriber;
+ 
+ return static function (ContainerConfigurator $configurator): void {
+@@ -10,4 +11,5 @@ return static function (ContainerConfigurator $configurator): void {
+ 
+     $services->set(LoyaltyLedger::class);
+     $services->set(LoyaltyPageSubscriber::class);
++    $services->set(LoyaltyLinkHeaderSubscriber::class);
+ };
+diff --git a/src/Subscriber/LoyaltyLinkHeaderSubscriber.php b/src/Subscriber/LoyaltyLinkHeaderSubscriber.php
+new file mode 100644
+index 0000000..20277d4
+--- /dev/null
++++ b/src/Subscriber/LoyaltyLinkHeaderSubscriber.php
+@@ -0,0 +1,46 @@
++<?php declare(strict_types=1);
++
++namespace Swag\Loyalty\Subscriber;
++
++use Doctrine\DBAL\Connection;
++use Shopware\Core\Framework\Event\BeforeSendResponseEvent;
++use Shopware\Core\PlatformRequest;
++use Symfony\Component\EventDispatcher\EventSubscriberInterface;
++
++/**
++ * Announces the loyalty program to agents and crawlers with a Link header on
++ * every storefront page of a sales channel that has the program switched on.
++ */
++class LoyaltyLinkHeaderSubscriber implements EventSubscriberInterface
++{
++    public function __construct(private readonly Connection $connection)
++    {
++    }
++
++    public static function getSubscribedEvents(): array
++    {
++        return [BeforeSendResponseEvent::class => 'addLinkHeader'];
++    }
++
++    public function addLinkHeader(BeforeSendResponseEvent $event): void
++    {
++        $response = $event->getResponse();
++        if (!str_starts_with((string) $response->headers->get('Content-Type'), 'text/html')) {
++            return;
++        }
++
++        $salesChannelId = $event->getRequest()->attributes->get(PlatformRequest::ATTRIBUTE_SALES_CHANNEL_ID);
++        if (!\is_string($salesChannelId)) {
++            return;
++        }
++
++        $active = $this->connection->fetchOne(
++            'SELECT active FROM swag_loyalty_config WHERE sales_channel_id = :id',
++            ['id' => hex2bin($salesChannelId)],
++        );
++
++        if ((bool) $active) {
++            $response->headers->set('Link', '</loyalty/program.json>; rel="loyalty-program"', false);
++        }
++    }
++}

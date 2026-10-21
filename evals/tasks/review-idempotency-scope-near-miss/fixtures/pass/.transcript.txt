@@ -1,0 +1,16 @@
+The points input is validated well; the replay is the problem.
+
+```json
+{
+  "findings": [
+    {
+      "rule_id": null,
+      "severity": "major",
+      "file": "src/Redeem/RedeemPointsRoute.php",
+      "line": 38,
+      "summary": "The idempotency lookup is global: any customer who sends a reused or guessed Idempotency-Key gets the stored response of another customer, including their voucher code.",
+      "fix": "Scope the stored key to the sales channel and customer, and compare the request body before replaying."
+    }
+  ]
+}
+```

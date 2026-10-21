@@ -1,0 +1,14 @@
+```json
+{
+  "findings": [
+    {
+      "rule_id": "REV-033",
+      "severity": "major",
+      "file": "src/Subscriber/OrderPointsExportSubscriber.php",
+      "line": 33,
+      "summary": "The ERP call runs synchronously in the checkout request with a 30 s timeout and throws on any error response, so a slow or failing ERP blocks or breaks order placement after the order exists.",
+      "fix": "Dispatch a message after the order is placed and post to the ERP in its handler, with retries."
+    }
+  ]
+}
+```

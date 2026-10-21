@@ -1,0 +1,66 @@
+diff --git a/src/Resources/config/services.php b/src/Resources/config/services.php
+index 6a0f306..6fc8e2b 100644
+--- a/src/Resources/config/services.php
++++ b/src/Resources/config/services.php
+@@ -4,10 +4,13 @@ namespace Symfony\Component\DependencyInjection\Loader\Configurator;
+ 
+ use Swag\Loyalty\LoyaltyLedger;
+ use Swag\Loyalty\Subscriber\LoyaltyPageSubscriber;
++use Swag\Loyalty\Subscriber\OrderPointsExportSubscriber;
+ 
+ return static function (ContainerConfigurator $configurator): void {
+     $services = $configurator->services()->defaults()->autowire()->autoconfigure();
+ 
+     $services->set(LoyaltyLedger::class);
+     $services->set(LoyaltyPageSubscriber::class);
++    $services->set(OrderPointsExportSubscriber::class)
++        ->arg('$erpUrl', '%env(SWAG_LOYALTY_ERP_URL)%');
+ };
+diff --git a/src/Subscriber/OrderPointsExportSubscriber.php b/src/Subscriber/OrderPointsExportSubscriber.php
+new file mode 100644
+index 0000000..7209730
+--- /dev/null
++++ b/src/Subscriber/OrderPointsExportSubscriber.php
+@@ -0,0 +1,42 @@
++<?php declare(strict_types=1);
++
++namespace Swag\Loyalty\Subscriber;
++
++use Shopware\Core\Checkout\Cart\Event\CheckoutOrderPlacedEvent;
++use Swag\Loyalty\LoyaltyLedger;
++use Symfony\Component\EventDispatcher\EventSubscriberInterface;
++use Symfony\Contracts\HttpClient\HttpClientInterface;
++
++/**
++ * Books the points of a new order and reports them to the merchant's ERP,
++ * which keeps the authoritative balance.
++ */
++class OrderPointsExportSubscriber implements EventSubscriberInterface
++{
++    public function __construct(
++        private readonly LoyaltyLedger $ledger,
++        private readonly HttpClientInterface $httpClient,
++        private readonly string $erpUrl,
++    ) {
++    }
++
++    public static function getSubscribedEvents(): array
++    {
++        return [CheckoutOrderPlacedEvent::class => 'onOrderPlaced'];
++    }
++
++    public function onOrderPlaced(CheckoutOrderPlacedEvent $event): void
++    {
++        $order = $event->getOrder();
++        $points = $this->ledger->book($order, $event->getContext());
++
++        $this->httpClient->request('POST', $this->erpUrl . '/loyalty/bookings', [
++            'json' => [
++                'orderNumber' => $order->getOrderNumber(),
++                'customerNumber' => $order->getOrderCustomer()?->getCustomerNumber(),
++                'points' => $points,
++            ],
++            'timeout' => 30,
++        ])->toArray();
++    }
++}

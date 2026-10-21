@@ -37,6 +37,10 @@ points at a replacement the extenders can use today: `CORE-063`.
   or backfill a large table in one statement: `PLG-028`, `PLG-030`,
   `PLG-019`?
 - Is a migration behind a feature flag: `PLG-029`?
+- Does the plugin write its entities with raw SQL, so DAL events, indexers
+  and cache invalidation never run: `PLG-003`, `REV-024`, `PLG-007`?
+- Does `uninstall()` drop the plugin's tables and config when
+  `keepUserData()` is false: `PLG-008`?
 - Does a hot path load associations per row: `REV-021`?
 
 ## Workers and long-running processes
@@ -49,6 +53,8 @@ points at a replacement the extenders can use today: `CORE-063`.
 ## Security
 
 - Is new route input validated and typed: `SEC-005`?
+- Does new admin UI that reads a DAL entity or association ship the ACL
+  privileges for it: `ADM-004`?
 - Does an app verify webhook signatures: `SEC-006`?
 - Are secrets read from configuration, not committed (see the security
   `secrets-and-config.md` reference)?
@@ -58,6 +64,20 @@ points at a replacement the extenders can use today: `CORE-063`.
 - Can the new test fail? An assertion inside a hook or listener that never
   runs proves nothing: `TEST-016`, `TEST-035`.
 - Does the test cover the case the diff changes, not only the happy path?
+
+## Near misses
+
+Real reviews cited these rules for problems they do not cover. Report the
+problem with `null`, or with the rule that does cover it:
+
+| Problem | Not | Use |
+| ------- | --- | --- |
+| A database query on every response or request, cache hits included | `SF-013` (cache switched off) | `null` |
+| A write that skips cache invalidation | `IMP-008` (cache key inputs) | `PLG-007`, or `PLG-003` / `REV-024` for raw SQL |
+| An HTTP call made synchronously in the request, with no queue anywhere | `REV-033` (inline fallback when queueing fails) | `null` |
+| An idempotency key or stored response not scoped to the caller | `SEC-005` (input validation) | `null` |
+| An admin override of a core component that skips `$super` | `ADM-039` (the API a shipped component offers) | `null` |
+| Plugin ACL roles that grant `system_config` read or write | `ADM-016` (UI checks of privileges) | `null` |
 
 ## Core-only rules
 

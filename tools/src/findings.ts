@@ -1,5 +1,5 @@
-// Review findings in an agent transcript, and the catch and ignore checks of
-// the review-shaped eval tasks (plan WP5).
+// Review findings in an agent transcript, and the catch, ignore and near-miss
+// checks of the review-shaped eval tasks (plan WP5).
 //
 // The agent ends its answer with one fenced `json` block:
 //
@@ -99,4 +99,26 @@ export const falsePositives = (findings: Finding[], e: Pick<Expectation, 'rule' 
       f.severity !== 'nit' &&
       (f.rule_id?.startsWith(e.rule) === true ||
         ((f.rule_id === null || !CATALOG_ID.test(f.rule_id)) && e.summary.test(f.summary))),
+  );
+
+/** A near-miss task plants a real problem next to a rule that does not cover
+ *  it. `rule` is that decoy; `accept` lists the IDs that do cover the problem
+ *  (empty when no rule does). */
+export interface NearMiss extends Expectation {
+  accept: string[];
+}
+
+/** Findings above `nit` that describe the problem and cite the decoy rule. */
+export const decoyCitations = (findings: Finding[], e: NearMiss): Finding[] =>
+  findings.filter((f) => f.severity !== 'nit' && f.rule_id?.startsWith(e.rule) === true && e.summary.test(f.summary));
+
+/** The near-miss task needs the problem reported at the file and severity,
+ *  under an accepted ID, a non-catalog ID or none. */
+export const reportedRightly = (findings: Finding[], e: NearMiss): boolean =>
+  findings.some(
+    (f) =>
+      globMatches(e.file, f.file) &&
+      atLeast(f.severity, e.minSeverity) &&
+      e.summary.test(f.summary) &&
+      (f.rule_id === null || !CATALOG_ID.test(f.rule_id) || e.accept.some((id) => f.rule_id?.startsWith(id) === true)),
   );
