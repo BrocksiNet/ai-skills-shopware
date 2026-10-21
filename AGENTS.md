@@ -8,6 +8,22 @@ proving they change model behavior.
 Human onboarding: [`README.md`](README.md). Skill ownership and topic boundaries:
 [`REGISTRY.md`](REGISTRY.md).
 
+## Concepts at a glance
+
+The terms the rest of this guide uses. Details follow in the sections linked.
+
+| Term | Meaning |
+| ---- | ------- |
+| Rule ID | `PLG-028`: prefix of the owning skill plus a number. Written bold once where the rule is stated, as a code span everywhere else. Never reused. See [Adding or changing a rule](#adding-or-changing-a-rule). |
+| Catalog | `rules/catalog.json`: one entry per rule with its file, eval task (or why there is none), `audience` and what core already enforces. |
+| Audience | Who a rule is for: `core`, `plugin`, `app`, `storefront`, `admin`. The extension review reports only `plugin` and `app` rules. |
+| Route | An entry in a skill's `routes.json`: which reference to read when a diff touches these paths (`paths_any`) or lines (`anchors_any`), on every change (`always`), or when the task asks for it (`on_demand`). See [Adding or changing a reference](#adding-or-changing-a-reference). |
+| Borrowed route | A route to `../<skill>/references/<file>.md`. It takes its triggers from the owning skill, so a review skill reuses rules without copying them. |
+| Review pair | Two tasks per rule: `review-<rule>-catch` (a diff with the problem; the findings must name it) and `review-<rule>-ignore` (a clean diff that looks similar; no finding allowed). Graded by `tools/bin/grade-findings.ts`. |
+| Golden fixtures | `fixtures/pass/` and `fixtures/fail/` of a task: known answers the grader must pass and fail on every push, so a grader cannot silently go soft. |
+| Enforced by CI | A generated `SKILL.md` section listing rules an existing check (PHPStan, ECS, ESLint, Danger, a core test) already catches, so the agent does not repeat them. |
+| Trunk mining | The weekly `trunk-drift` issue about changes on `shopware/shopware` trunk; `docs/.mining-state.json` marks how far it has been read. |
+
 ## Repository layout
 
 ```text
