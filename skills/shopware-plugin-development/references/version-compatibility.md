@@ -36,6 +36,17 @@ minimum supported version.** `Feature`, `Context`, `Criteria`, `EntityRepository
 adding a guard; a guard for a class that always exists is dead code that misleads
 readers about the supported range.
 
+## Optional packages
+
+- **PLG-032** **A package in `suggest` may be missing.** Code that loads on
+  every request (service and route files, subscribers, Twig templates and
+  extensions) must not reference a class of a suggested package, such as
+  `shopware/storefront` in a headless shop or an optional SDK, outside the
+  guard that registers it. A controller registered outside the guard, a
+  route file that names `StorefrontRouteScope`, or a template that calls a
+  Twig function registered behind `class_exists()` breaks every request
+  when the package is missing. Guard both sides, or move it to `require`.
+
 ## Shopware feature flags
 
 Shopware ships experimental and in-progress API behind `Feature` flags

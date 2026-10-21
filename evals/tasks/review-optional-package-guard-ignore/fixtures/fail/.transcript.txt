@@ -1,0 +1,14 @@
+```json
+{
+  "findings": [
+    {
+      "rule_id": null,
+      "severity": "major",
+      "file": "src/Storefront/Controller/LoyaltyPageController.php",
+      "line": 15,
+      "summary": "LoyaltyPageController extends StorefrontController, but shopware/storefront is only in suggest, so a headless shop without the storefront breaks.",
+      "fix": "Require shopware/storefront in composer.json."
+    }
+  ]
+}
+```

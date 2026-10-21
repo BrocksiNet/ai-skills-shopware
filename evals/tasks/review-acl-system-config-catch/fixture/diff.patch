@@ -1,0 +1,177 @@
+diff --git a/src/Resources/app/administration/src/acl/index.js b/src/Resources/app/administration/src/acl/index.js
+index c5a505a..dd5f5d0 100644
+--- a/src/Resources/app/administration/src/acl/index.js
++++ b/src/Resources/app/administration/src/acl/index.js
+@@ -4,11 +4,18 @@ Shopware.Service('privileges').addPrivilegeMappingEntry({
+     key: 'swag_loyalty',
+     roles: {
+         viewer: {
+-            privileges: ['swag_loyalty_program:read'],
++            privileges: [
++                'swag_loyalty_program:read',
++                'swag_loyalty_tier:read',
++                'system_config:read',
++            ],
+             dependencies: [],
+         },
+         editor: {
+-            privileges: ['swag_loyalty_program:update'],
++            privileges: [
++                'swag_loyalty_program:update',
++                'system_config:update',
++            ],
+             dependencies: ['swag_loyalty.viewer'],
+         },
+     },
+diff --git a/src/Resources/app/administration/src/module/swag-loyalty/component/swag-loyalty-settings-card/index.js b/src/Resources/app/administration/src/module/swag-loyalty/component/swag-loyalty-settings-card/index.js
+new file mode 100644
+index 0000000..af5cd74
+--- /dev/null
++++ b/src/Resources/app/administration/src/module/swag-loyalty/component/swag-loyalty-settings-card/index.js
+@@ -0,0 +1,51 @@
++import template from './swag-loyalty-settings-card.html.twig';
++
++const { Component, Mixin } = Shopware;
++
++const CONFIG_DOMAIN = 'SwagLoyalty.config';
++
++Component.register('swag-loyalty-settings-card', {
++    template,
++
++    inject: ['systemConfigApiService', 'acl'],
++
++    mixins: [
++        Mixin.getByName('notification'),
++    ],
++
++    data() {
++        return {
++            settings: {},
++            isLoading: false,
++        };
++    },
++
++    created() {
++        this.createdComponent();
++    },
++
++    methods: {
++        async createdComponent() {
++            this.isLoading = true;
++
++            try {
++                this.settings = await this.systemConfigApiService.getValues(CONFIG_DOMAIN);
++            } finally {
++                this.isLoading = false;
++            }
++        },
++
++        async onSave() {
++            this.isLoading = true;
++
++            try {
++                await this.systemConfigApiService.saveValues(this.settings);
++                this.createNotificationSuccess({
++                    message: this.$tc('swag-loyalty.settings.saveSuccess'),
++                });
++            } finally {
++                this.isLoading = false;
++            }
++        },
++    },
++});
+diff --git a/src/Resources/app/administration/src/module/swag-loyalty/component/swag-loyalty-settings-card/swag-loyalty-settings-card.html.twig b/src/Resources/app/administration/src/module/swag-loyalty/component/swag-loyalty-settings-card/swag-loyalty-settings-card.html.twig
+new file mode 100644
+index 0000000..0625b8d
+--- /dev/null
++++ b/src/Resources/app/administration/src/module/swag-loyalty/component/swag-loyalty-settings-card/swag-loyalty-settings-card.html.twig
+@@ -0,0 +1,45 @@
++{% block swag_loyalty_settings_card %}
++<mt-card
++    class="swag-loyalty-settings-card"
++    :title="$tc('swag-loyalty.settings.cardTitle')"
++    :is-loading="isLoading"
++>
++    {% block swag_loyalty_settings_card_points_per_euro %}
++    <mt-number-field
++        v-model="settings['SwagLoyalty.config.pointsPerEuro']"
++        :label="$tc('swag-loyalty.settings.labelPointsPerEuro')"
++        :min="0"
++        :disabled="!acl.can('swag_loyalty.editor')"
++    />
++    {% endblock %}
++
++    {% block swag_loyalty_settings_card_expiry_days %}
++    <mt-number-field
++        v-model="settings['SwagLoyalty.config.expiryDays']"
++        :label="$tc('swag-loyalty.settings.labelExpiryDays')"
++        :min="0"
++        :disabled="!acl.can('swag_loyalty.editor')"
++    />
++    {% endblock %}
++
++    {% block swag_loyalty_settings_card_default_tier %}
++    <sw-entity-single-select
++        v-model:value="settings['SwagLoyalty.config.defaultTierId']"
++        entity="swag_loyalty_tier"
++        :label="$tc('swag-loyalty.settings.labelDefaultTier')"
++        :disabled="!acl.can('swag_loyalty.editor')"
++    />
++    {% endblock %}
++
++    {% block swag_loyalty_settings_card_save %}
++    <mt-button
++        v-if="acl.can('swag_loyalty.editor')"
++        variant="primary"
++        :is-loading="isLoading"
++        @click="onSave"
++    >
++        {{ $tc('swag-loyalty.settings.buttonSave') }}
++    </mt-button>
++    {% endblock %}
++</mt-card>
++{% endblock %}
+diff --git a/src/Resources/app/administration/src/module/swag-loyalty/index.js b/src/Resources/app/administration/src/module/swag-loyalty/index.js
+index a6dc72e..7473242 100644
+--- a/src/Resources/app/administration/src/module/swag-loyalty/index.js
++++ b/src/Resources/app/administration/src/module/swag-loyalty/index.js
+@@ -1,4 +1,5 @@
+ import './page/swag-loyalty-list';
++import './component/swag-loyalty-settings-card';
+ 
+ Shopware.Module.register('swag-loyalty', {
+     type: 'plugin',
+diff --git a/src/Resources/app/administration/src/module/swag-loyalty/page/swag-loyalty-list/swag-loyalty-list.html.twig b/src/Resources/app/administration/src/module/swag-loyalty/page/swag-loyalty-list/swag-loyalty-list.html.twig
+index c0b394c..d50b8b6 100644
+--- a/src/Resources/app/administration/src/module/swag-loyalty/page/swag-loyalty-list/swag-loyalty-list.html.twig
++++ b/src/Resources/app/administration/src/module/swag-loyalty/page/swag-loyalty-list/swag-loyalty-list.html.twig
+@@ -6,6 +6,10 @@
+             {% block swag_loyalty_list_program %}
+             <swag-loyalty-program-card />
+             {% endblock %}
++
++            {% block swag_loyalty_list_settings %}
++            <swag-loyalty-settings-card />
++            {% endblock %}
+         </sw-card-view>
+     </template>
+     {% endblock %}
+diff --git a/src/Resources/app/administration/src/module/swag-loyalty/snippet/en-GB.json b/src/Resources/app/administration/src/module/swag-loyalty/snippet/en-GB.json
+index e0000f2..81abb8b 100644
+--- a/src/Resources/app/administration/src/module/swag-loyalty/snippet/en-GB.json
++++ b/src/Resources/app/administration/src/module/swag-loyalty/snippet/en-GB.json
+@@ -3,6 +3,14 @@
+         "general": {
+             "mainMenuItemGeneral": "Loyalty",
+             "descriptionTextModule": "Manage loyalty programs and points"
++        },
++        "settings": {
++            "cardTitle": "Loyalty settings",
++            "labelPointsPerEuro": "Points per euro",
++            "labelExpiryDays": "Points expire after (days)",
++            "labelDefaultTier": "Default tier",
++            "buttonSave": "Save",
++            "saveSuccess": "Loyalty settings saved."
+         }
+     }
+ }

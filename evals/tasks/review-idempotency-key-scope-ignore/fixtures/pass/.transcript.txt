@@ -1,0 +1,7 @@
+The replay is scoped to the calling integration or user and checks a hash of the request body.
+
+```json
+{
+  "findings": []
+}
+```

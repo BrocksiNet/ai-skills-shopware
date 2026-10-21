@@ -37,7 +37,7 @@ Read only the reference that matches the task or the files it changes:
 | [`api-contracts.md`](references/api-contracts.md) | You add or change a Store-API or Admin route, its response struct, or its OpenAPI schema. | `StoreApi/**/*.php`, `Resources/Schema/**`, `#[Route(`, … |
 | [`cache-tags.md`](references/cache-tags.md) | A change affects cached pages or needs cache tags (6.7+). | `CacheTagCollector`, … |
 | [`migrations.md`](references/migrations.md) | You add or change a database migration. | `Migration/Migration*.php`, `extends MigrationStep`, … |
-| [`version-compatibility.md`](references/version-compatibility.md) | The plugin must support more than one Shopware minor. | `composer.json`, `"shopware/core"`, … |
+| [`version-compatibility.md`](references/version-compatibility.md) | The plugin must support more than one Shopware minor, or runs without a package it only suggests. | `composer.json`, `"shopware/core"`, … |
 | [`symfony-first.md`](references/symfony-first.md) | You are about to write code a Symfony component already provides. | `file_put_contents(`, … |
 <!-- routes:end -->
 

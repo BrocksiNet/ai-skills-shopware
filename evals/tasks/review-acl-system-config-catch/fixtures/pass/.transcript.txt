@@ -1,0 +1,16 @@
+The settings card goes through systemConfigApiService, and to make that work the role now grants the system_config privileges.
+
+```json
+{
+  "findings": [
+    {
+      "rule_id": "ADM-043",
+      "severity": "major",
+      "file": "src/Resources/app/administration/src/acl/index.js",
+      "line": 10,
+      "summary": "The swag_loyalty viewer and editor roles grant system_config:read and system_config:update, which let a loyalty user read and change every extension's settings, including API keys and secrets of other plugins.",
+      "fix": "Remove the system_config privileges and load and save the loyalty settings through a plugin Admin API route guarded by swag_loyalty.viewer and swag_loyalty.editor."
+    }
+  ]
+}
+```

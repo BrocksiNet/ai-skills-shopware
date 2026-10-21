@@ -1,0 +1,16 @@
+The override starts from this.$super for both orderCriteria and getOrderColumns, so core and other plugins' columns stay.
+
+```json
+{
+  "findings": [
+    {
+      "rule_id": null,
+      "severity": "nit",
+      "file": "src/Resources/app/administration/src/extension/sw-order-list/index.js",
+      "line": 18,
+      "summary": "When no amountTotal column is found, findIndex returns -1 and the points column is inserted first.",
+      "fix": "Push the column at the end when amountIndex is -1."
+    }
+  ]
+}
+```

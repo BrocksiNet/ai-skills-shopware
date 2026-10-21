@@ -15,7 +15,7 @@
     {
       "reference": "references/api-acl-and-input.md",
       "when": "You add or change a route, an ACL privilege or user input handling.",
-      "anchors_any": ["#\\[Route\\(", "_acl", "_loginRequired", "_routeScope", "_httpCache", "addPrivilegeMappingEntry\\(", "\\$request->(get\\(|query->|request->)"]
+      "anchors_any": ["#\\[Route\\(", "_acl", "_loginRequired", "_routeScope", "_httpCache", "[Ii]dempotency", "addPrivilegeMappingEntry\\(", "\\$request->(get\\(|query->|request->)"]
     },
     {
       "reference": "references/apps-and-webhooks.md",

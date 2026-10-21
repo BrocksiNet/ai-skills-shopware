@@ -1,0 +1,154 @@
+diff --git a/src/Controller/Api/PointsImportController.php b/src/Controller/Api/PointsImportController.php
+index a54a441..4e36058 100644
+--- a/src/Controller/Api/PointsImportController.php
++++ b/src/Controller/Api/PointsImportController.php
+@@ -7,9 +7,11 @@ use Shopware\Core\Framework\Log\Package;
+ use Shopware\Core\Framework\Validation\DataBag\RequestDataBag;
+ use Shopware\Core\Framework\Validation\DataValidationDefinition;
+ use Shopware\Core\Framework\Validation\DataValidator;
++use Swag\Loyalty\Idempotency\IdempotencyStore;
+ use Swag\Loyalty\Points\PointsImporter;
+ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+ use Symfony\Component\HttpFoundation\JsonResponse;
++use Symfony\Component\HttpFoundation\Request;
+ use Symfony\Component\Routing\Attribute\Route;
+ use Symfony\Component\Validator\Constraints\Count;
+ use Symfony\Component\Validator\Constraints\NotBlank;
+@@ -22,17 +24,33 @@ class PointsImportController extends AbstractController
+     public function __construct(
+         private readonly PointsImporter $importer,
+         private readonly DataValidator $validator,
++        private readonly IdempotencyStore $idempotencyStore,
+     ) {
+     }
+ 
++    /**
++     * ERP connectors retry on timeouts. With an `Idempotency-Key` header a
++     * retried import returns the first result instead of booking the points
++     * a second time.
++     */
+     #[Route(
+         path: '/api/_action/swag-loyalty/points-import',
+         name: 'api.action.swag-loyalty.points-import',
+         defaults: ['_acl' => ['swag_loyalty_points:update']],
+         methods: ['POST'],
+     )]
+-    public function import(RequestDataBag $data, Context $context): JsonResponse
++    public function import(Request $request, RequestDataBag $data, Context $context): JsonResponse
+     {
++        $idempotencyKey = $request->headers->get('Idempotency-Key');
++
++        if ($idempotencyKey !== null) {
++            $stored = $this->idempotencyStore->find($idempotencyKey);
++
++            if ($stored !== null) {
++                return new JsonResponse($stored, JsonResponse::HTTP_OK, ['Idempotent-Replayed' => 'true']);
++            }
++        }
++
+         $row = new DataValidationDefinition('swag_loyalty.points_import_row');
+         $row->add('customerNumber', new NotBlank(), new Type('string'));
+         $row->add('points', new NotBlank(), new Type('int'));
+@@ -46,8 +64,14 @@ class PointsImportController extends AbstractController
+         $rows = $data->get('rows');
+         \assert($rows instanceof RequestDataBag);
+ 
+-        return new JsonResponse([
++        $response = [
+             'imported' => $this->importer->import($rows->all(), $context),
+-        ]);
++        ];
++
++        if ($idempotencyKey !== null) {
++            $this->idempotencyStore->save($idempotencyKey, $response);
++        }
++
++        return new JsonResponse($response);
+     }
+ }
+diff --git a/src/Idempotency/IdempotencyStore.php b/src/Idempotency/IdempotencyStore.php
+new file mode 100644
+index 0000000..9b15279
+--- /dev/null
++++ b/src/Idempotency/IdempotencyStore.php
+@@ -0,0 +1,46 @@
++<?php declare(strict_types=1);
++
++namespace Swag\Loyalty\Idempotency;
++
++use Doctrine\DBAL\Connection;
++use Shopware\Core\Defaults;
++use Shopware\Core\Framework\Log\Package;
++
++#[Package('checkout')]
++class IdempotencyStore
++{
++    public function __construct(private readonly Connection $connection)
++    {
++    }
++
++    /**
++     * @return array<string, mixed>|null
++     */
++    public function find(string $key): ?array
++    {
++        $response = $this->connection->fetchOne(
++            'SELECT `response` FROM `swag_loyalty_idempotency` WHERE `idempotency_key` = :key',
++            ['key' => $key],
++        );
++
++        if (!\is_string($response)) {
++            return null;
++        }
++
++        $decoded = json_decode($response, true, 512, \JSON_THROW_ON_ERROR);
++
++        return \is_array($decoded) ? $decoded : null;
++    }
++
++    /**
++     * @param array<string, mixed> $response
++     */
++    public function save(string $key, array $response): void
++    {
++        $this->connection->insert('swag_loyalty_idempotency', [
++            'idempotency_key' => $key,
++            'response' => json_encode($response, \JSON_THROW_ON_ERROR),
++            'created_at' => (new \DateTimeImmutable())->format(Defaults::STORAGE_DATE_TIME_FORMAT),
++        ]);
++    }
++}
+diff --git a/src/Migration/Migration1729497600PointsImportIdempotency.php b/src/Migration/Migration1729497600PointsImportIdempotency.php
+new file mode 100644
+index 0000000..4779a98
+--- /dev/null
++++ b/src/Migration/Migration1729497600PointsImportIdempotency.php
+@@ -0,0 +1,28 @@
++<?php declare(strict_types=1);
++
++namespace Swag\Loyalty\Migration;
++
++use Doctrine\DBAL\Connection;
++use Shopware\Core\Framework\Log\Package;
++use Shopware\Core\Framework\Migration\MigrationStep;
++
++#[Package('checkout')]
++class Migration1729497600PointsImportIdempotency extends MigrationStep
++{
++    public function getCreationTimestamp(): int
++    {
++        return 1729497600;
++    }
++
++    public function update(Connection $connection): void
++    {
++        $connection->executeStatement('
++            CREATE TABLE IF NOT EXISTS `swag_loyalty_idempotency` (
++                `idempotency_key` VARCHAR(255) NOT NULL,
++                `response` JSON NOT NULL,
++                `created_at` DATETIME(3) NOT NULL,
++                PRIMARY KEY (`idempotency_key`)
++            ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
++        ');
++    }
++}

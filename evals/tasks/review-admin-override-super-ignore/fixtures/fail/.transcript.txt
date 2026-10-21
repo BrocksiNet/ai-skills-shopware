@@ -1,0 +1,14 @@
+```json
+{
+  "findings": [
+    {
+      "rule_id": null,
+      "severity": "minor",
+      "file": "src/Resources/app/administration/src/extension/sw-order-list/index.js",
+      "line": 15,
+      "summary": "The override replaces the core getOrderColumns method, so future core column changes are lost.",
+      "fix": "Register the column through a separate component instead of overriding sw-order-list."
+    }
+  ]
+}
+```

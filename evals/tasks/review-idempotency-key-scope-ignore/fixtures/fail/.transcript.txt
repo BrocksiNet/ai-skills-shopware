@@ -1,0 +1,14 @@
+```json
+{
+  "findings": [
+    {
+      "rule_id": null,
+      "severity": "major",
+      "file": "src/Controller/Api/PointsImportController.php",
+      "line": 52,
+      "summary": "The stored import result, with customer emails and balances, is replayed to any caller that sends the same Idempotency-Key.",
+      "fix": "Scope the stored response to the caller."
+    }
+  ]
+}
+```

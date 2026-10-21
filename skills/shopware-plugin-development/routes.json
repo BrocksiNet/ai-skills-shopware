@@ -51,13 +51,16 @@
     },
     {
       "reference": "references/version-compatibility.md",
-      "when": "The plugin must support more than one Shopware minor.",
+      "when": "The plugin must support more than one Shopware minor, or runs without a package it only suggests.",
       "paths_any": [
         "**/composer.json"
       ],
       "anchors_any": [
         "\"shopware/core\"",
-        "Feature::isActive\\("
+        "Feature::isActive\\(",
+        "InstalledVersions::isInstalled\\(",
+        "StorefrontRouteScope",
+        "extends StorefrontController"
       ]
     },
     {

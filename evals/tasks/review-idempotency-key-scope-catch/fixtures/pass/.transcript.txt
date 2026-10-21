@@ -1,0 +1,16 @@
+The replay lookup uses the Idempotency-Key alone.
+
+```json
+{
+  "findings": [
+    {
+      "rule_id": "SEC-008",
+      "severity": "major",
+      "file": "src/Idempotency/IdempotencyStore.php",
+      "line": 23,
+      "summary": "Stored import results are keyed only by the Idempotency-Key, so another integration sending the same key gets the first caller's response, including customer emails and balances.",
+      "fix": "Key the store by the integration or user id from AdminApiSource plus the key, and store a sha256 of the request body to answer 422 on a mismatch."
+    }
+  ]
+}
+```

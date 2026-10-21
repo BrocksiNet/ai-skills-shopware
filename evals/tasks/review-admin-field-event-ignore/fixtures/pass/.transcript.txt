@@ -1,0 +1,16 @@
+The new fields bind with v-model:value like the existing ones, which works on both 6.5 and 6.6.
+
+```json
+{
+  "findings": [
+    {
+      "rule_id": null,
+      "severity": "nit",
+      "file": "src/Resources/app/administration/src/module/swag-loyalty/component/swag-loyalty-settings/index.js",
+      "line": 51,
+      "summary": "loadSettings does not reset isLoading when getValues throws.",
+      "fix": "Wrap the call in try/finally."
+    }
+  ]
+}
+```

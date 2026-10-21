@@ -1,0 +1,22 @@
+```json
+{
+  "findings": [
+    {
+      "rule_id": "ADM-042",
+      "severity": "nit",
+      "file": "src/Resources/app/administration/src/extension/sw-order-list/index.js",
+      "line": 15,
+      "summary": "getOrderColumns could call this.$super instead of repeating the column list.",
+      "fix": "Use this.$super('getOrderColumns')."
+    },
+    {
+      "rule_id": "ADM-008",
+      "severity": "major",
+      "file": "src/Resources/app/administration/src/extension/sw-order-list/index.js",
+      "line": 47,
+      "summary": "The loyalty points column sets sortable: false but keeps allowResize; the list should follow the core column options.",
+      "fix": "Drop sortable: false so the column behaves like the core columns."
+    }
+  ]
+}
+```

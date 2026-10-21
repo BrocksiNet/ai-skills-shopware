@@ -31,6 +31,18 @@ Load when adding modules, components, services, or ACL-backed UI.
   from `MigrationStep`. It only extends roles that already hold the key, so
   roles a merchant restricted gain nothing. Never write `acl_role` with raw
   SQL or `$connection->update()`.
+- **ADM-043** **A plugin role never grants `system_config:read` or
+  `system_config:update`.** The system config API checks only those
+  privileges, for every domain, so a role meant for one feature can read and
+  change every extension's settings, API keys and secrets included. Serve
+  the feature's own settings through a plugin Admin API route that checks
+  the feature's privilege and reads only the plugin's domain.
+- **ADM-044** **One bundle for 6.5 and 6.6+ binds `sw-*` form fields with
+  `v-model:value`.** On 6.5 (Vue 2) the fields emit `change`; from 6.6.0
+  they emit only `update:value`. `@change` never fires on 6.6+, and `:value`
+  with a bare `@update:value` never fires on 6.5, so the setting looks saved
+  and is not. `v-model:value` works on both. `mt-*` components (6.6.2+) use
+  `v-model`.
 - **ADM-017** Business logic stays out of templates. Prefer composables over new
   mixins.
 - Use BEM class names and Meteor design tokens. Avoid inline styles.

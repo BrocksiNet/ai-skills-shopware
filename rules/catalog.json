@@ -1192,6 +1192,20 @@
       "defer_on_trunk": false
     },
     {
+      "id": "PLG-032",
+      "skill": "shopware-plugin-development",
+      "file": "skills/shopware-plugin-development/references/version-compatibility.md",
+      "title": "Boot-time code does not use a suggested package outside its guard",
+      "status": "active",
+      "since": "2026-10-21",
+      "eval": "review-optional-package-guard-catch",
+      "core_guide_ids": [],
+      "audience": [
+        "plugin"
+      ],
+      "defer_on_trunk": false
+    },
+    {
       "id": "REV-001",
       "skill": "shopware-review-learnings",
       "file": "skills/shopware-review-learnings/SKILL.md",
@@ -3822,6 +3836,51 @@
       }
     },
     {
+      "id": "ADM-042",
+      "skill": "shopware-admin-js",
+      "file": "skills/shopware-admin-js/references/extension-api.md",
+      "title": "A core component override calls $super for every method it replaces",
+      "status": "active",
+      "since": "2026-10-21",
+      "eval": "review-admin-override-super-catch",
+      "core_guide_ids": [],
+      "audience": [
+        "admin",
+        "plugin"
+      ],
+      "defer_on_trunk": false
+    },
+    {
+      "id": "ADM-043",
+      "skill": "shopware-admin-js",
+      "file": "skills/shopware-admin-js/references/architecture.md",
+      "title": "A plugin role never grants system_config privileges",
+      "status": "active",
+      "since": "2026-10-21",
+      "eval": "review-acl-system-config-catch",
+      "core_guide_ids": [],
+      "audience": [
+        "admin",
+        "plugin"
+      ],
+      "defer_on_trunk": false
+    },
+    {
+      "id": "ADM-044",
+      "skill": "shopware-admin-js",
+      "file": "skills/shopware-admin-js/references/architecture.md",
+      "title": "One bundle for 6.5 and 6.6+ binds sw-* form fields with v-model:value",
+      "status": "active",
+      "since": "2026-10-21",
+      "eval": "review-admin-field-event-catch",
+      "core_guide_ids": [],
+      "audience": [
+        "admin",
+        "plugin"
+      ],
+      "defer_on_trunk": false
+    },
+    {
       "id": "ARCH-001",
       "skill": "shopware-architecture",
       "file": "skills/shopware-architecture/references/symfony-in-shopware.md",
@@ -4237,6 +4296,22 @@
       "trunk": {
         "source": "coding-guidelines/core/backward-compatibility.md#store-and-admin-api"
       }
+    },
+    {
+      "id": "SEC-008",
+      "skill": "shopware-security",
+      "file": "skills/shopware-security/references/api-acl-and-input.md",
+      "title": "Replay a stored idempotent response only to the caller that created it",
+      "status": "active",
+      "since": "2026-10-21",
+      "eval": "review-idempotency-key-scope-catch",
+      "core_guide_ids": [],
+      "audience": [
+        "core",
+        "plugin",
+        "app"
+      ],
+      "defer_on_trunk": false
     },
     {
       "id": "IMP-001",

@@ -1,0 +1,283 @@
+diff --git a/src/Controller/LoyaltySettingsController.php b/src/Controller/LoyaltySettingsController.php
+new file mode 100644
+index 0000000..4cf3123
+--- /dev/null
++++ b/src/Controller/LoyaltySettingsController.php
+@@ -0,0 +1,42 @@
++<?php declare(strict_types=1);
++
++namespace Swag\Loyalty\Controller;
++
++use Shopware\Core\Framework\Uuid\Uuid;
++use Shopware\Core\System\SystemConfig\SystemConfigService;
++use Symfony\Component\HttpFoundation\JsonResponse;
++use Symfony\Component\HttpFoundation\Request;
++use Symfony\Component\HttpFoundation\Response;
++use Symfony\Component\Routing\Attribute\Route;
++
++#[Route(defaults: ['_routeScope' => ['api']])]
++final class LoyaltySettingsController
++{
++    private const DOMAIN = 'SwagLoyalty.config.';
++
++    public function __construct(private readonly SystemConfigService $systemConfigService)
++    {
++    }
++
++    #[Route(path: '/api/_action/swag-loyalty/settings', name: 'api.action.swag_loyalty.settings.load', defaults: ['_acl' => ['swag_loyalty.viewer']], methods: ['GET'])]
++    public function load(): JsonResponse
++    {
++        return new JsonResponse([
++            'pointsPerEuro' => $this->systemConfigService->getInt(self::DOMAIN . 'pointsPerEuro'),
++            'expiryDays' => $this->systemConfigService->getInt(self::DOMAIN . 'expiryDays'),
++            'defaultTierId' => $this->systemConfigService->getString(self::DOMAIN . 'defaultTierId') ?: null,
++        ]);
++    }
++
++    #[Route(path: '/api/_action/swag-loyalty/settings', name: 'api.action.swag_loyalty.settings.save', defaults: ['_acl' => ['swag_loyalty.editor']], methods: ['POST'])]
++    public function save(Request $request): Response
++    {
++        $tierId = $request->request->getString('defaultTierId');
++
++        $this->systemConfigService->set(self::DOMAIN . 'pointsPerEuro', max(0, $request->request->getInt('pointsPerEuro')));
++        $this->systemConfigService->set(self::DOMAIN . 'expiryDays', max(0, $request->request->getInt('expiryDays')));
++        $this->systemConfigService->set(self::DOMAIN . 'defaultTierId', Uuid::isValid($tierId) ? $tierId : null);
++
++        return new Response(null, Response::HTTP_NO_CONTENT);
++    }
++}
+diff --git a/src/Resources/app/administration/src/acl/index.js b/src/Resources/app/administration/src/acl/index.js
+index c5a505a..c790c31 100644
+--- a/src/Resources/app/administration/src/acl/index.js
++++ b/src/Resources/app/administration/src/acl/index.js
+@@ -4,7 +4,10 @@ Shopware.Service('privileges').addPrivilegeMappingEntry({
+     key: 'swag_loyalty',
+     roles: {
+         viewer: {
+-            privileges: ['swag_loyalty_program:read'],
++            privileges: [
++                'swag_loyalty_program:read',
++                'swag_loyalty_tier:read',
++            ],
+             dependencies: [],
+         },
+         editor: {
+diff --git a/src/Resources/app/administration/src/main.js b/src/Resources/app/administration/src/main.js
+index c94cacf..d9d5a40 100644
+--- a/src/Resources/app/administration/src/main.js
++++ b/src/Resources/app/administration/src/main.js
+@@ -1,2 +1,9 @@
+ import './acl';
+ import './module/swag-loyalty';
++import SwagLoyaltySettingsApiService from './service/swag-loyalty-settings.api.service';
++
++Shopware.Service().register('swagLoyaltySettingsService', (container) => {
++    const initContainer = Shopware.Application.getContainer('init');
++
++    return new SwagLoyaltySettingsApiService(initContainer.httpClient, container.loginService);
++});
+diff --git a/src/Resources/app/administration/src/module/swag-loyalty/component/swag-loyalty-settings-card/index.js b/src/Resources/app/administration/src/module/swag-loyalty/component/swag-loyalty-settings-card/index.js
+new file mode 100644
+index 0000000..8b74127
+--- /dev/null
++++ b/src/Resources/app/administration/src/module/swag-loyalty/component/swag-loyalty-settings-card/index.js
+@@ -0,0 +1,49 @@
++import template from './swag-loyalty-settings-card.html.twig';
++
++const { Component, Mixin } = Shopware;
++
++Component.register('swag-loyalty-settings-card', {
++    template,
++
++    inject: ['swagLoyaltySettingsService', 'acl'],
++
++    mixins: [
++        Mixin.getByName('notification'),
++    ],
++
++    data() {
++        return {
++            settings: {},
++            isLoading: false,
++        };
++    },
++
++    created() {
++        this.createdComponent();
++    },
++
++    methods: {
++        async createdComponent() {
++            this.isLoading = true;
++
++            try {
++                this.settings = await this.swagLoyaltySettingsService.getSettings();
++            } finally {
++                this.isLoading = false;
++            }
++        },
++
++        async onSave() {
++            this.isLoading = true;
++
++            try {
++                await this.swagLoyaltySettingsService.saveSettings(this.settings);
++                this.createNotificationSuccess({
++                    message: this.$tc('swag-loyalty.settings.saveSuccess'),
++                });
++            } finally {
++                this.isLoading = false;
++            }
++        },
++    },
++});
+diff --git a/src/Resources/app/administration/src/module/swag-loyalty/component/swag-loyalty-settings-card/swag-loyalty-settings-card.html.twig b/src/Resources/app/administration/src/module/swag-loyalty/component/swag-loyalty-settings-card/swag-loyalty-settings-card.html.twig
+new file mode 100644
+index 0000000..a98734b
+--- /dev/null
++++ b/src/Resources/app/administration/src/module/swag-loyalty/component/swag-loyalty-settings-card/swag-loyalty-settings-card.html.twig
+@@ -0,0 +1,45 @@
++{% block swag_loyalty_settings_card %}
++<mt-card
++    class="swag-loyalty-settings-card"
++    :title="$tc('swag-loyalty.settings.cardTitle')"
++    :is-loading="isLoading"
++>
++    {% block swag_loyalty_settings_card_points_per_euro %}
++    <mt-number-field
++        v-model="settings['pointsPerEuro']"
++        :label="$tc('swag-loyalty.settings.labelPointsPerEuro')"
++        :min="0"
++        :disabled="!acl.can('swag_loyalty.editor')"
++    />
++    {% endblock %}
++
++    {% block swag_loyalty_settings_card_expiry_days %}
++    <mt-number-field
++        v-model="settings['expiryDays']"
++        :label="$tc('swag-loyalty.settings.labelExpiryDays')"
++        :min="0"
++        :disabled="!acl.can('swag_loyalty.editor')"
++    />
++    {% endblock %}
++
++    {% block swag_loyalty_settings_card_default_tier %}
++    <sw-entity-single-select
++        v-model:value="settings['defaultTierId']"
++        entity="swag_loyalty_tier"
++        :label="$tc('swag-loyalty.settings.labelDefaultTier')"
++        :disabled="!acl.can('swag_loyalty.editor')"
++    />
++    {% endblock %}
++
++    {% block swag_loyalty_settings_card_save %}
++    <mt-button
++        v-if="acl.can('swag_loyalty.editor')"
++        variant="primary"
++        :is-loading="isLoading"
++        @click="onSave"
++    >
++        {{ $tc('swag-loyalty.settings.buttonSave') }}
++    </mt-button>
++    {% endblock %}
++</mt-card>
++{% endblock %}
+diff --git a/src/Resources/app/administration/src/module/swag-loyalty/index.js b/src/Resources/app/administration/src/module/swag-loyalty/index.js
+index a6dc72e..7473242 100644
+--- a/src/Resources/app/administration/src/module/swag-loyalty/index.js
++++ b/src/Resources/app/administration/src/module/swag-loyalty/index.js
+@@ -1,4 +1,5 @@
+ import './page/swag-loyalty-list';
++import './component/swag-loyalty-settings-card';
+ 
+ Shopware.Module.register('swag-loyalty', {
+     type: 'plugin',
+diff --git a/src/Resources/app/administration/src/module/swag-loyalty/page/swag-loyalty-list/swag-loyalty-list.html.twig b/src/Resources/app/administration/src/module/swag-loyalty/page/swag-loyalty-list/swag-loyalty-list.html.twig
+index c0b394c..d50b8b6 100644
+--- a/src/Resources/app/administration/src/module/swag-loyalty/page/swag-loyalty-list/swag-loyalty-list.html.twig
++++ b/src/Resources/app/administration/src/module/swag-loyalty/page/swag-loyalty-list/swag-loyalty-list.html.twig
+@@ -6,6 +6,10 @@
+             {% block swag_loyalty_list_program %}
+             <swag-loyalty-program-card />
+             {% endblock %}
++
++            {% block swag_loyalty_list_settings %}
++            <swag-loyalty-settings-card />
++            {% endblock %}
+         </sw-card-view>
+     </template>
+     {% endblock %}
+diff --git a/src/Resources/app/administration/src/module/swag-loyalty/snippet/en-GB.json b/src/Resources/app/administration/src/module/swag-loyalty/snippet/en-GB.json
+index e0000f2..81abb8b 100644
+--- a/src/Resources/app/administration/src/module/swag-loyalty/snippet/en-GB.json
++++ b/src/Resources/app/administration/src/module/swag-loyalty/snippet/en-GB.json
+@@ -3,6 +3,14 @@
+         "general": {
+             "mainMenuItemGeneral": "Loyalty",
+             "descriptionTextModule": "Manage loyalty programs and points"
++        },
++        "settings": {
++            "cardTitle": "Loyalty settings",
++            "labelPointsPerEuro": "Points per euro",
++            "labelExpiryDays": "Points expire after (days)",
++            "labelDefaultTier": "Default tier",
++            "buttonSave": "Save",
++            "saveSuccess": "Loyalty settings saved."
+         }
+     }
+ }
+diff --git a/src/Resources/app/administration/src/service/swag-loyalty-settings.api.service.js b/src/Resources/app/administration/src/service/swag-loyalty-settings.api.service.js
+new file mode 100644
+index 0000000..8aef734
+--- /dev/null
++++ b/src/Resources/app/administration/src/service/swag-loyalty-settings.api.service.js
+@@ -0,0 +1,20 @@
++const { ApiService } = Shopware.Classes;
++
++export default class SwagLoyaltySettingsApiService extends ApiService {
++    constructor(httpClient, loginService, apiEndpoint = 'swag-loyalty') {
++        super(httpClient, loginService, apiEndpoint);
++        this.name = 'swagLoyaltySettingsService';
++    }
++
++    getSettings() {
++        return this.httpClient
++            .get(`_action/${this.getApiBasePath()}/settings`, { headers: this.getBasicHeaders() })
++            .then((response) => ApiService.handleResponse(response));
++    }
++
++    saveSettings(settings) {
++        return this.httpClient
++            .post(`_action/${this.getApiBasePath()}/settings`, settings, { headers: this.getBasicHeaders() })
++            .then((response) => ApiService.handleResponse(response));
++    }
++}
+diff --git a/src/Resources/config/routes.xml b/src/Resources/config/routes.xml
+new file mode 100644
+index 0000000..46e702f
+--- /dev/null
++++ b/src/Resources/config/routes.xml
+@@ -0,0 +1,8 @@
++<?xml version="1.0" encoding="UTF-8" ?>
++<routes xmlns="http://symfony.com/schema/routing"
++        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
++        xsi:schemaLocation="http://symfony.com/schema/routing
++        https://symfony.com/schema/routing/routing-1.0.xsd">
++
++    <import resource="../../Controller/*Controller.php" type="attribute" />
++</routes>
+diff --git a/src/Resources/config/services.xml b/src/Resources/config/services.xml
+index 587382c..7da449b 100644
+--- a/src/Resources/config/services.xml
++++ b/src/Resources/config/services.xml
+@@ -6,5 +6,10 @@
+         <service id="Swag\Loyalty\Core\Content\Program\LoyaltyProgramDefinition">
+             <tag name="shopware.entity.definition" entity="swag_loyalty_program"/>
+         </service>
++
++        <service id="Swag\Loyalty\Controller\LoyaltySettingsController" public="true">
++            <argument type="service" id="Shopware\Core\System\SystemConfig\SystemConfigService"/>
++            <tag name="controller.service_arguments"/>
++        </service>
+     </services>
+ </container>

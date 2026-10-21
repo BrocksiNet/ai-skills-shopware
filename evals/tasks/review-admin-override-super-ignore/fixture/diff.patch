@@ -1,0 +1,57 @@
+diff --git a/src/Resources/app/administration/src/extension/sw-order-list/index.js b/src/Resources/app/administration/src/extension/sw-order-list/index.js
+new file mode 100644
+index 0000000..62cc526
+--- /dev/null
++++ b/src/Resources/app/administration/src/extension/sw-order-list/index.js
+@@ -0,0 +1,29 @@
++const { Component } = Shopware;
++
++Component.override('sw-order-list', {
++    computed: {
++        orderCriteria() {
++            const criteria = this.$super('orderCriteria');
++            criteria.addAssociation('swagLoyaltyPoints');
++
++            return criteria;
++        },
++    },
++
++    methods: {
++        getOrderColumns() {
++            const columns = this.$super('getOrderColumns');
++            const amountIndex = columns.findIndex((column) => column.property === 'amountTotal');
++
++            columns.splice(amountIndex + 1, 0, {
++                property: 'extensions.swagLoyaltyPoints.points',
++                label: 'swag-loyalty.orderList.columnPoints',
++                align: 'right',
++                allowResize: true,
++                sortable: false,
++            });
++
++            return columns;
++        },
++    },
++});
+diff --git a/src/Resources/app/administration/src/main.js b/src/Resources/app/administration/src/main.js
+index c94cacf..ed849be 100644
+--- a/src/Resources/app/administration/src/main.js
++++ b/src/Resources/app/administration/src/main.js
+@@ -1,2 +1,3 @@
+ import './acl';
+ import './module/swag-loyalty';
++import './extension/sw-order-list';
+diff --git a/src/Resources/app/administration/src/module/swag-loyalty/snippet/en-GB.json b/src/Resources/app/administration/src/module/swag-loyalty/snippet/en-GB.json
+index acf4713..dcd6b62 100644
+--- a/src/Resources/app/administration/src/module/swag-loyalty/snippet/en-GB.json
++++ b/src/Resources/app/administration/src/module/swag-loyalty/snippet/en-GB.json
+@@ -7,6 +7,9 @@
+         "list": {
+             "columnName": "Name",
+             "columnMinPoints": "Minimum points"
++        },
++        "orderList": {
++            "columnPoints": "Loyalty points"
+         }
+     }
+ }

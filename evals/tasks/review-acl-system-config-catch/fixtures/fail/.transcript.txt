@@ -1,0 +1,22 @@
+```json
+{
+  "findings": [
+    {
+      "rule_id": "ADM-043",
+      "severity": "nit",
+      "file": "src/Resources/app/administration/src/acl/index.js",
+      "line": 10,
+      "summary": "The privileges list could be sorted alphabetically.",
+      "fix": "Sort the privileges."
+    },
+    {
+      "rule_id": "ADM-012",
+      "severity": "major",
+      "file": "src/Resources/app/administration/src/module/swag-loyalty/component/swag-loyalty-settings-card/index.js",
+      "line": 45,
+      "summary": "onSave shows no error notification when saving fails.",
+      "fix": "Catch the error and call createNotificationError."
+    }
+  ]
+}
+```
