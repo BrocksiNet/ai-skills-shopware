@@ -36,6 +36,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   unchanged. A skill now counts as activated only when the agent output
   names it as a whole entry, not inside a longer name. The activation run
   prints its summary line even when an agent error stops it.
+- Skill validation in TypeScript (plan WP10 step 5). `scripts/validate-skills.sh`
+  now calls `tools/bin/validate-skills.ts`, which runs the rule ID and route
+  checks in the same process instead of starting `node` twice. The output
+  and exit code on the repository are unchanged. A description is now
+  measured without the leading space the bash version counted on folded
+  (`>-`) descriptions, and any top-level frontmatter key ends a folded
+  description, including one with no value on its line.
 - Strict lint and format for `tools/`: oxlint with type-aware rules (built on
   typescript-go, so it checks against TypeScript 7) and oxfmt, both in the
   `tools` CI job as `npm run lint` and `npm run format:check`. No `any`, no

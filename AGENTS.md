@@ -50,10 +50,11 @@ tools/                        # repo tooling in TypeScript (Node 24, no build st
   bin/skills-profile.ts       # skills on/off per eval workdir
   bin/activation.ts           # Layer 1 activation evals
   bin/eval-local.ts           # local model evals with your agent login, then the gate
+  bin/validate-skills.ts      # skill structure, budgets, conflicts, rule IDs, routes
   test/*.test.ts              # node --test
 
 scripts/
-  validate-skills.sh          # structure, budgets, REGISTRY conflicts, rule IDs
+  validate-skills.sh          # structure, budgets, REGISTRY conflicts, rule IDs (wrapper for tools/bin/validate-skills.ts)
   eval-{plan,gate,diff}.sh    # wrappers for tools/bin/eval-*.ts (Node 24)
   run-activation-evals.sh     # Layer 1 activation checks (wrapper for tools/bin/activation.ts)
   eval-local.sh               # local model evals (wrapper for tools/bin/eval-local.ts)
