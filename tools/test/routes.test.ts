@@ -68,7 +68,9 @@ describe('selectReferences', () => {
     assert.deepEqual(fixedReferences(ROUTES, 'on_demand'), ['references/stuck.md']);
   });
   test('lists a reference once when several routes select it', () => {
-    const twice: RouteFile = { routes: [ROUTES.routes[0]!, { ...ROUTES.routes[0]!, paths_any: ['**/*.php'] }] };
+    const [first] = ROUTES.routes;
+    assert.ok(first);
+    const twice: RouteFile = { routes: [first, { ...first, paths_any: ['**/*.php'] }] };
     assert.deepEqual(selectReferences(twice, parseDiff(DIFF)), ['references/migrations.md']);
   });
 });
@@ -77,37 +79,45 @@ describe('renderTable', () => {
   test('shows globs without **/, unescaped anchors, escaped pipes', () => {
     const table = renderTable(ROUTES);
     assert.ok(table.startsWith(START) && table.endsWith(END));
-    assert.match(table, /\| \[`migrations\.md`\]\(references\/migrations\.md\) \| Migrations\. \| `Migration\/Migration\*\.php` \|/);
-    assert.match(table, /DAL \\\| data\. \| `new Criteria\(` \|/);
-    assert.match(table, /\| Always\. \| any change \|/);
-    assert.match(table, /\| Keeps failing\. \| on demand \|/);
+    assert.match(
+      table,
+      /\| \[`migrations\.md`\]\(references\/migrations\.md\) \| Migrations\. \| `Migration\/Migration\*\.php` \|/u,
+    );
+    assert.match(table, /DAL \\\| data\. \| `new Criteria\(` \|/u);
+    assert.match(table, /\| Always\. \| any change \|/u);
+    assert.match(table, /\| Keeps failing\. \| on demand \|/u);
   });
   test('shows at most two globs and one anchor, then an ellipsis', () => {
     const many: RouteFile = {
-      routes: [{ reference: 'references/a.md', when: 'A.', paths_any: ['**/a', '**/b', '**/c'], anchors_any: ['x', 'y'] }],
+      routes: [
+        { reference: 'references/a.md', when: 'A.', paths_any: ['**/a', '**/b', '**/c'], anchors_any: ['x', 'y'] },
+      ],
     };
-    assert.match(renderTable(many), /\| A\. \| `a`, `b`, `x`, … \|/);
-    const few: RouteFile = { routes: [{ reference: 'references/a.md', when: 'A.', paths_any: ['**/a'], anchors_any: ['x'] }] };
-    assert.match(renderTable(few), /\| A\. \| `a`, `x` \|/);
+    assert.match(renderTable(many), /\| A\. \| `a`, `b`, `x`, … \|/u);
+    const few: RouteFile = {
+      routes: [{ reference: 'references/a.md', when: 'A.', paths_any: ['**/a'], anchors_any: ['x'] }],
+    };
+    assert.match(renderTable(few), /\| A\. \| `a`, `x` \|/u);
   });
   test('applyTable replaces the block and is idempotent; needs markers', () => {
     const once = applyTable(`intro\n<!-- routes:start -->\nold\n${END}\noutro`, ROUTES);
     assert.ok(once.startsWith('intro\n' + START) && once.endsWith(END + '\noutro'));
     assert.equal(applyTable(once, ROUTES), once);
-    assert.throws(() => applyTable('no markers', ROUTES), /markers/);
+    assert.throws(() => applyTable('no markers', ROUTES), /markers/u);
   });
 });
 
+/** A skill folder with `routes` and its rendered table, or `skillMd`. */
+function skill(routes: RouteFile, skillMd?: string, refs = ['a.md']): string {
+  const dir = mkdtempSync(join(tmpdir(), 'routes-'));
+  mkdirSync(join(dir, 'references'));
+  for (const r of refs) writeFileSync(join(dir, 'references', r), '# ref\n');
+  writeFileSync(join(dir, 'routes.json'), JSON.stringify(routes));
+  writeFileSync(join(dir, 'SKILL.md'), skillMd ?? `x\n${renderTable(routes)}\n`);
+  return dir;
+}
+
 describe('routeErrors', () => {
-  function skill(routes: unknown, skillMd?: string, refs = ['a.md']): string {
-    const dir = mkdtempSync(join(tmpdir(), 'routes-'));
-    mkdirSync(join(dir, 'references'));
-    for (const r of refs) writeFileSync(join(dir, 'references', r), '# ref\n');
-    writeFileSync(join(dir, 'routes.json'), JSON.stringify(routes));
-    const table = skillMd ?? `x\n${renderTable(routes as RouteFile)}\n`;
-    writeFileSync(join(dir, 'SKILL.md'), table);
-    return dir;
-  }
   const ok: RouteFile = { routes: [{ reference: 'references/a.md', when: 'A.', paths_any: ['**/*.php'] }] };
 
   test('a rendered, complete skill has no errors', () => {
@@ -115,19 +125,30 @@ describe('routeErrors', () => {
   });
   test('reports a missing reference, bad regex and a route with no trigger', () => {
     const errors = routeErrors(
-      skill({ routes: [{ reference: 'references/nope.md', when: 'N.', anchors_any: ['('] }, { reference: 'references/a.md', when: 'A.' }] }),
+      skill({
+        routes: [
+          { reference: 'references/nope.md', when: 'N.', anchors_any: ['('] },
+          { reference: 'references/a.md', when: 'A.' },
+        ],
+      }),
       's',
     );
     assert.equal(errors.length, 3);
-    assert.match(errors.join('\n'), /nope\.md not found/);
-    assert.match(errors.join('\n'), /bad regex \(/);
-    assert.match(errors.join('\n'), /needs paths_any, anchors_any, always or on_demand/);
+    assert.match(errors.join('\n'), /nope\.md not found/u);
+    assert.match(errors.join('\n'), /bad regex \(/u);
+    assert.match(errors.join('\n'), /needs paths_any, anchors_any, always or on_demand/u);
   });
   test('accepts on_demand alone; rejects it next to triggers or always', () => {
-    assert.deepEqual(routeErrors(skill({ routes: [{ reference: 'references/a.md', when: 'A.', on_demand: true }] }), 's'), []);
+    assert.deepEqual(
+      routeErrors(skill({ routes: [{ reference: 'references/a.md', when: 'A.', on_demand: true }] }), 's'),
+      [],
+    );
     for (const extra of [{ paths_any: ['**/*.php'] }, { always: true }]) {
-      const errors = routeErrors(skill({ routes: [{ reference: 'references/a.md', when: 'A.', on_demand: true, ...extra }] }), 's');
-      assert.match(errors.join(), /not more than one/);
+      const errors = routeErrors(
+        skill({ routes: [{ reference: 'references/a.md', when: 'A.', on_demand: true, ...extra }] }),
+        's',
+      );
+      assert.match(errors.join(), /not more than one/u);
     }
   });
   test('reports an unrouted reference but not enforced-by-ci.md', () => {
@@ -135,12 +156,12 @@ describe('routeErrors', () => {
     assert.deepEqual(errors, ['s/routes.json: references/b.md has no route']);
   });
   test('reports a stale table and missing markers', () => {
-    assert.match(routeErrors(skill(ok, `<!-- routes:start -->\n${END}\n`), 's').join(), /out of date/);
-    assert.match(routeErrors(skill(ok, 'none\n'), 's').join(), /markers/);
+    assert.match(routeErrors(skill(ok, `<!-- routes:start -->\n${END}\n`), 's').join(), /out of date/u);
+    assert.match(routeErrors(skill(ok, 'none\n'), 's').join(), /markers/u);
   });
   test('reports invalid JSON', () => {
     const dir = skill(ok);
     writeFileSync(join(dir, 'routes.json'), '{');
-    assert.match(routeErrors(dir, 's').join(), /s\/routes\.json:/);
+    assert.match(routeErrors(dir, 's').join(), /s\/routes\.json:/u);
   });
 });

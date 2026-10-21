@@ -5,6 +5,7 @@ import { existsSync, readdirSync, readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import type { Catalog } from './catalog.ts';
 import { REFERENCE, enforcedItems, render } from './enforced.ts';
+import { compareText } from './text.ts';
 
 export interface FileChange {
   /** Repo-relative path. */
@@ -19,7 +20,7 @@ const read = (path: string): string | null => (existsSync(path) ? readFileSync(p
  *  unbalanced markers or a hand-written file at the reference path. */
 export function enforcedChanges(root: string, catalog: Catalog): FileChange[] {
   const changes: FileChange[] = [];
-  for (const skill of readdirSync(join(root, 'skills')).sort()) {
+  for (const skill of readdirSync(join(root, 'skills')).toSorted(compareText)) {
     const skillFile = `skills/${skill}/SKILL.md`;
     const skillText = read(join(root, skillFile));
     if (skillText === null) continue;

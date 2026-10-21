@@ -53,14 +53,14 @@ describe('renderBullet', () => {
   });
 
   test('omits "trunk only" for checks that run everywhere', () => {
-    assert.match(renderBullet(item('REV-017', { kind: 'ecs', trunk_only: false })), /\(ECS\) /);
+    assert.match(renderBullet(item('REV-017', { kind: 'ecs', trunk_only: false })), /\(ECS\) /u);
   });
 });
 
 describe('renderBlock', () => {
   test('explains trunk-only checks only when there is one', () => {
-    assert.match(renderBlock([item('A-001')]), /trunk only\* are not active in plugin/);
-    assert.doesNotMatch(renderBlock([item('A-001', { trunk_only: false })]), /trunk only\*/);
+    assert.match(renderBlock([item('A-001')]), /trunk only\* are not active in plugin/u);
+    assert.doesNotMatch(renderBlock([item('A-001', { trunk_only: false })]), /trunk only\*/u);
   });
 });
 
@@ -101,13 +101,14 @@ describe('applySection', () => {
   });
 
   test('rejects unbalanced markers', () => {
-    assert.throws(() => applySection(`${SKILL}${START}\n`, []), /unbalanced/);
+    assert.throws(() => applySection(`${SKILL}${START}\n`, []), /unbalanced/u);
   });
 });
 
-describe('render', () => {
-  const many = (n: number): EnforcedItem[] => Array.from({ length: n }, (_, i) => item(`TEST-${String(i + 1).padStart(3, '0')}`));
+const many = (n: number): EnforcedItem[] =>
+  Array.from({ length: n }, (_, i) => item(`TEST-${String(i + 1).padStart(3, '0')}`));
 
+describe('render', () => {
   test(`keeps up to ${MAX_BULLETS} checks in SKILL.md`, () => {
     const out = render(SKILL, many(MAX_BULLETS));
     assert.equal(out.reference, null);
@@ -116,8 +117,8 @@ describe('render', () => {
 
   test('moves a longer list to the reference and links it', () => {
     const out = render(SKILL, many(MAX_BULLETS + 1));
-    assert.ok(out.reference?.includes('`TEST-011`'));
+    assert.match(out.reference ?? '', /`TEST-011`/u);
     assert.ok(out.skill.includes(`](${REFERENCE})`));
-    assert.doesNotMatch(out.skill, /\n- `TEST-/);
+    assert.doesNotMatch(out.skill, /\n- `TEST-/u);
   });
 });

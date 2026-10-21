@@ -4,7 +4,8 @@
 // Lists tasks whose verdict or skill-on pass rate changed, plus added and
 // removed tasks. When both sets have token counts for a task, a second table
 // compares the average skill-on tokens per run.
-import { type AbResult, type Tokens, compareText, hasTokens, latestPerTask } from './eval-results.ts';
+import { type AbResult, type Tokens, hasTokens, latestPerTask } from './eval-results.ts';
+import { compareText } from './text.ts';
 
 const byTask = (results: AbResult[]): Map<string, AbResult> => new Map(latestPerTask(results).map((r) => [r.task, r]));
 const total = (t: Tokens): number => t.input + t.output;
@@ -20,7 +21,7 @@ export function changePct(before: number, after: number): number {
 export function diff(oldResults: AbResult[], newResults: AbResult[]): string {
   const old = byTask(oldResults);
   const now = byTask(newResults);
-  const tasks = [...new Set([...old.keys(), ...now.keys()])].sort(compareText);
+  const tasks = [...new Set([...old.keys(), ...now.keys()])].toSorted(compareText);
 
   const rows: string[] = [];
   const tokenRows: string[] = [];
@@ -31,7 +32,8 @@ export function diff(oldResults: AbResult[], newResults: AbResult[]): string {
     else if (n === undefined && o !== undefined) rows.push(`| \`${t}\` | ${showRun(o)} | (removed) |`);
     else if (o !== undefined && n !== undefined) {
       // Same pass rate across different repeat counts is not a change.
-      if (o.verdict !== n.verdict || o.on * n.repeats !== n.on * o.repeats) rows.push(`| \`${t}\` | ${showRun(o)} | ${showRun(n)} |`);
+      if (o.verdict !== n.verdict || o.on * n.repeats !== n.on * o.repeats)
+        rows.push(`| \`${t}\` | ${showRun(o)} | ${showRun(n)} |`);
       if (hasTokens(o.tokens_on) && hasTokens(n.tokens_on) && total(o.tokens_on) > 0) {
         const change = changePct(total(o.tokens_on), total(n.tokens_on));
         tokenRows.push(`| \`${t}\` | ${showTokens(o.tokens_on)} | ${showTokens(n.tokens_on)} | ${change} % |`);
@@ -43,8 +45,16 @@ export function diff(oldResults: AbResult[], newResults: AbResult[]): string {
   if (rows.length === 0) out.push('No task changed its verdict or skill-on pass rate.');
   else out.push('| Task | Before | After |', '| ---- | ------ | ----- |', ...rows);
   if (tokenRows.length > 0) {
-    out.push('', '### Tokens per skill-on run', '', 'Average input / output tokens. Input includes cache reads and writes.', '');
-    out.push('| Task | Before | After | Change (total) |', '| ---- | ------ | ----- | -------------- |', ...tokenRows);
+    out.push(
+      '',
+      '### Tokens per skill-on run',
+      '',
+      'Average input / output tokens. Input includes cache reads and writes.',
+      '',
+      '| Task | Before | After | Change (total) |',
+      '| ---- | ------ | ----- | -------------- |',
+      ...tokenRows,
+    );
   }
   return out.join('\n');
 }

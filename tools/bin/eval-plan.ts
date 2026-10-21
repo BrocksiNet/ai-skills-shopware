@@ -15,23 +15,35 @@
 // Exit 2 on a bad setting or an unknown task.
 import { existsSync, readFileSync } from 'node:fs';
 import { resolve } from 'node:path';
-import { envInt } from '../src/eval-results.ts';
+import { envInt, envOr } from '../src/env.ts';
+import { errorMessage } from '../src/errors.ts';
 import { type PlanOptions, plan } from '../src/eval-plan.ts';
 
 const root = resolve(import.meta.dirname, '../..');
-const env = process.env;
-try {
-  const opts: PlanOptions = {
-    maxTasks: envInt(env, 'EVAL_MAX_TASKS', 0),
-    shards: envInt(env, 'EVAL_SHARDS', 4, 1),
-  };
-  if (env.EVAL_TASKS) opts.tasks = env.EVAL_TASKS.split(',');
-  else if (env.EVAL_CHANGED_FILES) {
-    const file = env.EVAL_CHANGED_FILES;
-    opts.changedFiles = existsSync(file) ? readFileSync(file, 'utf8').split('\n').filter((l) => l !== '') : [];
+
+function main(env: NodeJS.ProcessEnv): number {
+  try {
+    const opts: PlanOptions = {
+      maxTasks: envInt(env, 'EVAL_MAX_TASKS', 0),
+      shards: envInt(env, 'EVAL_SHARDS', 4, 1),
+    };
+    const tasks = envOr(env, 'EVAL_TASKS', '');
+    const changed = envOr(env, 'EVAL_CHANGED_FILES', '');
+    if (tasks !== '') {
+      opts.tasks = tasks.split(',');
+    } else if (changed !== '') {
+      opts.changedFiles = existsSync(changed)
+        ? readFileSync(changed, 'utf8')
+            .split('\n')
+            .filter((l) => l !== '')
+        : [];
+    }
+    console.log(JSON.stringify(plan(resolve(root, 'evals/tasks'), opts)));
+    return 0;
+  } catch (error) {
+    console.error(`eval-plan: ${errorMessage(error)}`);
+    return 2;
   }
-  console.log(JSON.stringify(plan(resolve(root, 'evals/tasks'), opts)));
-} catch (e) {
-  console.error(`eval-plan: ${(e as Error).message}`);
-  process.exit(2);
 }
+
+process.exitCode = main(process.env);

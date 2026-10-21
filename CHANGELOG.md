@@ -30,6 +30,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   OpenCode and a recorded Claude Code session. Output, logs and exit codes
   are unchanged; the adapters no longer need `python3`, and the OpenCode
   timeout no longer needs a watchdog subshell.
+- Strict lint and format for `tools/`: oxlint with type-aware rules (built on
+  typescript-go, so it checks against TypeScript 7) and oxfmt, both in the
+  `tools` CI job as `npm run lint` and `npm run format:check`. No `any`, no
+  unchecked casts or non-null assertions, no `||` on nullable values, no
+  floating promises, and no `process.exit`. All findings are fixed, with no
+  suppressions. JSON the tools read (`rules/catalog.json`, `routes.json`, A/B
+  results) is now checked field by field. A malformed record is reported
+  with its line and field instead of passing as a typed value.
 
 - Path-based reference routing. Each skill with references has a
   `routes.json` that maps changed-file globs and diff-line regexes to the

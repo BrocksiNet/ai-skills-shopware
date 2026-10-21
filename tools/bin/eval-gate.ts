@@ -10,27 +10,30 @@
 // Env: EVAL_GATE_MIN_PASS_PCT (default 70), EVAL_GATE_MAX_ERROR_PCT
 // (default 25), EVAL_GATE_MIN_LOAD_PCT (default 50).
 import { readFileSync } from 'node:fs';
-import { GATE_DEFAULTS, type GateOptions, gate } from '../src/eval-gate.ts';
-import { type AbResult, envInt, parseResults } from '../src/eval-results.ts';
+import { envInt } from '../src/env.ts';
+import { errorMessage } from '../src/errors.ts';
+import { GATE_DEFAULTS, gate } from '../src/eval-gate.ts';
+import { parseResults } from '../src/eval-results.ts';
 
-const files = process.argv.slice(2);
-if (files.length === 0) {
-  console.error('usage: eval-gate.ts <ab.jsonl> [...]');
-  process.exit(2);
+function main(): number {
+  const files = process.argv.slice(2);
+  if (files.length === 0) {
+    console.error('usage: eval-gate.ts <ab.jsonl> [...]');
+    return 2;
+  }
+  try {
+    const results = files.flatMap((f) => parseResults(readFileSync(f, 'utf8')));
+    const report = gate(results, {
+      minPassPct: envInt(process.env, 'EVAL_GATE_MIN_PASS_PCT', GATE_DEFAULTS.minPassPct),
+      maxErrorPct: envInt(process.env, 'EVAL_GATE_MAX_ERROR_PCT', GATE_DEFAULTS.maxErrorPct),
+      minLoadPct: envInt(process.env, 'EVAL_GATE_MIN_LOAD_PCT', GATE_DEFAULTS.minLoadPct),
+    });
+    console.log(report.markdown);
+    return report.failed ? 1 : 0;
+  } catch (error) {
+    console.error(`eval-gate: ${errorMessage(error)}`);
+    return 2;
+  }
 }
-let results: AbResult[];
-let opts: GateOptions;
-try {
-  results = files.flatMap((f) => parseResults(readFileSync(f, 'utf8')));
-  opts = {
-    minPassPct: envInt(process.env, 'EVAL_GATE_MIN_PASS_PCT', GATE_DEFAULTS.minPassPct),
-    maxErrorPct: envInt(process.env, 'EVAL_GATE_MAX_ERROR_PCT', GATE_DEFAULTS.maxErrorPct),
-    minLoadPct: envInt(process.env, 'EVAL_GATE_MIN_LOAD_PCT', GATE_DEFAULTS.minLoadPct),
-  };
-} catch (e) {
-  console.error(`eval-gate: ${(e as Error).message}`);
-  process.exit(2);
-}
-const report = gate(results, opts);
-console.log(report.markdown);
-process.exit(report.failed ? 1 : 0);
+
+process.exitCode = main();

@@ -13,6 +13,8 @@
 // `when`. Both are reported apart from the diff-selected references.
 import { existsSync, readFileSync, readdirSync } from 'node:fs';
 import { join, matchesGlob } from 'node:path';
+import { errorMessage } from './errors.ts';
+import { compareText } from './text.ts';
 
 export interface Route {
   /** Skill-relative path, e.g. `references/migrations.md`. */
@@ -33,7 +35,8 @@ export interface RouteFile {
 }
 
 export const ROUTES_FILE = 'routes.json';
-export const START = '<!-- routes:start: generated from routes.json by `node tools/bin/render-routes.ts`; do not edit -->';
+export const START =
+  '<!-- routes:start: generated from routes.json by `node tools/bin/render-routes.ts`; do not edit -->';
 export const END = '<!-- routes:end -->';
 
 /** One file of a unified diff. */
@@ -53,11 +56,11 @@ export function parseDiff(diff: string): ChangedFile[] {
       continue;
     }
     if (line.startsWith('--- ')) {
-      oldPath = line.slice(4).replace(/^a\//, '').trim();
+      oldPath = line.slice(4).replace(/^a\//u, '').trim();
       continue;
     }
     if (line.startsWith('+++ ')) {
-      const newPath = line.slice(4).replace(/^b\//, '').trim();
+      const newPath = line.slice(4).replace(/^b\//u, '').trim();
       current = { path: newPath === '/dev/null' ? oldPath : newPath, lines: [] };
       files.push(current);
       continue;
@@ -67,12 +70,70 @@ export function parseDiff(diff: string): ChangedFile[] {
   return files;
 }
 
+// ---- validation ----------------------------------------------------------------
+
+type Json = Record<string, unknown>;
+
+const isRecord = (v: unknown): v is Json => typeof v === 'object' && v !== null && !Array.isArray(v);
+const isText = (v: unknown): v is string => typeof v === 'string' && v !== '';
+const isTextList = (v: unknown): v is string[] => Array.isArray(v) && v.every((s) => isText(s));
+
+/** An anchor as a regex, or null when it does not compile. Anchors use the
+ *  `u` flag, so `\d` and friends behave the same for every line. */
+function anchorRegex(pattern: string): RegExp | null {
+  try {
+    return new RegExp(pattern, 'u');
+  } catch {
+    return null;
+  }
+}
+
+/** Errors of one route; `here` names it in the messages. With `skillDir`,
+ *  a reference that does not exist there is an error too. */
+function routeShapeErrors(r: unknown, here: string, skillDir: string | null): string[] {
+  if (!isRecord(r)) return [`${here} must be an object`];
+  const errors: string[] = [];
+  if (!isText(r.reference)) errors.push(`${here}.reference must be a string`);
+  else if (skillDir !== null && !existsSync(join(skillDir, r.reference))) {
+    errors.push(`${here}: ${r.reference} not found`);
+  }
+  if (!isText(r.when)) errors.push(`${here}.when must be a non-empty string`);
+  if (r.paths_any !== undefined && !isTextList(r.paths_any)) errors.push(`${here}.paths_any must be a list of globs`);
+  if (r.anchors_any !== undefined && !isTextList(r.anchors_any)) {
+    errors.push(`${here}.anchors_any must be a list of regexes`);
+  }
+  const anchors = isTextList(r.anchors_any) ? r.anchors_any : [];
+  for (const a of anchors) if (anchorRegex(a) === null) errors.push(`${here}: bad regex ${a}`);
+  if (r.always !== undefined && typeof r.always !== 'boolean') errors.push(`${here}.always must be true or false`);
+  if (r.on_demand !== undefined && typeof r.on_demand !== 'boolean') {
+    errors.push(`${here}.on_demand must be true or false`);
+  }
+  const paths = isTextList(r.paths_any) ? r.paths_any : [];
+  const hasTriggers = paths.length + anchors.length > 0;
+  const kinds = [hasTriggers, r.always === true, r.on_demand === true].filter(Boolean).length;
+  if (kinds === 0) errors.push(`${here}: needs paths_any, anchors_any, always or on_demand`);
+  if (kinds > 1) errors.push(`${here}: use triggers, always or on_demand, not more than one`);
+  return errors;
+}
+
+/** Errors of a parsed routes.json; `at` names the file. */
+function shapeErrors(value: unknown, at: string, skillDir: string | null = null): string[] {
+  if (!isRecord(value) || !Array.isArray(value.routes) || value.routes.length === 0) {
+    return [`${at}: routes must be a non-empty list`];
+  }
+  return value.routes.flatMap((r, i) => routeShapeErrors(r, `${at}: routes[${i}]`, skillDir));
+}
+
+const isRouteFile = (value: unknown): value is RouteFile => shapeErrors(value, '').length === 0;
+
+// ---- selection -----------------------------------------------------------------
+
 /** True when the diff triggers the route. `always` and `on_demand` routes have
  *  no diff signal and never match; see `fixedReferences`. */
 export function routeMatches(route: Route, files: ChangedFile[]): boolean {
-  if (route.always || route.on_demand) return false;
+  if (route.always === true || route.on_demand === true) return false;
   const paths = route.paths_any ?? [];
-  const anchors = (route.anchors_any ?? []).map((a) => new RegExp(a));
+  const anchors = (route.anchors_any ?? []).map((a) => anchorRegex(a)).filter((re) => re !== null);
   return files.some(
     (f) => paths.some((g) => matchesGlob(f.path, g)) || anchors.some((re) => f.lines.some((l) => re.test(l))),
   );
@@ -90,9 +151,14 @@ export function fixedReferences(routes: RouteFile, kind: 'always' | 'on_demand')
   return unique(routes.routes.filter((r) => r[kind] === true).map((r) => r.reference));
 }
 
+/** A skill's routes.json, or null when it has none. Throws when the file is
+ *  not JSON or not a valid route file. */
 export function loadRoutes(skillDir: string): RouteFile | null {
   const path = join(skillDir, ROUTES_FILE);
-  return existsSync(path) ? (JSON.parse(readFileSync(path, 'utf8')) as RouteFile) : null;
+  if (!existsSync(path)) return null;
+  const value: unknown = JSON.parse(readFileSync(path, 'utf8'));
+  if (!isRouteFile(value)) throw new Error(shapeErrors(value, ROUTES_FILE).join('; '));
+  return value;
 }
 
 export interface RouteReport {
@@ -109,7 +175,7 @@ export interface RouteReport {
 export function routeDiff(root: string, diff: string): RouteReport {
   const files = parseDiff(diff);
   const report: RouteReport = { selected: {}, always: {}, on_demand: {} };
-  for (const skill of readdirSync(join(root, 'skills')).sort()) {
+  for (const skill of readdirSync(join(root, 'skills')).toSorted(compareText)) {
     const routes = loadRoutes(join(root, 'skills', skill));
     if (routes === null) continue;
     const kinds: [keyof RouteReport, string[]][] = [
@@ -124,10 +190,10 @@ export function routeDiff(root: string, diff: string): RouteReport {
 
 // ---- rendering ---------------------------------------------------------------
 
-const cell = (text: string): string => text.replace(/\|/g, '\\|');
+const cell = (text: string): string => text.replaceAll('|', '\\|');
 /** `**\/Migration/Migration*.php` -> `Migration/Migration*.php`; `updateDestructive\(` -> `updateDestructive(`. */
-const showGlob = (g: string): string => g.replace(/^(\*\*\/)+/, '');
-const showAnchor = (a: string): string => a.replace(/\\([^A-Za-z0-9])/g, '$1');
+const showGlob = (g: string): string => g.replace(/^(\*\*\/)+/u, '');
+const showAnchor = (a: string): string => a.replaceAll(/\\([^A-Za-z0-9])/gu, '$1');
 
 /** The table shows a hint of what a row covers, not every trigger: the full
  *  lists stay in routes.json for the router and CI. */
@@ -135,10 +201,10 @@ export const SHOWN_GLOBS = 2;
 export const SHOWN_ANCHORS = 1;
 
 function triggers(route: Route): string {
-  if (route.always) return 'any change';
-  if (route.on_demand) return 'on demand';
-  const globs = unique((route.paths_any ?? []).map(showGlob));
-  const anchors = unique((route.anchors_any ?? []).map(showAnchor));
+  if (route.always === true) return 'any change';
+  if (route.on_demand === true) return 'on demand';
+  const globs = unique((route.paths_any ?? []).map((g) => showGlob(g)));
+  const anchors = unique((route.anchors_any ?? []).map((a) => showAnchor(a)));
   const shown = [...globs.slice(0, SHOWN_GLOBS), ...anchors.slice(0, SHOWN_ANCHORS)].map((s) => `\`${cell(s)}\``);
   if (globs.length > SHOWN_GLOBS || anchors.length > SHOWN_ANCHORS) shown.push('…');
   return shown.join(', ');
@@ -146,10 +212,16 @@ function triggers(route: Route): string {
 
 export function renderTable(routes: RouteFile): string {
   const rows = routes.routes.map((r) => {
-    const name = r.reference.replace(/^references\//, '');
+    const name = r.reference.replace(/^references\//u, '');
     return `| [\`${name}\`](${r.reference}) | ${cell(r.when)} | ${triggers(r)} |`;
   });
-  return [START, '| Read | When | Or the change touches |', '| ---- | ---- | --------------------- |', ...rows, END].join('\n');
+  return [
+    START,
+    '| Read | When | Or the change touches |',
+    '| ---- | ---- | --------------------- |',
+    ...rows,
+    END,
+  ].join('\n');
 }
 
 /** SKILL.md with the table brought in line with routes.json. Throws when the
@@ -158,66 +230,47 @@ export function applyTable(text: string, routes: RouteFile): string {
   const lines = text.split('\n');
   const start = lines.findIndex((l) => l.startsWith('<!-- routes:start'));
   const end = lines.findIndex((l) => l === END);
-  if (start === -1 || end === -1 || end < start) throw new Error('missing or unbalanced routes:start / routes:end markers');
+  if (start === -1 || end === -1 || end < start)
+    throw new Error('missing or unbalanced routes:start / routes:end markers');
   return [...lines.slice(0, start), ...renderTable(routes).split('\n'), ...lines.slice(end + 1)].join('\n');
 }
 
-// ---- validation ----------------------------------------------------------------
+// ---- checks ----------------------------------------------------------------------
 
-const isString = (v: unknown): v is string => typeof v === 'string' && v !== '';
-const isStringList = (v: unknown): v is string[] => Array.isArray(v) && v.every(isString);
+/** Errors for reference files that have no route. */
+function unroutedErrors(skillDir: string, routes: RouteFile, at: string): string[] {
+  const refsDir = join(skillDir, 'references');
+  const routed = new Set(routes.routes.map((r) => r.reference));
+  if (!existsSync(refsDir)) return [];
+  // The WP3 overflow list is linked from its own section.
+  return readdirSync(refsDir)
+    .toSorted(compareText)
+    .filter((f) => f.endsWith('.md') && f !== 'enforced-by-ci.md' && !routed.has(`references/${f}`))
+    .map((f) => `${at}: references/${f} has no route`);
+}
 
 /** Errors for one skill's routes.json and its rendered table. */
 export function routeErrors(skillDir: string, label: string): string[] {
-  let routes: RouteFile | null;
-  try {
-    routes = loadRoutes(skillDir);
-  } catch (e) {
-    return [`${label}/${ROUTES_FILE}: ${(e as Error).message}`];
-  }
-  if (routes === null) return [];
-  const errors: string[] = [];
   const at = `${label}/${ROUTES_FILE}`;
-  if (!Array.isArray(routes.routes) || routes.routes.length === 0) return [`${at}: routes must be a non-empty list`];
-  routes.routes.forEach((r, i) => {
-    const here = `${at}: routes[${i}]`;
-    if (!isString(r.reference)) errors.push(`${here}.reference must be a string`);
-    else if (!existsSync(join(skillDir, r.reference))) errors.push(`${here}: ${r.reference} not found`);
-    if (!isString(r.when)) errors.push(`${here}.when must be a non-empty string`);
-    if (r.paths_any !== undefined && !isStringList(r.paths_any)) errors.push(`${here}.paths_any must be a list of globs`);
-    if (r.anchors_any !== undefined && !isStringList(r.anchors_any)) errors.push(`${here}.anchors_any must be a list of regexes`);
-    for (const a of isStringList(r.anchors_any) ? r.anchors_any : []) {
-      try {
-        new RegExp(a);
-      } catch {
-        errors.push(`${here}: bad regex ${a}`);
-      }
-    }
-    if (r.always !== undefined && typeof r.always !== 'boolean') errors.push(`${here}.always must be true or false`);
-    if (r.on_demand !== undefined && typeof r.on_demand !== 'boolean') errors.push(`${here}.on_demand must be true or false`);
-    const hasTriggers = Boolean(r.paths_any?.length || r.anchors_any?.length);
-    const kinds = [hasTriggers, r.always === true, r.on_demand === true].filter(Boolean).length;
-    if (kinds === 0) errors.push(`${here}: needs paths_any, anchors_any, always or on_demand`);
-    if (kinds > 1) errors.push(`${here}: use triggers, always or on_demand, not more than one`);
-  });
-  if (errors.length > 0) return errors;
-
-  const refsDir = join(skillDir, 'references');
-  const routed = new Set(routes.routes.map((r) => r.reference));
-  if (existsSync(refsDir)) {
-    for (const f of readdirSync(refsDir).sort()) {
-      // The WP3 overflow list is linked from its own section.
-      if (f.endsWith('.md') && f !== 'enforced-by-ci.md' && !routed.has(`references/${f}`)) {
-        errors.push(`${at}: references/${f} has no route`);
-      }
-    }
-  }
-  const skillMd = join(skillDir, 'SKILL.md');
-  const text = readFileSync(skillMd, 'utf8');
+  const path = join(skillDir, ROUTES_FILE);
+  if (!existsSync(path)) return [];
+  let value: unknown;
   try {
-    if (applyTable(text, routes) !== text) errors.push(`${label}/SKILL.md: routes table is out of date; run node tools/bin/render-routes.ts`);
-  } catch (e) {
-    errors.push(`${label}/SKILL.md: ${(e as Error).message}`);
+    value = JSON.parse(readFileSync(path, 'utf8'));
+  } catch (error) {
+    return [`${at}: ${errorMessage(error)}`];
+  }
+  const shape = shapeErrors(value, at, skillDir);
+  if (shape.length > 0 || !isRouteFile(value)) return shape;
+  const errors = unroutedErrors(skillDir, value, at);
+
+  const text = readFileSync(join(skillDir, 'SKILL.md'), 'utf8');
+  try {
+    if (applyTable(text, value) !== text) {
+      errors.push(`${label}/SKILL.md: routes table is out of date; run node tools/bin/render-routes.ts`);
+    }
+  } catch (error) {
+    errors.push(`${label}/SKILL.md: ${errorMessage(error)}`);
   }
   return errors;
 }
