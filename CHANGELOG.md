@@ -10,6 +10,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- Near-miss review tasks (`review-<topic>-near-miss`): a real problem next
+  to a rule that does not cover it. The finding must not cite that decoy
+  rule. Four tasks, from rule IDs a real plugin review got wrong: `SF-013`,
+  `IMP-008`, `REV-033` and `SEC-005`. Graded by `reviewNearMiss`.
+- `shopware-extension-review` cites a rule only when the rule's own
+  sentence covers the finding, and writes `null` otherwise. `lenses.md`
+  lists the near misses and asks about raw SQL writes (`PLG-003`,
+  `REV-024`, `PLG-007`), `uninstall()` (`PLG-008`) and admin ACL for new
+  associations (`ADM-004`). Findings that copy core behavior say "same as
+  core".
 - `shopware-extension-review` (plan WP6): reviews a plugin or app diff as a
   whole and ends with the findings JSON of the review tasks. It defines no
   rule; its `routes.json` borrows the references of the topic skills.

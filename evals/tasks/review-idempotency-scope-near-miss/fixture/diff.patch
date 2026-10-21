@@ -1,0 +1,57 @@
+diff --git a/src/Redeem/RedeemPointsRoute.php b/src/Redeem/RedeemPointsRoute.php
+new file mode 100644
+index 0000000..bcf260b
+--- /dev/null
++++ b/src/Redeem/RedeemPointsRoute.php
+@@ -0,0 +1,51 @@
++<?php declare(strict_types=1);
++
++namespace Swag\Loyalty\Redeem;
++
++use Shopware\Core\Checkout\Customer\CustomerEntity;
++use Shopware\Core\Framework\Validation\DataBag\RequestDataBag;
++use Shopware\Core\Framework\Validation\DataValidationDefinition;
++use Shopware\Core\Framework\Validation\DataValidator;
++use Shopware\Core\System\SalesChannel\SalesChannelContext;
++use Swag\Loyalty\Idempotency\IdempotencyStore;
++use Symfony\Component\HttpFoundation\JsonResponse;
++use Symfony\Component\HttpFoundation\Request;
++use Symfony\Component\Routing\Attribute\Route;
++use Symfony\Component\Validator\Constraints\NotBlank;
++use Symfony\Component\Validator\Constraints\Range;
++use Symfony\Component\Validator\Constraints\Type;
++
++#[Route(defaults: ['_routeScope' => ['store-api'], '_loginRequired' => true])]
++class RedeemPointsRoute
++{
++    public function __construct(
++        private readonly VoucherIssuer $voucherIssuer,
++        private readonly IdempotencyStore $idempotencyStore,
++        private readonly DataValidator $validator,
++    ) {
++    }
++
++    #[Route(path: '/store-api/loyalty/redeem', name: 'store-api.loyalty.redeem', methods: ['POST'])]
++    public function redeem(Request $request, RequestDataBag $data, SalesChannelContext $context, CustomerEntity $customer): JsonResponse
++    {
++        $definition = new DataValidationDefinition('loyalty.redeem');
++        $definition->add('points', new NotBlank(), new Type('int'), new Range(min: 100, max: 100000));
++        $this->validator->validate($data->all(), $definition);
++
++        $key = (string) $request->headers->get('Idempotency-Key', '');
++        if ($key !== '') {
++            $previous = $this->idempotencyStore->find($key);
++            if ($previous !== null) {
++                return new JsonResponse($previous);
++            }
++        }
++
++        $voucher = $this->voucherIssuer->issue($customer, $data->getInt('points'), $context);
++
++        if ($key !== '') {
++            $this->idempotencyStore->save($key, $voucher);
++        }
++
++        return new JsonResponse($voucher);
++    }
++}

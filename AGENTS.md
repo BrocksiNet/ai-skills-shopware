@@ -19,7 +19,8 @@ The terms the rest of this guide uses. Details follow in the sections linked.
 | Audience | Who a rule is for: `core`, `plugin`, `app`, `storefront`, `admin`. The extension review reports only `plugin` and `app` rules. |
 | Route | An entry in a skill's `routes.json`: which reference to read when a diff touches these paths (`paths_any`) or lines (`anchors_any`), on every change (`always`), or when the task asks for it (`on_demand`). See [Adding or changing a reference](#adding-or-changing-a-reference). |
 | Borrowed route | A route to `../<skill>/references/<file>.md`. It takes its triggers from the owning skill, so a review skill reuses rules without copying them. |
-| Review pair | Two tasks per rule: `review-<rule>-catch` (a diff with the problem; the findings must name it) and `review-<rule>-ignore` (a clean diff that looks similar; no finding allowed). Graded by `tools/bin/grade-findings.ts`. |
+| Review pair | Two tasks per rule: `review-<rule>-catch` (a diff with the problem; the findings must name it) and `review-<rule>-ignore` (a clean diff that looks similar; no finding allowed). Graded by `reviewCatch` and `reviewIgnore` in `tools/src/grade/review.ts`. |
+| Near-miss task | `review-<topic>-near-miss`: a real problem next to a rule that does not cover it. The finding must report it without citing that decoy rule. Guards against the most common review error, a plausible but wrong rule ID. |
 | Golden fixtures | `fixtures/pass/` and `fixtures/fail/` of a task: known answers the grader must pass and fail on every push, so a grader cannot silently go soft. |
 | Enforced by CI | A generated `SKILL.md` section listing rules an existing check (PHPStan, ECS, ESLint, Danger, a core test) already catches, so the agent does not repeat them. |
 | Trunk mining | The weekly `trunk-drift` issue about changes on `shopware/shopware` trunk; `docs/.mining-state.json` marks how far it has been read. |
@@ -194,8 +195,8 @@ the same holes):
   dir is not that sneak.
 
 Review-shaped tasks (`review-<rule>-catch` / `-ignore`) grade the findings
-JSON in `TRANSCRIPT`: their grader is one call to `reviewCatch` or
-`reviewIgnore` from `tools/src/grade/review.ts`. Layout and
+JSON in `TRANSCRIPT`: their grader is one call to `reviewCatch`,
+`reviewIgnore` or `reviewNearMiss` from `tools/src/grade/review.ts`. Layout and
 contract: [`evals/README.md`](evals/README.md#review-tasks-review-rule-catch---ignore).
 
 ## Adding or changing a rule

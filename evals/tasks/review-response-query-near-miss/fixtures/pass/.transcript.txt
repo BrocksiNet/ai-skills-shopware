@@ -1,0 +1,16 @@
+The Link header itself is fine; the cost is where it is computed.
+
+```json
+{
+  "findings": [
+    {
+      "rule_id": null,
+      "severity": "minor",
+      "file": "src/Subscriber/LoyaltyLinkHeaderSubscriber.php",
+      "line": 38,
+      "summary": "The subscriber runs an uncached database query on every HTML response, cache hits included, only to decide on a Link header.",
+      "fix": "Read the flag through a cached config service or the sales channel context instead of querying per response."
+    }
+  ]
+}
+```

@@ -89,8 +89,8 @@ the agent reads it for that diff       A/B run: does the skill change the answer
 rules; CI fails when a core-only rule lands in a reference it reads and the
 review does not list it as one to skip.
 
-The repo tooling (validators, renderers, eval runner, graders of the review
-tasks) is TypeScript in [`tools/`](tools/), run directly by Node 24.
+The repo tooling (validators, renderers, eval runner, task graders) is
+TypeScript in [`tools/`](tools/), run directly by Node 24.
 
 ## Install
 

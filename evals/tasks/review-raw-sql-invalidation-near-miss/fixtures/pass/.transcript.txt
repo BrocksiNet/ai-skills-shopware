@@ -1,0 +1,16 @@
+The bulk update is fast, but the cached page does not learn about it.
+
+```json
+{
+  "findings": [
+    {
+      "rule_id": null,
+      "severity": "major",
+      "file": "src/Tier/TierThresholdUpdater.php",
+      "line": 25,
+      "summary": "The raw UPDATE changes tier thresholds without invalidating the swag-loyalty-tier cache tags, so the cached tier page keeps showing the old thresholds.",
+      "fix": "Write through the tier repository, or invalidate the tier tags with CacheInvalidator after the statement."
+    }
+  ]
+}
+```

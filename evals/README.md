@@ -91,6 +91,17 @@ pairs per rule:
 - `-ignore`: a clean diff that looks similar. A finding above `nit` that names
   the rule fails the task, so A/B counts false positives as failures.
 
+Near-miss tasks (`review-<topic>-near-miss`) test the rule ID, not
+detection. The diff plants a real problem next to a rule that does not
+cover it, the decoy. The grader (`reviewNearMiss`) needs a finding at the
+file and severity whose summary describes the problem, under no catalog ID
+or one of the IDs in `accept`; a finding that describes the problem and
+cites the decoy fails the task. With the skill off the model cannot cite
+our IDs, so these tasks do not show the skill helping. They show it
+hurting, when it makes a reviewer reach for the nearest ID. The four
+decoys come from a real review of a plugin: `SF-013`, `IMP-008`, `REV-033`
+and `SEC-005`.
+
 ```text
 tasks/review-<rule>-catch/
 ├── instruction.md              # "Review diff.patch", plus the findings contract

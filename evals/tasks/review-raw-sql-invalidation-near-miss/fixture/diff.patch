@@ -1,0 +1,53 @@
+diff --git a/src/Resources/config/services.php b/src/Resources/config/services.php
+index 0ab2188..3e05e74 100644
+--- a/src/Resources/config/services.php
++++ b/src/Resources/config/services.php
+@@ -3,10 +3,12 @@
+ namespace Symfony\Component\DependencyInjection\Loader\Configurator;
+ 
+ use Swag\Loyalty\Tier\TierPageLoader;
++use Swag\Loyalty\Tier\TierThresholdUpdater;
+ 
+ return static function (ContainerConfigurator $configurator): void {
+     $services = $configurator->services()->defaults()->autowire()->autoconfigure();
+ 
+     $services->set(TierPageLoader::class)
+         ->arg('$tierRepository', service('swag_loyalty_tier.repository'));
++    $services->set(TierThresholdUpdater::class);
+ };
+diff --git a/src/Tier/TierThresholdUpdater.php b/src/Tier/TierThresholdUpdater.php
+new file mode 100644
+index 0000000..a120461
+--- /dev/null
++++ b/src/Tier/TierThresholdUpdater.php
+@@ -0,0 +1,30 @@
++<?php declare(strict_types=1);
++
++namespace Swag\Loyalty\Tier;
++
++use Doctrine\DBAL\ArrayParameterType;
++use Doctrine\DBAL\Connection;
++use Shopware\Core\Framework\Uuid\Uuid;
++
++/**
++ * Bulk edit from the admin: raise or lower the thresholds of many tiers in
++ * one statement instead of one DAL update per tier.
++ */
++class TierThresholdUpdater
++{
++    public function __construct(private readonly Connection $connection)
++    {
++    }
++
++    /**
++     * @param list<string> $tierIds
++     */
++    public function shift(array $tierIds, int $delta): void
++    {
++        $this->connection->executeStatement(
++            'UPDATE swag_loyalty_tier SET threshold = GREATEST(0, threshold + :delta), updated_at = NOW(3) WHERE id IN (:ids)',
++            ['delta' => $delta, 'ids' => Uuid::fromHexToBytesList($tierIds)],
++            ['ids' => ArrayParameterType::BINARY],
++        );
++    }
++}

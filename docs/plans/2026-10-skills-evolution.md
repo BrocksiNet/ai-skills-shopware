@@ -592,6 +592,16 @@ and the admin `flags-and-modern-web.md` are not borrowed: the first is the
 hand-off, the second is almost all core-only. Every `review-*-catch` and
 `-ignore` task now loads the skill next to the owning one.
 
+A/B on 2026-10-21 (claude, haiku, 3 repeats): all six catch tasks and the
+ignore tasks pass with the skill on and off, so the second acceptance
+point is not met: Haiku finds the planted problems without help. A real
+review of a plugin with the skill (29 findings) had no false finding, but
+only 3 of 12 cited rule IDs fit. The skill's weak point is the rule ID,
+not detection. `output.md` now says when to cite an ID, `lenses.md` lists
+the near misses, and four `review-<topic>-near-miss` tasks fail a review
+that cites the decoy rule. Next: catch tasks subtle enough that the
+model misses them without the skill.
+
 Goal: a review skill for plugin and app diffs. Core's `sw-review` only
 reviews `shopware/shopware` PRs, and our `shopware-pr-review` only answers
 review threads.

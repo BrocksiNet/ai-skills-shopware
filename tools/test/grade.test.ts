@@ -16,7 +16,7 @@ import {
   stripComments,
   verdict,
 } from '../src/grade/kit.ts';
-import { reviewCatch, reviewIgnore } from '../src/grade/review.ts';
+import { reviewCatch, reviewIgnore, reviewNearMiss } from '../src/grade/review.ts';
 import { gradeTask, readTranscript } from '../src/grade/run.ts';
 
 const ROOT = resolve(import.meta.dirname, '../..');
@@ -95,6 +95,18 @@ describe('review graders', () => {
   test('ignore fails on a false positive', () => {
     assert.equal(reviewIgnore(expectation)(run(fence([]))).pass, true);
     assert.match(reviewIgnore(expectation)(run(fence([finding]))).detail, /^false positive: src\/A\.php/u);
+  });
+
+  test('near-miss passes with no ID or an accepted one; fails on the decoy, another ID or no report', () => {
+    const nearMiss = reviewNearMiss({ ...expectation, rule: 'SF-013', accept: ['ARCH-001'] });
+    assert.equal(nearMiss(run(fence([finding]))).pass, true);
+    assert.equal(nearMiss(run(fence([{ ...finding, rule_id: null }]))).pass, true);
+    assert.match(nearMiss(run(fence([{ ...finding, rule_id: 'SF-013' }]))).detail, /^cites SF-013 for: never reset/u);
+    assert.equal(nearMiss(run(fence([{ ...finding, rule_id: 'IMP-008' }]))).pass, false);
+    const elsewhere = { ...finding, rule_id: 'SF-013', file: 'src/B.php', summary: 'another problem' };
+    assert.equal(nearMiss(run(fence([finding, elsewhere]))).pass, true);
+    assert.equal(nearMiss(run(fence([{ ...finding, severity: 'minor' }]))).pass, false);
+    assert.match(nearMiss(run(fence([]))).detail, /^no major\+ finding at src\/\*\*/u);
   });
 });
 
