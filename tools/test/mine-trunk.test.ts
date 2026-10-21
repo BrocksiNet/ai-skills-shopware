@@ -69,10 +69,13 @@ describe('the 2026-10-13..2026-10-19 window', () => {
       last_sha: '219491014944c6b6463cf6426c7001adea8dae0d',
       last_date: '2026-10-19T19:45:03Z',
     });
-    assert.deepEqual(
-      parseState(JSON.parse(readFileSync(join(ROOT, 'docs/.mining-state.json'), 'utf8'))),
-      stateFromReport(await report),
-    );
+  });
+  test('the committed state is mined up to this window or later', async () => {
+    // `/mined` moves docs/.mining-state.json on, so it only ever passes the
+    // recorded window; it never equals it for long.
+    const state = parseState(JSON.parse(readFileSync(join(ROOT, 'docs/.mining-state.json'), 'utf8')));
+    assert.match(state.last_sha, /^[0-9a-f]{40}$/u);
+    assert.ok(state.last_date >= stateFromReport(await report).last_date, state.last_date);
   });
 });
 
