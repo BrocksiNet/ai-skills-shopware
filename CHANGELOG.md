@@ -25,6 +25,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   table points at ADM-042, ADM-043 and SEC-008, and
   `review-idempotency-scope-near-miss` accepts SEC-008.
 
+### Fixed
+
+- `shopware-extension-review` opens each selected reference by its path.
+  One A/B run reported the references as missing because file search does
+  not follow the symlinked skill folders.
+
 ## [0.9.0] - 2026-10-21
 
 ### Added

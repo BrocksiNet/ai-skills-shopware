@@ -67,9 +67,12 @@ Read the references the change selects:
    change touches its globs or adds or removes a line matching its anchor.
    Always read [`lenses.md`](references/lenses.md): the backward
    compatibility and cache questions apply to any PHP or storefront change,
-   whether a reference is selected or not. A row whose skill is not
-   installed has a dead link: skip it and say which surface you could not
-   check.
+   whether a reference is selected or not. Open each reference by its path
+   next to this skill (`../<skill>/references/<file>.md`). Skill folders are
+   often symlinks that file search does not follow, so a search that lists
+   nothing does not mean the file is missing. Only a path that fails to open
+   is a skill that is not installed: skip it and say which surface you could
+   not check.
 4. **Check each selected rule** against the diff. Report a rule only when
    it applies to an extension; [`lenses.md`](references/lenses.md#core-only-rules)
    lists the core-only rules in the borrowed references.
