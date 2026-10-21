@@ -61,6 +61,37 @@ We **own** our skill library — maintainer rules from shopware/shopware (merged
 see [`docs/core-pr-17657-alignment.md`](docs/core-pr-17657-alignment.md) and
 [`docs/skill-resolution.md`](docs/skill-resolution.md) for trunk overlay vs full install.
 
+## How it works
+
+Six ideas carry the library. Each one is checked on every push.
+
+| Idea | In one sentence | Where |
+| ---- | --------------- | ----- |
+| **Rules have IDs** | Every rule starts with a bold ID like `**PLG-028**`, and `rules/catalog.json` records its owner, its eval and whether core already enforces it. | [`rules/catalog.json`](rules/catalog.json) |
+| **One owner per topic** | A topic belongs to exactly one skill; other skills point at the rule by its ID instead of repeating it. | [`REGISTRY.md`](REGISTRY.md) |
+| **References load by diff** | A skill's `routes.json` says which reference file to read for which changed paths or lines, so a migration change reads `migrations.md` and nothing else. The table in `SKILL.md` is generated from it. | `skills/*/routes.json` |
+| **Reviews borrow, not copy** | `shopware-extension-review` owns no rules: its routes point at the other skills' references (`../shopware-plugin-development/references/migrations.md`) and take their triggers, so the review and the rule cannot drift apart. | [`skills/shopware-extension-review/`](skills/shopware-extension-review/SKILL.md) |
+| **Every rule is tested** | A task gives an agent a real change and a script grades the result. Review rules come in pairs: `-catch` must find the problem, `-ignore` must stay quiet on a clean change that only looks like it. | [`evals/tasks/`](evals/tasks/) |
+| **Trunk is watched** | A weekly job lists what changed in Shopware's own agent skills, guidelines and PHPStan rules, so we notice when core adds or drops a rule we mirror. | [`mine-trunk.yml`](.github/workflows/mine-trunk.yml) |
+
+A rule's life, end to end:
+
+```text
+rule text in a skill (**PLG-028**)  ->  catalog entry (owner, eval, audience)
+        |                                        |
+routes.json picks the reference        evals/tasks/review-...-catch / -ignore
+        |                                        |
+the agent reads it for that diff       A/B run: does the skill change the answer?
+```
+
+`audience` in the catalog says who a rule is for: `core`, `plugin`, `app`,
+`storefront` or `admin`. The extension review reports only `plugin` and `app`
+rules; CI fails when a core-only rule lands in a reference it reads and the
+review does not list it as one to skip.
+
+The repo tooling (validators, renderers, eval runner, graders of the review
+tasks) is TypeScript in [`tools/`](tools/), run directly by Node 24.
+
 ## Install
 
 Requires Node.js (for `npx`). There is no single "install everything" command on
@@ -365,8 +396,9 @@ opens an issue labeled `trunk-drift` that lists what changed on
 `shopware/shopware` trunk since
 [`docs/.mining-state.json`](docs/.mining-state.json), checked against
 `rules/catalog.json`. A `/mined` comment from a member opens a PR that moves
-the state forward. That PR needs "Allow GitHub Actions to create and approve
-pull requests" in the repository settings. Run it locally with
+the state forward. That PR needs **Settings → Actions → General → Workflow
+permissions → "Allow GitHub Actions to create and approve pull requests"**
+enabled on the repository. Run it locally with
 `node tools/bin/mine-trunk.ts report`.
 
 For a hands-on, real-instance check, follow
