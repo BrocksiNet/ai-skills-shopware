@@ -13,7 +13,7 @@ set -euo pipefail
 HERE="$(cd "$(dirname "$0")" && pwd)"
 ROOT="$(cd "$HERE/../.." && pwd)"
 
-# Bash-only graders, so the self-test needs no Node install.
+# Bash-only graders. The runner itself needs Node 24 (tools/bin/*.ts).
 TASK_A=dal-search-without-limit   # has a `skills` file
 TASK_B=no-empty-explicit          # no `skills` file: profile loads all skills
 
