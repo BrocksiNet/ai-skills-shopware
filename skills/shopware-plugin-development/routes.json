@@ -18,7 +18,7 @@
     },
     {
       "reference": "references/api-contracts.md",
-      "when": "You add a Store-API or Admin route, or its OpenAPI schema.",
+      "when": "You add or change a Store-API or Admin route, its response struct, or its OpenAPI schema.",
       "paths_any": [
         "**/StoreApi/**/*.php",
         "**/Resources/Schema/**",

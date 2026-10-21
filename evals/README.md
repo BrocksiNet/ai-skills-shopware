@@ -71,6 +71,48 @@ Snippet tests: `cd evals/tools/ast && npm test`. Bash helpers in
 Twig/XML/markdown. A comment, leftover file, or unused call is not a pass.
 New graders must ship `fixtures/fail/` as an almost-correct sneak.
 
+### Review tasks (`review-<rule>-catch` / `-ignore`)
+
+Review tasks grade what an agent reports, not what it edits. They come in
+pairs per rule:
+
+- `-catch`: `fixture/diff.patch` plants the problem. The grader needs a
+  finding at the right file and at least the task's minimum severity that
+  names the rule.
+- `-ignore`: a clean diff that looks similar. A finding above `nit` that names
+  the rule fails the task, so A/B counts false positives as failures.
+
+```text
+tasks/review-<rule>-catch/
+├── instruction.md              # "Review diff.patch", plus the findings contract
+├── fixture/diff.patch          # the change under review
+├── fixture/context/            # the touched files before the change
+├── fixtures/pass/.transcript.txt
+├── fixtures/fail/.transcript.txt
+├── grade.sh                    # exec node tools/bin/grade-findings.ts catch|ignore ...
+└── skills
+```
+
+The agent ends its answer with one fenced `json` block:
+
+```json
+{"findings": [{"rule_id": "PLG-027", "severity": "major", "file": "src/…",
+  "line": 13, "summary": "…", "fix": "…"}]}
+```
+
+`severity` is `blocking`, `major`, `minor` or `nit`; `rule_id` may be null.
+[`tools/bin/grade-findings.ts`](../tools/bin/grade-findings.ts) reads the last
+such block from `$TRANSCRIPT`. A finding names the rule when its `rule_id`
+starts with the rule's ID, or, when it has no catalog-shaped ID, when its
+`summary` matches the task's `--summary` regex. The regex keeps the eval fair
+with the skill off, when the model cannot know our IDs: A/B compares
+detection, not ID recall. A different catalog ID is a wrong rule.
+
+Golden transcripts: the `-catch` fail sneak has the right rule as a `nit`
+and a wrong catalog ID at `major`; the `-ignore` fail sneak reports the
+look-alike as a problem. The pristine `fixture/` has no transcript, so it
+fails both graders without `.skip-fixture-grade`.
+
 ## Layer 3 — A/B ablation (`runner/`)
 
 - `runner/run-task.sh <task> <on|off>` — copy the fixture into a temp workdir,

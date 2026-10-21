@@ -52,6 +52,7 @@ tools/                        # repo tooling in TypeScript (Node 24, no build st
   bin/eval-local.ts           # local model evals with your agent login, then the gate
   bin/validate-skills.ts      # skill structure, budgets, conflicts, rule IDs, routes
   bin/mine-trunk.ts           # weekly trunk drift report, and the /mined state update
+  bin/grade-findings.ts       # grader of the review-<rule>-catch / -ignore tasks
   bin/test-graders.ts         # golden fixtures against every grade.sh
   bin/fake-agent.ts           # test double for SKILLS_AGENT_CMD
   bin/check-update.ts         # pinned version vs latest release tag
@@ -156,6 +157,10 @@ the same holes):
 - New graders need `fixtures/fail/` as an **almost-pass sneak** (what a
   token-only check would have accepted). The pristine `fixture/` start
   dir is not that sneak.
+
+Review-shaped tasks (`review-<rule>-catch` / `-ignore`) grade the findings
+JSON in `TRANSCRIPT` through `tools/bin/grade-findings.ts`. Layout and
+contract: [`evals/README.md`](evals/README.md#review-tasks-review-rule-catch---ignore).
 
 ## Adding or changing a rule
 

@@ -1,0 +1,17 @@
+The test captures the event in the hook, asserts after `redeem()` and checks
+that the hook fired. Nothing to report.
+
+```json
+{
+  "findings": [
+    {
+      "rule_id": null,
+      "severity": "nit",
+      "file": "tests/integration/GiftCardRedeemerTest.php",
+      "line": 37,
+      "summary": "testRedeemDebitsTheBalance creates three default contexts; one variable reads better.",
+      "fix": "Assign Context::createDefaultContext() once."
+    }
+  ]
+}
+```

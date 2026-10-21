@@ -1,0 +1,22 @@
+```json
+{
+  "findings": [
+    {
+      "rule_id": null,
+      "severity": "minor",
+      "file": "src/StoreApi/LoyaltyBalanceStruct.php",
+      "line": 13,
+      "summary": "points is now nullable; document when it is null.",
+      "fix": "Explain the null case in the schema description."
+    },
+    {
+      "rule_id": "PLG-011",
+      "severity": "major",
+      "file": "src/Resources/Schema/StoreApi/loyalty.json",
+      "line": 30,
+      "summary": "The schema change for points breaks existing clients.",
+      "fix": "Update the OpenAPI schema."
+    }
+  ]
+}
+```

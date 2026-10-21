@@ -11,3 +11,4 @@
 - Migrate this plugin's services.xml to PHP before Shopware 6.8.
 - Call an external API from my plugin — should I use curl or Symfony HttpClient?
 - Prepare this plugin for Shopware 6.8 without dropping 6.6 and 6.7.
+- Review this diff that changes the response struct of my plugin's Store API route.

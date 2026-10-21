@@ -1082,6 +1082,21 @@
       "defer_on_trunk": false
     },
     {
+      "id": "PLG-027",
+      "skill": "shopware-plugin-development",
+      "file": "skills/shopware-plugin-development/references/api-contracts.md",
+      "title": "Never change an existing API response field's type or nullability",
+      "status": "active",
+      "since": "2026-10-21",
+      "eval": "review-store-api-contract-catch",
+      "core_guide_ids": [],
+      "audience": [
+        "plugin",
+        "app"
+      ],
+      "defer_on_trunk": false
+    },
+    {
       "id": "REV-001",
       "skill": "shopware-review-learnings",
       "file": "skills/shopware-review-learnings/SKILL.md",

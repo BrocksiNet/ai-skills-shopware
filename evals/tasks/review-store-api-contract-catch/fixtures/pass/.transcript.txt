@@ -1,0 +1,17 @@
+`points` is part of a released Store API response. Typed headless clients
+read it as a non-null integer; after this change it can be a fraction or null.
+
+```json
+{
+  "findings": [
+    {
+      "rule_id": "PLG-027",
+      "severity": "blocking",
+      "file": "src/StoreApi/LoyaltyBalanceStruct.php",
+      "line": 13,
+      "summary": "The existing points field changes from int to ?float, a breaking change for API clients.",
+      "fix": "Keep points as int, add a new nullable number field for partial points, and deprecate points in the schema."
+    }
+  ]
+}
+```

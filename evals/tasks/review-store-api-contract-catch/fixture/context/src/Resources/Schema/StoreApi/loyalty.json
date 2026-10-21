@@ -1,0 +1,36 @@
+{
+  "openapi": "3.0.0",
+  "info": [],
+  "paths": {
+    "/loyalty/balance": {
+      "get": {
+        "tags": ["Loyalty"],
+        "summary": "Loyalty balance of the logged-in customer",
+        "operationId": "readLoyaltyBalance",
+        "responses": {
+          "200": {
+            "description": "The balance",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/SwagLoyaltyBalance" }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "SwagLoyaltyBalance": {
+        "type": "object",
+        "required": ["apiAlias", "points", "tier"],
+        "properties": {
+          "apiAlias": { "type": "string", "enum": ["swag_loyalty_balance"] },
+          "points": { "type": "integer", "description": "Points the customer can redeem." },
+          "tier": { "type": "string", "enum": ["bronze", "silver", "gold"] }
+        }
+      }
+    }
+  }
+}

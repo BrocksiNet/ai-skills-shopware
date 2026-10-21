@@ -1,0 +1,14 @@
+```json
+{
+  "findings": [
+    {
+      "rule_id": null,
+      "severity": "minor",
+      "file": "tests/integration/GiftCardRedeemerTest.php",
+      "line": 46,
+      "summary": "The event hook closure should assert on the event instead of capturing it.",
+      "fix": "Move the assertions into the listener."
+    }
+  ]
+}
+```
