@@ -28,7 +28,12 @@ criteria. Packages are ordered so that each one only depends on earlier ones.
 | WP10 | Eval runner in TypeScript | none | M | none |
 | WP11 | Kev classifier for on-demand routes (experiment) | WP4 | M | local only |
 
-Suggested milestones:
+Shipped: everything through WP10 landed in **v0.9.0** (2026-10-21), ahead
+of the milestones below. Still open: WP0 item 7 (waits for #21730), the
+WP6 A/B acceptance (catch tasks too easy for the model without the skill),
+and WP11.
+
+Suggested milestones, as planned:
 
 1. **v0.9.0**: WP0, WP1, WP2, WP9. Truthful evals and stable rule IDs.
 2. **v0.10.0**: WP3, WP4, WP5, WP8. Cheaper context, review evals, automated mining.
