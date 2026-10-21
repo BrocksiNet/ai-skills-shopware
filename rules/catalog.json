@@ -360,7 +360,7 @@
     {
       "id": "TEST-016",
       "skill": "shopware-testing",
-      "file": "skills/shopware-testing/SKILL.md",
+      "file": "skills/shopware-testing/references/test-shape-and-flags.md",
       "title": "Observe events through a hook or an owned dispatcher; assert afterwards",
       "status": "active",
       "since": "2026-10-20",
@@ -687,7 +687,7 @@
     {
       "id": "TEST-035",
       "skill": "shopware-testing",
-      "file": "skills/shopware-testing/SKILL.md",
+      "file": "skills/shopware-testing/references/test-shape-and-flags.md",
       "title": "A test must be able to fail",
       "status": "active",
       "since": "2026-10-21",
@@ -744,7 +744,7 @@
     {
       "id": "PLG-003",
       "skill": "shopware-plugin-development",
-      "file": "skills/shopware-plugin-development/SKILL.md",
+      "file": "skills/shopware-plugin-development/references/dal-usage.md",
       "title": "Entity data goes through the DAL, not raw SQL",
       "status": "active",
       "since": "2026-10-20",
@@ -802,7 +802,7 @@
     {
       "id": "PLG-007",
       "skill": "shopware-plugin-development",
-      "file": "skills/shopware-plugin-development/SKILL.md",
+      "file": "skills/shopware-plugin-development/references/cache-tags.md",
       "title": "Cache tags through CacheTagCollector, not *CacheTagsEvent",
       "status": "active",
       "since": "2026-10-20",
@@ -941,8 +941,7 @@
       "title": "Storefront and Store-API reads use the sales channel context",
       "status": "active",
       "since": "2026-10-20",
-      "eval": null,
-      "eval_reason": "Documented only; no eval yet.",
+      "eval": "review-storefront-default-context-catch",
       "core_guide_ids": [],
       "audience": [
         "plugin"
@@ -3204,7 +3203,7 @@
     {
       "id": "ADM-004",
       "skill": "shopware-admin-js",
-      "file": "skills/shopware-admin-js/SKILL.md",
+      "file": "skills/shopware-admin-js/references/architecture.md",
       "title": "ACL mapping ships with DAL-backed UI; existing roles get a migration",
       "status": "active",
       "since": "2026-10-20",
@@ -3287,12 +3286,11 @@
     {
       "id": "ADM-009",
       "skill": "shopware-admin-js",
-      "file": "skills/shopware-admin-js/SKILL.md",
+      "file": "skills/shopware-admin-js/references/architecture.md",
       "title": "Admin build is Vite; no new webpack.config.js",
       "status": "active",
       "since": "2026-10-20",
-      "eval": null,
-      "eval_reason": "Documented only; no eval yet.",
+      "eval": "review-admin-webpack-config-catch",
       "core_guide_ids": [],
       "audience": [
         "core",
@@ -4093,7 +4091,7 @@
     {
       "id": "SF-009",
       "skill": "shopware-storefront",
-      "file": "skills/shopware-storefront/SKILL.md",
+      "file": "skills/shopware-storefront/references/twig-and-theme.md",
       "title": "No sw_csrf in storefront forms",
       "status": "active",
       "since": "2026-10-21",

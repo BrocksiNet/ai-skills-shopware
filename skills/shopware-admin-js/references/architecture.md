@@ -18,13 +18,15 @@ Load when adding modules, components, services, or ACL-backed UI.
 
 - **ADM-016** Protect routes, navigation, and templates with the required ACL
   privileges.
-- New Admin UI that reads or persists a DAL entity: update the privilege
-  mapping in the **same** change. Limited roles need `read` / `create` /
+- **ADM-004** **New Admin UI that reads or persists a DAL entity updates the
+  privilege mapping in the same change.** Limited roles need `read` / `create` /
   `update` / `delete` through viewer/editor/creator/deleter — do not rely
   on super-admin. `addPrivilegeMappingEntry` takes
-  `roles: { viewer: { privileges: [...], dependencies: [...] } }`. A flat
-  `privileges: { viewer: [...] }` fails `isPrivilegeMapping` and never
-  registers the key.
+  `roles: { viewer: { privileges: [...], dependencies: [...] } }`, and every
+  role needs `dependencies`, even `[]`. A flat `privileges: { viewer: [...] }`
+  passes `isPrivilegeMapping`, which checks only `category`, `parent` and
+  `key`, and is registered. The role screens then throw a `TypeError` when
+  they read the missing `roles`.
 - Privileges that must apply to **existing** roles need a migration.
   Mapping-only changes fix future evaluations. In that migration call
   `$this->addAdditionalPrivileges($connection, ['swag_example.viewer' => ['product:read']])`
@@ -43,6 +45,11 @@ Load when adding modules, components, services, or ACL-backed UI.
   with a bare `@update:value` never fires on 6.5, so the setting looks saved
   and is not. `v-model:value` works on both. `mt-*` components (6.6.2+) use
   `v-model`.
+- **ADM-009** **6.7+ builds the Administration with Vite.** A plugin
+  `build/webpack.config.js` is not read on 6.7, so its aliases, loaders and
+  plugins do nothing and an import that relies on them fails the build. Do
+  not add one for a 6.7 target; a bundle that also supports 6.6 keeps it for
+  6.6 only.
 - **ADM-017** Business logic stays out of templates. Prefer composables over new
   mixins.
 - Use BEM class names and Meteor design tokens. Avoid inline styles.

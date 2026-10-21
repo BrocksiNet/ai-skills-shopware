@@ -1,0 +1,150 @@
+diff --git a/src/Resources/app/administration/src/main.js b/src/Resources/app/administration/src/main.js
+index b65f922..1a35396 100644
+--- a/src/Resources/app/administration/src/main.js
++++ b/src/Resources/app/administration/src/main.js
+@@ -1 +1,2 @@
+ import './module/swag-loyalty';
++import './module/swag-loyalty-tier';
+diff --git a/src/Resources/app/administration/src/module/swag-loyalty-tier/acl/index.js b/src/Resources/app/administration/src/module/swag-loyalty-tier/acl/index.js
+new file mode 100644
+index 0000000..3e500d2
+--- /dev/null
++++ b/src/Resources/app/administration/src/module/swag-loyalty-tier/acl/index.js
+@@ -0,0 +1,23 @@
++Shopware.Service('privileges').addPrivilegeMappingEntry({
++    category: 'permissions',
++    parent: 'customers',
++    key: 'swag_loyalty_tier',
++    roles: {
++        viewer: {
++            privileges: ['swag_loyalty_tier:read'],
++            dependencies: [],
++        },
++        editor: {
++            privileges: ['swag_loyalty_tier:update'],
++            dependencies: ['swag_loyalty_tier.viewer'],
++        },
++        creator: {
++            privileges: ['swag_loyalty_tier:create'],
++            dependencies: ['swag_loyalty_tier.viewer', 'swag_loyalty_tier.editor'],
++        },
++        deleter: {
++            privileges: ['swag_loyalty_tier:delete'],
++            dependencies: ['swag_loyalty_tier.viewer'],
++        },
++    },
++});
+diff --git a/src/Resources/app/administration/src/module/swag-loyalty-tier/index.js b/src/Resources/app/administration/src/module/swag-loyalty-tier/index.js
+new file mode 100644
+index 0000000..1ed656b
+--- /dev/null
++++ b/src/Resources/app/administration/src/module/swag-loyalty-tier/index.js
+@@ -0,0 +1,33 @@
++import './acl';
++import './page/swag-loyalty-tier-list';
++
++Shopware.Module.register('swag-loyalty-tier', {
++    type: 'plugin',
++    name: 'swag-loyalty-tier',
++    title: 'swag-loyalty-tier.general.mainMenuItemGeneral',
++    description: 'swag-loyalty-tier.general.descriptionTextModule',
++    color: '#F88962',
++    icon: 'regular-star',
++    entity: 'swag_loyalty_tier',
++
++    routes: {
++        list: {
++            component: 'swag-loyalty-tier-list',
++            path: 'list',
++            meta: {
++                privilege: 'swag_loyalty_tier.viewer',
++            },
++        },
++    },
++
++    navigation: [
++        {
++            id: 'swag-loyalty-tier',
++            label: 'swag-loyalty-tier.general.mainMenuItemGeneral',
++            path: 'swag.loyalty.tier.list',
++            parent: 'sw-customer',
++            privilege: 'swag_loyalty_tier.viewer',
++            position: 100,
++        },
++    ],
++});
+diff --git a/src/Resources/app/administration/src/module/swag-loyalty-tier/page/swag-loyalty-tier-list/index.js b/src/Resources/app/administration/src/module/swag-loyalty-tier/page/swag-loyalty-tier-list/index.js
+new file mode 100644
+index 0000000..303cac1
+--- /dev/null
++++ b/src/Resources/app/administration/src/module/swag-loyalty-tier/page/swag-loyalty-tier-list/index.js
+@@ -0,0 +1,47 @@
++import template from './swag-loyalty-tier-list.html.twig';
++
++const { Criteria } = Shopware.Data;
++
++Shopware.Component.register('swag-loyalty-tier-list', {
++    template,
++
++    inject: ['repositoryFactory', 'acl'],
++
++    data() {
++        return {
++            tiers: null,
++            isLoading: false,
++        };
++    },
++
++    computed: {
++        tierRepository() {
++            return this.repositoryFactory.create('swag_loyalty_tier');
++        },
++
++        columns() {
++            return [
++                { property: 'name', label: this.$tc('swag-loyalty-tier.list.columnName'), primary: true },
++                { property: 'minPoints', label: this.$tc('swag-loyalty-tier.list.columnMinPoints') },
++            ];
++        },
++    },
++
++    created() {
++        this.loadTiers();
++    },
++
++    methods: {
++        async loadTiers() {
++            this.isLoading = true;
++            const criteria = new Criteria(1, 25);
++            criteria.addSorting(Criteria.sort('minPoints', 'ASC'));
++
++            try {
++                this.tiers = await this.tierRepository.search(criteria);
++            } finally {
++                this.isLoading = false;
++            }
++        },
++    },
++});
+diff --git a/src/Resources/app/administration/src/module/swag-loyalty-tier/page/swag-loyalty-tier-list/swag-loyalty-tier-list.html.twig b/src/Resources/app/administration/src/module/swag-loyalty-tier/page/swag-loyalty-tier-list/swag-loyalty-tier-list.html.twig
+new file mode 100644
+index 0000000..236bc73
+--- /dev/null
++++ b/src/Resources/app/administration/src/module/swag-loyalty-tier/page/swag-loyalty-tier-list/swag-loyalty-tier-list.html.twig
+@@ -0,0 +1,16 @@
++{% block swag_loyalty_tier_list %}
++<sw-page class="swag-loyalty-tier-list">
++    <template #content>
++        <sw-entity-listing
++            v-if="tiers"
++            :items="tiers"
++            :columns="columns"
++            :repository="tierRepository"
++            :is-loading="isLoading"
++            :allow-edit="acl.can('swag_loyalty_tier.editor')"
++            :allow-delete="acl.can('swag_loyalty_tier.deleter')"
++            :show-selection="acl.can('swag_loyalty_tier.deleter')"
++        />
++    </template>
++</sw-page>
++{% endblock %}

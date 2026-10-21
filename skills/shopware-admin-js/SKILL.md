@@ -44,7 +44,7 @@ Read only the reference that matches the task or the files it changes:
 3. **ADM-003** **Use Meteor / existing Admin components** (`mt-modal`, `mt-banner`,
    `mt-*`, or the local `sw-*` already in the file). Do not replace them
    with raw `<dialog>`, Popover API, or a custom select.
-4. **ADM-004** **ACL in the same change** as UI that reads or writes a DAL entity.
+4. **ACL in the same change** as UI that reads or writes a DAL entity.
    Existing roles need a privileges migration; mapping-only fixes future
    roles.
 5. **ADM-005** **Do not rewrite a working Twig / Options API override into a Vue SFC
@@ -68,7 +68,7 @@ Read only the reference that matches the task or the files it changes:
 - **ADM-008** BEM + Meteor design tokens. No inline styles. Snippets for visible text.
 - Reload an entity after a repository save so origin / change-set stay in
   sync.
-- **ADM-009** 6.7+ Admin build is Vite. Do not add a new `webpack.config.js`.
+- 6.7+ Admin build is Vite. Do not add a new `webpack.config.js`.
 
 ## Tests
 

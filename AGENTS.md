@@ -271,7 +271,10 @@ and the triggers from the owning skill's route, so the two cannot drift.
 `shopware-extension-review` reads the topic skills this way. Its
 `routes.json` sets `audience`; a rule in a borrowed reference that is for
 none of those audiences must be named in the skill (`references/lenses.md`),
-or `validate-rules` fails.
+or `validate-rules` fails. The other way round, a rule a review task expects
+(a `-catch` grader's `rule`, a near-miss grader's `accept`) must be tagged in
+a reference the review borrows, not in a topic skill's `SKILL.md`: the
+review never reads that, and cites the nearest ID it did read instead.
 
 ## Repo tooling
 

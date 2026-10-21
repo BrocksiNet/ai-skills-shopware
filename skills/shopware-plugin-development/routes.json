@@ -53,7 +53,9 @@
       "reference": "references/version-compatibility.md",
       "when": "The plugin must support more than one Shopware minor, or runs without a package it only suggests.",
       "paths_any": [
-        "**/composer.json"
+        "**/composer.json",
+        "**/Resources/config/services.xml",
+        "**/Resources/config/routes.xml"
       ],
       "anchors_any": [
         "\"shopware/core\"",

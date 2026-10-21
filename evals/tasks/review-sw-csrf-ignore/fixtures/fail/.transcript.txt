@@ -1,0 +1,14 @@
+```json
+{
+  "findings": [
+    {
+      "rule_id": null,
+      "severity": "major",
+      "file": "src/Resources/views/storefront/page/account/loyalty/index.html.twig",
+      "line": 11,
+      "summary": "The redeem form posts without a CSRF token, so another site can make a logged-in customer redeem their points.",
+      "fix": "Add {{ sw_csrf('frontend.loyalty.redeem') }} inside the form."
+    }
+  ]
+}
+```

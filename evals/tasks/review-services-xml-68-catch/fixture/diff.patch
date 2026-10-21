@@ -1,0 +1,170 @@
+diff --git a/src/Resources/config/config.xml b/src/Resources/config/config.xml
+index d3475b3..f5d9026 100644
+--- a/src/Resources/config/config.xml
++++ b/src/Resources/config/config.xml
+@@ -19,4 +19,23 @@
+             <defaultValue>1</defaultValue>
+         </input-field>
+     </card>
++
++    <card>
++        <title>Expiry reminder</title>
++        <title lang="de-DE">Erinnerung vor Verfall</title>
++
++        <input-field type="bool">
++            <name>expiryReminderEnabled</name>
++            <label>Remind customers before their points expire</label>
++            <label lang="de-DE">Kunden vor dem Verfall ihrer Punkte erinnern</label>
++            <defaultValue>false</defaultValue>
++        </input-field>
++
++        <input-field type="int">
++            <name>expiryReminderDays</name>
++            <label>Days before expiry</label>
++            <label lang="de-DE">Tage vor dem Verfall</label>
++            <defaultValue>14</defaultValue>
++        </input-field>
++    </card>
+ </config>
+diff --git a/src/Resources/config/services.xml b/src/Resources/config/services.xml
+new file mode 100644
+index 0000000..ba36606
+--- /dev/null
++++ b/src/Resources/config/services.xml
+@@ -0,0 +1,22 @@
++<?xml version="1.0" ?>
++<container xmlns="http://symfony.com/schema/dic/services"
++           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
++           xsi:schemaLocation="http://symfony.com/schema/dic/services http://symfony.com/schema/dic/services/services-1.0.xsd">
++    <services>
++        <defaults autowire="true" autoconfigure="true"/>
++
++        <service id="Swag\Loyalty\ScheduledTask\ExpiryReminderTask">
++            <tag name="shopware.scheduled.task"/>
++        </service>
++
++        <service id="Swag\Loyalty\ScheduledTask\ExpiryReminderTaskHandler">
++            <argument key="$scheduledTaskRepository" type="service" id="scheduled_task.repository"/>
++            <argument key="$exceptionLogger" type="service" id="logger"/>
++        </service>
++
++        <service id="Swag\Loyalty\Service\ExpiryReminderMailer">
++            <argument key="$mailService" type="service" id="Shopware\Core\Content\Mail\Service\MailService"/>
++            <argument key="$customerRepository" type="service" id="customer.repository"/>
++        </service>
++    </services>
++</container>
+diff --git a/src/ScheduledTask/ExpiryReminderTask.php b/src/ScheduledTask/ExpiryReminderTask.php
+new file mode 100644
+index 0000000..1c248e9
+--- /dev/null
++++ b/src/ScheduledTask/ExpiryReminderTask.php
+@@ -0,0 +1,18 @@
++<?php declare(strict_types=1);
++
++namespace Swag\Loyalty\ScheduledTask;
++
++use Shopware\Core\Framework\MessageQueue\ScheduledTask\ScheduledTask;
++
++class ExpiryReminderTask extends ScheduledTask
++{
++    public static function getTaskName(): string
++    {
++        return 'swag_loyalty.expiry_reminder';
++    }
++
++    public static function getDefaultInterval(): int
++    {
++        return self::DAILY;
++    }
++}
+diff --git a/src/ScheduledTask/ExpiryReminderTaskHandler.php b/src/ScheduledTask/ExpiryReminderTaskHandler.php
+new file mode 100644
+index 0000000..15b8d6b
+--- /dev/null
++++ b/src/ScheduledTask/ExpiryReminderTaskHandler.php
+@@ -0,0 +1,41 @@
++<?php declare(strict_types=1);
++
++namespace Swag\Loyalty\ScheduledTask;
++
++use Psr\Log\LoggerInterface;
++use Shopware\Core\Framework\Context;
++use Shopware\Core\Framework\DataAbstractionLayer\EntityRepository;
++use Shopware\Core\Framework\MessageQueue\ScheduledTask\ScheduledTaskHandler;
++use Shopware\Core\System\SystemConfig\SystemConfigService;
++use Swag\Loyalty\Service\ExpiryReminderMailer;
++use Swag\Loyalty\Service\LoyaltyPointsService;
++use Symfony\Component\Messenger\Attribute\AsMessageHandler;
++
++#[AsMessageHandler(handles: ExpiryReminderTask::class)]
++class ExpiryReminderTaskHandler extends ScheduledTaskHandler
++{
++    public function __construct(
++        EntityRepository $scheduledTaskRepository,
++        LoggerInterface $exceptionLogger,
++        private readonly LoyaltyPointsService $pointsService,
++        private readonly ExpiryReminderMailer $mailer,
++        private readonly SystemConfigService $systemConfigService,
++    ) {
++        parent::__construct($scheduledTaskRepository, $exceptionLogger);
++    }
++
++    public function run(): void
++    {
++        if (!$this->systemConfigService->getBool('SwagLoyalty.config.expiryReminderEnabled')) {
++            return;
++        }
++
++        $days = $this->systemConfigService->getInt('SwagLoyalty.config.expiryReminderDays');
++        $until = new \DateTimeImmutable(\sprintf('+%d days', $days));
++        $context = Context::createCLIContext();
++
++        foreach ($this->pointsService->findCustomersWithExpiringPoints($until, $context) as $customerId) {
++            $this->mailer->send($customerId, $until, $context);
++        }
++    }
++}
+diff --git a/src/Service/ExpiryReminderMailer.php b/src/Service/ExpiryReminderMailer.php
+new file mode 100644
+index 0000000..0652566
+--- /dev/null
++++ b/src/Service/ExpiryReminderMailer.php
+@@ -0,0 +1,37 @@
++<?php declare(strict_types=1);
++
++namespace Swag\Loyalty\Service;
++
++use Shopware\Core\Content\Mail\Service\AbstractMailService;
++use Shopware\Core\Framework\Context;
++use Shopware\Core\Framework\DataAbstractionLayer\EntityRepository;
++use Shopware\Core\Framework\DataAbstractionLayer\Search\Criteria;
++use Shopware\Core\Framework\Validation\DataBag\DataBag;
++
++class ExpiryReminderMailer
++{
++    public function __construct(
++        private readonly AbstractMailService $mailService,
++        private readonly EntityRepository $customerRepository,
++    ) {
++    }
++
++    public function send(string $customerId, \DateTimeImmutable $until, Context $context): void
++    {
++        $customer = $this->customerRepository->search(new Criteria([$customerId]), $context)->first();
++        if ($customer === null) {
++            return;
++        }
++
++        $data = new DataBag([
++            'recipients' => [$customer->getEmail() => $customer->getFirstName() . ' ' . $customer->getLastName()],
++            'senderName' => 'Loyalty points',
++            'salesChannelId' => $customer->getSalesChannelId(),
++            'subject' => 'Your loyalty points expire soon',
++            'contentHtml' => \sprintf('<p>Some of your loyalty points expire on %s.</p>', $until->format('Y-m-d')),
++            'contentPlain' => \sprintf('Some of your loyalty points expire on %s.', $until->format('Y-m-d')),
++        ]);
++
++        $this->mailService->send($data->all(), $context, ['customer' => $customer]);
++    }
++}

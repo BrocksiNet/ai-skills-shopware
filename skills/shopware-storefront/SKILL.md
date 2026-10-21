@@ -54,7 +54,7 @@ Read only the reference that matches the task or the files it changes:
 - **SF-007** Visible text goes through snippets (`trans`), not hardcoded strings.
 - **SF-008** Product / CMS images use Shopware media + thumbnails / `srcset`, not a
   one-off `<img>` with a hardcoded CDN URL.
-- **SF-009** Storefront forms post to the existing storefront controller or a Store-API
+- Storefront forms post to the existing storefront controller or a Store-API
   route. Do **not** add `sw_csrf` or a CSRF hidden field — Shopware 6.5+
   dropped storefront CSRF for SameSite cookies.
 - **SF-010** **Twig 4 (Shopware 6.8) is stricter, not a new theme.** Remove the

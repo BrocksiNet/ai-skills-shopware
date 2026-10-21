@@ -1,0 +1,60 @@
+diff --git a/src/Resources/app/administration/build/webpack.config.js b/src/Resources/app/administration/build/webpack.config.js
+new file mode 100644
+index 0000000..172cecd
+--- /dev/null
++++ b/src/Resources/app/administration/build/webpack.config.js
+@@ -0,0 +1,11 @@
++const path = require('path');
++
++module.exports = () => {
++    return {
++        resolve: {
++            alias: {
++                '@loyalty': path.join(__dirname, '..', 'src', 'loyalty-shared'),
++            },
++        },
++    };
++};
+diff --git a/src/Resources/app/administration/src/component/swag-loyalty-customer-points/index.js b/src/Resources/app/administration/src/component/swag-loyalty-customer-points/index.js
+new file mode 100644
+index 0000000..e9c393e
+--- /dev/null
++++ b/src/Resources/app/administration/src/component/swag-loyalty-customer-points/index.js
+@@ -0,0 +1,19 @@
++import formatPoints from '@loyalty/format-points';
++import template from './swag-loyalty-customer-points.html.twig';
++
++Shopware.Component.register('swag-loyalty-customer-points', {
++    template,
++
++    props: {
++        points: {
++            type: Number,
++            required: true,
++        },
++    },
++
++    computed: {
++        formattedPoints() {
++            return formatPoints(this.points, Shopware.State.get('session').currentLocale);
++        },
++    },
++});
+diff --git a/src/Resources/app/administration/src/component/swag-loyalty-customer-points/swag-loyalty-customer-points.html.twig b/src/Resources/app/administration/src/component/swag-loyalty-customer-points/swag-loyalty-customer-points.html.twig
+new file mode 100644
+index 0000000..f2d112d
+--- /dev/null
++++ b/src/Resources/app/administration/src/component/swag-loyalty-customer-points/swag-loyalty-customer-points.html.twig
+@@ -0,0 +1,5 @@
++{% block swag_loyalty_customer_points %}
++<span class="swag-loyalty-customer-points">
++    {{ $tc('swag-loyalty.customer.points', points, { points: formattedPoints }) }}
++</span>
++{% endblock %}
+diff --git a/src/Resources/app/administration/src/main.js b/src/Resources/app/administration/src/main.js
+index b65f922..5c62f8c 100644
+--- a/src/Resources/app/administration/src/main.js
++++ b/src/Resources/app/administration/src/main.js
+@@ -1 +1,2 @@
+ import './module/swag-loyalty';
++import './component/swag-loyalty-customer-points';

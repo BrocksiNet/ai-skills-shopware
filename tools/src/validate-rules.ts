@@ -16,10 +16,12 @@
 //      does not match the catalog (run tools/bin/render-enforced.ts)
 //   7. a skill that borrows references for an audience does not name a rule
 //      in them that is for another audience (see borrow-audience.ts)
+//   8. a review task expects a rule that is not tagged in a file its
+//      reviewing skill reads (see borrow-audience.ts)
 // It also checks the field types, since the catalog is hand-edited JSON.
 import { existsSync, readdirSync, readFileSync, statSync } from 'node:fs';
 import { join, relative, sep } from 'node:path';
-import { borrowedAudienceErrors } from './borrow-audience.ts';
+import { borrowedAudienceErrors, reviewReachErrors } from './borrow-audience.ts';
 import { type Catalog, type Rule, checkCatalog, isActive, prefixOf, readCatalog } from './catalog.ts';
 import { enforcedChanges } from './enforced-files.ts';
 import { errorMessage } from './errors.ts';
@@ -210,6 +212,7 @@ export function validateRules(root: string, raw: unknown = readCatalog(root)): R
     ...mentionErrors(ctx, references, checked.malformed),
     ...enforcedSectionErrors(root, { ...checked.catalog, rules: [...byId.values()] }),
     ...borrowedAudienceErrors(root, [...byId.values()], references),
+    ...reviewReachErrors(root, byId),
   );
   return { errors, ...coverage([...byId.values()]) };
 }

@@ -29,11 +29,13 @@ criteria. Packages are ordered so that each one only depends on earlier ones.
 | WP11 | Kev classifier for on-demand routes (experiment) | WP4 | M | local only |
 
 Shipped: everything through WP10 landed in **v0.9.0** (2026-10-21), ahead
-of the milestones below. Still open: WP0 item 7 (waits for #21730), the
-WP6 A/B acceptance (catch tasks too easy for the model without the skill),
-and WP11. v0.10.0 (2026-10-21) added five rules from a real plugin review
+of the milestones below. Still open: WP0 item 7 (waits for #21730) and
+WP11. v0.10.0 (2026-10-21) added five rules from a real plugin review
 (ADM-042..044, SEC-008, PLG-032); ADM-044 is the first catch task where the
-skill wins the A/B (3/3 on, 0/3 off).
+skill wins the A/B (3/3 on, 0/3 off). PR #46 met the WP6 A/B acceptance
+with review pairs that turn on version and API facts: PLG-007 (3/3 on, 0/3
+off), SF-009 (3/3, 0/3) and ADM-009 (2/3, 0/3) win too, and no `-ignore`
+task has more false positives with the skill on (Haiku, 3 repeats).
 
 Suggested milestones, as planned:
 
@@ -672,8 +674,10 @@ WP7 phase A rules.
 
 - Activation evals reach 90 % or more on should-trigger and 0 false triggers
   for core PR review prompts.
-- In the WP1 A/B, `on` beats `off` on at least four of the six WP5 catch tasks,
-  and false positives on `-ignore` tasks do not increase.
+- In the WP1 A/B, `on` beats `off` on at least four review catch tasks for
+  plugin and app rules, and false positives on `-ignore` tasks do not
+  increase. (Changed 2026-10-21 from "four of the six WP5 catch tasks":
+  Haiku finds those six without the skill, so they cannot show it helping.)
 
 ---
 

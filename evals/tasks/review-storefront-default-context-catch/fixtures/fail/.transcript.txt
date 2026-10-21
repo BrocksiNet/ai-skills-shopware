@@ -1,0 +1,22 @@
+```json
+{
+  "findings": [
+    {
+      "rule_id": "PLG-016",
+      "severity": "nit",
+      "file": "src/Storefront/Pagelet/TierRecommendation/TierRecommendationPageletLoader.php",
+      "line": 43,
+      "summary": "The loader could pass the sales channel context it already has.",
+      "fix": "Use $salesChannelContext."
+    },
+    {
+      "rule_id": "PLG-015",
+      "severity": "major",
+      "file": "src/Storefront/Pagelet/TierRecommendation/TierRecommendationPageletLoader.php",
+      "line": 43,
+      "summary": "Context::createDefaultContext() ignores the customer's language and currency, so names and prices are wrong.",
+      "fix": "Use the sales channel product repository with the SalesChannelContext."
+    }
+  ]
+}
+```

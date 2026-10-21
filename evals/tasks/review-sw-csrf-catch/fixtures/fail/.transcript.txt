@@ -1,0 +1,22 @@
+```json
+{
+  "findings": [
+    {
+      "rule_id": "SF-009",
+      "severity": "nit",
+      "file": "src/Resources/views/storefront/page/account/loyalty/index.html.twig",
+      "line": 14,
+      "summary": "The sw_csrf call is not needed in the redeem form.",
+      "fix": "Remove it."
+    },
+    {
+      "rule_id": "SF-013",
+      "severity": "major",
+      "file": "src/Resources/views/storefront/page/account/loyalty/index.html.twig",
+      "line": 14,
+      "summary": "sw_csrf() no longer exists on 6.6, so the template fails to compile.",
+      "fix": "Remove the sw_csrf call."
+    }
+  ]
+}
+```

@@ -1,0 +1,14 @@
+```json
+{
+  "findings": [
+    {
+      "rule_id": null,
+      "severity": "major",
+      "file": "src/Resources/app/administration/build/webpack.config.js",
+      "line": 1,
+      "summary": "The Administration builds with Vite, so build/webpack.config.js is ignored and the '@loyalty/format-points' import fails to resolve.",
+      "fix": "Move the alias into a vite.config."
+    }
+  ]
+}
+```

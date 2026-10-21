@@ -1,0 +1,16 @@
+composer.json requires shopware/administration ~6.7.0, where the Administration builds with Vite.
+
+```json
+{
+  "findings": [
+    {
+      "rule_id": "ADM-009",
+      "severity": "major",
+      "file": "src/Resources/app/administration/build/webpack.config.js",
+      "line": 1,
+      "summary": "On 6.7 the Administration builds with Vite and build/webpack.config.js is not read, so the @loyalty alias does nothing and the import of '@loyalty/format-points' fails to resolve.",
+      "fix": "Drop the webpack config and import format-points with a relative path, or move the alias into a vite.config as UPGRADE-6.7 describes."
+    }
+  ]
+}
+```

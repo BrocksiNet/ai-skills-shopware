@@ -1,0 +1,7 @@
+The ACL mapping declares each role with privileges and dependencies, and the route and navigation entry require swag_loyalty_tier.viewer.
+
+```json
+{
+  "findings": []
+}
+```

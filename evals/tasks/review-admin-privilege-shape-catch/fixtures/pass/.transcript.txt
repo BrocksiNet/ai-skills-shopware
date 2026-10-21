@@ -1,0 +1,16 @@
+The new tier module registers its ACL mapping with a flat privileges object.
+
+```json
+{
+  "findings": [
+    {
+      "rule_id": "ADM-004",
+      "severity": "major",
+      "file": "src/Resources/app/administration/src/module/swag-loyalty-tier/acl/index.js",
+      "line": 5,
+      "summary": "addPrivilegeMappingEntry gets a flat privileges object instead of roles: { viewer: { privileges, dependencies }, ... }; isPrivilegeMapping only checks category, parent and key, so the entry registers and the role screens then throw a TypeError reading roles.",
+      "fix": "Use roles with one object per role, each with privileges and dependencies (editor depends on swag_loyalty_tier.viewer, viewer on [])."
+    }
+  ]
+}
+```

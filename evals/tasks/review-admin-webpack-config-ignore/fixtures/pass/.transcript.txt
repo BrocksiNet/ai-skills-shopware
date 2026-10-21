@@ -1,0 +1,16 @@
+composer.json requires ~6.6.0, where the Administration still builds with webpack and reads build/webpack.config.js, so the alias resolves.
+
+```json
+{
+  "findings": [
+    {
+      "rule_id": null,
+      "severity": "minor",
+      "file": "src/Resources/app/administration/src/component/swag-loyalty-customer-points/index.js",
+      "line": 1,
+      "summary": "New Administration code is plain JavaScript; consider TypeScript for the new component.",
+      "fix": "Write the component as index.ts."
+    }
+  ]
+}
+```

@@ -37,6 +37,11 @@ $products = $this->productRepository->search($criteria, $context)->getEntities()
 
 ## Raw SQL: last resort
 
+- **PLG-003** **Entity data goes through the DAL, not raw SQL**, when a
+  `Criteria` read or an `EntityRepository` write works. A raw write skips
+  entity events, the indexers and cache invalidation, so other extensions and
+  the HTTP cache never see the change.
+
 Only drop to `Doctrine\DBAL\Connection` for bulk/performance work the DAL cannot
 express. When you do: bind parameters (never interpolate), and document why.
 
