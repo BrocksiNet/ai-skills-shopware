@@ -360,7 +360,7 @@
     {
       "id": "TEST-016",
       "skill": "shopware-testing",
-      "file": "skills/shopware-testing/SKILL.md",
+      "file": "skills/shopware-testing/references/test-shape-and-flags.md",
       "title": "Observe events through a hook or an owned dispatcher; assert afterwards",
       "status": "active",
       "since": "2026-10-20",
@@ -687,7 +687,7 @@
     {
       "id": "TEST-035",
       "skill": "shopware-testing",
-      "file": "skills/shopware-testing/SKILL.md",
+      "file": "skills/shopware-testing/references/test-shape-and-flags.md",
       "title": "A test must be able to fail",
       "status": "active",
       "since": "2026-10-21",
@@ -744,7 +744,7 @@
     {
       "id": "PLG-003",
       "skill": "shopware-plugin-development",
-      "file": "skills/shopware-plugin-development/SKILL.md",
+      "file": "skills/shopware-plugin-development/references/dal-usage.md",
       "title": "Entity data goes through the DAL, not raw SQL",
       "status": "active",
       "since": "2026-10-20",

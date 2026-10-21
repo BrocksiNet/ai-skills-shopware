@@ -26,6 +26,14 @@ behavior.
   **exactly one** test file belongs in that file, below the test class. Move it
   into a shared `_fixtures` namespace once a second test needs it.
 
+## A test must be able to fail
+
+- **TEST-035** **A test must be able to fail.** Assert that a captured value
+  exists (`assertNotNull`, `assertInstanceOf`, or a fired-count) before you
+  check its fields; never guard assertions with `if ($captured !== null)`. A
+  mocked `transactional()` or callback must run the closure it receives, or
+  the code under test never executes and the test passes on nothing.
+
 ## Never terminate the test process
 
 A test must never let production or framework code call `exit()`, `die()`, or
@@ -61,6 +69,11 @@ A test must never let production or framework code call `exit()`, `die()`, or
   passes vacuously.
 
 ## Observing events in tests
+
+- **TEST-016** **No runtime listeners on the shared `event_dispatcher`.**
+  Observe through a dispatcher the test owns (unit) or a hook (integration),
+  capture in the hook and assert afterwards, never inside it: an assertion in
+  a listener that never runs never fails.
 
 Two shapes, in this order of preference:
 

@@ -50,7 +50,7 @@ Read only the reference that matches the task or the files it changes:
 2. **PLG-002** **Never use a deprecated API when a stable replacement exists** (e.g. the
    `*CacheTagsEvent` events in 6.7 — use `CacheTagCollector`). If you must, say so
    and why.
-3. **PLG-003** **Never write raw SQL through the DAL layer for entity data** when a `Criteria`
+3. **Never write raw SQL through the DAL layer for entity data** when a `Criteria`
    read or `EntityRepository` write works. Raw connection SQL is a last resort
    with a stated reason (bulk/performance) and parameter binding.
 4. **PLG-004** **Never modify core files or vendor code.** Extend via decoration, events,

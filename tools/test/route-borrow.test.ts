@@ -3,7 +3,7 @@ import { mkdirSync, mkdtempSync, rmSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { after, describe, test } from 'node:test';
-import { borrowedAudienceErrors } from '../src/borrow-audience.ts';
+import { borrowedAudienceErrors, expectedRules, reviewReachErrors } from '../src/borrow-audience.ts';
 import type { Audience, Rule } from '../src/catalog.ts';
 import { resolveBorrowed } from '../src/route-borrow.ts';
 import { loadRoutes, renderTable, routeErrors } from '../src/routes.ts';
@@ -124,5 +124,34 @@ describe('borrowedAudienceErrors', () => {
   test('a bad audience is an error', () => {
     write('skills/shopware-review/routes.json', JSON.stringify({ audience: ['shop'], routes: [] }));
     assert.match(borrowedAudienceErrors(repo, rules, []).join(), /audience must be a non-empty list/u);
+  });
+});
+
+describe('reviewReachErrors', () => {
+  const repo = join(root, 'reach');
+  const write = (path: string, text: string): void => {
+    mkdirSync(join(repo, path, '..'), { recursive: true });
+    writeFileSync(join(repo, path), text);
+  };
+  write('skills/shopware-lender/routes.json', JSON.stringify({ routes: [lender] }));
+  write(
+    'skills/shopware-review/routes.json',
+    JSON.stringify({ audience: ['plugin'], routes: [{ reference: BORROW }] }),
+  );
+  write('evals/tasks/review-x-catch/skills', 'shopware-lender\nshopware-review\n');
+  write('tools/graders/review-x-catch.ts', "export const grade = reviewCatch({ rule: 'X-001', file: 'src/**' });\n");
+  const inSkill = { ...rule('X-001', ['plugin']), file: 'skills/shopware-lender/SKILL.md' };
+
+  test('a rule a catch task expects must be tagged where the reviewing skill reads', () => {
+    assert.deepEqual(reviewReachErrors(repo, new Map([['X-001', rule('X-001', ['plugin'])]])), []);
+    assert.deepEqual(reviewReachErrors(repo, new Map([['X-001', inSkill]])), [
+      'evals/tasks/review-x-catch: expects X-001, tagged in skills/shopware-lender/SKILL.md, which shopware-review does not read; tag it in a reference shopware-review borrows',
+    ]);
+  });
+
+  test('a catch grader expects its rule; a near-miss grader its accept list, not the decoy', () => {
+    assert.deepEqual(expectedRules("reviewCatch({ rule: 'ADM-004', file: 'a' })", 'review-a-catch'), ['ADM-004']);
+    const nearMiss = "reviewNearMiss({ rule: 'SEC-005', accept: ['SEC-008', 'PLG-003'] })";
+    assert.deepEqual(expectedRules(nearMiss, 'review-a-near-miss'), ['SEC-008', 'PLG-003']);
   });
 });

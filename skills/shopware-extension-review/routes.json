@@ -67,6 +67,17 @@
       "reference": "../shopware-architecture/references/symfony-in-shopware.md"
     },
     {
+      "reference": "../shopware-core-development/references/removals-and-shims.md"
+    },
+    {
+      "reference": "../shopware-change-impact/references/impact-review.md",
+      "when": "The extension caches a computed value under its own key.",
+      "anchors_any": [
+        "Contracts\\\\Cache\\\\(CacheInterface|TagAwareCacheInterface)",
+        "CacheItemPoolInterface"
+      ]
+    },
+    {
       "reference": "../shopware-architecture/references/extension-mechanisms.md"
     },
     {

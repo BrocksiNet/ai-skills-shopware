@@ -23,6 +23,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
     (`review-services-xml-68-*`)
   - PLG-016: `Context::createDefaultContext()` for storefront product data
     (`review-storefront-default-context-*`)
+- `validate-rules` fails when a review task expects a rule that is tagged
+  where the reviewing skill cannot read it. It moved the tags of PLG-003,
+  TEST-016 and TEST-035 into borrowed references, and
+  `shopware-extension-review` now borrows `removals-and-shims.md` (CORE-063)
+  and, for a plugin's own cache, `impact-review.md` (IMP-008).
 - The `version-compatibility.md` route also fires on a plugin
   `services.xml` or `routes.xml`.
 

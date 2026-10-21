@@ -100,3 +100,5 @@ itself. Do not report them on a plugin or app diff:
   `Shopware` object's extension points.
 - `ARCH-004`: new core Store API routes publish a typed extension event.
 - `TEST-024` and `TEST-031`: tests for major feature flag behavior.
+- `CORE-064` and `CORE-065`: shims for core removals and gating code that
+  ends at the major.

@@ -3,6 +3,12 @@
 // name, as a code span anywhere in its files, every active rule in a borrowed
 // reference that is for none of them. The model skips what the skill names;
 // a new core-only rule in a borrowed reference fails CI until it is named.
+//
+// The other way round: a review task expects a rule (a `review-*-catch`
+// grader's `rule`, a near-miss grader's `accept` IDs), and the reviewing skill
+// reads only its own files and the references it borrows. A rule tagged
+// anywhere else, often a topic skill's SKILL.md, is invisible to it: the
+// review finds the problem and cites the nearest ID it did read.
 import { existsSync, readdirSync, readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { AUDIENCES, type Audience, isActive, type Rule } from './catalog.ts';
@@ -62,6 +68,54 @@ export function borrowedAudienceErrors(root: string, rules: Rule[], mentions: Me
       errors.push(
         `skills/${skill}: borrows ${rule.file} but does not name ${rule.id} (audience ${rule.audience.join(', ')}) as out of scope`,
       );
+    }
+  }
+  return errors;
+}
+
+const REVIEW_TASK = /^review-.+-(catch|near-miss)$/u;
+const ID = /'([A-Z]+-\d{3})'/gu;
+
+/** The rule IDs a review task's grader expects a finding to cite. */
+export function expectedRules(grader: string, task: string): string[] {
+  if (task.endsWith('-catch')) {
+    const id = /\brule:\s*'([A-Z]+-\d{3})'/u.exec(grader)?.[1];
+    return id === undefined ? [] : [id];
+  }
+  const accept = /\baccept:\s*\[([^\]]*)\]/u.exec(grader)?.[1] ?? '';
+  return Array.from(accept.matchAll(ID), (m) => m[1] ?? '');
+}
+
+const lines = (path: string): string[] =>
+  existsSync(path)
+    ? readFileSync(path, 'utf8')
+        .split('\n')
+        .map((l) => l.trim())
+        .filter((l) => l !== '')
+    : [];
+
+/** Errors for rules a review task expects that its reviewing skill cannot read. */
+export function reviewReachErrors(root: string, rules: Map<string, Rule>): string[] {
+  const dir = join(root, 'evals', 'tasks');
+  if (!existsSync(dir)) return [];
+  const errors: string[] = [];
+  for (const task of readdirSync(dir)
+    .filter((t) => REVIEW_TASK.test(t))
+    .toSorted(compareText)) {
+    const grader = join(root, 'tools', 'graders', `${task}.ts`);
+    if (!existsSync(grader)) continue;
+    const reviewers = lines(join(dir, task, 'skills'))
+      .map((s) => borrower(root, s))
+      .filter((b): b is Borrower => b !== null && typeof b !== 'string');
+    for (const id of expectedRules(readFileSync(grader, 'utf8'), task)) {
+      const rule = rules.get(id);
+      if (rule === undefined) continue;
+      for (const b of reviewers) {
+        if (b.files.has(rule.file) || rule.file.startsWith(`skills/${b.skill}/`)) continue;
+        errors.push(
+          `evals/tasks/${task}: expects ${id}, tagged in ${rule.file}, which ${b.skill} does not read; tag it in a reference ${b.skill} borrows`,
+        );
+      }
     }
   }
   return errors;
