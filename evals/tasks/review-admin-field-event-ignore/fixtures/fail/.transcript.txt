@@ -1,0 +1,14 @@
+```json
+{
+  "findings": [
+    {
+      "rule_id": null,
+      "severity": "major",
+      "file": "src/Resources/app/administration/src/module/swag-loyalty/component/swag-loyalty-settings/swag-loyalty-settings.html.twig",
+      "line": 34,
+      "summary": "v-model:value on sw-switch-field relies on update:value, which the 6.5 field never emits, so the guest points setting does not update on 6.5.",
+      "fix": "Bind :value and listen to @change instead."
+    }
+  ]
+}
+```

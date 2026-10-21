@@ -1,0 +1,22 @@
+```json
+{
+  "findings": [
+    {
+      "rule_id": "ADM-044",
+      "severity": "nit",
+      "file": "src/Resources/app/administration/src/module/swag-loyalty/component/swag-loyalty-settings/swag-loyalty-settings.html.twig",
+      "line": 36,
+      "summary": "The new fields use :value with @change instead of v-model:value like the rest of the card.",
+      "fix": "Use v-model:value for consistency."
+    },
+    {
+      "rule_id": "ADM-039",
+      "severity": "major",
+      "file": "src/Resources/app/administration/src/module/swag-loyalty/component/swag-loyalty-settings/swag-loyalty-settings.html.twig",
+      "line": 36,
+      "summary": "The @change listener on sw-switch-field never fires on 6.6, so the guest points setting does not update.",
+      "fix": "Bind the field with v-model:value."
+    }
+  ]
+}
+```

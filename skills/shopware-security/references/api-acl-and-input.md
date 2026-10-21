@@ -5,6 +5,12 @@
 - Declare **privileges** / `_acl` consistent with existing Admin routes.
 - Store-API: use correct **route scope** (e.g. login required vs public).
 - **SEC-005** Validate and type **input** — do not trust query/body parameters without constraints.
+- **SEC-008** **A stored idempotent response is replayed only to the caller
+  that created it.** Key it by the idempotency key plus the sales channel
+  and the customer, or the integration or user for the Admin API, and store
+  a hash of the request body: the same key with a different body is an
+  error, not a replay. A key without that scope hands whoever reuses or
+  guesses it another caller's response, with its tokens, codes and data.
 
 ## Changing an existing route
 
@@ -32,3 +38,5 @@
 `store-api-route-missing-acl` — fixture route without privilege annotation.
 `review-route-defaults-changed-catch` / `-ignore` — a changed `_loginRequired`
 on a released route.
+`review-idempotency-key-scope-catch` / `-ignore` — an idempotency store
+keyed only by the header.

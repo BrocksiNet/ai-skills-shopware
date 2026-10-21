@@ -1,0 +1,12 @@
+{
+    "swag-loyalty": {
+        "general": {
+            "mainMenuItemGeneral": "Loyalty",
+            "descriptionTextModule": "Manage loyalty tiers and points"
+        },
+        "list": {
+            "columnName": "Name",
+            "columnMinPoints": "Minimum points"
+        }
+    }
+}

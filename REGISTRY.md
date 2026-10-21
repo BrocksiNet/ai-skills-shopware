@@ -49,6 +49,7 @@ the surface skills can all be installed together without contradicting (see
 | Long-running service state (`ResetInterface`, `kernel.reset`); extension event properties as contract | `shopware-architecture` |
 | Secrets, access keys, API ACL, app least privilege | `shopware-security` |
 | Access and cache defaults of existing routes (`_routeScope`, `_loginRequired`, `_httpCache`, `_acl`) | `shopware-security` |
+| Idempotency keys and replayed responses scoped to their caller | `shopware-security` |
 | Plugin/extension Store-API & Admin OpenAPI contracts | `shopware-plugin-development` |
 | Plugin/extension Store-API & Admin request and response compatibility (field types, required parameters, status codes, validation) | `shopware-plugin-development` |
 | Core Admin/Store API OpenAPI schemas | `shopware-core-development` |
@@ -62,6 +63,7 @@ the surface skills can all be installed together without contradicting (see
 | Core platform scope (hosting-only options, silent environment probes, product-specific code) | `shopware-core-development` |
 | Theme and media asset lifetime behind the HTTP cache (core) | `shopware-core-development` |
 | Plugin structure & lifecycle (install/activate/uninstall, keepUserData) | `shopware-plugin-development` |
+| Suggested (optional) packages such as `shopware/storefront`: guards in boot-time code | `shopware-plugin-development` |
 | DAL usage (Criteria, associations, write/sync, avoid N+1) | `shopware-plugin-development` |
 | HTTP cache & cache tags (6.7 `CacheTagCollector`) | `shopware-plugin-development` |
 | Database migrations (`MigrationStep`, destructive/non-destructive) | `shopware-plugin-development` |
@@ -97,7 +99,7 @@ the surface skills can all be installed together without contradicting (see
 | Storefront Twig/theme inheritance, PluginManager JS, Bootstrap storefront components, Twig 4 (`spaceless`, null attributes) | `shopware-storefront` |
 | Storefront HTTP cache vs AJAX; no speculation/prerender on cart/checkout/account | `shopware-storefront` |
 | Storefront public API for themes (Twig blocks and variables, JS plugin options and events, SCSS variables, `theme.json` fields, snippet keys) | `shopware-storefront` |
-| Administration Vue/TS, Meteor `mt-*`, Jest next to code, Admin ACL + privilege migrations; experimental SFC is not the 6.8 upgrade | `shopware-admin-js` |
+| Administration Vue/TS, Meteor `mt-*`, Jest next to code, Admin ACL + privilege migrations (no `system_config` grants in plugin roles), component overrides with `$super`, form field binding across 6.5 and 6.6+; experimental SFC is not the 6.8 upgrade | `shopware-admin-js` |
 | Administration extension API (component props, blocks, `swDefinePublic`, `blocks-list.json`, position identifiers) | `shopware-admin-js` |
 | Generic modern CSS/HTML/JS lookup (Modern Web Guidance CLI) after Shopware primitives | `shopware-research-and-escalation` |
 

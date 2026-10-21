@@ -5,7 +5,7 @@
       "reference": "references/architecture.md",
       "when": "You add a module, component override or ACL privilege.",
       "paths_any": ["**/Resources/app/administration/src/module/**", "**/Resources/app/administration/src/**/acl/index.{js,ts}"],
-      "anchors_any": ["Shopware\\.Module\\.register\\(", "Shopware\\.Component\\.(override|extend|register)\\(", "addPrivilegeMappingEntry\\("]
+      "anchors_any": ["Shopware\\.Module\\.register\\(", "Shopware\\.Component\\.(override|extend|register)\\(", "addPrivilegeMappingEntry\\(", "system_config:(read|update)", "enrichPrivileges\\("]
     },
     {
       "reference": "references/extension-api.md",

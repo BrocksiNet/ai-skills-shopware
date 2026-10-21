@@ -1,0 +1,13 @@
+{% block swag_loyalty_list %}
+<sw-page class="swag-loyalty-list">
+    {% block swag_loyalty_list_content %}
+    <template #content>
+        <sw-card-view>
+            {% block swag_loyalty_list_program %}
+            <swag-loyalty-program-card />
+            {% endblock %}
+        </sw-card-view>
+    </template>
+    {% endblock %}
+</sw-page>
+{% endblock %}

@@ -1,0 +1,22 @@
+```json
+{
+  "findings": [
+    {
+      "rule_id": "PLG-032",
+      "severity": "nit",
+      "file": "src/Resources/config/services.php",
+      "line": 26,
+      "summary": "The storefront controller could sit next to the other storefront service inside the guard.",
+      "fix": "Move it into the if block."
+    },
+    {
+      "rule_id": "PLG-011",
+      "severity": "major",
+      "file": "src/Resources/config/routes.php",
+      "line": 8,
+      "summary": "Storefront routes are imported even when shopware/storefront is not installed, which is only a suggest dependency.",
+      "fix": "Guard the import."
+    }
+  ]
+}
+```

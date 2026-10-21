@@ -1,0 +1,16 @@
+composer.json supports 6.5 and 6.6, so the new fields have to bind in a way both versions understand.
+
+```json
+{
+  "findings": [
+    {
+      "rule_id": "ADM-044",
+      "severity": "major",
+      "file": "src/Resources/app/administration/src/module/swag-loyalty/component/swag-loyalty-settings/swag-loyalty-settings.html.twig",
+      "line": 36,
+      "summary": "The new sw-switch-field and sw-single-select listen to @change, which 6.6 fields never emit (they only emit update:value), so on 6.6 the guest points and rounding settings never update and are not saved.",
+      "fix": "Bind both fields with v-model:value=\"settings.guestPoints\" and v-model:value=\"settings.rounding\" like the existing fields, and drop the onChange methods."
+    }
+  ]
+}
+```

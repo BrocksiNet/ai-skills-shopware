@@ -1,0 +1,14 @@
+```json
+{
+  "findings": [
+    {
+      "rule_id": null,
+      "severity": "major",
+      "file": "src/Controller/LoyaltySettingsController.php",
+      "line": 21,
+      "summary": "The new settings route gives every swag_loyalty.viewer access to system config values, exposing the settings of all config domains.",
+      "fix": "Require system_config:read on the route instead of the loyalty role."
+    }
+  ]
+}
+```

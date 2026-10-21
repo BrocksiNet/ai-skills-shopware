@@ -22,6 +22,15 @@ build on it. For each removed or renamed name, ask who used it:
 A rename without a deprecation and a fallback is a removal. A deprecation
 points at a replacement the extenders can use today: `CORE-063`.
 
+## Supported versions
+
+- Does code that loads on every request use a package that `composer.json`
+  only suggests, outside its guard: `PLG-032`?
+- Does an admin override replace a core method without `$super`:
+  `ADM-042`?
+- Does a bundle for 6.5 and 6.6+ bind `sw-*` fields with `@change` or a
+  bare `@update:value`: `ADM-044`?
+
 ## Cache
 
 - Does a cached result still vary only by what its cache key holds:
@@ -54,7 +63,10 @@ points at a replacement the extenders can use today: `CORE-063`.
 
 - Is new route input validated and typed: `SEC-005`?
 - Does new admin UI that reads a DAL entity or association ship the ACL
-  privileges for it: `ADM-004`?
+  privileges for it: `ADM-004`? Does a plugin role grant `system_config`
+  privileges: `ADM-043`?
+- Does a stored idempotent response replay only to its own caller:
+  `SEC-008`?
 - Does an app verify webhook signatures: `SEC-006`?
 - Are secrets read from configuration, not committed (see the security
   `secrets-and-config.md` reference)?
@@ -75,9 +87,9 @@ problem with `null`, or with the rule that does cover it:
 | A database query on every response or request, cache hits included | `SF-013` (cache switched off) | `null` |
 | A write that skips cache invalidation | `IMP-008` (cache key inputs) | `PLG-007`, or `PLG-003` / `REV-024` for raw SQL |
 | An HTTP call made synchronously in the request, with no queue anywhere | `REV-033` (inline fallback when queueing fails) | `null` |
-| An idempotency key or stored response not scoped to the caller | `SEC-005` (input validation) | `null` |
-| An admin override of a core component that skips `$super` | `ADM-039` (the API a shipped component offers) | `null` |
-| Plugin ACL roles that grant `system_config` read or write | `ADM-016` (UI checks of privileges) | `null` |
+| An idempotency key or stored response not scoped to the caller | `SEC-005` (input validation) | `SEC-008` |
+| An admin override of a core component that skips `$super` | `ADM-039` (the API a shipped component offers) | `ADM-042` |
+| Plugin ACL roles that grant `system_config` read or write | `ADM-016` (UI checks of privileges) | `ADM-043` |
 
 ## Core-only rules
 

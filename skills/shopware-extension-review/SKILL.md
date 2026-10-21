@@ -31,7 +31,7 @@ Read the references the change selects:
 | [`plugin-development: api-contracts.md`](../shopware-plugin-development/references/api-contracts.md) | You add or change a Store-API or Admin route, its response struct, or its OpenAPI schema. | `StoreApi/**/*.php`, `Resources/Schema/**`, `#[Route(`, … |
 | [`plugin-development: cache-tags.md`](../shopware-plugin-development/references/cache-tags.md) | A change affects cached pages or needs cache tags (6.7+). | `CacheTagCollector`, … |
 | [`plugin-development: migrations.md`](../shopware-plugin-development/references/migrations.md) | You add or change a database migration. | `Migration/Migration*.php`, `extends MigrationStep`, … |
-| [`plugin-development: version-compatibility.md`](../shopware-plugin-development/references/version-compatibility.md) | The plugin must support more than one Shopware minor. | `composer.json`, `"shopware/core"`, … |
+| [`plugin-development: version-compatibility.md`](../shopware-plugin-development/references/version-compatibility.md) | The plugin must support more than one Shopware minor, or runs without a package it only suggests. | `composer.json`, `"shopware/core"`, … |
 | [`plugin-development: symfony-first.md`](../shopware-plugin-development/references/symfony-first.md) | You are about to write code a Symfony component already provides. | `file_put_contents(`, … |
 | [`app-development: manifest-and-permissions.md`](../shopware-app-development/references/manifest-and-permissions.md) | You edit the manifest, permissions or app lifecycle. | `manifest.xml`, `app:(install\|refresh\|activate\|validate)` |
 | [`app-development: app-scripts.md`](../shopware-app-development/references/app-scripts.md) | You write an app script. | `Resources/scripts/**/*.twig` |

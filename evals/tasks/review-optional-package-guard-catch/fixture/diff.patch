@@ -1,0 +1,100 @@
+diff --git a/src/Resources/config/routes.php b/src/Resources/config/routes.php
+index d43b907..cd0f2fb 100644
+--- a/src/Resources/config/routes.php
++++ b/src/Resources/config/routes.php
+@@ -4,4 +4,5 @@ use Symfony\Component\Routing\Loader\Configurator\RoutingConfigurator;
+ 
+ return static function (RoutingConfigurator $routes): void {
+     $routes->import('../../Controller/Api/', 'attribute');
++    $routes->import('../../Storefront/Controller/', 'attribute');
+ };
+diff --git a/src/Resources/config/services.php b/src/Resources/config/services.php
+index e173404..b181bfb 100644
+--- a/src/Resources/config/services.php
++++ b/src/Resources/config/services.php
+@@ -4,6 +4,7 @@ use Composer\InstalledVersions;
+ use Swag\Loyalty\Controller\Api\PointsImportController;
+ use Swag\Loyalty\Points\PointsCalculator;
+ use Swag\Loyalty\Points\PointsLedger;
++use Swag\Loyalty\Storefront\Controller\LoyaltyPageController;
+ use Swag\Loyalty\Storefront\Subscriber\AccountMenuBalanceSubscriber;
+ use Symfony\Component\DependencyInjection\Loader\Configurator\ContainerConfigurator;
+ 
+@@ -22,6 +23,10 @@ return static function (ContainerConfigurator $container): void {
+         ->public()
+         ->call('setContainer', [service('service_container')]);
+ 
++    $services->set(LoyaltyPageController::class)
++        ->public()
++        ->call('setContainer', [service('service_container')]);
++
+     if (InstalledVersions::isInstalled('shopware/storefront')) {
+         $services->set(AccountMenuBalanceSubscriber::class);
+     }
+diff --git a/src/Resources/views/storefront/page/account/loyalty.html.twig b/src/Resources/views/storefront/page/account/loyalty.html.twig
+new file mode 100644
+index 0000000..4480dd5
+--- /dev/null
++++ b/src/Resources/views/storefront/page/account/loyalty.html.twig
+@@ -0,0 +1,21 @@
++{% sw_extends '@Storefront/storefront/page/account/_page.html.twig' %}
++
++{% block page_account_main_content %}
++    <div class="account-loyalty">
++        <h1 class="account-welcome">{{ 'swagLoyalty.account.title'|trans|sw_sanitize }}</h1>
++
++        <p class="account-loyalty-balance">
++            {{ 'swagLoyalty.account.balance'|trans({ '%points%': balance })|sw_sanitize }}
++        </p>
++
++        <table class="table account-loyalty-history">
++            {% for entry in history %}
++                <tr>
++                    <td>{{ entry.date|format_date('short', locale=app.request.locale) }}</td>
++                    <td>{{ entry.reason }}</td>
++                    <td class="text-end">{{ entry.points }}</td>
++                </tr>
++            {% endfor %}
++        </table>
++    </div>
++{% endblock %}
+diff --git a/src/Storefront/Controller/LoyaltyPageController.php b/src/Storefront/Controller/LoyaltyPageController.php
+new file mode 100644
+index 0000000..84b46f5
+--- /dev/null
++++ b/src/Storefront/Controller/LoyaltyPageController.php
+@@ -0,0 +1,34 @@
++<?php declare(strict_types=1);
++
++namespace Swag\Loyalty\Storefront\Controller;
++
++use Shopware\Core\Checkout\Customer\CustomerEntity;
++use Shopware\Core\Framework\Log\Package;
++use Shopware\Core\System\SalesChannel\SalesChannelContext;
++use Shopware\Storefront\Controller\StorefrontController;
++use Swag\Loyalty\Points\PointsCalculator;
++use Symfony\Component\HttpFoundation\Response;
++use Symfony\Component\Routing\Attribute\Route;
++
++#[Route(defaults: ['_routeScope' => ['storefront']])]
++#[Package('checkout')]
++class LoyaltyPageController extends StorefrontController
++{
++    public function __construct(private readonly PointsCalculator $points)
++    {
++    }
++
++    #[Route(
++        path: '/account/loyalty',
++        name: 'frontend.account.loyalty.page',
++        defaults: ['_loginRequired' => true, '_noStore' => true],
++        methods: ['GET'],
++    )]
++    public function page(CustomerEntity $customer, SalesChannelContext $context): Response
++    {
++        return $this->renderStorefront('@SwagLoyalty/storefront/page/account/loyalty.html.twig', [
++            'balance' => $this->points->balance($customer->getId(), $context->getContext()),
++            'history' => $this->points->history($customer->getId(), $context->getContext()),
++        ]);
++    }
++}

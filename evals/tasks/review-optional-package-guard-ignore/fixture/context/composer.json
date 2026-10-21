@@ -1,0 +1,25 @@
+{
+    "name": "swag/loyalty",
+    "description": "Loyalty points for Shopware",
+    "type": "shopware-platform-plugin",
+    "license": "MIT",
+    "version": "2.3.0",
+    "require": {
+        "shopware/core": "~6.6.0 || ~6.7.0"
+    },
+    "suggest": {
+        "shopware/storefront": "Shows the points balance in the account menu of the Twig storefront"
+    },
+    "autoload": {
+        "psr-4": {
+            "Swag\\Loyalty\\": "src/"
+        }
+    },
+    "extra": {
+        "shopware-plugin-class": "Swag\\Loyalty\\SwagLoyalty",
+        "label": {
+            "de-DE": "Treuepunkte",
+            "en-GB": "Loyalty points"
+        }
+    }
+}

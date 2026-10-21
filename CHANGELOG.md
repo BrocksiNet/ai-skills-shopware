@@ -8,6 +8,23 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- Five rules from a real review of a plugin, each with a review pair:
+  - ADM-042: a core component override calls `$super` for every method it
+    replaces (`review-admin-override-super-*`)
+  - ADM-043: a plugin role never grants `system_config` privileges
+    (`review-acl-system-config-*`)
+  - ADM-044: one Administration bundle for 6.5 and 6.6+ binds `sw-*` form
+    fields with `v-model:value` (`review-admin-field-event-*`)
+  - SEC-008: a stored idempotent response is replayed only to its caller
+    (`review-idempotency-key-scope-*`)
+  - PLG-032: boot-time code does not use a suggested package outside its
+    guard (`review-optional-package-guard-*`)
+- `shopware-extension-review` lenses ask about the five rules; the near-miss
+  table points at ADM-042, ADM-043 and SEC-008, and
+  `review-idempotency-scope-near-miss` accepts SEC-008.
+
 ## [0.9.0] - 2026-10-21
 
 ### Added

@@ -1,0 +1,7 @@
+The new storefront controller and its routes sit inside the existing InstalledVersions check.
+
+```json
+{
+  "findings": []
+}
+```

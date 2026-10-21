@@ -1,0 +1,16 @@
+The card uses the plugin's own settings route, guarded by the swag_loyalty roles, and the role mapping only adds swag_loyalty_tier:read.
+
+```json
+{
+  "findings": [
+    {
+      "rule_id": null,
+      "severity": "nit",
+      "file": "src/Resources/app/administration/src/module/swag-loyalty/component/swag-loyalty-settings-card/index.js",
+      "line": 42,
+      "summary": "onSave shows no error notification when the request fails.",
+      "fix": "Catch the error and call createNotificationError."
+    }
+  ]
+}
+```

@@ -1,0 +1,16 @@
+composer.json only suggests shopware/storefront, and services.php already guards the storefront subscriber.
+
+```json
+{
+  "findings": [
+    {
+      "rule_id": "PLG-032",
+      "severity": "major",
+      "file": "src/Resources/config/services.php",
+      "line": 26,
+      "summary": "LoyaltyPageController extends StorefrontController but is registered outside the InstalledVersions guard, and routes.php imports it unconditionally, so in a headless shop without the storefront the container and route compile fail.",
+      "fix": "Register the controller and import its routes inside the existing InstalledVersions::isInstalled('shopware/storefront') check."
+    }
+  ]
+}
+```

@@ -1,0 +1,16 @@
+The override of sw-order-list copies the core column list instead of extending it.
+
+```json
+{
+  "findings": [
+    {
+      "rule_id": "ADM-042",
+      "severity": "major",
+      "file": "src/Resources/app/administration/src/extension/sw-order-list/index.js",
+      "line": 15,
+      "summary": "getOrderColumns copies the core implementation and does not call this.$super, so columns added by other plugins' overrides and future core changes are dropped.",
+      "fix": "Start from const columns = this.$super('getOrderColumns'), add the loyalty points column and return columns."
+    }
+  ]
+}
+```

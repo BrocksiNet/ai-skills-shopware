@@ -1,0 +1,8 @@
+{
+    "swag-loyalty": {
+        "general": {
+            "mainMenuItemGeneral": "Loyalty",
+            "descriptionTextModule": "Manage loyalty programs and points"
+        }
+    }
+}

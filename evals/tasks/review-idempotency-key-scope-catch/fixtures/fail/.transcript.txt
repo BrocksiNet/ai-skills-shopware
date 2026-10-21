@@ -1,0 +1,22 @@
+```json
+{
+  "findings": [
+    {
+      "rule_id": "SEC-008",
+      "severity": "nit",
+      "file": "src/Idempotency/IdempotencyStore.php",
+      "line": 23,
+      "summary": "The idempotency table is keyed only by the key; consider scoping it per integration.",
+      "fix": "Add the integration id to the key."
+    },
+    {
+      "rule_id": "SEC-005",
+      "severity": "major",
+      "file": "src/Controller/Api/PointsImportController.php",
+      "line": 47,
+      "summary": "A replayed response can leak customer emails to another integration.",
+      "fix": "Validate the Idempotency-Key header."
+    }
+  ]
+}
+```
