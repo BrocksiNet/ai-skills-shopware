@@ -802,7 +802,7 @@
     {
       "id": "PLG-007",
       "skill": "shopware-plugin-development",
-      "file": "skills/shopware-plugin-development/SKILL.md",
+      "file": "skills/shopware-plugin-development/references/cache-tags.md",
       "title": "Cache tags through CacheTagCollector, not *CacheTagsEvent",
       "status": "active",
       "since": "2026-10-20",
@@ -3203,7 +3203,7 @@
     {
       "id": "ADM-004",
       "skill": "shopware-admin-js",
-      "file": "skills/shopware-admin-js/SKILL.md",
+      "file": "skills/shopware-admin-js/references/architecture.md",
       "title": "ACL mapping ships with DAL-backed UI; existing roles get a migration",
       "status": "active",
       "since": "2026-10-20",
@@ -3286,7 +3286,7 @@
     {
       "id": "ADM-009",
       "skill": "shopware-admin-js",
-      "file": "skills/shopware-admin-js/SKILL.md",
+      "file": "skills/shopware-admin-js/references/architecture.md",
       "title": "Admin build is Vite; no new webpack.config.js",
       "status": "active",
       "since": "2026-10-20",
@@ -4091,7 +4091,7 @@
     {
       "id": "SF-009",
       "skill": "shopware-storefront",
-      "file": "skills/shopware-storefront/SKILL.md",
+      "file": "skills/shopware-storefront/references/twig-and-theme.md",
       "title": "No sw_csrf in storefront forms",
       "status": "active",
       "since": "2026-10-21",

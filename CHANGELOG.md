@@ -34,6 +34,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+- ADM-004, ADM-009, SF-009 and PLG-007 are tagged in the references
+  `shopware-extension-review` borrows, not in a `SKILL.md` it never reads.
+  The review cited ADM-016 for the privilege shape, the nearest ID it saw,
+  and had no Vite fact for ADM-009 at all.
 - ADM-004: the flat privilege shape passes `isPrivilegeMapping` and then
   throws in the role screens; every role needs `dependencies`, even `[]`.
 - PLG-007: `addTag()` exists from 6.7.2; 6.7.0 and 6.7.1 dispatch

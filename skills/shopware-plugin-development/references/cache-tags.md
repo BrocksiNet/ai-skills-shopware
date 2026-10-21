@@ -32,6 +32,10 @@ $this->cacheInvalidator->invalidate(['my-plugin-' . $salesChannelId]);
 
 ## Deprecated — do not use
 
+- **PLG-007** **On 6.7+, add tags through `CacheTagCollector::addTag()`
+  (6.7.2+) or `AddCacheTagEvent` (6.7.0, 6.7.1); never subscribe to a
+  `*CacheTagsEvent`.**
+
 The `*CacheTagsEvent` events (`ProductDetailRouteCacheTagsEvent`,
 `NavigationRouteCacheTagsEvent`, `CategoryRouteCacheTagsEvent`, …) are deprecated
 in 6.7, no longer dispatched, and removed in 6.8. Do not subscribe to them.

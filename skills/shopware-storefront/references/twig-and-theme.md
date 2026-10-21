@@ -9,9 +9,11 @@ Load when changing storefront templates, SCSS, or media.
 - Keep CMS / shopping-experience elements on their existing block structure
   so merchants can still compose them.
 - User-facing strings: `{{ 'snippet.key'|trans }}`. No hardcoded copy.
-- Forms: post to the existing storefront controller or a Store-API route,
-  not a one-off unauthenticated POST. Do **not** add `sw_csrf` or a CSRF
-  hidden field; 6.5+ relies on SameSite cookies and `sw_csrf` is gone.
+- **SF-009** **Forms post to the existing storefront controller or a
+  Store-API route, without `sw_csrf` or a CSRF hidden field.** 6.5.0
+  removed storefront CSRF for SameSite cookies, and with it the `sw_csrf()`
+  Twig function: a template that calls it fails to compile with "Unknown
+  function", so the page errors. Not a one-off unauthenticated POST either.
 
 ## What you ship is public API
 

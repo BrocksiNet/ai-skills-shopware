@@ -72,7 +72,7 @@ Inherits all **`php-foundation` trunk habits** (`empty()`, interface injection,
 - **DAL first.** Read with `Criteria` (add associations before filtering on them;
   avoid N+1; request only the fields/associations you need). Write with
   `EntityRepository::create/update/upsert` and the right `Context`.
-- **PLG-007** **Cache (6.7+).** Inject `CacheTagCollector` and call `addTag()` (6.7.2+;
+- **Cache (6.7+).** Inject `CacheTagCollector` and call `addTag()` (6.7.2+;
   dispatch `AddCacheTagEvent` for 6.7.0 and 6.7.1); invalidate
   with `CacheInvalidator::invalidate()`. Do not subscribe to deprecated
   `*CacheTagsEvent`.
