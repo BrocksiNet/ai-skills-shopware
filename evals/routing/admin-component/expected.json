@@ -1,5 +1,8 @@
 {
   "shopware-admin-js": [
     "references/architecture.md"
+  ],
+  "shopware-extension-review": [
+    "../shopware-admin-js/references/architecture.md"
   ]
 }

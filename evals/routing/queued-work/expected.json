@@ -2,6 +2,10 @@
   "shopware-architecture": [
     "references/symfony-in-shopware.md"
   ],
+  "shopware-extension-review": [
+    "../shopware-architecture/references/symfony-in-shopware.md",
+    "../shopware-review-learnings/references/dal-and-performance.md"
+  ],
   "shopware-review-learnings": [
     "references/dal-and-performance.md"
   ]

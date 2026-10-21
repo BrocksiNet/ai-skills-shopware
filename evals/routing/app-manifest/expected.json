@@ -2,6 +2,10 @@
   "shopware-app-development": [
     "references/manifest-and-permissions.md"
   ],
+  "shopware-extension-review": [
+    "../shopware-app-development/references/manifest-and-permissions.md",
+    "../shopware-security/references/apps-and-webhooks.md"
+  ],
   "shopware-security": [
     "references/apps-and-webhooks.md"
   ]

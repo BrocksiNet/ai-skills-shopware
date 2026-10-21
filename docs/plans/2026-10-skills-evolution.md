@@ -581,6 +581,17 @@ diffs. Reuse only their scenario ideas and write our own diffs, per the
 
 ## WP6: `shopware-extension-review` skill
 
+Status: **built 2026-10-21; acceptance needs the model runs.** The skill
+defines no rule, so the `XR` prefix stays unused. Its `routes.json` borrows
+24 references of eight skills (`../<skill>/references/<file>.md`; the
+triggers come from the owning skill's route) and sets `audience: ["plugin",
+"app"]`. `validate-rules` fails when a borrowed reference holds an active
+rule for neither audience that `references/lenses.md` does not name, so a
+new core-only rule cannot slip into extension reviews. `impact-review.md`
+and the admin `flags-and-modern-web.md` are not borrowed: the first is the
+hand-off, the second is almost all core-only. Every `review-*-catch` and
+`-ignore` task now loads the skill next to the owning one.
+
 Goal: a review skill for plugin and app diffs. Core's `sw-review` only
 reviews `shopware/shopware` PRs, and our `shopware-pr-review` only answers
 review threads.

@@ -1,0 +1,91 @@
+{
+  "$comment": "Which reference to read for a change (plan WP4). Borrowed routes (../<skill>/references/<file>.md) take when and triggers from the owning skill's routes.json, so they cannot drift. audience: report only rules for these audiences; name every other rule in a borrowed reference in lenses.md. Render the SKILL.md table with node tools/bin/render-routes.ts.",
+  "audience": [
+    "plugin",
+    "app"
+  ],
+  "routes": [
+    {
+      "reference": "references/lenses.md",
+      "when": "Any review: backward compatibility, cache, queue, security and test questions, and the core-only rules to skip.",
+      "always": true
+    },
+    {
+      "reference": "references/output.md",
+      "when": "Writing the findings.",
+      "always": true
+    },
+    {
+      "reference": "../shopware-plugin-development/references/dal-usage.md"
+    },
+    {
+      "reference": "../shopware-plugin-development/references/api-contracts.md"
+    },
+    {
+      "reference": "../shopware-plugin-development/references/cache-tags.md"
+    },
+    {
+      "reference": "../shopware-plugin-development/references/migrations.md"
+    },
+    {
+      "reference": "../shopware-plugin-development/references/version-compatibility.md"
+    },
+    {
+      "reference": "../shopware-plugin-development/references/symfony-first.md"
+    },
+    {
+      "reference": "../shopware-app-development/references/manifest-and-permissions.md"
+    },
+    {
+      "reference": "../shopware-app-development/references/app-scripts.md"
+    },
+    {
+      "reference": "../shopware-security/references/secrets-and-config.md"
+    },
+    {
+      "reference": "../shopware-security/references/api-acl-and-input.md"
+    },
+    {
+      "reference": "../shopware-security/references/apps-and-webhooks.md"
+    },
+    {
+      "reference": "../shopware-storefront/references/js-plugins.md"
+    },
+    {
+      "reference": "../shopware-storefront/references/twig-and-theme.md"
+    },
+    {
+      "reference": "../shopware-storefront/references/cache-and-modern-web.md"
+    },
+    {
+      "reference": "../shopware-admin-js/references/architecture.md"
+    },
+    {
+      "reference": "../shopware-admin-js/references/extension-api.md"
+    },
+    {
+      "reference": "../shopware-architecture/references/symfony-in-shopware.md"
+    },
+    {
+      "reference": "../shopware-architecture/references/extension-mechanisms.md"
+    },
+    {
+      "reference": "../shopware-architecture/references/dal-contracts.md"
+    },
+    {
+      "reference": "../shopware-review-learnings/references/api-aware.md"
+    },
+    {
+      "reference": "../shopware-review-learnings/references/dal-and-performance.md"
+    },
+    {
+      "reference": "../shopware-testing/references/test-shape-and-flags.md"
+    },
+    {
+      "reference": "../shopware-testing/references/integration-repository.md"
+    },
+    {
+      "reference": "../shopware-testing/references/exception-assertions.md"
+    }
+  ]
+}

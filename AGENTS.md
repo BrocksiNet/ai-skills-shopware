@@ -14,7 +14,7 @@ Human onboarding: [`README.md`](README.md). Skill ownership and topic boundaries
 skills/<skill-name>/
   SKILL.md                    # frontmatter + progressive-disclosure body
   references/*.md             # loaded on demand from SKILL.md links
-  routes.json                 # which reference a change needs (globs + line regexes)
+  routes.json                 # which reference a change needs (globs + line regexes; may borrow ../<skill>/references)
   evals/should-trigger.md       # activation eval prompts (must trigger)
   evals/should-not-trigger.md   # activation eval prompts (must stay quiet)
 
@@ -227,6 +227,14 @@ git diff main | node tools/bin/route.ts  # selected by the diff, plus always and
 When a change alters what a case in `evals/routing/` should select, update
 its `expected.json`; add a case for a new kind of change. `expected.json`
 lists only diff-selected references, never `always` or `on_demand` ones.
+
+A route can borrow another skill's reference: `"reference":
+"../<skill>/references/<file>.md"` with no triggers of its own takes `when`
+and the triggers from the owning skill's route, so the two cannot drift.
+`shopware-extension-review` reads the topic skills this way. Its
+`routes.json` sets `audience`; a rule in a borrowed reference that is for
+none of those audiences must be named in the skill (`references/lenses.md`),
+or `validate-rules` fails.
 
 ## Repo tooling
 

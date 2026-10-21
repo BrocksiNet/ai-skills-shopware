@@ -2,6 +2,9 @@
   "shopware-architecture": [
     "references/anti-patterns.md"
   ],
+  "shopware-extension-review": [
+    "../shopware-plugin-development/references/migrations.md"
+  ],
   "shopware-plugin-development": [
     "references/migrations.md"
   ]

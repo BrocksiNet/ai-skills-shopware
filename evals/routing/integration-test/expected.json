@@ -1,4 +1,8 @@
 {
+  "shopware-extension-review": [
+    "../shopware-plugin-development/references/dal-usage.md",
+    "../shopware-testing/references/integration-repository.md"
+  ],
   "shopware-plugin-development": [
     "references/dal-usage.md"
   ],

@@ -10,6 +10,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- `shopware-extension-review` (plan WP6): reviews a plugin or app diff as a
+  whole and ends with the findings JSON of the review tasks. It defines no
+  rule; its `routes.json` borrows the references of the topic skills.
+  Install line in `use-cases/extension-review.md`.
+- Borrowed routes: a route for `../<skill>/references/<file>.md` with no
+  triggers of its own takes them from the owning skill. A `routes.json`
+  `audience` makes `validate-rules` require every out-of-audience rule in a
+  borrowed reference to be named in the borrowing skill.
 - WP7 phases B and C. Ten new review pairs, each backing a new rule:
   - PLG-031: never make an existing API route stricter (`review-store-api-stricter-request-*`)
   - SEC-007: do not change access or cache defaults of a released route (`review-route-defaults-changed-*`)
