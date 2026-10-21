@@ -1,0 +1,14 @@
+```json
+{
+  "findings": [
+    {
+      "rule_id": null,
+      "severity": "major",
+      "file": "src/StoreApi/LoyaltyBalanceStruct.php",
+      "line": 14,
+      "summary": "Adding pointsExpireAt changes the response shape, a breaking change for existing clients.",
+      "fix": "Ship it behind a new route version."
+    }
+  ]
+}
+```

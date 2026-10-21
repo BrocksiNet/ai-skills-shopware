@@ -34,7 +34,7 @@ Read only the reference that matches the task or the files it changes:
 | Read | When | Or the change touches |
 | ---- | ---- | --------------------- |
 | [`dal-usage.md`](references/dal-usage.md) | You read or write data through the DAL. | `*Definition.php`, `*Entity.php`, `new Criteria(`, … |
-| [`api-contracts.md`](references/api-contracts.md) | You add a Store-API or Admin route, or its OpenAPI schema. | `StoreApi/**/*.php`, `Resources/Schema/**`, `#[Route(`, … |
+| [`api-contracts.md`](references/api-contracts.md) | You add or change a Store-API or Admin route, its response struct, or its OpenAPI schema. | `StoreApi/**/*.php`, `Resources/Schema/**`, `#[Route(`, … |
 | [`cache-tags.md`](references/cache-tags.md) | A change affects cached pages or needs cache tags (6.7+). | `CacheTagCollector`, … |
 | [`migrations.md`](references/migrations.md) | You add or change a database migration. | `Migration/Migration*.php`, `extends MigrationStep`, … |
 | [`version-compatibility.md`](references/version-compatibility.md) | The plugin must support more than one Shopware minor. | `composer.json`, `"shopware/core"`, … |

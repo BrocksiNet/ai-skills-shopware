@@ -1,0 +1,16 @@
+The change adds an optional field and keeps every existing field as it was.
+
+```json
+{
+  "findings": [
+    {
+      "rule_id": null,
+      "severity": "nit",
+      "file": "src/StoreApi/LoyaltyBalanceRoute.php",
+      "line": 27,
+      "summary": "The customer id and context are read three times; a local variable reads better.",
+      "fix": "Assign $customer->getId() and $context->getContext() once."
+    }
+  ]
+}
+```

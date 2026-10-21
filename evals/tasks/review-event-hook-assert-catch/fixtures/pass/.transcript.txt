@@ -1,0 +1,19 @@
+The new integration test asserts inside the event hook. `GiftCardRedeemer::redeem()`
+catches every `\Throwable` a listener throws and only logs it, so a failing
+assertion in the closure never reaches PHPUnit and the test also passes when
+the event is never dispatched.
+
+```json
+{
+  "findings": [
+    {
+      "rule_id": null,
+      "severity": "major",
+      "file": "tests/integration/GiftCardRedeemerTest.php",
+      "line": 47,
+      "summary": "Assertions run inside the event hook closure; redeem() swallows listener exceptions, so the test cannot fail.",
+      "fix": "Capture the event in the hook, assert after redeem(), and assert that the hook fired."
+    }
+  ]
+}
+```

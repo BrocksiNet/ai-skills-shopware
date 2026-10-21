@@ -1,0 +1,60 @@
+diff --git a/tests/integration/GiftCardRedeemerTest.php b/tests/integration/GiftCardRedeemerTest.php
+new file mode 100644
+index 0000000..90f1b7e
+--- /dev/null
++++ b/tests/integration/GiftCardRedeemerTest.php
+@@ -0,0 +1,54 @@
++<?php declare(strict_types=1);
++
++namespace Swag\GiftCard\Tests\Integration;
++
++use PHPUnit\Framework\Attributes\CoversClass;
++use PHPUnit\Framework\TestCase;
++use Shopware\Core\Framework\Context;
++use Shopware\Core\Framework\Test\TestCaseBase\IntegrationTestBehaviour;
++use Shopware\Core\Test\Integration\EventDispatcher\EventHookDispatcher;
++use Swag\GiftCard\GiftCardBalanceGateway;
++use Swag\GiftCard\GiftCardRedeemedEvent;
++use Swag\GiftCard\GiftCardRedeemer;
++
++/**
++ * @internal
++ */
++#[CoversClass(GiftCardRedeemer::class)]
++class GiftCardRedeemerTest extends TestCase
++{
++    use IntegrationTestBehaviour;
++
++    private GiftCardRedeemer $redeemer;
++
++    private GiftCardBalanceGateway $gateway;
++
++    protected function setUp(): void
++    {
++        $this->redeemer = static::getContainer()->get(GiftCardRedeemer::class);
++        $this->gateway = static::getContainer()->get(GiftCardBalanceGateway::class);
++    }
++
++    public function testRedeemDebitsTheBalance(): void
++    {
++        $code = $this->gateway->issue(2500, Context::createDefaultContext());
++
++        $this->redeemer->redeem($code, Context::createDefaultContext());
++
++        static::assertSame(0, $this->gateway->balance($code, Context::createDefaultContext()));
++    }
++
++    public function testRedeemDispatchesTheRedeemedEvent(): void
++    {
++        $context = Context::createDefaultContext();
++        $code = $this->gateway->issue(2500, $context);
++
++        $assertRedeemed = function (GiftCardRedeemedEvent $event) use ($code): void {
++            static::assertSame($code, $event->code);
++            static::assertSame(2500, $event->amountInCents);
++        };
++        EventHookDispatcher::fromContainer(static::getContainer())->on(GiftCardRedeemedEvent::class, $assertRedeemed);
++
++        $this->redeemer->redeem($code, $context);
++    }
++}

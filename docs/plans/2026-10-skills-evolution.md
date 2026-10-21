@@ -486,6 +486,10 @@ evals/routing/plugin-migration-and-cache/
 
 ## WP5: Review-shaped evals
 
+Status: **in progress**. PR A ships the grader and two of six pairs:
+`review-event-hook-assert-*` (TEST-016) and `review-store-api-contract-*`
+(new PLG-027). PR B adds the other four pairs and their rules.
+
 Goal: grade review skills on whether they find a planted problem and stay
 quiet on a clean diff. Today the review skills have one or two tasks each,
 and all graders check edits.
@@ -525,6 +529,12 @@ The instruction asks for this shape. WP6 makes it the skill's default output.
 ```
 
 ### Grader helpers in `evals/grade-helpers.sh`
+
+Deviation: the grader is `tools/bin/grade-findings.ts` (TypeScript, no `jq`),
+in line with WP10. A task's `grade.sh` execs it with `catch` or `ignore`.
+The pristine `fixture/` has no transcript and fails both modes, so
+`.skip-fixture-grade` is not needed. The design below still describes the
+checks.
 
 - `grade_findings_json`: extracts the last fenced `json` block from
   `$TRANSCRIPT`. Exit 1 when it is missing or invalid.

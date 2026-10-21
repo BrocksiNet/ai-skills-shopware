@@ -1,0 +1,53 @@
+diff --git a/src/Resources/Schema/StoreApi/loyalty.json b/src/Resources/Schema/StoreApi/loyalty.json
+index 10d531d..81869ee 100644
+--- a/src/Resources/Schema/StoreApi/loyalty.json
++++ b/src/Resources/Schema/StoreApi/loyalty.json
+@@ -27,7 +27,11 @@
+         "required": ["apiAlias", "points", "tier"],
+         "properties": {
+           "apiAlias": { "type": "string", "enum": ["swag_loyalty_balance"] },
+-          "points": { "type": "integer", "description": "Points the customer can redeem." },
++          "points": {
++            "type": "number",
++            "nullable": true,
++            "description": "Points the customer can redeem. Partial points come from refunds; null while the ledger syncs."
++          },
+           "tier": { "type": "string", "enum": ["bronze", "silver", "gold"] }
+         }
+       }
+diff --git a/src/StoreApi/LoyaltyBalanceRoute.php b/src/StoreApi/LoyaltyBalanceRoute.php
+index 69cbe60..51ed3ae 100644
+--- a/src/StoreApi/LoyaltyBalanceRoute.php
++++ b/src/StoreApi/LoyaltyBalanceRoute.php
+@@ -23,7 +23,7 @@ class LoyaltyBalanceRoute
+         \assert($customer !== null);
+ 
+         return new StoreApiResponse(new LoyaltyBalanceStruct(
+-            $this->ledger->points($customer->getId(), $context->getContext()),
++            $this->ledger->syncedPoints($customer->getId(), $context->getContext()),
+             $this->ledger->tier($customer->getId(), $context->getContext()),
+         ));
+     }
+diff --git a/src/StoreApi/LoyaltyBalanceStruct.php b/src/StoreApi/LoyaltyBalanceStruct.php
+index a877947..9a9f3b3 100644
+--- a/src/StoreApi/LoyaltyBalanceStruct.php
++++ b/src/StoreApi/LoyaltyBalanceStruct.php
+@@ -6,13 +6,16 @@ use Shopware\Core\Framework\Struct\Struct;
+ 
+ class LoyaltyBalanceStruct extends Struct
+ {
++    /**
++     * @param float|null $points null while the ledger has not synced the latest orders
++     */
+     public function __construct(
+-        protected int $points,
++        protected ?float $points,
+         protected string $tier,
+     ) {
+     }
+ 
+-    public function getPoints(): int
++    public function getPoints(): ?float
+     {
+         return $this->points;
+     }

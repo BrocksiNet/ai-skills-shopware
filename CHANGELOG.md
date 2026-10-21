@@ -10,6 +10,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- Review-shaped evals (plan WP5, first two pairs). `review-<rule>-catch`
+  tasks plant a problem in `diff.patch`; `-ignore` tasks show a clean
+  look-alike. The agent reports findings as one fenced `json` block, and
+  `tools/bin/grade-findings.ts` grades it: the catch task needs a finding at
+  the file and severity that names the rule by ID or in its own words; the
+  ignore task fails on any such finding above `nit`. Pairs:
+  `review-event-hook-assert-*` (TEST-016) and `review-store-api-contract-*`.
+- PLG-027 in `shopware-plugin-development`: never change the type or
+  nullability of an existing API response field; add a new field and
+  deprecate the old one.
+
 - Weekly trunk mining (plan WP8). `tools/bin/mine-trunk.ts` reads the
   `shopware/shopware` trunk commits since `docs/.mining-state.json` that touch
   `.agents/`, `coding-guidelines/`, `src/Core/DevOps/StaticAnalyze/` or the PR

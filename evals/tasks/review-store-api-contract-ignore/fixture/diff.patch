@@ -1,0 +1,58 @@
+diff --git a/src/Resources/Schema/StoreApi/loyalty.json b/src/Resources/Schema/StoreApi/loyalty.json
+index 10d531d..a329a2d 100644
+--- a/src/Resources/Schema/StoreApi/loyalty.json
++++ b/src/Resources/Schema/StoreApi/loyalty.json
+@@ -28,7 +28,13 @@
+         "properties": {
+           "apiAlias": { "type": "string", "enum": ["swag_loyalty_balance"] },
+           "points": { "type": "integer", "description": "Points the customer can redeem." },
+-          "tier": { "type": "string", "enum": ["bronze", "silver", "gold"] }
++          "tier": { "type": "string", "enum": ["bronze", "silver", "gold"] },
++          "pointsExpireAt": {
++            "type": "string",
++            "format": "date-time",
++            "nullable": true,
++            "description": "When the oldest points expire; null when nothing expires."
++          }
+         }
+       }
+     }
+diff --git a/src/StoreApi/LoyaltyBalanceRoute.php b/src/StoreApi/LoyaltyBalanceRoute.php
+index 69cbe60..8707678 100644
+--- a/src/StoreApi/LoyaltyBalanceRoute.php
++++ b/src/StoreApi/LoyaltyBalanceRoute.php
+@@ -25,6 +25,7 @@ class LoyaltyBalanceRoute
+         return new StoreApiResponse(new LoyaltyBalanceStruct(
+             $this->ledger->points($customer->getId(), $context->getContext()),
+             $this->ledger->tier($customer->getId(), $context->getContext()),
++            $this->ledger->nextExpiry($customer->getId(), $context->getContext())?->format(\DATE_ATOM),
+         ));
+     }
+ }
+diff --git a/src/StoreApi/LoyaltyBalanceStruct.php b/src/StoreApi/LoyaltyBalanceStruct.php
+index a877947..09e3157 100644
+--- a/src/StoreApi/LoyaltyBalanceStruct.php
++++ b/src/StoreApi/LoyaltyBalanceStruct.php
+@@ -9,6 +9,7 @@ class LoyaltyBalanceStruct extends Struct
+     public function __construct(
+         protected int $points,
+         protected string $tier,
++        protected ?string $pointsExpireAt = null,
+     ) {
+     }
+ 
+@@ -22,6 +23,14 @@ class LoyaltyBalanceStruct extends Struct
+         return $this->tier;
+     }
+ 
++    /**
++     * ISO 8601 date the oldest points expire, or null when nothing expires.
++     */
++    public function getPointsExpireAt(): ?string
++    {
++        return $this->pointsExpireAt;
++    }
++
+     public function getApiAlias(): string
+     {
+         return 'swag_loyalty_balance';

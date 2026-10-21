@@ -1,0 +1,22 @@
+```json
+{
+  "findings": [
+    {
+      "rule_id": "TEST-016",
+      "severity": "nit",
+      "file": "tests/integration/GiftCardRedeemerTest.php",
+      "line": 47,
+      "summary": "Assertions inside the hook closure could move after redeem().",
+      "fix": "Capture the event and assert afterwards."
+    },
+    {
+      "rule_id": "TEST-003",
+      "severity": "major",
+      "file": "tests/integration/GiftCardRedeemerTest.php",
+      "line": 44,
+      "summary": "The hook closure is assigned to a variable before it is registered; assert the listener inline.",
+      "fix": "Pass the closure to on() directly."
+    }
+  ]
+}
+```
