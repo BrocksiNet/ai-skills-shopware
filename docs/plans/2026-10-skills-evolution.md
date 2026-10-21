@@ -763,7 +763,7 @@ WP8 using `gh pr view --json state,mergedAt`:
 
 ## WP10: Eval runner in TypeScript
 
-Status: **steps 1 and 2 done 2026-10-20, steps 3 and 4 done 2026-10-21**.
+Status: **steps 1 and 2 done 2026-10-20, steps 3 to 5 done 2026-10-21**.
 
 - Step 1: plan, gate and diff live in `tools/src/eval-{plan,gate,diff}.ts`
   over the typed records in `tools/src/eval-results.ts`. On the WP1 and WP4
@@ -800,10 +800,25 @@ Status: **steps 1 and 2 done 2026-10-20, steps 3 and 4 done 2026-10-21**.
   - When `eval-local` produced no results file, the gate reports "no results"
     (exit 1) instead of a read error (exit 2).
 
-The `scripts/eval-*.sh`, `scripts/run-activation-evals.sh` and
-`evals/runner/*.sh` files are wrappers, except `fake-agent.sh` (a test
-double) and `install-agent.sh` (CI install). Step 5 ports
-`validate-skills.sh`.
+- Step 5: skill validation in `tools/src/validate-skills.ts`, with the
+  per-skill and conflict checks as pure functions in
+  `tools/src/skill-checks.ts`. The rule ID and route checks run in the same
+  process (`tools/src/check-reports.ts`); their own bins stay. On the
+  repository and on a copy with one planted error of every kind, the output
+  and exit code match the bash script, apart from a trailing space after the
+  owners of an overlapping trigger phrase. Two behaviour changes, both on
+  inputs the repository does not have:
+  - A folded description is measured without the leading space the bash
+    version added, so the 1024 budget counts the text a provider loads.
+  - Any top-level frontmatter key ends a folded description, also one with
+    no value on its line (`metadata:`), which the bash version appended.
+
+The `scripts/*.sh` files except `check-update.sh`, and the
+`evals/runner/*.sh` files except `fake-agent.sh` (a test double) and
+`install-agent.sh` (CI install), are now wrappers. Shell left outside the
+graders: `evals/test-graders.sh`, `evals/grade-helpers.sh`,
+`scripts/check-update.sh`, `fake-agent.sh` and `evals/smoke/`, which is
+retired rather than ported.
 
 Goal: one typed codebase for the eval pipeline, so result records, verdicts
 and gate rules are checked by the compiler instead of by `jq` filters and
