@@ -763,7 +763,7 @@ WP8 using `gh pr view --json state,mergedAt`:
 
 ## WP10: Eval runner in TypeScript
 
-Status: **steps 1 and 2 done 2026-10-20, steps 3 to 5 done 2026-10-21**.
+Status: **steps 1 and 2 done 2026-10-20, steps 3 to 6 done 2026-10-21**.
 
 - Step 1: plan, gate and diff live in `tools/src/eval-{plan,gate,diff}.ts`
   over the typed records in `tools/src/eval-results.ts`. On the WP1 and WP4
@@ -813,12 +813,20 @@ Status: **steps 1 and 2 done 2026-10-20, steps 3 to 5 done 2026-10-21**.
   - Any top-level frontmatter key ends a folded description, also one with
     no value on its line (`metadata:`), which the bash version appended.
 
-The `scripts/*.sh` files except `check-update.sh`, and the
-`evals/runner/*.sh` files except `fake-agent.sh` (a test double) and
-`install-agent.sh` (CI install), are now wrappers. Shell left outside the
-graders: `evals/test-graders.sh`, `evals/grade-helpers.sh`,
-`scripts/check-update.sh`, `fake-agent.sh` and `evals/smoke/`, which is
-retired rather than ported.
+- Step 6 (added to close the acceptance list): `evals/test-graders.sh`,
+  `evals/runner/fake-agent.sh` and `scripts/check-update.sh` now call
+  `tools/bin/test-graders.ts`, `fake-agent.ts` and `check-update.ts`. The
+  golden grader output and exit codes match on all 64 tasks. The fake agent
+  matches the bash version in all 2,268 combinations of skills present,
+  mode, load, usage, one-shot fault and task (stdout, stderr, exit code,
+  resulting workdir, skill and token logs). `check-update` asks the GitHub
+  API with `fetch` instead of trying `gh` and then `curl`.
+
+Every `scripts/*.sh` file and every `evals/runner/*.sh` file except
+`install-agent.sh` is now a wrapper. The shell left is `grade.sh` and the
+`evals/grade-helpers.sh` it sources, `install-agent.sh` (it runs the vendors'
+shell installers on CI) and `evals/smoke/`, which is retired rather than
+ported once `eval-local` covers its agents.
 
 Goal: one typed codebase for the eval pipeline, so result records, verdicts
 and gate rules are checked by the compiler instead of by `jq` filters and
@@ -856,10 +864,16 @@ agents (Codex and Cursor adapters are added in step 3 if still used).
 ### WP10 acceptance
 
 - `evals/runner/selftest.sh` is replaced by unit tests in `tools/` that cover
-  the same cases, plus parser tests on recorded agent output.
+  the same cases, plus parser tests on recorded agent output. **Met** in
+  step 4.
 - A local `eval-local` run and a CI `evals.yml` run produce the same JSONL
   fields as before, and the gate gives the same verdict on the WP1 baseline.
+  **Met locally:** on the WP1 run (`local-20261020T125814Z.jsonl`) the
+  ported gate prints the same summary and exit code as the bash gate from
+  before step 1. The JSONL fields were compared side by side in step 2. The
+  next `evals.yml` run confirms it on CI.
 - Only `grade.sh` files and documented wrappers remain as shell scripts.
+  **Met** in step 6, with the exceptions listed above.
 
 ---
 

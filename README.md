@@ -271,7 +271,8 @@ npx skills update                 # update installed skills to latest
 ```
 
 `check-update.sh` compares your pinned version against the latest GitHub release
-tag and prints the exact `npx skills update` command to run.
+tag and prints the exact `npx skills update` command to run. It needs Node 24
+and uses `GH_TOKEN` or `GITHUB_TOKEN` when set.
 
 ## Where skills load (per provider)
 

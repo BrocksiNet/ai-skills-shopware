@@ -43,6 +43,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   measured without the leading space the bash version counted on folded
   (`>-`) descriptions, and any top-level frontmatter key ends a folded
   description, including one with no value on its line.
+- The last helper scripts in TypeScript (plan WP10 step 6).
+  `evals/test-graders.sh`, `evals/runner/fake-agent.sh` and
+  `scripts/check-update.sh` now call `tools/bin/test-graders.ts`,
+  `fake-agent.ts` and `check-update.ts`. Golden grader output and exit codes
+  are unchanged on all 64 tasks, and the fake agent behaves the same in all
+  2,268 combinations of its settings. `check-update` asks the GitHub API
+  directly instead of trying `gh` and then `curl`, sends `GH_TOKEN` or
+  `GITHUB_TOKEN` when set, and names the reason when the lookup fails. The
+  `grader-golden` CI job now runs on Node 24.
 - Strict lint and format for `tools/`: oxlint with type-aware rules (built on
   typescript-go, so it checks against TypeScript 7) and oxfmt, both in the
   `tools` CI job as `npm run lint` and `npm run format:check`. No `any`, no
