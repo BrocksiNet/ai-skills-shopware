@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
 #
-# Test double for SKILLS_AGENT_CMD. No model calls. selftest.sh uses it to
-# prove that run-task.sh, ab.sh, eval-gate.sh and the workflow wiring report
-# what really happened.
+# Test double for SKILLS_AGENT_CMD. No model calls. The tests in tools/test/
+# use it to prove that the runner, the A/B verdicts, the gate and the shell
+# wrappers report what really happened.
 #
 # It reads the prompt on stdin (and ignores it), then acts on EVAL_TASK in the
 # current workdir according to FAKE_AGENT_MODE:

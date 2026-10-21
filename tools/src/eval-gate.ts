@@ -13,6 +13,7 @@
 // The two skill-load gates only count records whose adapter reports loads.
 // "held" and "no_difference" tasks are warnings: candidates for a sharper
 // eval or for removing the rule.
+import { envInt } from './env.ts';
 import {
   type AbResult,
   hasTokens,
@@ -33,6 +34,15 @@ export interface GateOptions {
 }
 
 export const GATE_DEFAULTS: GateOptions = { minPassPct: 70, maxErrorPct: 25, minLoadPct: 50 };
+
+/** Gate options from EVAL_GATE_*; throws on a bad number. */
+export function gateOptionsFromEnv(env: NodeJS.ProcessEnv): GateOptions {
+  return {
+    minPassPct: envInt(env, 'EVAL_GATE_MIN_PASS_PCT', GATE_DEFAULTS.minPassPct),
+    maxErrorPct: envInt(env, 'EVAL_GATE_MAX_ERROR_PCT', GATE_DEFAULTS.maxErrorPct),
+    minLoadPct: envInt(env, 'EVAL_GATE_MIN_LOAD_PCT', GATE_DEFAULTS.minLoadPct),
+  };
+}
 
 export interface GateReport {
   markdown: string;

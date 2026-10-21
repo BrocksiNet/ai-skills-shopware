@@ -27,7 +27,7 @@ evals/tasks/<task-name>/
   skills                      # optional: extra skills for smoke A/B (one name per line)
 
 evals/smoke/                  # local A/B harness (Claude, Codex, Cursor CLI)
-evals/runner/                 # A/B runner, OpenCode (free) and Claude adapters, skills profile, self-test
+evals/runner/                 # shell wrappers for tools/bin, fake-agent.sh test double, install-agent.sh
 evals/harbor/                 # containerized Harbor wiring (optional)
 evals/test-graders.sh         # golden tests for all grade.sh scripts
 evals/tools/ast/              # Node AST graders (php-parser + @babel/parser)
@@ -48,12 +48,15 @@ tools/                        # repo tooling in TypeScript (Node 24, no build st
   bin/{ab,run-task}.ts        # A/B runner behind evals/runner/{ab,run-task}.sh
   bin/adapter.ts              # agent adapters behind evals/runner/*-{task,activation}.sh
   bin/skills-profile.ts       # skills on/off per eval workdir
+  bin/activation.ts           # Layer 1 activation evals
+  bin/eval-local.ts           # local model evals with your agent login, then the gate
   test/*.test.ts              # node --test
 
 scripts/
   validate-skills.sh          # structure, budgets, REGISTRY conflicts, rule IDs
   eval-{plan,gate,diff}.sh    # wrappers for tools/bin/eval-*.ts (Node 24)
-  run-activation-evals.sh     # Layer 1 activation checks
+  run-activation-evals.sh     # Layer 1 activation checks (wrapper for tools/bin/activation.ts)
+  eval-local.sh               # local model evals (wrapper for tools/bin/eval-local.ts)
   check-update.sh             # compare pinned version vs latest release tag
 
 use-cases/                    # canonical `npx skills add` one-liners
@@ -77,7 +80,6 @@ bash scripts/run-activation-evals.sh
 ( cd tools && npm ci && npm run typecheck && npm run lint && npm run format:check && npm test )
 ( cd evals/tools/ast && npm ci && npm test )
 bash evals/test-graders.sh
-bash evals/runner/selftest.sh
 ```
 
 ShellCheck (optional locally; required in CI):

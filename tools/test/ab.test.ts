@@ -12,10 +12,10 @@ import {
   decide,
   emptyCounts,
   loadedOneOf,
-  runModes,
   sumUsage,
   tokensAverage,
 } from '../src/ab.ts';
+import { runModes } from '../src/ab-run.ts';
 import { RUN, errorReason, runTask } from '../src/run-task.ts';
 
 const ROOT = resolve(import.meta.dirname, '../..');
