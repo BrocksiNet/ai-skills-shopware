@@ -16,6 +16,13 @@ Ask what else this change touches, even if those files are not in the diff.
   runs for every shop that has the plugin active, including shops that never
   open the new admin screen.
 
+- **IMP-008** **A cache key holds every input that changes the result.** A new
+  `Criteria` property, the sales channel, language, customer group, currency
+  or app state that the cached value depends on belongs in the key, hashed
+  the same way wherever the key is built. A missing input serves one shop's,
+  language's or customer's result to another. Keep tags and variants few:
+  one tag per row turns every write into a mass invalidation.
+
 If you cannot name who else is affected, you have not reviewed the change.
 
 ## Who pays

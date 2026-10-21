@@ -1,0 +1,14 @@
+```json
+{
+  "findings": [
+    {
+      "rule_id": null,
+      "severity": "minor",
+      "file": "src/Event/LoyaltyPointsCalculateEvent.php",
+      "line": 23,
+      "summary": "Adding campaignCode to the event constructor is a breaking change for anyone constructing the event.",
+      "fix": "Add a setter instead."
+    }
+  ]
+}
+```

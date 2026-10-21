@@ -1,0 +1,22 @@
+```json
+{
+  "findings": [
+    {
+      "rule_id": "ADM-039",
+      "severity": "nit",
+      "file": "src/Resources/app/administration/src/component/swag-loyalty-card/index.ts",
+      "line": 15,
+      "summary": "The customerId prop was renamed; consider a deprecation.",
+      "fix": "Keep the old prop for one release."
+    },
+    {
+      "rule_id": "ADM-008",
+      "severity": "major",
+      "file": "src/Resources/app/administration/src/component/swag-loyalty-card/swag-loyalty-card.html.twig",
+      "line": 8,
+      "summary": "The swag_loyalty_card_balance block markup should use BEM class names and Meteor tokens.",
+      "fix": "Rename the class to swag-loyalty-card__balance."
+    }
+  ]
+}
+```

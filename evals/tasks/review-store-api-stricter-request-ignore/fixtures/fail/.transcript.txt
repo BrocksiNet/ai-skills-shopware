@@ -1,0 +1,14 @@
+```json
+{
+  "findings": [
+    {
+      "rule_id": null,
+      "severity": "minor",
+      "file": "src/StoreApi/WishlistAddRoute.php",
+      "line": 34,
+      "summary": "Adding a note parameter with a length constraint makes the request validation stricter for existing clients.",
+      "fix": "Drop the Length constraint."
+    }
+  ]
+}
+```

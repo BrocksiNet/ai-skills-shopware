@@ -1,0 +1,16 @@
+Snippet keys a plugin ships are public API for themes and snippet sets.
+
+```json
+{
+  "findings": [
+    {
+      "rule_id": null,
+      "severity": "major",
+      "file": "src/Resources/snippet/en_GB/storefront.en-GB.json",
+      "line": 4,
+      "summary": "The snippet key swag-loyalty.badge.label is renamed to swag-loyalty.badge.title; theme templates and merchant snippet overrides that use the old key now show the raw key.",
+      "fix": "Keep the old key next to the new one until the next major and deprecate it."
+    }
+  ]
+}
+```

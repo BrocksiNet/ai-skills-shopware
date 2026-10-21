@@ -1,0 +1,22 @@
+```json
+{
+  "findings": [
+    {
+      "rule_id": "SF-012",
+      "severity": "nit",
+      "file": "src/Resources/snippet/en_GB/storefront.en-GB.json",
+      "line": 4,
+      "summary": "title describes the text better than label.",
+      "fix": "Keep the new name."
+    },
+    {
+      "rule_id": "SF-007",
+      "severity": "major",
+      "file": "src/Resources/views/storefront/component/loyalty/badge.html.twig",
+      "line": 4,
+      "summary": "Renaming the snippet key breaks theme overrides of the badge label.",
+      "fix": "Move the visible text into a snippet."
+    }
+  ]
+}
+```

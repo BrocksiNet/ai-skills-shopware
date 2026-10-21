@@ -1,0 +1,51 @@
+diff --git a/src/Resources/app/administration/src/component/swag-loyalty-card/index.ts b/src/Resources/app/administration/src/component/swag-loyalty-card/index.ts
+index 38e30af..919fbdd 100644
+--- a/src/Resources/app/administration/src/component/swag-loyalty-card/index.ts
++++ b/src/Resources/app/administration/src/component/swag-loyalty-card/index.ts
+@@ -16,11 +16,18 @@ Component.register('swag-loyalty-card', {
+             type: String,
+             required: true,
+         },
++
++        showTier: {
++            type: Boolean,
++            required: false,
++            default: false,
++        },
+     },
+ 
+-    data(): { points: number; isLoading: boolean } {
++    data(): { points: number; tier: string | null; isLoading: boolean } {
+         return {
+             points: 0,
++            tier: null,
+             isLoading: false,
+         };
+     },
+@@ -40,6 +47,7 @@ Component.register('swag-loyalty-card', {
+             this.isLoading = true;
+             const balance = await this.balanceRepository.get(this.customerId);
+             this.points = balance?.points ?? 0;
++            this.tier = balance?.tier ?? null;
+             this.isLoading = false;
+         },
+     },
+diff --git a/src/Resources/app/administration/src/component/swag-loyalty-card/swag-loyalty-card.html.twig b/src/Resources/app/administration/src/component/swag-loyalty-card/swag-loyalty-card.html.twig
+index d6e9258..b0af0a0 100644
+--- a/src/Resources/app/administration/src/component/swag-loyalty-card/swag-loyalty-card.html.twig
++++ b/src/Resources/app/administration/src/component/swag-loyalty-card/swag-loyalty-card.html.twig
+@@ -9,5 +9,14 @@
+         {{ $tc('swag-loyalty.card.points', points, { points }) }}
+     </p>
+     {% endblock %}
++
++    {% block swag_loyalty_card_tier %}
++    <p
++        v-if="showTier && tier"
++        class="swag-loyalty-card__tier"
++    >
++        {{ $tc('swag-loyalty.card.tier', 0, { tier }) }}
++    </p>
++    {% endblock %}
+ </mt-card>
+ {% endblock %}

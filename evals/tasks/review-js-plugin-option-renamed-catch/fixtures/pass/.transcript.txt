@@ -1,0 +1,16 @@
+Options and emitted events of a shipped storefront JS plugin are public API.
+
+```json
+{
+  "findings": [
+    {
+      "rule_id": null,
+      "severity": "major",
+      "file": "src/Resources/app/storefront/src/swag-loyalty-badge/swag-loyalty-badge.plugin.js",
+      "line": 9,
+      "summary": "The showTooltip option is renamed to tooltip and the onBadgeRendered event to badgeRendered; themes that pass showTooltip through data-swag-loyalty-badge-options and plugins subscribed to onBadgeRendered break silently.",
+      "fix": "Keep reading showTooltip and publish onBadgeRendered next to the new names, deprecated until the next major."
+    }
+  ]
+}
+```

@@ -14,6 +14,15 @@ to apply a generic modern CSS/JS pattern.
   Do **not** add speculation rules, prerender, or prefetch that would pull
   those URLs in for anonymous users.
 
+## Change caching through its policy
+
+- **SF-013** **Never switch the HTTP cache off from the side.** A listener that
+  sets `no-store` or `private`, or disables caching for every logged-in
+  customer, to make one personalized value correct bypasses the configured
+  cache policies and makes every affected page slow. Keep personal data off
+  cacheable responses: load it after first paint from an uncached Store-API
+  route, and change caching rules through the cache policy configuration.
+
 ## Do not add
 
 - `<script type="speculationrules">` (or equivalent prerender/prefetch) on

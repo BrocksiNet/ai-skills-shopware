@@ -1,0 +1,24 @@
+The component is extended by other plugins, so its props and blocks are public API.
+
+```json
+{
+  "findings": [
+    {
+      "rule_id": "ADM-039",
+      "severity": "major",
+      "file": "src/Resources/app/administration/src/component/swag-loyalty-card/index.ts",
+      "line": 15,
+      "summary": "The customerId prop is renamed to customer and a new required salesChannelId prop is added, so every plugin that renders swag-loyalty-card with customer-id breaks.",
+      "fix": "Keep customerId as a deprecated prop next to customer, and give salesChannelId a default or make it optional."
+    },
+    {
+      "rule_id": null,
+      "severity": "major",
+      "file": "src/Resources/app/administration/src/component/swag-loyalty-card/swag-loyalty-card.html.twig",
+      "line": 8,
+      "summary": "The swag_loyalty_card_points block was renamed to swag_loyalty_card_balance; plugin overrides of the old block stop rendering.",
+      "fix": "Keep swag_loyalty_card_points wrapping the new block with a deprecation comment until the next major."
+    }
+  ]
+}
+```

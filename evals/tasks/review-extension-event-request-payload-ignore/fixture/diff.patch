@@ -1,0 +1,33 @@
+diff --git a/src/Event/LoyaltyPointsCalculateEvent.php b/src/Event/LoyaltyPointsCalculateEvent.php
+index 5197e76..57ff4bc 100644
+--- a/src/Event/LoyaltyPointsCalculateEvent.php
++++ b/src/Event/LoyaltyPointsCalculateEvent.php
+@@ -20,6 +20,7 @@ final class LoyaltyPointsCalculateEvent extends Event
+         public readonly ?string $customerGroupId,
+         public readonly Context $context,
+         public int $points,
++        public readonly ?string $campaignCode = null,
+     ) {
+     }
+ }
+diff --git a/src/LoyaltyPointsCalculator.php b/src/LoyaltyPointsCalculator.php
+index acb18fe..4e61ebe 100644
+--- a/src/LoyaltyPointsCalculator.php
++++ b/src/LoyaltyPointsCalculator.php
+@@ -15,7 +15,7 @@ class LoyaltyPointsCalculator
+     ) {
+     }
+ 
+-    public function calculate(Cart $cart, SalesChannelContext $context): int
++    public function calculate(Cart $cart, SalesChannelContext $context, ?string $campaignCode = null): int
+     {
+         $rate = $this->config->pointsPerEuro($context->getSalesChannelId());
+         $points = (int) floor($cart->getPrice()->getTotalPrice() * $rate);
+@@ -26,6 +26,7 @@ class LoyaltyPointsCalculator
+             $context->getCustomer()?->getGroupId(),
+             $context->getContext(),
+             $points,
++            $campaignCode,
+         );
+         $this->dispatcher->dispatch($event);
+ 

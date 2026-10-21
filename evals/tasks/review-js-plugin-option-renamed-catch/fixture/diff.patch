@@ -1,0 +1,26 @@
+diff --git a/src/Resources/app/storefront/src/swag-loyalty-badge/swag-loyalty-badge.plugin.js b/src/Resources/app/storefront/src/swag-loyalty-badge/swag-loyalty-badge.plugin.js
+index 1ee5a29..3d072d6 100644
+--- a/src/Resources/app/storefront/src/swag-loyalty-badge/swag-loyalty-badge.plugin.js
++++ b/src/Resources/app/storefront/src/swag-loyalty-badge/swag-loyalty-badge.plugin.js
+@@ -6,7 +6,7 @@ import Plugin from 'src/plugin-system/plugin.class';
+  */
+ export default class SwagLoyaltyBadgePlugin extends Plugin {
+     static options = {
+-        showTooltip: true,
++        tooltip: true,
+         tooltipSelector: '.swag-loyalty-badge__tooltip',
+     };
+ 
+@@ -15,10 +15,10 @@ export default class SwagLoyaltyBadgePlugin extends Plugin {
+     }
+ 
+     _render() {
+-        if (this.options.showTooltip) {
++        if (this.options.tooltip) {
+             this.el.querySelector(this.options.tooltipSelector)?.classList.add('is--visible');
+         }
+ 
+-        this.$emitter.publish('onBadgeRendered', { el: this.el });
++        this.$emitter.publish('badgeRendered', { el: this.el });
+     }
+ }

@@ -1,0 +1,8 @@
+{
+    "swag-loyalty": {
+        "badge": {
+            "label": "Loyalty points",
+            "tooltip": "Points you collect with this purchase"
+        }
+    }
+}

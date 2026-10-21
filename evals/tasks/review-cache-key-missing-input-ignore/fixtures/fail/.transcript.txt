@@ -1,0 +1,14 @@
+```json
+{
+  "findings": [
+    {
+      "rule_id": null,
+      "severity": "minor",
+      "file": "src/Recommendation/RecommendationLoader.php",
+      "line": 46,
+      "summary": "The cache key ignores the Criteria filters, so another caller can get the wrong recommendations.",
+      "fix": "Hash the Criteria too."
+    }
+  ]
+}
+```

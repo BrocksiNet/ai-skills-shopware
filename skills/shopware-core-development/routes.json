@@ -76,6 +76,54 @@
         "getSubscribedEvents\\(",
         "->getSession\\("
       ]
+    },
+    {
+      "reference": "references/removals-and-shims.md",
+      "when": "You deprecate or remove an API, or add code that only lives until the next major.",
+      "anchors_any": [
+        "@deprecated tag:v",
+        "triggerDeprecationOrThrow\\(",
+        "silentUntil",
+        "#\\[BCChange"
+      ]
+    },
+    {
+      "reference": "references/bc-data-and-config.md",
+      "when": "You change API flags or associations of a definition, a feature flag, a config default or a console command.",
+      "paths_any": [
+        "**/Resources/config/packages/*.yaml",
+        "**/feature.yaml",
+        "**/config-schema.json",
+        "**/Resources/config/config.xml",
+        "**/Command/*Command.php"
+      ],
+      "anchors_any": [
+        "new ApiAware\\(",
+        "autoload: ",
+        "#\\[AsCommand\\(",
+        "->addOption\\("
+      ]
+    },
+    {
+      "reference": "references/platform-scope.md",
+      "when": "A change adds an option, an environment probe, or code for one product or hosting setup.",
+      "anchors_any": [
+        "getenv\\(",
+        "ini_get\\(",
+        "is_writable\\(",
+        "function_exists\\(",
+        "class_exists\\("
+      ]
+    },
+    {
+      "reference": "references/asset-lifetime.md",
+      "when": "Code deletes, moves or overwrites theme files, media or thumbnails, or schedules their cleanup.",
+      "anchors_any": [
+        "UnusedThemeDirectoryDeleter",
+        "\\.retired",
+        "->deleteDirectory\\(",
+        "theme/<hash>|themeHash"
+      ]
     }
   ]
 }

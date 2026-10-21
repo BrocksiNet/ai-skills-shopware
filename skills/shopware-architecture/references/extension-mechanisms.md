@@ -24,6 +24,12 @@ Load when adding extensibility or integrating with core.
   `Abstract*Route` plus `getDecorated()` for that. Abstract route classes that
   are already public stay; they are a backward-compatible contract, and plugins
   still decorate those.
+- **ARCH-005** **An extension event's public properties are its contract.** Listeners
+  read them; the constructor is `@internal` and owned by whoever dispatches.
+  Never rename, retype or remove a public property (or `NAME`) of a released
+  event; add a new property instead. Pass the values listeners need, never the
+  whole `Request`: it lets them read arbitrary request data, and the event can
+  no longer be built outside an HTTP request (CLI, queue, tests).
 - **One listener** for one event → `#[AsEventListener]` over full subscriber
   boilerplate (`CORE-031`).
 

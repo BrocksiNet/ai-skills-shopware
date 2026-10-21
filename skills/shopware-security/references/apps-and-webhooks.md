@@ -7,7 +7,7 @@
 
 ## Webhooks
 
-- Verify **signature** on incoming webhook requests per Shopware app docs.
+- **SEC-006** Verify **signature** on incoming webhook requests per Shopware app docs.
 - Do not log raw signing secrets or full signed payloads with secrets.
 
 ## Registration

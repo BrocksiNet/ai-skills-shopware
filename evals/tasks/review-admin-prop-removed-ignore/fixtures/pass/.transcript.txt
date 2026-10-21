@@ -1,0 +1,16 @@
+The new prop is optional with a default and the existing props and blocks stay, so plugin overrides keep working.
+
+```json
+{
+  "findings": [
+    {
+      "rule_id": null,
+      "severity": "nit",
+      "file": "src/Resources/app/administration/src/component/swag-loyalty-card/index.ts",
+      "line": 52,
+      "summary": "loadBalance does not reset isLoading when the repository call throws.",
+      "fix": "Wrap the call in try/finally."
+    }
+  ]
+}
+```

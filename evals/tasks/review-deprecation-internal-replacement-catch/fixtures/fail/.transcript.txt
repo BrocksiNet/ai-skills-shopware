@@ -1,0 +1,22 @@
+```json
+{
+  "findings": [
+    {
+      "rule_id": "CORE-063",
+      "severity": "nit",
+      "file": "src/Core/Content/Product/SalesChannel/Price/ProductPriceCalculatorV2.php",
+      "line": 9,
+      "summary": "Consider documenting the batching behaviour in the class docblock.",
+      "fix": "Add a docblock."
+    },
+    {
+      "rule_id": "CORE-017",
+      "severity": "major",
+      "file": "src/Core/Content/Product/SalesChannel/Price/ProductPriceCalculator.php",
+      "line": 22,
+      "summary": "The deprecation warning points to an @internal class.",
+      "fix": "Name the replacement in the @deprecated tag."
+    }
+  ]
+}
+```

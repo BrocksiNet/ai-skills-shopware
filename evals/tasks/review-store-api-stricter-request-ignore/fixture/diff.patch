@@ -1,0 +1,53 @@
+diff --git a/src/Resources/Schema/StoreApi/wishlist.json b/src/Resources/Schema/StoreApi/wishlist.json
+index 164fef4..8e8fe1e 100644
+--- a/src/Resources/Schema/StoreApi/wishlist.json
++++ b/src/Resources/Schema/StoreApi/wishlist.json
+@@ -16,7 +16,8 @@
+                 "required": ["productId"],
+                 "properties": {
+                   "productId": { "type": "string", "pattern": "^[0-9a-f]{32}$" },
+-                  "list": { "type": "string", "enum": ["default", "gift", "later"], "default": "default" }
++                  "list": { "type": "string", "enum": ["default", "gift", "later"], "default": "default" },
++                  "note": { "type": "string", "maxLength": 255, "description": "Optional note shown next to the item." }
+                 }
+               }
+             }
+diff --git a/src/StoreApi/WishlistAddRoute.php b/src/StoreApi/WishlistAddRoute.php
+index 08f8a22..ee295b1 100644
+--- a/src/StoreApi/WishlistAddRoute.php
++++ b/src/StoreApi/WishlistAddRoute.php
+@@ -11,6 +11,7 @@ use Shopware\Core\System\SalesChannel\SalesChannelContext;
+ use Swag\Wishlist\WishlistService;
+ use Symfony\Component\Routing\Attribute\Route;
+ use Symfony\Component\Validator\Constraints\Choice;
++use Symfony\Component\Validator\Constraints\Length;
+ use Symfony\Component\Validator\Constraints\NotBlank;
+ use Symfony\Component\Validator\Constraints\Uuid;
+ 
+@@ -30,11 +31,13 @@ class WishlistAddRoute
+         $definition = new DataValidationDefinition('swag_wishlist.add');
+         $definition->add('productId', new NotBlank(), new Uuid(['strict' => false]));
+         $definition->add('list', new Choice(['choices' => ['default', 'gift', 'later']]));
++        $definition->add('note', new Length(['max' => 255]));
+         $this->validator->validate($data->all(), $definition);
+ 
+         $this->wishlist->add(
+             $data->getString('productId'),
+             $data->getString('list', 'default'),
++            $data->has('note') ? $data->getString('note') : null,
+             $context,
+         );
+ 
+diff --git a/src/WishlistService.php b/src/WishlistService.php
+index 61d6f32..d7a3378 100644
+--- a/src/WishlistService.php
++++ b/src/WishlistService.php
+@@ -6,7 +6,7 @@ use Shopware\Core\System\SalesChannel\SalesChannelContext;
+ 
+ class WishlistService
+ {
+-    public function add(string $productId, string $list, SalesChannelContext $context): void
++    public function add(string $productId, string $list, ?string $note, SalesChannelContext $context): void
+     {
+         // writes swag_wishlist_item through the DAL
+     }

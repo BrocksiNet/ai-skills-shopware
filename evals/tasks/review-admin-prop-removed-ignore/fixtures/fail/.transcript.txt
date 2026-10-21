@@ -1,0 +1,14 @@
+```json
+{
+  "findings": [
+    {
+      "rule_id": null,
+      "severity": "minor",
+      "file": "src/Resources/app/administration/src/component/swag-loyalty-card/index.ts",
+      "line": 20,
+      "summary": "Adding the showTier prop changes the component API and breaks plugins that extend swag-loyalty-card.",
+      "fix": "Ship the tier display as a separate component."
+    }
+  ]
+}
+```

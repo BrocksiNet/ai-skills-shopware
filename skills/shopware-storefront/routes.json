@@ -9,14 +9,14 @@
     },
     {
       "reference": "references/twig-and-theme.md",
-      "when": "You edit Twig blocks, the theme or assets.",
-      "paths_any": ["**/Resources/views/storefront/**/*.twig", "**/Resources/app/storefront/src/scss/**", "**/theme.json", "**/Resources/app/storefront/dist/**"],
+      "when": "You edit Twig blocks, the theme, snippets or assets.",
+      "paths_any": ["**/Resources/views/storefront/**/*.twig", "**/Resources/app/storefront/src/scss/**", "**/theme.json", "**/Resources/snippet/**/*.json", "**/Resources/app/storefront/dist/**"],
       "anchors_any": ["\\{% sw_extends"]
     },
     {
       "reference": "references/cache-and-modern-web.md",
       "when": "Content depends on the user or cache, or you need a modern web API.",
-      "anchors_any": ["CacheTagCollector", "new (HttpClient|StoreApiClient)\\(", "speculationrules", "startViewTransition\\(|@view-transition"]
+      "anchors_any": ["CacheTagCollector", "new (HttpClient|StoreApiClient)\\(", "speculationrules", "startViewTransition\\(|@view-transition", "no-store", "Cache-Control", "->setPrivate\\(", "BeforeSendResponseEvent"]
     }
   ]
 }

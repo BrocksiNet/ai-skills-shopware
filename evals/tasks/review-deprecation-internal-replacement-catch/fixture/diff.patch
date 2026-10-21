@@ -1,0 +1,66 @@
+diff --git a/src/Core/Content/Product/SalesChannel/Price/ProductPriceCalculator.php b/src/Core/Content/Product/SalesChannel/Price/ProductPriceCalculator.php
+index 1dd02ea..276b52c 100644
+--- a/src/Core/Content/Product/SalesChannel/Price/ProductPriceCalculator.php
++++ b/src/Core/Content/Product/SalesChannel/Price/ProductPriceCalculator.php
+@@ -2,6 +2,7 @@
+ 
+ namespace Shopware\Core\Content\Product\SalesChannel\Price;
+ 
++use Shopware\Core\Framework\Feature;
+ use Shopware\Core\Framework\Log\Package;
+ use Shopware\Core\System\SalesChannel\SalesChannelContext;
+ 
+@@ -14,10 +15,17 @@ class ProductPriceCalculator extends AbstractProductPriceCalculator
+     }
+ 
+     /**
++     * @deprecated tag:v6.8.0 - Will be removed. Use ProductPriceCalculatorV2::calculate() instead.
++     *
+      * @param iterable<SalesChannelProductEntity> $products
+      */
+     public function calculate(iterable $products, SalesChannelContext $context): void
+     {
++        Feature::triggerDeprecationOrThrow(
++            'v6.8.0.0',
++            Feature::deprecatedMethodMessage(self::class, __METHOD__, 'v6.8.0.0', 'ProductPriceCalculatorV2::calculate()'),
++        );
++
+         foreach ($products as $product) {
+             $this->calculatePrice($product, $context);
+         }
+diff --git a/src/Core/Content/Product/SalesChannel/Price/ProductPriceCalculatorV2.php b/src/Core/Content/Product/SalesChannel/Price/ProductPriceCalculatorV2.php
+new file mode 100644
+index 0000000..f64bdb2
+--- /dev/null
++++ b/src/Core/Content/Product/SalesChannel/Price/ProductPriceCalculatorV2.php
+@@ -0,0 +1,30 @@
++<?php declare(strict_types=1);
++
++namespace Shopware\Core\Content\Product\SalesChannel\Price;
++
++use Shopware\Core\Framework\Log\Package;
++use Shopware\Core\System\SalesChannel\SalesChannelContext;
++
++/**
++ * @internal
++ */
++#[Package('inventory')]
++class ProductPriceCalculatorV2
++{
++    public function __construct(private readonly PriceRuleMatcher $matcher)
++    {
++    }
++
++    /**
++     * Calculates prices for many products at once and matches price rules once per batch.
++     *
++     * @param iterable<SalesChannelProductEntity> $products
++     */
++    public function calculate(iterable $products, SalesChannelContext $context): void
++    {
++        $rules = $this->matcher->match($context);
++        foreach ($products as $product) {
++            $product->setCalculatedPrices($rules->pricesFor($product));
++        }
++    }
++}

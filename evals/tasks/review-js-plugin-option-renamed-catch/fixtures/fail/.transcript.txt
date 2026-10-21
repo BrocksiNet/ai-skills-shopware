@@ -1,0 +1,22 @@
+```json
+{
+  "findings": [
+    {
+      "rule_id": "SF-011",
+      "severity": "nit",
+      "file": "src/Resources/app/storefront/src/swag-loyalty-badge/swag-loyalty-badge.plugin.js",
+      "line": 9,
+      "summary": "tooltip is a shorter option name than showTooltip.",
+      "fix": "Keep it."
+    },
+    {
+      "rule_id": "SF-006",
+      "severity": "major",
+      "file": "src/Resources/app/storefront/src/swag-loyalty-badge/swag-loyalty-badge.plugin.js",
+      "line": 22,
+      "summary": "The renamed event breaks plugins subscribed to onBadgeRendered.",
+      "fix": "Register the plugin asynchronously."
+    }
+  ]
+}
+```

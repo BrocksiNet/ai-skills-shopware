@@ -1,0 +1,47 @@
+diff --git a/src/Recommendation/RecommendationLoader.php b/src/Recommendation/RecommendationLoader.php
+index dc6c8b0..e1c3239 100644
+--- a/src/Recommendation/RecommendationLoader.php
++++ b/src/Recommendation/RecommendationLoader.php
+@@ -7,6 +7,8 @@ use Shopware\Core\Framework\DataAbstractionLayer\Search\Criteria;
+ use Shopware\Core\Framework\DataAbstractionLayer\Search\Filter\EqualsFilter;
+ use Shopware\Core\System\SalesChannel\Entity\SalesChannelRepository;
+ use Shopware\Core\System\SalesChannel\SalesChannelContext;
++use Symfony\Contracts\Cache\CacheInterface;
++use Symfony\Contracts\Cache\ItemInterface;
+ 
+ class RecommendationLoader
+ {
+@@ -16,6 +18,7 @@ class RecommendationLoader
+     public function __construct(
+         private readonly SalesChannelRepository $productRepository,
+         private readonly CoPurchaseScorer $scorer,
++        private readonly CacheInterface $cache,
+     ) {
+     }
+ 
+@@ -24,13 +27,19 @@ class RecommendationLoader
+      */
+     public function load(string $productId, int $limit, SalesChannelContext $context): array
+     {
+-        $criteria = new Criteria($this->scorer->candidates($productId));
+-        $criteria->addFilter(new EqualsFilter('active', true));
+-        $criteria->setLimit($limit);
++        // Scoring is slow on large catalogs; cache the ranked ids for an hour.
++        return $this->cache->get('swag-reco-' . $productId, function (ItemInterface $item) use ($productId, $limit, $context): array {
++            $item->expiresAfter(3600);
++            $item->tag(['swag-reco-' . $productId]);
+ 
+-        // Visibility, prices and stock depend on the sales channel and customer group.
+-        $products = $this->productRepository->search($criteria, $context)->getEntities();
++            $criteria = new Criteria($this->scorer->candidates($productId));
++            $criteria->addFilter(new EqualsFilter('active', true));
++            $criteria->setLimit($limit);
+ 
+-        return $this->scorer->rank($productId, $products);
++            // Visibility, prices and stock depend on the sales channel and customer group.
++            $products = $this->productRepository->search($criteria, $context)->getEntities();
++
++            return $this->scorer->rank($productId, $products);
++        });
+     }
+ }

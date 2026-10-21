@@ -1,0 +1,22 @@
+```json
+{
+  "findings": [
+    {
+      "rule_id": "PLG-031",
+      "severity": "nit",
+      "file": "src/StoreApi/WishlistAddRoute.php",
+      "line": 34,
+      "summary": "note could use a NotBlank constraint message.",
+      "fix": "Add a message."
+    },
+    {
+      "rule_id": "PLG-011",
+      "severity": "major",
+      "file": "src/Resources/Schema/StoreApi/wishlist.json",
+      "line": 17,
+      "summary": "The schema change makes note required, a breaking change for existing clients.",
+      "fix": "Document the route in OpenAPI."
+    }
+  ]
+}
+```

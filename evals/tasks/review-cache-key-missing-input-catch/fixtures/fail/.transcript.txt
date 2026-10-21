@@ -1,0 +1,22 @@
+```json
+{
+  "findings": [
+    {
+      "rule_id": "IMP-008",
+      "severity": "nit",
+      "file": "src/Recommendation/RecommendationLoader.php",
+      "line": 32,
+      "summary": "The key prefix could be a constant.",
+      "fix": "Extract it."
+    },
+    {
+      "rule_id": "REV-008",
+      "severity": "major",
+      "file": "src/Recommendation/RecommendationLoader.php",
+      "line": 34,
+      "summary": "The cache key misses the sales channel, so other sales channels get the wrong products.",
+      "fix": "Use the CacheTagCollector."
+    }
+  ]
+}
+```

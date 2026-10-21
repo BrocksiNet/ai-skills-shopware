@@ -1,0 +1,14 @@
+```json
+{
+  "findings": [
+    {
+      "rule_id": null,
+      "severity": "nit",
+      "file": "src/Recommendation/RecommendationLoader.php",
+      "line": 33,
+      "summary": "The one-hour lifetime could be a named constant next to the key prefix.",
+      "fix": "Extract RECOMMENDATION_TTL."
+    }
+  ]
+}
+```

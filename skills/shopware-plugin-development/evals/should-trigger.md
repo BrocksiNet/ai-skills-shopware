@@ -13,3 +13,4 @@
 - Prepare this plugin for Shopware 6.8 without dropping 6.6 and 6.7.
 - Review this diff that changes the response struct of my plugin's Store API route.
 - Review my plugin migration that updates the shipped order confirmation mail template.
+- Can I make the note parameter required on my plugin's existing Store API route?

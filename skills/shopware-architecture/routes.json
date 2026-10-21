@@ -43,15 +43,17 @@
     },
     {
       "reference": "references/extension-mechanisms.md",
-      "when": "You choose between an event, a decoration and a core edit.",
+      "when": "You choose between an event, a decoration and a core edit, or change an event.",
       "paths_any": [
+        "**/*Event.php",
         "**/Resources/config/services.{xml,php}"
       ],
       "anchors_any": [
         "decorates",
         "#\\[AsEventListener",
         "getSubscribedEvents\\(",
-        "ExtensionDispatcher"
+        "ExtensionDispatcher",
+        "extends (Event|Extension|NestedEvent)\\b"
       ]
     },
     {

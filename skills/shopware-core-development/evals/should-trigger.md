@@ -17,3 +17,4 @@
 - Replace file_get_contents in core with Symfony HttpClient behind a feature flag.
 - Replace file_put_contents in this core service with Symfony Filesystem.
 - Modernize this core service to use Messenger instead of a custom queue.
+- Is it fine to switch off autoload on an existing core association in a minor?

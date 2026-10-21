@@ -1,0 +1,27 @@
+diff --git a/src/Resources/app/administration/blocks-list.json b/src/Resources/app/administration/blocks-list.json
+index 181a580..c760aa2 100644
+--- a/src/Resources/app/administration/blocks-list.json
++++ b/src/Resources/app/administration/blocks-list.json
+@@ -2,5 +2,5 @@
+     "swag_loyalty_detail": "swag-loyalty-detail",
+     "swag_loyalty_detail_content": "swag-loyalty-detail",
+     "swag_loyalty_detail_balance": "swag-loyalty-detail",
+-    "swag_loyalty_detail_sidebar": "swag-loyalty-detail"
++    "swag_loyalty_detail_aside": "swag-loyalty-detail"
+ }
+diff --git a/src/Resources/app/administration/src/module/swag-loyalty/page/swag-loyalty-detail/swag-loyalty-detail.html.twig b/src/Resources/app/administration/src/module/swag-loyalty/page/swag-loyalty-detail/swag-loyalty-detail.html.twig
+index a246d82..40dc7f8 100644
+--- a/src/Resources/app/administration/src/module/swag-loyalty/page/swag-loyalty-detail/swag-loyalty-detail.html.twig
++++ b/src/Resources/app/administration/src/module/swag-loyalty/page/swag-loyalty-detail/swag-loyalty-detail.html.twig
+@@ -7,9 +7,9 @@
+             <swag-loyalty-card :customer-id="customerId" />
+             {% endblock %}
+ 
+-            {% block swag_loyalty_detail_sidebar %}
++            {% block swag_loyalty_detail_aside %}
+             <sw-extension-component-section
+-                position-identifier="swag-loyalty-detail-sidebar"
++                position-identifier="swag-loyalty-detail-aside"
+             />
+             {% endblock %}
+         </sw-card-view>

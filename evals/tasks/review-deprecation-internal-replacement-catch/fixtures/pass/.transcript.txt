@@ -1,0 +1,14 @@
+```json
+{
+  "findings": [
+    {
+      "rule_id": null,
+      "severity": "major",
+      "file": "src/Core/Content/Product/SalesChannel/Price/ProductPriceCalculator.php",
+      "line": 22,
+      "summary": "The deprecation points to ProductPriceCalculatorV2, which is @internal, so extensions get a deprecation warning they cannot act on.",
+      "fix": "Make the replacement public API first, or keep the deprecation silent (no runtime trigger) until a usable replacement exists."
+    }
+  ]
+}
+```

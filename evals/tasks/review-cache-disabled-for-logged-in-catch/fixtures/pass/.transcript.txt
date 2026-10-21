@@ -1,0 +1,16 @@
+The badge bug comes from personal data in cacheable HTML; the fix trades it for a slower shop.
+
+```json
+{
+  "findings": [
+    {
+      "rule_id": null,
+      "severity": "major",
+      "file": "src/Subscriber/LoyaltyNoCacheSubscriber.php",
+      "line": 26,
+      "summary": "The subscriber sets every response for logged-in customers to private and no-store, switching the HTTP cache off for all their pages instead of keeping the personal balance off the cached page.",
+      "fix": "Remove the subscriber; render the page without the balance and load the balance separately (Store API call after paint), or change caching through the cache policy configuration."
+    }
+  ]
+}
+```

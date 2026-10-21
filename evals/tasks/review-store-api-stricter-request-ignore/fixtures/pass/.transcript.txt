@@ -1,0 +1,16 @@
+The new note parameter is optional and the existing input is still accepted.
+
+```json
+{
+  "findings": [
+    {
+      "rule_id": null,
+      "severity": "nit",
+      "file": "src/WishlistService.php",
+      "line": 9,
+      "summary": "The note parameter could be named itemNote to match the column.",
+      "fix": "Rename it."
+    }
+  ]
+}
+```

@@ -1,0 +1,14 @@
+```json
+{
+  "findings": [
+    {
+      "rule_id": null,
+      "severity": "minor",
+      "file": "src/StoreApi/RedeemableRewardRoute.php",
+      "line": 11,
+      "summary": "The new rewards route requires login, so anonymous clients get a 403.",
+      "fix": "Make it public."
+    }
+  ]
+}
+```

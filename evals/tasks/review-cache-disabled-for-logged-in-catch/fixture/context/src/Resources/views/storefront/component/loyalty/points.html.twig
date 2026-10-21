@@ -1,0 +1,7 @@
+{% block swag_loyalty_points %}
+    {% if page.extensions.swagLoyalty %}
+        <p class="swag-loyalty-points">
+            {{ 'swag-loyalty.points.balance'|trans({'%points%': page.extensions.swagLoyalty.points})|sw_sanitize }}
+        </p>
+    {% endif %}
+{% endblock %}
