@@ -14,6 +14,12 @@ Seed PR: [#17657](https://github.com/shopware/shopware/pull/17657) (merged
 [#20575](https://github.com/shopware/shopware/pull/20575)).
 Canonical path: `.agents/skills/`; `.claude/skills` → symlink.
 
+From 2026-10-20 the weekly
+[`mine-trunk`](../.github/workflows/mine-trunk.yml) workflow lists new deltas
+in an issue labeled `trunk-drift`, and [`.mining-state.json`](.mining-state.json)
+records how far trunk has been read. Record each decision from such an issue
+in a mining pass section here, as before.
+
 The guidance-skill catalog since #17657 is unchanged: no new `shopware-*`
 names, still no storefront skill (a `shopware-storefront-component` skill is
 WIP in [#20437](https://github.com/shopware/shopware/pull/20437)). The CI-only

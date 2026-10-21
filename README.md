@@ -337,6 +337,16 @@ with a free model by default, so they need no API key or secret. Details:
 [`evals/README.md`](evals/README.md#model-evals-in-ci-evalsyml). Local A/B smoke:
 [`docs/smoke-evals.md`](docs/smoke-evals.md).
 
+Trunk mining runs weekly in
+[`.github/workflows/mine-trunk.yml`](.github/workflows/mine-trunk.yml). It
+opens an issue labeled `trunk-drift` that lists what changed on
+`shopware/shopware` trunk since
+[`docs/.mining-state.json`](docs/.mining-state.json), checked against
+`rules/catalog.json`. A `/mined` comment from a member opens a PR that moves
+the state forward. That PR needs "Allow GitHub Actions to create and approve
+pull requests" in the repository settings. Run it locally with
+`node tools/bin/mine-trunk.ts report`.
+
 For a hands-on, real-instance check, follow
 [`docs/local-validation.md`](docs/local-validation.md): install the skills for
 your use-case, point them at your own local Shopware, run a task, verify with the
