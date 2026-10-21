@@ -14,9 +14,12 @@
 //      reference or `see` entry names an unknown or inactive ID
 //   6. a skill's "Already enforced by CI" section or references/enforced-by-ci.md
 //      does not match the catalog (run tools/bin/render-enforced.ts)
+//   7. a skill that borrows references for an audience does not name a rule
+//      in them that is for another audience (see borrow-audience.ts)
 // It also checks the field types, since the catalog is hand-edited JSON.
 import { existsSync, readdirSync, readFileSync, statSync } from 'node:fs';
 import { join, relative, sep } from 'node:path';
+import { borrowedAudienceErrors } from './borrow-audience.ts';
 import { type Catalog, type Rule, checkCatalog, isActive, prefixOf, readCatalog } from './catalog.ts';
 import { enforcedChanges } from './enforced-files.ts';
 import { errorMessage } from './errors.ts';
@@ -206,6 +209,7 @@ export function validateRules(root: string, raw: unknown = readCatalog(root)): R
   errors.push(
     ...mentionErrors(ctx, references, checked.malformed),
     ...enforcedSectionErrors(root, { ...checked.catalog, rules: [...byId.values()] }),
+    ...borrowedAudienceErrors(root, [...byId.values()], references),
   );
   return { errors, ...coverage([...byId.values()]) };
 }

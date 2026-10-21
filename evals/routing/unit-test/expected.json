@@ -1,4 +1,7 @@
 {
+  "shopware-extension-review": [
+    "../shopware-testing/references/test-shape-and-flags.md"
+  ],
   "shopware-testing": [
     "references/test-shape-and-flags.md",
     "references/core-platform-patterns.md"

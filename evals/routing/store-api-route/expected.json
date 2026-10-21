@@ -2,6 +2,11 @@
   "shopware-core-development": [
     "references/api-schema.md"
   ],
+  "shopware-extension-review": [
+    "../shopware-plugin-development/references/api-contracts.md",
+    "../shopware-security/references/api-acl-and-input.md",
+    "../shopware-review-learnings/references/api-aware.md"
+  ],
   "shopware-plugin-development": [
     "references/api-contracts.md"
   ],

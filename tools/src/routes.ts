@@ -11,13 +11,21 @@
 // depend on the task, not the diff (an approach keeps failing, a fix grows
 // beyond the bug); the router never selects them and the model decides from
 // `when`. Both are reported apart from the diff-selected references.
+//
+// A route can borrow another skill's reference: `reference` is
+// `../<skill>/references/<file>.md`, and with no triggers, `always` or
+// `on_demand` of its own it takes them, and `when` if it has none, from that
+// skill's route for the file. A review skill that reads other skills'
+// references this way cannot drift from their triggers.
 import { existsSync, readFileSync, readdirSync } from 'node:fs';
 import { join, matchesGlob } from 'node:path';
 import { errorMessage } from './errors.ts';
+import { BORROWED, resolveBorrowed, ROUTES_FILE } from './route-borrow.ts';
 import { compareText } from './text.ts';
 
 export interface Route {
-  /** Skill-relative path, e.g. `references/migrations.md`. */
+  /** Skill-relative path, e.g. `references/migrations.md`, or a borrowed
+   *  `../<skill>/references/<file>.md`. */
   reference: string;
   /** The task in words; the "When" column of the table. */
   when: string;
@@ -29,12 +37,13 @@ export interface Route {
   on_demand?: boolean;
 }
 
+export { ROUTES_FILE } from './route-borrow.ts';
+
 export interface RouteFile {
   $comment?: string;
   routes: Route[];
 }
 
-export const ROUTES_FILE = 'routes.json';
 export const START =
   '<!-- routes:start: generated from routes.json by `node tools/bin/render-routes.ts`; do not edit -->';
 export const END = '<!-- routes:end -->';
@@ -156,7 +165,8 @@ export function fixedReferences(routes: RouteFile, kind: 'always' | 'on_demand')
 export function loadRoutes(skillDir: string): RouteFile | null {
   const path = join(skillDir, ROUTES_FILE);
   if (!existsSync(path)) return null;
-  const value: unknown = JSON.parse(readFileSync(path, 'utf8'));
+  const { value, errors } = resolveBorrowed(skillDir, JSON.parse(readFileSync(path, 'utf8')));
+  if (errors.length > 0) throw new Error(errors.join('; '));
   if (!isRouteFile(value)) throw new Error(shapeErrors(value, ROUTES_FILE).join('; '));
   return value;
 }
@@ -212,7 +222,9 @@ function triggers(route: Route): string {
 
 export function renderTable(routes: RouteFile): string {
   const rows = routes.routes.map((r) => {
-    const name = r.reference.replace(/^references\//u, '');
+    const name = r.reference.replace(/^references\//u, '').replace(BORROWED, (_, skill: string, file: string) => {
+      return `${skill.replace(/^shopware-/u, '')}: ${file.replace(/^references\//u, '')}`;
+    });
     return `| [\`${name}\`](${r.reference}) | ${cell(r.when)} | ${triggers(r)} |`;
   });
   return [
@@ -256,7 +268,9 @@ export function routeErrors(skillDir: string, label: string): string[] {
   if (!existsSync(path)) return [];
   let value: unknown;
   try {
-    value = JSON.parse(readFileSync(path, 'utf8'));
+    const resolved = resolveBorrowed(skillDir, JSON.parse(readFileSync(path, 'utf8')));
+    if (resolved.errors.length > 0) return resolved.errors.map((e) => `${at}: ${e}`);
+    value = resolved.value;
   } catch (error) {
     return [`${at}: ${errorMessage(error)}`];
   }

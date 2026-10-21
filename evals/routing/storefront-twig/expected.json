@@ -1,4 +1,7 @@
 {
+  "shopware-extension-review": [
+    "../shopware-storefront/references/twig-and-theme.md"
+  ],
   "shopware-storefront": [
     "references/twig-and-theme.md"
   ]

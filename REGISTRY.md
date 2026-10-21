@@ -29,6 +29,7 @@ the surface skills can all be installed together without contradicting (see
 | `shopware-pr-description` | maintainer | core PR workflow | The shopware/shopware PR template sections. Opening the PR stays with shopware-pr-hygiene on trunk | Plugin PRs, RELEASE_INFO files, "tests are green, open the PR" |
 | `shopware-assistant-style` | maintainer | any communication | Support ticket replies, short/plain answers, copy-ready customer text | Code rules, PR templates, release notes |
 | `shopware-pr-review` | maintainer | PR review threads | Reacting to GitHub review comments, fix vs reply vs push back | Initial PR body, generic idiomatic review |
+| `shopware-extension-review` | maintainer | plugin / app review (`custom/plugins`, `custom/apps`) | Reviewing a whole plugin or app diff before merge, release or Store submission; findings with rule IDs and severities | Core PRs (core `sw-review`), review thread replies, writing the code, feature blast radius |
 | `shopware-podman-dev` | maintainer | linked Podman checkout or Shopware CLI project | Running php/composer/phpunit/console/npm in shopware-dev, or shopware-cli project/extension validate | Test structure, PR text, release notes |
 | `shopware-storefront` | maintainer | storefront (Twig/theme/JS) | Storefront plugins, Twig blocks, theme SCSS, HTTP-cache-safe AJAX | Admin Vue, PHP DAL, generic CSS lectures |
 | `shopware-admin-js` | maintainer | Administration JS/TS/Vue | Admin Vue/TS, Meteor `mt-*`, Jest specs, Admin ACL | Storefront Twig, PHPUnit, PHP services |
@@ -89,6 +90,7 @@ the surface skills can all be installed together without contradicting (see
 | PR follow-up commits after review (no amend unless asked) | `shopware-pr-description` |
 | Assistant tone: plain language, concise answers, support-ticket copy blocks | `shopware-assistant-style` |
 | Reacting to GitHub PR review comments (fix / reply / push back, confidence %) | `shopware-pr-review` |
+| Reviewing plugin and app diffs as a whole: route rules by changed paths, rule-tagged findings (workflow only; each rule stays with its topic skill) | `shopware-extension-review` |
 | Migration tests, Codecov `#[CoversClass]`, core platform test placement | `shopware-testing` |
 | Container execution (Podman on shopware-dev; shopware-cli on CLI projects; MCP never blocking) | `shopware-podman-dev` |
 | shopware-dev hub (`~/shopware-dev`, `sw-dev link`, Mutagen, multi-lane proxy) | `shopware-podman-dev` |
@@ -116,6 +118,8 @@ the right one activates. There is no project-level "core vs plugin" choice.
 4. `shopware-review-learnings` records findings; it points at the owning skill
    rather than re-defining a topic. Blast radius of a finished feature is
    `shopware-change-impact`, not a finding list.
+   A whole plugin or app diff review is `shopware-extension-review`: it reads
+   the owning skills' references through borrowed routes and defines no rule.
 5. **Frontend is a second axis.** Twig/theme/storefront JS → `shopware-storefront`;
    Administration Vue/TS → `shopware-admin-js`. Those can sit next to a PHP
    surface skill in the same plugin. Generic modern CSS/JS lookup after

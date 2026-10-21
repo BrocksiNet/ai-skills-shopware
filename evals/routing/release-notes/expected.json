@@ -2,6 +2,9 @@
   "shopware-core-development": [
     "references/release-notes-and-adr.md"
   ],
+  "shopware-extension-review": [
+    "../shopware-review-learnings/references/api-aware.md"
+  ],
   "shopware-review-learnings": [
     "references/api-aware.md"
   ]

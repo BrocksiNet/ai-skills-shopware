@@ -43,6 +43,7 @@ release tag, and run `npx skills update` to pull improvements.
 | [`shopware-pr-description`](skills/shopware-pr-description/SKILL.md) | core PR workflow | GitHub PR body template for `shopware/shopware` contributions (copy-paste ready). |
 | [`shopware-assistant-style`](skills/shopware-assistant-style/SKILL.md) | any communication | Plain, concise answers; support-ticket replies in one copy block. |
 | [`shopware-pr-review`](skills/shopware-pr-review/SKILL.md) | PR review | Triage GitHub review threads; fix, reply, or push back with confidence. |
+| [`shopware-extension-review`](skills/shopware-extension-review/SKILL.md) | plugin / app review | Review a plugin or app diff as a whole: rules picked by changed path, findings with rule IDs and severities. Reads the topic skills' references. |
 | [`shopware-podman-dev`](skills/shopware-podman-dev/SKILL.md) | linked Podman or CLI project | **Optional.** Podman on `~/shopware-dev`; `shopware-cli` when `.shopware-project.yml` exists; MCP never blocks a fallback. |
 
 See [`docs/tooling-stack.md`](docs/tooling-stack.md) for how this repo fits with
@@ -73,9 +74,10 @@ safe; in a monorepo, editing `src/Core` fires the platform rules while editing
 Canonical one-liners live in [`use-cases/`](use-cases/):
 [`plugin-development.md`](use-cases/plugin-development.md),
 [`app-development.md`](use-cases/app-development.md),
-[`core-development.md`](use-cases/core-development.md), and
+[`core-development.md`](use-cases/core-development.md),
 [`storefront-development.md`](use-cases/storefront-development.md)
-(Twig/theme/Admin JS — install beside a PHP use-case, not instead of one).
+(Twig/theme/Admin JS — install beside a PHP use-case, not instead of one), and
+[`extension-review.md`](use-cases/extension-review.md) (plugin and app review).
 
 Each use-case below lists one ready-to-copy command per supported tool. The only
 difference between tools is the `-a` target.
@@ -245,6 +247,26 @@ npx skills add BrocksiNet/ai-skills-shopware \
 Building across more than one use-case (e.g. a monorepo with platform and
 extensions)? Add each use-case's surface skill: the surface routing keeps strict
 and pragmatic rules from firing on the wrong code.
+
+### Plugin and app review
+
+`shopware-extension-review` reads the references of the topic skills, so
+install it with them (any `-a` target):
+
+```bash
+npx skills add BrocksiNet/ai-skills-shopware \
+  --skill shopware-extension-review \
+  --skill shopware-plugin-development \
+  --skill shopware-app-development \
+  --skill shopware-security \
+  --skill shopware-storefront \
+  --skill shopware-admin-js \
+  --skill shopware-architecture \
+  --skill shopware-review-learnings \
+  --skill shopware-testing \
+  --skill shopware-change-impact \
+  -a claude-code
+```
 
 ### Prefer a project-level install
 
