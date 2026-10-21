@@ -23,6 +23,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   `EVAL_AGENT_TIMEOUT_SECONDS` stops a hung agent and every process it
   started, and an agent that leaves a background process holding its output
   no longer blocks grading.
+- Agent adapters and the skills profile in TypeScript (plan WP10 step 3).
+  `evals/runner/opencode-task.sh`, `claude-task.sh`, `opencode-activation.sh`,
+  `claude-activation.sh` and `skills-profile.sh` now call `tools/bin/`. The
+  inline Python event parsing became typed parsers, tested on a recorded
+  OpenCode and a recorded Claude Code session. Output, logs and exit codes
+  are unchanged; the adapters no longer need `python3`, and the OpenCode
+  timeout no longer needs a watchdog subshell.
 
 - Path-based reference routing. Each skill with references has a
   `routes.json` that maps changed-file globs and diff-line regexes to the

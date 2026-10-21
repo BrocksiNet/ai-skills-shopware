@@ -51,6 +51,16 @@ export function taskSkills(tasksRoot: string, task: string): string[] {
     .filter((l) => !l.startsWith('#') && l.trim() !== '');
 }
 
+/** Skill folders under skills/, sorted. */
+export function repoSkills(root: string): string[] {
+  const dir = join(root, 'skills');
+  if (!existsSync(dir)) return [];
+  return readdirSync(dir, { withFileTypes: true })
+    .filter((d) => d.isDirectory())
+    .map((d) => d.name)
+    .sort(compareText);
+}
+
 /** The second path segment of changed files under `prefix/`, e.g. the task
  *  of `evals/tasks/<task>/grade.sh`. Files directly in `prefix/` do not count. */
 function changedUnder(files: string[], prefix: string): Set<string> {

@@ -21,6 +21,10 @@ this repo's skills, with read-only tools, and print the invoked skills:
   OpenCode with a free model. It needs no account and no API key.
 - [`runner/claude-activation.sh`](runner/claude-activation.sh) uses Claude Code.
 
+The adapters, `skills-profile.sh`, `run-task.sh` and `ab.sh` are wrappers for
+TypeScript in `tools/` and need Node 24. Event parsers are tested on recorded
+sessions in `tools/test/fixtures/agents/`.
+
 ```bash
 SKILLS_ACTIVATION_CMD="$PWD/evals/runner/opencode-activation.sh" \
   ./scripts/run-activation-evals.sh
@@ -77,8 +81,7 @@ New graders must ship `fixtures/fail/` as an almost-correct sneak.
   `EVAL_AGENT_RETRIES` times (default 2), `EVAL_AGENT_RETRY_WAIT` seconds apart
   (default 60), on a fresh copy of the fixture. The reason is logged.
   `EVAL_AGENT_TIMEOUT_SECONDS` stops a hung agent and counts an agent error.
-- Both scripts are wrappers for `tools/bin/run-task.ts` and `tools/bin/ab.ts`
-  and need Node 24. Unit tests in `tools/test/ab.test.ts` drive them with
+- Unit tests in `tools/test/ab.test.ts` drive both with
   `runner/fake-agent.sh`.
 - `runner/ab.sh <task> [repeats]` — run both modes `repeats` times, print the
   comparison and append one JSON line to `$EVAL_RESULTS`

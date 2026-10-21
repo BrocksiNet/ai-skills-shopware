@@ -763,7 +763,7 @@ WP8 using `gh pr view --json state,mergedAt`:
 
 ## WP10: Eval runner in TypeScript
 
-Status: **steps 1 and 2 done 2026-10-20**.
+Status: **steps 1 and 2 done 2026-10-20, step 3 done 2026-10-21**.
 
 - Step 1: plan, gate and diff live in `tools/src/eval-{plan,gate,diff}.ts`
   over the typed records in `tools/src/eval-results.ts`. On the WP1 and WP4
@@ -777,9 +777,21 @@ Status: **steps 1 and 2 done 2026-10-20**.
   group, and a background child holding the agent's output no longer blocks
   grading. That is what step 3 needs to drop the watchdog in
   `opencode-task.sh`.
+- Step 3: the four agent adapters live in `tools/src/agents.ts`, the event
+  parsers in `tools/src/agent-events.ts` and the profile in
+  `tools/src/skills-profile.ts`. The parsers are tested on one recorded
+  OpenCode session and one recorded Claude Code session
+  (`tools/test/fixtures/agents/`, scrubbed of paths and IDs). In 41
+  side-by-side runs against fake CLIs the stdout, stderr, exit codes and
+  skill and token logs match the bash adapters. The OpenCode watchdog is
+  gone: `tools/src/proc.ts` kills the process group on timeout, and the
+  adapters no longer need `python3`. No Codex or Cursor adapter was added,
+  because `evals/smoke/` still covers those agents.
 
-The `scripts/eval-*.sh` and `evals/runner/{ab,run-task}.sh` files are
-wrappers. `selftest.sh` still checks the adapters end to end until step 3.
+The `scripts/eval-*.sh` and `evals/runner/*.sh` files are wrappers, except
+`fake-agent.sh` (a test double) and `install-agent.sh` (CI install).
+`selftest.sh` still runs end to end through the wrappers; step 4 retires it
+once its last cases are unit tests.
 
 Goal: one typed codebase for the eval pipeline, so result records, verdicts
 and gate rules are checked by the compiler instead of by `jq` filters and

@@ -19,60 +19,9 @@
 #   ACTIVATION_SKILLS_DIR  skills folder to expose (default: <repo>/skills)
 #   ACTIVATION_MODEL       provider/model (default: opencode/longcat-2.5-preview-free)
 #   ACTIVATION_MAX_TURNS   agent steps per prompt (default: 3)
+#
+# The adapter is TypeScript in tools/ (plan WP10); this wrapper keeps the
+# path that evals.yml, the scripts and the docs use. Needs Node 24.
 set -euo pipefail
-
 ROOT="$(cd "$(dirname "$0")/../.." && pwd)"
-SKILLS_DIR="${ACTIVATION_SKILLS_DIR:-$ROOT/skills}"
-MODEL="${ACTIVATION_MODEL:-opencode/longcat-2.5-preview-free}"
-MAX_TURNS="${ACTIVATION_MAX_TURNS:-3}"
-
-command -v opencode >/dev/null || { echo "opencode CLI not found" >&2; exit 2; }
-[[ "$MAX_TURNS" =~ ^[1-9][0-9]*$ ]] || { echo "ACTIVATION_MAX_TURNS must be >= 1" >&2; exit 2; }
-
-scratch="$(mktemp -d "${TMPDIR:-/tmp}/skills-activation.XXXXXX")"
-trap 'rm -rf "$scratch"' EXIT
-workspace="$scratch/ws"
-mkdir -p "$workspace/.agents"
-ln -s "$SKILLS_DIR" "$workspace/.agents/skills"
-
-export HOME="$scratch/home"
-export XDG_CONFIG_HOME="$HOME/.config" XDG_DATA_HOME="$HOME/.local/share"
-export XDG_CACHE_HOME="$HOME/.cache" XDG_STATE_HOME="$HOME/.local/state"
-mkdir -p "$XDG_CONFIG_HOME" "$XDG_DATA_HOME" "$XDG_CACHE_HOME" "$XDG_STATE_HOME"
-export OPENCODE_DISABLE_AUTOUPDATE=1 OPENCODE_DISABLE_LSP_DOWNLOAD=1
-OPENCODE_CONFIG_CONTENT="$(printf '{"agent":{"build":{"steps":%s}},"permission":{"edit":"deny","bash":"deny","webfetch":"deny","websearch":"deny","task":"deny","question":"deny"}}' "$MAX_TURNS")"
-export OPENCODE_CONFIG_CONTENT
-
-prompt="$(cat)"
-
-(
-  cd "$workspace"
-  opencode run --standalone --auto --format json -m "$MODEL" "$prompt"
-) | python3 -I -c '
-import json, sys
-seen, errors, events = [], [], 0
-for line in sys.stdin:
-    try:
-        ev = json.loads(line)
-    except ValueError:
-        continue
-    events += 1
-    if ev.get("type") == "error":
-        err = ev.get("error") or {}
-        errors.append(err.get("message") or err.get("type") or "unknown error")
-    if ev.get("type") != "tool_use":
-        continue
-    part = ev.get("part") or {}
-    if part.get("tool") != "skill":
-        continue
-    args = (part.get("state") or {}).get("input") or {}
-    name = args.get("id") or args.get("name") or args.get("skill") or ""
-    name = str(name).lstrip("/").split(":")[-1].strip()
-    if name and name not in seen:
-        seen.append(name)
-if errors:
-    sys.exit("Activation session failed: %s" % errors[0])
-if events == 0:
-    sys.exit("Activation session produced no events; no score recorded.")
-print("\n".join(seen))
-'
+exec node "$ROOT/tools/bin/adapter.ts" opencode-activation "$@"

@@ -13,41 +13,9 @@
 #      skills, otherwise skills installed on the machine leak into the "off"
 #      run. claude-task.sh passes --setting-sources project; opencode-task.sh
 #      runs with a throwaway HOME. Both read the two folders above.
+#
+# The adapter is TypeScript in tools/ (plan WP10); this wrapper keeps the
+# path that evals.yml, the scripts and the docs use. Needs Node 24.
 set -euo pipefail
-
-MODE="${1:?usage: skills-profile.sh on|off <workdir> [task]}"
-WORKDIR="${2:?usage: skills-profile.sh on|off <workdir> [task]}"
-TASK="${3:-}"
-
-ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
-SKILLS_ROOT="${ROOT}/skills"
-
-task_skills() {
-  local file="${ROOT}/evals/tasks/${TASK}/skills"
-  if [[ -n "${TASK}" && -f "${file}" ]]; then
-    grep -v '^#' "${file}" | grep -v '^[[:space:]]*$' || true
-  else
-    find "${SKILLS_ROOT}" -mindepth 1 -maxdepth 1 -type d -exec basename {} \; | sort
-  fi
-}
-
-case "${MODE}" in
-  on)
-    mkdir -p "${WORKDIR}/.claude/skills" "${WORKDIR}/.agents/skills"
-    count=0
-    while IFS= read -r skill; do
-      [[ -d "${SKILLS_ROOT}/${skill}" ]] || { echo "skills-profile: unknown skill '${skill}'" >&2; exit 2; }
-      ln -sfn "${SKILLS_ROOT}/${skill}" "${WORKDIR}/.claude/skills/${skill}"
-      ln -sfn "${SKILLS_ROOT}/${skill}" "${WORKDIR}/.agents/skills/${skill}"
-      count=$((count + 1))
-    done < <(task_skills)
-    [[ "${count}" -gt 0 ]] || { echo "skills-profile: no skills selected for '${TASK}'" >&2; exit 2; }
-    ;;
-  off)
-    rm -rf "${WORKDIR}/.claude/skills" "${WORKDIR}/.agents/skills"
-    ;;
-  *)
-    echo "skills-profile: mode must be on|off" >&2
-    exit 2
-    ;;
-esac
+ROOT="$(cd "$(dirname "$0")/../.." && pwd)"
+exec node "$ROOT/tools/bin/skills-profile.ts" "$@"
