@@ -83,6 +83,14 @@ jobs:
         working-directory: tools
         run: npm run typecheck
 
+      - name: Lint (oxlint, type-aware)
+        working-directory: tools
+        run: npm run lint
+
+      - name: Format check (oxfmt)
+        working-directory: tools
+        run: npm run format:check
+
       - name: Unit tests
         working-directory: tools
         run: npm test

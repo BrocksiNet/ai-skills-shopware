@@ -1,11 +1,8 @@
 {
   "name": "ai-skills-shopware-tools",
   "private": true,
-  "type": "module",
   "description": "Repo tooling for the skills library (rule catalog checks, renderers, eval plan/gate/diff). Runs on Node's built-in TypeScript type stripping; no build step.",
-  "engines": {
-    "node": ">=24"
-  },
+  "type": "module",
   "scripts": {
     "typecheck": "tsc -p .",
     "test": "node --test \"test/**/*.test.ts\"",
@@ -16,10 +13,19 @@
     "route": "node bin/route.ts",
     "eval-plan": "node bin/eval-plan.ts",
     "eval-gate": "node bin/eval-gate.ts",
-    "eval-diff": "node bin/eval-diff.ts"
+    "eval-diff": "node bin/eval-diff.ts",
+    "lint": "oxlint --type-aware --deny-warnings --report-unused-disable-directives src bin test",
+    "format": "oxfmt .",
+    "format:check": "oxfmt --check ."
   },
   "devDependencies": {
     "@types/node": "24.19.2",
+    "oxfmt": "0.74.0",
+    "oxlint": "1.89.0",
+    "oxlint-tsgolint": "7.0.2004",
     "typescript": "7.0.2"
+  },
+  "engines": {
+    "node": ">=24"
   }
 }

@@ -33,7 +33,8 @@ export function skillsProfile(root: string, mode: string, workdir: string, task:
   const skills = profileSkills(root, task);
   for (const skill of skills) {
     const source = join(root, 'skills', skill);
-    if (skill.includes('/') || !existsSync(source) || !statSync(source).isDirectory()) return `skills-profile: unknown skill '${skill}'`;
+    if (skill.includes('/') || !existsSync(source) || !statSync(source).isDirectory())
+      return `skills-profile: unknown skill '${skill}'`;
     for (const dir of PROFILE_DIRS) {
       const link = join(workdir, dir, skill);
       rmSync(link, { recursive: true, force: true });

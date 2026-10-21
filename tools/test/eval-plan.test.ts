@@ -28,7 +28,10 @@ describe('eval plan', () => {
     const p = plan(root, { tasks: [' task-b ', 'task-a'], maxTasks: 0, shards: 2 });
     assert.deepEqual(p.tasks, ['task-b', 'task-a']);
     assert.equal(p.count, 2);
-    assert.deepEqual(p.shards, [{ id: 1, tasks: 'task-b' }, { id: 2, tasks: 'task-a' }]);
+    assert.deepEqual(p.shards, [
+      { id: 1, tasks: 'task-b' },
+      { id: 2, tasks: 'task-a' },
+    ]);
   });
   test('empty shards are dropped', () => {
     assert.equal(plan(root, { tasks: ['task-a', 'task-b'], maxTasks: 0, shards: 8 }).shards.length, 2);
@@ -43,14 +46,20 @@ describe('eval plan', () => {
     assert.equal(plan(root, { maxTasks: 2, shards: 4 }).count, 2);
   });
   test('an unknown task is rejected', () => {
-    assert.throws(() => selectTasks(root, { ...opts, tasks: ['does-not-exist'] }), /unknown task 'does-not-exist'/);
+    assert.throws(() => selectTasks(root, { ...opts, tasks: ['does-not-exist'] }), /unknown task 'does-not-exist'/u);
   });
   test('a changed skill selects its tasks and tasks without a skills file', () => {
-    const tasks = selectTasks(root, { ...opts, changedFiles: ['skills/shopware-plugin-development/SKILL.md', 'README.md'] });
+    const tasks = selectTasks(root, {
+      ...opts,
+      changedFiles: ['skills/shopware-plugin-development/SKILL.md', 'README.md'],
+    });
     assert.deepEqual(tasks, ['task-a', 'task-b']);
   });
   test('a changed task folder selects that task only', () => {
-    const tasks = selectTasks(root, { ...opts, changedFiles: ['evals/tasks/task-c/grade.sh', 'evals/tasks/README.md'] });
+    const tasks = selectTasks(root, {
+      ...opts,
+      changedFiles: ['evals/tasks/task-c/grade.sh', 'evals/tasks/README.md'],
+    });
     assert.deepEqual(tasks, ['task-c']);
   });
   test('a docs-only change selects nothing', () => {

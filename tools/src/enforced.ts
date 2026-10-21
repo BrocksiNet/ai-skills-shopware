@@ -9,11 +9,11 @@
 // The block between the markers is generated; the renderer replaces it,
 // appends the section when a skill gains its first enforced rule, and drops
 // it (and the reference) when the last one goes.
-import type { Catalog, Enforcement, EnforcementKind, Rule } from './catalog.ts';
-import { isActive } from './catalog.ts';
+import { type Catalog, type Enforcement, type EnforcementKind, type Rule, isActive } from './catalog.ts';
 
 export const HEADING = '## Already enforced by CI (do not repeat)';
-export const START = '<!-- enforced:start: generated from rules/catalog.json by `node tools/bin/render-enforced.ts`; do not edit -->';
+export const START =
+  '<!-- enforced:start: generated from rules/catalog.json by `node tools/bin/render-enforced.ts`; do not edit -->';
 export const END = '<!-- enforced:end -->';
 /** Above this, the list moves to REFERENCE (plan WP3). */
 export const MAX_BULLETS = 10;
@@ -49,7 +49,7 @@ export function enforcedItems(catalog: Catalog, skill: string): EnforcedItem[] {
     .flatMap((rule) => (rule.trunk?.enforced_by ?? []).map((check) => ({ rule, check })));
 }
 
-const sentence = (text: string): string => text.trim().replace(/[.;]+$/, '');
+const sentence = (text: string): string => text.trim().replace(/[.;]+$/u, '');
 
 export function renderBullet({ rule, check }: EnforcedItem): string {
   const where = check.trunk_only ? `${KIND[check.kind]}, trunk only` : KIND[check.kind];
@@ -79,7 +79,7 @@ export function renderBlock(items: EnforcedItem[]): string {
           `flag a finding or write a checklist, read [\`${REFERENCE}\`](${REFERENCE})`,
           'and flag only what each check misses.',
         ]
-      : [...intro(items), '', ...items.map(renderBullet)];
+      : [...intro(items), '', ...items.map((item) => renderBullet(item))];
   return [START, ...body, END].join('\n');
 }
 
@@ -91,7 +91,7 @@ export function renderReference(items: EnforcedItem[]): string {
     '',
     ...intro(items),
     '',
-    ...items.map(renderBullet),
+    ...items.map((item) => renderBullet(item)),
     '',
   ].join('\n');
 }
@@ -108,13 +108,13 @@ function sectionBounds(lines: string[]): { heading: number; start: number; end: 
 
 /** Returns the SKILL.md text with the section brought in line with `items`. */
 export function applySection(text: string, items: EnforcedItem[]): string {
-  const lines = text.replace(/\n+$/, '').split('\n');
+  const lines = text.replace(/\n+$/u, '').split('\n');
   const bounds = sectionBounds(lines);
   if (items.length === 0) {
     if (bounds === null) return text;
     const from = bounds.heading === -1 ? bounds.start : bounds.heading;
     const kept = [...lines.slice(0, from), ...lines.slice(bounds.end + 1)];
-    return kept.join('\n').replace(/\n+$/, '') + '\n';
+    return kept.join('\n').replace(/\n+$/u, '') + '\n';
   }
   const block = renderBlock(items).split('\n');
   if (bounds === null) return [...lines, '', HEADING, '', ...block].join('\n') + '\n';

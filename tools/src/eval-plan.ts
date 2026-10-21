@@ -10,7 +10,7 @@
 // dropped.
 import { existsSync, readFileSync, readdirSync } from 'node:fs';
 import { join } from 'node:path';
-import { compareText } from './eval-results.ts';
+import { compareText } from './text.ts';
 
 export interface PlanOptions {
   /** Explicit task names; wins over `changedFiles`. */
@@ -39,7 +39,7 @@ export function allTasks(tasksRoot: string): string[] {
   return readdirSync(tasksRoot, { withFileTypes: true })
     .filter((d) => d.isDirectory() && existsSync(join(tasksRoot, d.name, 'grade.sh')))
     .map((d) => d.name)
-    .sort(compareText);
+    .toSorted(compareText);
 }
 
 /** Skill names in a task's `skills` file; empty when there is none. */
@@ -58,7 +58,7 @@ export function repoSkills(root: string): string[] {
   return readdirSync(dir, { withFileTypes: true })
     .filter((d) => d.isDirectory())
     .map((d) => d.name)
-    .sort(compareText);
+    .toSorted(compareText);
 }
 
 /** The second path segment of changed files under `prefix/`, e.g. the task
@@ -67,8 +67,8 @@ function changedUnder(files: string[], prefix: string): Set<string> {
   const out = new Set<string>();
   for (const f of files) {
     if (!f.startsWith(prefix)) continue;
-    const name = f.slice(prefix.length).split('/');
-    if (name.length > 1 && name[0] !== '') out.add(name[0]!);
+    const [name, ...rest] = f.slice(prefix.length).split('/');
+    if (rest.length > 0 && name !== undefined && name !== '') out.add(name);
   }
   return out;
 }
@@ -76,7 +76,7 @@ function changedUnder(files: string[], prefix: string): Set<string> {
 export function selectTasks(tasksRoot: string, opts: PlanOptions): string[] {
   if (opts.tasks !== undefined) {
     const known = new Set(allTasks(tasksRoot));
-    const picked = opts.tasks.map((t) => t.replace(/\s/g, '')).filter((t) => t !== '');
+    const picked = opts.tasks.map((t) => t.replaceAll(/\s/gu, '')).filter((t) => t !== '');
     for (const t of picked) if (!known.has(t)) throw new Error(`unknown task '${t}'`);
     return picked;
   }

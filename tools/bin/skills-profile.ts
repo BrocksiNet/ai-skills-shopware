@@ -5,13 +5,16 @@
 import { resolve } from 'node:path';
 import { skillsProfile } from '../src/skills-profile.ts';
 
-const [mode, workdir, task = '', ...rest] = process.argv.slice(2);
-if (!mode || !workdir || rest.length > 0) {
-  console.error('usage: skills-profile.sh on|off <workdir> [task]');
-  process.exit(2);
-}
-const error = skillsProfile(resolve(import.meta.dirname, '../..'), mode, workdir, task);
-if (error !== null) {
+function main(): number {
+  const [mode = '', workdir = '', task = '', ...rest] = process.argv.slice(2);
+  if (mode === '' || workdir === '' || rest.length > 0) {
+    console.error('usage: skills-profile.sh on|off <workdir> [task]');
+    return 2;
+  }
+  const error = skillsProfile(resolve(import.meta.dirname, '../..'), mode, workdir, task);
+  if (error === null) return 0;
   console.error(error);
-  process.exit(2);
+  return 2;
 }
+
+process.exitCode = main();

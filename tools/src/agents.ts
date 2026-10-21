@@ -11,10 +11,20 @@
 // workspace that exposes only the repo skills and print each skill the model
 // loaded, one per line. A CLI or API error fails the run, so it never looks
 // like "no activation".
-import { appendFileSync, chmodSync, copyFileSync, existsSync, mkdirSync, mkdtempSync, rmSync, symlinkSync } from 'node:fs';
+import {
+  appendFileSync,
+  chmodSync,
+  copyFileSync,
+  existsSync,
+  mkdirSync,
+  mkdtempSync,
+  rmSync,
+  symlinkSync,
+} from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { CLAUDE_CAPS, type Usage, parseClaude, parseOpencode } from './agent-events.ts';
+import { envOr } from './env.ts';
 import { onPath, run, tail } from './proc.ts';
 
 export interface AdapterIo {
@@ -28,19 +38,24 @@ export type Adapter = (prompt: string, env: NodeJS.ProcessEnv, io: AdapterIo, ro
 const AGENT_ERROR = 4;
 const OPENCODE_FREE_MODEL = 'opencode/longcat-2.5-preview-free';
 
-const positive = (v: string): boolean => /^[1-9][0-9]*$/.test(v);
+const positive = (v: string): boolean => /^[1-9][0-9]*$/u.test(v);
 
 function logSkills(env: NodeJS.ProcessEnv, skills: string[]): void {
-  if (env.EVAL_SKILLS_LOG) appendFileSync(env.EVAL_SKILLS_LOG, skills.map((s) => `${s}\n`).join(''));
+  const log = envOr(env, 'EVAL_SKILLS_LOG', '');
+  if (log !== '') appendFileSync(log, skills.map((s) => `${s}\n`).join(''));
 }
 
 function logUsage(env: NodeJS.ProcessEnv, usage: Usage | null): void {
-  if (env.EVAL_USAGE_LOG && usage) appendFileSync(env.EVAL_USAGE_LOG, `${usage.input} ${usage.output}\n`);
+  const log = envOr(env, 'EVAL_USAGE_LOG', '');
+  if (log !== '' && usage !== null) appendFileSync(log, `${usage.input} ${usage.output}\n`);
 }
+
+const scratchDir = (env: NodeJS.ProcessEnv, prefix: string): string =>
+  mkdtempSync(join(envOr(env, 'TMPDIR', tmpdir()), prefix));
 
 /** HOME and XDG folders in `scratch`, so no user config, login or global
  *  skills reach OpenCode. */
-function isolatedHome(env: NodeJS.ProcessEnv, scratch: string): NodeJS.ProcessEnv {
+function isolatedHome(env: NodeJS.ProcessEnv, scratch: string): { env: NodeJS.ProcessEnv; dataHome: string } {
   const home = join(scratch, 'home');
   const xdg = {
     XDG_CONFIG_HOME: join(home, '.config'),
@@ -49,7 +64,26 @@ function isolatedHome(env: NodeJS.ProcessEnv, scratch: string): NodeJS.ProcessEn
     XDG_STATE_HOME: join(home, '.local/state'),
   };
   for (const dir of Object.values(xdg)) mkdirSync(dir, { recursive: true });
-  return { ...env, HOME: home, ...xdg };
+  return { env: { ...env, HOME: home, ...xdg }, dataHome: xdg.XDG_DATA_HOME };
+}
+
+/** The OpenCode environment for a task run: isolated unless OPENCODE_ISOLATE
+ *  is not 1, with OPENCODE_AUTH_FILE copied in as the login. Null when the
+ *  auth file is missing. */
+function opencodeTaskEnv(env: NodeJS.ProcessEnv, scratch: string, err: (t: string) => void): NodeJS.ProcessEnv | null {
+  if (envOr(env, 'OPENCODE_ISOLATE', '1') !== '1') return env;
+  const isolated = isolatedHome(env, scratch);
+  const authFile = envOr(env, 'OPENCODE_AUTH_FILE', '');
+  if (authFile === '') return isolated.env;
+  if (!existsSync(authFile)) {
+    err(`OPENCODE_AUTH_FILE not found: ${authFile}\n`);
+    return null;
+  }
+  const auth = join(isolated.dataHome, 'opencode/auth.json');
+  mkdirSync(join(isolated.dataHome, 'opencode'), { recursive: true });
+  copyFileSync(authFile, auth);
+  chmodSync(auth, 0o600);
+  return isolated.env;
 }
 
 const opencodeEnv = (env: NodeJS.ProcessEnv, config: object): NodeJS.ProcessEnv => ({
@@ -59,31 +93,34 @@ const opencodeEnv = (env: NodeJS.ProcessEnv, config: object): NodeJS.ProcessEnv 
   OPENCODE_CONFIG_CONTENT: JSON.stringify(config),
 });
 
-const opencodeArgs = (model: string, prompt: string): string[] => ['run', '--standalone', '--auto', '--format', 'json', '-m', model, prompt];
+const opencodeArgs = (model: string, prompt: string): string[] => [
+  'run',
+  '--standalone',
+  '--auto',
+  '--format',
+  'json',
+  '-m',
+  model,
+  prompt,
+];
 
 export const opencodeTask: Adapter = async (prompt, env, { out, err }) => {
-  const model = env.TASK_MODEL || OPENCODE_FREE_MODEL;
-  const maxTurns = env.TASK_MAX_TURNS || '12';
-  const timeout = env.TASK_TIMEOUT_SECONDS || '600';
+  const model = envOr(env, 'TASK_MODEL', OPENCODE_FREE_MODEL);
+  const maxTurns = envOr(env, 'TASK_MAX_TURNS', '12');
+  const timeout = envOr(env, 'TASK_TIMEOUT_SECONDS', '600');
   if (!onPath('opencode', env)) return (err('opencode CLI not found\n'), AGENT_ERROR);
   if (!positive(maxTurns)) return (err('TASK_MAX_TURNS must be >= 1\n'), AGENT_ERROR);
   if (!positive(timeout)) return (err('TASK_TIMEOUT_SECONDS must be >= 1\n'), AGENT_ERROR);
 
-  const scratch = mkdtempSync(join(env.TMPDIR || tmpdir(), 'opencode-task.'));
+  const scratch = scratchDir(env, 'opencode-task.');
   try {
-    let childEnv = env;
-    if ((env.OPENCODE_ISOLATE || '1') === '1') {
-      childEnv = isolatedHome(env, scratch);
-      if (env.OPENCODE_AUTH_FILE) {
-        if (!existsSync(env.OPENCODE_AUTH_FILE)) return (err(`OPENCODE_AUTH_FILE not found: ${env.OPENCODE_AUTH_FILE}\n`), AGENT_ERROR);
-        const auth = join(childEnv.XDG_DATA_HOME!, 'opencode/auth.json');
-        mkdirSync(join(childEnv.XDG_DATA_HOME!, 'opencode'), { recursive: true });
-        copyFileSync(env.OPENCODE_AUTH_FILE, auth);
-        chmodSync(auth, 0o600);
-      }
-    }
+    const baseEnv = opencodeTaskEnv(env, scratch, err);
+    if (baseEnv === null) return AGENT_ERROR;
     // Cap the agent loop; a headless run must never stop to ask a question.
-    childEnv = opencodeEnv(childEnv, { agent: { build: { steps: Number(maxTurns) } }, permission: { question: 'deny' } });
+    const childEnv = opencodeEnv(baseEnv, {
+      agent: { build: { steps: Number(maxTurns) } },
+      permission: { question: 'deny' },
+    });
     const proc = await run('opencode', opencodeArgs(model, prompt), { env: childEnv, timeoutSeconds: Number(timeout) });
 
     const s = parseOpencode(proc.stdout);
@@ -110,13 +147,27 @@ export const opencodeTask: Adapter = async (prompt, env, { out, err }) => {
 };
 
 export const claudeTask: Adapter = async (prompt, env, { out, err }) => {
-  const model = env.TASK_MODEL || 'sonnet';
-  const maxTurns = env.TASK_MAX_TURNS || '12';
-  const maxBudget = env.TASK_MAX_BUDGET_USD || '0.75';
+  const model = envOr(env, 'TASK_MODEL', 'sonnet');
+  const maxTurns = envOr(env, 'TASK_MAX_TURNS', '12');
+  const maxBudget = envOr(env, 'TASK_MAX_BUDGET_USD', '0.75');
   if (!onPath('claude', env)) return (err('claude CLI not found\n'), AGENT_ERROR);
 
-  const args = ['-p', '--setting-sources', 'project', '--model', model, '--max-turns', maxTurns, '--max-budget-usd', maxBudget];
-  args.push('--dangerously-skip-permissions', '--no-session-persistence', '--output-format', 'stream-json', '--verbose');
+  const args = [
+    '-p',
+    '--setting-sources',
+    'project',
+    '--model',
+    model,
+    '--max-turns',
+    maxTurns,
+    '--max-budget-usd',
+    maxBudget,
+    '--dangerously-skip-permissions',
+    '--no-session-persistence',
+    '--output-format',
+    'stream-json',
+    '--verbose',
+  ];
   const proc = await run('claude', args, { env, input: prompt, onStderr: err });
 
   const s = parseClaude(proc.stdout);
@@ -137,8 +188,12 @@ export const claudeTask: Adapter = async (prompt, env, { out, err }) => {
 
 /** A temp workspace whose only project skills are `skillsDir`, linked as
  *  `<dot>/skills`. */
-function activationWorkspace(env: NodeJS.ProcessEnv, skillsDir: string, dot: '.agents' | '.claude'): { scratch: string; ws: string } {
-  const scratch = mkdtempSync(join(env.TMPDIR || tmpdir(), 'skills-activation.'));
+function activationWorkspace(
+  env: NodeJS.ProcessEnv,
+  skillsDir: string,
+  dot: '.agents' | '.claude',
+): { scratch: string; ws: string } {
+  const scratch = scratchDir(env, 'skills-activation.');
   const ws = join(scratch, 'ws');
   mkdirSync(join(ws, dot), { recursive: true });
   symlinkSync(skillsDir, join(ws, dot, 'skills'));
@@ -146,9 +201,9 @@ function activationWorkspace(env: NodeJS.ProcessEnv, skillsDir: string, dot: '.a
 }
 
 export const opencodeActivation: Adapter = async (prompt, env, { out, err }, root) => {
-  const skillsDir = env.ACTIVATION_SKILLS_DIR || join(root, 'skills');
-  const model = env.ACTIVATION_MODEL || OPENCODE_FREE_MODEL;
-  const maxTurns = env.ACTIVATION_MAX_TURNS || '3';
+  const skillsDir = envOr(env, 'ACTIVATION_SKILLS_DIR', join(root, 'skills'));
+  const model = envOr(env, 'ACTIVATION_MODEL', OPENCODE_FREE_MODEL);
+  const maxTurns = envOr(env, 'ACTIVATION_MAX_TURNS', '3');
   if (!onPath('opencode', env)) return (err('opencode CLI not found\n'), 2);
   if (!positive(maxTurns)) return (err('ACTIVATION_MAX_TURNS must be >= 1\n'), 2);
 
@@ -156,7 +211,10 @@ export const opencodeActivation: Adapter = async (prompt, env, { out, err }, roo
   try {
     // Edits and shell are denied, so a run cannot change anything.
     const deny = { edit: 'deny', bash: 'deny', webfetch: 'deny', websearch: 'deny', task: 'deny', question: 'deny' };
-    const childEnv = opencodeEnv(isolatedHome(env, scratch), { agent: { build: { steps: Number(maxTurns) } }, permission: deny });
+    const childEnv = opencodeEnv(isolatedHome(env, scratch).env, {
+      agent: { build: { steps: Number(maxTurns) } },
+      permission: deny,
+    });
     const proc = await run('opencode', opencodeArgs(model, prompt), { cwd: ws, env: childEnv, onStderr: err });
     const s = parseOpencode(proc.stdout);
     if (s.errors.length > 0) return (err(`Activation session failed: ${s.errors[0]}\n`), 1);
@@ -169,21 +227,38 @@ export const opencodeActivation: Adapter = async (prompt, env, { out, err }, roo
 };
 
 export const claudeActivation: Adapter = async (prompt, env, { out, err }, root) => {
-  const skillsDir = env.ACTIVATION_SKILLS_DIR || join(root, 'skills');
-  const model = env.ACTIVATION_MODEL || 'sonnet';
-  const maxTurns = env.ACTIVATION_MAX_TURNS || '3';
+  const skillsDir = envOr(env, 'ACTIVATION_SKILLS_DIR', join(root, 'skills'));
+  const model = envOr(env, 'ACTIVATION_MODEL', 'sonnet');
+  const maxTurns = envOr(env, 'ACTIVATION_MAX_TURNS', '3');
   if (!onPath('claude', env)) return (err('claude CLI not found\n'), 2);
 
   const { scratch, ws } = activationWorkspace(env, skillsDir, '.claude');
   try {
     // Only project settings, and read-only tools plus Skill.
-    const args = ['-p', '--setting-sources', 'project', '--model', model, '--tools', 'Skill', 'Read', 'Glob', 'Grep'];
-    args.push('--max-turns', maxTurns, '--no-session-persistence', '--output-format', 'stream-json', '--verbose');
+    const args = [
+      '-p',
+      '--setting-sources',
+      'project',
+      '--model',
+      model,
+      '--tools',
+      'Skill',
+      'Read',
+      'Glob',
+      'Grep',
+      '--max-turns',
+      maxTurns,
+      '--no-session-persistence',
+      '--output-format',
+      'stream-json',
+      '--verbose',
+    ];
     const proc = await run('claude', args, { cwd: ws, env, input: prompt, onStderr: err });
     const s = parseClaude(proc.stdout);
     const r = s.result;
     if (r === null) return (err('Activation session ended without a result; no score recorded.\n'), 1);
-    if (r.isError || r.subtype !== 'success') return (err(`Activation session failed: ${r.message || r.subtype || 'unknown error'}\n`), 1);
+    if (r.isError || r.subtype !== 'success')
+      return (err(`Activation session failed: ${r.message || r.subtype || 'unknown error'}\n`), 1);
     out(`${s.skills.join('\n')}\n`);
     return proc.status;
   } finally {

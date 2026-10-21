@@ -1,5 +1,15 @@
 import assert from 'node:assert/strict';
-import { chmodSync, existsSync, lstatSync, mkdirSync, mkdtempSync, readFileSync, readdirSync, readlinkSync, writeFileSync } from 'node:fs';
+import {
+  chmodSync,
+  existsSync,
+  lstatSync,
+  mkdirSync,
+  mkdtempSync,
+  readFileSync,
+  readdirSync,
+  readlinkSync,
+  writeFileSync,
+} from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join, resolve } from 'node:path';
 import { describe, test } from 'node:test';
@@ -32,7 +42,7 @@ describe('recorded Claude Code session', () => {
     assert.ok(s.texts.length > 0);
     assert.deepEqual(s.skills, ['shopware-testing']);
     assert.equal(s.result?.subtype, 'success');
-    assert.equal(s.result?.isError, false);
+    assert.equal(s.result.isError, false);
   });
   test('input tokens include cache reads and writes', () => {
     assert.deepEqual(s.result?.usage, { input: 8 + 80616 + 14662, output: 626 });
@@ -117,13 +127,25 @@ const withResult = (patch: object): string =>
     .split('\n')
     .filter((l) => l !== '')
     .map((l) => {
-      const ev = JSON.parse(l) as Record<string, unknown>;
-      return JSON.stringify(ev.type === 'result' ? { ...ev, ...patch } : ev);
+      const ev: unknown = JSON.parse(l);
+      const isResult = typeof ev === 'object' && ev !== null && 'type' in ev && ev.type === 'result';
+      return JSON.stringify(isResult ? { ...ev, ...patch } : ev);
     })
     .join('\n');
 
+interface Call {
+  rc: number;
+  out: string;
+  err: string;
+  skills: string | null;
+  usage: string | null;
+  args: string | null;
+  stdin: string | null;
+  env: string | null;
+}
+
 let n = 0;
-async function call(adapter: Adapter, over: NodeJS.ProcessEnv) {
+async function call(adapter: Adapter, over: NodeJS.ProcessEnv): Promise<Call> {
   const dir = join(tmp, `call-${++n}`);
   mkdirSync(dir);
   const env: NodeJS.ProcessEnv = {
@@ -136,9 +158,26 @@ async function call(adapter: Adapter, over: NodeJS.ProcessEnv) {
   };
   let out = '';
   let err = '';
-  const rc = await adapter('do it', env, { out: (t) => (out += t), err: (t) => (err += t) }, ROOT);
+  const io = {
+    out: (t: string): void => {
+      out += t;
+    },
+    err: (t: string): void => {
+      err += t;
+    },
+  };
+  const rc = await adapter('do it', env, io, ROOT);
   const read = (f: string): string | null => (existsSync(join(dir, f)) ? readFileSync(join(dir, f), 'utf8') : null);
-  return { rc, out, err, skills: read('skills'), usage: read('usage'), args: read('rec.args'), stdin: read('rec.stdin'), env: read('rec.env') };
+  return {
+    rc,
+    out,
+    err,
+    skills: read('skills'),
+    usage: read('usage'),
+    args: read('rec.args'),
+    stdin: read('rec.stdin'),
+    env: read('rec.env'),
+  };
 }
 
 describe('opencode-task adapter', () => {
@@ -147,34 +186,51 @@ describe('opencode-task adapter', () => {
     assert.deepEqual([r.rc, r.out, r.skills, r.usage], [0, 'DONE\n', 'shopware-testing\n', '11620 317\n']);
   });
   test('runs isolated with the step cap, the prompt as an argument', async () => {
-    const r = await call(opencodeTask, { FAKE_OUT: join(FIXTURES, 'opencode-task.jsonl'), TASK_MAX_TURNS: '3', TASK_MODEL: 'p/m' });
-    assert.match(r.env ?? '', /HOME=.*opencode-task\.[^/]+\/home\n/);
-    assert.match(r.env ?? '', /CFG=\{"agent":\{"build":\{"steps":3\}\},"permission":\{"question":"deny"\}\}/);
+    const r = await call(opencodeTask, {
+      FAKE_OUT: join(FIXTURES, 'opencode-task.jsonl'),
+      TASK_MAX_TURNS: '3',
+      TASK_MODEL: 'p/m',
+    });
+    assert.match(r.env ?? '', /HOME=.*opencode-task\.[^/]+\/home\n/u);
+    assert.match(r.env ?? '', /CFG=\{"agent":\{"build":\{"steps":3\}\},"permission":\{"question":"deny"\}\}/u);
     assert.equal(r.args, 'run\n--standalone\n--auto\n--format\njson\n-m\np/m\ndo it\n');
   });
   test('an auth file is copied into the throwaway HOME', async () => {
-    const r = await call(opencodeTask, { FAKE_OUT: join(FIXTURES, 'opencode-task.jsonl'), OPENCODE_AUTH_FILE: '/nonexistent' });
+    const r = await call(opencodeTask, {
+      FAKE_OUT: join(FIXTURES, 'opencode-task.jsonl'),
+      OPENCODE_AUTH_FILE: '/nonexistent',
+    });
     assert.deepEqual([r.rc, r.err], [4, 'OPENCODE_AUTH_FILE not found: /nonexistent\n']);
   });
   test('error event, empty session and a crash are agent errors', async () => {
-    const error = await call(opencodeTask, { FAKE_OUT: fixture('oc-error.jsonl', '{"type":"error","error":{"message":"Model unavailable"}}\n') });
+    const error = await call(opencodeTask, {
+      FAKE_OUT: fixture('oc-error.jsonl', '{"type":"error","error":{"message":"Model unavailable"}}\n'),
+    });
     assert.deepEqual([error.rc, error.err], [4, 'opencode-task: Model unavailable\n']);
     const empty = await call(opencodeTask, { FAKE_OUT: fixture('oc-empty.jsonl', '{"type":"step_start"}\n') });
     assert.deepEqual([empty.rc, empty.err], [4, 'opencode-task: session produced no text and no tool call\n']);
-    const crash = await call(opencodeTask, { FAKE_OUT: join(FIXTURES, 'opencode-task.jsonl'), FAKE_RC: '3', FAKE_ERR: '1\\n2\\n3\\n4\\n5\\n6\\n' });
+    const crash = await call(opencodeTask, {
+      FAKE_OUT: join(FIXTURES, 'opencode-task.jsonl'),
+      FAKE_RC: '3',
+      FAKE_ERR: '1\\n2\\n3\\n4\\n5\\n6\\n',
+    });
     assert.deepEqual([crash.rc, crash.err], [4, 'opencode-task: opencode exited 3\n2\n3\n4\n5\n6\n']);
   });
   test('a hung session times out promptly', async () => {
     const started = Date.now();
     const r = await call(opencodeTask, { FAKE_SLEEP: '20', TASK_TIMEOUT_SECONDS: '1' });
     assert.equal(r.rc, 4);
-    assert.match(r.err, /timed out after 1s/);
+    assert.match(r.err, /timed out after 1s/u);
     assert.ok(Date.now() - started < 10_000);
   });
   test('bad settings and a missing CLI are agent errors', async () => {
     assert.equal((await call(opencodeTask, { TASK_MAX_TURNS: '0' })).err, 'TASK_MAX_TURNS must be >= 1\n');
     assert.equal((await call(opencodeTask, { TASK_TIMEOUT_SECONDS: 'x' })).rc, 4);
-    assert.deepEqual(Object.values(await call(opencodeTask, { PATH: '/usr/bin:/bin' })).slice(0, 3), [4, '', 'opencode CLI not found\n']);
+    assert.deepEqual(Object.values(await call(opencodeTask, { PATH: '/usr/bin:/bin' })).slice(0, 3), [
+      4,
+      '',
+      'opencode CLI not found\n',
+    ]);
   });
 });
 
@@ -184,18 +240,38 @@ describe('claude-task adapter', () => {
     assert.equal(r.rc, 0);
     assert.ok(r.out.endsWith('\n'));
     assert.deepEqual([r.skills, r.usage, r.stdin], ['shopware-testing\n', '95286 626\n', 'do it']);
-    assert.match(r.args ?? '', /^-p\n--setting-sources\nproject\n--model\nsonnet\n--max-turns\n12\n--max-budget-usd\n0\.75\n/);
+    assert.match(
+      r.args ?? '',
+      /^-p\n--setting-sources\nproject\n--model\nsonnet\n--max-turns\n12\n--max-budget-usd\n0\.75\n/u,
+    );
   });
   test('a turn or budget cap is a finished attempt, even when claude exits 1', async () => {
-    const r = await call(claudeTask, { FAKE_OUT: fixture('cl-turns.jsonl', withResult({ subtype: 'error_max_turns', is_error: true })), FAKE_RC: '1' });
+    const r = await call(claudeTask, {
+      FAKE_OUT: fixture('cl-turns.jsonl', withResult({ subtype: 'error_max_turns', is_error: true })),
+      FAKE_RC: '1',
+    });
     assert.deepEqual([r.rc, r.err], [0, 'claude-task: stopped at error_max_turns\n']);
   });
   test('a failed result, a missing result and a crash are agent errors', async () => {
-    const failed = await call(claudeTask, { FAKE_OUT: fixture('cl-err.jsonl', withResult({ subtype: 'error_during_execution', is_error: true, result: 'API Error: 529' })) });
+    const failed = await call(claudeTask, {
+      FAKE_OUT: fixture(
+        'cl-err.jsonl',
+        withResult({ subtype: 'error_during_execution', is_error: true, result: 'API Error: 529' }),
+      ),
+    });
     assert.deepEqual([failed.rc, failed.err], [4, 'claude-task: API Error: 529\n']);
-    const none = await call(claudeTask, { FAKE_OUT: fixture('cl-none.jsonl', '{"type":"assistant","message":{"content":[{"type":"text","text":"DONE"}]}}\n') });
+    const none = await call(claudeTask, {
+      FAKE_OUT: fixture(
+        'cl-none.jsonl',
+        '{"type":"assistant","message":{"content":[{"type":"text","text":"DONE"}]}}\n',
+      ),
+    });
     assert.deepEqual([none.rc, none.out, none.err], [4, 'DONE\n', 'claude-task: session ended without a result\n']);
-    const crash = await call(claudeTask, { FAKE_OUT: join(FIXTURES, 'claude-task.jsonl'), FAKE_RC: '2', FAKE_ERR: 'boom\\n' });
+    const crash = await call(claudeTask, {
+      FAKE_OUT: join(FIXTURES, 'claude-task.jsonl'),
+      FAKE_RC: '2',
+      FAKE_ERR: 'boom\\n',
+    });
     assert.deepEqual([crash.rc, crash.err], [4, 'boom\n']);
   });
 });
@@ -204,11 +280,13 @@ describe('activation adapters', () => {
   test('opencode lists the loaded skills from an isolated workspace', async () => {
     const r = await call(opencodeActivation, { FAKE_OUT: join(FIXTURES, 'opencode-task.jsonl') });
     assert.deepEqual([r.rc, r.out], [0, 'shopware-testing\n']);
-    assert.match(r.env ?? '', /"permission":\{"edit":"deny","bash":"deny"/);
-    assert.match(r.env ?? '', /\.agents\/skills:\nphp-foundation\n/);
+    assert.match(r.env ?? '', /"permission":\{"edit":"deny","bash":"deny"/u);
+    assert.match(r.env ?? '', /\.agents\/skills:\nphp-foundation\n/u);
   });
   test('opencode: an error or no events fails the run, never "no activation"', async () => {
-    const error = await call(opencodeActivation, { FAKE_OUT: fixture('a-err.jsonl', '{"type":"error","error":{"message":"down"}}\n') });
+    const error = await call(opencodeActivation, {
+      FAKE_OUT: fixture('a-err.jsonl', '{"type":"error","error":{"message":"down"}}\n'),
+    });
     assert.deepEqual([error.rc, error.out, error.err], [1, '', 'Activation session failed: down\n']);
     const none = await call(opencodeActivation, { FAKE_OUT: fixture('a-none.jsonl', '') });
     assert.deepEqual([none.rc, none.err], [1, 'Activation session produced no events; no score recorded.\n']);
@@ -216,8 +294,10 @@ describe('activation adapters', () => {
   test('claude lists the loaded skills; a failed or missing result fails', async () => {
     const ok = await call(claudeActivation, { FAKE_OUT: join(FIXTURES, 'claude-task.jsonl') });
     assert.deepEqual([ok.rc, ok.out], [0, 'shopware-testing\n']);
-    assert.match(ok.args ?? '', /--tools\nSkill\nRead\nGlob\nGrep\n/);
-    const failed = await call(claudeActivation, { FAKE_OUT: fixture('a-cl-err.jsonl', withResult({ subtype: 'error_max_turns', is_error: true, result: '' })) });
+    assert.match(ok.args ?? '', /--tools\nSkill\nRead\nGlob\nGrep\n/u);
+    const failed = await call(claudeActivation, {
+      FAKE_OUT: fixture('a-cl-err.jsonl', withResult({ subtype: 'error_max_turns', is_error: true, result: '' })),
+    });
     assert.deepEqual([failed.rc, failed.err], [1, 'Activation session failed: error_max_turns\n']);
   });
   test('a CLI exit code passes through when the stream was fine', async () => {
@@ -225,18 +305,22 @@ describe('activation adapters', () => {
   });
 });
 
+const wd = (): string => mkdtempSync(join(tmp, 'wd-'));
+
 describe('skills profile', () => {
-  const wd = (): string => mkdtempSync(join(tmp, 'wd-'));
   test('a task skills file selects its skills in both folders', () => {
     const dir = wd();
     assert.equal(skillsProfile(ROOT, 'on', dir, 'dal-search-without-limit'), null);
     const linked = readdirSync(join(dir, '.claude/skills'));
     assert.equal(linked.length, 2);
     assert.deepEqual(readdirSync(join(dir, '.agents/skills')), linked);
-    assert.equal(readlinkSync(join(dir, '.claude/skills', linked[0]!)), join(ROOT, 'skills', linked[0]!));
+    const [first = ''] = linked;
+    assert.equal(readlinkSync(join(dir, '.claude/skills', first)), join(ROOT, 'skills', first));
   });
   test('no skills file, or no task, links every skill', () => {
-    const all = readdirSync(join(ROOT, 'skills')).filter((s) => lstatSync(join(ROOT, 'skills', s)).isDirectory()).length;
+    const all = readdirSync(join(ROOT, 'skills')).filter((s) =>
+      lstatSync(join(ROOT, 'skills', s)).isDirectory(),
+    ).length;
     const dir = wd();
     skillsProfile(ROOT, 'on', dir, 'no-empty-explicit');
     assert.equal(readdirSync(join(dir, '.claude/skills')).length, all);
@@ -248,7 +332,10 @@ describe('skills profile', () => {
     const dir = wd();
     skillsProfile(ROOT, 'on', dir, 'dal-search-without-limit');
     assert.equal(skillsProfile(ROOT, 'off', dir, ''), null);
-    assert.deepEqual([existsSync(join(dir, '.claude/skills')), existsSync(join(dir, '.agents/skills'))], [false, false]);
+    assert.deepEqual(
+      [existsSync(join(dir, '.claude/skills')), existsSync(join(dir, '.agents/skills'))],
+      [false, false],
+    );
     assert.equal(skillsProfile(ROOT, 'sideways', dir, ''), 'skills-profile: mode must be on|off');
   });
 });

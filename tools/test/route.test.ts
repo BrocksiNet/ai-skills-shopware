@@ -7,17 +7,24 @@ import { existsSync, readFileSync, readdirSync } from 'node:fs';
 import { join, resolve } from 'node:path';
 import { test } from 'node:test';
 import { routeDiff } from '../src/routes.ts';
+import { compareText } from '../src/text.ts';
 
 const root = resolve(import.meta.dirname, '../..');
 const casesDir = join(root, 'evals/routing');
-const cases = existsSync(casesDir) ? readdirSync(casesDir).filter((c) => existsSync(join(casesDir, c, 'diff.patch'))).sort() : [];
+const cases = existsSync(casesDir)
+  ? readdirSync(casesDir)
+      .filter((c) => existsSync(join(casesDir, c, 'diff.patch')))
+      .toSorted(compareText)
+  : [];
 
-test('evals/routing has cases', () => assert.ok(cases.length >= 8, `found ${cases.length}`));
+test('evals/routing has cases', () => {
+  assert.ok(cases.length >= 8, `found ${cases.length}`);
+});
 
 for (const name of cases) {
   test(`routing: ${name}`, () => {
     const diff = readFileSync(join(casesDir, name, 'diff.patch'), 'utf8');
-    const expected = JSON.parse(readFileSync(join(casesDir, name, 'expected.json'), 'utf8')) as Record<string, string[]>;
+    const expected: unknown = JSON.parse(readFileSync(join(casesDir, name, 'expected.json'), 'utf8'));
     assert.deepEqual(routeDiff(root, diff).selected, expected);
   });
 }

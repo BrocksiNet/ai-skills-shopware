@@ -13,7 +13,18 @@
 // The two skill-load gates only count records whose adapter reports loads.
 // "held" and "no_difference" tasks are warnings: candidates for a sharper
 // eval or for removing the rule.
-import { type AbResult, compareText, hasTokens, isNumber, latestPerTask, offDone, onDone, pct } from './eval-results.ts';
+import {
+  type AbResult,
+  hasTokens,
+  isNumber,
+  latestPerTask,
+  offDone,
+  onDone,
+  pct,
+  VERDICTS,
+  type Verdict,
+} from './eval-results.ts';
+import { compareText } from './text.ts';
 
 export interface GateOptions {
   minPassPct: number;
@@ -28,86 +39,140 @@ export interface GateReport {
   failed: boolean;
 }
 
-const RANK: Record<string, number> = { worse: 0, error: 1, no_difference: 2, held: 3, improved: 4 };
-const rank = (r: AbResult): number => RANK[r.verdict] ?? 5;
+const RANK: Record<Verdict, number> = { worse: 0, error: 1, no_difference: 2, held: 3, improved: 4 };
+const rank = (r: AbResult): number => RANK[r.verdict];
 
-export function gate(all: AbResult[], opts: GateOptions = GATE_DEFAULTS): GateReport {
-  const results = latestPerTask(all);
-  const out: string[] = [];
-  const total = results.length;
-  if (total === 0) {
-    out.push('## A/B eval results', '', 'No results found. Did any task run?');
-    return { markdown: out.join('\n'), failed: true };
-  }
+/** The numbers the gates and the summary are computed from. */
+interface Stats {
+  results: AbResult[];
+  count: Record<Verdict, number>;
+  graded: number;
+  fullOn: number;
+  passPct: number;
+  errorPct: number;
+  loadRuns: number;
+  loadedRuns: number;
+  /** -1 when no graded record reports skill loads. */
+  loadPct: number;
+  leaked: AbResult[];
+}
 
-  const count = (v: string): number => results.filter((r) => r.verdict === v).length;
-  const improved = count('improved');
-  const held = count('held');
-  const nodiff = count('no_difference');
-  const worse = count('worse');
-  const errors = count('error');
-  const graded = total - errors;
+function stats(results: AbResult[]): Stats {
+  const count = { improved: 0, held: 0, no_difference: 0, worse: 0, error: 0 };
+  for (const r of results) count[r.verdict]++;
+  const graded = results.length - count.error;
   const fullOn = results.filter((r) => r.verdict !== 'error' && r.on === onDone(r)).length;
-  const passPct = graded > 0 ? pct(fullOn, graded) : 0;
-  const errorPct = pct(errors, total);
-
   // Skill loads over graded tasks whose adapter reported them.
   const reporting = results.filter((r) => r.verdict !== 'error' && isNumber(r.loaded_on));
   const loadRuns = reporting.reduce((n, r) => n + onDone(r), 0);
-  const loadedRuns = reporting.reduce((n, r) => n + (r.loaded_on as number), 0);
-  const leaked = results.filter((r) => isNumber(r.loaded_off) && r.loaded_off > 0);
-  const loadPct = loadRuns > 0 ? pct(loadedRuns, loadRuns) : -1;
+  const loadedRuns = reporting.reduce((n, r) => n + (r.loaded_on ?? 0), 0);
+  return {
+    results,
+    count,
+    graded,
+    fullOn,
+    passPct: graded > 0 ? pct(fullOn, graded) : 0,
+    errorPct: pct(count.error, results.length),
+    loadRuns,
+    loadedRuns,
+    loadPct: loadRuns > 0 ? pct(loadedRuns, loadRuns) : -1,
+    leaked: results.filter((r) => isNumber(r.loaded_off) && r.loaded_off > 0),
+  };
+}
 
-  const first = results[0]!;
-  out.push('## A/B eval results', '', `${first.agent ?? 'null'} / ${first.model ?? 'null'} @ ${first.sha ?? 'null'}, ${first.repeats} repeat(s)`, '');
-  out.push('| Verdict | Tasks |', '| ------- | ----- |');
-  out.push(`| improved | ${improved} |`, `| held | ${held} |`, `| no_difference | ${nodiff} |`);
-  out.push(`| worse | ${worse} |`, `| error | ${errors} |`, '');
-  out.push(`Skill-on full pass: **${fullOn} / ${graded}** (${passPct} %, gate ${opts.minPassPct} %).`);
-  if (loadPct >= 0) {
-    out.push('', `Skill-on runs that loaded a task skill: **${loadedRuns} / ${loadRuns}** (${loadPct} %, gate ${opts.minLoadPct} %).`);
-  }
-  out.push('', '<details><summary>Per task</summary>', '', 'On and Off count passed / completed runs.', '');
-  out.push('| Task | On | Off | Skill loaded (on) | Tokens on (in/out) | Verdict |');
-  out.push('| ---- | -- | --- | ----------------- | ------------------ | ------- |');
-  const rows = [...results].sort((a, b) => rank(a) - rank(b) || compareText(a.task, b.task));
-  for (const r of rows) {
-    const loaded = isNumber(r.loaded_on) ? `${r.loaded_on}/${r.repeats}` : 'n/a';
-    const tokens = hasTokens(r.tokens_on) ? `${r.tokens_on.input}/${r.tokens_on.output}` : 'n/a';
-    out.push(`| \`${r.task}\` | ${r.on}/${onDone(r)} | ${r.off}/${offDone(r)} | ${loaded} | ${tokens} | ${r.verdict} |`);
-  }
-  out.push('', '</details>', '');
-
-  let failed = false;
-  if (worse > 0) {
-    out.push(`- **FAIL**: ${worse} task(s) got worse with the skill on:`);
-    for (const r of results.filter((x) => x.verdict === 'worse')) out.push(`  - \`${r.task}\``);
-    failed = true;
-  }
-  if (graded > 0 && passPct < opts.minPassPct) {
-    out.push(`- **FAIL**: skill-on full pass rate ${passPct} % is below ${opts.minPassPct} %.`);
-    failed = true;
-  }
-  if (errorPct > opts.maxErrorPct) {
-    out.push(`- **FAIL**: ${errorPct} % of tasks ended in agent errors (limit ${opts.maxErrorPct} %). Check the provider, then rerun.`);
-    failed = true;
-  }
-  if (loadPct >= 0 && loadPct < opts.minLoadPct) {
+function summary(s: Stats, first: AbResult, opts: GateOptions): string[] {
+  const out = [
+    '## A/B eval results',
+    '',
+    `${first.agent ?? 'null'} / ${first.model ?? 'null'} @ ${first.sha ?? 'null'}, ${first.repeats} repeat(s)`,
+    '',
+    '| Verdict | Tasks |',
+    '| ------- | ----- |',
+    ...VERDICTS.map((v) => `| ${v} | ${s.count[v]} |`),
+    '',
+    `Skill-on full pass: **${s.fullOn} / ${s.graded}** (${s.passPct} %, gate ${opts.minPassPct} %).`,
+  ];
+  if (s.loadPct >= 0) {
     out.push(
-      `- **FAIL**: only ${loadPct} % of skill-on runs loaded a task skill (gate ${opts.minLoadPct} %). The model ignores the skills, so on and off are the same run. Use a model that loads skills.`,
+      '',
+      `Skill-on runs that loaded a task skill: **${s.loadedRuns} / ${s.loadRuns}** (${s.loadPct} %, gate ${opts.minLoadPct} %).`,
     );
-    failed = true;
   }
-  if (leaked.length > 0) {
-    out.push(`- **FAIL**: ${leaked.length} task(s) loaded a repo skill with skills off; the baseline is not skill-free:`);
-    for (const r of leaked) out.push(`  - \`${r.task}\``);
-    failed = true;
+  return out;
+}
+
+function perTask(results: AbResult[]): string[] {
+  const rows = results
+    .toSorted((a, b) => rank(a) - rank(b) || compareText(a.task, b.task))
+    .map((r) => {
+      const loaded = isNumber(r.loaded_on) ? `${r.loaded_on}/${r.repeats}` : 'n/a';
+      const tokens = hasTokens(r.tokens_on) ? `${r.tokens_on.input}/${r.tokens_on.output}` : 'n/a';
+      return `| \`${r.task}\` | ${r.on}/${onDone(r)} | ${r.off}/${offDone(r)} | ${loaded} | ${tokens} | ${r.verdict} |`;
+    });
+  return [
+    '',
+    '<details><summary>Per task</summary>',
+    '',
+    'On and Off count passed / completed runs.',
+    '',
+    '| Task | On | Off | Skill loaded (on) | Tokens on (in/out) | Verdict |',
+    '| ---- | -- | --- | ----------------- | ------------------ | ------- |',
+    ...rows,
+    '',
+    '</details>',
+    '',
+  ];
+}
+
+const taskList = (results: AbResult[]): string[] => results.map((r) => `  - \`${r.task}\``);
+
+/** One line per failed gate, each followed by the tasks it names. */
+function failures(s: Stats, opts: GateOptions): string[] {
+  const out: string[] = [];
+  if (s.count.worse > 0) {
+    out.push(
+      `- **FAIL**: ${s.count.worse} task(s) got worse with the skill on:`,
+      ...taskList(s.results.filter((r) => r.verdict === 'worse')),
+    );
   }
+  if (s.graded > 0 && s.passPct < opts.minPassPct) {
+    out.push(`- **FAIL**: skill-on full pass rate ${s.passPct} % is below ${opts.minPassPct} %.`);
+  }
+  if (s.errorPct > opts.maxErrorPct) {
+    out.push(
+      `- **FAIL**: ${s.errorPct} % of tasks ended in agent errors (limit ${opts.maxErrorPct} %). Check the provider, then rerun.`,
+    );
+  }
+  if (s.loadPct >= 0 && s.loadPct < opts.minLoadPct) {
+    out.push(
+      `- **FAIL**: only ${s.loadPct} % of skill-on runs loaded a task skill (gate ${opts.minLoadPct} %). The model ignores the skills, so on and off are the same run. Use a model that loads skills.`,
+    );
+  }
+  if (s.leaked.length > 0) {
+    out.push(
+      `- **FAIL**: ${s.leaked.length} task(s) loaded a repo skill with skills off; the baseline is not skill-free:`,
+      ...taskList(s.leaked),
+    );
+  }
+  return out;
+}
+
+export function gate(all: AbResult[], opts: GateOptions = GATE_DEFAULTS): GateReport {
+  const results = latestPerTask(all);
+  const [first] = results;
+  if (first === undefined) {
+    return { markdown: ['## A/B eval results', '', 'No results found. Did any task run?'].join('\n'), failed: true };
+  }
+  const s = stats(results);
+  const failed = failures(s, opts);
+  const out = [...summary(s, first, opts), ...perTask(results), ...failed];
   const quiet = results.filter((r) => r.verdict === 'held' || r.verdict === 'no_difference');
   if (quiet.length > 0) {
-    out.push(`- Warning: ${quiet.length} task(s) show no difference between skill on and off:`);
-    for (const r of quiet) out.push(`  - \`${r.task}\` (${r.verdict}${r.loaded_on === 0 ? ', skill never loaded' : ''})`);
+    out.push(
+      `- Warning: ${quiet.length} task(s) show no difference between skill on and off:`,
+      ...quiet.map((r) => `  - \`${r.task}\` (${r.verdict}${r.loaded_on === 0 ? ', skill never loaded' : ''})`),
+    );
   }
-  if (!failed) out.push('- Gate: **PASS**');
-  return { markdown: out.join('\n'), failed };
+  if (failed.length === 0) out.push('- Gate: **PASS**');
+  return { markdown: out.join('\n'), failed: failed.length > 0 };
 }
