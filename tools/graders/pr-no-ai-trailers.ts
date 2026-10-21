@@ -1,25 +1,43 @@
-// Grader: pr-no-ai-trailers
+// Grader: pr-no-ai-trailers (PRD-007)
+// Pass: no attribution trailer in any capitalisation, the five template
+// sections in order, and each kept text still under its own section.
 import { basename } from 'node:path';
 import { fail, filesUnder, type Grader, hasLine, read, verdict } from '../src/grade/kit.ts';
 
+const S1 = '### 1. What and why?';
+const S2 = '### 2. How?';
+const S3 = '### 3. Testing';
+const S4 = '### 4. Additional notes';
+const S5 = '### 5. Checklist';
+
+/** The lines after `heading` up to the next `### ` heading. `#### Impact`
+ *  stays inside section 2. */
+function section(text: string, heading: string): string {
+  const lines = text.split('\n');
+  const start = lines.indexOf(heading);
+  if (start === -1) return '';
+  const rest = lines.slice(start + 1);
+  const end = rest.findIndex((l) => l.startsWith('### '));
+  return (end === -1 ? rest : rest.slice(0, end)).join('\n');
+}
+
+const KEPT: [string, string][] = [
+  [S1, 'relates #12345'],
+  [S1, 'cannot be decorated by plugins today'],
+  [S2, 'Make CartProcessor extensible so plugins can decorate cart calculation'],
+  [S2, '#### Impact'],
+  [S3, 'The decoration is ignored'],
+  [S4, 'Follow-up: move the existing decorators'],
+  [S5, '[x] Tests added, and they fail without this change'],
+];
+
 export const grade: Grader = ({ workdir }) => {
-  const file = filesUnder(workdir).find((f) => basename(f) === 'pr-body.md');
+  const file = filesUnder(workdir).find((f) => basename(f) === 'pr-body.md' && !f.includes('/.claude/'));
   if (file === undefined) return fail('pr-body.md not found');
   const text = read(file);
-  const has = (s: string): boolean => text.includes(s);
-  const flags = {
-    trailer: hasLine(text, /Co-authored-by|Co-committed-by|Signed-off-by/u),
-    s1: has('### 1. Why is this change necessary?'),
-    s2: has('### 2. What does this change do, exactly?'),
-    s3: has('### 3. Describe each step to reproduce the issue or behaviour.'),
-    s4: has('### 4. Please link to the relevant issues (if any).'),
-    s5: has('### 5. Checklist'),
-    why: has('cannot be decorated by plugins today'),
-    what: has('Make CartProcessor extensible so plugins can decorate cart calculation'),
-    repro: has('The decoration is ignored'),
-    issue: has('relates #12345'),
-    check: has('I have written tests and verified that they fail without my change'),
-  };
-  const { trailer, ...required } = flags;
-  return verdict(!trailer && Object.values(required).every(Boolean), flags);
+  const trailer = hasLine(text, /^\s*(co-authored-by|co-committed-by|signed-off-by):/iu);
+  const headings = text.split('\n').filter((l) => l.startsWith('### '));
+  const sections = headings.join('|') === [S1, S2, S3, S4, S5].join('|');
+  const kept = KEPT.every(([heading, needle]) => section(text, heading).includes(needle));
+  return verdict(!trailer && sections && kept, { trailer, sections, kept });
 };

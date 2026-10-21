@@ -4450,6 +4450,140 @@
       "trunk": {
         "source": "coding-guidelines/core/http-cache-and-assets.md#cache-keys-contain-every-input-tags-stay-few"
       }
+    },
+    {
+      "id": "PRD-001",
+      "skill": "shopware-pr-description",
+      "file": "skills/shopware-pr-description/SKILL.md",
+      "title": "Fill the five template sections only; Impact sub-section when it applies",
+      "status": "active",
+      "since": "2026-10-20",
+      "eval": null,
+      "eval_reason": "Documented only; no eval yet.",
+      "core_guide_ids": [],
+      "audience": [
+        "core"
+      ],
+      "defer_on_trunk": false
+    },
+    {
+      "id": "PRD-002",
+      "skill": "shopware-pr-description",
+      "file": "skills/shopware-pr-description/SKILL.md",
+      "title": "One outer code block for copy-paste; four backticks when the body shows code",
+      "status": "active",
+      "since": "2026-10-20",
+      "eval": null,
+      "eval_reason": "Documented only; no eval yet.",
+      "core_guide_ids": [],
+      "audience": [
+        "core"
+      ],
+      "defer_on_trunk": false
+    },
+    {
+      "id": "PRD-003",
+      "skill": "shopware-pr-description",
+      "file": "skills/shopware-pr-description/SKILL.md",
+      "title": "Write what the diff cannot show; the trunk template agent block wins",
+      "status": "active",
+      "since": "2026-10-20",
+      "eval": null,
+      "eval_reason": "Documented only; no eval yet.",
+      "core_guide_ids": [],
+      "audience": [
+        "core"
+      ],
+      "defer_on_trunk": false
+    },
+    {
+      "id": "PRD-004",
+      "skill": "shopware-pr-description",
+      "file": "skills/shopware-pr-description/SKILL.md",
+      "title": "Link issues with closes or relates",
+      "status": "active",
+      "since": "2026-10-20",
+      "eval": null,
+      "eval_reason": "Documented only; no eval yet.",
+      "core_guide_ids": [],
+      "audience": [
+        "core"
+      ],
+      "defer_on_trunk": false
+    },
+    {
+      "id": "PRD-005",
+      "skill": "shopware-pr-description",
+      "file": "skills/shopware-pr-description/SKILL.md",
+      "title": "Conventional PR title when asked",
+      "status": "active",
+      "since": "2026-10-20",
+      "eval": null,
+      "eval_reason": "Documented only; no eval yet.",
+      "core_guide_ids": [],
+      "audience": [
+        "core"
+      ],
+      "defer_on_trunk": false
+    },
+    {
+      "id": "PRD-006",
+      "skill": "shopware-pr-description",
+      "file": "skills/shopware-pr-description/SKILL.md",
+      "title": "Follow-up commits after review; no amend or force-push unless asked",
+      "status": "active",
+      "since": "2026-10-20",
+      "eval": null,
+      "eval_reason": "Documented only; no eval yet.",
+      "core_guide_ids": [],
+      "audience": [
+        "core"
+      ],
+      "defer_on_trunk": false
+    },
+    {
+      "id": "PRD-007",
+      "skill": "shopware-pr-description",
+      "file": "skills/shopware-pr-description/SKILL.md",
+      "title": "No AI attribution trailers",
+      "status": "active",
+      "since": "2026-10-20",
+      "eval": "pr-no-ai-trailers",
+      "core_guide_ids": [],
+      "audience": [
+        "core"
+      ],
+      "defer_on_trunk": false
+    },
+    {
+      "id": "PRD-008",
+      "skill": "shopware-pr-description",
+      "file": "skills/shopware-pr-description/SKILL.md",
+      "title": "Tick only true checklist items",
+      "status": "active",
+      "since": "2026-10-20",
+      "eval": null,
+      "eval_reason": "Documented only; no eval yet.",
+      "core_guide_ids": [],
+      "audience": [
+        "core"
+      ],
+      "defer_on_trunk": false
+    },
+    {
+      "id": "PRD-009",
+      "skill": "shopware-pr-description",
+      "file": "skills/shopware-pr-description/SKILL.md",
+      "title": "Explain an unsplit diff over about 400 lines",
+      "status": "active",
+      "since": "2026-10-20",
+      "eval": null,
+      "eval_reason": "Documented only; no eval yet.",
+      "core_guide_ids": [],
+      "audience": [
+        "core"
+      ],
+      "defer_on_trunk": false
     }
   ]
 }

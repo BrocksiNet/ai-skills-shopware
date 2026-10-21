@@ -1,30 +1,67 @@
 # PR body template (shopware/shopware)
 
-Copy this skeleton and fill each section from the branch changes.
+The source is `.github/PULL_REQUEST_TEMPLATE.md` on trunk. GitHub uses it for
+every PR, release branches included. When the file is in the checkout, read
+it: its comment block at the bottom holds the maintainers' writing rules for
+agents, and those win over this summary.
+
+Skeleton since [shopware/shopware#21627](https://github.com/shopware/shopware/pull/21627).
+Drop the HTML comments once a section is filled.
 
 ```markdown
-### 1. Why is this change necessary?
-<!-- One or two sentences explaining the problem or motivation -->
+### 1. What and why?
 
-### 2. What does this change do, exactly?
-<!-- Concise description of the fix/feature -->
+- closes #123
+- The problem in one sentence. Without an issue: why the change is needed,
+  including the business context.
 
-### 3. Describe each step to reproduce the issue or behaviour.
-<!-- Numbered steps or a short explanation -->
+### 2. How?
 
-### 4. Please link to the relevant issues (if any).
-<!-- Use: closes #123 or relates #123 -->
+- The approach in one or two sentences.
+
+#### Impact
+
+- Only when the PR changes a public API, breaks BC, adds a migration or
+  schema change, changes configuration, or adds work to a hot path (cart,
+  checkout, listings, indexing). Name what changes and what extension
+  developers must do.
+
+### 3. Testing
+
+1. Steps to reproduce or verify.
+2. Expected vs. actual result.
+
+- Environment if relevant. Screenshots or a recording for UI changes.
+
+### 4. Additional notes
+
+- Follow-up work, or where reviewers should look closely.
 
 ### 5. Checklist
-- [ ] I have written tests and verified that they fail without my change
-- [ ] I have updated developer-facing release notes if this change is **relevant** for external developers
-- [ ] I have written or adjusted the documentation according to my changes
-- [ ] This change has comments for package types, values, functions, and non-obvious lines of code
-- [ ] I have read the contribution requirements and fulfilled them
+
+- [ ] I have read and followed the [contribution guidelines](https://github.com/shopware/shopware/blob/trunk/CONTRIBUTING.md#pull-request-checklist)
+- [ ] **Only** non-obvious code is commented
+- [ ] Tests added, and they fail without this change
+- [ ] Release notes updated, if relevant for external developers ([how to document a release](https://github.com/shopware/shopware/blob/trunk/delivery-process/documenting-a-release.md))
+- [ ] Documentation and agent skills updated
 ```
+
+## Writing the sections
+
+- The reviewer reads the diff. Give them what it cannot show: the problem,
+  the approach, the impact.
+- Section 2 is not a walkthrough. If it accounts for every file, cut it to
+  about a third.
+- Leave "Impact" out unless one of its cases applies. Never write what did
+  not change ("no BC break", "purely additive").
+- For hot-path cost, give the cost per request or per item. Numbers only if
+  measured.
+- Describe the change, not the session that produced it.
+- Short bullets, fragments are fine, no em dashes.
 
 ## Output rules for the agent
 
 - Return the **filled** template in one outer fenced markdown block.
-- Do not put another fenced block inside section 5 or any section.
-- Uncheck checklist items that do not apply; do not invent completed work.
+- When the body shows code, fence that code with three backticks and the
+  outer block with four, so the copy keeps working.
+- Tick only the checklist items that are true; do not invent completed work.

@@ -1,19 +1,29 @@
-### 1. Why is this change necessary?
-CartProcessor cannot be decorated by plugins today.
+### 1. What and why?
 
-### 2. What does this change do, exactly?
-Make CartProcessor extensible so plugins can decorate cart calculation.
+- relates #12345
+- CartProcessor cannot be decorated by plugins today.
 
-### 3. Describe each step to reproduce the issue or behaviour.
+### 2. How?
+
+- Make CartProcessor extensible so plugins can decorate cart calculation.
+
+#### Impact
+
+- New abstract class `AbstractCartProcessor`; plugins decorate it instead of the concrete class.
+
+### 3. Testing
+
 1. Install a plugin that needs to decorate CartProcessor.
 2. The decoration is ignored.
 
-### 4. Please link to the relevant issues (if any).
-relates #12345
+### 4. Additional notes
+
+- Follow-up: move the existing decorators in core to the abstract class.
 
 ### 5. Checklist
-- [x] I have written tests and verified that they fail without my change
-- [x] I have updated developer-facing release notes if this change is **relevant** for external developers
-- [ ] I have written or adjusted the documentation according to my changes
-- [ ] This change has comments for package types, values, functions, and non-obvious lines of code
-- [x] I have read the contribution requirements and fulfilled them
+
+- [x] I have read and followed the [contribution guidelines](https://github.com/shopware/shopware/blob/trunk/CONTRIBUTING.md#pull-request-checklist)
+- [x] **Only** non-obvious code is commented
+- [x] Tests added, and they fail without this change
+- [x] Release notes updated, if relevant for external developers ([how to document a release](https://github.com/shopware/shopware/blob/trunk/delivery-process/documenting-a-release.md))
+- [ ] Documentation and agent skills updated
