@@ -10,6 +10,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- Weekly trunk mining (plan WP8). `tools/bin/mine-trunk.ts` reads the
+  `shopware/shopware` trunk commits since `docs/.mining-state.json` that touch
+  `.agents/`, `coding-guidelines/`, `src/Core/DevOps/StaticAnalyze/` or the PR
+  template. It reports:
+  - core guide IDs that no rule cites in `core_guide_ids`
+  - PHPStan and Danger rule classes that were added, removed or renamed,
+    and changes to classes that `enforced_by` cites
+  - changed guideline headings, agent skill bullets and PR template lines
+  `.github/workflows/mine-trunk.yml` posts the report as a `trunk-drift` issue
+  every Monday. A `/mined` comment opens a PR that moves the state. Tested
+  offline on recorded API responses for 2026-10-13..2026-10-19.
 - Eval plan, gate and diff in TypeScript (plan WP10 step 1). The logic lives
   in `tools/src/` as pure functions over typed A/B records, with unit tests.
   `scripts/eval-plan.sh`, `eval-gate.sh` and `eval-diff.sh` keep their

@@ -690,6 +690,25 @@ reference grows past that, split it by angle, the way core splits
 
 ## WP8: Automated trunk mining
 
+Status: **done 2026-10-21**. Run on 2026-10-13..2026-10-19, the script
+reports eight commits with a delta: the five found by hand, #21541 (the new
+guidelines, handled in WP0), and two the hand pass skipped. #21660 adds
+`DeprecatedEntityConstructionRule`, which no rule maps. #21177 changes
+`BCChangeAttributeUsageRule`, which CORE-015 cites. The other four commits in
+the window are listed as having no delta. The state starts at the trunk head
+of 2026-10-19 (`21949101`), where the last hand pass ended. Differences from
+the spec:
+
+- The script calls the GitHub REST API with `fetch` (`tools/src/github.ts`)
+  instead of `gh api`. GH_TOKEN or GITHUB_TOKEN raises the rate limit.
+- The report has three more sections: agent skill bullets, PR template lines,
+  and the list of commits. A change to a rule class counts only when
+  `enforced_by` cites it, so small fixes to other rule classes stay quiet.
+- An issue whose window a newer report also covers is closed as superseded.
+- The `/mined` PR needs "Allow GitHub Actions to create and approve pull
+  requests". GitHub does not start CI for a PR opened with GITHUB_TOKEN; the
+  PR changes only `docs/.mining-state.json`.
+
 Goal: replace the manual mining pass with a weekly issue that lists new
 deltas.
 

@@ -51,6 +51,7 @@ tools/                        # repo tooling in TypeScript (Node 24, no build st
   bin/activation.ts           # Layer 1 activation evals
   bin/eval-local.ts           # local model evals with your agent login, then the gate
   bin/validate-skills.ts      # skill structure, budgets, conflicts, rule IDs, routes
+  bin/mine-trunk.ts           # weekly trunk drift report, and the /mined state update
   bin/test-graders.ts         # golden fixtures against every grade.sh
   bin/fake-agent.ts           # test double for SKILLS_AGENT_CMD
   bin/check-update.ts         # pinned version vs latest release tag
@@ -68,6 +69,7 @@ docs/                         # local validation, smoke evals, tooling stack
 .github/workflows/
   validate.yml                # cheap CI on every push (no model calls)
   evals.yml                   # model evals (gated: schedule, label, dispatch)
+  mine-trunk.yml              # weekly trunk-drift issue; /mined moves docs/.mining-state.json
 ```
 
 Skills install into provider-specific folders (`.cursor/skills/`, `.claude/skills/`,
@@ -271,7 +273,7 @@ Default agents: `claude codex cursor`. Cursor uses `agent login` locally; admin
 
 | Doc | Purpose |
 | --- | ------- |
-| [`docs/core-pr-17657-alignment.md`](docs/core-pr-17657-alignment.md) | Rule checklist mined from core trunk skills (seed PR #17657; last mined 2026-10-13) |
+| [`docs/core-pr-17657-alignment.md`](docs/core-pr-17657-alignment.md) | Rule checklist mined from core trunk skills (seed PR #17657; manual passes up to 2026-10-19, weekly `trunk-drift` issues since) |
 | [`docs/plans/2026-10-skills-evolution.md`](docs/plans/2026-10-skills-evolution.md) | Accepted roadmap: rule IDs, real model evals, routing, review evals, extension review skill |
 | [`docs/skill-resolution.md`](docs/skill-resolution.md) | Trunk overlay vs full install; defer to core `.agents/skills/` when present |
 | [`docs/local-validation.md`](docs/local-validation.md) | Dogfood skills on a real Shopware instance |

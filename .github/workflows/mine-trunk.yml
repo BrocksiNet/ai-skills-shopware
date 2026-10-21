@@ -1,0 +1,135 @@
+name: mine-trunk
+
+# Weekly trunk mining (plan WP8). Lists what changed on shopware/shopware
+# trunk since docs/.mining-state.json: agent skill bullets, coding guideline
+# headings, review guide rule IDs, the PR template, and PHPStan and Danger
+# rule classes, each checked against rules/catalog.json.
+#
+#   - schedule (Monday 05:00 UTC, before evals.yml) and manual dispatch open
+#     or update this week's issue labeled `trunk-drift`. Older open
+#     `trunk-drift` issues are closed as superseded: the new report covers
+#     their window too, because the state has not moved.
+#   - a `/mined` comment by a member or collaborator on a `trunk-drift` issue
+#     opens a PR that moves the state to the trunk commit the report ends
+#     at, then closes the issue. The state never moves past unread deltas.
+#
+# No model calls and no secrets beyond GITHUB_TOKEN.
+
+on:
+  schedule:
+    - cron: "0 5 * * 1" # Monday 05:00 UTC
+  workflow_dispatch:
+  issue_comment:
+    types: [created]
+
+permissions:
+  contents: read
+
+jobs:
+  report:
+    if: github.event_name != 'issue_comment'
+    runs-on: ubuntu-latest
+    concurrency: mine-trunk-report
+    permissions:
+      contents: read
+      issues: write
+    steps:
+      - uses: actions/checkout@v5
+
+      - uses: actions/setup-node@v5
+        with:
+          node-version: '24'
+
+      - name: Mine trunk since the last state
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: node tools/bin/mine-trunk.ts report > "$RUNNER_TEMP/report.md"
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: trunk-drift
+          path: ${{ runner.temp }}/report.md
+
+      - name: Open or update this week's issue
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          body="$RUNNER_TEMP/report.md"
+          # An issue body holds 65536 characters. Keep the state marker.
+          if [ "$(wc -c < "$body")" -gt 60000 ]; then
+            marker="$(grep -m1 '^<!-- mine-trunk-state: ' "$body")"
+            run_url="${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}/actions/runs/${GITHUB_RUN_ID}"
+            {
+              head -c 58000 "$body" | sed '$d'
+              echo
+              echo "The report is cut here. The full report is the \`trunk-drift\` artifact of ${run_url}."
+              echo
+              echo "$marker"
+            } > "$RUNNER_TEMP/issue.md"
+            body="$RUNNER_TEMP/issue.md"
+          fi
+
+          monday="$(date -u -d "$(date -u +%Y-%m-%d) -$(( $(date -u +%u) - 1 )) days" +%Y-%m-%d)"
+          title="Trunk drift: week of ${monday}"
+          gh label create trunk-drift --color D93F0B \
+            --description "Weekly trunk mining report (mine-trunk.yml)" --force
+
+          current="$(gh issue list --label trunk-drift --state open --json number,title \
+            --jq "map(select(.title == \"${title}\")) | .[0].number // empty")"
+          if [ -n "$current" ]; then
+            gh issue edit "$current" --body-file "$body"
+          else
+            url="$(gh issue create --label trunk-drift --title "$title" --body-file "$body")"
+            current="${url##*/}"
+          fi
+
+          for old in $(gh issue list --label trunk-drift --state open --json number \
+            --jq ".[] | select(.number != ${current}) | .number"); do
+            gh issue close "$old" --reason "not planned" \
+              --comment "Superseded by #${current}, which covers this window too."
+          done
+
+  mined:
+    if: >-
+      github.event_name == 'issue_comment' && !github.event.issue.pull_request &&
+      contains(github.event.issue.labels.*.name, 'trunk-drift') &&
+      startsWith(github.event.comment.body, '/mined') &&
+      contains(fromJSON('["OWNER", "MEMBER", "COLLABORATOR"]'), github.event.comment.author_association)
+    runs-on: ubuntu-latest
+    concurrency: mine-trunk-state
+    permissions:
+      contents: write
+      issues: write
+      pull-requests: write
+    steps:
+      - uses: actions/checkout@v5
+
+      - uses: actions/setup-node@v5
+        with:
+          node-version: '24'
+
+      - name: Open the state PR and close the issue
+        env:
+          GH_TOKEN: ${{ github.token }}
+          BODY: ${{ github.event.issue.body }}
+          ISSUE: ${{ github.event.issue.number }}
+          ACTOR: ${{ github.event.comment.user.login }}
+        run: |
+          printf '%s' "$BODY" | node tools/bin/mine-trunk.ts advance
+          if git diff --quiet -- docs/.mining-state.json; then
+            gh issue close "$ISSUE" --comment "The mining state is already at the end of this report."
+            exit 0
+          fi
+          sha="$(node -p 'require("./docs/.mining-state.json").last_sha.slice(0, 8)')"
+          branch="mining-state/${ISSUE}-${sha}"
+
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git switch -c "$branch"
+          git add docs/.mining-state.json
+          git commit -m "chore(mining): trunk mined up to ${sha}"
+          git push origin "$branch"
+          url="$(gh pr create --base main --head "$branch" \
+            --title "chore(mining): trunk mined up to ${sha}" \
+            --body "Moves \`docs/.mining-state.json\` to the end of #${ISSUE}, marked mined by @${ACTOR}.")"
+          gh issue close "$ISSUE" --comment "Marked mined by @${ACTOR}. State PR: ${url}"
