@@ -13,7 +13,9 @@ Load when changing storefront templates, SCSS, or media.
   Store-API route, without `sw_csrf` or a CSRF hidden field.** 6.5.0
   removed storefront CSRF for SameSite cookies, and with it the `sw_csrf()`
   Twig function: a template that calls it fails to compile with "Unknown
-  function", so the page errors. Not a one-off unauthenticated POST either.
+  function", so the page errors. A POST form without a token is correct
+  on 6.5+, not a CSRF hole: do not report it. Not a one-off unauthenticated
+  POST either.
 
 ## What you ship is public API
 
