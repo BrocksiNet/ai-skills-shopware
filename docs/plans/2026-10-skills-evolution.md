@@ -832,7 +832,7 @@ WP8 using `gh pr view --json state,mergedAt`:
 
 ## WP10: Eval runner in TypeScript
 
-Status: **steps 1 and 2 done 2026-10-20, steps 3 to 6 done 2026-10-21**.
+Status: **steps 1 and 2 done 2026-10-20, steps 3 to 7 done 2026-10-21**.
 
 - Step 1: plan, gate and diff live in `tools/src/eval-{plan,gate,diff}.ts`
   over the typed records in `tools/src/eval-results.ts`. On the WP1 and WP4
@@ -891,11 +891,28 @@ Status: **steps 1 and 2 done 2026-10-20, steps 3 to 6 done 2026-10-21**.
   resulting workdir, skill and token logs). `check-update` asks the GitHub
   API with `fetch` instead of trying `gh` and then `curl`.
 
-Every `scripts/*.sh` file and every `evals/runner/*.sh` file except
-`install-agent.sh` is now a wrapper. The shell left is `grade.sh` and the
-`evals/grade-helpers.sh` it sources, `install-agent.sh` (it runs the vendors'
-shell installers on CI) and `evals/smoke/`, which is retired rather than
-ported once `eval-local` covers its agents.
+- Step 7 (added 2026-10-21): the task graders. Each of the 98 non-AST
+  tasks has its checks in `tools/graders/<task>.ts`; its `grade.sh` is one
+  shared wrapper that runs `tools/bin/grade.ts <task>`, so Harbor, the smoke
+  harness and the runner did not change. The kit in `tools/src/grade/`
+  replaces `evals/grade-helpers.sh` (file search, per-line matching like
+  `grep -q`, comment stripping, one PHP method, one JS call) and
+  `tools/bin/grade-findings.ts` (`reviewCatch`, `reviewIgnore`). Every golden
+  case passes as before. The port found two shell checks that could never
+  match, now fixed:
+  - `mwg-only-after-shopware-primitive` tested the folder name on the file
+    name, so an added modern-web-guidance skill never failed the task.
+  - `no-access-key-in-source` read `$_ENV` as an end-of-line anchor, so a
+    key read from `$_ENV` did not count.
+  File search skips `node_modules` and `.git` and takes the first match in
+  sorted order. The six AST graders stay JavaScript in `evals/tools/ast/`,
+  because they need `php-parser` and `@babel/parser`.
+
+Every `scripts/*.sh` file, every `evals/runner/*.sh` file except
+`install-agent.sh`, and every `grade.sh` is now a wrapper. The shell left is
+`install-agent.sh` (it runs the vendors' shell installers on CI) and
+`evals/smoke/`, which is retired rather than ported once `eval-local` covers
+its agents.
 
 Goal: one typed codebase for the eval pipeline, so result records, verdicts
 and gate rules are checked by the compiler instead of by `jq` filters and
@@ -907,9 +924,8 @@ Since 2026-10-20 the repo tooling lives in `tools/`: TypeScript run directly
 by Node 24 (built-in type stripping, no build step), `tsc --noEmit` with
 `strict`, and `node --test`. CI runs it in the `tools` job of `validate.yml`.
 New tooling goes there; the WP2 validator was the first port. Shell stays
-for two things only: `grade.sh` graders (the grader contract is a script
-that exits 0 or 1) and thin one-line wrappers where a tool must be called
-from a shell step.
+only for thin wrappers where a tool must be called from a shell step,
+`grade.sh` among them: the grader contract is a script that exits 0 or 1.
 
 ### WP10 spec
 

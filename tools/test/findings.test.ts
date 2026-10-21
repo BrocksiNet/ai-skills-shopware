@@ -1,9 +1,5 @@
 import assert from 'node:assert/strict';
-import { spawnSync } from 'node:child_process';
-import { mkdtempSync, rmSync, writeFileSync } from 'node:fs';
-import { tmpdir } from 'node:os';
-import { join, resolve } from 'node:path';
-import { after, describe, test } from 'node:test';
+import { describe, test } from 'node:test';
 import {
   caught,
   type Expectation,
@@ -13,12 +9,6 @@ import {
   lastJsonBlock,
   parseFindings,
 } from '../src/findings.ts';
-
-const ROOT = resolve(import.meta.dirname, '../..');
-const tmp = mkdtempSync(join(tmpdir(), 'findings-test-'));
-after(() => {
-  rmSync(tmp, { recursive: true, force: true });
-});
 
 const fence = (json: string): string => `\`\`\`json\n${json}\n\`\`\`\n`;
 const transcript = (findings: unknown[]): string => `Review done.\n\n${fence(JSON.stringify({ findings }, null, 2))}`;
@@ -108,51 +98,5 @@ describe('falsePositives', () => {
       finding({ summary: 'The test name does not say what it checks.' }),
     ];
     assert.deepEqual(falsePositives(fine, hook), []);
-  });
-});
-
-const grade = (args: string[], body: string): { status: number | null; stdout: string } => {
-  const file = join(tmp, `t-${Math.random().toString(36).slice(2)}.txt`);
-  writeFileSync(file, body);
-  return spawnSync('node', [join(ROOT, 'tools/bin/grade-findings.ts'), ...args], {
-    env: { PATH: process.env.PATH, TRANSCRIPT: file },
-    encoding: 'utf8',
-  });
-};
-
-describe('grade-findings bin', () => {
-  const catchArgs = [
-    'catch',
-    '--rule',
-    'TEST-016',
-    '--file',
-    'tests/**',
-    '--min-severity',
-    'major',
-    '--summary',
-    'hook',
-  ];
-
-  test('catch passes on the finding and fails without it', () => {
-    const pass = grade(catchArgs, transcript([finding({})]));
-    assert.equal(pass.status, 0);
-    assert.match(pass.stdout, /^score=1/u);
-    const fail = grade(catchArgs, transcript([]));
-    assert.equal(fail.status, 1);
-    assert.match(fail.stdout, /^score=0 \(no major\+ finding for TEST-016/u);
-  });
-
-  test('ignore fails on a false positive and passes on an empty list', () => {
-    const args = ['ignore', '--rule', 'TEST-016', '--summary', 'hook'];
-    assert.equal(grade(args, transcript([])).status, 0);
-    const fail = grade(args, transcript([finding({ severity: 'minor' })]));
-    assert.equal(fail.status, 1);
-    assert.match(fail.stdout, /false positive: tests\/integration\/FooTest\.php/u);
-  });
-
-  test('a transcript without findings scores 0; bad usage exits 2', () => {
-    assert.equal(grade(['ignore', '--rule', 'X-001', '--summary', 'x'], '').status, 1);
-    assert.equal(grade(['catch', '--rule', 'X-001'], '').status, 2);
-    assert.equal(grade([...catchArgs.slice(0, 6), 'high', '--summary', 'x'], transcript([])).status, 1);
   });
 });

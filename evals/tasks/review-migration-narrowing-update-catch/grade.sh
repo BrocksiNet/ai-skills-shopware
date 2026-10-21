@@ -1,10 +1,6 @@
 #!/usr/bin/env bash
-# Grader: review-migration-narrowing-update-catch (shopware-plugin-development, PLG-030)
-# update() shrinks external_ref from VARCHAR(255) NULL to VARCHAR(64) NOT
-# NULL without a default: existing rows fail or get cut. Needs a major+
-# finding in src/Migration/ that names PLG-030 or describes the narrowing.
+# Grader entry for Harbor, the smoke harness and the runner. The checks are
+# in tools/graders/<task>.ts; tools/bin/grade.ts runs them.
 set -euo pipefail
-ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../../.." && pwd)"
-exec node "${ROOT}/tools/bin/grade-findings.ts" catch \
-  --rule PLG-030 --file 'src/Migration/**' --min-severity major \
-  --summary 'narrow|shrink|shorten|truncat|NOT NULL|without (a )?default|no default|updateDestructive|destructive|data loss|lose data|existing (rows|values|data)|longer than 64'
+HERE="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+exec node "${HERE}/../../../tools/bin/grade.ts" "$(basename "${HERE}")"

@@ -39,7 +39,7 @@ evals/tasks/<task-name>/
   fixture/                    # starting code (negative / pristine case)
   fixtures/pass/              # golden workdir that must PASS grade.sh
   fixtures/fail/              # optional golden FAIL case
-  grade.sh                    # deterministic grader (exit 0 = pass)
+  grade.sh                    # fixed entry: runs tools/graders/<task>.ts (or an AST grader)
   skills                      # optional: extra skills for smoke A/B (one name per line)
 
 evals/smoke/                  # local A/B harness (Claude, Codex, Cursor CLI)
@@ -68,7 +68,9 @@ tools/                        # repo tooling in TypeScript (Node 24, no build st
   bin/eval-local.ts           # local model evals with your agent login, then the gate
   bin/validate-skills.ts      # skill structure, budgets, conflicts, rule IDs, routes
   bin/mine-trunk.ts           # weekly trunk drift report, and the /mined state update
-  bin/grade-findings.ts       # grader of the review-<rule>-catch / -ignore tasks
+  bin/grade.ts                # runs one task's grader (what every grade.sh calls)
+  graders/<task>.ts           # one grader per eval task: workdir + transcript -> verdict
+  src/grade/                  # grader kit (file search, comment stripping, PHP method, review findings)
   bin/test-graders.ts         # golden fixtures against every grade.sh
   bin/fake-agent.ts           # test double for SKILLS_AGENT_CMD
   bin/check-update.ts         # pinned version vs latest release tag
@@ -147,6 +149,23 @@ Graders receive:
 - `WORKDIR` — directory with fixture + agent edits
 - `TRANSCRIPT` — path to the agent's textual output
 
+Every task keeps a `grade.sh`, because Harbor, the smoke harness and the
+runner call it. It is the same two-line wrapper everywhere: it runs
+`node tools/bin/grade.ts <task>`, which loads
+[`tools/graders/<task>.ts`](tools/graders/) and prints `score=1 (…)` or
+`score=0 (…)`. Write the checks there, as `export const grade: Grader`, with
+the helpers in [`tools/src/grade/kit.ts`](tools/src/grade/kit.ts):
+
+```ts
+export const grade: Grader = ({ workdir }) => {
+  const file = findFile(workdir, 'UserValidator');
+  if (file === undefined) return fail('UserValidator.php not found');
+  const text = read(file);
+  const usesEmpty = hasLine(text, /\bempty\s*\(/u);
+  return verdict(!usesEmpty, { uses_empty: usesEmpty });
+};
+```
+
 Prefer grep/AST and project tooling (PHPStan, ECS, PHPUnit via `vendor/bin/`
 when present) over LLM-as-judge. For PHP/JS **structure** (attribute on a
 named method, real `import`/`export`, not a comment or leftover file), add a
@@ -157,14 +176,14 @@ do not add Composer or a Shopware `vendor/`. Golden fixtures in
 every push. `fixture/` is also graded as FAIL unless the task has
 `.skip-fixture-grade`.
 
-Before you ship a `grade.sh`, check these yourself (Copilot keeps finding
+Before you ship a grader, check these yourself (Copilot keeps finding
 the same holes):
 
 - Prefer the **structural relationship** that matters over “several strings
   occur somewhere”. Scope checks to the subject file, method, class, or
   template block. Use [`evals/tools/ast/`](evals/tools/ast/) for PHP/JS
-  structure. Source [`evals/grade-helpers.sh`](evals/grade-helpers.sh) for
-  comment-as-subject checks and Twig/XML/markdown.
+  structure. `stripComments`, `phpMethod` and `jsCallArgs` in the kit scope
+  a check to code, one method or one call.
 - A token in a comment, leftover file, or unused call is not a pass.
 - Accept common compliant rewrites (receiver variables, named-arg order,
   async `import()`, official `main.js` / `mt-popover`).
@@ -175,7 +194,8 @@ the same holes):
   dir is not that sneak.
 
 Review-shaped tasks (`review-<rule>-catch` / `-ignore`) grade the findings
-JSON in `TRANSCRIPT` through `tools/bin/grade-findings.ts`. Layout and
+JSON in `TRANSCRIPT`: their grader is one call to `reviewCatch` or
+`reviewIgnore` from `tools/src/grade/review.ts`. Layout and
 contract: [`evals/README.md`](evals/README.md#review-tasks-review-rule-catch---ignore).
 
 ## Adding or changing a rule
@@ -200,8 +220,8 @@ contract: [`evals/README.md`](evals/README.md#review-tasks-review-rule-catch---i
    `## Already enforced by CI (do not repeat)` section; never edit that
    block by hand.
 6. Add activation prompts under `skills/<skill>/evals/`.
-7. Add a behavioral task under `evals/tasks/<rule>/` with `grade.sh` and golden
-   fixtures (`fixtures/pass/` required when the rule is gradable). For PHP/JS
+7. Add a behavioral task under `evals/tasks/<rule>/` with the `grade.sh`
+   wrapper, its grader in `tools/graders/<task>.ts`, and golden fixtures (`fixtures/pass/` required when the rule is gradable). For PHP/JS
    structure, add `evals/tools/ast/src/tasks/<rule>.mjs` and thin-wrap `grade.sh`.
    Then set the rule's `eval` to the task.
 8. Re-run `validate-skills.sh` (it runs `tools/bin/validate-rules.ts`), `evals/tools/ast`
@@ -259,7 +279,9 @@ directly (type stripping, so only erasable syntax: no `enum`, no parameter
 properties, no namespaces). `npm run typecheck` runs `tsc` with `strict`;
 `npm test` runs `node --test`. Keep runtime dependencies at zero where you
 can, so `node tools/bin/<tool>.ts` works without `npm ci`. The eval runner
-scripts move here step by step (plan WP10); `grade.sh` graders stay shell.
+and the task graders live here; what is left in shell are thin wrappers
+that keep old entry points working. The AST graders in `evals/tools/ast/`
+stay JavaScript, because they need `php-parser` and `@babel/parser`.
 
 `npm run lint` runs oxlint with type-aware rules
 ([`tools/.oxlintrc.json`](tools/.oxlintrc.json)), and `npm run format`

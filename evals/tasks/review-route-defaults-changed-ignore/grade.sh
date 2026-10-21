@@ -1,10 +1,6 @@
 #!/usr/bin/env bash
-# Grader: review-route-defaults-changed-ignore (shopware-security, SEC-007)
-# The change adds a new login-only route and leaves the existing public
-# route as it was. A minor+ finding that names SEC-007 or calls the login
-# requirement or caching a breaking route change is a false positive.
+# Grader entry for Harbor, the smoke harness and the runner. The checks are
+# in tools/graders/<task>.ts; tools/bin/grade.ts runs them.
 set -euo pipefail
-ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../../.." && pwd)"
-exec node "${ROOT}/tools/bin/grade-findings.ts" ignore \
-  --rule SEC-007 \
-  --summary '_loginRequired|_httpCache|login.?required|requires? (a )?login|logged.?in|anonymous|guests?\b|401|403|no longer (cached|public)|cach|route (scope|defaults)|breaking|backward.?compat|\bBC\b|existing (clients|callers)'
+HERE="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+exec node "${HERE}/../../../tools/bin/grade.ts" "$(basename "${HERE}")"
