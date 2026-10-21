@@ -1,0 +1,14 @@
+```json
+{
+  "findings": [
+    {
+      "rule_id": null,
+      "severity": "minor",
+      "file": "src/Resources/views/storefront/component/loyalty/badge.html.twig",
+      "line": 10,
+      "summary": "Adding a block inside swag_loyalty_badge_label breaks themes that override that block.",
+      "fix": "Put the points next to the badge instead."
+    }
+  ]
+}
+```

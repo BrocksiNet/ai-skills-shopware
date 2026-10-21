@@ -24,6 +24,18 @@ the project pins (`shopware-research-and-escalation`).
 
 Symfony lives **inside** services — it does not replace the DAL or extension model.
 
+## Services live longer than a request
+
+Workers, `messenger:consume` and runtimes like RoadRunner or FrankenPHP keep
+the container alive across requests and messages.
+
+- **ARCH-001** **A service that memoizes in a property resets it.** Implement
+  Symfony's `ResetInterface` and clear the property in `reset()`, or tag the
+  service `kernel.reset`. Without it, the next request or message sees the
+  previous customer's, sales channel's or language's data. Key the memo by
+  every input it depends on as well; a reset does not fix a memo keyed by
+  product ID alone when the price depends on the sales channel.
+
 ## Plugins
 
 See `shopware-plugin-development` → `symfony-first.md` for extension-layer

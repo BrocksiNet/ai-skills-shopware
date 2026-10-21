@@ -1,0 +1,14 @@
+```json
+{
+  "findings": [
+    {
+      "rule_id": null,
+      "severity": "minor",
+      "file": "src/Subscriber/OrderPlacedSubscriber.php",
+      "line": 30,
+      "summary": "The order export runs synchronously in the order placed subscriber; move it to a message handler.",
+      "fix": "Dispatch a message and handle it asynchronously."
+    }
+  ]
+}
+```

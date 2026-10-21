@@ -13,9 +13,11 @@
     },
     {
       "reference": "references/dal-and-performance.md",
-      "when": "The code queries the DAL or runs on a hot path.",
+      "when": "The code queries the DAL, runs on a hot path, or dispatches queued work.",
       "anchors_any": [
         "new Criteria\\(",
+        "MessageBusInterface",
+        "->dispatch\\(new [A-Za-z]+Message\\(",
         "->addAssociation\\(",
         "EqualsFilter\\(",
         "->fetch(All|One|Associative|FirstColumn)[A-Za-z]*\\("

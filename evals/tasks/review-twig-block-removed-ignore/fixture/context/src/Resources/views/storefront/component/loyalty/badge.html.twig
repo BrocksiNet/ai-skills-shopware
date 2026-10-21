@@ -1,0 +1,13 @@
+{% block swag_loyalty_badge %}
+    <div class="swag-loyalty-badge swag-loyalty-badge--{{ loyaltyBalance.tier }}">
+        {% block swag_loyalty_badge_icon %}
+            {% sw_icon 'star' style { size: 'xs' } %}
+        {% endblock %}
+
+        {% block swag_loyalty_badge_label %}
+            <span class="swag-loyalty-badge__label">
+                {{ ('swag-loyalty.tier.' ~ loyaltyBalance.tier)|trans }}
+            </span>
+        {% endblock %}
+    </div>
+{% endblock %}

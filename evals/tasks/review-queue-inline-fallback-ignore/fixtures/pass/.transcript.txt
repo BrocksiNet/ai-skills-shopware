@@ -1,0 +1,14 @@
+```json
+{
+  "findings": [
+    {
+      "rule_id": null,
+      "severity": "nit",
+      "file": "src/Subscriber/OrderPlacedSubscriber.php",
+      "line": 25,
+      "summary": "The free-order check compares a float with 0.0; a named constant or comment on rounding would help.",
+      "fix": "Extract the threshold."
+    }
+  ]
+}
+```

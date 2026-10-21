@@ -1,0 +1,51 @@
+diff --git a/tests/integration/LoyaltyTierUpdaterTest.php b/tests/integration/LoyaltyTierUpdaterTest.php
+new file mode 100644
+index 0000000..31c93db
+--- /dev/null
++++ b/tests/integration/LoyaltyTierUpdaterTest.php
+@@ -0,0 +1,45 @@
++<?php declare(strict_types=1);
++
++namespace Swag\Loyalty\Tests\Integration;
++
++use PHPUnit\Framework\Attributes\CoversClass;
++use PHPUnit\Framework\TestCase;
++use Shopware\Core\Framework\Context;
++use Shopware\Core\Framework\Test\TestCaseBase\IntegrationTestBehaviour;
++use Shopware\Core\Test\Integration\EventDispatcher\EventHookDispatcher;
++use Swag\Loyalty\LoyaltyLedger;
++use Swag\Loyalty\LoyaltyTierChangedEvent;
++use Swag\Loyalty\LoyaltyTierUpdater;
++
++/**
++ * @internal
++ */
++#[CoversClass(LoyaltyTierUpdater::class)]
++class LoyaltyTierUpdaterTest extends TestCase
++{
++    use IntegrationTestBehaviour;
++
++    public function testCrossingTheGoldThresholdDispatchesTierChanged(): void
++    {
++        $context = Context::createDefaultContext();
++        $ledger = static::getContainer()->get(LoyaltyLedger::class);
++        $customerId = $this->createCustomer();
++        $ledger->book($customerId, 5000, $context);
++
++        $changed = null;
++        EventHookDispatcher::fromContainer(static::getContainer())->on(
++            LoyaltyTierChangedEvent::class,
++            function (LoyaltyTierChangedEvent $event) use (&$changed): void {
++                $changed = $event;
++            },
++        );
++
++        static::getContainer()->get(LoyaltyTierUpdater::class)->update($customerId, $context);
++
++        if ($changed !== null) {
++            static::assertSame($customerId, $changed->customerId);
++            static::assertSame('silver', $changed->previousTier);
++            static::assertSame('gold', $changed->tier);
++        }
++    }
++}

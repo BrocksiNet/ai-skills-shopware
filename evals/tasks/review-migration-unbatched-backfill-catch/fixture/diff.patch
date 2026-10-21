@@ -1,0 +1,40 @@
+diff --git a/src/Migration/Migration1729800000BackfillVerifiedPurchase.php b/src/Migration/Migration1729800000BackfillVerifiedPurchase.php
+new file mode 100644
+index 0000000..db2eb94
+--- /dev/null
++++ b/src/Migration/Migration1729800000BackfillVerifiedPurchase.php
+@@ -0,0 +1,34 @@
++<?php declare(strict_types=1);
++
++namespace Swag\Review\Migration;
++
++use Doctrine\DBAL\Connection;
++use Shopware\Core\Framework\Migration\MigrationStep;
++
++class Migration1729800000BackfillVerifiedPurchase extends MigrationStep
++{
++    public function getCreationTimestamp(): int
++    {
++        return 1729800000;
++    }
++
++    public function update(Connection $connection): void
++    {
++        if (!$this->columnExists($connection, 'swag_review', 'verified_purchase')) {
++            $connection->executeStatement(
++                'ALTER TABLE `swag_review` ADD COLUMN `verified_purchase` TINYINT(1) NOT NULL DEFAULT 0'
++            );
++        }
++
++        $connection->executeStatement(
++            'UPDATE `swag_review` SET `verified_purchase` = 1
++            WHERE `customer_id` IS NOT NULL
++              AND EXISTS (
++                SELECT 1 FROM `order_line_item` li
++                INNER JOIN `order_customer` oc ON oc.`order_id` = li.`order_id`
++                WHERE li.`product_id` = `swag_review`.`product_id`
++                  AND oc.`customer_id` = `swag_review`.`customer_id`
++              )'
++        );
++    }
++}

@@ -13,6 +13,17 @@ Load when changing storefront templates, SCSS, or media.
   not a one-off unauthenticated POST. Do **not** add `sw_csrf` or a CSRF
   hidden field; 6.5+ relies on SameSite cookies and `sw_csrf` is gone.
 
+## Templates you ship are public API
+
+Themes and other plugins extend the blocks of the templates your plugin
+ships, and read the variables you pass into them.
+
+- **SF-001** **Deprecate before you rename, move or remove** a Twig block, a
+  template variable or a template file that a released version shipped. Keep
+  the old block wrapping the new one (or the old variable filled) with a
+  `{# @deprecated tag:vX.0.0 #}` comment until the next major. A theme that
+  overrides a removed block renders nothing and throws no error.
+
 ## Theme / SCSS
 
 - Theme config and Bootstrap SCSS variables first. Do not fork Bootstrap

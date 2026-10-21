@@ -1,0 +1,14 @@
+```json
+{
+  "findings": [
+    {
+      "rule_id": null,
+      "severity": "minor",
+      "file": "tests/integration/LoyaltyTierUpdaterTest.php",
+      "line": 36,
+      "summary": "The test passes even when the event is never dispatched; assert that the hook fired.",
+      "fix": "Add assertNotNull($changed)."
+    }
+  ]
+}
+```

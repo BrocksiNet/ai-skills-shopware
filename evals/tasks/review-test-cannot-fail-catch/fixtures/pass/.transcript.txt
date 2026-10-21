@@ -1,0 +1,16 @@
+The hook captures correctly and asserts afterwards, but the null guard makes the test vacuous.
+
+```json
+{
+  "findings": [
+    {
+      "rule_id": null,
+      "severity": "major",
+      "file": "tests/integration/LoyaltyTierUpdaterTest.php",
+      "line": 39,
+      "summary": "The assertions only run if ($changed !== null), so the test passes even when the tier changed event is never dispatched.",
+      "fix": "Assert assertInstanceOf(LoyaltyTierChangedEvent::class, $changed) first, then check the fields without the if."
+    }
+  ]
+}
+```

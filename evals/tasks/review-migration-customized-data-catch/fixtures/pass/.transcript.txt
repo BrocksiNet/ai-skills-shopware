@@ -1,0 +1,16 @@
+The update has no guard for templates the merchant already changed.
+
+```json
+{
+  "findings": [
+    {
+      "rule_id": "PLG-028",
+      "severity": "major",
+      "file": "src/Migration/Migration1729500000UpdateGiftCardMailTemplate.php",
+      "line": 40,
+      "summary": "The UPDATE overwrites the gift card mail template for every shop, including templates the merchant customized.",
+      "fix": "Add AND updated_at IS NULL so edited templates are skipped."
+    }
+  ]
+}
+```

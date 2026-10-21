@@ -33,7 +33,7 @@ Detailed, growing lists live in references. Read only the one that matches the c
 | Read | When | Or the change touches |
 | ---- | ---- | --------------------- |
 | [`api-aware.md`](references/api-aware.md) | The code serves Store-API or headless clients. | `StoreApi/**/*.php`, `SalesChannel/**/*Route.php`, `store-api`, … |
-| [`dal-and-performance.md`](references/dal-and-performance.md) | The code queries the DAL or runs on a hot path. | `new Criteria(`, … |
+| [`dal-and-performance.md`](references/dal-and-performance.md) | The code queries the DAL, runs on a hot path, or dispatches queued work. | `new Criteria(`, … |
 | [`change-scope.md`](references/change-scope.md) | A fix grows beyond the bug. | on demand |
 <!-- routes:end -->
 
@@ -123,7 +123,7 @@ Detailed, growing lists live in references. Read only the one that matches the c
 ## TODO slots (grow these from real reviews)
 
 - DAL: TODO - capture the recurring "writing without the right Context" finding.
-- Performance: TODO - indexer / message-queue misuse findings.
+- Performance: TODO - indexer misuse findings (queue fallback is `REV-033`).
 - Security: hardcoded access keys, missing Store-API ACL — see `shopware-security`.
 - Storefront: blocking/uncached AJAX on listing/product/home — own in
   `shopware-storefront` (`references/cache-and-modern-web.md`).

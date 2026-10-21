@@ -1,0 +1,22 @@
+```json
+{
+  "findings": [
+    {
+      "rule_id": "PLG-030",
+      "severity": "nit",
+      "file": "src/Migration/Migration1729700000ChangeExternalRef.php",
+      "line": 20,
+      "summary": "The column change could move to updateDestructive().",
+      "fix": "Move it."
+    },
+    {
+      "rule_id": "PLG-021",
+      "severity": "major",
+      "file": "src/Migration/Migration1729700000ChangeExternalRef.php",
+      "line": 20,
+      "summary": "The ALTER TABLE is not guarded and makes external_ref NOT NULL on every run.",
+      "fix": "Check the column definition first."
+    }
+  ]
+}
+```

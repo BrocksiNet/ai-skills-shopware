@@ -1,0 +1,14 @@
+```json
+{
+  "findings": [
+    {
+      "rule_id": null,
+      "severity": "minor",
+      "file": "src/Loyalty/LoyaltyConfigReader.php",
+      "line": 33,
+      "summary": "The in-memory config cache keeps stale values across requests in long-running workers.",
+      "fix": "Drop the cache and read SystemConfigService each time."
+    }
+  ]
+}
+```

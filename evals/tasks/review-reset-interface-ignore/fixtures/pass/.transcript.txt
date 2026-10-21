@@ -1,0 +1,7 @@
+The memoized config is cleared through ResetInterface::reset(), so workers pick up config changes. Nothing to report.
+
+```json
+{
+  "findings": []
+}
+```

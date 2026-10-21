@@ -1,0 +1,22 @@
+```json
+{
+  "findings": [
+    {
+      "rule_id": "SF-001",
+      "severity": "nit",
+      "file": "src/Resources/views/storefront/component/loyalty/badge.html.twig",
+      "line": 7,
+      "summary": "The new block name reads better than the old one.",
+      "fix": "Keep it."
+    },
+    {
+      "rule_id": "SF-002",
+      "severity": "major",
+      "file": "src/Resources/views/storefront/component/loyalty/badge.html.twig",
+      "line": 7,
+      "summary": "The renamed block breaks themes that extend the badge.",
+      "fix": "Use a JS plugin instead."
+    }
+  ]
+}
+```

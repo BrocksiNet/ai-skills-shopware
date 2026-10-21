@@ -36,6 +36,11 @@ class Migration1700000000AddExampleColumn extends MigrationStep
 
 - **PLG-017** **Split destructive from non-destructive.** Adding goes in `update()`; dropping
   goes in `updateDestructive()`. Never drop data in `update()`.
+- **PLG-030** **`update()` never narrows.** Shortening a column, changing it to a
+  smaller type, adding `NOT NULL` without a default, or dropping a default
+  breaks writes from code that is still on the old version during a blue-green
+  or rolling update. Those changes go in `updateDestructive()`. Adding a
+  nullable column or widening a type stays in `update()`.
 - **PLG-018** **`updateDestructive()` stays small.** No long-running backfills or heavy work
   there either.
 - **PLG-019** **Large data changes run in batches.** Update about 1,000 rows per statement,
@@ -52,11 +57,22 @@ class Migration1700000000AddExampleColumn extends MigrationStep
   on installations, write a new one to change course. Editing it will not re-run
   and breaks new installs vs. existing ones.
 - **PLG-023** **Bind parameters** for any data values; never interpolate.
+- **PLG-028** **Leave merchant edits alone.** A migration that changes shipped content
+  (mail templates, flows, CMS pages, snippets, system config defaults) only
+  touches rows the merchant has not edited: guard with `updated_at IS NULL`,
+  or compare against the value you shipped before. Overwriting an edited
+  template silently undoes the merchant's work.
+- **PLG-029** **No feature flags in migrations.** `Feature::isActive()` and
+  `Feature::has()` are evaluated once, when the migration runs, and the result
+  is frozen into the schema. Shops that switch the flag later never get the
+  other branch. Migrate unconditionally and branch on the flag in the code
+  that reads the data.
 - Keep migrations free of service/container logic where possible — they run early.
 
 ## Done
 
 - [ ] Class/timestamp naming correct; `getCreationTimestamp()` matches.
-- [ ] Destructive changes only in `updateDestructive()`.
+- [ ] Destructive or narrowing changes only in `updateDestructive()`.
+- [ ] Content updates skip rows the merchant edited; no feature flags.
 - [ ] Guarded/idempotent; parameters bound.
 - [ ] No edits to already-released migrations.

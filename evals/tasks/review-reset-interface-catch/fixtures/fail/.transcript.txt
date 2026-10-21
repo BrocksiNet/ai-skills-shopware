@@ -1,0 +1,22 @@
+```json
+{
+  "findings": [
+    {
+      "rule_id": "ARCH-001",
+      "severity": "nit",
+      "file": "src/Loyalty/LoyaltyConfigReader.php",
+      "line": 15,
+      "summary": "Consider clearing the memoized config between requests.",
+      "fix": "Implement ResetInterface."
+    },
+    {
+      "rule_id": "REV-022",
+      "severity": "major",
+      "file": "src/Loyalty/LoyaltyConfigReader.php",
+      "line": 30,
+      "summary": "The memoized config goes stale in long-running workers.",
+      "fix": "Load less config."
+    }
+  ]
+}
+```

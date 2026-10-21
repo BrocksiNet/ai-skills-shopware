@@ -1,0 +1,22 @@
+```json
+{
+  "findings": [
+    {
+      "rule_id": "REV-033",
+      "severity": "nit",
+      "file": "src/Subscriber/OrderPlacedSubscriber.php",
+      "line": 38,
+      "summary": "The catch block could log at error level instead of warning.",
+      "fix": "Use $this->logger->error()."
+    },
+    {
+      "rule_id": "REV-024",
+      "severity": "major",
+      "file": "src/Subscriber/OrderPlacedSubscriber.php",
+      "line": 40,
+      "summary": "The subscriber exports the order inline when the queue is down.",
+      "fix": "Use the repository instead of raw SQL."
+    }
+  ]
+}
+```

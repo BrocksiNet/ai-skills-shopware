@@ -1,0 +1,16 @@
+The backfill is batched by id with a cursor.
+
+```json
+{
+  "findings": [
+    {
+      "rule_id": null,
+      "severity": "nit",
+      "file": "src/Migration/Migration1729800000BackfillVerifiedPurchase.php",
+      "line": 47,
+      "summary": "The literal 1000 appears twice.",
+      "fix": "Use a BATCH_SIZE constant."
+    }
+  ]
+}
+```

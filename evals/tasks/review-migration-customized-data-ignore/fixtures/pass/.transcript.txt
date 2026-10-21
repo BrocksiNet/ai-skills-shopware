@@ -1,0 +1,7 @@
+The update only touches untouched templates. Nothing to report.
+
+```json
+{
+  "findings": []
+}
+```

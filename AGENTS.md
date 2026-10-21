@@ -192,7 +192,8 @@ contract: [`evals/README.md`](evals/README.md#review-tasks-review-rule-catch---i
    snippet tests, and `evals/test-graders.sh`.
 
 Tagged so far: `shopware-testing`, `shopware-plugin-development`,
-`shopware-review-learnings`, `shopware-core-development`, `shopware-admin-js`. Tag a skill's remaining rules when you next touch it.
+`shopware-review-learnings`, `shopware-core-development`, `shopware-admin-js`,
+`shopware-architecture`, `shopware-storefront`. Tag a skill's remaining rules when you next touch it.
 
 For recurring real-world findings, prefer `shopware-review-learnings` and point
 at the owning skill rather than re-defining the topic.

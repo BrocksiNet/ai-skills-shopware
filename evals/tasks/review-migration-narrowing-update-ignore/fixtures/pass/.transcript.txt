@@ -1,0 +1,16 @@
+Widening a column and adding a nullable one are safe in update().
+
+```json
+{
+  "findings": [
+    {
+      "rule_id": null,
+      "severity": "nit",
+      "file": "src/Migration/Migration1729700000ChangeExternalRef.php",
+      "line": 10,
+      "summary": "The class docblock describes the CRM sync rather than the schema change.",
+      "fix": "Say which columns change."
+    }
+  ]
+}
+```

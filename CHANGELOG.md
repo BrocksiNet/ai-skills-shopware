@@ -10,6 +10,28 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- Eight more review eval pairs (plan WP5 done, WP7 phase A): planted
+  problem in `-catch`, clean look-alike in `-ignore`, graded by
+  `tools/bin/grade-findings.ts`.
+  - `review-migration-customized-data-*`, `review-migration-feature-flag-*`,
+    `review-migration-narrowing-update-*`, `review-migration-unbatched-backfill-*`
+  - `review-reset-interface-*`, `review-queue-inline-fallback-*`,
+    `review-test-cannot-fail-*`, `review-twig-block-removed-*`
+- New rules, each backed by its catch task:
+  - PLG-028: content migrations skip rows the merchant edited.
+  - PLG-029: no feature flags in migrations.
+  - PLG-030: `update()` never narrows a column; that goes to `updateDestructive()`.
+  - ARCH-001: a service that memoizes in a property implements `ResetInterface`.
+  - REV-033: no inline synchronous fallback for queued work.
+  - SF-001: deprecate shipped Twig blocks, variables and templates before renaming them.
+  - TEST-035: a test must be able to fail.
+- `shopware-architecture` and `shopware-storefront` carry rule IDs
+  (ARCH-002..004, SF-002..010); the storefront tasks now back SF-002..010.
+  PLG-019 gets an eval. Catalog entries for the new rules list their core
+  guide IDs in `core_guide_ids`.
+- Routes: `symfony-in-shopware.md` loads for `ResetInterface`, `kernel.reset`
+  and `$this->x[$k] ??=` memos; `dal-and-performance.md` for queued work.
+  Routing cases `memoized-service` and `queued-work`.
 - Review-shaped evals (plan WP5, first two pairs). `review-<rule>-catch`
   tasks plant a problem in `diff.patch`; `-ignore` tasks show a clean
   look-alike. The agent reports findings as one fenced `json` block, and

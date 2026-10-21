@@ -113,6 +113,11 @@ These match PHPStan rules and reviewer expectations on core PRs:
   never depend on pre-existing DB rows in integration tests.
 - **TEST-021** **One behavior per test**; arrange-act-assert; cover the public contract.
 - **TEST-022** **Deterministic** — no `sleep`, no unordered shared state.
+- **TEST-035** **A test must be able to fail.** Assert that a captured value exists
+  (`assertNotNull`, `assertInstanceOf`, or a fired-count) before you check its
+  fields; never guard assertions with `if ($captured !== null)`. A mocked
+  `transactional()` or callback must run the closure it receives, or the code
+  under test never executes.
 
 ## Platform core extras
 

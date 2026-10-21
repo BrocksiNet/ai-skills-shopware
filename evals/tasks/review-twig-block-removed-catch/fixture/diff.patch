@@ -1,0 +1,19 @@
+diff --git a/src/Resources/views/storefront/component/loyalty/badge.html.twig b/src/Resources/views/storefront/component/loyalty/badge.html.twig
+index c84cd8a..17676cb 100644
+--- a/src/Resources/views/storefront/component/loyalty/badge.html.twig
++++ b/src/Resources/views/storefront/component/loyalty/badge.html.twig
+@@ -4,9 +4,12 @@
+             {% sw_icon 'star' style { size: 'xs' } %}
+         {% endblock %}
+ 
+-        {% block swag_loyalty_badge_label %}
+-            <span class="swag-loyalty-badge__label">
++        {% block swag_loyalty_badge_text %}
++            <span class="swag-loyalty-badge__text">
+                 {{ ('swag-loyalty.tier.' ~ loyaltyBalance.tier)|trans }}
++                <small class="swag-loyalty-badge__points">
++                    {{ 'swag-loyalty.points'|trans({ '%count%': loyaltyBalance.points }) }}
++                </small>
+             </span>
+         {% endblock %}
+     </div>

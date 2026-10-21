@@ -1,0 +1,22 @@
+```json
+{
+  "findings": [
+    {
+      "rule_id": "PLG-028",
+      "severity": "nit",
+      "file": "src/Migration/Migration1729500000UpdateGiftCardMailTemplate.php",
+      "line": 40,
+      "summary": "Consider skipping templates the merchant edited.",
+      "fix": "Add an updated_at IS NULL guard."
+    },
+    {
+      "rule_id": "PLG-021",
+      "severity": "major",
+      "file": "src/Migration/Migration1729500000UpdateGiftCardMailTemplate.php",
+      "line": 38,
+      "summary": "The UPDATE overwrites the template on every run; guard it so a re-run is a no-op.",
+      "fix": "Check the current content before updating."
+    }
+  ]
+}
+```

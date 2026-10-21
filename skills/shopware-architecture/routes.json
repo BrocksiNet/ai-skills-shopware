@@ -31,11 +31,14 @@
     },
     {
       "reference": "references/symfony-in-shopware.md",
-      "when": "You reach for a Symfony component or container feature.",
+      "when": "You reach for a Symfony component or container feature, or a service keeps state in a property.",
       "anchors_any": [
         "HttpClientInterface",
         "ClockInterface",
-        "MessageBusInterface"
+        "MessageBusInterface",
+        "ResetInterface",
+        "kernel\\.reset",
+        "\\$this->[A-Za-z]+\\[[^\\]]+\\] \\?\\?="
       ]
     },
     {

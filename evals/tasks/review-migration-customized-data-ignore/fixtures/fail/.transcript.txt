@@ -1,0 +1,14 @@
+```json
+{
+  "findings": [
+    {
+      "rule_id": null,
+      "severity": "minor",
+      "file": "src/Migration/Migration1729500000UpdateGiftCardMailTemplate.php",
+      "line": 40,
+      "summary": "The migration overwrites the merchant's mail template text.",
+      "fix": "Ship the new text as a separate template instead."
+    }
+  ]
+}
+```
