@@ -27,9 +27,9 @@ evals/tasks/<task-name>/
   skills                      # optional: extra skills for smoke A/B (one name per line)
 
 evals/smoke/                  # local A/B harness (Claude, Codex, Cursor CLI)
-evals/runner/                 # shell wrappers for tools/bin, fake-agent.sh test double, install-agent.sh
+evals/runner/                 # shell wrappers for tools/bin (fake-agent.sh is the test double), install-agent.sh
 evals/harbor/                 # containerized Harbor wiring (optional)
-evals/test-graders.sh         # golden tests for all grade.sh scripts
+evals/test-graders.sh         # golden tests for all grade.sh scripts (wrapper for tools/bin/test-graders.ts)
 evals/tools/ast/              # Node AST graders (php-parser + @babel/parser)
 evals/routing/<case>/         # diff.patch + expected.json for reference routing
 
@@ -51,6 +51,9 @@ tools/                        # repo tooling in TypeScript (Node 24, no build st
   bin/activation.ts           # Layer 1 activation evals
   bin/eval-local.ts           # local model evals with your agent login, then the gate
   bin/validate-skills.ts      # skill structure, budgets, conflicts, rule IDs, routes
+  bin/test-graders.ts         # golden fixtures against every grade.sh
+  bin/fake-agent.ts           # test double for SKILLS_AGENT_CMD
+  bin/check-update.ts         # pinned version vs latest release tag
   test/*.test.ts              # node --test
 
 scripts/
@@ -58,7 +61,7 @@ scripts/
   eval-{plan,gate,diff}.sh    # wrappers for tools/bin/eval-*.ts (Node 24)
   run-activation-evals.sh     # Layer 1 activation checks (wrapper for tools/bin/activation.ts)
   eval-local.sh               # local model evals (wrapper for tools/bin/eval-local.ts)
-  check-update.sh             # compare pinned version vs latest release tag
+  check-update.sh             # compare pinned version vs latest release tag (wrapper for tools/bin/check-update.ts)
 
 use-cases/                    # canonical `npx skills add` one-liners
 docs/                         # local validation, smoke evals, tooling stack
