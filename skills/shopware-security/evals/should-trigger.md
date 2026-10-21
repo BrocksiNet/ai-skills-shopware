@@ -6,3 +6,4 @@
 - App manifest permissions — are we over-permissioned?
 - Verify webhook signature on this app endpoint.
 - Add a Store-API route for this custom field.
+- I want to set _loginRequired on an existing Store API route of my plugin. What breaks?

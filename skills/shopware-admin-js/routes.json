@@ -8,6 +8,12 @@
       "anchors_any": ["Shopware\\.Module\\.register\\(", "Shopware\\.Component\\.(override|extend|register)\\(", "addPrivilegeMappingEntry\\("]
     },
     {
+      "reference": "references/extension-api.md",
+      "when": "You change a shipped component, template block or position identifier.",
+      "paths_any": ["**/blocks-list.json"],
+      "anchors_any": ["positionIdentifier", "swDefinePublic\\(", "Component\\.override\\("]
+    },
+    {
       "reference": "references/testing.md",
       "when": "You write or fix a Jest spec.",
       "paths_any": ["**/Resources/app/administration/**/*.spec.{js,ts}"],

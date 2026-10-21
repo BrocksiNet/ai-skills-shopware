@@ -1,0 +1,16 @@
+Headless clients and apps call this route with only a productId today.
+
+```json
+{
+  "findings": [
+    {
+      "rule_id": "PLG-031",
+      "severity": "blocking",
+      "file": "src/StoreApi/WishlistAddRoute.php",
+      "line": 34,
+      "summary": "The existing route now requires a note and a list and rejects \"later\", so every client that called it before gets a 400 validation error.",
+      "fix": "Keep note and list optional with the old defaults and accepted values; tighten validation only in the next major."
+    }
+  ]
+}
+```

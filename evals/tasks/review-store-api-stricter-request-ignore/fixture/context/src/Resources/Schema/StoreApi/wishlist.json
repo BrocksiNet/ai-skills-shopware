@@ -1,0 +1,29 @@
+{
+  "openapi": "3.0.0",
+  "info": [],
+  "paths": {
+    "/swag-wishlist/add": {
+      "post": {
+        "tags": ["Wishlist"],
+        "summary": "Add a product to a wishlist of the logged-in customer",
+        "operationId": "addSwagWishlistItem",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["productId"],
+                "properties": {
+                  "productId": { "type": "string", "pattern": "^[0-9a-f]{32}$" },
+                  "list": { "type": "string", "enum": ["default", "gift", "later"], "default": "default" }
+                }
+              }
+            }
+          }
+        },
+        "responses": { "204": { "description": "Added" } }
+      }
+    }
+  }
+}

@@ -24,6 +24,12 @@ change they cannot see in the version number.
   every typed client. Add a new field with the new shape, keep filling the old
   one, and deprecate it in the OpenAPI schema (`deprecated: true`) and in the
   struct. Remove it only in the next major. Adding an optional field is fine.
+- **PLG-031** **Never make an existing route stricter.** No new required request
+  parameter, no changed HTTP status or error code, and no stricter validation
+  (a new pattern, a narrower list of allowed values, a new constraint) for
+  input the route accepted before. Integrations that worked yesterday get
+  `400` or take the error path after a routine update. Add new parameters as
+  optional with a default, and move the stricter check to the next major.
 
 ## Core vs extension
 
@@ -38,9 +44,12 @@ change they cannot see in the version number.
 - [ ] Request/response schemas match implementation.
 - [ ] Sales-channel context used for storefront-facing reads.
 - [ ] Existing response fields keep their type and nullability.
+- [ ] Existing requests keep working: no new required parameter, status code or stricter check.
 
 ## Eval
 
 `store-api-openapi-required` — custom Store-API route must reference OpenApi.
 `review-store-api-contract-catch` / `-ignore` — a review finds the changed
 field type and stays quiet on an added optional field.
+`review-store-api-stricter-request-catch` / `-ignore` — the same for a
+stricter request.

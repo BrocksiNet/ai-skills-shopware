@@ -1,0 +1,57 @@
+diff --git a/src/Resources/config/services.php b/src/Resources/config/services.php
+index 6a0f306..52be6f3 100644
+--- a/src/Resources/config/services.php
++++ b/src/Resources/config/services.php
+@@ -3,6 +3,7 @@
+ namespace Symfony\Component\DependencyInjection\Loader\Configurator;
+ 
+ use Swag\Loyalty\LoyaltyLedger;
++use Swag\Loyalty\Subscriber\LoyaltyNoCacheSubscriber;
+ use Swag\Loyalty\Subscriber\LoyaltyPageSubscriber;
+ 
+ return static function (ContainerConfigurator $configurator): void {
+@@ -10,4 +11,5 @@ return static function (ContainerConfigurator $configurator): void {
+ 
+     $services->set(LoyaltyLedger::class);
+     $services->set(LoyaltyPageSubscriber::class);
++    $services->set(LoyaltyNoCacheSubscriber::class);
+ };
+diff --git a/src/Subscriber/LoyaltyNoCacheSubscriber.php b/src/Subscriber/LoyaltyNoCacheSubscriber.php
+new file mode 100644
+index 0000000..6df51ff
+--- /dev/null
++++ b/src/Subscriber/LoyaltyNoCacheSubscriber.php
+@@ -0,0 +1,33 @@
++<?php declare(strict_types=1);
++
++namespace Swag\Loyalty\Subscriber;
++
++use Shopware\Core\System\SalesChannel\SalesChannelContext;
++use Shopware\Core\PlatformRequest;
++use Symfony\Component\EventDispatcher\EventSubscriberInterface;
++use Symfony\Component\HttpKernel\Event\ResponseEvent;
++use Symfony\Component\HttpKernel\KernelEvents;
++
++/**
++ * Logged-in customers saw the points of another customer on cached product
++ * pages. Serve their pages uncached so the badge always shows their balance.
++ */
++class LoyaltyNoCacheSubscriber implements EventSubscriberInterface
++{
++    public static function getSubscribedEvents(): array
++    {
++        return [KernelEvents::RESPONSE => ['onResponse', -2000]];
++    }
++
++    public function onResponse(ResponseEvent $event): void
++    {
++        $context = $event->getRequest()->attributes->get(PlatformRequest::ATTRIBUTE_SALES_CHANNEL_CONTEXT_OBJECT);
++        if (!$context instanceof SalesChannelContext || $context->getCustomer() === null) {
++            return;
++        }
++
++        $response = $event->getResponse();
++        $response->setPrivate();
++        $response->headers->addCacheControlDirective('no-store');
++    }
++}

@@ -1,0 +1,22 @@
+```json
+{
+  "findings": [
+    {
+      "rule_id": "ARCH-005",
+      "severity": "nit",
+      "file": "src/Event/LoyaltyPointsCalculateEvent.php",
+      "line": 21,
+      "summary": "The docblock could list which request attributes listeners may read.",
+      "fix": "Document the attributes."
+    },
+    {
+      "rule_id": "CORE-031",
+      "severity": "major",
+      "file": "src/LoyaltyPointsCalculator.php",
+      "line": 23,
+      "summary": "Listeners of this event break because the Request replaced two properties.",
+      "fix": "Use #[AsEventListener]."
+    }
+  ]
+}
+```

@@ -45,14 +45,21 @@ the surface skills can all be installed together without contradicting (see
 | Architecture decisions, DAL boundaries, progressive enhancement, anti-patterns | `shopware-architecture` |
 | Bounded DAL reads; repository vs Connection for entity data | `shopware-architecture` |
 | Extension mechanism choice (event vs decoration vs entity extension) | `shopware-architecture` |
+| Long-running service state (`ResetInterface`, `kernel.reset`); extension event properties as contract | `shopware-architecture` |
 | Secrets, access keys, API ACL, app least privilege | `shopware-security` |
+| Access and cache defaults of existing routes (`_routeScope`, `_loginRequired`, `_httpCache`, `_acl`) | `shopware-security` |
 | Plugin/extension Store-API & Admin OpenAPI contracts | `shopware-plugin-development` |
+| Plugin/extension Store-API & Admin request and response compatibility (field types, required parameters, status codes, validation) | `shopware-plugin-development` |
 | Core Admin/Store API OpenAPI schemas | `shopware-core-development` |
 | Deprecation policy (`BCChange` attributes vs `@deprecated tag:`, `Feature::silent`, no DI `<deprecated>` while core still uses the id) | `shopware-core-development` |
 | Core modernization (Symfony behind feature flags, dual paths until major) | `shopware-core-development` |
 | Local filesystem in core PHP (Symfony `Filesystem`, not raw file functions) | `shopware-core-development` |
 | Static-analysis baseline discipline (PHPStan level, shrink-not-delete) | `shopware-core-development` |
 | Public-API / `@internal` boundaries | `shopware-core-development` |
+| Core BC of data, config and CLI (`ApiAware`, `autoload`, feature flag defaults, config keys, commands) | `shopware-core-development` |
+| Core deprecation replacements, shims and code that ends at the major | `shopware-core-development` |
+| Core platform scope (hosting-only options, silent environment probes, product-specific code) | `shopware-core-development` |
+| Theme and media asset lifetime behind the HTTP cache (core) | `shopware-core-development` |
 | Plugin structure & lifecycle (install/activate/uninstall, keepUserData) | `shopware-plugin-development` |
 | DAL usage (Criteria, associations, write/sync, avoid N+1) | `shopware-plugin-development` |
 | HTTP cache & cache tags (6.7 `CacheTagCollector`) | `shopware-plugin-development` |
@@ -74,6 +81,7 @@ the surface skills can all be installed together without contradicting (see
 | `StaticEntityRepository` stubbing and generic inference | `shopware-testing` |
 | Recurring review findings (cross-cutting, delta-only) | `shopware-review-learnings` |
 | Blast radius after a feature works (shared cache, who pays, easier vs more complex, remote asset loading, one compiled container) | `shopware-change-impact` |
+| Cache key inputs and tag count of cached data | `shopware-change-impact` |
 | Bug-fix scope and boyscouting (root cause vs drive-by refactors) | `shopware-review-learnings` |
 | When to research vs proceed; docs map; Context7 | `shopware-research-and-escalation` |
 | What to do when stuck (escalation ladder) | `shopware-research-and-escalation` |
@@ -86,7 +94,9 @@ the surface skills can all be installed together without contradicting (see
 | shopware-dev hub (`~/shopware-dev`, `sw-dev link`, Mutagen, multi-lane proxy) | `shopware-podman-dev` |
 | Storefront Twig/theme inheritance, PluginManager JS, Bootstrap storefront components, Twig 4 (`spaceless`, null attributes) | `shopware-storefront` |
 | Storefront HTTP cache vs AJAX; no speculation/prerender on cart/checkout/account | `shopware-storefront` |
+| Storefront public API for themes (Twig blocks and variables, JS plugin options and events, SCSS variables, `theme.json` fields, snippet keys) | `shopware-storefront` |
 | Administration Vue/TS, Meteor `mt-*`, Jest next to code, Admin ACL + privilege migrations; experimental SFC is not the 6.8 upgrade | `shopware-admin-js` |
+| Administration extension API (component props, blocks, `swDefinePublic`, `blocks-list.json`, position identifiers) | `shopware-admin-js` |
 | Generic modern CSS/HTML/JS lookup (Modern Web Guidance CLI) after Shopware primitives | `shopware-research-and-escalation` |
 
 ### Precedence (when more than one applies)

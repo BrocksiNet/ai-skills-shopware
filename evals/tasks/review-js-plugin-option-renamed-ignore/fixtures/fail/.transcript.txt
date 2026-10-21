@@ -1,0 +1,14 @@
+```json
+{
+  "findings": [
+    {
+      "rule_id": null,
+      "severity": "minor",
+      "file": "src/Resources/app/storefront/src/swag-loyalty-badge/swag-loyalty-badge.plugin.js",
+      "line": 11,
+      "summary": "The new animate option changes the plugin options that themes rely on; this breaks theme overrides.",
+      "fix": "Leave the options alone."
+    }
+  ]
+}
+```

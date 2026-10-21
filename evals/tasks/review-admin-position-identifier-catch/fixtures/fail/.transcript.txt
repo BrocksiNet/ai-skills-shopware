@@ -1,0 +1,22 @@
+```json
+{
+  "findings": [
+    {
+      "rule_id": "ADM-040",
+      "severity": "nit",
+      "file": "src/Resources/app/administration/src/module/swag-loyalty/page/swag-loyalty-detail/swag-loyalty-detail.html.twig",
+      "line": 12,
+      "summary": "The position identifier was renamed; mention it in the changelog.",
+      "fix": "Add a changelog line."
+    },
+    {
+      "rule_id": "ADM-015",
+      "severity": "major",
+      "file": "src/Resources/app/administration/blocks-list.json",
+      "line": 5,
+      "summary": "The blocks-list.json entry for the aside block was renamed; extensions overriding the old block break.",
+      "fix": "Keep the old block name."
+    }
+  ]
+}
+```

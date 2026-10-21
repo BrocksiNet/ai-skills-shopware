@@ -1,0 +1,39 @@
+diff --git a/src/Resources/snippet/de_DE/storefront.de-DE.json b/src/Resources/snippet/de_DE/storefront.de-DE.json
+index 85248f0..cc64484 100644
+--- a/src/Resources/snippet/de_DE/storefront.de-DE.json
++++ b/src/Resources/snippet/de_DE/storefront.de-DE.json
+@@ -1,7 +1,7 @@
+ {
+     "swag-loyalty": {
+         "badge": {
+-            "label": "Treuepunkte",
++            "title": "Treuepunkte",
+             "tooltip": "Punkte, die du mit diesem Kauf sammelst"
+         }
+     }
+diff --git a/src/Resources/snippet/en_GB/storefront.en-GB.json b/src/Resources/snippet/en_GB/storefront.en-GB.json
+index be3d9c8..3675ec2 100644
+--- a/src/Resources/snippet/en_GB/storefront.en-GB.json
++++ b/src/Resources/snippet/en_GB/storefront.en-GB.json
+@@ -1,7 +1,7 @@
+ {
+     "swag-loyalty": {
+         "badge": {
+-            "label": "Loyalty points",
++            "title": "Loyalty points",
+             "tooltip": "Points you collect with this purchase"
+         }
+     }
+diff --git a/src/Resources/views/storefront/component/loyalty/badge.html.twig b/src/Resources/views/storefront/component/loyalty/badge.html.twig
+index 2a4db9d..dcc3a38 100644
+--- a/src/Resources/views/storefront/component/loyalty/badge.html.twig
++++ b/src/Resources/views/storefront/component/loyalty/badge.html.twig
+@@ -1,7 +1,7 @@
+ {% block swag_loyalty_badge %}
+     <div class="swag-loyalty-badge" data-swag-loyalty-badge="true">
+         {% block swag_loyalty_badge_label %}
+-            <span class="swag-loyalty-badge__label">{{ 'swag-loyalty.badge.label'|trans|sw_sanitize }}</span>
++            <span class="swag-loyalty-badge__label">{{ 'swag-loyalty.badge.title'|trans|sw_sanitize }}</span>
+         {% endblock %}
+ 
+         {% block swag_loyalty_badge_tooltip %}

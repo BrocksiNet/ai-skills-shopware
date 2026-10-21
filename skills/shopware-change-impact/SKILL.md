@@ -30,26 +30,26 @@ change is acceptable for everyone else.
 
 ## Hard guardrails
 
-1. **Do not approve "it works."** A green test and a matching acceptance
+1. **IMP-001** **Do not approve "it works."** A green test and a matching acceptance
    criterion are the start of the review, not the end.
-2. **A shared cache key is not a private feature.** A new request header,
+2. **IMP-002** **A shared cache key is not a private feature.** A new request header,
    cookie, query parameter, or `Vary` entry on a route that other clients
    already cache changes the cache for those clients too.
-3. **The people who do not use the feature must not pay for it.** Extra data
+3. **IMP-003** **The people who do not use the feature must not pay for it.** Extra data
    loaded on checkout, cart, or a listing runs for every customer unless the
    work is skipped when the feature is off.
-4. **One feature does not outweigh a slower shared path.** If the only design
+4. **IMP-004** **One feature does not outweigh a slower shared path.** If the only design
    that "completes" the ticket slows checkout or listings for every shop, stop
    and narrow it. Say that out loud.
-5. **Easier beats more complete.** A new setting, header, or ritual that only
+5. **IMP-005** **Easier beats more complete.** A new setting, header, or ritual that only
    makes the feature work has made the shop harder. Prefer the change that
    removes a step.
-6. **A local asset test does not prove production asset loading.** Theme
+6. **IMP-006** **A local asset test does not prove production asset loading.** Theme
    assets, media, and compiled storefront files are often on remote storage
    (S3 or another object store). A loading, copy, or URL change that only
    passes against the local `public/` directory still breaks every shop whose
    filesystem is remote.
-7. **There is one compiled container.** An `if` in the Symfony container
+7. **IMP-007** **There is one compiled container.** An `if` in the Symfony container
    (service definition, compiler pass, `when@`, or a feature-flag condition)
    that builds a different container per flag or per condition cannot ship.
    SaaS runs one container for every shop. Feature differences are runtime

@@ -39,6 +39,10 @@ Read only the reference that matches the task or the files it changes:
 | [`release-notes-and-adr.md`](references/release-notes-and-adr.md) | The change needs RELEASE_INFO, UPGRADE or an ADR. | `RELEASE_INFO-*.md`, `UPGRADE-*.md`, … |
 | [`static-analysis-baseline.md`](references/static-analysis-baseline.md) | You touch the PHPStan baseline. | `phpstan-baseline.neon`, `phpstan*.neon`, … |
 | [`platform-architecture.md`](references/platform-architecture.md) | You cross a bundle boundary or add a listener or migration. | `src/Core/Migration/**/Migration*.php`, `use Shopware\(Storefront\|Administration)\`, … |
+| [`removals-and-shims.md`](references/removals-and-shims.md) | You deprecate or remove an API, or add code that only lives until the next major. | `@deprecated tag:v`, … |
+| [`bc-data-and-config.md`](references/bc-data-and-config.md) | You change API flags or associations of a definition, a feature flag, a config default or a console command. | `Resources/config/packages/*.yaml`, `feature.yaml`, `new ApiAware(`, … |
+| [`platform-scope.md`](references/platform-scope.md) | A change adds an option, an environment probe, or code for one product or hosting setup. | `getenv(`, … |
+| [`asset-lifetime.md`](references/asset-lifetime.md) | Code deletes, moves or overwrites theme files, media or thumbnails, or schedules their cleanup. | `UnusedThemeDirectoryDeleter`, … |
 <!-- routes:end -->
 
 ## Hard guardrails (refuse rather than violate)

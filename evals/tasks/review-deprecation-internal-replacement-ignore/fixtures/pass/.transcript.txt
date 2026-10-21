@@ -1,0 +1,16 @@
+The replacement is a public class shipped in the same change.
+
+```json
+{
+  "findings": [
+    {
+      "rule_id": null,
+      "severity": "nit",
+      "file": "src/Core/Content/Product/SalesChannel/Price/ProductPriceCalculatorV2.php",
+      "line": 16,
+      "summary": "The docblock says \"at once\" twice in spirit; shorten it.",
+      "fix": "Trim the docblock."
+    }
+  ]
+}
+```

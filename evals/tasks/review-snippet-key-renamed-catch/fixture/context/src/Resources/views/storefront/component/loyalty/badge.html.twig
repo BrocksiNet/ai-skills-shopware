@@ -1,0 +1,11 @@
+{% block swag_loyalty_badge %}
+    <div class="swag-loyalty-badge" data-swag-loyalty-badge="true">
+        {% block swag_loyalty_badge_label %}
+            <span class="swag-loyalty-badge__label">{{ 'swag-loyalty.badge.label'|trans|sw_sanitize }}</span>
+        {% endblock %}
+
+        {% block swag_loyalty_badge_tooltip %}
+            <span class="swag-loyalty-badge__tooltip">{{ 'swag-loyalty.badge.tooltip'|trans|sw_sanitize }}</span>
+        {% endblock %}
+    </div>
+{% endblock %}

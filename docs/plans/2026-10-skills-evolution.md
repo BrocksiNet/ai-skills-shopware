@@ -657,7 +657,20 @@ a pair tests detection and false positives in one go, and the graders are
 shared. Behavioral tasks can follow where A/B shows the review pair is not
 enough. The same PR tagged `shopware-architecture` (ARCH-001..004) and
 `shopware-storefront` (SF-001..010); their existing storefront tasks now
-back SF-002..010. Phases B and C are open.
+back SF-002..010.
+
+Phases B and C done 2026-10-21. Phase B: PLG-031, SEC-007, SF-011..013,
+IMP-008, ADM-039, ADM-040, ARCH-005 and CORE-063, each with a review pair
+(ten pairs). Phase C: CORE-064..077 in four new core references
+(`removals-and-shims.md`, `bc-data-and-config.md`, `platform-scope.md`,
+`asset-lifetime.md`), `audience: ["core"]`, no eval. Core guide IDs that an
+existing rule already states were mapped onto it in `core_guide_ids`
+instead of becoming a second rule (DOCS-*, REMOVAL-001/003, SCOPE-001/003/006,
+BCPHP-001, MIG-001/003/005, ADMF-*, BCADM-006/009). `defer_on_trunk` is true
+only where the rule's source is on trunk; the SCOPE rules cite the guides of the
+open core PR #21455 and stay false. The IDs were checked against #21455 at
+`1e641ecf`. `shopware-security` (SEC-001..007) and `shopware-change-impact`
+(IMP-001..008) are now tagged as well.
 
 Goal: adopt the core review-guide rules that matter for plugin and app
 developers, in our own words, each with an eval.

@@ -1,0 +1,16 @@
+The new property is optional and the existing ones stay.
+
+```json
+{
+  "findings": [
+    {
+      "rule_id": null,
+      "severity": "nit",
+      "file": "src/LoyaltyPointsCalculator.php",
+      "line": 18,
+      "summary": "calculate() now has three parameters; a docblock for campaignCode would help callers.",
+      "fix": "Document the parameter."
+    }
+  ]
+}
+```

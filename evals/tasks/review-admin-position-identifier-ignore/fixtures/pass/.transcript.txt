@@ -1,0 +1,7 @@
+A new position identifier is additive; the existing one stays.
+
+```json
+{
+  "findings": []
+}
+```

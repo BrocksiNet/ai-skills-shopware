@@ -1,0 +1,22 @@
+```json
+{
+  "findings": [
+    {
+      "rule_id": "SEC-007",
+      "severity": "nit",
+      "file": "src/StoreApi/RewardListRoute.php",
+      "line": 11,
+      "summary": "The route defaults could be sorted alphabetically.",
+      "fix": "Sort the keys."
+    },
+    {
+      "rule_id": "SEC-003",
+      "severity": "major",
+      "file": "src/StoreApi/RewardListRoute.php",
+      "line": 11,
+      "summary": "The rewards route now requires login, which breaks guest clients.",
+      "fix": "Add an ACL privilege."
+    }
+  ]
+}
+```

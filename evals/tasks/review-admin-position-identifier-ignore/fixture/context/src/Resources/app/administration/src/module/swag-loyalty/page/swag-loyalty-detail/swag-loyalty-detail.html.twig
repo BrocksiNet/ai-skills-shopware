@@ -1,0 +1,19 @@
+{% block swag_loyalty_detail %}
+<sw-page class="swag-loyalty-detail">
+    {% block swag_loyalty_detail_content %}
+    <template #content>
+        <sw-card-view>
+            {% block swag_loyalty_detail_balance %}
+            <swag-loyalty-card :customer-id="customerId" />
+            {% endblock %}
+
+            {% block swag_loyalty_detail_sidebar %}
+            <sw-extension-component-section
+                position-identifier="swag-loyalty-detail-sidebar"
+            />
+            {% endblock %}
+        </sw-card-view>
+    </template>
+    {% endblock %}
+</sw-page>
+{% endblock %}

@@ -1,0 +1,13 @@
+{% block swag_loyalty_card %}
+<mt-card
+    class="swag-loyalty-card"
+    :title="$tc('swag-loyalty.card.title')"
+    :is-loading="isLoading"
+>
+    {% block swag_loyalty_card_points %}
+    <p class="swag-loyalty-card__points">
+        {{ $tc('swag-loyalty.card.points', points, { points }) }}
+    </p>
+    {% endblock %}
+</mt-card>
+{% endblock %}

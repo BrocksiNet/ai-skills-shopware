@@ -1,0 +1,109 @@
+diff --git a/src/Resources/app/storefront/src/main.js b/src/Resources/app/storefront/src/main.js
+new file mode 100644
+index 0000000..cfca51c
+--- /dev/null
++++ b/src/Resources/app/storefront/src/main.js
+@@ -0,0 +1,3 @@
++import SwagLoyaltyPointsPlugin from './swag-loyalty-points/swag-loyalty-points.plugin';
++
++window.PluginManager.register('SwagLoyaltyPoints', SwagLoyaltyPointsPlugin, '[data-swag-loyalty-points]');
+diff --git a/src/Resources/app/storefront/src/swag-loyalty-points/swag-loyalty-points.plugin.js b/src/Resources/app/storefront/src/swag-loyalty-points/swag-loyalty-points.plugin.js
+new file mode 100644
+index 0000000..b914976
+--- /dev/null
++++ b/src/Resources/app/storefront/src/swag-loyalty-points/swag-loyalty-points.plugin.js
+@@ -0,0 +1,23 @@
++import Plugin from 'src/plugin-system/plugin.class';
++
++/**
++ * Loads the customer's balance after first paint, so the product page HTML
++ * stays the same for everyone and stays in the HTTP cache.
++ */
++export default class SwagLoyaltyPointsPlugin extends Plugin {
++    static options = {
++        url: '',
++    };
++
++    async init() {
++        const response = await fetch(this.options.url, {
++            headers: { 'sw-access-key': window.accessKey, 'sw-context-token': window.contextToken },
++        });
++        if (!response.ok) {
++            return;
++        }
++
++        const balance = await response.json();
++        this.el.textContent = balance.points;
++    }
++}
+diff --git a/src/Resources/config/services.php b/src/Resources/config/services.php
+index 6a0f306..02a639e 100644
+--- a/src/Resources/config/services.php
++++ b/src/Resources/config/services.php
+@@ -3,11 +3,9 @@
+ namespace Symfony\Component\DependencyInjection\Loader\Configurator;
+ 
+ use Swag\Loyalty\LoyaltyLedger;
+-use Swag\Loyalty\Subscriber\LoyaltyPageSubscriber;
+ 
+ return static function (ContainerConfigurator $configurator): void {
+     $services = $configurator->services()->defaults()->autowire()->autoconfigure();
+ 
+     $services->set(LoyaltyLedger::class);
+-    $services->set(LoyaltyPageSubscriber::class);
+ };
+diff --git a/src/Resources/views/storefront/component/loyalty/points.html.twig b/src/Resources/views/storefront/component/loyalty/points.html.twig
+index b90cc65..16acb72 100644
+--- a/src/Resources/views/storefront/component/loyalty/points.html.twig
++++ b/src/Resources/views/storefront/component/loyalty/points.html.twig
+@@ -1,7 +1,7 @@
+ {% block swag_loyalty_points %}
+-    {% if page.extensions.swagLoyalty %}
+-        <p class="swag-loyalty-points">
+-            {{ 'swag-loyalty.points.balance'|trans({'%points%': page.extensions.swagLoyalty.points})|sw_sanitize }}
+-        </p>
+-    {% endif %}
++    {# The balance is personal; the page stays cacheable and the plugin loads it from the Store API. #}
++    <p class="swag-loyalty-points"
++       data-swag-loyalty-points="true"
++       data-swag-loyalty-points-options="{{ { url: path('store-api.loyalty.balance') }|json_encode|escape('html_attr') }}">
++    </p>
+ {% endblock %}
+diff --git a/src/Subscriber/LoyaltyPageSubscriber.php b/src/Subscriber/LoyaltyPageSubscriber.php
+deleted file mode 100644
+index b060cdd..0000000
+--- a/src/Subscriber/LoyaltyPageSubscriber.php
++++ /dev/null
+@@ -1,32 +0,0 @@
+-<?php declare(strict_types=1);
+-
+-namespace Swag\Loyalty\Subscriber;
+-
+-use Shopware\Core\Framework\Struct\ArrayStruct;
+-use Shopware\Storefront\Page\Product\ProductPageLoadedEvent;
+-use Swag\Loyalty\LoyaltyLedger;
+-use Symfony\Component\EventDispatcher\EventSubscriberInterface;
+-
+-class LoyaltyPageSubscriber implements EventSubscriberInterface
+-{
+-    public function __construct(private readonly LoyaltyLedger $ledger)
+-    {
+-    }
+-
+-    public static function getSubscribedEvents(): array
+-    {
+-        return [ProductPageLoadedEvent::class => 'onProductPageLoaded'];
+-    }
+-
+-    public function onProductPageLoaded(ProductPageLoadedEvent $event): void
+-    {
+-        $customer = $event->getSalesChannelContext()->getCustomer();
+-        if ($customer === null) {
+-            return;
+-        }
+-
+-        $event->getPage()->addExtension('swagLoyalty', new ArrayStruct([
+-            'points' => $this->ledger->points($customer->getId(), $event->getContext()),
+-        ]));
+-    }
+-}

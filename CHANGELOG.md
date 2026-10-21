@@ -10,6 +10,24 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- WP7 phases B and C. Ten new review pairs, each backing a new rule:
+  - PLG-031: never make an existing API route stricter (`review-store-api-stricter-request-*`)
+  - SEC-007: do not change access or cache defaults of a released route (`review-route-defaults-changed-*`)
+  - SF-011, SF-012, SF-013: JS plugin options and events, snippet keys and
+    theme fields are public API; never switch the HTTP cache off from the side
+  - IMP-008: a cache key holds every input (`review-cache-key-missing-input-*`)
+  - ADM-039, ADM-040: Administration component API and position identifiers,
+    in the new `shopware-admin-js` reference `extension-api.md`
+  - ARCH-005: extension event properties are the contract; no whole `Request`
+  - CORE-063: a deprecation points at a replacement extensions can use today
+- Core-only rules CORE-064..077 (shims, data and config BC, CLI, platform
+  scope, asset lifetime) in four new `shopware-core-development` references,
+  without evals (`audience: ["core"]`).
+- `core_guide_ids` now map the core review-guide IDs of #21455 onto existing
+  rules where they already state the rule.
+- `shopware-security` (SEC-001..007) and `shopware-change-impact`
+  (IMP-001..008) carry rule IDs; their existing tasks back SEC-001, SEC-003,
+  SEC-004, IMP-001, IMP-002, IMP-006 and IMP-007.
 - Eight more review eval pairs (plan WP5 done, WP7 phase A): planted
   problem in `-catch`, clean look-alike in `-ignore`, graded by
   `tools/bin/grade-findings.ts`.

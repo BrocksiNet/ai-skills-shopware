@@ -1,0 +1,22 @@
+```json
+{
+  "findings": [
+    {
+      "rule_id": "SF-013",
+      "severity": "nit",
+      "file": "src/Subscriber/LoyaltyNoCacheSubscriber.php",
+      "line": 26,
+      "summary": "The listener priority -2000 is a magic number.",
+      "fix": "Name it."
+    },
+    {
+      "rule_id": "SF-005",
+      "severity": "major",
+      "file": "src/Subscriber/LoyaltyNoCacheSubscriber.php",
+      "line": 26,
+      "summary": "Logged-in customers now get every page with no-store.",
+      "fix": "Use a JS plugin for the AJAX call."
+    }
+  ]
+}
+```

@@ -1,0 +1,16 @@
+Visibility and prices differ per sales channel and customer group; the first caller decides what everyone sees for an hour.
+
+```json
+{
+  "findings": [
+    {
+      "rule_id": null,
+      "severity": "major",
+      "file": "src/Recommendation/RecommendationLoader.php",
+      "line": 32,
+      "summary": "The cache key only contains the product id, but the result also depends on the limit, sales channel, language and customer group, so one sales channel is served the recommendations cached for another.",
+      "fix": "Put every input into the key, e.g. hash productId, limit, sales channel, language and customer group."
+    }
+  ]
+}
+```

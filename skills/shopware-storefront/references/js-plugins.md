@@ -21,6 +21,16 @@ window.PluginManager.register('ScrollHint', ScrollHintPlugin, '[data-scroll-hint
 - Selectors are `data-*` attributes. Do not bind new behavior to random
   Bootstrap class names that themes override.
 
+## A shipped JS plugin is public API
+
+- **SF-011** **Keep the registered name, public methods, emitted events and
+  `static options` of a released JS plugin.** Themes set options through
+  `data-*-options` attributes, overrides call methods with `super`, and other
+  plugins subscribe to events. To rename, read the old option as a fallback,
+  emit both events, and warn where the old name is used (not only in
+  `init()`), until the next major. Phase out a helper other plugins import
+  instead of deleting it.
+
 ## Stay inside the plugin system
 
 - Do not add a second bundler or a `<script>` tag in Twig for feature JS

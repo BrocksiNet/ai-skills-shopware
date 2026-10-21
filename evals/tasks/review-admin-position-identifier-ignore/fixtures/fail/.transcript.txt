@@ -1,0 +1,14 @@
+```json
+{
+  "findings": [
+    {
+      "rule_id": null,
+      "severity": "minor",
+      "file": "src/Resources/app/administration/src/module/swag-loyalty/page/swag-loyalty-detail/swag-loyalty-detail.html.twig",
+      "line": 18,
+      "summary": "Adding the swag-loyalty-detail-history position identifier changes where apps render and breaks existing extensions on the detail page.",
+      "fix": "Reuse the sidebar identifier instead."
+    }
+  ]
+}
+```

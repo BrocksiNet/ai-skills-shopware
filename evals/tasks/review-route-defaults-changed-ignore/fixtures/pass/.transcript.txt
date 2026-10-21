@@ -1,0 +1,7 @@
+A new route with its own login requirement; the existing route is unchanged.
+
+```json
+{
+  "findings": []
+}
+```

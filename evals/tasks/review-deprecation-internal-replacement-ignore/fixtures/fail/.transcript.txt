@@ -1,0 +1,14 @@
+```json
+{
+  "findings": [
+    {
+      "rule_id": null,
+      "severity": "minor",
+      "file": "src/Core/Content/Product/SalesChannel/Price/ProductPriceCalculatorV2.php",
+      "line": 9,
+      "summary": "ProductPriceCalculatorV2 should be marked @internal until it is stable; extensions cannot rely on it yet.",
+      "fix": "Add @internal."
+    }
+  ]
+}
+```

@@ -21,17 +21,17 @@ Read only the reference that matches the task or the files it changes:
 | Read | When | Or the change touches |
 | ---- | ---- | --------------------- |
 | [`secrets-and-config.md`](references/secrets-and-config.md) | Code reads a secret, an access key or a config value. | `.env`, `.env.*`, `sw-access-key\|SW_ACCESS_KEY`, … |
-| [`api-acl-and-input.md`](references/api-acl-and-input.md) | You add a route, an ACL privilege or user input handling. | `#[Route(`, … |
+| [`api-acl-and-input.md`](references/api-acl-and-input.md) | You add or change a route, an ACL privilege or user input handling. | `#[Route(`, … |
 | [`apps-and-webhooks.md`](references/apps-and-webhooks.md) | An app or webhook sends or receives data. | `manifest.xml`, `shopware-(shop\|app)-signature`, … |
 <!-- routes:end -->
 
 ## Hard guardrails
 
-1. **Never commit** sales channel access keys, app secrets, webhook signing keys,
+1. **SEC-001** **Never commit** sales channel access keys, app secrets, webhook signing keys,
    or Admin API passwords in source, fixtures committed to git, or skill examples.
-2. **Never log** secrets or full authorization headers.
-3. **Store-API and Admin routes** must declare appropriate ACL / login requirements.
-4. **App manifests** use least privilege — no wildcard permissions without justification.
+2. **SEC-002** **Never log** secrets or full authorization headers.
+3. **SEC-003** **Store-API and Admin routes** must declare appropriate ACL / login requirements.
+4. **SEC-004** **App manifests** use least privilege — no wildcard permissions without justification.
 
 ## Definition of done
 

@@ -1,0 +1,57 @@
+diff --git a/src/Event/LoyaltyPointsCalculateEvent.php b/src/Event/LoyaltyPointsCalculateEvent.php
+index 5197e76..9d557ca 100644
+--- a/src/Event/LoyaltyPointsCalculateEvent.php
++++ b/src/Event/LoyaltyPointsCalculateEvent.php
+@@ -4,10 +4,12 @@ namespace Swag\Loyalty\Event;
+ 
+ use Shopware\Core\Checkout\Cart\Cart;
+ use Shopware\Core\Framework\Context;
++use Symfony\Component\HttpFoundation\Request;
+ use Symfony\Contracts\EventDispatcher\Event;
+ 
+ /**
+  * Dispatched before the points for a cart are stored. Listeners may change `points`.
++ * Read the sales channel, customer group or any campaign parameter from `request`.
+  */
+ final class LoyaltyPointsCalculateEvent extends Event
+ {
+@@ -16,8 +18,7 @@ final class LoyaltyPointsCalculateEvent extends Event
+      */
+     public function __construct(
+         public readonly Cart $cart,
+-        public readonly string $salesChannelId,
+-        public readonly ?string $customerGroupId,
++        public readonly Request $request,
+         public readonly Context $context,
+         public int $points,
+     ) {
+diff --git a/src/LoyaltyPointsCalculator.php b/src/LoyaltyPointsCalculator.php
+index acb18fe..ffd7d1a 100644
+--- a/src/LoyaltyPointsCalculator.php
++++ b/src/LoyaltyPointsCalculator.php
+@@ -5,6 +5,7 @@ namespace Swag\Loyalty;
+ use Shopware\Core\Checkout\Cart\Cart;
+ use Shopware\Core\System\SalesChannel\SalesChannelContext;
+ use Swag\Loyalty\Event\LoyaltyPointsCalculateEvent;
++use Symfony\Component\HttpFoundation\RequestStack;
+ use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
+ 
+ class LoyaltyPointsCalculator
+@@ -12,6 +13,7 @@ class LoyaltyPointsCalculator
+     public function __construct(
+         private readonly LoyaltyConfigReader $config,
+         private readonly EventDispatcherInterface $dispatcher,
++        private readonly RequestStack $requestStack,
+     ) {
+     }
+ 
+@@ -22,8 +24,7 @@ class LoyaltyPointsCalculator
+ 
+         $event = new LoyaltyPointsCalculateEvent(
+             $cart,
+-            $context->getSalesChannelId(),
+-            $context->getCustomer()?->getGroupId(),
++            $this->requestStack->getMainRequest() ?? new \Symfony\Component\HttpFoundation\Request(),
+             $context->getContext(),
+             $points,
+         );

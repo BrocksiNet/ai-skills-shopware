@@ -1,0 +1,14 @@
+```json
+{
+  "findings": [
+    {
+      "rule_id": null,
+      "severity": "minor",
+      "file": "src/Resources/app/storefront/src/swag-loyalty-points/swag-loyalty-points.plugin.js",
+      "line": 14,
+      "summary": "The balance request bypasses the HTTP cache for logged-in customers.",
+      "fix": "Render the balance in the page instead."
+    }
+  ]
+}
+```

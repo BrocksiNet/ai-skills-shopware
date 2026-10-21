@@ -1,0 +1,25 @@
+diff --git a/src/StoreApi/RewardListRoute.php b/src/StoreApi/RewardListRoute.php
+index 3a1920b..72c9744 100644
+--- a/src/StoreApi/RewardListRoute.php
++++ b/src/StoreApi/RewardListRoute.php
+@@ -8,7 +8,7 @@ use Shopware\Core\System\SalesChannel\StoreApiResponse;
+ use Swag\Loyalty\RewardCatalog;
+ use Symfony\Component\Routing\Attribute\Route;
+ 
+-#[Route(defaults: ['_routeScope' => ['store-api'], '_httpCache' => true])]
++#[Route(defaults: ['_routeScope' => ['store-api'], '_loginRequired' => true])]
+ #[Package('checkout')]
+ class RewardListRoute
+ {
+@@ -19,6 +19,10 @@ class RewardListRoute
+     #[Route(path: '/store-api/swag-loyalty/rewards', name: 'store-api.swag-loyalty.rewards', methods: ['GET', 'POST'])]
+     public function load(SalesChannelContext $context): StoreApiResponse
+     {
+-        return new StoreApiResponse($this->catalog->rewards($context));
++        $customer = $context->getCustomer();
++        \assert($customer !== null);
++
++        // Only show rewards the customer can redeem with their current points.
++        return new StoreApiResponse($this->catalog->redeemable($customer->getId(), $context));
+     }
+ }

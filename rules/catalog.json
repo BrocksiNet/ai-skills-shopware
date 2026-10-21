@@ -1004,7 +1004,9 @@
       "since": "2026-10-20",
       "eval": null,
       "eval_reason": "Documented only; no eval yet.",
-      "core_guide_ids": [],
+      "core_guide_ids": [
+        "MIG-005"
+      ],
       "audience": [
         "plugin"
       ],
@@ -1019,7 +1021,9 @@
       "since": "2026-10-20",
       "eval": null,
       "eval_reason": "Documented only; no eval yet.",
-      "core_guide_ids": [],
+      "core_guide_ids": [
+        "MIG-001"
+      ],
       "audience": [
         "plugin"
       ],
@@ -1034,7 +1038,9 @@
       "since": "2026-10-20",
       "eval": null,
       "eval_reason": "Documented only; no eval yet.",
-      "core_guide_ids": [],
+      "core_guide_ids": [
+        "MIG-003"
+      ],
       "audience": [
         "plugin"
       ],
@@ -1108,8 +1114,7 @@
       "since": "2026-10-21",
       "eval": "review-store-api-contract-catch",
       "core_guide_ids": [
-        "BCAPI-001",
-        "BCAPI-002"
+        "BCAPI-001"
       ],
       "audience": [
         "plugin",
@@ -1163,6 +1168,26 @@
       ],
       "audience": [
         "plugin"
+      ],
+      "defer_on_trunk": false
+    },
+    {
+      "id": "PLG-031",
+      "skill": "shopware-plugin-development",
+      "file": "skills/shopware-plugin-development/references/api-contracts.md",
+      "title": "Never make an existing API route stricter",
+      "status": "active",
+      "since": "2026-10-21",
+      "eval": "review-store-api-stricter-request-catch",
+      "core_guide_ids": [
+        "BCAPI-001",
+        "BCAPI-002",
+        "BCAPI-008",
+        "BCDATA-001"
+      ],
+      "audience": [
+        "plugin",
+        "app"
       ],
       "defer_on_trunk": false
     },
@@ -1308,7 +1333,9 @@
       "status": "active",
       "since": "2026-10-20",
       "eval": "store-api-openapi-required",
-      "core_guide_ids": [],
+      "core_guide_ids": [
+        "BCAPI-003"
+      ],
       "audience": [
         "core",
         "plugin"
@@ -1629,7 +1656,9 @@
       "since": "2026-10-20",
       "eval": null,
       "eval_reason": "Process rule; core shopware-change-scope owns it on trunk.",
-      "core_guide_ids": [],
+      "core_guide_ids": [
+        "SCOPE-003"
+      ],
       "audience": [
         "core",
         "plugin"
@@ -1726,7 +1755,8 @@
       "eval": "review-queue-inline-fallback-catch",
       "core_guide_ids": [
         "QUEUE-001",
-        "QUEUE-003"
+        "QUEUE-003",
+        "SCOPE-001"
       ],
       "audience": [
         "core",
@@ -1758,7 +1788,10 @@
       "since": "2026-10-20",
       "eval": null,
       "eval_reason": "Documented only; no eval yet.",
-      "core_guide_ids": [],
+      "core_guide_ids": [
+        "REMOVAL-001",
+        "BCPHP-001"
+      ],
       "audience": [
         "core"
       ],
@@ -1773,7 +1806,11 @@
       "since": "2026-10-20",
       "eval": null,
       "eval_reason": "Documented only; no eval yet.",
-      "core_guide_ids": [],
+      "core_guide_ids": [
+        "DOCS-002",
+        "DOCS-006",
+        "DOCS-009"
+      ],
       "audience": [
         "core"
       ],
@@ -1847,7 +1884,9 @@
       "since": "2026-10-20",
       "eval": null,
       "eval_reason": "Style rule; core shopware-php-code owns it on trunk.",
-      "core_guide_ids": [],
+      "core_guide_ids": [
+        "BCAPI-003"
+      ],
       "audience": [
         "core"
       ],
@@ -1888,7 +1927,9 @@
       "since": "2026-10-20",
       "eval": null,
       "eval_reason": "Documented only; no eval yet.",
-      "core_guide_ids": [],
+      "core_guide_ids": [
+        "DOCS-007"
+      ],
       "audience": [
         "core"
       ],
@@ -2025,7 +2066,9 @@
       "since": "2026-10-20",
       "eval": null,
       "eval_reason": "Documented only; no eval yet.",
-      "core_guide_ids": [],
+      "core_guide_ids": [
+        "BCPHP-004"
+      ],
       "audience": [
         "core"
       ],
@@ -2066,7 +2109,9 @@
       "since": "2026-10-20",
       "eval": null,
       "eval_reason": "Documented only; no eval yet.",
-      "core_guide_ids": [],
+      "core_guide_ids": [
+        "REMOVAL-003"
+      ],
       "audience": [
         "core"
       ],
@@ -2240,7 +2285,9 @@
       "since": "2026-10-20",
       "eval": null,
       "eval_reason": "Documented only; no eval yet.",
-      "core_guide_ids": [],
+      "core_guide_ids": [
+        "SCOPE-006"
+      ],
       "audience": [
         "core"
       ],
@@ -2390,7 +2437,9 @@
       "since": "2026-10-20",
       "eval": null,
       "eval_reason": "Documented only; no eval yet.",
-      "core_guide_ids": [],
+      "core_guide_ids": [
+        "MIG-003"
+      ],
       "audience": [
         "core"
       ],
@@ -2437,7 +2486,9 @@
       "status": "active",
       "since": "2026-10-20",
       "eval": "upgrade-entry-past-tense",
-      "core_guide_ids": [],
+      "core_guide_ids": [
+        "DOCS-004"
+      ],
       "audience": [
         "core"
       ],
@@ -2452,7 +2503,9 @@
       "since": "2026-10-20",
       "eval": null,
       "eval_reason": "Documented only; no eval yet.",
-      "core_guide_ids": [],
+      "core_guide_ids": [
+        "DOCS-004"
+      ],
       "audience": [
         "core"
       ],
@@ -2482,7 +2535,10 @@
       "since": "2026-10-20",
       "eval": null,
       "eval_reason": "Documented only; no eval yet.",
-      "core_guide_ids": [],
+      "core_guide_ids": [
+        "DOCS-001",
+        "DOCS-005"
+      ],
       "audience": [
         "core"
       ],
@@ -2497,7 +2553,9 @@
       "since": "2026-10-20",
       "eval": null,
       "eval_reason": "Documented only; no eval yet.",
-      "core_guide_ids": [],
+      "core_guide_ids": [
+        "DOCS-008"
+      ],
       "audience": [
         "core"
       ],
@@ -2511,7 +2569,9 @@
       "status": "active",
       "since": "2026-10-20",
       "eval": "release-info-no-duplicate-heading",
-      "core_guide_ids": [],
+      "core_guide_ids": [
+        "DOCS-003"
+      ],
       "audience": [
         "core"
       ],
@@ -2525,7 +2585,9 @@
       "status": "active",
       "since": "2026-10-20",
       "eval": "release-info-no-duplicate-heading",
-      "core_guide_ids": [],
+      "core_guide_ids": [
+        "DOCS-008"
+      ],
       "audience": [
         "core"
       ],
@@ -2655,7 +2717,9 @@
       "since": "2026-10-20",
       "eval": null,
       "eval_reason": "Documented only; no eval yet.",
-      "core_guide_ids": [],
+      "core_guide_ids": [
+        "BCEXT-009"
+      ],
       "audience": [
         "core"
       ],
@@ -2772,6 +2836,297 @@
         "core"
       ],
       "defer_on_trunk": false
+    },
+    {
+      "id": "CORE-063",
+      "skill": "shopware-core-development",
+      "file": "skills/shopware-core-development/references/removals-and-shims.md",
+      "title": "A deprecation points at a replacement extensions can use today",
+      "status": "active",
+      "since": "2026-10-21",
+      "eval": "review-deprecation-internal-replacement-catch",
+      "core_guide_ids": [
+        "BCPHP-004"
+      ],
+      "audience": [
+        "core",
+        "plugin"
+      ],
+      "defer_on_trunk": true,
+      "trunk": {
+        "source": "coding-guidelines/core/backward-compatibility.md#deprecation-and-announcement"
+      }
+    },
+    {
+      "id": "CORE-064",
+      "skill": "shopware-core-development",
+      "file": "skills/shopware-core-development/references/removals-and-shims.md",
+      "title": "Ask for a shim before a break",
+      "status": "active",
+      "since": "2026-10-21",
+      "eval": null,
+      "eval_reason": "Core-only (WP7 phase C); core's review guide covers it on trunk.",
+      "core_guide_ids": [
+        "REMOVAL-002"
+      ],
+      "audience": [
+        "core"
+      ],
+      "defer_on_trunk": true,
+      "trunk": {
+        "source": "coding-guidelines/core/backward-compatibility.md#when-a-break-is-acceptable"
+      }
+    },
+    {
+      "id": "CORE-065",
+      "skill": "shopware-core-development",
+      "file": "skills/shopware-core-development/references/removals-and-shims.md",
+      "title": "Mark or gate code that ends at the major when you add it",
+      "status": "active",
+      "since": "2026-10-21",
+      "eval": null,
+      "eval_reason": "Core-only (WP7 phase C); core's review guide covers it on trunk.",
+      "core_guide_ids": [
+        "REMOVAL-004"
+      ],
+      "audience": [
+        "core"
+      ],
+      "defer_on_trunk": true,
+      "trunk": {
+        "source": ".agents/skills/shopware-php-code/SKILL.md#deprecations"
+      }
+    },
+    {
+      "id": "CORE-066",
+      "skill": "shopware-core-development",
+      "file": "skills/shopware-core-development/references/bc-data-and-config.md",
+      "title": "Keep the API shape of a definition",
+      "status": "active",
+      "since": "2026-10-21",
+      "eval": null,
+      "eval_reason": "Core-only (WP7 phase C); core's review guide covers it on trunk.",
+      "core_guide_ids": [
+        "BCDATA-002"
+      ],
+      "audience": [
+        "core"
+      ],
+      "defer_on_trunk": true,
+      "trunk": {
+        "source": "coding-guidelines/core/backward-compatibility.md#store-and-admin-api"
+      }
+    },
+    {
+      "id": "CORE-067",
+      "skill": "shopware-core-development",
+      "file": "skills/shopware-core-development/references/bc-data-and-config.md",
+      "title": "Do not drop an association or switch off autoload in a minor",
+      "status": "active",
+      "since": "2026-10-21",
+      "eval": null,
+      "eval_reason": "Core-only (WP7 phase C); core's review guide covers it on trunk.",
+      "core_guide_ids": [
+        "BCDATA-003"
+      ],
+      "audience": [
+        "core"
+      ],
+      "defer_on_trunk": true,
+      "trunk": {
+        "source": "adr/2023-02-02-deprecate-autoload-true-in-dal-associations.md"
+      }
+    },
+    {
+      "id": "CORE-068",
+      "skill": "shopware-core-development",
+      "file": "skills/shopware-core-development/references/bc-data-and-config.md",
+      "title": "A feature flag keeps its default and name within a major",
+      "status": "active",
+      "since": "2026-10-21",
+      "eval": null,
+      "eval_reason": "Core-only (WP7 phase C); core's review guide covers it on trunk.",
+      "core_guide_ids": [
+        "BCDATA-007"
+      ],
+      "audience": [
+        "core"
+      ],
+      "defer_on_trunk": true,
+      "trunk": {
+        "source": "coding-guidelines/core/backward-compatibility.md#flags-and-experimental"
+      }
+    },
+    {
+      "id": "CORE-069",
+      "skill": "shopware-core-development",
+      "file": "skills/shopware-core-development/references/bc-data-and-config.md",
+      "title": "Configuration defaults, keys and environment variables stay",
+      "status": "active",
+      "since": "2026-10-21",
+      "eval": null,
+      "eval_reason": "Core-only (WP7 phase C); core's review guide covers it on trunk.",
+      "core_guide_ids": [
+        "BCDATA-008"
+      ],
+      "audience": [
+        "core"
+      ],
+      "defer_on_trunk": true,
+      "trunk": {
+        "source": "coding-guidelines/core/backward-compatibility.md#configuration-and-operations"
+      }
+    },
+    {
+      "id": "CORE-070",
+      "skill": "shopware-core-development",
+      "file": "skills/shopware-core-development/references/bc-data-and-config.md",
+      "title": "Existing command invocations keep working",
+      "status": "active",
+      "since": "2026-10-21",
+      "eval": null,
+      "eval_reason": "Core-only (WP7 phase C); core's review guide covers it on trunk.",
+      "core_guide_ids": [
+        "BCDATA-009"
+      ],
+      "audience": [
+        "core"
+      ],
+      "defer_on_trunk": true,
+      "trunk": {
+        "source": "coding-guidelines/core/backward-compatibility.md#configuration-and-operations"
+      }
+    },
+    {
+      "id": "CORE-071",
+      "skill": "shopware-core-development",
+      "file": "skills/shopware-core-development/references/bc-data-and-config.md",
+      "title": "A new configuration key ships its default and schema",
+      "status": "active",
+      "since": "2026-10-21",
+      "eval": null,
+      "eval_reason": "Core-only (WP7 phase C); core's review guide covers it on trunk.",
+      "core_guide_ids": [
+        "BCDATA-010"
+      ],
+      "audience": [
+        "core"
+      ],
+      "defer_on_trunk": true,
+      "trunk": {
+        "source": "coding-guidelines/core/backward-compatibility.md#configuration-and-operations"
+      }
+    },
+    {
+      "id": "CORE-072",
+      "skill": "shopware-core-development",
+      "file": "skills/shopware-core-development/references/platform-scope.md",
+      "title": "No option for one hosting variant",
+      "status": "active",
+      "since": "2026-10-21",
+      "eval": null,
+      "eval_reason": "Core-only (WP7 phase C); core's review guide (open #21455) covers it once merged.",
+      "core_guide_ids": [
+        "SCOPE-002"
+      ],
+      "audience": [
+        "core"
+      ],
+      "defer_on_trunk": false
+    },
+    {
+      "id": "CORE-073",
+      "skill": "shopware-core-development",
+      "file": "skills/shopware-core-development/references/platform-scope.md",
+      "title": "No silent environment probes",
+      "status": "active",
+      "since": "2026-10-21",
+      "eval": null,
+      "eval_reason": "Core-only (WP7 phase C); core's review guide (open #21455) covers it once merged.",
+      "core_guide_ids": [
+        "SCOPE-004"
+      ],
+      "audience": [
+        "core"
+      ],
+      "defer_on_trunk": false
+    },
+    {
+      "id": "CORE-074",
+      "skill": "shopware-core-development",
+      "file": "skills/shopware-core-development/references/platform-scope.md",
+      "title": "No code for one product or integration in core",
+      "status": "active",
+      "since": "2026-10-21",
+      "eval": null,
+      "eval_reason": "Core-only (WP7 phase C); core's review guide (open #21455) covers it once merged.",
+      "core_guide_ids": [
+        "SCOPE-005"
+      ],
+      "audience": [
+        "core"
+      ],
+      "defer_on_trunk": false
+    },
+    {
+      "id": "CORE-075",
+      "skill": "shopware-core-development",
+      "file": "skills/shopware-core-development/references/asset-lifetime.md",
+      "title": "Do not delete or overwrite assets a cached page can reference",
+      "status": "active",
+      "since": "2026-10-21",
+      "eval": null,
+      "eval_reason": "Core-only (WP7 phase C); core's review guide covers it on trunk.",
+      "core_guide_ids": [
+        "CACHE-001"
+      ],
+      "audience": [
+        "core"
+      ],
+      "defer_on_trunk": true,
+      "trunk": {
+        "source": "coding-guidelines/core/http-cache-and-assets.md#cached-responses-reference-assets"
+      }
+    },
+    {
+      "id": "CORE-076",
+      "skill": "shopware-core-development",
+      "file": "skills/shopware-core-development/references/asset-lifetime.md",
+      "title": "A grace period starts when the reference changes",
+      "status": "active",
+      "since": "2026-10-21",
+      "eval": null,
+      "eval_reason": "Core-only (WP7 phase C); core's review guide covers it on trunk.",
+      "core_guide_ids": [
+        "CACHE-002"
+      ],
+      "audience": [
+        "core"
+      ],
+      "defer_on_trunk": true,
+      "trunk": {
+        "source": "coding-guidelines/core/http-cache-and-assets.md#grace-periods-start-at-the-reference-change"
+      }
+    },
+    {
+      "id": "CORE-077",
+      "skill": "shopware-core-development",
+      "file": "skills/shopware-core-development/references/asset-lifetime.md",
+      "title": "Clean up referenced assets asynchronously",
+      "status": "active",
+      "since": "2026-10-21",
+      "eval": null,
+      "eval_reason": "Core-only (WP7 phase C); core's review guide covers it on trunk.",
+      "core_guide_ids": [
+        "CACHE-003"
+      ],
+      "audience": [
+        "core"
+      ],
+      "defer_on_trunk": true,
+      "trunk": {
+        "source": "coding-guidelines/core/http-cache-and-assets.md#cleanup-stays-asynchronous"
+      }
     },
     {
       "id": "ADM-001",
@@ -3055,7 +3410,9 @@
       "since": "2026-10-20",
       "eval": null,
       "eval_reason": "Documented only; no eval yet.",
-      "core_guide_ids": [],
+      "core_guide_ids": [
+        "BCADM-009"
+      ],
       "audience": [
         "core",
         "plugin",
@@ -3173,7 +3530,10 @@
       "since": "2026-10-20",
       "eval": null,
       "eval_reason": "Style rule; core shopware-admin-js owns it on trunk.",
-      "core_guide_ids": [],
+      "core_guide_ids": [
+        "ADMF-002",
+        "ADMF-003"
+      ],
       "audience": [
         "core",
         "admin"
@@ -3189,7 +3549,9 @@
       "since": "2026-10-20",
       "eval": null,
       "eval_reason": "Style rule; core shopware-admin-js owns it on trunk.",
-      "core_guide_ids": [],
+      "core_guide_ids": [
+        "ADMF-004"
+      ],
       "audience": [
         "core",
         "admin"
@@ -3205,7 +3567,9 @@
       "since": "2026-10-20",
       "eval": null,
       "eval_reason": "Style rule; core shopware-admin-js owns it on trunk.",
-      "core_guide_ids": [],
+      "core_guide_ids": [
+        "ADMF-005"
+      ],
       "audience": [
         "core",
         "admin"
@@ -3221,7 +3585,9 @@
       "since": "2026-10-20",
       "eval": null,
       "eval_reason": "Style rule; core shopware-admin-js owns it on trunk.",
-      "core_guide_ids": [],
+      "core_guide_ids": [
+        "BCADM-006"
+      ],
       "audience": [
         "core",
         "admin"
@@ -3411,6 +3777,51 @@
       "defer_on_trunk": true
     },
     {
+      "id": "ADM-039",
+      "skill": "shopware-admin-js",
+      "file": "skills/shopware-admin-js/references/extension-api.md",
+      "title": "Shipped component props, blocks and members are public API",
+      "status": "active",
+      "since": "2026-10-21",
+      "eval": "review-admin-prop-removed-catch",
+      "core_guide_ids": [
+        "BCADM-001",
+        "BCADM-002",
+        "BCADM-003",
+        "BCADM-004",
+        "BCADM-005"
+      ],
+      "audience": [
+        "admin",
+        "plugin"
+      ],
+      "defer_on_trunk": true,
+      "trunk": {
+        "source": "coding-guidelines/core/backward-compatibility.md#administration"
+      }
+    },
+    {
+      "id": "ADM-040",
+      "skill": "shopware-admin-js",
+      "file": "skills/shopware-admin-js/references/extension-api.md",
+      "title": "blocks-list.json entries and position identifiers are a contract",
+      "status": "active",
+      "since": "2026-10-21",
+      "eval": "review-admin-position-identifier-catch",
+      "core_guide_ids": [
+        "ADMF-008"
+      ],
+      "audience": [
+        "admin",
+        "plugin",
+        "app"
+      ],
+      "defer_on_trunk": true,
+      "trunk": {
+        "source": "coding-guidelines/core/backward-compatibility.md#administration"
+      }
+    },
+    {
       "id": "ARCH-001",
       "skill": "shopware-architecture",
       "file": "skills/shopware-architecture/references/symfony-in-shopware.md",
@@ -3451,7 +3862,10 @@
       "since": "2026-10-21",
       "eval": null,
       "eval_reason": "Documented only; no eval yet.",
-      "core_guide_ids": [],
+      "core_guide_ids": [
+        "BCSF-009",
+        "BCEXT-010"
+      ],
       "audience": [
         "core",
         "plugin"
@@ -3466,9 +3880,29 @@
       "status": "active",
       "since": "2026-10-21",
       "eval": "store-api-route-extension-event",
-      "core_guide_ids": [],
+      "core_guide_ids": [
+        "BCEXT-001"
+      ],
       "audience": [
         "core"
+      ],
+      "defer_on_trunk": false
+    },
+    {
+      "id": "ARCH-005",
+      "skill": "shopware-architecture",
+      "file": "skills/shopware-architecture/references/extension-mechanisms.md",
+      "title": "Extension event properties are the contract; no whole Request",
+      "status": "active",
+      "since": "2026-10-21",
+      "eval": "review-extension-event-request-payload-catch",
+      "core_guide_ids": [
+        "BCEXT-005",
+        "BCEXT-006"
+      ],
+      "audience": [
+        "core",
+        "plugin"
       ],
       "defer_on_trunk": false
     },
@@ -3626,6 +4060,323 @@
         "plugin"
       ],
       "defer_on_trunk": false
+    },
+    {
+      "id": "SF-011",
+      "skill": "shopware-storefront",
+      "file": "skills/shopware-storefront/references/js-plugins.md",
+      "title": "A shipped JS plugin's name, methods, events and options are public API",
+      "status": "active",
+      "since": "2026-10-21",
+      "eval": "review-js-plugin-option-renamed-catch",
+      "core_guide_ids": [
+        "BCSF-005",
+        "BCSF-006",
+        "BCSF-007"
+      ],
+      "audience": [
+        "storefront",
+        "plugin"
+      ],
+      "defer_on_trunk": true,
+      "trunk": {
+        "source": "coding-guidelines/core/backward-compatibility.md#storefront-twig-js-scss"
+      }
+    },
+    {
+      "id": "SF-012",
+      "skill": "shopware-storefront",
+      "file": "skills/shopware-storefront/references/twig-and-theme.md",
+      "title": "Keep shipped SCSS variables, state classes, theme.json fields and snippet keys",
+      "status": "active",
+      "since": "2026-10-21",
+      "eval": "review-snippet-key-renamed-catch",
+      "core_guide_ids": [
+        "BCSF-008"
+      ],
+      "audience": [
+        "storefront",
+        "plugin"
+      ],
+      "defer_on_trunk": true,
+      "trunk": {
+        "source": "coding-guidelines/core/backward-compatibility.md#storefront-twig-js-scss"
+      }
+    },
+    {
+      "id": "SF-013",
+      "skill": "shopware-storefront",
+      "file": "skills/shopware-storefront/references/cache-and-modern-web.md",
+      "title": "Never switch the HTTP cache off from the side",
+      "status": "active",
+      "since": "2026-10-21",
+      "eval": "review-cache-disabled-for-logged-in-catch",
+      "core_guide_ids": [
+        "CACHE-005"
+      ],
+      "audience": [
+        "storefront",
+        "plugin"
+      ],
+      "defer_on_trunk": true,
+      "trunk": {
+        "source": "coding-guidelines/core/http-cache-and-assets.md#change-caching-through-its-policy"
+      }
+    },
+    {
+      "id": "SEC-001",
+      "skill": "shopware-security",
+      "file": "skills/shopware-security/SKILL.md",
+      "title": "Never commit access keys, app secrets or passwords",
+      "status": "active",
+      "since": "2026-10-21",
+      "eval": "no-access-key-in-source",
+      "core_guide_ids": [],
+      "audience": [
+        "core",
+        "plugin",
+        "app"
+      ],
+      "defer_on_trunk": false
+    },
+    {
+      "id": "SEC-002",
+      "skill": "shopware-security",
+      "file": "skills/shopware-security/SKILL.md",
+      "title": "Never log secrets or full authorization headers",
+      "status": "active",
+      "since": "2026-10-21",
+      "eval": null,
+      "eval_reason": "Documented only; no eval yet.",
+      "core_guide_ids": [],
+      "audience": [
+        "core",
+        "plugin",
+        "app"
+      ],
+      "defer_on_trunk": false
+    },
+    {
+      "id": "SEC-003",
+      "skill": "shopware-security",
+      "file": "skills/shopware-security/SKILL.md",
+      "title": "Store-API and Admin routes declare ACL and login requirements",
+      "status": "active",
+      "since": "2026-10-21",
+      "eval": "store-api-route-missing-acl",
+      "core_guide_ids": [],
+      "audience": [
+        "core",
+        "plugin"
+      ],
+      "defer_on_trunk": false
+    },
+    {
+      "id": "SEC-004",
+      "skill": "shopware-security",
+      "file": "skills/shopware-security/SKILL.md",
+      "title": "App manifests request least privilege",
+      "status": "active",
+      "since": "2026-10-21",
+      "eval": "app-manifest-least-privilege",
+      "core_guide_ids": [],
+      "audience": [
+        "app"
+      ],
+      "defer_on_trunk": false
+    },
+    {
+      "id": "SEC-005",
+      "skill": "shopware-security",
+      "file": "skills/shopware-security/references/api-acl-and-input.md",
+      "title": "Validate and type route input",
+      "status": "active",
+      "since": "2026-10-21",
+      "eval": null,
+      "eval_reason": "Documented only; no eval yet.",
+      "core_guide_ids": [],
+      "audience": [
+        "core",
+        "plugin",
+        "app"
+      ],
+      "defer_on_trunk": false
+    },
+    {
+      "id": "SEC-006",
+      "skill": "shopware-security",
+      "file": "skills/shopware-security/references/apps-and-webhooks.md",
+      "title": "Verify webhook signatures",
+      "status": "active",
+      "since": "2026-10-21",
+      "eval": null,
+      "eval_reason": "Documented only; no eval yet.",
+      "core_guide_ids": [],
+      "audience": [
+        "app"
+      ],
+      "defer_on_trunk": false
+    },
+    {
+      "id": "SEC-007",
+      "skill": "shopware-security",
+      "file": "skills/shopware-security/references/api-acl-and-input.md",
+      "title": "Do not change access or cache defaults of a released route",
+      "status": "active",
+      "since": "2026-10-21",
+      "eval": "review-route-defaults-changed-catch",
+      "core_guide_ids": [
+        "BCAPI-006"
+      ],
+      "audience": [
+        "core",
+        "plugin",
+        "app"
+      ],
+      "defer_on_trunk": true,
+      "trunk": {
+        "source": "coding-guidelines/core/backward-compatibility.md#store-and-admin-api"
+      }
+    },
+    {
+      "id": "IMP-001",
+      "skill": "shopware-change-impact",
+      "file": "skills/shopware-change-impact/SKILL.md",
+      "title": "Do not approve because it works",
+      "status": "active",
+      "since": "2026-10-21",
+      "eval": "feature-impact-before-done",
+      "core_guide_ids": [],
+      "audience": [
+        "core",
+        "plugin",
+        "app"
+      ],
+      "defer_on_trunk": false
+    },
+    {
+      "id": "IMP-002",
+      "skill": "shopware-change-impact",
+      "file": "skills/shopware-change-impact/SKILL.md",
+      "title": "A shared cache key is not a private feature",
+      "status": "active",
+      "since": "2026-10-21",
+      "eval": "feature-impact-before-done",
+      "core_guide_ids": [
+        "BCAPI-004"
+      ],
+      "audience": [
+        "core",
+        "plugin",
+        "app"
+      ],
+      "defer_on_trunk": false
+    },
+    {
+      "id": "IMP-003",
+      "skill": "shopware-change-impact",
+      "file": "skills/shopware-change-impact/SKILL.md",
+      "title": "Shops that do not use a feature do not pay for it",
+      "status": "active",
+      "since": "2026-10-21",
+      "eval": null,
+      "eval_reason": "Documented only; no eval yet.",
+      "core_guide_ids": [
+        "SCOPE-007"
+      ],
+      "audience": [
+        "core",
+        "plugin",
+        "app"
+      ],
+      "defer_on_trunk": false
+    },
+    {
+      "id": "IMP-004",
+      "skill": "shopware-change-impact",
+      "file": "skills/shopware-change-impact/SKILL.md",
+      "title": "One feature does not outweigh a slower shared path",
+      "status": "active",
+      "since": "2026-10-21",
+      "eval": null,
+      "eval_reason": "Documented only; no eval yet.",
+      "core_guide_ids": [],
+      "audience": [
+        "core",
+        "plugin",
+        "app"
+      ],
+      "defer_on_trunk": false
+    },
+    {
+      "id": "IMP-005",
+      "skill": "shopware-change-impact",
+      "file": "skills/shopware-change-impact/SKILL.md",
+      "title": "Easier beats more complete",
+      "status": "active",
+      "since": "2026-10-21",
+      "eval": null,
+      "eval_reason": "Documented only; no eval yet.",
+      "core_guide_ids": [],
+      "audience": [
+        "core",
+        "plugin",
+        "app"
+      ],
+      "defer_on_trunk": false
+    },
+    {
+      "id": "IMP-006",
+      "skill": "shopware-change-impact",
+      "file": "skills/shopware-change-impact/SKILL.md",
+      "title": "Asset loading is proven against remote storage",
+      "status": "active",
+      "since": "2026-10-21",
+      "eval": "asset-loading-remote-filesystem",
+      "core_guide_ids": [],
+      "audience": [
+        "core",
+        "plugin",
+        "app"
+      ],
+      "defer_on_trunk": false
+    },
+    {
+      "id": "IMP-007",
+      "skill": "shopware-change-impact",
+      "file": "skills/shopware-change-impact/SKILL.md",
+      "title": "There is one compiled container",
+      "status": "active",
+      "since": "2026-10-21",
+      "eval": "container-if-splits-saas",
+      "core_guide_ids": [],
+      "audience": [
+        "core",
+        "plugin",
+        "app"
+      ],
+      "defer_on_trunk": false
+    },
+    {
+      "id": "IMP-008",
+      "skill": "shopware-change-impact",
+      "file": "skills/shopware-change-impact/references/impact-review.md",
+      "title": "A cache key holds every input that changes the result",
+      "status": "active",
+      "since": "2026-10-21",
+      "eval": "review-cache-key-missing-input-catch",
+      "core_guide_ids": [
+        "CACHE-006"
+      ],
+      "audience": [
+        "core",
+        "plugin",
+        "app"
+      ],
+      "defer_on_trunk": true,
+      "trunk": {
+        "source": "coding-guidelines/core/http-cache-and-assets.md#cache-keys-contain-every-input-tags-stay-few"
+      }
     }
   ]
 }

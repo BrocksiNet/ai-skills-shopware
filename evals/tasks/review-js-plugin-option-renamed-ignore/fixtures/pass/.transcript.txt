@@ -1,0 +1,14 @@
+```json
+{
+  "findings": [
+    {
+      "rule_id": null,
+      "severity": "nit",
+      "file": "src/Resources/app/storefront/src/swag-loyalty-badge/swag-loyalty-badge.plugin.js",
+      "line": 27,
+      "summary": "The modifier class name could follow the existing is--* state class convention.",
+      "fix": "Use is--animated."
+    }
+  ]
+}
+```

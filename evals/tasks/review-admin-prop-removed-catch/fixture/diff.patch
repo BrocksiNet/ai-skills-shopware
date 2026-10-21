@@ -1,0 +1,45 @@
+diff --git a/src/Resources/app/administration/src/component/swag-loyalty-card/index.ts b/src/Resources/app/administration/src/component/swag-loyalty-card/index.ts
+index 38e30af..948ae50 100644
+--- a/src/Resources/app/administration/src/component/swag-loyalty-card/index.ts
++++ b/src/Resources/app/administration/src/component/swag-loyalty-card/index.ts
+@@ -1,3 +1,4 @@
++import type { PropType } from 'vue';
+ import template from './swag-loyalty-card.html.twig';
+ 
+ const { Component } = Shopware;
+@@ -12,7 +13,12 @@ Component.register('swag-loyalty-card', {
+     inject: ['repositoryFactory'],
+ 
+     props: {
+-        customerId: {
++        customer: {
++            type: Object as PropType<Entity<'customer'>>,
++            required: true,
++        },
++
++        salesChannelId: {
+             type: String,
+             required: true,
+         },
+@@ -38,7 +44,7 @@ Component.register('swag-loyalty-card', {
+     methods: {
+         async loadBalance(): Promise<void> {
+             this.isLoading = true;
+-            const balance = await this.balanceRepository.get(this.customerId);
++            const balance = await this.balanceRepository.get(this.customer.id);
+             this.points = balance?.points ?? 0;
+             this.isLoading = false;
+         },
+diff --git a/src/Resources/app/administration/src/component/swag-loyalty-card/swag-loyalty-card.html.twig b/src/Resources/app/administration/src/component/swag-loyalty-card/swag-loyalty-card.html.twig
+index d6e9258..a1fa43a 100644
+--- a/src/Resources/app/administration/src/component/swag-loyalty-card/swag-loyalty-card.html.twig
++++ b/src/Resources/app/administration/src/component/swag-loyalty-card/swag-loyalty-card.html.twig
+@@ -4,7 +4,7 @@
+     :title="$tc('swag-loyalty.card.title')"
+     :is-loading="isLoading"
+ >
+-    {% block swag_loyalty_card_points %}
++    {% block swag_loyalty_card_balance %}
+     <p class="swag-loyalty-card__points">
+         {{ $tc('swag-loyalty.card.points', points, { points }) }}
+     </p>

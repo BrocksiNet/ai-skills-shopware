@@ -1,0 +1,16 @@
+Apps render into position identifiers by name, so renaming one is a break.
+
+```json
+{
+  "findings": [
+    {
+      "rule_id": null,
+      "severity": "major",
+      "file": "src/Resources/app/administration/src/module/swag-loyalty/page/swag-loyalty-detail/swag-loyalty-detail.html.twig",
+      "line": 12,
+      "summary": "The position identifier swag-loyalty-detail-sidebar is renamed to swag-loyalty-detail-aside; apps and plugins that render into the old identifier silently disappear.",
+      "fix": "Keep the old identifier (and its blocks-list.json entry) next to the new one and deprecate it until the next major."
+    }
+  ]
+}
+```

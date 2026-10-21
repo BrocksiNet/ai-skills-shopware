@@ -1,0 +1,46 @@
+diff --git a/src/Resources/snippet/de_DE/storefront.de-DE.json b/src/Resources/snippet/de_DE/storefront.de-DE.json
+index 85248f0..1438176 100644
+--- a/src/Resources/snippet/de_DE/storefront.de-DE.json
++++ b/src/Resources/snippet/de_DE/storefront.de-DE.json
+@@ -2,7 +2,8 @@
+     "swag-loyalty": {
+         "badge": {
+             "label": "Treuepunkte",
+-            "tooltip": "Punkte, die du mit diesem Kauf sammelst"
++            "tooltip": "Punkte, die du mit diesem Kauf sammelst",
++            "expiry": "Deine ältesten Punkte verfallen am %date%"
+         }
+     }
+ }
+diff --git a/src/Resources/snippet/en_GB/storefront.en-GB.json b/src/Resources/snippet/en_GB/storefront.en-GB.json
+index be3d9c8..87bcb8f 100644
+--- a/src/Resources/snippet/en_GB/storefront.en-GB.json
++++ b/src/Resources/snippet/en_GB/storefront.en-GB.json
+@@ -2,7 +2,8 @@
+     "swag-loyalty": {
+         "badge": {
+             "label": "Loyalty points",
+-            "tooltip": "Points you collect with this purchase"
++            "tooltip": "Points you collect with this purchase",
++            "expiry": "Your oldest points expire on %date%"
+         }
+     }
+ }
+diff --git a/src/Resources/views/storefront/component/loyalty/badge.html.twig b/src/Resources/views/storefront/component/loyalty/badge.html.twig
+index 2a4db9d..227e9e2 100644
+--- a/src/Resources/views/storefront/component/loyalty/badge.html.twig
++++ b/src/Resources/views/storefront/component/loyalty/badge.html.twig
+@@ -7,5 +7,13 @@
+         {% block swag_loyalty_badge_tooltip %}
+             <span class="swag-loyalty-badge__tooltip">{{ 'swag-loyalty.badge.tooltip'|trans|sw_sanitize }}</span>
+         {% endblock %}
++
++        {% block swag_loyalty_badge_expiry %}
++            {% if page.extensions.swagLoyalty.pointsExpireAt %}
++                <span class="swag-loyalty-badge__expiry">
++                    {{ 'swag-loyalty.badge.expiry'|trans({'%date%': page.extensions.swagLoyalty.pointsExpireAt|format_date('medium', locale=app.request.locale)})|sw_sanitize }}
++                </span>
++            {% endif %}
++        {% endblock %}
+     </div>
+ {% endblock %}

@@ -10,3 +10,4 @@
 - Should I add sw_csrf to this storefront login form?
 - Remove the spaceless filter and fix null HTML attributes for Twig 4.
 - I renamed a Twig block in my plugin's storefront template. Do themes care?
+- I renamed a static option of my storefront JS plugin. Is that a breaking change for themes?

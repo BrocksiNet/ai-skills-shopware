@@ -1,0 +1,14 @@
+```json
+{
+  "findings": [
+    {
+      "rule_id": null,
+      "severity": "nit",
+      "file": "src/Resources/views/storefront/component/loyalty/badge.html.twig",
+      "line": 16,
+      "summary": "format_date reads the locale from the request; the date macro of the theme would be shorter.",
+      "fix": "Use the theme date macro."
+    }
+  ]
+}
+```

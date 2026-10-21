@@ -1,0 +1,14 @@
+```json
+{
+  "findings": [
+    {
+      "rule_id": null,
+      "severity": "major",
+      "file": "src/Event/LoyaltyPointsCalculateEvent.php",
+      "line": 21,
+      "summary": "The event replaces its public salesChannelId and customerGroupId properties with the whole Request, which breaks existing listeners and fails when points are calculated outside an HTTP request.",
+      "fix": "Keep the existing properties and add only the specific new values listeners need, such as a campaign code."
+    }
+  ]
+}
+```

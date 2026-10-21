@@ -1,0 +1,33 @@
+diff --git a/src/StoreApi/RedeemableRewardRoute.php b/src/StoreApi/RedeemableRewardRoute.php
+new file mode 100644
+index 0000000..1efb86b
+--- /dev/null
++++ b/src/StoreApi/RedeemableRewardRoute.php
+@@ -0,0 +1,27 @@
++<?php declare(strict_types=1);
++
++namespace Swag\Loyalty\StoreApi;
++
++use Shopware\Core\Framework\Log\Package;
++use Shopware\Core\System\SalesChannel\SalesChannelContext;
++use Shopware\Core\System\SalesChannel\StoreApiResponse;
++use Swag\Loyalty\RewardCatalog;
++use Symfony\Component\Routing\Attribute\Route;
++
++#[Route(defaults: ['_routeScope' => ['store-api'], '_loginRequired' => true])]
++#[Package('checkout')]
++class RedeemableRewardRoute
++{
++    public function __construct(private readonly RewardCatalog $catalog)
++    {
++    }
++
++    #[Route(path: '/store-api/swag-loyalty/rewards/redeemable', name: 'store-api.swag-loyalty.rewards.redeemable', methods: ['GET', 'POST'])]
++    public function load(SalesChannelContext $context): StoreApiResponse
++    {
++        $customer = $context->getCustomer();
++        \assert($customer !== null);
++
++        return new StoreApiResponse($this->catalog->redeemable($customer->getId(), $context));
++    }
++}

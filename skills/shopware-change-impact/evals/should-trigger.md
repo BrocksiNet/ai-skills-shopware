@@ -8,3 +8,4 @@
 - Asset loading only tested locally. Does this still work when assets are on S3?
 - This Symfony container if is per feature flag. Do we still have one container?
 - Tests are green. Open the PR.
+- My cached recommendation list is keyed by product ID only. Is that enough?
