@@ -12,7 +12,7 @@ const ROOT = resolve(import.meta.dirname, '../..');
 const RUNNER = join(ROOT, 'evals/runner');
 const TASK_A = 'dal-search-without-limit';
 const TASK_B = 'no-empty-explicit';
-const tmp = mkdtempSync(join(tmpdir(), 'runner-cli-test-'));
+const tmp = mkdtempSync(join(tmpdir(), 'eval-local-test-'));
 after(() => {
   rmSync(tmp, { recursive: true, force: true });
 });
