@@ -12,5 +12,5 @@ export const grade = reviewNearMiss({
   file: 'src/**',
   minSeverity: 'minor',
   summary:
-    /(every|each|per) (html )?(response|request|page)|cache hits?|uncached (query|select|read|lookup)|(query|select|database|db)[^.]{0,80}(every|each|per) (response|request|page)/iu,
+    /\b(every|each|per|all)\b[^.]{0,30}\b(responses?|requests?|page ?views?|pages?)\b|cache hits?|uncached [^.]{0,20}(query|select|read|lookup)|round.?trip/iu,
 });

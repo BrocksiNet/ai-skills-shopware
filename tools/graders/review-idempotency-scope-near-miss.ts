@@ -13,5 +13,5 @@ export const grade = reviewNearMiss({
   file: 'src/**',
   minSeverity: 'major',
   summary:
-    /scop|global|another (customer|caller|user|client)|other (customers?|callers?|users?|clients?)|any (customer|caller|user|client)|leak|cross.(customer|user|tenant)|not (bound|tied) to|regardless of (the )?(customer|caller|user)|guess/iu,
+    /scop|global|namespac|another (customer|caller|user|client)|other (customers?|callers?|users?|clients?)|any (customer|caller|user|client)|per (customer|caller|user|client)|leak|cross.(customer|user|tenant)|not (bound|tied) to|regardless of (the )?(customer|caller|user)|(keyed|looked up) only by|guess/iu,
 });
