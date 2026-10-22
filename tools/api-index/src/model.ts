@@ -2,7 +2,7 @@
 // symbol. docs/plans/2026-10-wp11-public-api-index.md explains the surfaces.
 
 export const SCHEMA = 1;
-export const GENERATOR = 'api-index/0.1.0';
+export const GENERATOR = 'api-index/0.2.0';
 
 export type ItemKind = 'class' | 'interface' | 'trait' | 'enum' | 'method' | 'property' | 'constant' | 'case';
 
@@ -33,6 +33,8 @@ export interface Item {
   signature?: string;
   extends?: string[];
   implements?: string[];
+  /** Traits the class uses; their members are the class's members. */
+  traits?: string[];
   /** The `#[Package]` area of a class. */
   package?: string;
   flags: Flags;

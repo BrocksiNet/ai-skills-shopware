@@ -16,7 +16,7 @@ const parser = new Engine({
 });
 
 /** Names in scope: the namespace and the `use` aliases of a file. */
-interface Scope {
+export interface Scope {
   namespace: string;
   uses: Map<string, string>;
 }
@@ -25,7 +25,7 @@ function trimSlash(name: string): string {
   return name.replace(/^\\/u, '');
 }
 
-function addUses(scope: Scope, group: Node): void {
+export function addUses(scope: Scope, group: Node): void {
   const type = text(group, 'type');
   if (type === 'function' || type === 'const') return;
   const prefix = text(group, 'name');
@@ -143,9 +143,7 @@ function parentNames(node: Node, kind: string, scope: Scope): { extends: string[
     return list.map((parent) => resolveNode(parent, scope)).filter((value) => value !== undefined);
   };
   // An interface's parents are `extends`, which php-parser stores as an array.
-  return kind === 'interface'
-    ? { extends: names('extends'), implements: [] }
-    : { extends: names('extends'), implements: names('implements') };
+  return { extends: names('extends'), implements: kind === 'interface' ? [] : names('implements') };
 }
 
 /** `public` and `protected` members are API; no modifier means public. */
@@ -262,6 +260,12 @@ function classItems(node: Node, scope: Scope, file: string): Item[] {
   if (parents.implements.length > 0) head.implements = parents.implements;
   const area = packageOf(node, scope);
   if (area !== undefined) head.package = area;
+  const traits = children(node, 'body')
+    .filter((member) => member.kind === 'traituse')
+    .flatMap((member) => children(member, 'traits'))
+    .map((trait) => resolveNode(trait, scope))
+    .filter((value) => value !== undefined);
+  if (traits.length > 0) head.traits = traits;
   const members = children(node, 'body').flatMap((member) => memberItems(member, fqcn, scope, file));
   return [head, ...members];
 }
