@@ -68,8 +68,8 @@ describe('tokens and loads', () => {
     assert.equal(tokensAverage(emptyCounts()), null);
   });
   test('a load counts only on an exact line', () => {
-    assert.equal(loadedOneOf('shopware-testing\n', ['shopware-testing']), true);
-    assert.equal(loadedOneOf('shopware-testing-x\n', ['shopware-testing']), false);
+    assert.equal(loadedOneOf('sw-testing\n', ['sw-testing']), true);
+    assert.equal(loadedOneOf('shopware-testing-x\n', ['sw-testing']), false);
     assert.equal(loadedOneOf('', []), false);
   });
 });

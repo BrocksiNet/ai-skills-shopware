@@ -1,4 +1,4 @@
-// Grader: review-admin-prop-removed-catch (shopware-admin-js, ADM-039)
+// Grader: review-admin-prop-removed-catch (sw-admin-js, ADM-039)
 // The released swag-loyalty-card component renames its customerId prop to
 // customer, adds a required salesChannelId prop and renames the
 // swag_loyalty_card_points block. Plugins that pass customerId or override

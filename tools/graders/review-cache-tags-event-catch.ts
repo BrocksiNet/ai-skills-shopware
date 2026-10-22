@@ -1,4 +1,4 @@
-// Grader: review-cache-tags-event-catch (shopware-plugin-development, PLG-007)
+// Grader: review-cache-tags-event-catch (sw-plugin-development, PLG-007)
 // SwagLoyalty requires shopware/core ~6.7.0. The change adds a subscriber
 // to ProductDetailRouteCacheTagsEvent that tags the product with its loyalty
 // badge, and a writer that invalidates that tag. 6.7 removed Store-API route

@@ -1,4 +1,4 @@
-// Grader: review-js-plugin-option-renamed-catch (shopware-storefront, SF-011)
+// Grader: review-js-plugin-option-renamed-catch (sw-storefront, SF-011)
 // The JS plugin renames its showTooltip option to tooltip and its
 // onBadgeRendered event to badgeRendered. Themes that set the option in
 // data-swag-loyalty-badge-options and plugins subscribed to the event

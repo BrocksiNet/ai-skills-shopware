@@ -9,24 +9,24 @@ DI container and no DAL in the shop process.
 
 | Skill | Why |
 | ----- | --- |
-| `php-foundation` | Shared strict PHP 8.x base (for any external backend code you write). |
-| `shopware-app-development` | Manifest, permissions, app scripts, webhooks, Admin API, Meteor Admin SDK. |
-| `shopware-security` | App secrets, least-privilege manifest, webhook verification. |
-| `shopware-research-and-escalation` | Verify against installed source; escalate instead of guessing. |
-| `shopware-review-learnings` | Recurring real-world findings. |
-| `shopware-change-impact` | After a feature works: blast radius, who pays, easier vs more complex. |
+| `sw-php-foundation` | Shared strict PHP 8.x base (for any external backend code you write). |
+| `sw-app-development` | Manifest, permissions, app scripts, webhooks, Admin API, Meteor Admin SDK. |
+| `sw-security` | App secrets, least-privilege manifest, webhook verification. |
+| `sw-research-and-escalation` | Verify against installed source; escalate instead of guessing. |
+| `sw-review-learnings` | Recurring real-world findings. |
+| `sw-change-impact` | After a feature works: blast radius, who pays, easier vs more complex. |
 
 ## Install (one-liner)
 
 ```bash
 # Cursor (use -a claude-code, -a codex or -a opencode for the other tools)
 npx skills add BrocksiNet/ai-skills-shopware \
-  --skill php-foundation \
-  --skill shopware-app-development \
-  --skill shopware-security \
-  --skill shopware-research-and-escalation \
-  --skill shopware-review-learnings \
-  --skill shopware-change-impact \
+  --skill sw-php-foundation \
+  --skill sw-app-development \
+  --skill sw-security \
+  --skill sw-research-and-escalation \
+  --skill sw-review-learnings \
+  --skill sw-change-impact \
   -a claude-code -a codex -a cursor
 ```
 
@@ -37,8 +37,8 @@ then global and effectively unpinned. Pin a version with
 
 ## Mixing use-cases
 
-`shopware-app-development` (declarative manifest + sandboxed app scripts +
-external backend) and `shopware-plugin-development` (PHP: DI, DAL, decoration,
+`sw-app-development` (declarative manifest + sandboxed app scripts +
+external backend) and `sw-plugin-development` (PHP: DI, DAL, decoration,
 migrations) are different surfaces and route by target (`custom/apps` +
 `manifest.xml` vs `custom/plugins`). If you build both, add the skills from
 [`plugin-development.md`](plugin-development.md) too; they coexist safely.

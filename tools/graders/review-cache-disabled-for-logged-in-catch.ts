@@ -1,4 +1,4 @@
-// Grader: review-cache-disabled-for-logged-in-catch (shopware-storefront, SF-013)
+// Grader: review-cache-disabled-for-logged-in-catch (sw-storefront, SF-013)
 // A new response subscriber marks every page private and no-store for
 // logged-in customers so the points badge is right. It bypasses the cache
 // policies and makes every page of every logged-in customer uncached. Needs

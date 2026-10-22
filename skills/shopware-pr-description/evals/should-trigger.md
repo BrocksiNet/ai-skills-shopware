@@ -1,9 +1,0 @@
-# shopware-pr-description — should trigger
-
-- Write a PR description for my shopware/shopware branch.
-- Fill in the PR template for this core contribution.
-- Fill the shopware/shopware PR template sections for this diff.
-- I need a copy-paste PR body for GitHub.
-- Update the description on <https://github.com/shopware/shopware/pull/15346>.
-- Create a pull request — use the Shopware PR template.
-- Strip Co-authored-by and Signed-off-by trailers from this shopware/shopware PR body.

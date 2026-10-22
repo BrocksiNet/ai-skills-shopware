@@ -1,4 +1,4 @@
-// Grader: review-optional-package-guard-catch (shopware-plugin-development, PLG-032)
+// Grader: review-optional-package-guard-catch (sw-plugin-development, PLG-032)
 // composer.json only suggests shopware/storefront and services.php guards the
 // storefront subscriber with InstalledVersions. The diff registers a new
 // StorefrontController subclass and imports its routes outside that guard,

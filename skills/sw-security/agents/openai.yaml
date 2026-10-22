@@ -1,0 +1,4 @@
+interface:
+  display_name: "Shopware Security"
+  short_description: "Check routes, ACL privileges, webhooks and secrets."
+  default_prompt: "Use $sw-security to check this Shopware route change for security issues."

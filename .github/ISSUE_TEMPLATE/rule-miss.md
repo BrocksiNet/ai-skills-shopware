@@ -15,7 +15,7 @@ labels: ["rule-miss", "review-learning"]
 
 ## Which skill should have caught it
 
-<!-- e.g. shopware-plugin-development, php-foundation, ... -->
+<!-- e.g. sw-plugin-development, sw-php-foundation, ... -->
 
 ## Context
 

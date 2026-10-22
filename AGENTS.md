@@ -232,12 +232,12 @@ contract: [`evals/README.md`](evals/README.md#review-tasks-review-rule-catch---i
 8. Re-run `validate-skills.sh` (it runs `tools/bin/validate-rules.ts`), `evals/tools/ast`
    snippet tests, and `evals/test-graders.sh`.
 
-Tagged so far: `shopware-testing`, `shopware-plugin-development`,
-`shopware-review-learnings`, `shopware-core-development`, `shopware-admin-js`,
-`shopware-architecture`, `shopware-storefront`, `shopware-security`,
-`shopware-change-impact`. Tag a skill's remaining rules when you next touch it.
+Tagged so far: `sw-testing`, `sw-plugin-development`,
+`sw-review-learnings`, `sw-core-development`, `sw-admin-js`,
+`sw-architecture`, `sw-storefront`, `sw-security`,
+`sw-change-impact`. Tag a skill's remaining rules when you next touch it.
 
-For recurring real-world findings, prefer `shopware-review-learnings` and point
+For recurring real-world findings, prefer `sw-review-learnings` and point
 at the owning skill rather than re-defining the topic.
 
 ## Adding a skill
@@ -272,7 +272,7 @@ lists only diff-selected references, never `always` or `on_demand` ones.
 A route can borrow another skill's reference: `"reference":
 "../<skill>/references/<file>.md"` with no triggers of its own takes `when`
 and the triggers from the owning skill's route, so the two cannot drift.
-`shopware-extension-review` reads the topic skills this way. Its
+`sw-extension-review` reads the topic skills this way. Its
 `routes.json` sets `audience`; a rule in a borrowed reference that is for
 none of those audiences must be named in the skill (`references/lenses.md`),
 or `validate-rules` fails. The other way round, a rule a review task expects

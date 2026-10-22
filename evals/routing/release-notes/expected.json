@@ -1,11 +1,11 @@
 {
-  "shopware-core-development": [
+  "sw-core-development": [
     "references/release-notes-and-adr.md"
   ],
-  "shopware-extension-review": [
-    "../shopware-review-learnings/references/api-aware.md"
+  "sw-extension-review": [
+    "../sw-review-learnings/references/api-aware.md"
   ],
-  "shopware-review-learnings": [
+  "sw-review-learnings": [
     "references/api-aware.md"
   ]
 }

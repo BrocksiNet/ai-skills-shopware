@@ -1,4 +1,4 @@
-// Grader: review-unneeded-guard-catch (shopware-review-learnings, REV-015)
+// Grader: review-unneeded-guard-catch (sw-review-learnings, REV-015)
 // SwagMediaCdn supports ~6.6.0 || ~6.7.0 and registers a subscriber for
 // UpdateMediaPathEvent behind class_exists(). The event exists in every
 // release since 6.5.7.0, so the guard is always true. Needs a minor+ finding

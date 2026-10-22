@@ -1,4 +1,4 @@
-// Grader: review-deprecation-internal-replacement-ignore (shopware-core-development, CORE-063)
+// Grader: review-deprecation-internal-replacement-ignore (sw-core-development, CORE-063)
 // The same deprecation, with a public replacement class shipped in the
 // same change. A minor+ finding that names CORE-063 or calls the replacement
 // internal or unusable is a false positive.

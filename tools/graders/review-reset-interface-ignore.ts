@@ -1,4 +1,4 @@
-// Grader: review-reset-interface-ignore (shopware-architecture, ARCH-001)
+// Grader: review-reset-interface-ignore (sw-architecture, ARCH-001)
 // The same memoization, but the service implements ResetInterface and
 // reset() clears both arrays. A minor+ finding that names ARCH-001 or calls
 // the cache stale or unreset is a false positive.

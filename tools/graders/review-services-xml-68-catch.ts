@@ -1,4 +1,4 @@
-// Grader: review-services-xml-68-catch (shopware-plugin-development, PLG-026)
+// Grader: review-services-xml-68-catch (sw-plugin-development, PLG-026)
 // SwagLoyalty supports Shopware 6.7 and 6.8 and already registers its
 // services in services.php. The change registers the new expiry reminder
 // services in a new services.xml. Symfony 8 (6.8) drops the XML loader, so

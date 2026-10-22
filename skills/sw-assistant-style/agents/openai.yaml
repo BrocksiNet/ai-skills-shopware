@@ -1,0 +1,4 @@
+interface:
+  display_name: "Shopware Assistant Style"
+  short_description: "Answer Shopware questions in plain, short, human language."
+  default_prompt: "Use $sw-assistant-style to draft a short reply to this Shopware support ticket."

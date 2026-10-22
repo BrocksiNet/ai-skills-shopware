@@ -21,9 +21,9 @@ const FILES: readonly [string, Expect][] = [
   ['should-not-trigger.md', 'no-trigger'],
 ];
 
-/** A reviewer note at the end of a prompt, such as "(-> shopware-testing)",
+/** A reviewer note at the end of a prompt, such as "(-> sw-testing)",
  *  which would tell the agent the expected skill. */
-const NOTE = /\s*\((?:->|should|redirect|[a-z-]*shopware[a-z-]*|php-foundation)[^)]*\)\.?\s*$/u;
+const NOTE = /\s*\((?:->|should|redirect|[a-z-]*shopware[a-z-]*|sw-php-foundation)[^)]*\)\.?\s*$/u;
 
 /** The prompts of an eval file: its "- " list items, without surrounding
  *  quotes and without a trailing reviewer note. */

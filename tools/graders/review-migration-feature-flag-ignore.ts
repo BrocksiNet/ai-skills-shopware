@@ -1,4 +1,4 @@
-// Grader: review-migration-feature-flag-ignore (shopware-plugin-development, PLG-029)
+// Grader: review-migration-feature-flag-ignore (sw-plugin-development, PLG-029)
 // The migration adds the column unconditionally; only the tier resolver
 // reads the flag. A minor+ finding that names PLG-029 or ties the flag to the
 // migration or schema is a false positive.

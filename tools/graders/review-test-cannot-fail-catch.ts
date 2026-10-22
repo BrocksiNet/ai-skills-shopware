@@ -1,4 +1,4 @@
-// Grader: review-test-cannot-fail-catch (shopware-testing, TEST-035)
+// Grader: review-test-cannot-fail-catch (sw-testing, TEST-035)
 // The assertions on the captured event sit inside if ($changed !== null), so
 // the test passes when the event is never dispatched. Capturing in the hook
 // is fine (TEST-016). Needs a major+ finding in tests/ that names TEST-035

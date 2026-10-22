@@ -21,7 +21,7 @@
 //
 //   present      (default) log every skill present in the workdir
 //   none         create the log but load nothing (model ignores skills)
-//   leak         log php-foundation even when no skills are present
+//   leak         log sw-php-foundation even when no skills are present
 //   unsupported  never create the log (adapter cannot report)
 //
 // Token reporting (EVAL_USAGE_LOG, set by the runner) writes FAKE_AGENT_USAGE,
@@ -52,7 +52,7 @@ const skillsIn = (cwd: string): string[] => {
 function logSkills(log: string, mode: string, skills: string[]): string | undefined {
   if (mode === 'present') appendFileSync(log, skills.map((s) => `${s}\n`).join(''));
   else if (mode === 'none') appendFileSync(log, '');
-  else if (mode === 'leak') appendFileSync(log, 'php-foundation\n');
+  else if (mode === 'leak') appendFileSync(log, 'sw-php-foundation\n');
   else if (mode !== 'unsupported') return 'fake-agent: unknown FAKE_AGENT_LOAD\n';
   return undefined;
 }

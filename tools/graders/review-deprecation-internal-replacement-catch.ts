@@ -1,4 +1,4 @@
-// Grader: review-deprecation-internal-replacement-catch (shopware-core-development, CORE-063)
+// Grader: review-deprecation-internal-replacement-catch (sw-core-development, CORE-063)
 // ProductPriceCalculator::calculate() is deprecated with a runtime warning,
 // but its replacement ProductPriceCalculatorV2 is marked @internal, so
 // extensions get a warning they cannot act on. Needs a major+ finding in

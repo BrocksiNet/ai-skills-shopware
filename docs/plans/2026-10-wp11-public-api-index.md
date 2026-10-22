@@ -192,10 +192,10 @@ flagged `internal` or `experimental` in the base are skipped, with a count.
 
 One line each, never a rule of their own:
 
-- `shopware-extension-review` and `shopware-plugin-development`: run
+- `sw-extension-review` and `sw-plugin-development`: run
   `api-facts` when it is available; its output is facts to verify, not
   findings.
-- `shopware-change-impact` and `shopware-core-development`: run
+- `sw-change-impact` and `sw-core-development`: run
   `api-diff` for a core PR; it covers what `bc-check` does not.
 
 Both tools are optional. Installing the skills does not need them, and CI
@@ -285,7 +285,7 @@ the parser or the index.
   wrong on 6.6.6.0 to 6.7.1.x. It now checks the method. `AddCacheTagEvent`
   exists from 6.6.6.0, not "6.6".
 - **Rule changes.** `REV-015` moved to
-  `shopware-review-learnings/references/version-guards.md`, which the
+  `sw-review-learnings/references/version-guards.md`, which the
   extension review borrows; `PLG-001` is tagged in
   `version-compatibility.md`. Both have their review pair now.
 - **Open for phase 2.**

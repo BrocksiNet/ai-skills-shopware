@@ -28,7 +28,7 @@ describe('recorded OpenCode session', () => {
   test('text, tool calls and the loaded skill', () => {
     assert.deepEqual(s.texts, ['DONE']);
     assert.equal(s.tools, 2);
-    assert.deepEqual(s.skills, ['shopware-testing']);
+    assert.deepEqual(s.skills, ['sw-testing']);
     assert.deepEqual(s.errors, []);
   });
   test('tokens summed over steps, cache in input, reasoning in output', () => {
@@ -40,7 +40,7 @@ describe('recorded Claude Code session', () => {
   const s = parseClaude(recorded('claude-task.jsonl'));
   test('text, loaded skill and the result', () => {
     assert.ok(s.texts.length > 0);
-    assert.deepEqual(s.skills, ['shopware-testing']);
+    assert.deepEqual(s.skills, ['sw-testing']);
     assert.equal(s.result?.subtype, 'success');
     assert.equal(s.result.isError, false);
   });
@@ -67,7 +67,7 @@ describe('event parsing edge cases', () => {
     assert.deepEqual([s.texts, s.skills, s.usage, s.errors, s.tools], [[], ['a'], null, ['RateLimit'], 2]);
   });
   test('skill names drop a leading slash and a plugin prefix', () => {
-    assert.equal(skillName({ command: '/plug:shopware-testing ' }, ['skill', 'command']), 'shopware-testing');
+    assert.equal(skillName({ command: '/plug:sw-testing ' }, ['skill', 'command']), 'sw-testing');
     assert.equal(skillName({ skill: '', command: 'x' }, ['skill', 'command']), 'x');
     assert.equal(skillName(null, ['skill']), '');
   });
@@ -183,7 +183,7 @@ async function call(adapter: Adapter, over: NodeJS.ProcessEnv): Promise<Call> {
 describe('opencode-task adapter', () => {
   test('a finished session prints the text and logs skills and tokens', async () => {
     const r = await call(opencodeTask, { FAKE_OUT: join(FIXTURES, 'opencode-task.jsonl') });
-    assert.deepEqual([r.rc, r.out, r.skills, r.usage], [0, 'DONE\n', 'shopware-testing\n', '11620 317\n']);
+    assert.deepEqual([r.rc, r.out, r.skills, r.usage], [0, 'DONE\n', 'sw-testing\n', '11620 317\n']);
   });
   test('runs isolated with the step cap, the prompt as an argument', async () => {
     const r = await call(opencodeTask, {
@@ -239,7 +239,7 @@ describe('claude-task adapter', () => {
     const r = await call(claudeTask, { FAKE_OUT: join(FIXTURES, 'claude-task.jsonl') });
     assert.equal(r.rc, 0);
     assert.ok(r.out.endsWith('\n'));
-    assert.deepEqual([r.skills, r.usage, r.stdin], ['shopware-testing\n', '95286 626\n', 'do it']);
+    assert.deepEqual([r.skills, r.usage, r.stdin], ['sw-testing\n', '95286 626\n', 'do it']);
     assert.match(
       r.args ?? '',
       /^-p\n--setting-sources\nproject\n--model\nsonnet\n--max-turns\n12\n--max-budget-usd\n0\.75\n/u,
@@ -279,9 +279,9 @@ describe('claude-task adapter', () => {
 describe('activation adapters', () => {
   test('opencode lists the loaded skills from an isolated workspace', async () => {
     const r = await call(opencodeActivation, { FAKE_OUT: join(FIXTURES, 'opencode-task.jsonl') });
-    assert.deepEqual([r.rc, r.out], [0, 'shopware-testing\n']);
+    assert.deepEqual([r.rc, r.out], [0, 'sw-testing\n']);
     assert.match(r.env ?? '', /"permission":\{"edit":"deny","bash":"deny"/u);
-    assert.match(r.env ?? '', /\.agents\/skills:\nphp-foundation\n/u);
+    assert.match(r.env ?? '', /\.agents\/skills:\nsw-admin-js\n/u);
   });
   test('opencode: an error or no events fails the run, never "no activation"', async () => {
     const error = await call(opencodeActivation, {
@@ -293,7 +293,7 @@ describe('activation adapters', () => {
   });
   test('claude lists the loaded skills; a failed or missing result fails', async () => {
     const ok = await call(claudeActivation, { FAKE_OUT: join(FIXTURES, 'claude-task.jsonl') });
-    assert.deepEqual([ok.rc, ok.out], [0, 'shopware-testing\n']);
+    assert.deepEqual([ok.rc, ok.out], [0, 'sw-testing\n']);
     assert.match(ok.args ?? '', /--tools\nSkill\nRead\nGlob\nGrep\n/u);
     const failed = await call(claudeActivation, {
       FAKE_OUT: fixture('a-cl-err.jsonl', withResult({ subtype: 'error_max_turns', is_error: true, result: '' })),

@@ -1,4 +1,4 @@
-// Grader: review-admin-webpack-config-ignore (shopware-admin-js, ADM-009)
+// Grader: review-admin-webpack-config-ignore (sw-admin-js, ADM-009)
 // The same alias and import, but SwagLoyalty requires ~6.6.0, where the
 // Administration still builds with webpack and reads build/webpack.config.js.
 // A minor+ finding that names ADM-009 or calls the webpack config ignored is

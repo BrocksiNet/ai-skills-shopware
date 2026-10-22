@@ -1,4 +1,4 @@
-// Grader: review-triage-with-confidence (shopware-pr-review)
+// Grader: review-triage-with-confidence (sw-pr-review)
 // Every thread needs a classified action (fix / reply / push back) and an
 // explicit confidence percentage. T1 is a real bug (fix); T3 asks for a
 // guideline violation (push back).

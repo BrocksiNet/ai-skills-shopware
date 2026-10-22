@@ -17,8 +17,8 @@ import {
 function item(id: string, check: Partial<Enforcement> = {}): EnforcedItem {
   const rule: Rule = {
     id,
-    skill: 'shopware-testing',
-    file: 'skills/shopware-testing/SKILL.md',
+    skill: 'sw-testing',
+    file: 'skills/sw-testing/SKILL.md',
     title: id,
     status: 'active',
     since: '2026-10-20',

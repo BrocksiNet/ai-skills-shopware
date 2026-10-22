@@ -1,4 +1,4 @@
-// Grader: review-cache-key-missing-input-catch (shopware-change-impact, IMP-008)
+// Grader: review-cache-key-missing-input-catch (sw-change-impact, IMP-008)
 // The new cache key holds only the product id, but the result depends on
 // the limit, sales channel, language and customer group. One caller gets
 // another caller's recommendations. Needs a major+ finding in src/ that

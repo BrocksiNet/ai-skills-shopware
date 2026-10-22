@@ -1,4 +1,4 @@
-// Grader: review-sw-csrf-ignore (shopware-storefront, SF-009)
+// Grader: review-sw-csrf-ignore (sw-storefront, SF-009)
 // The change adds the same redeem form without any CSRF call, which is
 // correct on 6.5+: storefront forms need no token. A minor+ finding that
 // names SF-009 or mentions CSRF at all (the form "lacks CSRF protection") is

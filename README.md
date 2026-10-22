@@ -28,23 +28,23 @@ release tag, and run `npx skills update` to pull improvements.
 
 | Skill | Surface | Purpose |
 | ----- | ------- | ------- |
-| [`php-foundation`](skills/php-foundation/SKILL.md) | any PHP | Strict PHP 8.x base: `strict_types`, enums/DTOs over arrays, PER-CS, `list<>` over `array<>`. |
-| [`shopware-architecture`](skills/shopware-architecture/SKILL.md) | any PHP refactor | Patterns, DAL boundaries, progressive enhancement, anti-patterns; defers to core on trunk. |
-| [`shopware-security`](skills/shopware-security/SKILL.md) | any PHP/API/config | Secrets, access keys, ACL, app least privilege — not covered by core skills. |
-| [`shopware-core-development`](skills/shopware-core-development/SKILL.md) | platform (`shopware/shopware`, `src/`) | A platform diff that can break extensions: public API, deprecations, PHPStan baseline, RELEASE_INFO/UPGRADE + ADRs. A private bugfix stays with core's `shopware-php-code` on trunk. |
-| [`shopware-plugin-development`](skills/shopware-plugin-development/SKILL.md) | plugin / project (`custom/plugins`) | Pragmatic PHP-extension rules: smallest safe change, 6.6–6.8 compat, DAL usage, HTTP cache tags (6.7+), migrations, PHP DI on 6.8, Symfony-first components, decoration. |
-| [`shopware-app-development`](skills/shopware-app-development/SKILL.md) | app (`custom/apps`, `manifest.xml`) | Declarative app rules: manifest, least-privilege permissions, sandboxed Twig app scripts, webhooks + Admin API, Meteor Admin SDK. |
-| [`shopware-testing`](skills/shopware-testing/SKILL.md) | any test | PHPUnit standards: unit vs integration placement, `IntegrationTestBehaviour`, data providers, no real I/O in unit tests. |
-| [`shopware-storefront`](skills/shopware-storefront/SKILL.md) | storefront (Twig/theme/JS) | PluginManager, Twig/theme inheritance, Bootstrap SCSS, cache-safe AJAX; Modern Web Guidance only after Shopware primitives. |
-| [`shopware-admin-js`](skills/shopware-admin-js/SKILL.md) | Administration JS/TS/Vue | TypeScript, Meteor `mt-*`, Jest next to code, Admin ACL; defers to core `shopware-admin-js` on trunk. |
-| [`shopware-review-learnings`](skills/shopware-review-learnings/SKILL.md) | any review | Recurring findings from real plugin/app/PR reviews. Grows over time. |
-| [`shopware-change-impact`](skills/shopware-change-impact/SKILL.md) | after a feature works | Blast radius: shared cache, who pays, easier vs more complex, assets only tested locally, one compiled container. Not a line-level review. |
-| [`shopware-research-and-escalation`](skills/shopware-research-and-escalation/SKILL.md) | any | When to research vs. proceed, the Shopware docs map, Context7 for libraries, and the when-stuck ladder. |
-| [`shopware-pr-description`](skills/shopware-pr-description/SKILL.md) | core PR workflow | GitHub PR body template for `shopware/shopware` contributions (copy-paste ready). |
-| [`shopware-assistant-style`](skills/shopware-assistant-style/SKILL.md) | any communication | Plain, concise answers; support-ticket replies in one copy block. |
-| [`shopware-pr-review`](skills/shopware-pr-review/SKILL.md) | PR review | Triage GitHub review threads; fix, reply, or push back with confidence. |
-| [`shopware-extension-review`](skills/shopware-extension-review/SKILL.md) | plugin / app review | Review a plugin or app diff as a whole: rules picked by changed path, findings with rule IDs and severities. Reads the topic skills' references. |
-| [`shopware-podman-dev`](skills/shopware-podman-dev/SKILL.md) | linked Podman or CLI project | **Optional.** Podman on `~/shopware-dev`; `shopware-cli` when `.shopware-project.yml` exists; MCP never blocks a fallback. |
+| [`sw-php-foundation`](skills/sw-php-foundation/SKILL.md) | any PHP | Strict PHP 8.x base: `strict_types`, enums/DTOs over arrays, PER-CS, `list<>` over `array<>`. |
+| [`sw-architecture`](skills/sw-architecture/SKILL.md) | any PHP refactor | Patterns, DAL boundaries, progressive enhancement, anti-patterns; defers to core on trunk. |
+| [`sw-security`](skills/sw-security/SKILL.md) | any PHP/API/config | Secrets, access keys, ACL, app least privilege — not covered by core skills. |
+| [`sw-core-development`](skills/sw-core-development/SKILL.md) | platform (`shopware/shopware`, `src/`) | A platform diff that can break extensions: public API, deprecations, PHPStan baseline, RELEASE_INFO/UPGRADE + ADRs. A private bugfix stays with core's `shopware-php-code` on trunk. |
+| [`sw-plugin-development`](skills/sw-plugin-development/SKILL.md) | plugin / project (`custom/plugins`) | Pragmatic PHP-extension rules: smallest safe change, 6.6–6.8 compat, DAL usage, HTTP cache tags (6.7+), migrations, PHP DI on 6.8, Symfony-first components, decoration. |
+| [`sw-app-development`](skills/sw-app-development/SKILL.md) | app (`custom/apps`, `manifest.xml`) | Declarative app rules: manifest, least-privilege permissions, sandboxed Twig app scripts, webhooks + Admin API, Meteor Admin SDK. |
+| [`sw-testing`](skills/sw-testing/SKILL.md) | any test | PHPUnit standards: unit vs integration placement, `IntegrationTestBehaviour`, data providers, no real I/O in unit tests. |
+| [`sw-storefront`](skills/sw-storefront/SKILL.md) | storefront (Twig/theme/JS) | PluginManager, Twig/theme inheritance, Bootstrap SCSS, cache-safe AJAX; Modern Web Guidance only after Shopware primitives. |
+| [`sw-admin-js`](skills/sw-admin-js/SKILL.md) | Administration JS/TS/Vue | TypeScript, Meteor `mt-*`, Jest next to code, Admin ACL; defers to core `sw-admin-js` on trunk. |
+| [`sw-review-learnings`](skills/sw-review-learnings/SKILL.md) | any review | Recurring findings from real plugin/app/PR reviews. Grows over time. |
+| [`sw-change-impact`](skills/sw-change-impact/SKILL.md) | after a feature works | Blast radius: shared cache, who pays, easier vs more complex, assets only tested locally, one compiled container. Not a line-level review. |
+| [`sw-research-and-escalation`](skills/sw-research-and-escalation/SKILL.md) | any | When to research vs. proceed, the Shopware docs map, Context7 for libraries, and the when-stuck ladder. |
+| [`sw-pr-description`](skills/sw-pr-description/SKILL.md) | core PR workflow | GitHub PR body template for `shopware/shopware` contributions (copy-paste ready). |
+| [`sw-assistant-style`](skills/sw-assistant-style/SKILL.md) | any communication | Plain, concise answers; support-ticket replies in one copy block. |
+| [`sw-pr-review`](skills/sw-pr-review/SKILL.md) | PR review | Triage GitHub review threads; fix, reply, or push back with confidence. |
+| [`sw-extension-review`](skills/sw-extension-review/SKILL.md) | plugin / app review | Review a plugin or app diff as a whole: rules picked by changed path, findings with rule IDs and severities. Reads the topic skills' references. |
+| [`sw-podman-dev`](skills/sw-podman-dev/SKILL.md) | linked Podman or CLI project | **Optional.** Podman on `~/shopware-dev`; `shopware-cli` when `.shopware-project.yml` exists; MCP never blocks a fallback. |
 
 See [`docs/tooling-stack.md`](docs/tooling-stack.md) for how this repo fits with
 shopware-ai-coding-tools and a multi-instance proxy setup.
@@ -70,7 +70,7 @@ Six ideas carry the library. Each one is checked on every push.
 | **Rules have IDs** | Every rule starts with a bold ID like `**PLG-028**`, and `rules/catalog.json` records its owner, its eval and whether core already enforces it. | [`rules/catalog.json`](rules/catalog.json) |
 | **One owner per topic** | A topic belongs to exactly one skill; other skills point at the rule by its ID instead of repeating it. | [`REGISTRY.md`](REGISTRY.md) |
 | **References load by diff** | A skill's `routes.json` says which reference file to read for which changed paths or lines, so a migration change reads `migrations.md` and nothing else. The table in `SKILL.md` is generated from it. | `skills/*/routes.json` |
-| **Reviews borrow, not copy** | `shopware-extension-review` owns no rules: its routes point at the other skills' references (`../shopware-plugin-development/references/migrations.md`) and take their triggers, so the review and the rule cannot drift apart. | [`skills/shopware-extension-review/`](skills/shopware-extension-review/SKILL.md) |
+| **Reviews borrow, not copy** | `sw-extension-review` owns no rules: its routes point at the other skills' references (`../sw-plugin-development/references/migrations.md`) and take their triggers, so the review and the rule cannot drift apart. | [`skills/sw-extension-review/`](skills/sw-extension-review/SKILL.md) |
 | **Every rule is tested** | A task gives an agent a real change and a script grades the result. Review rules come in pairs: `-catch` must find the problem, `-ignore` must stay quiet on a clean change that only looks like it. | [`evals/tasks/`](evals/tasks/) |
 | **Trunk is watched** | A weekly job lists what changed in Shopware's own agent skills, guidelines and PHPStan rules, so we notice when core adds or drops a rule we mirror. | [`mine-trunk.yml`](.github/workflows/mine-trunk.yml) |
 
@@ -119,12 +119,12 @@ difference between tools is the `-a` target.
 
 ```bash
 npx skills add BrocksiNet/ai-skills-shopware \
-  --skill php-foundation \
-  --skill shopware-plugin-development \
-  --skill shopware-testing \
-  --skill shopware-research-and-escalation \
-  --skill shopware-review-learnings \
-  --skill shopware-change-impact \
+  --skill sw-php-foundation \
+  --skill sw-plugin-development \
+  --skill sw-testing \
+  --skill sw-research-and-escalation \
+  --skill sw-review-learnings \
+  --skill sw-change-impact \
   -a cursor
 ```
 
@@ -132,12 +132,12 @@ npx skills add BrocksiNet/ai-skills-shopware \
 
 ```bash
 npx skills add BrocksiNet/ai-skills-shopware \
-  --skill php-foundation \
-  --skill shopware-plugin-development \
-  --skill shopware-testing \
-  --skill shopware-research-and-escalation \
-  --skill shopware-review-learnings \
-  --skill shopware-change-impact \
+  --skill sw-php-foundation \
+  --skill sw-plugin-development \
+  --skill sw-testing \
+  --skill sw-research-and-escalation \
+  --skill sw-review-learnings \
+  --skill sw-change-impact \
   -a claude-code
 ```
 
@@ -145,12 +145,12 @@ npx skills add BrocksiNet/ai-skills-shopware \
 
 ```bash
 npx skills add BrocksiNet/ai-skills-shopware \
-  --skill php-foundation \
-  --skill shopware-plugin-development \
-  --skill shopware-testing \
-  --skill shopware-research-and-escalation \
-  --skill shopware-review-learnings \
-  --skill shopware-change-impact \
+  --skill sw-php-foundation \
+  --skill sw-plugin-development \
+  --skill sw-testing \
+  --skill sw-research-and-escalation \
+  --skill sw-review-learnings \
+  --skill sw-change-impact \
   -a codex
 ```
 
@@ -158,12 +158,12 @@ npx skills add BrocksiNet/ai-skills-shopware \
 
 ```bash
 npx skills add BrocksiNet/ai-skills-shopware \
-  --skill php-foundation \
-  --skill shopware-plugin-development \
-  --skill shopware-testing \
-  --skill shopware-research-and-escalation \
-  --skill shopware-review-learnings \
-  --skill shopware-change-impact \
+  --skill sw-php-foundation \
+  --skill sw-plugin-development \
+  --skill sw-testing \
+  --skill sw-research-and-escalation \
+  --skill sw-review-learnings \
+  --skill sw-change-impact \
   -a opencode
 ```
 
@@ -173,12 +173,12 @@ npx skills add BrocksiNet/ai-skills-shopware \
 
 ```bash
 npx skills add BrocksiNet/ai-skills-shopware \
-  --skill php-foundation \
-  --skill shopware-app-development \
-  --skill shopware-testing \
-  --skill shopware-research-and-escalation \
-  --skill shopware-review-learnings \
-  --skill shopware-change-impact \
+  --skill sw-php-foundation \
+  --skill sw-app-development \
+  --skill sw-testing \
+  --skill sw-research-and-escalation \
+  --skill sw-review-learnings \
+  --skill sw-change-impact \
   -a cursor
 ```
 
@@ -186,12 +186,12 @@ npx skills add BrocksiNet/ai-skills-shopware \
 
 ```bash
 npx skills add BrocksiNet/ai-skills-shopware \
-  --skill php-foundation \
-  --skill shopware-app-development \
-  --skill shopware-testing \
-  --skill shopware-research-and-escalation \
-  --skill shopware-review-learnings \
-  --skill shopware-change-impact \
+  --skill sw-php-foundation \
+  --skill sw-app-development \
+  --skill sw-testing \
+  --skill sw-research-and-escalation \
+  --skill sw-review-learnings \
+  --skill sw-change-impact \
   -a claude-code
 ```
 
@@ -199,12 +199,12 @@ npx skills add BrocksiNet/ai-skills-shopware \
 
 ```bash
 npx skills add BrocksiNet/ai-skills-shopware \
-  --skill php-foundation \
-  --skill shopware-app-development \
-  --skill shopware-testing \
-  --skill shopware-research-and-escalation \
-  --skill shopware-review-learnings \
-  --skill shopware-change-impact \
+  --skill sw-php-foundation \
+  --skill sw-app-development \
+  --skill sw-testing \
+  --skill sw-research-and-escalation \
+  --skill sw-review-learnings \
+  --skill sw-change-impact \
   -a codex
 ```
 
@@ -212,12 +212,12 @@ npx skills add BrocksiNet/ai-skills-shopware \
 
 ```bash
 npx skills add BrocksiNet/ai-skills-shopware \
-  --skill php-foundation \
-  --skill shopware-app-development \
-  --skill shopware-testing \
-  --skill shopware-research-and-escalation \
-  --skill shopware-review-learnings \
-  --skill shopware-change-impact \
+  --skill sw-php-foundation \
+  --skill sw-app-development \
+  --skill sw-testing \
+  --skill sw-research-and-escalation \
+  --skill sw-review-learnings \
+  --skill sw-change-impact \
   -a opencode
 ```
 
@@ -227,12 +227,12 @@ npx skills add BrocksiNet/ai-skills-shopware \
 
 ```bash
 npx skills add BrocksiNet/ai-skills-shopware \
-  --skill php-foundation \
-  --skill shopware-core-development \
-  --skill shopware-testing \
-  --skill shopware-research-and-escalation \
-  --skill shopware-review-learnings \
-  --skill shopware-change-impact \
+  --skill sw-php-foundation \
+  --skill sw-core-development \
+  --skill sw-testing \
+  --skill sw-research-and-escalation \
+  --skill sw-review-learnings \
+  --skill sw-change-impact \
   -a cursor
 ```
 
@@ -240,12 +240,12 @@ npx skills add BrocksiNet/ai-skills-shopware \
 
 ```bash
 npx skills add BrocksiNet/ai-skills-shopware \
-  --skill php-foundation \
-  --skill shopware-core-development \
-  --skill shopware-testing \
-  --skill shopware-research-and-escalation \
-  --skill shopware-review-learnings \
-  --skill shopware-change-impact \
+  --skill sw-php-foundation \
+  --skill sw-core-development \
+  --skill sw-testing \
+  --skill sw-research-and-escalation \
+  --skill sw-review-learnings \
+  --skill sw-change-impact \
   -a claude-code
 ```
 
@@ -253,12 +253,12 @@ npx skills add BrocksiNet/ai-skills-shopware \
 
 ```bash
 npx skills add BrocksiNet/ai-skills-shopware \
-  --skill php-foundation \
-  --skill shopware-core-development \
-  --skill shopware-testing \
-  --skill shopware-research-and-escalation \
-  --skill shopware-review-learnings \
-  --skill shopware-change-impact \
+  --skill sw-php-foundation \
+  --skill sw-core-development \
+  --skill sw-testing \
+  --skill sw-research-and-escalation \
+  --skill sw-review-learnings \
+  --skill sw-change-impact \
   -a codex
 ```
 
@@ -266,12 +266,12 @@ npx skills add BrocksiNet/ai-skills-shopware \
 
 ```bash
 npx skills add BrocksiNet/ai-skills-shopware \
-  --skill php-foundation \
-  --skill shopware-core-development \
-  --skill shopware-testing \
-  --skill shopware-research-and-escalation \
-  --skill shopware-review-learnings \
-  --skill shopware-change-impact \
+  --skill sw-php-foundation \
+  --skill sw-core-development \
+  --skill sw-testing \
+  --skill sw-research-and-escalation \
+  --skill sw-review-learnings \
+  --skill sw-change-impact \
   -a opencode
 ```
 
@@ -281,21 +281,21 @@ and pragmatic rules from firing on the wrong code.
 
 ### Plugin and app review
 
-`shopware-extension-review` reads the references of the topic skills, so
+`sw-extension-review` reads the references of the topic skills, so
 install it with them (any `-a` target):
 
 ```bash
 npx skills add BrocksiNet/ai-skills-shopware \
-  --skill shopware-extension-review \
-  --skill shopware-plugin-development \
-  --skill shopware-app-development \
-  --skill shopware-security \
-  --skill shopware-storefront \
-  --skill shopware-admin-js \
-  --skill shopware-architecture \
-  --skill shopware-review-learnings \
-  --skill shopware-testing \
-  --skill shopware-change-impact \
+  --skill sw-extension-review \
+  --skill sw-plugin-development \
+  --skill sw-app-development \
+  --skill sw-security \
+  --skill sw-storefront \
+  --skill sw-admin-js \
+  --skill sw-architecture \
+  --skill sw-review-learnings \
+  --skill sw-testing \
+  --skill sw-change-impact \
   -a claude-code
 ```
 
@@ -313,7 +313,7 @@ exclusively and accept that trade-off.
 
 ```bash
 # Pin to a release tag for reproducibility
-npx skills add BrocksiNet/ai-skills-shopware@v0.12.0 --skill php-foundation -a cursor
+npx skills add BrocksiNet/ai-skills-shopware@v0.12.0 --skill sw-php-foundation -a cursor
 ```
 
 ## Update
@@ -422,7 +422,7 @@ This is a curated library, not a dumping ground. A rule is included only if it:
    dependency. MIT content may be vendored as a pinned, attributed snapshot;
    CC-BY-SA content is rewritten.
 
-Ownership: the `shopware-core-development` skill is platform/maintainer-controlled.
+Ownership: the `sw-core-development` skill is platform/maintainer-controlled.
 Propose changes via PR; recurring real-world findings go through the
 [issue templates](.github/ISSUE_TEMPLATE) and become review-learnings + eval tasks.
 

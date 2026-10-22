@@ -1,4 +1,4 @@
-// Grader: review-snippet-key-renamed-catch (shopware-storefront, SF-012)
+// Grader: review-snippet-key-renamed-catch (sw-storefront, SF-012)
 // The plugin renames snippet key swag-loyalty.badge.label to
 // swag-loyalty.badge.title. Themes and merchant snippet sets that override
 // or use the old key fall back to the raw key. Needs a major+ finding in

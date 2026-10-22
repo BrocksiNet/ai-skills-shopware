@@ -1,4 +1,4 @@
-// Grader: review-route-defaults-changed-ignore (shopware-security, SEC-007)
+// Grader: review-route-defaults-changed-ignore (sw-security, SEC-007)
 // The change adds a new login-only route and leaves the existing public
 // route as it was. A minor+ finding that names SEC-007 or calls the login
 // requirement or caching a breaking route change is a false positive.

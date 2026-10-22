@@ -23,8 +23,8 @@ function skill(name: string, routes: unknown, refs: string[] = []): string {
 }
 
 const lender = { reference: 'references/dal.md', when: 'DAL reads.', anchors_any: ['new Criteria\\('] };
-skill('shopware-lender', { routes: [lender] }, ['dal.md']);
-const BORROW = '../shopware-lender/references/dal.md';
+skill('sw-lender', { routes: [lender] }, ['dal.md']);
+const BORROW = '../sw-lender/references/dal.md';
 
 describe('resolveBorrowed', () => {
   const dir = join(root, 'borrower');
@@ -44,11 +44,11 @@ describe('resolveBorrowed', () => {
 
   test('a missing lending skill or route is an error', () => {
     const { errors } = resolveBorrowed(dir, {
-      routes: [{ reference: '../shopware-none/references/a.md' }, { reference: '../shopware-lender/references/x.md' }],
+      routes: [{ reference: '../sw-none/references/a.md' }, { reference: '../sw-lender/references/x.md' }],
     });
     assert.deepEqual(errors, [
-      'routes[0]: shopware-none has no routes.json',
-      'routes[1]: shopware-lender has no route for references/x.md',
+      'routes[0]: sw-none has no routes.json',
+      'routes[1]: sw-lender has no route for references/x.md',
     ]);
   });
 
@@ -68,17 +68,17 @@ describe('borrowed routes in a skill', () => {
     const table = renderTable(routes);
     assert.match(
       table,
-      /\| \[`lender: dal\.md`\]\(\.\.\/shopware-lender\/references\/dal\.md\) \| DAL reads\. \| `new Criteria\(` \|/u,
+      /\| \[`lender: dal\.md`\]\(\.\.\/sw-lender\/references\/dal\.md\) \| DAL reads\. \| `new Criteria\(` \|/u,
     );
     writeFileSync(join(dir, 'SKILL.md'), `x\n${table}\n`);
     assert.deepEqual(routeErrors(dir, 's'), []);
   });
 
   test('a broken borrow is a route error', () => {
-    const broken = skill('shopware-broken', { routes: [{ reference: '../shopware-lender/references/x.md' }] });
+    const broken = skill('sw-broken', { routes: [{ reference: '../sw-lender/references/x.md' }] });
     writeFileSync(join(broken, 'SKILL.md'), 'x\n');
     assert.deepEqual(routeErrors(broken, 's'), [
-      's/routes.json: routes[0]: shopware-lender has no route for references/x.md',
+      's/routes.json: routes[0]: sw-lender has no route for references/x.md',
     ]);
     assert.throws(() => loadRoutes(broken), /no route for references\/x\.md/u);
   });
@@ -86,8 +86,8 @@ describe('borrowed routes in a skill', () => {
 
 const rule = (id: string, audience: Audience[], status = 'active'): Rule => ({
   id,
-  skill: 'shopware-lender',
-  file: 'skills/shopware-lender/references/dal.md',
+  skill: 'sw-lender',
+  file: 'skills/sw-lender/references/dal.md',
   title: id,
   status: status === 'active' ? 'active' : 'retired',
   since: '2026-10-21',
@@ -104,7 +104,7 @@ describe('borrowedAudienceErrors', () => {
     mkdirSync(join(repo, path, '..'), { recursive: true });
     writeFileSync(join(repo, path), text);
   };
-  write('skills/shopware-lender/routes.json', JSON.stringify({ routes: [lender] }));
+  write('skills/sw-lender/routes.json', JSON.stringify({ routes: [lender] }));
   write(
     'skills/shopware-review/routes.json',
     JSON.stringify({ audience: ['plugin'], routes: [{ reference: BORROW }] }),
@@ -113,9 +113,9 @@ describe('borrowedAudienceErrors', () => {
 
   test('an active rule for another audience must be named in the borrowing skill', () => {
     assert.deepEqual(borrowedAudienceErrors(repo, rules, []), [
-      'skills/shopware-review: borrows skills/shopware-lender/references/dal.md but does not name X-002 (audience core) as out of scope',
+      'skills/shopware-review: borrows skills/sw-lender/references/dal.md but does not name X-002 (audience core) as out of scope',
     ]);
-    const elsewhere = [{ id: 'X-002', file: 'skills/shopware-lender/SKILL.md' }];
+    const elsewhere = [{ id: 'X-002', file: 'skills/sw-lender/SKILL.md' }];
     assert.equal(borrowedAudienceErrors(repo, rules, elsewhere).length, 1);
     const named = [{ id: 'X-002', file: 'skills/shopware-review/references/lenses.md' }];
     assert.deepEqual(borrowedAudienceErrors(repo, rules, named), []);
@@ -133,19 +133,19 @@ describe('reviewReachErrors', () => {
     mkdirSync(join(repo, path, '..'), { recursive: true });
     writeFileSync(join(repo, path), text);
   };
-  write('skills/shopware-lender/routes.json', JSON.stringify({ routes: [lender] }));
+  write('skills/sw-lender/routes.json', JSON.stringify({ routes: [lender] }));
   write(
     'skills/shopware-review/routes.json',
     JSON.stringify({ audience: ['plugin'], routes: [{ reference: BORROW }] }),
   );
-  write('evals/tasks/review-x-catch/skills', 'shopware-lender\nshopware-review\n');
+  write('evals/tasks/review-x-catch/skills', 'sw-lender\nshopware-review\n');
   write('tools/graders/review-x-catch.ts', "export const grade = reviewCatch({ rule: 'X-001', file: 'src/**' });\n");
-  const inSkill = { ...rule('X-001', ['plugin']), file: 'skills/shopware-lender/SKILL.md' };
+  const inSkill = { ...rule('X-001', ['plugin']), file: 'skills/sw-lender/SKILL.md' };
 
   test('a rule a catch task expects must be tagged where the reviewing skill reads', () => {
     assert.deepEqual(reviewReachErrors(repo, new Map([['X-001', rule('X-001', ['plugin'])]])), []);
     assert.deepEqual(reviewReachErrors(repo, new Map([['X-001', inSkill]])), [
-      'evals/tasks/review-x-catch: expects X-001, tagged in skills/shopware-lender/SKILL.md, which shopware-review does not read; tag it in a reference shopware-review borrows',
+      'evals/tasks/review-x-catch: expects X-001, tagged in skills/sw-lender/SKILL.md, which shopware-review does not read; tag it in a reference shopware-review borrows',
     ]);
   });
 

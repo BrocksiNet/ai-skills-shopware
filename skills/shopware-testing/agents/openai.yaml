@@ -1,4 +1,0 @@
-interface:
-  display_name: "Shopware Testing"
-  short_description: "Write and place Shopware PHPUnit tests correctly."
-  default_prompt: "Use $shopware-testing to write a PHPUnit test for this Shopware code."

@@ -1,4 +1,0 @@
-interface:
-  display_name: "Shopware Core Development"
-  short_description: "Keep shopware/shopware changes backward compatible."
-  default_prompt: "Use $shopware-core-development to check whether this shopware/shopware change breaks extensions."

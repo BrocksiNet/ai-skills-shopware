@@ -223,7 +223,7 @@ function triggers(route: Route): string {
 export function renderTable(routes: RouteFile): string {
   const rows = routes.routes.map((r) => {
     const name = r.reference.replace(/^references\//u, '').replace(BORROWED, (_, skill: string, file: string) => {
-      return `${skill.replace(/^shopware-/u, '')}: ${file.replace(/^references\//u, '')}`;
+      return `${skill.replace(/^sw-/u, '')}: ${file.replace(/^references\//u, '')}`;
     });
     return `| [\`${name}\`](${r.reference}) | ${cell(r.when)} | ${triggers(r)} |`;
   });

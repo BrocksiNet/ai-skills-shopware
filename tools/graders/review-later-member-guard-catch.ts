@@ -1,4 +1,4 @@
-// Grader: review-later-member-guard-catch (shopware-plugin-development, PLG-024)
+// Grader: review-later-member-guard-catch (sw-plugin-development, PLG-024)
 // SwagCustomerPrices supports ~6.6.0 || ~6.7.0 and registers a subscriber for
 // HttpCacheCookieEvent behind class_exists(), which is right: the class
 // arrived in 6.6.6.0. The subscriber calls $event->getHash(), which only

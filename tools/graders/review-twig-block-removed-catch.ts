@@ -1,4 +1,4 @@
-// Grader: review-twig-block-removed-catch (shopware-storefront, SF-001)
+// Grader: review-twig-block-removed-catch (sw-storefront, SF-001)
 // The plugin template renames block swag_loyalty_badge_label to
 // swag_loyalty_badge_text and drops the old name, so theme overrides of the
 // old block silently stop rendering. Needs a major+ finding in the views

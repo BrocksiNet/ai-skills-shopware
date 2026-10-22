@@ -1,0 +1,230 @@
+---
+name: sw-podman-dev
+description: >-
+  Run Shopware dev commands in the right environment. Use for linked
+  shopware-dev checkouts (Podman and Mutagen: php, composer install, phpunit,
+  bin/console, phpstan, ecs, npm, podman compose, mutagen sync,
+  trunk.localhost lanes, enabling OpenSearch on a lane) and for Shopware CLI
+  projects with .shopware-project.yml (shopware-cli project console, project validate,
+  extension validate). Do NOT use for CI log interpretation, PR descriptions,
+  or PHPUnit test structure rules (sw-testing).
+license: MIT
+---
+
+# Shopware local execution (Podman and CLI)
+
+Use the **project's** runner. Linked `shopware-dev` trees run inside **Podman**
+with **Mutagen** sync — host PHP/Composer/PHPUnit/Node are wrong because code
+and `vendor/` live in the container volume. Shopware CLI projects
+(`.shopware-project.yml`) should go through **shopware-cli**, not reconstructed
+composer/`bin/console`/npm. MCP is optional and must never block a fallback.
+
+## Hard rules
+
+1. **Never** run `php`, `composer`, `phpunit`, `bin/console`, `phpstan`,
+   `ecs`, `rector`, or Shopware `npm`/`node` scripts on the **host** for a
+   linked shopware-dev project unless the user explicitly says native/no-container.
+2. **Never** assume `vendor/`, `var/`, or `node_modules/` on the host are
+   current on a linked project — Mutagen syncs into the container named volume.
+3. **Always** `cd` to the **project root** (where `compose.yaml` or
+   `.shopware-project.yml` lives) before compose, CLI, or MCP commands.
+4. **Do not block** on missing MCP. If php-tooling MCP is down, use Podman or
+   `shopware-cli` instead of stalling.
+
+## Command priority
+
+Match the project, then use the first option that works:
+
+| Detect | Prefer | Fallback |
+| ------ | ------ | -------- |
+| `.env` contains `shopware-dev (managed by sw-dev)` | `podman compose exec web …` (MCP php-tooling if it is actually callable) | Host CLI only if the user confirms native |
+| `.shopware-project.yml` and **not** a linked shopware-dev tree | `shopware-cli` (`project console`, `project validate`, `extension validate`, `project dev`) | CLI Docker skill if the project is Docker-backed |
+| User said native | Host CLI | — |
+
+Do **not** route a linked `shopware-dev` trunk through `shopware-cli` by default
+(Docker vs Podman mismatch). Install the CLI skills separately; do not copy them:
+
+```bash
+npx skills add shopware/shopware-cli
+```
+
+MCP configs for linked projects are symlinked from `~/shopware-dev`
+(`.mcp-php-tooling.json`, etc.). They target compose service `web`, workdir
+`/var/www/html`. Set `enforce_mcp_tools: false` if that plugin is installed so
+hooks cannot veto Podman or `shopware-cli`.
+
+## Detect a linked project
+
+A project is **shopware-dev linked** when `.env` contains:
+
+```dotenv
+# --- shopware-dev (managed by sw-dev) ---
+```
+
+Then overrides come from `~/shopware-dev/`, not local `compose.override.yaml`.
+
+Quick check:
+
+```bash
+grep -F 'shopware-dev (managed by sw-dev)' .env && sw-dev show <instance>
+```
+
+(`sw-dev` lives at `~/shopware-dev/bin/sw-dev`.)
+
+**Optional skill** in [ai-skills-shopware](https://github.com/BrocksiNet/ai-skills-shopware) —
+skip it if you do not use Podman/Mutagen. With `~/shopware-dev`, `sw-dev link`
+symlinks skills from `ai-skills-shopware/skills/` into `.agents/skills/` and
+`.claude/skills/` so Claude Code, Codex, and Cursor share one source.
+
+## Shell patterns (MCP fallback)
+
+From project root:
+
+```bash
+# PHP / Composer / Console
+podman compose exec web composer install
+podman compose exec web bin/console cache:clear
+podman compose exec web vendor/bin/phpunit --filter MyTest
+
+# Quality tools (prefer MCP when available)
+podman compose exec web composer phpstan
+podman compose exec web composer ecs
+
+# Administration JS (scope admin in .mcp-js-tooling.json)
+podman compose exec web bash -lc 'cd src/Administration/Resources/app/administration && npm run lint'
+
+# Storefront JS
+podman compose exec web bash -lc 'cd src/Storefront/Resources/app/storefront && npm run lint'
+```
+
+Use `podman compose` (not bare `docker`). Do **not** pass `-f compose.override.yaml`
+unless debugging — linked projects use `COMPOSE_FILE` in `.env`.
+
+## Multi-instance lanes
+
+Several checkouts run in parallel. **Use the workspace's project** — do not
+cross lanes.
+
+| Instance | Proxy (browser / HTTP MCP) | App port |
+| -------- | -------------------------- | -------- |
+| trunk | `http://trunk.localhost:8088` | 8100 |
+| sw66 | `http://sw66.localhost:8088` | 8101 |
+| sw65 | `http://sw65.localhost:8088` | 8102 |
+| sw67 | `http://sw67.localhost:8088` | 8103 |
+
+`.mcp.json` Shopware HTTP URL must match **this** workspace's lane.
+
+## Add a new instance (fresh clone)
+
+Full walkthrough: `~/shopware-dev/README.md` → "Add a new instance". Short version:
+clone the tag/branch into its own folder, register the lane in
+`instances.json` + create `instances/<lane>.yaml` (unique ports), `sw-dev link
+<lane>`, `podman compose up -d`, `sw-dev sync all`, then **inside the container**:
+`composer install` → `bin/console system:install --create-database --basic-setup
+--force` → build admin (`npm ci && npm run build` in
+`src/Administration/Resources/app/administration`) → `bundle:dump` +
+`assets:install`.
+
+A bare `shopware/shopware` clone ships **no built assets and no `install.lock`**.
+The shared tooling handles the traps, but know them:
+
+- **Never build on the host.** Admin/storefront builds run in the `web` container.
+- **Check the Mutagen mode when container-created files vanish.** Lanes use
+  `two-way-resolved` (container output syncs back to the host). A
+  `one-way-replica` session mirrors host to container and deletes anything created
+  only in the container within seconds (webpack `dist/`, `.env.local`,
+  `install.lock`), which leads to `/installer` loops and a storefront without JS.
+  `sw-dev sync` uses the `mode` from `instances.json` (older `lib/mutagen.sh`
+  forced `one-way-replica` for non-agentic lanes). Verify with
+  `mutagen sync list <session> -l | grep "Synchronization mode"`.
+- **Generated output is Mutagen-ignored.** `lib/mutagen.sh` ignores
+  `install.lock`, `public/bundles`, `public/theme`, `public/administration`,
+  `public/storefront`, `src/{Administration,Storefront}/Resources/public` and the
+  storefront `vendor/`. If you add such a path, add it there too.
+- **Storefront without CSS on a fresh lane:** `system:install` cannot compile the
+  theme before the storefront npm deps exist. After `npm run production` and
+  `node copy-to-vendor.js`, run `bin/console theme:change Storefront --all --sync`.
+- **`PROJECT_ROOT` is set on `web`** by `overrides/shared.podman-mutagen.yaml`; the
+  admin Vite build needs it or dies with `paths[0] must be of type string`.
+- After changing `lib/mutagen.sh` ignores or the shared override:
+  `sw-dev sync all` (recreates sessions) and
+  `podman compose up -d --force-recreate web` (applies env).
+- For API/Admin-only work (e.g. MCP), you do **not** need the storefront theme;
+  skip `theme:compile`.
+- **OpenSearch is off by default** (compose profile `opensearch` in the shared
+  override). If the task sets `SHOPWARE_ES_ENABLED` / `SHOPWARE_ADMIN_ES_ENABLED`,
+  runs `es:*` commands, or touches `src/Elasticsearch/` or its integration tests,
+  enable it for this lane only. Steps: [`references/shopware-dev-hub.md`](references/shopware-dev-hub.md#opensearch-opt-in-per-lane).
+  Do not remove the profile from the shared override; the VM cannot run one
+  OpenSearch per lane.
+
+## Before running tools
+
+1. Container up: `podman compose up -d` (from project root).
+2. Mutagen: sessions should be watching (`mutagen sync list`). After reboot:
+   `sw-dev startup` (or `~/shopware-dev/bin/sw-dev startup`). The old
+   `~/scripts/dev-startup.sh` path is only a compatibility wrapper.
+3. After changing `~/shopware-dev` overrides: `sw-dev link-all`, then
+   `podman compose up -d --force-recreate web` if volumes/ports changed.
+
+## shopware-dev commands
+
+`~/shopware-dev/bin/sw-dev` is the source of truth for local orchestration:
+
+```bash
+sw-dev startup --quiet       # GPG, phpactor, Podman, proxy, Mutagen
+sw-dev sync all              # all lane and non-agentic Mutagen sessions
+sw-dev sync status           # lane Mutagen/container file status
+sw-dev proxy restart         # reload local trunk/sw66/sw65 proxy
+sw-dev lane shell trunk      # open shell in the lane's web container
+sw-dev lane exec 66 bin/console cache:clear
+sw-dev agentic bootstrap 65
+sw-dev agentic qa trunk ci
+sw-dev agentic matrix --with-qa
+sw-dev agentic seed trunk music
+```
+
+Compatibility wrappers remain under `~/scripts/dev-startup.sh` and
+`~/scripts/agentic-commerce/*`, but new instructions should prefer `sw-dev`.
+
+## Validate shopware-dev
+
+```bash
+sw-dev doctor              # links, symlinks, override files exist
+sw-dev validate trunk      # + compose merge + container exec + proxy + mutagen
+sw-dev validate --static-only   # no podman exec / no HTTP
+```
+
+## Common mistakes
+
+| Wrong | Right |
+| ----- | ----- |
+| `php bin/console …` on host (linked) | `podman compose exec web bin/console …` |
+| `composer install` on host (linked) | `podman compose exec web composer install` |
+| `./vendor/bin/phpunit` on host (linked) | MCP `phpunit_run` if callable, else exec in `web` |
+| Reconstruct validate with phpstan/eslint by hand (CLI project) | `shopware-cli project validate` / `extension validate` |
+| `shopware-cli` against a linked shopware-dev trunk | `podman compose exec web …` |
+| Read host `vendor/` for symbols | Search source or use LSP/MCP in container |
+| Edit `compose.override.yaml` in project | Edit `~/shopware-dev/instances/*.yaml` |
+| `es:index` fails with no OpenSearch host, so remove the profile from the shared override | Enable OpenSearch for this lane only (`COMPOSE_PROFILES=opensearch` in `.env`), see the hub reference |
+
+## Hub layout (edit once)
+
+```text
+~/shopware-dev/
+  instances.json
+  overrides/shared.podman-mutagen.yaml
+  instances/trunk.yaml, sw66.yaml, …
+  tooling/mcp-*.base.json
+  proxy/dev_host_proxy.py
+  lib/startup.sh, lib/mutagen.sh, lib/agentic.sh, …
+  bin/sw-dev
+```
+
+Read the reference that matches the task or the files it changes:
+
+<!-- routes:start: generated from routes.json by `node tools/bin/render-routes.ts`; do not edit -->
+| Read | When | Or the change touches |
+| ---- | ---- | --------------------- |
+| [`shopware-dev-hub.md`](references/shopware-dev-hub.md) | You need the hub layout or a command not listed above. | `compose*.y*ml`, `docker-compose*.y*ml`, `COMPOSE_(FILE\|PROFILES)=`, … |
+<!-- routes:end -->

@@ -1,4 +1,4 @@
-// Grader: review-store-api-stricter-request-ignore (shopware-plugin-development, PLG-031)
+// Grader: review-store-api-stricter-request-ignore (sw-plugin-development, PLG-031)
 // The change adds an optional `note` parameter and keeps the existing
 // validation. A minor+ finding that names PLG-031 or calls the route
 // stricter or breaking is a false positive.

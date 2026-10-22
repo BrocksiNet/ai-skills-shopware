@@ -1,4 +1,4 @@
-// Grader: review-migration-narrowing-update-catch (shopware-plugin-development, PLG-030)
+// Grader: review-migration-narrowing-update-catch (sw-plugin-development, PLG-030)
 // update() shrinks external_ref from VARCHAR(255) NULL to VARCHAR(64) NOT
 // NULL without a default: existing rows fail or get cut. Needs a major+
 // finding in src/Migration/ that names PLG-030 or describes the narrowing.
