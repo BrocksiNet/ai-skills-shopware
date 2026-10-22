@@ -1,0 +1,16 @@
+MediaUploadService arrived in 6.7.1.0, so the guard keeps 6.6 and 6.7.0.x shops working.
+
+```json
+{
+  "findings": [
+    {
+      "rule_id": null,
+      "severity": "nit",
+      "file": "src/Service/RemoteMediaImporter.php",
+      "line": 18,
+      "summary": "A failed purge after a successful upload is not logged.",
+      "fix": "Log the purge failure."
+    }
+  ]
+}
+```

@@ -37,7 +37,7 @@ export const reviewCatch =
 
 /** Fails on a finding above `nit` that names the rule anywhere. */
 export const reviewIgnore =
-  (e: Pick<Expectation, 'rule' | 'summary'>): Grader =>
+  (e: Pick<Expectation, 'rule' | 'also' | 'summary'>): Grader =>
   ({ transcript }) =>
     withFindings(transcript, (findings) => {
       const [wrong] = falsePositives(findings, e);

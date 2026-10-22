@@ -1,0 +1,16 @@
+The class_exists() guard in services.php is right for the class, which arrived in 6.6.6.0, but the subscriber calls a method that arrived later.
+
+```json
+{
+  "findings": [
+    {
+      "rule_id": "PLG-024",
+      "severity": "blocking",
+      "file": "src/Subscriber/PriceGroupCacheSubscriber.php",
+      "line": 37,
+      "summary": "HttpCacheCookieEvent::getHash() only exists from 6.7.6.0; on 6.6.6.0 to 6.7.5.x the class guard passes, the subscriber runs, and every cached request fails with an undefined method.",
+      "fix": "Guard the call with method_exists(HttpCacheCookieEvent::class, 'getHash'), or build the variant from getParts() yourself."
+    }
+  ]
+}
+```

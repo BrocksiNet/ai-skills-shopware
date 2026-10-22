@@ -345,6 +345,45 @@ the second fails, with no new false positives on the `-ignore` tasks.
   `review-dead-version-guard-catch` passes without skills, so it does not
   tell the arms apart.
 
+  These three pairs are not blind: the skill texts name
+  `ProductDetailRouteCacheTagsEvent` and `CacheInvalidator`, so the second
+  arm can answer two of them without facts. Facts only help where the
+  skill does not already say when an API arrived.
+- **The blind A/B.** Three more pairs whose Shopware symbols no skill
+  names; `tools/test/blind-tasks.test.ts` fails when one does. Haiku, five
+  runs per arm.
+
+  | Task | Rule | Skills off | Skills on | On plus facts |
+  | ---- | ---- | ---------- | --------- | ------------- |
+  | `review-later-member-guard-catch` | `PLG-024` | 0/5 | 1/5 | 5/5 |
+  | `review-later-member-guard-ignore` | `PLG-024` | 5/5 | 5/5 | 5/5 |
+  | `review-in-minor-range-catch` | `PLG-001` | 0/5 | 0/5 | 5/5 |
+  | `review-in-minor-range-ignore` | `PLG-001` | 5/5 | 5/5 | 5/5 |
+  | `review-unneeded-guard-catch` | `REV-015` | 0/5 | 4/5 | 5/5 |
+  | `review-unneeded-guard-ignore` | `REV-015` | 4/5 | 3/5 | 5/5 |
+
+  - `later-member-guard`: `class_exists(HttpCacheCookieEvent::class)` is
+    right for the class (6.6.6.0), but the subscriber calls `getHash()`
+    (6.7.6.0).
+  - `in-minor-range`: `OrderEntity::getPrimaryOrderTransaction()`
+    (6.7.1.0) under `~6.7.0`.
+  - `unneeded-guard`: a guard on `UpdateMediaPathEvent` (6.5.7.0). The
+    ignore half guards `MediaUploadService` (6.7.1.0), and the false
+    positives without facts call that guard dead.
+
+  The first run of `later-member-guard` had a changelog that promised the
+  fix on every release. Reviewers in all arms rightly said 6.6.0 to 6.6.5
+  do not get it. The changelog now says "from Shopware 6.6.6", and the
+  numbers above are the rerun. The task also showed that `api-facts` called
+  `getHash()` guarded because its class was. A class guard now covers only
+  the releases without the class:
+  `not guarded in 6.6.6.0 … 6.7.5.1: the class guard at … only covers
+  releases without the class`. Review graders take an `also` list of IDs
+  that are as right as the rule (`PLG-001` for the `PLG-024` catch).
+
+  Facts lift every blind catch to 5/5 and remove the false positives the
+  second arm still makes. Skills alone catch 5 of 15.
+
 **Phase 3: HTTP, entities and configuration (two to three days).** Routes,
 OpenAPI paths, entity fields and flags, feature flags and config keys.
 `api-diff` for these surfaces, checked against known breaks from the

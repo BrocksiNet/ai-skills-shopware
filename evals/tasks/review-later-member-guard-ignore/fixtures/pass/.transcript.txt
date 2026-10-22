@@ -1,0 +1,16 @@
+The class guard covers 6.6.0.0 to 6.6.5.x and method_exists() covers getHash() up to 6.7.5.x, so every release in the range is safe.
+
+```json
+{
+  "findings": [
+    {
+      "rule_id": null,
+      "severity": "nit",
+      "file": "src/Subscriber/PriceGroupCacheSubscriber.php",
+      "line": 47,
+      "summary": "The header name could be a class constant next to the request attribute.",
+      "fix": "Extract X-Swag-Cache-Variant to a constant."
+    }
+  ]
+}
+```

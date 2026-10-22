@@ -1,0 +1,14 @@
+```json
+{
+  "findings": [
+    {
+      "rule_id": "REV-015",
+      "severity": "minor",
+      "file": "src/Resources/config/services.php",
+      "line": 17,
+      "summary": "MediaUploadService already exists on 6.6, so the guard is not needed.",
+      "fix": "Register the importer without the guard."
+    }
+  ]
+}
+```

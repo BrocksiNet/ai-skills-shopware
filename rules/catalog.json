@@ -1066,8 +1066,7 @@
       "title": "Gate version-specific API with capability checks",
       "status": "active",
       "since": "2026-10-20",
-      "eval": null,
-      "eval_reason": "Documented only; no eval yet.",
+      "eval": "review-later-member-guard-catch",
       "core_guide_ids": [],
       "audience": [
         "plugin"

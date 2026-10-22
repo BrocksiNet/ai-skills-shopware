@@ -1,0 +1,91 @@
+diff --git a/CHANGELOG_en-GB.md b/CHANGELOG_en-GB.md
+index cc4292e..1a80d10 100644
+--- a/CHANGELOG_en-GB.md
++++ b/CHANGELOG_en-GB.md
+@@ -1,3 +1,8 @@
++# 2.2.0
++
++- From Shopware 6.6.6, vary the HTTP cache by price group, so customers of a price group no longer get pages cached for guests. Older releases keep the previous behaviour.
++- Send the cache variant of a page in the `X-Swag-Cache-Variant` header, on releases where Shopware provides the variant hash.
++
+ # 2.1.0
+ 
+ - Show the price group of the customer in the account overview.
+diff --git a/src/Resources/config/services.php b/src/Resources/config/services.php
+index b657c40..7053fea 100644
+--- a/src/Resources/config/services.php
++++ b/src/Resources/config/services.php
+@@ -1,6 +1,8 @@
+ <?php declare(strict_types=1);
+ 
++use Shopware\Core\Framework\Adapter\Cache\Event\HttpCacheCookieEvent;
+ use Swag\CustomerPrices\Service\CustomerPriceLoader;
++use Swag\CustomerPrices\Subscriber\PriceGroupCacheSubscriber;
+ use Symfony\Component\DependencyInjection\Loader\Configurator\ContainerConfigurator;
+ 
+ return static function (ContainerConfigurator $container): void {
+@@ -10,4 +12,9 @@ return static function (ContainerConfigurator $container): void {
+         ->autoconfigure();
+ 
+     $services->set(CustomerPriceLoader::class);
++
++    // HttpCacheCookieEvent arrived in 6.6.6.0.
++    if (class_exists(HttpCacheCookieEvent::class)) {
++        $services->set(PriceGroupCacheSubscriber::class);
++    }
+ };
+diff --git a/src/Subscriber/PriceGroupCacheSubscriber.php b/src/Subscriber/PriceGroupCacheSubscriber.php
+new file mode 100644
+index 0000000..6842e15
+--- /dev/null
++++ b/src/Subscriber/PriceGroupCacheSubscriber.php
+@@ -0,0 +1,49 @@
++<?php declare(strict_types=1);
++
++namespace Swag\CustomerPrices\Subscriber;
++
++use Shopware\Core\Framework\Adapter\Cache\Event\HttpCacheCookieEvent;
++use Swag\CustomerPrices\Service\CustomerPriceLoader;
++use Symfony\Component\EventDispatcher\EventSubscriberInterface;
++use Symfony\Component\HttpKernel\Event\ResponseEvent;
++use Symfony\Component\HttpKernel\KernelEvents;
++
++class PriceGroupCacheSubscriber implements EventSubscriberInterface
++{
++    public const PRICE_GROUP = 'swag-price-group';
++
++    private const VARIANT_ATTRIBUTE = '_swag_cache_variant';
++
++    public function __construct(private readonly CustomerPriceLoader $priceLoader)
++    {
++    }
++
++    public static function getSubscribedEvents(): array
++    {
++        return [
++            HttpCacheCookieEvent::class => 'onCacheCookie',
++            KernelEvents::RESPONSE => 'onResponse',
++        ];
++    }
++
++    public function onCacheCookie(HttpCacheCookieEvent $event): void
++    {
++        $priceGroupId = $this->priceLoader->priceGroupId($event->context);
++        if ($priceGroupId !== null) {
++            $event->add(self::PRICE_GROUP, $priceGroupId);
++        }
++
++        // The header shows which cache variant served the page.
++        if (method_exists(HttpCacheCookieEvent::class, 'getHash')) {
++            $event->request->attributes->set(self::VARIANT_ATTRIBUTE, $event->getHash());
++        }
++    }
++
++    public function onResponse(ResponseEvent $event): void
++    {
++        $variant = $event->getRequest()->attributes->get(self::VARIANT_ATTRIBUTE);
++        if (\is_string($variant)) {
++            $event->getResponse()->headers->set('X-Swag-Cache-Variant', $variant);
++        }
++    }
++}

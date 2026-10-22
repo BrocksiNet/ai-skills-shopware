@@ -11,7 +11,7 @@
 import { readFileSync, rmSync } from 'node:fs';
 import { parseArgs } from 'node:util';
 import { appliedCopy, type DiffLines, parseDiff } from '../src/diff.ts';
-import { Lookup } from '../src/facts.ts';
+import { formatRuns, Lookup } from '../src/facts.ts';
 import { locateIndex } from '../src/locate.ts';
 import { coreConstraint, describe, factsOfDir, type Report } from '../src/report.ts';
 import { loadTimeline } from '../src/store.ts';
@@ -39,21 +39,18 @@ function header(report: Report, timeline: Timeline, note: string | undefined): s
 
 function text(report: Report, timeline: Timeline, note: string | undefined): string {
   const out = [header(report, timeline, note)];
-  const guards = new Map(
-    report.facts
-      .flatMap((fact) => fact.uses)
-      .filter((use) => use.how === 'guard')
-      .map((use) => [use.target, use]),
-  );
   for (const fact of report.facts) {
     const at = fact.uses
       .map((use) => `${use.file}:${use.line}`)
       .slice(0, 3)
       .join(', ');
-    // A missing symbol the change guards, itself or through its class.
-    const guard =
-      fact.kind === 'missing' ? (guards.get(fact.target) ?? guards.get(fact.target.split('::')[0] ?? '')) : undefined;
-    const guarded = guard === undefined ? '' : `, guarded at ${guard.file}:${guard.line}`;
+    const guard = fact.guard === undefined ? '' : `${fact.guard.file}:${fact.guard.line}`;
+    const guarded =
+      fact.guard === undefined
+        ? ''
+        : fact.unguarded === undefined
+          ? `, guarded at ${guard}`
+          : `, not guarded in ${formatRuns(fact.unguarded)}: the class guard at ${guard} only covers releases without the class`;
     out.push(`- ${fact.target.replace(/^php:/u, '')}: ${describe(fact)}${guarded}  [${at}]\n`);
   }
   if (report.facts.length === 0) out.push('- no version facts for this code\n');

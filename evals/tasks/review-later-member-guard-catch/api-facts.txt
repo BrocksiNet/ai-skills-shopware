@@ -1,0 +1,6 @@
+Shopware API this change adds, checked against 6.6.0.0 … 6.7.15.1 (92 releases of ~6.6.0 || ~6.7.0; api-index built 2026-10-22, newest 6.7.15.1):
+- Shopware\Core\Framework\Adapter\Cache\Event\HttpCacheCookieEvent: missing in 6.6.0.0 … 6.6.5.1, guarded at src/Resources/config/services.php:17  [src/Resources/config/services.php:3, src/Resources/config/services.php:17, src/Resources/config/services.php:17]
+- Shopware\Core\Framework\Adapter\Cache\Event\HttpCacheCookieEvent::add(): missing in 6.6.0.0 … 6.6.5.1, guarded at src/Resources/config/services.php:17  [src/Subscriber/PriceGroupCacheSubscriber.php:33]
+- Shopware\Core\Framework\Adapter\Cache\Event\HttpCacheCookieEvent::getHash(): missing in 6.6.0.0 … 6.7.5.1, not guarded in 6.6.6.0 … 6.7.5.1: the class guard at src/Resources/config/services.php:17 only covers releases without the class  [src/Subscriber/PriceGroupCacheSubscriber.php:37]
+- 9 method calls not checked (receiver type unknown in the file)
+These are facts from the source of each release, not findings. Check each one against the code before you report it.

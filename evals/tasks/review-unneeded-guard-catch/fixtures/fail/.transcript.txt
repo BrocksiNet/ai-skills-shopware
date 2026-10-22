@@ -1,0 +1,22 @@
+```json
+{
+  "findings": [
+    {
+      "rule_id": "REV-015",
+      "severity": "nit",
+      "file": "src/Resources/config/services.php",
+      "line": 17,
+      "summary": "The guard could use a comment.",
+      "fix": "Explain the guard."
+    },
+    {
+      "rule_id": "PLG-024",
+      "severity": "minor",
+      "file": "src/Resources/config/services.php",
+      "line": 17,
+      "summary": "The class_exists() guard is redundant; the event exists in every supported release.",
+      "fix": "Drop the guard."
+    }
+  ]
+}
+```

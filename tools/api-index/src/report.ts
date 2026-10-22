@@ -31,7 +31,13 @@ export function coreConstraint(dir: string): string | undefined {
   return typeof core === 'string' ? core : undefined;
 }
 
-export type ReportFact = Fact & { uses: Use[] };
+export type ReportFact = Fact & {
+  uses: Use[];
+  /** For a missing symbol: the guard that covers it, its own or its class's. */
+  guard?: Use;
+  /** Releases a class guard leaves open: the member is missing there, the class is not. */
+  unguarded?: [string, string][];
+};
 
 export interface Report {
   dir: string;
@@ -86,6 +92,44 @@ function symbolFacts(lookup: Lookup, target: string, uses: Use[], releases: stri
   return facts;
 }
 
+/** The release names of `[first, last]` runs, in range order. */
+function expand(runs: [string, string][], releases: string[]): string[] {
+  return runs.flatMap(([first, last]) => releases.slice(releases.indexOf(first), releases.indexOf(last) + 1));
+}
+
+/** Collapses release names back into `[first, last]` runs of the range. */
+function collapse(names: string[], releases: string[]): [string, string][] {
+  const out: [string, string][] = [];
+  let previous = -2;
+  for (const index of names.map((name) => releases.indexOf(name)).toSorted((a, b) => a - b)) {
+    const run = out.at(-1);
+    if (run !== undefined && index === previous + 1) run[1] = releases[index] ?? run[1];
+    else out.push([releases[index] ?? '', releases[index] ?? '']);
+    previous = index;
+  }
+  return out;
+}
+
+/** Names the guard of each missing symbol: its own `method_exists`, or the
+ *  `class_exists` of its class, which covers only the releases without the
+ *  class. A member that arrived after its class stays open in between. */
+function attachGuards(facts: ReportFact[], uses: Use[], releases: string[]): void {
+  const guards = new Map(uses.filter((use) => use.how === 'guard').map((use) => [use.target, use]));
+  const missing = new Map(
+    facts.filter((fact) => fact.kind === 'missing').map((fact) => [fact.target, expand(fact.releases, releases)]),
+  );
+  for (const fact of facts.filter((candidate) => candidate.kind === 'missing')) {
+    const owner = fact.target.split('::')[0] ?? '';
+    const guard = guards.get(fact.target) ?? (owner === fact.target ? undefined : guards.get(owner));
+    if (guard === undefined) continue;
+    fact.guard = guard;
+    if (guard.target === fact.target) continue;
+    const classMissing = new Set(missing.get(owner));
+    const open = expand(fact.releases, releases).filter((release) => !classMissing.has(release));
+    if (open.length > 0) fact.unguarded = collapse(open, releases);
+  }
+}
+
 /** A diff that changes composer.json may change the range: every fact counts then. */
 function narrowTo(diff: DiffLines | undefined): ((use: Use) => boolean) | undefined {
   if (diff === undefined || diff.files.has('composer.json')) return undefined;
@@ -98,8 +142,9 @@ export function factsOfDir(lookup: Lookup, dir: string, range: string, diff?: Di
   const byTarget = new Map<string, Use[]>();
   for (const use of read.uses) byTarget.set(use.target, [...(byTarget.get(use.target) ?? []), use]);
   const inDiff = narrowTo(diff);
-  const facts = [...byTarget]
-    .flatMap(([target, list]) => symbolFacts(lookup, target, list, releases))
+  const all = [...byTarget].flatMap(([target, list]) => symbolFacts(lookup, target, list, releases));
+  attachGuards(all, read.uses, releases);
+  const facts = all
     .filter((fact) => inDiff === undefined || fact.uses.some(inDiff))
     .toSorted((a, b) => a.kind.localeCompare(b.kind) || a.target.localeCompare(b.target));
   return {

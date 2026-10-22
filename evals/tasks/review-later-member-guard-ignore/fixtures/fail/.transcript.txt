@@ -1,0 +1,14 @@
+```json
+{
+  "findings": [
+    {
+      "rule_id": null,
+      "severity": "major",
+      "file": "src/Subscriber/PriceGroupCacheSubscriber.php",
+      "line": 38,
+      "summary": "getHash() does not exist before 6.7.6.0, so older 6.7 shops fail here.",
+      "fix": "Raise the minimum to 6.7.6."
+    }
+  ]
+}
+```

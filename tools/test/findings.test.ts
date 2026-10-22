@@ -83,6 +83,14 @@ describe('caught', () => {
     assert.ok(!caught([finding({ file: 'src/Foo.php' })], hook));
     assert.ok(!caught([finding({ rule_id: 'TEST-003' })], hook));
   });
+
+  test('an ID in also is as good as the rule', () => {
+    assert.ok(caught([finding({ rule_id: 'TEST-003', summary: 'x' })], { ...hook, also: ['TEST-003'] }));
+    assert.equal(
+      falsePositives([finding({ rule_id: 'TEST-003', summary: 'x' })], { ...hook, also: ['TEST-003'] }).length,
+      1,
+    );
+  });
 });
 
 describe('falsePositives', () => {

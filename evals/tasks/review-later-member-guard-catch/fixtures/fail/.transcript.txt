@@ -1,0 +1,22 @@
+```json
+{
+  "findings": [
+    {
+      "rule_id": "REV-015",
+      "severity": "major",
+      "file": "src/Resources/config/services.php",
+      "line": 17,
+      "summary": "getHash() is missing before 6.7.6.0, and the class_exists() guard does not cover it.",
+      "fix": "Guard the method instead of the class."
+    },
+    {
+      "rule_id": "PLG-024",
+      "severity": "nit",
+      "file": "src/Subscriber/PriceGroupCacheSubscriber.php",
+      "line": 37,
+      "summary": "Consider a constant for the header name.",
+      "fix": "Extract X-Swag-Cache-Variant to a constant."
+    }
+  ]
+}
+```

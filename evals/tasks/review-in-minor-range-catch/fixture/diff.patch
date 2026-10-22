@@ -1,0 +1,58 @@
+diff --git a/CHANGELOG_en-GB.md b/CHANGELOG_en-GB.md
+index 99c6623..1860e47 100644
+--- a/CHANGELOG_en-GB.md
++++ b/CHANGELOG_en-GB.md
+@@ -1,3 +1,7 @@
++# 1.3.1
++
++- Export the payment status of the primary transaction of an order, not of its newest transaction.
++
+ # 1.3.0
+ 
+ - Export the payment status of each order.
+diff --git a/src/Service/OrderExporter.php b/src/Service/OrderExporter.php
+index af8f8b7..76e9ce0 100644
+--- a/src/Service/OrderExporter.php
++++ b/src/Service/OrderExporter.php
+@@ -26,7 +26,7 @@ class OrderExporter
+     public function export(array $orderIds, Context $context): array
+     {
+         $criteria = new Criteria($orderIds);
+-        $criteria->addAssociation('transactions.stateMachineState');
++        $criteria->addAssociation('primaryOrderTransaction.stateMachineState');
+ 
+         $rows = [];
+         foreach ($this->orderRepository->search($criteria, $context)->getEntities() as $order) {
+diff --git a/src/Service/PaymentStatusResolver.php b/src/Service/PaymentStatusResolver.php
+index 9c5f692..52852bc 100644
+--- a/src/Service/PaymentStatusResolver.php
++++ b/src/Service/PaymentStatusResolver.php
+@@ -2,27 +2,12 @@
+ 
+ namespace Swag\OrderExport\Service;
+ 
+-use Shopware\Core\Checkout\Order\Aggregate\OrderTransaction\OrderTransactionEntity;
+ use Shopware\Core\Checkout\Order\OrderEntity;
+ 
+ class PaymentStatusResolver
+ {
+     public function resolve(OrderEntity $order): ?string
+     {
+-        return $this->latestTransaction($order)?->getStateMachineState()?->getTechnicalName();
+-    }
+-
+-    private function latestTransaction(OrderEntity $order): ?OrderTransactionEntity
+-    {
+-        $transactions = $order->getTransactions();
+-        if ($transactions === null) {
+-            return null;
+-        }
+-
+-        $transactions->sort(
+-            static fn (OrderTransactionEntity $a, OrderTransactionEntity $b): int => $a->getCreatedAt() <=> $b->getCreatedAt()
+-        );
+-
+-        return $transactions->last();
++        return $order->getPrimaryOrderTransaction()?->getStateMachineState()?->getTechnicalName();
+     }
+ }
