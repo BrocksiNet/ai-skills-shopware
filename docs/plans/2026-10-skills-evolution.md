@@ -38,7 +38,8 @@ with review pairs that turn on version and API facts: PLG-007 (3/3 on, 0/3
 off), SF-009 (3/3, 0/3) and ADM-009 (2/3, 0/3) win too, and no `-ignore`
 task has more false positives with the skill on (Haiku, 3 repeats). v0.11.0
 (2026-10-22) ships it, with the PR description template from
-shopware/shopware#21627 (PRD-001..009).
+shopware/shopware#21627 (PRD-001..009). v0.12.0 (2026-10-22) ships WP11
+phases 0 to 2: the API index and `api-facts`.
 
 Suggested milestones, as planned:
 
