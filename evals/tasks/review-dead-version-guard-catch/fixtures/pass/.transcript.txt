@@ -1,0 +1,16 @@
+composer.json allows shopware/core ~6.6.0 || ~6.7.0.
+
+```json
+{
+  "findings": [
+    {
+      "rule_id": "REV-015",
+      "severity": "minor",
+      "file": "src/Resources/config/services.php",
+      "line": 19,
+      "summary": "The class_exists(CacheInvalidator::class) guard is dead: CacheInvalidator exists in every release since 6.5.0.0, so it is always true on 6.6 and 6.7, and the comment about the 6.7 cache rework is wrong.",
+      "fix": "Register FeedCacheInvalidationSubscriber unconditionally and drop the comment."
+    }
+  ]
+}
+```

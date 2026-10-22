@@ -704,12 +704,11 @@
     {
       "id": "PLG-001",
       "skill": "shopware-plugin-development",
-      "file": "skills/shopware-plugin-development/SKILL.md",
+      "file": "skills/shopware-plugin-development/references/version-compatibility.md",
       "title": "Do not break the supported Shopware range silently",
       "status": "active",
       "since": "2026-10-20",
-      "eval": null,
-      "eval_reason": "Documented only; no eval yet.",
+      "eval": "review-supported-range-catch",
       "core_guide_ids": [],
       "audience": [
         "plugin"
@@ -1448,12 +1447,11 @@
     {
       "id": "REV-015",
       "skill": "shopware-review-learnings",
-      "file": "skills/shopware-review-learnings/SKILL.md",
+      "file": "skills/shopware-review-learnings/references/version-guards.md",
       "title": "Guard only API added inside the supported range",
       "status": "active",
       "since": "2026-10-20",
-      "eval": null,
-      "eval_reason": "Documented only; no eval yet.",
+      "eval": "review-dead-version-guard-catch",
       "core_guide_ids": [],
       "audience": [
         "plugin"

@@ -111,6 +111,16 @@ if (class_exists(Other::class)) { class Bridge extends Other {} } else { class B
   ]);
 });
 
+test('trait use is recorded on the class, resolved', () => {
+  const code = `<?php
+namespace A;
+use B\\IdTrait;
+class Entity { use IdTrait, \\C\\Other; }
+`;
+  const [head] = phpItems(code, 'src/A.php');
+  assert.deepEqual(head?.traits, ['B\\IdTrait', 'C\\Other']);
+});
+
 test('a file that does not parse throws', () => {
   assert.throws(() => phpItems('<?php class {', 'src/Broken.php'));
 });

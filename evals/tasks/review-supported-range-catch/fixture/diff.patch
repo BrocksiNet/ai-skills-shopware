@@ -1,0 +1,25 @@
+diff --git a/CHANGELOG_en-GB.md b/CHANGELOG_en-GB.md
+index da0c102..15fa099 100644
+--- a/CHANGELOG_en-GB.md
++++ b/CHANGELOG_en-GB.md
+@@ -1,3 +1,7 @@
++# 2.4.1
++
++- Replace the deprecated `OrderTransactionStateHandler::payPartially()` with `paidPartially()`.
++
+ # 2.4.0
+ 
+ - Apply `cancelled` from the provider to the order transaction.
+diff --git a/src/Service/PaymentStatusSync.php b/src/Service/PaymentStatusSync.php
+index 54d081e..2e0d27b 100644
+--- a/src/Service/PaymentStatusSync.php
++++ b/src/Service/PaymentStatusSync.php
+@@ -19,7 +19,7 @@ class PaymentStatusSync
+         match ($providerStatus) {
+             'authorized' => $this->stateHandler->authorize($transactionId, $context),
+             'captured' => $this->stateHandler->paid($transactionId, $context),
+-            'partially_captured' => $this->stateHandler->payPartially($transactionId, $context),
++            'partially_captured' => $this->stateHandler->paidPartially($transactionId, $context),
+             'refunded' => $this->stateHandler->refund($transactionId, $context),
+             'cancelled' => $this->stateHandler->cancel($transactionId, $context),
+             default => null,

@@ -1,0 +1,16 @@
+Release 3.0.0 narrows shopware/core to ~6.7.0 and calls the break out in the changelog; paidPartially() exists in every allowed release.
+
+```json
+{
+  "findings": [
+    {
+      "rule_id": null,
+      "severity": "nit",
+      "file": "CHANGELOG_en-GB.md",
+      "line": 3,
+      "summary": "The breaking entry could name the last 2.x release for shops that stay on 6.6.",
+      "fix": "Add: shops on Shopware 6.6 keep 2.4.0."
+    }
+  ]
+}
+```

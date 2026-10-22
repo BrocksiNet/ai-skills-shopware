@@ -1,0 +1,16 @@
+Hasher arrived in 6.6.7.0, so the class_exists() guard is needed for 6.6.0.0 to 6.6.6.1 and the fallback hashes the same way.
+
+```json
+{
+  "findings": [
+    {
+      "rule_id": null,
+      "severity": "nit",
+      "file": "src/Service/FeedExporter.php",
+      "line": 37,
+      "summary": "The fallback line could name the Hasher default algorithm in a constant so the two branches cannot drift.",
+      "fix": "Extract 'xxh128' to a private constant."
+    }
+  ]
+}
+```

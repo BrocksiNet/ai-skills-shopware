@@ -1,0 +1,22 @@
+```json
+{
+  "findings": [
+    {
+      "rule_id": "PLG-001",
+      "severity": "nit",
+      "file": "src/Service/PaymentStatusSync.php",
+      "line": 22,
+      "summary": "Consider mentioning in the changelog that payPartially() is deprecated.",
+      "fix": "Add a note."
+    },
+    {
+      "rule_id": "PLG-024",
+      "severity": "major",
+      "file": "src/Service/PaymentStatusSync.php",
+      "line": 22,
+      "summary": "paidPartially() does not exist on 6.6, so partial captures fail with an undefined method there.",
+      "fix": "Guard the call with method_exists()."
+    }
+  ]
+}
+```

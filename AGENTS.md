@@ -76,7 +76,8 @@ tools/                        # repo tooling in TypeScript (Node 24, no build st
   bin/fake-agent.ts           # test double for SKILLS_AGENT_CMD
   bin/check-update.ts         # pinned version vs latest release tag
   test/*.test.ts              # node --test
-  api-index/                  # public API index of shopware/shopware per release (own package: php-parser)
+  api-index/                  # public API index of shopware/shopware per release (own package: php-parser):
+                              # bin/build.ts one ref, bin/timeline.ts all tags, bin/facts.ts an extension's facts
 
 scripts/
   validate-skills.sh          # structure, budgets, REGISTRY conflicts, rule IDs (wrapper for tools/bin/validate-skills.ts)

@@ -50,6 +50,7 @@ Read the references the change selects:
 | [`architecture: dal-contracts.md`](../shopware-architecture/references/dal-contracts.md) | You touch a DAL definition, entity or repository contract. | `*Definition.php`, `*EntityExtension.php`, `extends (Entity\|EntityTranslation\|MappingEntity)Definition`, … |
 | [`review-learnings: api-aware.md`](../shopware-review-learnings/references/api-aware.md) | The code serves Store-API or headless clients. | `StoreApi/**/*.php`, `SalesChannel/**/*Route.php`, `store-api`, … |
 | [`review-learnings: dal-and-performance.md`](../shopware-review-learnings/references/dal-and-performance.md) | The code queries the DAL, runs on a hot path, or dispatches queued work. | `new Criteria(`, … |
+| [`review-learnings: version-guards.md`](../shopware-review-learnings/references/version-guards.md) | The change adds or keeps a class_exists or method_exists check for Shopware API. | `(class\|method\|interface)_exists((\?Shopware\b\|[A-Z][A-Za-z]+::class)` |
 | [`testing: test-shape-and-flags.md`](../shopware-testing/references/test-shape-and-flags.md) | You need data providers, feature flags or coverage attributes. | `#[DataProvider(`, … |
 | [`testing: integration-repository.md`](../shopware-testing/references/integration-repository.md) | An integration test reads or writes through a repository. | `tests/integration/**/*Test.php`, `IntegrationTestBehaviour` |
 | [`testing: exception-assertions.md`](../shopware-testing/references/exception-assertions.md) | A test asserts an exception. | `->expectException(Object\|Message\|Code)?(` |

@@ -45,8 +45,9 @@ Read only the reference that matches the task or the files it changes:
 
 ## Hard guardrails (refuse rather than violate)
 
-1. **PLG-001** **Never break Shopware 6.6 compatibility silently.** If the project supports
-   6.6 and your change uses 6.7-only API, gate it or flag the bump explicitly.
+1. **Never break Shopware 6.6 compatibility silently** (`PLG-001`). If the project
+   supports 6.6 and your change uses 6.7-only API, gate it or flag the bump
+   explicitly; see [`version-compatibility.md`](references/version-compatibility.md).
 2. **PLG-002** **Never use a deprecated API when a stable replacement exists** (e.g. the
    `*CacheTagsEvent` events in 6.7 — use `CacheTagCollector`). If you must, say so
    and why.

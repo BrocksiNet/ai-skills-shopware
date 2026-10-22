@@ -24,6 +24,12 @@ points at a replacement the extenders can use today: `CORE-063`.
 
 ## Supported versions
 
+- Does the diff call a Shopware class or method that the oldest release in
+  the `shopware/core` range lacks, such as the replacement for a deprecated
+  method, without a guard or an announced range bump: `PLG-001`?
+- Does a new `class_exists` or `method_exists` guard name API that every
+  release in the range already ships: `REV-015`? Does it check the class
+  when only the method is new: `PLG-024`?
 - Does code that loads on every request use a package that `composer.json`
   only suggests, outside its guard: `PLG-032`?
 - Does an admin override replace a core method without `$super`:

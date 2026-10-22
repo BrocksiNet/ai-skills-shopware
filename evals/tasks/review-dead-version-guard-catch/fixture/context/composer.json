@@ -1,0 +1,22 @@
+{
+    "name": "swag/product-feed",
+    "description": "Product feeds for price comparison sites",
+    "type": "shopware-platform-plugin",
+    "version": "1.8.0",
+    "license": "MIT",
+    "require": {
+        "shopware/core": "~6.6.0 || ~6.7.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "Swag\\ProductFeed\\": "src/"
+        }
+    },
+    "extra": {
+        "shopware-plugin-class": "Swag\\ProductFeed\\SwagProductFeed",
+        "label": {
+            "de-DE": "Produkt-Feeds",
+            "en-GB": "Product feeds"
+        }
+    }
+}

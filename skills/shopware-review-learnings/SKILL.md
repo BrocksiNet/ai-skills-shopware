@@ -34,6 +34,7 @@ Detailed, growing lists live in references. Read only the one that matches the c
 | ---- | ---- | --------------------- |
 | [`api-aware.md`](references/api-aware.md) | The code serves Store-API or headless clients. | `StoreApi/**/*.php`, `SalesChannel/**/*Route.php`, `store-api`, … |
 | [`dal-and-performance.md`](references/dal-and-performance.md) | The code queries the DAL, runs on a hot path, or dispatches queued work. | `new Criteria(`, … |
+| [`version-guards.md`](references/version-guards.md) | The change adds or keeps a class_exists or method_exists check for Shopware API. | `(class\|method\|interface)_exists((\?Shopware\b\|[A-Z][A-Za-z]+::class)` |
 | [`change-scope.md`](references/change-scope.md) | A fix grows beyond the bug. | on demand |
 <!-- routes:end -->
 
@@ -87,12 +88,10 @@ Detailed, growing lists live in references. Read only the one that matches the c
   not cover production code belong in `tests/devops/` on core — keep the unit suite
   for Codecov. (Owning topic: `shopware-testing` -> `core-platform-patterns.md`.)
 
-- **REV-015** **`class_exists` guard for a core framework class** — `class_exists(Feature::class)`,
-  `class_exists(Context::class)`, etc. are dead code when the minimum supported version
-  already ships those classes. Only guard API that was *added within* your supported range
-  (e.g. `CacheTagCollector` added in 6.7, when you still support 6.6). Check the minimum
-  `shopware/core` version in `composer.json` before adding any defensive class/method check.
-  (Owning topic: `shopware-plugin-development` -> `references/version-compatibility.md`.)
+- **`class_exists` guard for a core framework class** (`REV-015`): dead code when the
+  oldest release in the `shopware/core` range already ships the class. Only guard API
+  added *within* the range. (See `references/version-guards.md`; owning topic:
+  `shopware-plugin-development` -> `references/version-compatibility.md`.)
 - **REV-016** **Direct `$_SERVER`/`getenv` access for Shopware feature flags** — use
   `Feature::has('FLAG') && Feature::isActive('FLAG')` (or `!Feature::has() || Feature::isActive()`
   for "assume active when flag is gone"). `Feature::has()` guards against

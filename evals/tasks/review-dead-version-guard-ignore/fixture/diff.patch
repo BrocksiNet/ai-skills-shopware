@@ -1,0 +1,41 @@
+diff --git a/src/Service/FeedExporter.php b/src/Service/FeedExporter.php
+index caaf462..880f374 100644
+--- a/src/Service/FeedExporter.php
++++ b/src/Service/FeedExporter.php
+@@ -2,6 +2,7 @@
+ 
+ namespace Swag\ProductFeed\Service;
+ 
++use Shopware\Core\Framework\Util\Hasher;
+ use Symfony\Contracts\Cache\ItemInterface;
+ use Symfony\Contracts\Cache\TagAwareCacheInterface;
+ 
+@@ -18,13 +19,27 @@ class FeedExporter
+      */
+     public function export(string $feedId, array $payload): string
+     {
+-        return $this->feedCache->get('swag-product-feed-' . $feedId, function (ItemInterface $item) use ($payload): string {
++        // The payload is part of the key, so a changed product set gets a new entry.
++        $key = 'swag-product-feed-' . $feedId . '-' . $this->payloadHash($payload);
++
++        return $this->feedCache->get($key, function (ItemInterface $item) use ($payload): string {
+             $item->tag(self::CACHE_TAG);
+ 
+             return $this->render($payload);
+         });
+     }
+ 
++    /**
++     * @param array<string, mixed> $payload
++     */
++    private function payloadHash(array $payload): string
++    {
++        // Hasher exists from 6.6.7.0; earlier 6.6 releases hash the same way by hand.
++        return class_exists(Hasher::class)
++            ? Hasher::hash($payload)
++            : hash('xxh128', json_encode($payload, \JSON_THROW_ON_ERROR));
++    }
++
+     /**
+      * @param array<string, mixed> $payload
+      */

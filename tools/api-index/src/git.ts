@@ -51,3 +51,11 @@ export function readFiles(repo: string, ref: string, paths: string[]): Map<strin
   const out = git(repo, ['cat-file', '--batch'], paths.map((path) => `${ref}:${path}\n`).join(''));
   return parseBatch(out, paths);
 }
+
+/** Tags matching `pattern` (a `git tag -l` glob). */
+export function listTags(repo: string, pattern: string): string[] {
+  return git(repo, ['tag', '-l', pattern])
+    .toString()
+    .split('\n')
+    .filter((tag) => tag !== '');
+}

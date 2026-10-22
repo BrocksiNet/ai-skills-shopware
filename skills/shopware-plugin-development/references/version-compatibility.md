@@ -9,32 +9,46 @@ Check `composer.json` `require` for `shopware/core` (e.g. `~6.6.0 || ~6.7.0`).
 That range is the contract. Your change must keep working across all of it, or
 you must consciously narrow the range and call it out.
 
+- **PLG-001** **Do not break the supported range silently.** Every Shopware
+  class and method the change calls must exist in every release the
+  `shopware/core` constraint allows, down to the oldest. The usual trap is
+  the replacement for a deprecated method: it often arrives in the same minor
+  that deprecates the old one, so the oldest supported minor does not have
+  it, and every shop on that minor fails with an undefined method. Gate the
+  new call (`PLG-024`), keep the old call until the range drops that minor,
+  or narrow the range in `composer.json` and say so in the changelog with a
+  major version.
+
+Check when an API arrived in the source of the oldest supported tag
+(`git show v6.6.0.0:src/…`), not from memory. A class and its methods can
+arrive in different releases.
+
 ## Guarding version-specific code
 
-When an API exists only in 6.7 (e.g. `CacheTagCollector`) but you still support
-6.6:
+When an API exists only in 6.7 (e.g. `CacheTagCollector::addTag()`) but you
+still support 6.6:
 
 - Prefer requiring 6.7+ and bumping `composer.json` *if* the project allows it —
   and state the bump explicitly.
 - **PLG-024** Otherwise gate at runtime. Use capability checks (class/method/service exists)
-  rather than version-string parsing where possible:
+  rather than version-string parsing where possible. Check the member you call, not
+  only its class:
 
 ```php
-if (class_exists(CacheTagCollector::class)) {
-    // 6.7+ path
+// CacheTagCollector exists from 6.6.6.0, addTag() only from 6.7.2.0.
+if (method_exists(CacheTagCollector::class, 'addTag')) {
+    $this->collector->addTag($tag);
 } else {
-    // 6.6 fallback
+    $this->dispatcher->dispatch(new AddCacheTagEvent($tag));
 }
 ```
 
 - Keep both paths covered by tests, or at least smoke-checked, until you drop the
   old minor.
 
-**Do not add `class_exists` for core framework classes that already exist in your
-minimum supported version.** `Feature`, `Context`, `Criteria`, `EntityRepository`,
-`Kernel` — all present since 6.4/6.5. Check the class's first-ship version before
-adding a guard; a guard for a class that always exists is dead code that misleads
-readers about the supported range.
+Do not guard a class or method that every release in the range already ships,
+such as `Feature`, `Context`, `Criteria`, `EntityRepository` or `Kernel`
+(`REV-015`).
 
 ## Optional packages
 

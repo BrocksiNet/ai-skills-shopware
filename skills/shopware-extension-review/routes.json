@@ -90,6 +90,9 @@
       "reference": "../shopware-review-learnings/references/dal-and-performance.md"
     },
     {
+      "reference": "../shopware-review-learnings/references/version-guards.md"
+    },
+    {
       "reference": "../shopware-testing/references/test-shape-and-flags.md"
     },
     {
