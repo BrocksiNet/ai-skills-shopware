@@ -8,6 +8,33 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.12.0] - 2026-10-22
+
+### Added
+
+- WP11 phases 0 to 2: a public API index of `shopware/shopware`.
+  `tools/api-index` builds the PHP surface of every tag since 6.5.0.0 plus
+  trunk into one timeline, with internal, deprecated, experimental, final
+  and BC-change flags per release. A weekly workflow publishes it as the
+  `api-index` release asset.
+- `api-facts` reports, for an extension and its `composer.json` range, the
+  Shopware API it uses that is missing, internal, deprecated or changed in
+  part of the range, and guards on API every release already has. A class
+  guard counts only for the releases without the class. The extension
+  review lenses and `version-compatibility.md` point at it.
+- Review pairs for PLG-001 (`review-supported-range-*`,
+  `review-in-minor-range-*`), REV-015 (`review-dead-version-guard-*`,
+  `review-unneeded-guard-*`) and PLG-024 (`review-later-member-guard-*`).
+  The last three pairs use API no skill names; with `api-facts` Haiku
+  catches 15 of 15, with skills alone 5 of 15.
+- Review graders take an `also` list of rule IDs that are as right as the
+  expected one.
+
+### Fixed
+
+- PLG-024: `CacheTagCollector` exists from 6.6.6.0 but `addTag()` only from
+  6.7.2.0, so the guard example checks the method.
+
 ## [0.11.0] - 2026-10-22
 
 ### Added
@@ -622,7 +649,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   (`actions/checkout@v5`, `markdownlint-cli2-action@v23`).
 - `docs/local-validation.md` and GitHub issue templates for feedback.
 
-[Unreleased]: https://github.com/BrocksiNet/ai-skills-shopware/compare/v0.11.0...main
+[Unreleased]: https://github.com/BrocksiNet/ai-skills-shopware/compare/v0.12.0...main
+[0.12.0]: https://github.com/BrocksiNet/ai-skills-shopware/compare/v0.11.0...v0.12.0
 [0.11.0]: https://github.com/BrocksiNet/ai-skills-shopware/compare/v0.10.0...v0.11.0
 [0.10.0]: https://github.com/BrocksiNet/ai-skills-shopware/compare/v0.9.0...v0.10.0
 [0.9.0]: https://github.com/BrocksiNet/ai-skills-shopware/compare/v0.8.0...v0.9.0

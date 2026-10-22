@@ -1,6 +1,6 @@
 # WP11, rethought: a public API index of Shopware
 
-Status: **accepted 2026-10-22, phase 0 in progress.** Replaces the Kev
+Status: **accepted 2026-10-22; phases 0 to 2 done, phase 3 next.** Replaces the Kev
 experiment in
 [WP11 of the skills evolution plan](2026-10-skills-evolution.md#wp11-public-api-index).
 The decisions are at the end.
