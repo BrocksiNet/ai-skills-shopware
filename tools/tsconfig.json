@@ -13,5 +13,5 @@
     "verbatimModuleSyntax": true,
     "skipLibCheck": true
   },
-  "include": ["src", "bin", "test", "graders"]
+  "include": ["src", "bin", "test", "graders", "api-index/src", "api-index/bin", "api-index/test"]
 }
