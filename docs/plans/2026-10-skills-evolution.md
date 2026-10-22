@@ -987,6 +987,9 @@ agents (Codex and Cursor adapters are added in step 3 if still used).
 
 ## WP11: Kev classifier for on-demand routes (experiment)
 
+Detailed plan, with what changed since this section was written:
+[`2026-10-wp11-kev-classifier.md`](2026-10-wp11-kev-classifier.md).
+
 Goal: decide the routes that globs and regexes cannot, with a small local
 classifier, and keep everything working without it.
 
