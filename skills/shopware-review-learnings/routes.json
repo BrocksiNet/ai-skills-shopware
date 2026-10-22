@@ -27,7 +27,7 @@
       "reference": "references/version-guards.md",
       "when": "The change adds or keeps a class_exists or method_exists check for Shopware API.",
       "anchors_any": [
-        "(class|method|interface)_exists\\((\\\\?Shopware\\\\|[A-Z][A-Za-z]+::class)"
+        "(class|method|interface)_exists\\((\\\\?Shopware\\b|[A-Z][A-Za-z]+::class)"
       ]
     },
     {

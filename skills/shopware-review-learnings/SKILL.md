@@ -34,7 +34,7 @@ Detailed, growing lists live in references. Read only the one that matches the c
 | ---- | ---- | --------------------- |
 | [`api-aware.md`](references/api-aware.md) | The code serves Store-API or headless clients. | `StoreApi/**/*.php`, `SalesChannel/**/*Route.php`, `store-api`, … |
 | [`dal-and-performance.md`](references/dal-and-performance.md) | The code queries the DAL, runs on a hot path, or dispatches queued work. | `new Criteria(`, … |
-| [`version-guards.md`](references/version-guards.md) | The change adds or keeps a class_exists or method_exists check for Shopware API. | `(class\|method\|interface)_exists((\?Shopware\\|[A-Z][A-Za-z]+::class)` |
+| [`version-guards.md`](references/version-guards.md) | The change adds or keeps a class_exists or method_exists check for Shopware API. | `(class\|method\|interface)_exists((\?Shopware\b\|[A-Z][A-Za-z]+::class)` |
 | [`change-scope.md`](references/change-scope.md) | A fix grows beyond the bug. | on demand |
 <!-- routes:end -->
 
