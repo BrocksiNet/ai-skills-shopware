@@ -30,6 +30,11 @@ points at a replacement the extenders can use today: `CORE-063`.
 - Does a new `class_exists` or `method_exists` guard name API that every
   release in the range already ships: `REV-015`? Does it check the class
   when only the method is new: `PLG-024`?
+- When `api-facts` output comes with the task, or the ai-skills-shopware
+  tools are at hand (`node tools/api-index/bin/api-facts.ts --apply
+  diff.patch <extension>`), use its facts for the two questions above. They
+  are facts about Shopware's source per release, not findings: check each
+  against the diff before you report it.
 - Does code that loads on every request use a package that `composer.json`
   only suggests, outside its guard: `PLG-032`?
 - Does an admin override replace a core method without `$super`:

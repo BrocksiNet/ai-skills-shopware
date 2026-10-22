@@ -156,12 +156,22 @@ async function runAgent(job: Job, agent: string, prompt: string, attempt: number
   return runAgent(job, agent, prompt, attempt + 1);
 }
 
+/** The instruction, plus the recorded `api-facts` output when EVAL_API_FACTS
+ *  is set and the task has one: the third arm of the WP11 A/B. */
+export function taskPrompt(taskDir: string, env: NodeJS.ProcessEnv): string {
+  const prompt = readFileSync(join(taskDir, 'instruction.md'), 'utf8').replace(/\n+$/u, '');
+  const factsFile = join(taskDir, 'api-facts.txt');
+  if (envOr(env, 'EVAL_API_FACTS', '') === '' || !existsSync(factsFile)) return prompt;
+  const facts = readFileSync(factsFile, 'utf8').replace(/\n+$/u, '');
+  return `${prompt}\n\nOutput of \`api-facts\` for this change (the public API index of Shopware):\n\n\`\`\`text\n${facts}\n\`\`\``;
+}
+
 /** Everything after the workdir exists: profile, agent, grading. */
 async function runInWorkdir(job: Job): Promise<number> {
   const { task, mode, env, out, err } = job;
   freshWorkdir(job);
   if (!(await profile(job, mode))) return RUN.usage;
-  const prompt = readFileSync(join(job.taskDir, 'instruction.md'), 'utf8').replace(/\n+$/u, '');
+  const prompt = taskPrompt(job.taskDir, env);
 
   const agent = envOr(env, 'SKILLS_AGENT_CMD', '');
   if (agent === '') {
