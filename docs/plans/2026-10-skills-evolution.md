@@ -30,7 +30,8 @@ criteria. Packages are ordered so that each one only depends on earlier ones.
 
 Shipped: everything through WP10 landed in **v0.9.0** (2026-10-21), ahead
 of the milestones below. Still open: WP0 item 7 (waits for #21730) and
-WP11. v0.10.0 (2026-10-21) added five rules from a real plugin review
+WP11 phases 3 and 4; phases 0 to 2 (the PHP index and `api-facts`) passed
+their gates. v0.10.0 (2026-10-21) added five rules from a real plugin review
 (ADM-042..044, SEC-008, PLG-032); ADM-044 is the first catch task where the
 skill wins the A/B (3/3 on, 0/3 off). PR #46 met the WP6 A/B acceptance
 with review pairs that turn on version and API facts: PLG-007 (3/3 on, 0/3
@@ -986,7 +987,7 @@ agents (Codex and Cursor adapters are added in step 3 if still used).
 
 ## WP11: Public API index
 
-Status: **accepted 2026-10-22, phase 0 in progress.** Plan:
+Status: **accepted 2026-10-22; phases 0 to 2 done, phase 3 next.** Plan:
 [`2026-10-wp11-public-api-index.md`](2026-10-wp11-public-api-index.md).
 
 Goal: give agents facts about Shopware's public API per release, built
