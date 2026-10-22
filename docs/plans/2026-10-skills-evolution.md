@@ -26,7 +26,7 @@ criteria. Packages are ordered so that each one only depends on earlier ones.
 | WP8 | Automated trunk mining | WP2 | M | none |
 | WP9 | Upstream watchlist | none | S | none |
 | WP10 | Eval runner in TypeScript | none | M | none |
-| WP11 | Kev classifier for on-demand routes (experiment) | WP4 | M | local only |
+| WP11 | Public API index and version facts | WP6 | L | weekly build |
 
 Shipped: everything through WP10 landed in **v0.9.0** (2026-10-21), ahead
 of the milestones below. Still open: WP0 item 7 (waits for #21730) and
@@ -46,8 +46,8 @@ Suggested milestones, as planned:
    WP10 runs alongside and lands before WP5 adds review-shaped tasks to the runner.
 3. **v0.11.0**: WP6, WP7. Extension review skill and the new rule backlog.
 
-WP11 is an experiment with no milestone. It ships only if it beats the
-deterministic routes on labelled data.
+WP11 has no milestone. Each phase ships only if it passes its measured
+gate.
 
 ---
 
@@ -418,8 +418,7 @@ Follow-up on 2026-10-20, after review of PR #20:
   allows exactly one of triggers, `always` or `on_demand`, so every
   reference is still routed. `when-stuck.md` and `docs-map.md` used proxy
   triggers (`@phpstan-ignore`, a docs URL) that fired on unrelated changes,
-  and `change-scope.md` was `always`. All three are `on_demand` now. WP11
-  plugs a classifier into these routes.
+  and `change-scope.md` was `always`. All three are `on_demand` now.
 - **Separate report.** `route.ts` prints `selected`, `always` and
   `on_demand` apart. `expected.json` in the routing cases lists only what
   the diff selected, so the cases no longer pass on routes that fire
@@ -985,106 +984,23 @@ agents (Codex and Cursor adapters are added in step 3 if still used).
 
 ---
 
-## WP11: Kev classifier for on-demand routes (experiment)
+## WP11: Public API index
 
-Proposed re-scope, waiting for review: drop the Kev experiment (measured
-already in shopware/framework-team#120) and build version facts from the
-codebase census instead, in
-[`2026-10-wp11-version-facts.md`](2026-10-wp11-version-facts.md).
+Status: **proposed, waiting for review.** Plan:
+[`2026-10-wp11-public-api-index.md`](2026-10-wp11-public-api-index.md).
 
-Goal: decide the routes that globs and regexes cannot, with a small local
-classifier, and keep everything working without it.
+Goal: give agents facts about Shopware's public API per release, built
+from the public `shopware/shopware` repository: PHP classes and methods,
+Store and Admin API routes, entity fields, admin and storefront extension
+points, feature flags and configuration, each with its `@internal`,
+`@deprecated` and `@final` status. Two optional tools use it: `api-facts`
+checks an extension against its supported range, and `api-diff` reports
+public API a pull request breaks beyond what core's `bc-check` sees.
 
-[Kev](https://github.com/jaredpalmer/kev) is a family of small decision
-models. It answers yes/no (`noul`), multiple-choice (`choice`) and rating
-(`score`) questions about a short text with calibrated probabilities. It
-runs locally (`python -m kev.serve --run jaredpalmer/kev-4b --port 8009`)
-and Kev-4B answers five questions in about 0.7 s on an Apple M5. That fits
-the gap between "a regex can do it" and "the model has to think about it".
-
-### Limits
-
-- **Optional.** Most people who install these skills will not run Kev.
-  Without a server, routing is exactly as in WP4, and CI checks only the
-  deterministic routes.
-- **Short input.** Kev was trained on texts of up to 384 tokens and loses
-  accuracy on long ones. It gets a summary, never a raw diff: changed files,
-  changed public signatures and the facts listed below.
-- **Unknown accuracy on our data.** Kev's README says to check a threshold
-  on your own data before relying on it. Nothing ships before that check.
-
-### WP11 spec
-
-#### Step 1: labelled set, `evals/kev/`
-
-30 to 50 examples: the eight routing cases plus real trunk and plugin PRs.
-Each example has the summary Kev would see and the labels:
-
-```json
-{
-  "summary": "files: src/Core/Checkout/Cart/CartService.php (+12 -3) ...",
-  "on_demand": {"shopware-review-learnings/references/change-scope.md": true},
-  "blast_radius": "cross-module",
-  "needs_upgrade_note": false,
-  "needs_migration": false
-}
-```
-
-#### Step 2: router hook, `route.ts --kev <url>`
-
-```bash
-git diff main | node tools/bin/route.ts --kev http://127.0.0.1:8009
-```
-
-- Every `on_demand` route becomes one `noul` question; its `when` sentence
-  is the question text. All questions go in one request.
-- A route moves from `on_demand` to `selected` when the probability is at
-  or above the threshold (start at 0.8; step 1 sets the real value).
-- A missing or failing server is a warning, not an error, and the output
-  is the WP4 output.
-- The client is `fetch` from Node 24, so `tools/` keeps zero runtime
-  dependencies. Unit tests use a recorded response, not a live server.
-
-#### Step 3: blast-radius facts for `shopware-change-impact`
-
-Kev cannot see callers, so tools gather the facts and Kev rates them:
-
-- **Facts, gathered deterministically:** changed files and public
-  signatures; whether a touched symbol is `@internal`, a Store or Admin API
-  route, an event, an entity definition or a migration; caller count from
-  a grep.
-- **Questions:** one `choice` for scope (local, one module, cross-module,
-  public API/BC), and `noul` for "needs an upgrade note?" and "needs a
-  migration?".
-
-The skill starts from those answers instead of working them out itself.
-
-#### Step 4 (optional): stuck-loop hook example
-
-"An approach keeps failing" is about the session, not the diff. An example
-Claude Code hook in `docs/examples/` sends a summary of the last failing
-tool results (the same PHPStan error three times, repeated PHPUnit
-failures) to Kev with "Is the agent stuck in a loop?". On yes, it adds
-"read `when-stuck.md`" to the agent's context. It is an example for local
-setups, not part of the installed skills.
-
-### Decision gate
-
-After step 1, run Kev-4B on the labelled set and compare it with the
-deterministic routes. Build steps 2 to 4 only when Kev selects the right
-`on_demand` references more often than "never select" and "always select"
-do, at a false-positive rate below 10 %. If Kev-4B misses, fine-tune it on
-the labelled set (Kev's `kev-finetune` skill) and run the gate again
-before dropping the idea.
-
-### WP11 acceptance
-
-- `evals/kev/` has at least 30 labelled examples and a script that prints
-  accuracy and false-positive rate per threshold.
-- The gate result is recorded in this section, with the chosen threshold.
-- If the gate passes: `route.ts --kev` works against a local server, the
-  routing cases pass unchanged without one, and `tools` tests cover the
-  client with a recorded response.
+This replaces the Kev classifier experiment first planned here. The same
+model was already measured for triage in shopware/framework-team#120; the
+facts, not the model, were the bottleneck there, and the routing question
+it would answer has no recorded ground truth.
 
 ---
 
@@ -1098,7 +1014,7 @@ before dropping the idea.
 | Review evals reward ID recall instead of detection | The keyword fallback in `grade_has_finding`, and `-ignore` twins |
 | Copying core guide wording | Rewrite in our words; cite the core rule by ID and link only |
 | Plugin rules mention PHPStan rules that plugins do not run | The "enforced on trunk only" wording from WP3 |
-| A local classifier (WP11) becomes a hidden dependency | Optional flag only; CI and the routing cases never call it; the decision gate comes before any code |
+| The API index (WP11) becomes a hidden dependency | The tools are optional; CI runs them only on recorded fixtures; each phase has a measured gate |
 
 ## Decisions
 
