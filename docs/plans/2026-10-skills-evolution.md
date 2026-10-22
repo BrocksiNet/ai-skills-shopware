@@ -35,7 +35,9 @@ WP11. v0.10.0 (2026-10-21) added five rules from a real plugin review
 skill wins the A/B (3/3 on, 0/3 off). PR #46 met the WP6 A/B acceptance
 with review pairs that turn on version and API facts: PLG-007 (3/3 on, 0/3
 off), SF-009 (3/3, 0/3) and ADM-009 (2/3, 0/3) win too, and no `-ignore`
-task has more false positives with the skill on (Haiku, 3 repeats).
+task has more false positives with the skill on (Haiku, 3 repeats). v0.11.0
+(2026-10-22) ships it, with the PR description template from
+shopware/shopware#21627 (PRD-001..009).
 
 Suggested milestones, as planned:
 
