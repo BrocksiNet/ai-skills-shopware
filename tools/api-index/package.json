@@ -1,0 +1,16 @@
+{
+  "name": "ai-skills-shopware-api-index",
+  "private": true,
+  "description": "Builds the public API index of shopware/shopware per release. Needs php-parser, so it is its own package; the tools that read the index have no dependencies.",
+  "type": "module",
+  "scripts": {
+    "build": "node bin/build.ts",
+    "test": "node --test \"test/**/*.test.ts\""
+  },
+  "dependencies": {
+    "php-parser": "3.7.0"
+  },
+  "engines": {
+    "node": ">=24"
+  }
+}

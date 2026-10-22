@@ -76,6 +76,7 @@ tools/                        # repo tooling in TypeScript (Node 24, no build st
   bin/fake-agent.ts           # test double for SKILLS_AGENT_CMD
   bin/check-update.ts         # pinned version vs latest release tag
   test/*.test.ts              # node --test
+  api-index/                  # public API index of shopware/shopware per release (own package: php-parser)
 
 scripts/
   validate-skills.sh          # structure, budgets, REGISTRY conflicts, rule IDs (wrapper for tools/bin/validate-skills.ts)
@@ -286,6 +287,9 @@ can, so `node tools/bin/<tool>.ts` works without `npm ci`. The eval runner
 and the task graders live here; what is left in shell are thin wrappers
 that keep old entry points working. The AST graders in `evals/tools/ast/`
 stay JavaScript, because they need `php-parser` and `@babel/parser`.
+`tools/api-index/` is TypeScript with its own `package.json`, because the
+index generator needs `php-parser`; `npm ci --prefix api-index` before the
+type check. The tools that read the index stay dependency-free.
 
 `npm run lint` runs oxlint with type-aware rules
 ([`tools/.oxlintrc.json`](tools/.oxlintrc.json)), and `npm run format`

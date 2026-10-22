@@ -16,7 +16,7 @@
     "eval-diff": "node bin/eval-diff.ts",
     "grade": "node bin/grade.ts",
     "mine-trunk": "node bin/mine-trunk.ts",
-    "lint": "oxlint --type-aware --deny-warnings --report-unused-disable-directives src bin test graders",
+    "lint": "oxlint --type-aware --deny-warnings --report-unused-disable-directives src bin test graders api-index/src api-index/bin api-index/test",
     "format": "oxfmt .",
     "format:check": "oxfmt --check ."
   },
