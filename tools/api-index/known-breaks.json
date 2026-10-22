@@ -1,0 +1,632 @@
+{
+  "$comment": "Breaks the UPGRADE files name for the surfaces api-diff covers, as item ids. Measured by bin/check-breaks.ts. A shipped major expects a removal or change from the last minor before it; a major on trunk expects a deprecation there. `confirmed` lists reported breaks the UPGRADE file does not name, checked against the source.",
+  "majors": [
+    {
+      "major": "6.6",
+      "base": "v6.5.8.7",
+      "head": "v6.6.0.0",
+      "expect": "removed"
+    },
+    {
+      "major": "6.7",
+      "base": "v6.6.10.5",
+      "head": "v6.7.0.0",
+      "expect": "removed"
+    },
+    {
+      "major": "6.8",
+      "base": "v6.7.0.0",
+      "head": "trunk",
+      "expect": "deprecated"
+    }
+  ],
+  "breaks": [
+    {
+      "major": "6.6",
+      "id": "field:product.availableStock",
+      "kind": "changed",
+      "heading": "Writing to `product.availableStock` field is now not possible"
+    },
+    {
+      "major": "6.6",
+      "id": "field:integration.writeAccess",
+      "kind": "removed",
+      "heading": "`writeAccess` field removed in `integrations`"
+    },
+    {
+      "major": "6.6",
+      "id": "field:scheduled_task.defaultRunInterval",
+      "kind": "changed",
+      "heading": "`defaultRunInterval` field is required for `ScheduledTask` entities"
+    },
+    {
+      "major": "6.6",
+      "id": "feature:ES_MULTILINGUAL_INDEX",
+      "kind": "removed",
+      "heading": "Old Elasticsearch data mapping structure is deprecated, introduce new data mapping structure:"
+    },
+    {
+      "major": "6.7",
+      "id": "route:api.oauth.authorize",
+      "kind": "removed",
+      "heading": "Removal of /api/oauth/authorize route"
+    },
+    {
+      "major": "6.7",
+      "id": "field:customer.defaultPaymentMethodId",
+      "kind": "removed",
+      "heading": "Customer: Default payment method removed"
+    },
+    {
+      "major": "6.7",
+      "id": "field:customer.defaultPaymentMethod",
+      "kind": "removed",
+      "heading": "Customer: Default payment method removed"
+    },
+    {
+      "major": "6.7",
+      "id": "field:payment_method.technicalName",
+      "kind": "changed",
+      "heading": "New `technicalName` property for payment and shipping methods"
+    },
+    {
+      "major": "6.7",
+      "id": "field:shipping_method.technicalName",
+      "kind": "changed",
+      "heading": "New `technicalName` property for payment and shipping methods"
+    },
+    {
+      "major": "6.7",
+      "id": "field:import_export_profile.name",
+      "kind": "removed",
+      "heading": "ImportExport signature changes"
+    },
+    {
+      "major": "6.7",
+      "id": "config:shopware.cache.invalidation.delay",
+      "kind": "removed",
+      "heading": "Delayed Cache Invalidation"
+    },
+    {
+      "major": "6.7",
+      "id": "config:shopware.http_cache.reverse_proxy.use_varnish_xkey",
+      "kind": "removed",
+      "heading": "XKeys module is now required for Varnish",
+      "excluded": "the 6.7 note announces the 6.8 removal; listed under 6.8"
+    },
+    {
+      "major": "6.7",
+      "id": "config:shopware.http_cache.reverse_proxy.redis_url",
+      "kind": "removed",
+      "heading": "XKeys module is now required for Varnish"
+    },
+    {
+      "major": "6.7",
+      "id": "config:shopware.cache.invalidation.delay_options.dsn",
+      "kind": "renamed",
+      "heading": "Config keys changes due to improved redis connection handling"
+    },
+    {
+      "major": "6.7",
+      "id": "config:shopware.number_range.redis_url",
+      "kind": "renamed",
+      "heading": "Config keys changes due to improved redis connection handling"
+    },
+    {
+      "major": "6.7",
+      "id": "config:shopware.number_range.config.dsn",
+      "kind": "renamed",
+      "heading": "Config keys changes due to improved redis connection handling"
+    },
+    {
+      "major": "6.7",
+      "id": "config:shopware.cart.redis_url",
+      "kind": "renamed",
+      "heading": "Config keys changes due to improved redis connection handling"
+    },
+    {
+      "major": "6.7",
+      "id": "config:shopware.cart.storage.config.dsn",
+      "kind": "renamed",
+      "heading": "Config keys changes due to improved redis connection handling"
+    },
+    {
+      "major": "6.7",
+      "id": "config:shopware.increment.<increment_name>.config.url",
+      "kind": "renamed",
+      "heading": "Config keys changes due to improved redis connection handling",
+      "excluded": "the keys under `config` are a variableNode: free data, not declared keys"
+    },
+    {
+      "major": "6.7",
+      "id": "config:shopware.cache.tagging.each_config",
+      "kind": "removed",
+      "heading": "Fine-grained caching is removed"
+    },
+    {
+      "major": "6.7",
+      "id": "config:shopware.cache.tagging.each_snippet",
+      "kind": "removed",
+      "heading": "Fine-grained caching is removed"
+    },
+    {
+      "major": "6.7",
+      "id": "config:shopware.cache.tagging.each_theme_config",
+      "kind": "removed",
+      "heading": "Fine-grained caching is removed"
+    },
+    {
+      "major": "6.7",
+      "id": "config:shopware.api.jwt_key.use_app_secret",
+      "kind": "removed",
+      "heading": "Removal of RSA JWT secrets"
+    },
+    {
+      "major": "6.8",
+      "id": "route:api.action.number-range.preview-pattern",
+      "kind": "removed",
+      "heading": "Type-based number range preview Admin API removed"
+    },
+    {
+      "major": "6.8",
+      "id": "route:api.info.queue",
+      "kind": "removed",
+      "heading": "Removal of `/api/_info/queue.json` endpoint"
+    },
+    {
+      "major": "6.8",
+      "id": "route:api.action.mail_template.validate",
+      "kind": "removed",
+      "heading": "Removed `/api/_action/mail-template/validate` route"
+    },
+    {
+      "major": "6.8",
+      "id": "route:widgets.account.order.detail",
+      "kind": "removed",
+      "heading": "Remove route `widgets.account.order.detail`"
+    },
+    {
+      "major": "6.8",
+      "id": "route:frontend.country.country.data",
+      "kind": "changed",
+      "heading": "CountryStateController supports only GET"
+    },
+    {
+      "major": "6.8",
+      "id": "field:category.cmsPageIdSwitched",
+      "kind": "removed",
+      "heading": "Default CMS page ID now persisted for categories"
+    },
+    {
+      "major": "6.8",
+      "id": "field:product_review.externalUser",
+      "kind": "changed",
+      "heading": "Product reviews require a rating"
+    },
+    {
+      "major": "6.8",
+      "id": "field:product_review.points",
+      "kind": "changed",
+      "heading": "Product reviews require a rating"
+    },
+    {
+      "major": "6.8",
+      "id": "field:mail_template_type.templateData",
+      "kind": "removed",
+      "heading": "Removed stored `mail_template_type.template_data`"
+    },
+    {
+      "major": "6.8",
+      "id": "field:import_export_profile.label",
+      "kind": "removed",
+      "heading": "Removed translation of import/export profile label"
+    },
+    {
+      "major": "6.8",
+      "id": "field:import_export_profile.translations",
+      "kind": "removed",
+      "heading": "Removed translation of import/export profile label"
+    },
+    {
+      "major": "6.8",
+      "id": "entity:import_export_profile_translation",
+      "kind": "removed",
+      "heading": "Removed translation of import/export profile label"
+    },
+    {
+      "major": "6.8",
+      "id": "field:language.importExportProfileTranslations",
+      "kind": "removed",
+      "heading": "Removed translation of import/export profile label"
+    },
+    {
+      "major": "6.8",
+      "id": "field:sales_channel.maintenanceIpWhitelist",
+      "kind": "renamed",
+      "heading": "Removed `maintenanceIpWhitelist` wording of the sales channel in favor of `maintenanceIpAllowlist`"
+    },
+    {
+      "major": "6.8",
+      "id": "field:theme.labels",
+      "kind": "removed",
+      "heading": "ThemeEntity::label & ThemeEntity::helpText removal"
+    },
+    {
+      "major": "6.8",
+      "id": "field:theme.helpTexts",
+      "kind": "removed",
+      "heading": "ThemeEntity::label & ThemeEntity::helpText removal"
+    },
+    {
+      "major": "6.8",
+      "id": "field:theme_translation.labels",
+      "kind": "removed",
+      "heading": "ThemeEntity::label & ThemeEntity::helpText removal"
+    },
+    {
+      "major": "6.8",
+      "id": "field:theme_translation.helpTexts",
+      "kind": "removed",
+      "heading": "ThemeEntity::label & ThemeEntity::helpText removal"
+    },
+    {
+      "major": "6.8",
+      "id": "field:product.states",
+      "kind": "removed",
+      "heading": "Removal of product's `states` field in favor of `type` field"
+    },
+    {
+      "major": "6.8",
+      "id": "field:order_line_item.states",
+      "kind": "removed",
+      "heading": "Removal of product's `states` field in favor of `type` field"
+    },
+    {
+      "major": "6.8",
+      "id": "field:product.type",
+      "kind": "changed",
+      "heading": "Removal of product's `states` field in favor of `type` field"
+    },
+    {
+      "major": "6.8",
+      "id": "feature:WEBHOOKS_REWORK",
+      "kind": "removed",
+      "heading": "Webhook Messenger transport — explicit receiver configuration required"
+    },
+    {
+      "major": "6.8",
+      "id": "config:shopware.cache.cache_compression",
+      "kind": "removed",
+      "heading": "Removal of `shopware.cache.cache_compression` and `shopware.cache.cache_compression_method` config options"
+    },
+    {
+      "major": "6.8",
+      "id": "config:shopware.cache.cache_compression_method",
+      "kind": "removed",
+      "heading": "Removal of `shopware.cache.cache_compression` and `shopware.cache.cache_compression_method` config options"
+    },
+    {
+      "major": "6.8",
+      "id": "config:shopware.cache.invalidation.http_cache",
+      "kind": "removed",
+      "heading": "Removed `sw-states` and `sw-currency` cache cookie handling"
+    },
+    {
+      "major": "6.8",
+      "id": "config:shopware.admin_worker.enable_queue_stats_worker",
+      "kind": "removed",
+      "heading": "Removed deprecated `TemplateGroup` class"
+    },
+    {
+      "major": "6.8",
+      "id": "config:shopware.increment.message_queue",
+      "kind": "removed",
+      "heading": "Removed deprecated `TemplateGroup` class",
+      "excluded": "a prototype entry name set in shopware.yaml, not a declared key"
+    },
+    {
+      "major": "6.8",
+      "id": "config:shopware.http.cache.default_ttl",
+      "kind": "removed",
+      "heading": "Removed configuration parameters",
+      "excluded": "a container parameter, not a key of the configuration tree"
+    },
+    {
+      "major": "6.8",
+      "id": "config:shopware.http_cache.stale_while_revalidate",
+      "kind": "removed",
+      "heading": "Removed configuration parameters"
+    },
+    {
+      "major": "6.8",
+      "id": "config:shopware.http_cache.stale_if_error",
+      "kind": "removed",
+      "heading": "Removed configuration parameters"
+    },
+    {
+      "major": "6.8",
+      "id": "config:shopware.http_cache.reverse_proxy.use_varnish_xkey",
+      "kind": "removed",
+      "heading": "Removed HTTP cache reverse proxy configuration options"
+    },
+    {
+      "major": "6.8",
+      "id": "config:shopware.http_cache.reverse_proxy.ban_method",
+      "kind": "removed",
+      "heading": "Removed HTTP cache reverse proxy configuration options"
+    },
+    {
+      "major": "6.8",
+      "id": "config:shopware.http_cache.reverse_proxy.ban_headers",
+      "kind": "removed",
+      "heading": "Removed HTTP cache reverse proxy configuration options"
+    },
+    {
+      "major": "6.8",
+      "id": "config:shopware.http_cache.reverse_proxy.purge_all.ban_method",
+      "kind": "removed",
+      "heading": "Removed HTTP cache reverse proxy configuration options"
+    },
+    {
+      "major": "6.8",
+      "id": "config:shopware.http_cache.reverse_proxy.purge_all.ban_headers",
+      "kind": "removed",
+      "heading": "Removed HTTP cache reverse proxy configuration options"
+    },
+    {
+      "major": "6.8",
+      "id": "config:shopware.http_cache.reverse_proxy.purge_all.urls",
+      "kind": "removed",
+      "heading": "Removed HTTP cache reverse proxy configuration options"
+    },
+    {
+      "major": "6.8",
+      "id": "config:shopware.cache.invalidation.product_listing_route",
+      "kind": "removed",
+      "heading": "Removed Store-API Route caching configuration"
+    },
+    {
+      "major": "6.8",
+      "id": "config:shopware.cache.invalidation.product_detail_route",
+      "kind": "removed",
+      "heading": "Removed Store-API Route caching configuration"
+    },
+    {
+      "major": "6.8",
+      "id": "config:shopware.cache.invalidation.product_review_route",
+      "kind": "removed",
+      "heading": "Removed Store-API Route caching configuration"
+    },
+    {
+      "major": "6.8",
+      "id": "config:shopware.cache.invalidation.product_search_route",
+      "kind": "removed",
+      "heading": "Removed Store-API Route caching configuration"
+    },
+    {
+      "major": "6.8",
+      "id": "config:shopware.cache.invalidation.product_suggest_route",
+      "kind": "removed",
+      "heading": "Removed Store-API Route caching configuration"
+    },
+    {
+      "major": "6.8",
+      "id": "config:shopware.cache.invalidation.product_cross_selling_route",
+      "kind": "removed",
+      "heading": "Removed Store-API Route caching configuration"
+    },
+    {
+      "major": "6.8",
+      "id": "config:shopware.cache.invalidation.payment_method_route",
+      "kind": "removed",
+      "heading": "Removed Store-API Route caching configuration"
+    },
+    {
+      "major": "6.8",
+      "id": "config:shopware.cache.invalidation.shipping_method_route",
+      "kind": "removed",
+      "heading": "Removed Store-API Route caching configuration"
+    },
+    {
+      "major": "6.8",
+      "id": "config:shopware.cache.invalidation.navigation_route",
+      "kind": "removed",
+      "heading": "Removed Store-API Route caching configuration"
+    },
+    {
+      "major": "6.8",
+      "id": "config:shopware.cache.invalidation.category_route",
+      "kind": "removed",
+      "heading": "Removed Store-API Route caching configuration"
+    },
+    {
+      "major": "6.8",
+      "id": "config:shopware.cache.invalidation.landing_page_route",
+      "kind": "removed",
+      "heading": "Removed Store-API Route caching configuration"
+    },
+    {
+      "major": "6.8",
+      "id": "config:shopware.cache.invalidation.language_route",
+      "kind": "removed",
+      "heading": "Removed Store-API Route caching configuration"
+    },
+    {
+      "major": "6.8",
+      "id": "config:shopware.cache.invalidation.currency_route",
+      "kind": "removed",
+      "heading": "Removed Store-API Route caching configuration"
+    },
+    {
+      "major": "6.8",
+      "id": "config:shopware.cache.invalidation.country_route",
+      "kind": "removed",
+      "heading": "Removed Store-API Route caching configuration"
+    },
+    {
+      "major": "6.8",
+      "id": "config:shopware.cache.invalidation.country_state_route",
+      "kind": "removed",
+      "heading": "Removed Store-API Route caching configuration"
+    },
+    {
+      "major": "6.8",
+      "id": "config:shopware.cache.invalidation.salutation_route",
+      "kind": "removed",
+      "heading": "Removed Store-API Route caching configuration"
+    },
+    {
+      "major": "6.8",
+      "id": "config:shopware.cache.invalidation.sitemap_route",
+      "kind": "removed",
+      "heading": "Removed Store-API Route caching configuration"
+    }
+  ],
+  "confirmed": [
+    {
+      "major": "6.6",
+      "id": "config:elasticsearch.logger_level",
+      "evidence": "Base Elasticsearch Configuration.php:29 \"->scalarNode('logger_level')->defaultValue(...)\" no deprecation; removed by 8be34dbdf54 (NEXT-31739) before 6.6.0.0."
+    },
+    {
+      "major": "6.6",
+      "id": "config:storefront.http_cache",
+      "evidence": "Base Storefront Configuration.php:55 arrayNode('http_cache') no deprecation; 6.6 changelog 2023-11-24-remove-http-cache-deprecations.md: 'Removed storefront.reverse_proxy and storefront.http_cache, now stored under shopware.http_cache...'. Moved key, but old key gone without in-code deprecation."
+    },
+    {
+      "major": "6.6",
+      "id": "config:storefront.reverse_proxy",
+      "evidence": "Base Storefront Configuration.php:23 arrayNode('reverse_proxy') no deprecation; moved to shopware.http_cache.reverse_proxy in 6.6 (same changelog)."
+    },
+    {
+      "major": "6.6",
+      "id": "feature:STOCK_HANDLING",
+      "evidence": "Base feature.yaml:28 '- name: STOCK_HANDLING / default: false / major: false', no description or deprecation; gone in v6.6.0.0 feature.yaml (stock handling made default)."
+    },
+    {
+      "major": "6.8",
+      "id": "config:shopware.feature.flags.*.major",
+      "evidence": "Base Configuration.php:339 \"->booleanNode('major')->defaultFalse()\"; trunk :675 \"->stringNode('major')->cannotBeEmpty()\" with a regex 'v\\d+.\\d+.0.0' check, so 'major: true' is now rejected. No deprecation in base."
+    },
+    {
+      "major": "6.8",
+      "id": "field:category_translation.keywords",
+      "evidence": "Base CategoryTranslationDefinition.php:64 LongTextField('keywords'); trunk :73 StringField (b578add4802 'limit seo fields'). No deprecation."
+    },
+    {
+      "major": "6.8",
+      "id": "field:category_translation.metaDescription",
+      "evidence": "Base :63 LongTextField('meta_description') -> trunk :72 StringField (b578add4802). No deprecation."
+    },
+    {
+      "major": "6.8",
+      "id": "field:category_translation.metaTitle",
+      "evidence": "Base :62 LongTextField('meta_title') -> trunk :71 StringField (b578add4802). No deprecation."
+    },
+    {
+      "major": "6.8",
+      "id": "field:custom_field.name",
+      "evidence": "Base CustomFieldDefinition.php:59 \"(new StringField('name','name'))->addFlags(new Required())\"; trunk :65 adds new Immutable(). No deprecation."
+    },
+    {
+      "major": "6.8",
+      "id": "field:custom_field.type",
+      "evidence": "Base :60 StringField('type') Required only; trunk :66 adds new Immutable(). No deprecation."
+    },
+    {
+      "major": "6.8",
+      "id": "field:custom_field_set.name",
+      "evidence": "Base CustomFieldSetDefinition.php:61 Required only; trunk :65 adds new Immutable(). No deprecation."
+    },
+    {
+      "major": "6.8",
+      "id": "field:customer.hash",
+      "evidence": "Base CustomerDefinition.php:125 \"(new StringField('hash','hash'))->addFlags(new ApiAware())\"; trunk :136 no ApiAware flag. No deprecation in base definition/entity."
+    },
+    {
+      "major": "6.8",
+      "id": "field:landing_page_translation.keywords",
+      "evidence": "Base LandingPageTranslationDefinition.php:54 LongTextField('keywords') -> trunk :56 StringField. No deprecation."
+    },
+    {
+      "major": "6.8",
+      "id": "field:landing_page_translation.metaDescription",
+      "evidence": "Base :53 LongTextField('meta_description') -> trunk :55 StringField. No deprecation."
+    },
+    {
+      "major": "6.8",
+      "id": "field:landing_page_translation.metaTitle",
+      "evidence": "Base :52 LongTextField('meta_title') -> trunk :54 StringField. No deprecation."
+    },
+    {
+      "major": "6.8",
+      "id": "field:media_translation.alt",
+      "evidence": "Base MediaTranslationDefinition.php:48 LongTextField('alt') -> trunk :50 StringField (b578add4802). No deprecation."
+    },
+    {
+      "major": "6.8",
+      "id": "field:plugin.managedByComposer",
+      "evidence": "Base PluginDefinition.php:61 'new BoolField(\\'managed_by_composer\\', ...)'; trunk :62 adds WriteProtected(Context::SYSTEM_SCOPE). No deprecation."
+    },
+    {
+      "major": "6.8",
+      "id": "field:plugin.path",
+      "evidence": "Base PluginDefinition.php:62 'new StringField(\\'path\\', \\'path\\')'; trunk :63 adds WriteProtected(SYSTEM_SCOPE). No deprecation."
+    },
+    {
+      "major": "6.8",
+      "id": "field:product_manufacturer.link",
+      "evidence": "Base ProductManufacturerDefinition.php:62 StringField('link') ApiAware; trunk :64 TranslatedField('link') ApiAware. No deprecation in base definition/entity."
+    },
+    {
+      "major": "6.8",
+      "id": "field:webhook.appId",
+      "evidence": "Base WebhookDefinition.php:64 'new FkField(\\'app_id\\', ...)'; trunk :81 adds WriteProtected(SYSTEM_SCOPE). No deprecation."
+    },
+    {
+      "major": "6.8",
+      "id": "route:api.app_system.app-url-change-resolve",
+      "evidence": "Base AppUrlChangeController.php:40 route exists, no deprecation; controller removed in 6bb1d687065 (replaced by ShopIdController). Note: class is '@internal only for use by the app-system'."
+    },
+    {
+      "major": "6.8",
+      "id": "route:api.app_system.app-url-change-strategies",
+      "evidence": "Base AppUrlChangeController.php:32, no deprecation; removed in 6bb1d687065. Class @internal (app-system only)."
+    },
+    {
+      "major": "6.8",
+      "id": "route:api.app_system.app-url-difference",
+      "evidence": "Base AppUrlChangeController.php:58, no deprecation; removed in 6bb1d687065. Class @internal (app-system only)."
+    },
+    {
+      "major": "6.8",
+      "id": "route:api.usage_data.accept_consent",
+      "evidence": "Base ConsentController.php:53, no deprecation; controller removed in 1d47cf27f8c (new consent system). Class docblock '@internal'."
+    },
+    {
+      "major": "6.8",
+      "id": "route:api.usage_data.get_consent",
+      "evidence": "Base ConsentController.php:37, no deprecation; removed in 1d47cf27f8c. Class @internal."
+    },
+    {
+      "major": "6.8",
+      "id": "route:api.usage_data.hide_consent_banner",
+      "evidence": "Base ConsentController.php:79, no deprecation; removed in 1d47cf27f8c. Class @internal."
+    },
+    {
+      "major": "6.8",
+      "id": "route:api.usage_data.revoke_consent",
+      "evidence": "Base ConsentController.php:66, no deprecation; removed in 1d47cf27f8c. Class @internal."
+    },
+    {
+      "major": "6.8",
+      "id": "route:frontend.footer",
+      "evidence": "Base NavigationController.php:88 path '/footer'; trunk NavigationController.php:143 path '/_esi/global/footer' (commit 80b7e7394a6), same name, no deprecation."
+    },
+    {
+      "major": "6.8",
+      "id": "route:frontend.header",
+      "evidence": "Base NavigationController.php:75 path '/header'; trunk path '/_esi/global/header' (80b7e7394a6), no deprecation."
+    }
+  ]
+}

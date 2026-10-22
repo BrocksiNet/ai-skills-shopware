@@ -2,9 +2,22 @@
 // symbol. docs/plans/2026-10-wp11-public-api-index.md explains the surfaces.
 
 export const SCHEMA = 1;
-export const GENERATOR = 'api-index/0.2.0';
+export const GENERATOR = 'api-index/0.3.0';
 
-export type ItemKind = 'class' | 'interface' | 'trait' | 'enum' | 'method' | 'property' | 'constant' | 'case';
+export type ItemKind =
+  | 'class'
+  | 'interface'
+  | 'trait'
+  | 'enum'
+  | 'method'
+  | 'property'
+  | 'constant'
+  | 'case'
+  | 'route'
+  | 'entity'
+  | 'field'
+  | 'feature'
+  | 'config';
 
 /** Status that decides whether an item is covered by the BC promise. */
 export interface Flags {
@@ -21,7 +34,9 @@ export interface Flags {
 }
 
 export interface Item {
-  /** `php:Fqcn`, `php:Fqcn::method()`, `php:Fqcn::$property`, `php:Fqcn::CONSTANT`. */
+  /** `php:Fqcn`, `php:Fqcn::method()`, `php:Fqcn::$property`, `php:Fqcn::CONSTANT`;
+   *  `route:name`, `entity:name`, `field:entity.property`, `feature:NAME`,
+   *  `config:shopware.key.path`. */
   id: string;
   kind: ItemKind;
   /** Path in the repository. */
@@ -29,7 +44,9 @@ export interface Item {
   visibility?: 'public' | 'protected';
   static?: true;
   abstract?: true;
-  /** Methods: `(Type $a, ?Type $b = …): Return`. Properties and constants: their type. */
+  /** Methods: `(Type $a, ?Type $b = …): Return`. Properties and constants: their type.
+   *  Routes: `GET|POST /path`. Fields: the field class and its API flags.
+   *  Feature flags: `default=… major=… toggleable=…`. Config: the default as JSON. */
   signature?: string;
   extends?: string[];
   implements?: string[];
@@ -37,6 +54,10 @@ export interface Item {
   traits?: string[];
   /** The `#[Package]` area of a class. */
   package?: string;
+  /** Routes: the route scope (`store-api`, `api`, `storefront`, …). */
+  scope?: string;
+  /** Routes: documented in the OpenAPI schema files of core. */
+  schema?: true;
   flags: Flags;
 }
 
@@ -48,5 +69,7 @@ export interface Snapshot {
   builtAt: string;
   /** Files that did not parse; their items are missing. */
   failed: string[];
+  /** Entity fields and schema files that parsed but could not be read. */
+  unread?: string[];
   items: Item[];
 }

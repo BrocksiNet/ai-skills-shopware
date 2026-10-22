@@ -29,6 +29,8 @@ export const TRACKED = [
   'implements',
   'traits',
   'package',
+  'scope',
+  'schema',
 ] as const;
 
 export type Tracked = (typeof TRACKED)[number];
@@ -103,6 +105,7 @@ export function fieldValue(item: Item, field: Tracked): string | undefined {
       return item.flags.bcChanges?.join(', ');
     case 'static':
     case 'abstract':
+    case 'schema':
       return item[field] === true ? 'true' : undefined;
     case 'extends':
     case 'implements':
@@ -111,6 +114,7 @@ export function fieldValue(item: Item, field: Tracked): string | undefined {
     case 'visibility':
     case 'signature':
     case 'package':
+    case 'scope':
       return item[field];
   }
   return undefined;
@@ -223,4 +227,44 @@ export function itemAt(timeline: Timeline, item: TimelineItem, release: string):
     if (span !== undefined) values[field] = span.value;
   }
   return { present: fromRanges(item.present, names).has(index), values };
+}
+
+/** The items of one release, rebuilt from the timeline, so two releases can
+ *  be compared without a clone. */
+export function snapshotAt(timeline: Timeline, ref: string): Snapshot | undefined {
+  const release = releaseName(ref);
+  const entry = timeline.releases.find((candidate) => candidate.release === release);
+  if (entry === undefined) return undefined;
+  const items: Item[] = [];
+  for (const item of timeline.items) {
+    const at = itemAt(timeline, item, release);
+    if (!at.present) continue;
+    const { values } = at;
+    const rebuilt: Item = { id: item.id, kind: item.kind, file: item.file, flags: {} };
+    if (values.internal === 'true') rebuilt.flags.internal = true;
+    if (values.deprecated !== undefined) rebuilt.flags.deprecated = values.deprecated;
+    if (values.experimental !== undefined) rebuilt.flags.experimental = values.experimental;
+    if (values.final === 'keyword' || values.final === 'doc') rebuilt.flags.final = values.final;
+    if (values.bcChanges !== undefined) rebuilt.flags.bcChanges = values.bcChanges.split(', ');
+    if (values.visibility === 'public' || values.visibility === 'protected') rebuilt.visibility = values.visibility;
+    if (values.static === 'true') rebuilt.static = true;
+    if (values.abstract === 'true') rebuilt.abstract = true;
+    if (values.signature !== undefined) rebuilt.signature = values.signature;
+    if (values.extends !== undefined) rebuilt.extends = values.extends.split(', ');
+    if (values.implements !== undefined) rebuilt.implements = values.implements.split(', ');
+    if (values.traits !== undefined) rebuilt.traits = values.traits.split(', ');
+    if (values.package !== undefined) rebuilt.package = values.package;
+    if (values.scope !== undefined) rebuilt.scope = values.scope;
+    if (values.schema === 'true') rebuilt.schema = true;
+    items.push(rebuilt);
+  }
+  return {
+    schema: timeline.schema,
+    generator: entry.generator,
+    ref: entry.release,
+    sha: entry.sha,
+    builtAt: entry.builtAt,
+    failed: [],
+    items,
+  };
 }

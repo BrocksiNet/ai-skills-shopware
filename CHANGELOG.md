@@ -8,6 +8,21 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- WP11 phase 3: the API index covers routes (with scope and OpenAPI
+  coverage), entity fields and their API flags, feature flags and bundle
+  configuration keys (generator `api-index/0.3.0`). Deprecations count
+  where core writes them: docblocks, the entity class, plain and YAML
+  comments, handler triggers and feature-flag branches.
+- `api-diff` reports what a change does to those surfaces: removed or
+  changed without a deprecation, removed after one, and newly deprecated.
+  It works on a `shopware/shopware` clone or offline from the index.
+  `bc-data-and-config.md` and `impact-review.md` point at it.
+- `check-breaks` measures `api-diff` against the breaks the 6.6, 6.7 and
+  6.8 UPGRADE files name: 97.2 % recall, 97.1 % precision. The weekly
+  index workflow runs it.
+
 ## [0.12.0] - 2026-10-22
 
 ### Added

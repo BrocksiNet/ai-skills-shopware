@@ -76,3 +76,13 @@ jobs:
               --notes "Built weekly by .github/workflows/api-index.yml. Read by tools/api-index/bin/api-facts.ts. Not a release of the skills."
           fi
           gh release upload api-index "$RUNNER_TEMP/dist/api-index.json.gz" "$RUNNER_TEMP/dist/index.json" --clobber
+
+      - name: Check api-diff against the known breaks
+        # After the upload, so a drop below the gate shows as a failed run
+        # without holding back the index.
+        run: |
+          status=0
+          node tools/api-index/bin/check-breaks.ts --index "$RUNNER_TEMP/dist/api-index.json.gz" --no-fetch > check-breaks.txt || status=$?
+          cat check-breaks.txt
+          { echo '```text'; cat check-breaks.txt; echo '```'; } >> "$GITHUB_STEP_SUMMARY"
+          exit "$status"

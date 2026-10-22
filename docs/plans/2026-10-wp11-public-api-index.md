@@ -1,6 +1,6 @@
 # WP11, rethought: a public API index of Shopware
 
-Status: **accepted 2026-10-22; phases 0 to 2 done, phase 3 next.** Replaces the Kev
+Status: **accepted 2026-10-22; phases 0 to 3 done, phase 4 next.** Replaces the Kev
 experiment in
 [WP11 of the skills evolution plan](2026-10-skills-evolution.md#wp11-public-api-index).
 The decisions are at the end.
@@ -388,6 +388,53 @@ the second fails, with no new false positives on the `-ignore` tasks.
 OpenAPI paths, entity fields and flags, feature flags and config keys.
 `api-diff` for these surfaces, checked against known breaks from the
 changelog and UPGRADE files, the same 90 % gate.
+
+**Phase 3 result (done 2026-10-22): the gate passed.** Tools:
+`bin/api-diff.ts` compares two refs of a clone (`--repo`) or two releases
+of the index, per surface, and `bin/check-breaks.ts` measures it against
+`known-breaks.json`, the breaks the UPGRADE files name for these surfaces.
+The weekly index workflow runs the check after it publishes.
+
+| Measure | Result |
+| ------- | ------ |
+| Known breaks counted | 72 of 76 (4 excluded: they name a container parameter, a prototype entry or free data, not a declared key) |
+| 6.6 (v6.5.8.7 → v6.6.0.0) | 4 of 4 found |
+| 6.7 (v6.6.10.5 → v6.7.0.0) | 17 of 17 found |
+| 6.8 (v6.7.0.0 → trunk, expected as deprecations) | 49 of 51 found |
+| Recall | 97.2 % |
+| Breaks reported without a deprecation | 34; 33 checked as real in the source |
+| Precision | 97.1 % |
+| Fields the parser could not read | 0 (2,582 to 2,701 fields per release) |
+
+- **Surfaces.** Routes from `#[Route]` (name, methods, path, scope, flags
+  of the method or a deprecated controller, and whether the OpenAPI files
+  document it), entities and fields from `defineFields()` with their API
+  flags, feature flags from `feature.yaml`, and the keys of the bundle
+  `Configuration` classes with type, default and deprecation. Generator
+  `api-index/0.3.0`.
+- **Where core marks a removal.** The first count missed 14 deprecations
+  that core writes outside a docblock: on the entity class's property or
+  getter, as a `/*` or `//` comment, as a comment in the package YAML, as
+  `Feature::triggerDeprecationOrThrow()` in a route handler, and as a field
+  that only the flag-off branch of `Feature::isActive()` declares. The
+  index reads all of them now. A major feature flag counts as deprecated
+  for its major.
+- **The base of a major** is the last minor before it by date, not the last
+  6.x tag: LTS tags such as 6.6.10.x continue after 6.7.0.0.
+- **The two misses** are `shopware.http_cache.stale_while_revalidate` and
+  `stale_if_error`: UPGRADE-6.8 removes them, but trunk does not deprecate
+  them in the code.
+- **The one wrong break** is `user.email`, `StringField` to `EmailField` in
+  6.6: a real change, but the new class extends the old one and only adds
+  validation.
+- **Real breaks the UPGRADE files do not name**, all checked in the source
+  and listed as `confirmed`: the storefront `http_cache` and
+  `reverse_proxy` keys and the `STOCK_HANDLING` flag in 6.6, and on trunk
+  SEO fields from `LongTextField` to `StringField`, `Immutable` and
+  `WriteProtected` added to custom field, plugin and webhook fields,
+  `customer.hash` no longer `ApiAware`, the app URL change and usage data
+  consent routes removed, and the header and footer routes under
+  `/_esi/global/`.
 
 **Phase 4: admin and storefront (two to three days).** Components, blocks,
 position identifiers, the `Shopware.*` global, storefront blocks and JS
