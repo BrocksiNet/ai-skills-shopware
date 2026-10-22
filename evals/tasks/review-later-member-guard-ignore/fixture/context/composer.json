@@ -1,0 +1,22 @@
+{
+    "name": "swag/customer-prices",
+    "description": "Prices per customer price group",
+    "type": "shopware-platform-plugin",
+    "version": "2.1.0",
+    "license": "MIT",
+    "require": {
+        "shopware/core": "~6.6.0 || ~6.7.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "Swag\\CustomerPrices\\": "src/"
+        }
+    },
+    "extra": {
+        "shopware-plugin-class": "Swag\\CustomerPrices\\SwagCustomerPrices",
+        "label": {
+            "de-DE": "Kundenpreise",
+            "en-GB": "Customer prices"
+        }
+    }
+}

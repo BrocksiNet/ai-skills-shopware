@@ -1,0 +1,78 @@
+name: api-index
+
+# Weekly build of the public API index of shopware/shopware (plan WP11):
+# every release tag from 6.5.0.0 on plus trunk, merged into one timeline.
+# The result is published as the assets of the `api-index` release, where
+# tools/api-index/bin/api-facts.ts downloads it from.
+#
+#   - schedule (Monday 04:00 UTC) and manual dispatch.
+#   - Snapshots of built tags are cached per generator version, so a run
+#     only builds new tags and trunk; a new generator version rebuilds all
+#     (about four minutes).
+#   - The release is a prerelease and never marked latest, so the skills'
+#     version check (tools/bin/check-update.ts) keeps reading the real
+#     release tags.
+#
+# No model calls and no secrets beyond GITHUB_TOKEN.
+
+on:
+  schedule:
+    - cron: "0 4 * * 1" # Monday 04:00 UTC
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency: api-index
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v5
+
+      - uses: actions/setup-node@v5
+        with:
+          node-version: '24'
+
+      - name: Install the generator
+        run: npm ci --prefix tools/api-index
+
+      - name: Clone shopware/shopware with tags
+        # A full clone: the generator reads blobs of every tag with
+        # git cat-file --batch, which a partial clone would fetch one by one.
+        run: git clone --quiet --no-checkout https://github.com/shopware/shopware.git "$RUNNER_TEMP/shopware"
+
+      - name: Generator version
+        id: generator
+        run: echo "version=$(node -e "import('./tools/api-index/src/model.ts').then((m) => console.log(m.GENERATOR))")" >> "$GITHUB_OUTPUT"
+
+      - uses: actions/cache@v4
+        with:
+          path: ${{ runner.temp }}/api-index-cache
+          key: api-index-${{ steps.generator.outputs.version }}-${{ github.run_id }}
+          restore-keys: api-index-${{ steps.generator.outputs.version }}-
+
+      - name: Build the timeline
+        run: |
+          mkdir -p "$RUNNER_TEMP/dist"
+          node tools/api-index/bin/timeline.ts \
+            --repo "$RUNNER_TEMP/shopware" \
+            --from 6.5.0.0 \
+            --trunk origin/trunk \
+            --cache "$RUNNER_TEMP/api-index-cache" \
+            --out "$RUNNER_TEMP/dist/api-index.json.gz" \
+            --index "$RUNNER_TEMP/dist/index.json"
+
+      - name: Publish the release assets
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          if ! gh release view api-index > /dev/null 2>&1; then
+            gh release create api-index --prerelease --latest=false \
+              --title "Public API index of Shopware" \
+              --notes "Built weekly by .github/workflows/api-index.yml. Read by tools/api-index/bin/api-facts.ts. Not a release of the skills."
+          fi
+          gh release upload api-index "$RUNNER_TEMP/dist/api-index.json.gz" "$RUNNER_TEMP/dist/index.json" --clobber

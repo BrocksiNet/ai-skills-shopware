@@ -22,6 +22,9 @@ export interface Finding {
  *  words a reviewer who does not know our IDs would use. */
 export interface Expectation {
   rule: string;
+  /** Other IDs that are just as right for the problem, such as the general
+   *  rule next to the specific one. */
+  also?: string[];
   file: string;
   minSeverity: Severity;
   summary: RegExp;
@@ -80,8 +83,11 @@ const atLeast = (s: Severity, min: Severity): boolean => SEVERITIES.indexOf(s) >
 
 /** The finding names the rule: our ID, or, without a catalog ID, a summary
  *  in the reviewer's own words. A different catalog ID is a wrong rule. */
+const citesRule = (f: Finding, e: Pick<Expectation, 'rule' | 'also'>): boolean =>
+  [e.rule, ...(e.also ?? [])].some((id) => f.rule_id?.startsWith(id) === true);
+
 export function namesRule(f: Finding, e: Expectation): boolean {
-  if (f.rule_id?.startsWith(e.rule) === true) return true;
+  if (citesRule(f, e)) return true;
   if (f.rule_id !== null && CATALOG_ID.test(f.rule_id)) return false;
   return e.summary.test(f.summary);
 }
@@ -93,12 +99,11 @@ export const caught = (findings: Finding[], e: Expectation): boolean =>
 
 /** The ignore task fails on a finding above `nit` that names the rule
  *  anywhere in the diff: the clean change only looks like the problem. */
-export const falsePositives = (findings: Finding[], e: Pick<Expectation, 'rule' | 'summary'>): Finding[] =>
+export const falsePositives = (findings: Finding[], e: Pick<Expectation, 'rule' | 'also' | 'summary'>): Finding[] =>
   findings.filter(
     (f) =>
       f.severity !== 'nit' &&
-      (f.rule_id?.startsWith(e.rule) === true ||
-        ((f.rule_id === null || !CATALOG_ID.test(f.rule_id)) && e.summary.test(f.summary))),
+      (citesRule(f, e) || ((f.rule_id === null || !CATALOG_ID.test(f.rule_id)) && e.summary.test(f.summary))),
   );
 
 /** A near-miss task plants a real problem next to a rule that does not cover

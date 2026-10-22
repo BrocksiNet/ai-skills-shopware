@@ -2,6 +2,7 @@
 // releases its composer range allows. Facts, not findings: each line says
 // what holds in which releases. No dependencies, so a tool that reads the
 // index can use it as is.
+import { builtinMembers } from './builtin.ts';
 import { parseConstraint } from './constraint.ts';
 import { compareReleases, fromRanges, type Timeline, type TimelineItem, type Tracked } from './timeline.ts';
 
@@ -80,7 +81,12 @@ export class Lookup {
     const own = this.get(`php:${owner}::${member}`);
     if (own !== undefined && this.present(own, index)) return own;
     const klass = this.get(`php:${owner}`);
-    if (klass === undefined) return seen.size > 1 ? 'external' : undefined;
+    if (klass === undefined) {
+      if (seen.size === 1) return undefined;
+      // A PHP built-in declares only its fixed members; other classes outside the index may declare anything.
+      const builtin = builtinMembers(owner);
+      return builtin === undefined || builtin.has(member.toLowerCase()) ? 'external' : undefined;
+    }
     if (!this.present(klass, index)) return undefined;
     const parents = [
       this.value(klass, 'traits', index),
@@ -106,7 +112,9 @@ export type FactKind =
   | 'deprecated'
   | 'experimental'
   | 'final-extended'
-  | 'bc-change';
+  | 'bc-change'
+  /** A `class_exists` or `method_exists` guard on a symbol every release of the range has. */
+  | 'guarded-everywhere';
 
 export interface Fact {
   target: string;
@@ -181,6 +189,18 @@ function flagFacts(lookup: Lookup, target: string, isMember: boolean, resolved: 
     }
   }
   return facts;
+}
+
+/** True only when the index shows the target in every release of the
+ *  range; false when it is missing or the index cannot say. */
+export function presentThroughout(lookup: Lookup, target: string, range: string[]): boolean {
+  const [owner = '', member] = target.replace(/^php:/u, '').split('::');
+  const indexes = range.map((release) => lookup.names.indexOf(release));
+  if (indexes.length === 0 || indexes.includes(-1)) return false;
+  return indexes.every((index) => {
+    const item = member === undefined ? lookup.get(target) : lookup.member(owner, member, index);
+    return item !== undefined && item !== 'external' && lookup.present(item, index);
+  });
 }
 
 /** Facts about one target over the releases of a range. A member inherits

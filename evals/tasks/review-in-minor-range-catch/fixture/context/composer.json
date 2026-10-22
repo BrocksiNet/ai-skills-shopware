@@ -1,0 +1,22 @@
+{
+    "name": "swag/order-export",
+    "description": "Order export for ERP systems",
+    "type": "shopware-platform-plugin",
+    "version": "1.3.0",
+    "license": "MIT",
+    "require": {
+        "shopware/core": "~6.7.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "Swag\\OrderExport\\": "src/"
+        }
+    },
+    "extra": {
+        "shopware-plugin-class": "Swag\\OrderExport\\SwagOrderExport",
+        "label": {
+            "de-DE": "Bestellexport",
+            "en-GB": "Order export"
+        }
+    }
+}

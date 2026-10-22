@@ -1,0 +1,5 @@
+Shopware API this change adds, checked against 6.6.0.0 … 6.7.15.1 (92 releases of ~6.6.0 || ~6.7.0; api-index built 2026-10-22, newest 6.7.15.1):
+- Shopware\Core\Framework\Util\Hasher: missing in 6.6.0.0 … 6.6.6.1, guarded at src/Service/FeedExporter.php:38  [src/Service/FeedExporter.php:5, src/Service/FeedExporter.php:38, src/Service/FeedExporter.php:38]
+- Shopware\Core\Framework\Util\Hasher::hash(): missing in 6.6.0.0 … 6.6.6.1, guarded at src/Service/FeedExporter.php:38  [src/Service/FeedExporter.php:39]
+- 5 method calls not checked (receiver type unknown in the file)
+These are facts from the source of each release, not findings. Check each one against the code before you report it.

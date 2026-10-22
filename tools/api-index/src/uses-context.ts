@@ -13,7 +13,9 @@ export type UseKind =
   | 'constant'
   | 'class-ref'
   | 'type'
-  | 'attribute';
+  | 'attribute'
+  /** `class_exists(Foo::class)`, `method_exists(Foo::class, 'bar')` and the like. */
+  | 'guard';
 
 export interface Use {
   /** `php:Fqcn` or `php:Fqcn::member()` / `php:Fqcn::CONSTANT`, as in the index. */

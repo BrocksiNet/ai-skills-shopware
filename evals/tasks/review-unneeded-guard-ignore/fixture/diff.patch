@@ -1,0 +1,63 @@
+diff --git a/CHANGELOG_en-GB.md b/CHANGELOG_en-GB.md
+index 15add50..6f87e79 100644
+--- a/CHANGELOG_en-GB.md
++++ b/CHANGELOG_en-GB.md
+@@ -1,3 +1,7 @@
++# 1.5.0
++
++- Add `RemoteMediaImporter`, which imports media from a URL and purges it on the CDN.
++
+ # 1.4.0
+ 
+ - Purge thumbnails on the CDN when a media file is replaced.
+diff --git a/src/Resources/config/services.php b/src/Resources/config/services.php
+index 698a539..128259e 100644
+--- a/src/Resources/config/services.php
++++ b/src/Resources/config/services.php
+@@ -1,6 +1,8 @@
+ <?php declare(strict_types=1);
+ 
++use Shopware\Core\Content\Media\Upload\MediaUploadService;
+ use Swag\MediaCdn\Service\CdnClient;
++use Swag\MediaCdn\Service\RemoteMediaImporter;
+ use Symfony\Component\DependencyInjection\Loader\Configurator\ContainerConfigurator;
+ 
+ return static function (ContainerConfigurator $container): void {
+@@ -11,4 +13,8 @@ return static function (ContainerConfigurator $container): void {
+ 
+     $services->set(CdnClient::class)
+         ->arg('$httpClient', service('http_client'));
++
++    if (class_exists(MediaUploadService::class)) {
++        $services->set(RemoteMediaImporter::class)->public();
++    }
+ };
+diff --git a/src/Service/RemoteMediaImporter.php b/src/Service/RemoteMediaImporter.php
+new file mode 100644
+index 0000000..0da2193
+--- /dev/null
++++ b/src/Service/RemoteMediaImporter.php
+@@ -0,0 +1,23 @@
++<?php declare(strict_types=1);
++
++namespace Swag\MediaCdn\Service;
++
++use Shopware\Core\Content\Media\Upload\MediaUploadService;
++use Shopware\Core\Framework\Context;
++
++class RemoteMediaImporter
++{
++    public function __construct(
++        private readonly MediaUploadService $uploadService,
++        private readonly CdnClient $cdnClient,
++    ) {
++    }
++
++    public function import(string $url, Context $context): string
++    {
++        $mediaId = $this->uploadService->uploadFromURL($url, $context);
++        $this->cdnClient->purgeMedia([$mediaId]);
++
++        return $mediaId;
++    }
++}

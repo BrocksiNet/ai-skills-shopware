@@ -30,6 +30,10 @@
 # half-finished attempt never leaks into the next one. The last error reason
 # goes to stderr.
 #
+# API facts: with EVAL_API_FACTS=1, a task's recorded `api-facts.txt` (the
+# output of tools/api-index/bin/api-facts.ts for its fixture) is appended to
+# the instruction. Tasks without the file run unchanged.
+#
 # The agent sees EVAL_TASK in its environment. Real agents ignore it; the
 # test double (fake-agent.sh) uses it to find the task fixtures.
 #

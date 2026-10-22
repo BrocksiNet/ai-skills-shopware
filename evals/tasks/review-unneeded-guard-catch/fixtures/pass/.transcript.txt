@@ -1,0 +1,16 @@
+UpdateMediaPathEvent exists since 6.5.7.0, so every release of ~6.6.0 || ~6.7.0 has it.
+
+```json
+{
+  "findings": [
+    {
+      "rule_id": "REV-015",
+      "severity": "minor",
+      "file": "src/Resources/config/services.php",
+      "line": 17,
+      "summary": "The class_exists(UpdateMediaPathEvent::class) guard is always true: the event exists in every supported release since 6.5.7.0, so the check is dead code.",
+      "fix": "Register MediaPathPurgeSubscriber without the guard."
+    }
+  ]
+}
+```

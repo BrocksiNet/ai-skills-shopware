@@ -1,0 +1,16 @@
+composer.json still allows shopware/core ~6.7.0, which includes 6.7.0.0 and 6.7.0.1.
+
+```json
+{
+  "findings": [
+    {
+      "rule_id": "PLG-001",
+      "severity": "blocking",
+      "file": "src/Service/PaymentStatusResolver.php",
+      "line": 11,
+      "summary": "OrderEntity::getPrimaryOrderTransaction() was added in 6.7.1.0; on 6.7.0.0 and 6.7.0.1 it is an undefined method, so every export fails although composer.json allows ~6.7.0.",
+      "fix": "Raise shopware/core to >=6.7.1 <6.8 and say so in the changelog, or keep the newest-transaction fallback behind method_exists()."
+    }
+  ]
+}
+```

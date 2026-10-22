@@ -21,7 +21,10 @@ you must consciously narrow the range and call it out.
 
 Check when an API arrived in the source of the oldest supported tag
 (`git show v6.6.0.0:src/…`), not from memory. A class and its methods can
-arrive in different releases.
+arrive in different releases. With the ai-skills-shopware tools,
+`node tools/api-index/bin/api-facts.ts <plugin>` lists, for every release
+in the range, the Shopware API the plugin uses that is missing, deprecated
+or internal there.
 
 ## Guarding version-specific code
 

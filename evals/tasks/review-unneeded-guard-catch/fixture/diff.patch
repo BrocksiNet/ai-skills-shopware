@@ -1,0 +1,64 @@
+diff --git a/CHANGELOG_en-GB.md b/CHANGELOG_en-GB.md
+index 15add50..6366de0 100644
+--- a/CHANGELOG_en-GB.md
++++ b/CHANGELOG_en-GB.md
+@@ -1,3 +1,7 @@
++# 1.5.0
++
++- Purge media on the CDN when Shopware regenerates its paths.
++
+ # 1.4.0
+ 
+ - Purge thumbnails on the CDN when a media file is replaced.
+diff --git a/src/Resources/config/services.php b/src/Resources/config/services.php
+index 698a539..5a5325d 100644
+--- a/src/Resources/config/services.php
++++ b/src/Resources/config/services.php
+@@ -1,6 +1,8 @@
+ <?php declare(strict_types=1);
+ 
++use Shopware\Core\Content\Media\Core\Event\UpdateMediaPathEvent;
+ use Swag\MediaCdn\Service\CdnClient;
++use Swag\MediaCdn\Subscriber\MediaPathPurgeSubscriber;
+ use Symfony\Component\DependencyInjection\Loader\Configurator\ContainerConfigurator;
+ 
+ return static function (ContainerConfigurator $container): void {
+@@ -11,4 +13,8 @@ return static function (ContainerConfigurator $container): void {
+ 
+     $services->set(CdnClient::class)
+         ->arg('$httpClient', service('http_client'));
++
++    if (class_exists(UpdateMediaPathEvent::class)) {
++        $services->set(MediaPathPurgeSubscriber::class);
++    }
+ };
+diff --git a/src/Subscriber/MediaPathPurgeSubscriber.php b/src/Subscriber/MediaPathPurgeSubscriber.php
+new file mode 100644
+index 0000000..a0becc6
+--- /dev/null
++++ b/src/Subscriber/MediaPathPurgeSubscriber.php
+@@ -0,0 +1,24 @@
++<?php declare(strict_types=1);
++
++namespace Swag\MediaCdn\Subscriber;
++
++use Shopware\Core\Content\Media\Core\Event\UpdateMediaPathEvent;
++use Swag\MediaCdn\Service\CdnClient;
++use Symfony\Component\EventDispatcher\EventSubscriberInterface;
++
++class MediaPathPurgeSubscriber implements EventSubscriberInterface
++{
++    public function __construct(private readonly CdnClient $cdnClient)
++    {
++    }
++
++    public static function getSubscribedEvents(): array
++    {
++        return [UpdateMediaPathEvent::class => 'onUpdateMediaPath'];
++    }
++
++    public function onUpdateMediaPath(UpdateMediaPathEvent $event): void
++    {
++        $this->cdnClient->purgeMedia(array_values($event->ids));
++    }
++}

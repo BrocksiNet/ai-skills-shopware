@@ -26,9 +26,37 @@ const parser = new Engine({
   ast: { withPositions: true },
 });
 
+const GUARDS = new Set(['class_exists', 'interface_exists', 'trait_exists', 'enum_exists', 'method_exists']);
+
+/** The class an argument names: `Foo::class` or a string literal. */
+function classArgument(node: Node | undefined, walk: Walk): string | undefined {
+  if (node?.kind === 'string') return text(node, 'value')?.replace(/^\\/u, '');
+  if (node?.kind !== 'staticlookup' || text(child(node, 'offset'), 'name')?.toLowerCase() !== 'class') return undefined;
+  return classOfReference(child(node, 'what'), walk);
+}
+
+/** `class_exists(Foo::class)` and `method_exists(Foo::class, 'bar')`: the
+ *  extension expects the symbol to be missing in some release. */
+function visitGuard(node: Node, name: string, walk: Walk): void {
+  const [subject, member] = children(node, 'arguments');
+  const owner = classArgument(subject, walk);
+  if (owner === undefined) return;
+  if (name !== 'method_exists') {
+    add(walk, `php:${owner}`, 'guard', node);
+    return;
+  }
+  const method = member?.kind === 'string' ? text(member, 'value') : undefined;
+  if (method !== undefined) add(walk, `php:${owner}::${method}()`, 'guard', node);
+}
+
 function visitCall(node: Node, walk: Walk): void {
   const what = child(node, 'what');
   if (what === undefined) return;
+  const called = what.kind === 'name' ? (text(what, 'name') ?? '').replace(/^\\/u, '').toLowerCase() : '';
+  if (GUARDS.has(called)) {
+    visitGuard(node, called, walk);
+    return;
+  }
   if (what.kind === 'staticlookup') {
     const owner = classOfReference(child(what, 'what'), walk);
     const name = methodName(child(what, 'offset'));
@@ -82,7 +110,8 @@ function visit(node: Node, walk: Walk): void {
       );
       break;
     }
-    case 'instanceof': {
+    case 'bin': {
+      if (text(node, 'type') !== 'instanceof') break;
       const owner = classOfReference(child(node, 'right'), walk);
       if (owner !== undefined) add(walk, `php:${owner}`, 'class-ref', node);
       break;
@@ -116,6 +145,43 @@ function childNodes(node: Node): Node[] {
     .filter((entry): entry is Node => isNode(entry) && typeof entry.kind === 'string');
 }
 
+/** `$x instanceof Foo` in a condition: the variables it types, also through `&&`. */
+function narrowing(test: Node, walk: Walk): Map<string, string> {
+  if (test.kind !== 'bin') return new Map<string, string>();
+  const left = child(test, 'left');
+  const right = child(test, 'right');
+  if (text(test, 'type') === '&&') {
+    return new Map<string, string>([...(left ? narrowing(left, walk) : []), ...(right ? narrowing(right, walk) : [])]);
+  }
+  if (text(test, 'type') !== 'instanceof' || left?.kind !== 'variable') return new Map<string, string>();
+  const name = text(left, 'name');
+  const owner = classOfReference(right, walk);
+  const types = new Map<string, string>();
+  if (name !== undefined && owner !== undefined) types.set(name, owner);
+  return types;
+}
+
+interface Branch {
+  test: Node;
+  /** What runs only when the test holds. */
+  guarded: Node[];
+  rest: Node[];
+}
+
+/** A ternary, an `if` or an `&&`, split into its test and the part the test guards. */
+function narrowedBranch(node: Node): Branch | undefined {
+  const pick = (key: string): Node[] => {
+    const value = child(node, key);
+    return value === undefined ? [] : [value];
+  };
+  const test = child(node, node.kind === 'bin' ? 'left' : 'test');
+  if (test === undefined) return undefined;
+  if (node.kind === 'retif') return { test, guarded: pick('trueExpr'), rest: pick('falseExpr') };
+  if (node.kind === 'if') return { test, guarded: pick('body'), rest: pick('alternate') };
+  if (node.kind === 'bin' && text(node, 'type') === '&&') return { test, guarded: pick('right'), rest: [] };
+  return undefined;
+}
+
 /** Visits every node below `node`; methods and closures get their own variables. */
 function walkTree(node: Node, walk: Walk): void {
   if (node.kind === 'method' || node.kind === 'function' || node.kind === 'closure' || node.kind === 'arrowfunc') {
@@ -132,6 +198,16 @@ function walkTree(node: Node, walk: Walk): void {
     return;
   }
   visit(node, walk);
+  const branch = narrowedBranch(node);
+  if (branch !== undefined) {
+    const types = narrowing(branch.test, walk);
+    walkTree(branch.test, walk);
+    const inner: Walk = { ...walk, vars: new Map([...walk.vars, ...types]), unresolved: 0 };
+    for (const entry of branch.guarded) walkTree(entry, inner);
+    walk.unresolved += inner.unresolved;
+    for (const entry of branch.rest) walkTree(entry, walk);
+    return;
+  }
   if (node.kind === 'call' && child(node, 'what')?.kind === 'staticlookup') {
     // The lookup is the call's target, not a constant; only the arguments are left.
     for (const argument of children(node, 'arguments')) walkTree(argument, walk);

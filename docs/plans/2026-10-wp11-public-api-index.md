@@ -146,16 +146,18 @@ needed.
 
 ## The tools
 
-Both read the index, have zero runtime dependencies (`node:zlib` for gzip)
-and live in `tools/bin/`. The generator needs `php-parser` and
+Both read the index. The generator needs `php-parser` and
 `@babel/parser`, like the AST graders, so it is its own package (see the
-decisions).
+decisions). `api-facts` reads the extension's PHP with the same parser, so
+it lives in that package too, as `tools/api-index/bin/api-facts.ts`, not in
+`tools/bin/` as first planned.
 
 ### `api-facts`: does the extension fit its range?
 
 ```bash
-git diff main | node tools/bin/api-facts.ts                # range from composer.json
-node tools/bin/api-facts.ts --range '~6.6.0 || ~6.7.0' src/  # a whole extension
+node tools/api-index/bin/api-facts.ts <plugin>                          # range from composer.json
+git diff main | node tools/api-index/bin/api-facts.ts --diff - <plugin>  # what the change adds
+node tools/api-index/bin/api-facts.ts --apply diff.patch <plugin>       # a patch not applied yet
 ```
 
 1. **Shopware API used**, read deterministically: `use Shopware\…`
@@ -299,6 +301,88 @@ tool, the release asset, the weekly workflow, and an A/B with three arms on
 the version-fact catch tasks: skills off, skills on, skills on plus the
 tool's output. It ships if the third arm beats the second on a task where
 the second fails, with no new false positives on the `-ignore` tasks.
+
+**Phase 2 result (done 2026-10-22): `api-facts` ships.**
+
+- **The tool.** `tools/api-index/bin/api-facts.ts` reads the extension's
+  PHP, takes the range from `composer.json`, and with `--diff` or
+  `--apply` reports only what a change adds (everything when the change
+  touches `composer.json`). It finds the index through `--index`,
+  `$API_INDEX` or the cached `api-index` release asset, downloaded again
+  after a week. The output ends with "facts, not findings".
+- **New in the facts.** A `class_exists` or `method_exists` guard on a
+  symbol every release of the range has is reported as
+  `guarded-everywhere` (the `REV-015` case). A missing symbol the change
+  guards says where. `instanceof` narrows a variable in a ternary, an `if`
+  and an `&&`. PHP's own interfaces and exceptions have a fixed set of
+  members, so a lookup that reaches `JsonSerializable` no longer gives up.
+- **Measured again on the 19 plugins.** 185 facts, all right: 175 confirmed
+  by the verifier, 10 checked by hand. The guard fact first claimed
+  `createCLIContext()` everywhere; it arrived in 6.6.1.0. Presence now has
+  to be shown for every release, not inferred from an empty result. Two
+  plugins outside this repository call `Context::createCLIContext()`
+  unguarded while their range allows 6.6.0.0 to 6.6.0.3.
+- **Release asset.** `.github/workflows/api-index.yml` builds every Monday
+  and uploads `api-index.json.gz` and `index.json` to the `api-index`
+  release, a prerelease that is never marked latest.
+- **The A/B.** Haiku through the Claude CLI, three runs per arm. The third
+  arm gets the recorded `api-facts.txt` of the task appended to the
+  instruction (`EVAL_API_FACTS=1`).
+
+  | Task | Skills off | Skills on | On plus facts |
+  | ---- | ---------- | --------- | ------------- |
+  | `review-supported-range-catch` | 0/3 | 2/3 | 3/3 |
+  | `review-supported-range-ignore` | 3/3 | 3/3 | 3/3 |
+  | `review-dead-version-guard-catch` | 3/3 | 3/3 | 3/3 |
+  | `review-dead-version-guard-ignore` | 3/3 | 3/3 | 3/3 |
+  | `review-cache-tags-event-catch` | 0/3 | 3/3 | 3/3 |
+  | `review-cache-tags-event-ignore` | 3/3 | 3/3 | 3/3 |
+
+  The third arm beats the second where the second fails
+  (`review-supported-range-catch`), with no false positive on an ignore
+  task, so the gate passes. The margin is one run in three on one task;
+  more repeats or a harder task would make it firmer.
+  `review-dead-version-guard-catch` passes without skills, so it does not
+  tell the arms apart.
+
+  These three pairs are not blind: the skill texts name
+  `ProductDetailRouteCacheTagsEvent` and `CacheInvalidator`, so the second
+  arm can answer two of them without facts. Facts only help where the
+  skill does not already say when an API arrived.
+- **The blind A/B.** Three more pairs whose Shopware symbols no skill
+  names; `tools/test/blind-tasks.test.ts` fails when one does. Haiku, five
+  runs per arm.
+
+  | Task | Rule | Skills off | Skills on | On plus facts |
+  | ---- | ---- | ---------- | --------- | ------------- |
+  | `review-later-member-guard-catch` | `PLG-024` | 0/5 | 1/5 | 5/5 |
+  | `review-later-member-guard-ignore` | `PLG-024` | 5/5 | 5/5 | 5/5 |
+  | `review-in-minor-range-catch` | `PLG-001` | 0/5 | 0/5 | 5/5 |
+  | `review-in-minor-range-ignore` | `PLG-001` | 5/5 | 5/5 | 5/5 |
+  | `review-unneeded-guard-catch` | `REV-015` | 0/5 | 4/5 | 5/5 |
+  | `review-unneeded-guard-ignore` | `REV-015` | 4/5 | 3/5 | 5/5 |
+
+  - `later-member-guard`: `class_exists(HttpCacheCookieEvent::class)` is
+    right for the class (6.6.6.0), but the subscriber calls `getHash()`
+    (6.7.6.0).
+  - `in-minor-range`: `OrderEntity::getPrimaryOrderTransaction()`
+    (6.7.1.0) under `~6.7.0`.
+  - `unneeded-guard`: a guard on `UpdateMediaPathEvent` (6.5.7.0). The
+    ignore half guards `MediaUploadService` (6.7.1.0), and the false
+    positives without facts call that guard dead.
+
+  The first run of `later-member-guard` had a changelog that promised the
+  fix on every release. Reviewers in all arms rightly said 6.6.0 to 6.6.5
+  do not get it. The changelog now says "from Shopware 6.6.6", and the
+  numbers above are the rerun. The task also showed that `api-facts` called
+  `getHash()` guarded because its class was. A class guard now covers only
+  the releases without the class:
+  `not guarded in 6.6.6.0 … 6.7.5.1: the class guard at … only covers
+  releases without the class`. Review graders take an `also` list of IDs
+  that are as right as the rule (`PLG-001` for the `PLG-024` catch).
+
+  Facts lift every blind catch to 5/5 and remove the false positives the
+  second arm still makes. Skills alone catch 5 of 15.
 
 **Phase 3: HTTP, entities and configuration (two to three days).** Routes,
 OpenAPI paths, entity fields and flags, feature flags and config keys.

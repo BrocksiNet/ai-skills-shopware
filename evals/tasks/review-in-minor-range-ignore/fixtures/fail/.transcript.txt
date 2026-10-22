@@ -1,0 +1,14 @@
+```json
+{
+  "findings": [
+    {
+      "rule_id": "PLG-001",
+      "severity": "major",
+      "file": "src/Service/PaymentStatusResolver.php",
+      "line": 11,
+      "summary": "getPrimaryOrderTransaction() is not available on every supported release.",
+      "fix": "Guard it with method_exists()."
+    }
+  ]
+}
+```

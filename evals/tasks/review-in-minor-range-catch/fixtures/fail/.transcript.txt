@@ -1,0 +1,22 @@
+```json
+{
+  "findings": [
+    {
+      "rule_id": "PLG-001",
+      "severity": "minor",
+      "file": "src/Service/PaymentStatusResolver.php",
+      "line": 11,
+      "summary": "getPrimaryOrderTransaction() does not exist on 6.7.0.0.",
+      "fix": "Raise the minimum version."
+    },
+    {
+      "rule_id": "PLG-002",
+      "severity": "major",
+      "file": "src/Service/OrderExporter.php",
+      "line": 29,
+      "summary": "The primaryOrderTransaction association is missing in 6.7.0.0, so the criteria fails there.",
+      "fix": "Raise the minimum version."
+    }
+  ]
+}
+```

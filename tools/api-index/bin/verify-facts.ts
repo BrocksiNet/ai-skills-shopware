@@ -1,4 +1,4 @@
-// Phase 1 measurement: checks the facts of bin/facts.ts --json against the
+// Phase 1 measurement: checks the facts of bin/api-facts.ts --json against the
 // source of shopware/shopware, without php-parser or the index. It reads the
 // declaration and its docblock with git grep and regular expressions at the
 // first and last release of each fact, and checks that the fact does not
