@@ -4,50 +4,20 @@
 // covers them.
 import { Engine } from 'php-parser';
 import type { Flags, Item, ItemKind } from './model.ts';
-import { child, children, flag, isNode, nameOf, type Node, text } from './node.ts';
+import { child, children, classFqcn, flag, isNode, nameOf, type Node, text } from './node.ts';
+import { addUses, resolve, type Scope } from './php-scope.ts';
 
 const BC_CHANGE = 'Shopware\\Core\\Framework\\Deprecation\\BCChange\\';
-const SELF_NAMES = new Set(['self', 'static', 'parent']);
 const CLASS_KINDS = new Set(['class', 'interface', 'trait', 'enum']);
 
 const parser = new Engine({
   parser: { php8: true, extractDoc: true, suppressErrors: false },
   ast: { withPositions: false },
 });
-
-/** Names in scope: the namespace and the `use` aliases of a file. */
-export interface Scope {
-  namespace: string;
-  uses: Map<string, string>;
-}
-
-function trimSlash(name: string): string {
-  return name.replace(/^\\/u, '');
-}
-
-export function addUses(scope: Scope, group: Node): void {
-  const type = text(group, 'type');
-  if (type === 'function' || type === 'const') return;
-  const prefix = text(group, 'name');
-  for (const item of children(group, 'items')) {
-    if (text(item, 'type') === 'function' || text(item, 'type') === 'const') continue;
-    const name = text(item, 'name');
-    if (name === undefined) continue;
-    const full = trimSlash(prefix === undefined ? name : `${prefix}\\${name}`);
-    const alias = text(child(item, 'alias'), 'name') ?? full.split('\\').pop() ?? full;
-    scope.uses.set(alias.toLowerCase(), full);
-  }
-}
-
-/** The fully qualified name of a `name` node, resolved against the scope. */
-export function resolve(name: string, resolution: string | undefined, scope: Scope): string {
-  if (resolution === 'fqn' || name.startsWith('\\')) return trimSlash(name);
-  if (SELF_NAMES.has(name.toLowerCase())) return name.toLowerCase();
-  const [first = name, ...rest] = name.split('\\');
-  const used = scope.uses.get(first.toLowerCase());
-  if (used !== undefined) return [used, ...rest].join('\\');
-  return scope.namespace === '' ? name : `${scope.namespace}\\${name}`;
-}
+const positionParser = new Engine({
+  parser: { php8: true, extractDoc: true, suppressErrors: false },
+  ast: { withPositions: true },
+});
 
 function resolveNode(node: Node | undefined, scope: Scope): string | undefined {
   const name = text(node, 'name');
@@ -87,7 +57,7 @@ export function typeText(type: Node | undefined, nullable: boolean, scope: Scope
 
 /** The docblock of a declaration: php-parser attaches it to the node, or to
  *  the first attribute group when there are attributes. */
-function docblock(node: Node): string {
+export function docblock(node: Node): string {
   const comments = [
     ...children(node, 'leadingComments'),
     ...children(node, 'attrGroups').flatMap((group) => children(group, 'leadingComments')),
@@ -96,7 +66,7 @@ function docblock(node: Node): string {
   return blocks.at(-1) ?? '';
 }
 
-function attributes(node: Node, scope: Scope): { name: string; args: Node[] }[] {
+export function attributes(node: Node, scope: Scope): { name: string; args: Node[] }[] {
   return children(node, 'attrGroups')
     .flatMap((group) => children(group, 'attrs'))
     .map((attr) => ({ name: resolve(text(attr, 'name') ?? '', undefined, scope), args: children(attr, 'args') }));
@@ -244,9 +214,8 @@ function memberItems(member: Node, fqcn: string, scope: Scope, file: string): It
 }
 
 function classItems(node: Node, scope: Scope, file: string): Item[] {
-  const name = nameOf(node);
-  if (name === undefined) return [];
-  const fqcn = scope.namespace === '' ? name : `${scope.namespace}\\${name}`;
+  const fqcn = classFqcn(node, scope.namespace);
+  if (fqcn === undefined) return [];
   const kind = String(node.kind);
   const head: Item = {
     id: `php:${fqcn}`,
@@ -281,19 +250,25 @@ function declarations(node: Node): Node[] {
   );
 }
 
-/** Items of one PHP file. Throws when the file does not parse. */
-export function phpItems(code: string, file: string): Item[] {
-  const program: unknown = parser.parseCode(code, file);
+/** The class-likes of one PHP file with the scope each is declared in.
+ *  Throws when the file does not parse. */
+export function phpClasses(code: string, file: string, positions = false): { node: Node; scope: Scope }[] {
+  const program: unknown = (positions ? positionParser : parser).parseCode(code, file);
   if (!isNode(program)) return [];
-  const items: Item[] = [];
+  const out: { node: Node; scope: Scope }[] = [];
   const top = children(program, 'children');
   const namespaces = top.filter((node) => node.kind === 'namespace');
   for (const block of namespaces.length > 0 ? namespaces : [program]) {
     const scope: Scope = { namespace: text(block, 'name') ?? '', uses: new Map() };
     for (const node of children(block, 'children')) {
       if (node.kind === 'usegroup') addUses(scope, node);
-      else items.push(...declarations(node).flatMap((declaration) => classItems(declaration, scope, file)));
+      else out.push(...declarations(node).map((declaration) => ({ node: declaration, scope })));
     }
   }
-  return items;
+  return out;
+}
+
+/** Items of one PHP file. Throws when the file does not parse. */
+export function phpItems(code: string, file: string): Item[] {
+  return phpClasses(code, file).flatMap(({ node, scope }) => classItems(node, scope, file));
 }

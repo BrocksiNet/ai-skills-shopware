@@ -1,7 +1,7 @@
 // What the use extractor knows while it walks one file: the namespace and
 // imports, the class it is in, and the types of variables and properties.
 import { child, children, nameOf, type Node, text } from './node.ts';
-import { resolve, type Scope } from './php.ts';
+import { resolve, type Scope } from './php-scope.ts';
 
 export type UseKind =
   | 'import'

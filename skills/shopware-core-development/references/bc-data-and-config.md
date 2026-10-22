@@ -4,7 +4,11 @@ Load when you change a DAL definition's API flags or associations, a feature
 flag registration, a configuration default or key, or a console command.
 
 None of these have a PHP signature, so no BC check notices the change.
-Operators and integrations notice after the update.
+Operators and integrations notice after the update. With the
+ai-skills-shopware tools, `node tools/api-index/bin/api-diff.ts --repo .
+--base origin/trunk --head HEAD` lists the routes, entity fields and flags,
+feature flags and configuration keys a branch removes or changes without a
+deprecation, and what it newly deprecates.
 
 ## Rules
 

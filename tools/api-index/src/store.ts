@@ -4,6 +4,8 @@ import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { homedir } from 'node:os';
 import { join } from 'node:path';
 import { gunzipSync, gzipSync } from 'node:zlib';
+import { buildSnapshot } from './build.ts';
+import { commitOf } from './git.ts';
 import { GENERATOR, type Item, type Snapshot } from './model.ts';
 import { isNode } from './node.ts';
 import type { Timeline, TimelineItem } from './timeline.ts';
@@ -81,4 +83,21 @@ export function loadTimeline(path: string): Timeline {
   const value = readJson(path);
   if (!isTimeline(value)) throw new Error(`${path} is not an api-index timeline`);
   return value;
+}
+
+/** The snapshot of `ref` from the cache, built and cached when missing. It
+ *  is stored under `label`, so trunk is cached by its commit. */
+export function snapshotFor(
+  repo: string,
+  ref: string,
+  cacheDir: string,
+  label: string,
+): { snapshot: Snapshot; built: boolean } {
+  const sha = commitOf(repo, ref);
+  const path = snapshotPath(cacheDir, label, sha);
+  const cached = loadSnapshot(path);
+  if (cached !== undefined) return { snapshot: cached, built: false };
+  const snapshot = buildSnapshot({ repo, ref, now: () => new Date() });
+  saveSnapshot(path, { ...snapshot, ref: label });
+  return { snapshot: { ...snapshot, ref: label }, built: true };
 }

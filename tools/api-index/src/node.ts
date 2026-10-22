@@ -32,3 +32,10 @@ export function flag(node: Node, key: string): boolean {
 export function nameOf(node: Node): string | undefined {
   return text(child(node, 'name'), 'name') ?? text(node, 'name');
 }
+
+/** The fully qualified name of a class-like declared in `namespace`. */
+export function classFqcn(node: Node, namespace: string): string | undefined {
+  const name = nameOf(node);
+  if (name === undefined) return undefined;
+  return namespace === '' ? name : `${namespace}\\${name}`;
+}

@@ -8,7 +8,8 @@
     "test": "node --test \"test/**/*.test.ts\""
   },
   "dependencies": {
-    "php-parser": "3.7.0"
+    "php-parser": "3.7.0",
+    "yaml": "2.9.1"
   },
   "engines": {
     "node": ">=24"

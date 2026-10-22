@@ -9,26 +9,10 @@
 // what is new. Trunk moves, so it is cached by its commit.
 import { parseArgs } from 'node:util';
 import { gzipSync } from 'node:zlib';
-import { buildSnapshot } from '../src/build.ts';
-import { commitOf, listTags } from '../src/git.ts';
+import { listTags } from '../src/git.ts';
 import type { Snapshot } from '../src/model.ts';
-import { defaultCacheDir, loadSnapshot, saveSnapshot, snapshotPath, writeJson } from '../src/store.ts';
+import { defaultCacheDir, snapshotFor, writeJson } from '../src/store.ts';
 import { mergeSnapshots, releaseTags } from '../src/timeline.ts';
-
-function snapshotFor(
-  repo: string,
-  ref: string,
-  cacheDir: string,
-  label: string,
-): { snapshot: Snapshot; built: boolean } {
-  const sha = commitOf(repo, ref);
-  const path = snapshotPath(cacheDir, label, sha);
-  const cached = loadSnapshot(path);
-  if (cached !== undefined) return { snapshot: cached, built: false };
-  const snapshot = buildSnapshot({ repo, ref, now: () => new Date() });
-  saveSnapshot(path, { ...snapshot, ref: label });
-  return { snapshot: { ...snapshot, ref: label }, built: true };
-}
 
 function main(): number {
   const { values } = parseArgs({

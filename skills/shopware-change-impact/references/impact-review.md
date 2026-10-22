@@ -24,6 +24,10 @@ Ask what else this change touches, even if those files are not in the diff.
   one tag per row turns every write into a mass invalidation.
 
 If you cannot name who else is affected, you have not reviewed the change.
+For the public API, `node tools/api-index/bin/api-diff.ts --repo .
+--base origin/trunk --head HEAD` (ai-skills-shopware tools) names the
+routes, entity fields, feature flags and configuration keys the change
+removes, changes or deprecates.
 
 ## Who pays
 

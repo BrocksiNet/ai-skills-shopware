@@ -5,7 +5,7 @@
 // counted as unresolved, never guessed.
 import { Engine } from 'php-parser';
 import { child, children, isNode, nameOf, type Node, text } from './node.ts';
-import { addUses, resolve } from './php.ts';
+import { addUses, resolve } from './php-scope.ts';
 import {
   add,
   classContext,
