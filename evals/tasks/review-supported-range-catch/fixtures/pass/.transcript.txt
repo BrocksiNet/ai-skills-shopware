@@ -1,0 +1,16 @@
+composer.json still allows shopware/core ~6.6.0 || ~6.7.0, and the change is released as a patch version.
+
+```json
+{
+  "findings": [
+    {
+      "rule_id": "PLG-001",
+      "severity": "blocking",
+      "file": "src/Service/PaymentStatusSync.php",
+      "line": 22,
+      "summary": "OrderTransactionStateHandler::paidPartially() was added in 6.7.0.0; on every 6.6 release the call is an undefined method, so syncing a partially captured payment fails although composer.json still allows ~6.6.0.",
+      "fix": "Keep payPartially() while 6.6 is supported, or call paidPartially() behind method_exists(), or narrow shopware/core to ~6.7.0 and release a major version."
+    }
+  ]
+}
+```

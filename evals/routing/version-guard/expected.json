@@ -1,0 +1,21 @@
+{
+  "shopware-architecture": [
+    "references/extension-mechanisms.md"
+  ],
+  "shopware-core-development": [
+    "references/service-architecture.md",
+    "references/platform-architecture.md",
+    "references/platform-scope.md"
+  ],
+  "shopware-extension-review": [
+    "../shopware-plugin-development/references/cache-tags.md",
+    "../shopware-architecture/references/extension-mechanisms.md",
+    "../shopware-review-learnings/references/version-guards.md"
+  ],
+  "shopware-plugin-development": [
+    "references/cache-tags.md"
+  ],
+  "shopware-review-learnings": [
+    "references/version-guards.md"
+  ]
+}

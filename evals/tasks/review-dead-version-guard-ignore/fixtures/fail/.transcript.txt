@@ -1,0 +1,14 @@
+```json
+{
+  "findings": [
+    {
+      "rule_id": null,
+      "severity": "minor",
+      "file": "src/Service/FeedExporter.php",
+      "line": 37,
+      "summary": "The class_exists(Hasher::class) guard is redundant; Hasher exists in every supported release.",
+      "fix": "Call Hasher::hash() directly."
+    }
+  ]
+}
+```

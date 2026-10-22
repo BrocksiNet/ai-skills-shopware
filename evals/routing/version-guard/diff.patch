@@ -1,0 +1,60 @@
+diff --git a/src/Resources/config/services.php b/src/Resources/config/services.php
+index 5b9bd9d..e69c072 100644
+--- a/src/Resources/config/services.php
++++ b/src/Resources/config/services.php
+@@ -1,6 +1,8 @@
+ <?php declare(strict_types=1);
+ 
++use Shopware\Core\Framework\Adapter\Cache\CacheInvalidator;
+ use Swag\ProductFeed\Service\FeedExporter;
++use Swag\ProductFeed\Subscriber\FeedCacheInvalidationSubscriber;
+ use Symfony\Component\DependencyInjection\Loader\Configurator\ContainerConfigurator;
+ 
+ return static function (ContainerConfigurator $container): void {
+@@ -11,4 +13,10 @@ return static function (ContainerConfigurator $container): void {
+ 
+     $services->set(FeedExporter::class)
+         ->arg('$feedCache', service('cache.object'));
++
++    // CacheInvalidator came with the 6.7 cache rework. On 6.6 the feeds are
++    // refreshed by the nightly export only, so the subscriber is left out.
++    if (class_exists(CacheInvalidator::class)) {
++        $services->set(FeedCacheInvalidationSubscriber::class);
++    }
+ };
+diff --git a/src/Subscriber/FeedCacheInvalidationSubscriber.php b/src/Subscriber/FeedCacheInvalidationSubscriber.php
+new file mode 100644
+index 0000000..70a93df
+--- /dev/null
++++ b/src/Subscriber/FeedCacheInvalidationSubscriber.php
+@@ -0,0 +1,30 @@
++<?php declare(strict_types=1);
++
++namespace Swag\ProductFeed\Subscriber;
++
++use Shopware\Core\Content\Product\ProductEvents;
++use Shopware\Core\Framework\Adapter\Cache\CacheInvalidator;
++use Shopware\Core\Framework\DataAbstractionLayer\Event\EntityWrittenEvent;
++use Swag\ProductFeed\Service\FeedExporter;
++use Symfony\Component\EventDispatcher\EventSubscriberInterface;
++
++class FeedCacheInvalidationSubscriber implements EventSubscriberInterface
++{
++    public function __construct(private readonly CacheInvalidator $cacheInvalidator)
++    {
++    }
++
++    public static function getSubscribedEvents(): array
++    {
++        return [ProductEvents::PRODUCT_WRITTEN_EVENT => 'onProductWritten'];
++    }
++
++    public function onProductWritten(EntityWrittenEvent $event): void
++    {
++        if ($event->getIds() === []) {
++            return;
++        }
++
++        $this->cacheInvalidator->invalidate([FeedExporter::CACHE_TAG]);
++    }
++}

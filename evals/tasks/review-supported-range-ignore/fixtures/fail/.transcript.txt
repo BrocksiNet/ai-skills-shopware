@@ -1,0 +1,14 @@
+```json
+{
+  "findings": [
+    {
+      "rule_id": null,
+      "severity": "major",
+      "file": "src/Service/PaymentStatusSync.php",
+      "line": 22,
+      "summary": "paidPartially() does not exist on 6.6, so partial captures fail with an undefined method.",
+      "fix": "Keep payPartially() or guard the call with method_exists()."
+    }
+  ]
+}
+```

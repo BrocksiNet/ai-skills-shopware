@@ -22,7 +22,7 @@ public function onProductPageLoaded(ProductPageLoadedEvent $event): void
 `CacheTagCollector::addTag()` exists from 6.7.2. For 6.7.0 and 6.7.1, dispatch
 `new AddCacheTagEvent(...$tags)`
 (`Shopware\Core\Framework\Adapter\Cache\Event\AddCacheTagEvent`, available
-since 6.6); it reaches the same collector.
+since 6.6.6.0); it reaches the same collector.
 
 Invalidate when the underlying data changes:
 

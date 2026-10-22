@@ -1,0 +1,22 @@
+{
+    "name": "swag/payment-sync",
+    "description": "Applies capture and refund states from the payment provider",
+    "type": "shopware-platform-plugin",
+    "version": "2.4.0",
+    "license": "MIT",
+    "require": {
+        "shopware/core": "~6.6.0 || ~6.7.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "Swag\\PaymentSync\\": "src/"
+        }
+    },
+    "extra": {
+        "shopware-plugin-class": "Swag\\PaymentSync\\SwagPaymentSync",
+        "label": {
+            "de-DE": "Zahlungsstatus-Sync",
+            "en-GB": "Payment status sync"
+        }
+    }
+}

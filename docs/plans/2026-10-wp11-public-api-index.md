@@ -112,10 +112,10 @@ version and when it was built.
 
 ### Range and size
 
-From 6.5.0.0 to the newest release, about 60 tags, plus trunk. Older
-releases can be added later; the census covers them if anyone needs to look
-back further. The size is measured in phase 0; the target is a few MB
-compressed for all of it.
+From 6.5.0.0 to the newest release, 133 tags on 2026-10-22 (release
+candidates left out), plus trunk. Older releases can be added later; the
+census covers them if anyone needs to look back further. Phase 1 measured
+the timeline at about 1 MB gzip for all of it.
 
 ### Where it lives
 
@@ -234,6 +234,65 @@ census. Hand-check the flags on the known cases:
 SwagAgenticCommerce. The phase passes at
 90 % of flags right or better, with every known problem found; otherwise
 WP11 stops, with the result recorded.
+
+**Phase 1 result (done 2026-10-22): the gate passed.** Tools:
+`bin/timeline.ts` builds and merges the tags, `bin/census-check.ts` compares
+with the census, `bin/facts.ts` reports the facts for an extension and
+`bin/verify-facts.ts` checks those facts against the source by text, without
+the parser or the index.
+
+| Measure | Result |
+| ------- | ------ |
+| Releases in the timeline | 133 tags (6.5.0.0 to 6.7.15.1) plus trunk |
+| Files that fail to parse | 0 |
+| Items in the timeline | 48,222 |
+| Timeline size | 21.2 MB JSON, 0.99 MB gzip |
+| Full build, no cache | about 200 s; a new tag adds about 1.5 s |
+| Census cross-check | all 133 tags match, classes both ways, no method with a body missing |
+| Plugins checked | 19, each spanning two or three minors |
+| Facts reported | 175 |
+| Facts right | 175 (171 by the verifier, 4 by hand) |
+| Flags in the source without a fact | 0 of 53, in 3,984 class flag probes |
+
+- **Plugins.** 15 FriendsOfShopware plugins (FroshTools, FroshPlatformMailArchive,
+  FroshMjml, FroshShopmon, FroshRobotsTxt and others), SwagPlatformDemoData,
+  SwagAdvancedSyncAPI, SwagTaxProviders and SwagAgenticCommerce.
+- **Facts by kind.** 81 internal, 49 deprecated, 22 missing, 21 BC change,
+  1 final class extended, 1 experimental.
+- **The four checked by hand** are members inherited through a parent or a
+  trait, which the verifier cannot find by text; all four are right
+  (for example `AbstractAppLifecycle::delete()` renamed in 6.7.12.0 and
+  `Manifest::createFromXml()` from 6.6.7.0).
+- **What it took.** The generator records `use` of traits (generator
+  0.2.0), the lookup walks traits, parents and interfaces, and a member
+  inherited from a class outside Shopware (Symfony) gives no fact rather
+  than a wrong "missing". A member's own deprecation and its class's are
+  separate facts.
+- **Known cases.** `review-cache-tags-event-catch` (`PLG-007`) gets
+  `ProductDetailRouteCacheTagsEvent` deprecated for 6.8.0, its ignore task
+  gets nothing. `PLG-032` (optional packages) is not a version fact, and the
+  index has nothing to say about it, as expected. The new
+  `review-supported-range-*` pair (`PLG-001`) gets `paidPartially()`
+  missing in 6.6.0.0 … 6.6.10.29 on the catch task and nothing on the
+  ignore task. The new `review-dead-version-guard-*` pair (`REV-015`) gets
+  nothing on the catch task, because `CacheInvalidator` exists in the whole
+  range, and `Hasher` missing in 6.6.0.0 … 6.6.6.1 on the ignore task.
+- **A known problem found in our own skills.** `CacheTagCollector` exists
+  from 6.6.6.0, but `addTag()` only from 6.7.2.0, so the `PLG-024` example
+  that guarded `addTag()` with `class_exists(CacheTagCollector::class)` was
+  wrong on 6.6.6.0 to 6.7.1.x. It now checks the method. `AddCacheTagEvent`
+  exists from 6.6.6.0, not "6.6".
+- **Rule changes.** `REV-015` moved to
+  `shopware-review-learnings/references/version-guards.md`, which the
+  extension review borrows; `PLG-001` is tagged in
+  `version-compatibility.md`. Both have their review pair now.
+- **Open for phase 2.**
+  - Method calls: 846 resolved and 213 static calls, against 2,249 calls
+    whose receiver type is not known in the file. Most are on variables
+    returned by another call; following return types is the next step.
+  - `REV-015` is the inverse question: a `class_exists` or `method_exists`
+    guard on a symbol that is never missing in the range. `api-facts` should
+    report guarded symbols too, so the catch task gets a fact.
 
 **Phase 2: `api-facts` for PHP, and the A/B (two to three days).** The
 tool, the release asset, the weekly workflow, and an A/B with three arms on

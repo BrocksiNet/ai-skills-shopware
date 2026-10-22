@@ -1,0 +1,22 @@
+```json
+{
+  "findings": [
+    {
+      "rule_id": "REV-015",
+      "severity": "nit",
+      "file": "src/Resources/config/services.php",
+      "line": 19,
+      "summary": "The comment could say which release added CacheInvalidator.",
+      "fix": "Name the version."
+    },
+    {
+      "rule_id": "PLG-024",
+      "severity": "minor",
+      "file": "src/Resources/config/services.php",
+      "line": 19,
+      "summary": "The class_exists(CacheInvalidator::class) guard is always true; CacheInvalidator already exists on 6.6.",
+      "fix": "Register the subscriber unconditionally."
+    }
+  ]
+}
+```
