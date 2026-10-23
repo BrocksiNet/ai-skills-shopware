@@ -3,7 +3,7 @@
 // table read from the eval-local results file, and the `gh` call.
 import { type CheckRun, type Exec, git } from './draft-checks.ts';
 import { type AbResult, offDone, onDone } from './eval-results.ts';
-import type { Suggestion } from './suggest-ask.ts';
+import type { DraftSubject } from './draft-prompt.ts';
 import { CRITERIA } from './suggest-schema.ts';
 
 export const PR_LABEL = 'run-evals';
@@ -30,7 +30,8 @@ export function abTable(results: AbResult[]): string[] {
   ];
 }
 
-export function prTitle(s: Suggestion, id: string): string {
+export function prTitle(s: DraftSubject, id: string): string {
+  if (s.action === 'eval') return `test(${s.skill}): eval for ${s.rule}`;
   if (s.action === 'new') return `feat(${s.skill}): ${id} ${s.title}`;
   if (s.action === 'retire') return `chore(${s.skill}): retire ${s.rule}`;
   return `docs(${s.skill}): ${s.rule} ${s.title}`;
@@ -43,7 +44,7 @@ function abSection(ab: AbSection): string[] {
 }
 
 export interface PrBodyInput {
-  suggestion: Suggestion;
+  suggestion: DraftSubject;
   /** The rule ID the change carries: the new one for `new`. */
   ruleId: string;
   files: string[];
@@ -52,8 +53,44 @@ export interface PrBodyInput {
   ab: AbSection;
 }
 
+function checksAndAb(x: PrBodyInput): string[] {
+  return [
+    '## Free checks',
+    '',
+    `Passed after ${String(x.attempts)} agent attempt(s).`,
+    '',
+    '| Check | Result |',
+    '| ----- | ------ |',
+    ...x.checks.map((c) => `| ${c.name} | ${c.ok ? 'pass' : 'FAIL'} |`),
+    '',
+    '## A/B',
+    '',
+    ...abSection(x.ab),
+    '',
+    '## Files',
+    '',
+    ...x.files.map((f) => `- \`${f}\``),
+    '',
+  ];
+}
+
+/** An eval for an existing rule: the rule as it stands, then the A/B. */
+function evalBody(x: PrBodyInput): string {
+  const s = x.suggestion;
+  return [
+    `Drafted by \`node tools/bin/suggest-rules.ts draft-eval ${s.rule}\`: an eval for \`${s.rule}\` in \`${s.skill}\`, which had none. The A/B shows the skill improves the result, so the rule earns its place. Review the eval like any other.`,
+    '',
+    '## Rule',
+    '',
+    s.draft,
+    '',
+    ...checksAndAb(x),
+  ].join('\n');
+}
+
 export function prBody(x: PrBodyInput): string {
   const s = x.suggestion;
+  if (s.action === 'eval') return evalBody(x);
   const text = s.action === 'retire' ? (s.reason ?? '') : s.draft;
   return [
     `Drafted by \`node tools/bin/suggest-rules.ts draft ${s.id}\` from proposal \`${s.id}\`: ${s.action} \`${x.ruleId}\` in \`${s.skill}\`. Review it like any other rule change; nothing here merges on its own.`,
@@ -72,22 +109,7 @@ export function prBody(x: PrBodyInput): string {
     '| --------- | ------ |',
     ...CRITERIA.map((c) => `| ${c} | ${cell(s.criteria[c])} |`),
     '',
-    '## Free checks',
-    '',
-    `Passed after ${String(x.attempts)} agent attempt(s).`,
-    '',
-    '| Check | Result |',
-    '| ----- | ------ |',
-    ...x.checks.map((c) => `| ${c.name} | ${c.ok ? 'pass' : 'FAIL'} |`),
-    '',
-    '## A/B',
-    '',
-    ...abSection(x.ab),
-    '',
-    '## Files',
-    '',
-    ...x.files.map((f) => `- \`${f}\``),
-    '',
+    ...checksAndAb(x),
   ].join('\n');
 }
 

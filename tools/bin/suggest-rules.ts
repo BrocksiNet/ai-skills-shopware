@@ -30,11 +30,19 @@
 // a draft PR with the `run-evals` label opens unless --no-pr. --base (main)
 // is the start and PR target, --worktree the folder (.cache/drafts/<branch>).
 // DRAFT_MODEL (haiku), DRAFT_REPEATS (3), DRAFT_MAX_TURNS (60) and
-// DRAFT_MAX_BUDGET_USD (2) set the agent. Exit 0 = drafted, 1 = not.
+// DRAFT_MAX_BUDGET_USD (2) and DRAFT_TIMEOUT_MINUTES (20) set the agent. Exit 0 = drafted, 1 = not.
+//
+//   node tools/bin/suggest-rules.ts draft-eval TEST-020 [--no-pr]
+//
+// Drafts an eval for an active rule without one, on the branch
+// evals/<skill>-<rule>, through the same pipeline. The PR opens only when a
+// task improved with the skill on; otherwise the worktree and branch go.
+// Every outcome is appended to <out>/evals.jsonl. Exit 0 = PR or drafted,
+// 1 = not.
 import { resolve } from 'node:path';
 import { parseArgs } from 'node:util';
 import { stderr, stdout } from '../src/cli.ts';
-import { draftCommand, draftSummary } from '../src/draft-cli.ts';
+import { draftCommand, draftEvalCommand, draftSummary } from '../src/draft-cli.ts';
 import { errorMessage } from '../src/errors.ts';
 import { suggestCommand } from '../src/suggest-cli.ts';
 
@@ -44,7 +52,8 @@ const USAGE =
   '                        [--agent claude|opencode|COMMAND] [--source ID]... [--offline] [--out DIR]\n' +
   '                        [--api-index FILE] [--baseline FILE] [--continue FILE]\n' +
   '       suggest-rules.ts draft ID [--agent claude|opencode|COMMAND] [--no-pr] [--base BRANCH]\n' +
-  '                        [--out DIR] [--worktree DIR]\n';
+  '                        [--out DIR] [--worktree DIR]\n' +
+  '       suggest-rules.ts draft-eval RULE [same options as draft]\n';
 
 async function main(): Promise<number> {
   let values;
@@ -74,14 +83,15 @@ async function main(): Promise<number> {
     return 2;
   }
   const [command, id, ...extra] = positionals;
-  const drafting = command === 'draft';
+  const drafting = command === 'draft' || command === 'draft-eval';
   if (command !== undefined && (!drafting || id === undefined || extra.length > 0)) {
     stderr(USAGE);
     return 2;
   }
   try {
     if (drafting) {
-      const r = await draftCommand(ROOT, id ?? '', values, process.env, stderr);
+      const run = command === 'draft-eval' ? draftEvalCommand : draftCommand;
+      const r = await run(ROOT, id ?? '', values, process.env, stderr);
       stdout(draftSummary(r));
       return r.status === 'drafted' || r.status === 'pr-opened' ? 0 : 1;
     }
