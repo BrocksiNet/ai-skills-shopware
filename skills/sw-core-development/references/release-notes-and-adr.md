@@ -101,12 +101,6 @@ changelog.
 - **CORE-045** Keep only changes visible or relevant to the section audience. Omit
   implementation details that do not affect API or behavior.
 - **CORE-046** Put a blank line before and after every heading, and between paragraphs.
-- **CORE-047** Put the entry under the matching category heading of the upcoming version
-  section; add that heading only if the section does not have it yet.
-- **CORE-048** **Never repeat a heading** inside one version section: no second
-  `## Features` under the same `# X.Y.Z.P`, and no entry title the section
-  already documents. The `release-info/section` check rejects a repetition the
-  pull request adds.
 
 ## Style guidelines
 

@@ -86,6 +86,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - The `code-comments.md` route for `REV-034` also fires on "instead would"
   and on any bare issue number in a comment.
 
+### Removed
+
+- 21 rules without a measured effect left the skills: `ADM-001`, `ADM-012`,
+  `ADM-040`, `CORE-001`, `CORE-007`, `CORE-013`, `CORE-020`, `CORE-025`,
+  `CORE-037`, `CORE-047`, `CORE-048`, `IMP-006`, `PLG-026`, `PRD-007`,
+  `SEC-001`, `TEST-007`, `TEST-011`, `TEST-012`, `TEST-023`, `TEST-024` and
+  `TEST-032`. With the skill off, each rule's eval task passed every repeat
+  on claude/haiku and on the free OpenCode model, so models already do this
+  without the rule. They stay in `rules/catalog.json` as `retired` with the
+  evidence in the new `retired_reason` field, which a retired or superseded
+  rule now needs. Their eval tasks stay as canaries.
+
 ### Fixed
 
 - Drift mining skipped commits merged after the state but dated before it.

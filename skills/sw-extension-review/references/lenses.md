@@ -15,8 +15,7 @@ build on it. For each removed or renamed name, ask who used it:
 - A Twig block, template variable, SCSS variable, state class or snippet key
   was renamed or removed: `SF-001`, `SF-012`.
 - A JS plugin's name, option, method or event changed: `SF-011`.
-- An admin component prop, block or `positionIdentifier` changed: `ADM-039`,
-  `ADM-040`.
+- An admin component prop or block changed: `ADM-039`.
 - An extension event gained the whole `Request`: `ARCH-005`.
 
 A rename without a deprecation and a fallback is a removal. A deprecation
@@ -116,6 +115,6 @@ itself. Do not report them on a plugin or app diff:
 - `ADM-013` and `ADM-015`: the Administration boot order and the global
   `Shopware` object's extension points.
 - `ARCH-004`: new core Store API routes publish a typed extension event.
-- `TEST-024` and `TEST-031`: tests for major feature flag behavior.
+- `TEST-031`: tests for major feature flag behavior.
 - `CORE-064` and `CORE-065`: shims for core removals and gating code that
   ends at the major.

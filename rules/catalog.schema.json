@@ -40,6 +40,11 @@
           "description": "Task name under evals/tasks/, or null with eval_reason."
         },
         "eval_reason": { "type": "string", "minLength": 1 },
+        "retired_reason": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Why a retired or superseded rule left the skills, with the evidence. Required when status is not active."
+        },
         "trunk": {
           "type": "object",
           "additionalProperties": false,

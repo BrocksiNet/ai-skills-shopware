@@ -53,8 +53,6 @@ Details: [`service-architecture.md`](service-architecture.md#classes-final-and-i
 
 ## Migrations (platform)
 
-- **CORE-037** Use the **exact current Unix timestamp** for new migration class names, file
-  names, and `getCreationTimestamp()` — not placeholder or rounded values.
 - **CORE-038** **`updateDestructive()` is not for long-running work** — keep heavy backfills in
   `update()` or dedicated commands; destructive step stays small.
 - **CORE-039** **Never edit a shipped migration** — add a new class with a new timestamp.

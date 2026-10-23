@@ -187,10 +187,6 @@ Eval: `event-hook-capture-then-assert`.
   `Feature::skipTestIfActive('v6.9.0.0', $this)` rather than `#[DisabledFeatures]`.
 - **TEST-031** Keep **legacy flag behavior** in dedicated tests that are easy to delete when
   the flag is removed.
-- **TEST-024** When a test **asserts that behavior throws while a major feature flag is
-  active**, mark that test method `@deprecated tag:vX.Y.0` and say it is
-  removed with the flag. The tag sits on the method, not only on the class,
-  so the temporary assertion is findable when the flag goes.
 
 ## Data providers (unit tests)
 

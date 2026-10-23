@@ -29,10 +29,6 @@ active instead of throwing: `getSubscribedEvents()` and Twig `getFilters()` /
 return `null`. PHPStan checks these contracts. Deprecated factories on
 **retained** domain exception classes keep `triggerDeprecationOrThrow()`.
 
-**CORE-013** Do **not** use `@deprecated reason:*` as a planning marker. Third-party static
-analysis treats those as actionable deprecations even when nothing should change
-yet. PHPStan on trunk rejects them.
-
 ## Planning a future break (`BCChange`)
 
 Use an attribute from `Shopware\Core\Framework\Deprecation\BCChange`. It is
@@ -92,11 +88,6 @@ public function oldHandle(Context $context): void
 
 ## Calling deprecated code from core (BC)
 
-- **CORE-020** **Core must not trigger self-deprecation notices** when it still calls deprecated
-  behavior for BC. Wrap that call with
-  `Feature::silent($majorFlag, static fn () => …)` so the notice is suppressed,
-  the path is tied to the major flag, and the branch disappears when the flag is
-  removed.
 - **CORE-021** **Do not add new code paths** that call deprecated functionality. Move internal
   callers to the replacement API and keep legacy behavior only in focused BC tests.
 - **CORE-022** When adding `@deprecated` on executable PHP, add matching
@@ -108,13 +99,6 @@ public function oldHandle(Context $context): void
 - **CORE-024** If a deprecated API remains for BC, add or keep **dedicated legacy tests** that
   are easy to remove with the deprecation; guard with the relevant major feature
   flag when needed.
-
-## DI service tags
-
-**CORE-025** Do **not** mark a DI service definition `<deprecated>` while Shopware core still
-references that service id anywhere. Internal references still fire container
-deprecations and spam compile/warmup logs. Deprecate the PHP API or class if
-needed; add the DI tag only after core no longer uses the id.
 
 ## Which marker, when
 

@@ -111,8 +111,6 @@ for plugins; **6.8 removes it** (Symfony 8 drops the XML loaders).
   (`services.php`, `routes.php`).
 - **Leave as XML:** plugin admin settings `config.xml`, `custom-fields.xml`,
   `flow.xml`, `rule-conditions.xml`, and app `manifest.xml`.
-- **PLG-026** A 6.6/6.7 plugin may still ship XML DI. A **6.8-targeted** plugin must not.
-  Do not add new `services.xml` when the supported range includes 6.8.
 
 ```php
 use SwagExample\ProductLoader;

@@ -4,9 +4,6 @@ Load when adding modules, components, services, or ACL-backed UI.
 
 ## Layers
 
-- **ADM-012** Keep `core` free of Vue. Modules must not import another module directly;
-  talk through registered services, repositories, routes, stores, or shared
-  app/core code.
 - **ADM-013** Keep boot order `init-pre/ → init/ → init-post/` when touching startup.
 - **ADM-014** Prefer extension-aware globals (`Shopware.Component`, `Shopware.Service()`,
   `Shopware.Store`) when they exist in that context. Boot code may need

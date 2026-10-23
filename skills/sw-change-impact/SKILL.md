@@ -48,12 +48,7 @@ change is acceptable for everyone else.
 5. **IMP-005** **Easier beats more complete.** A new setting, header, or ritual that only
    makes the feature work has made the shop harder. Prefer the change that
    removes a step.
-6. **IMP-006** **A local asset test does not prove production asset loading.** Theme
-   assets, media, and compiled storefront files are often on remote storage
-   (S3 or another object store). A loading, copy, or URL change that only
-   passes against the local `public/` directory still breaks every shop whose
-   filesystem is remote.
-7. **IMP-007** **There is one compiled container.** An `if` in the Symfony container
+6. **IMP-007** **There is one compiled container.** An `if` in the Symfony container
    (service definition, compiler pass, `when@`, or a feature-flag condition)
    that builds a different container per flag or per condition cannot ship.
    SaaS runs one container for every shop. Feature differences are runtime

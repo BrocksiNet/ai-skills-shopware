@@ -89,14 +89,10 @@ These match PHPStan rules and reviewer expectations on core PRs:
   integration: `Feature::skipTestIfActive()` / `skipTestIfInActive()` —
   **`#[DisabledFeatures]` is rejected at runtime** in the integration suite.
   See reference.
-- **TEST-007** **Coverage attrs** — no `#[CoversClass]` on integration tests; production-class
-  `@codeCoverageIgnore` uses FQCN `@see` on trunk (defer to core skill). See reference.
 - **TEST-008** **Cross-test docblocks** (test → test) — `@see OtherTest` with `use` import; no FQCN in prose.
 - **TEST-009** **`#[Package('…')]`** on every test class — must match the covered class or a
   package in the mirrored `src/` tree (`TestPackageMatchRule`).
 - **TEST-010** **`@internal`** on every test class docblock.
-- **TEST-011** **Exactly one `#[CoversClass]`** per unit/migration test file.
-- **TEST-012** **No `ReflectionMethod::invoke`** on private/protected Shopware methods.
 - **TEST-013** **Never `exit()` / `die()`** in a test path; `setAutoExit(false)` on
   `Application::run()`.
 - **TEST-014** **Stub DAL with `StaticEntityRepository`**, infer the generic (or `::of()`).
@@ -150,7 +146,7 @@ These match PHPStan rules and reviewer expectations on core PRs:
 ## Already enforced by CI (do not repeat)
 
 <!-- enforced:start: generated from rules/catalog.json by `node tools/bin/render-enforced.ts`; do not edit -->
-CI already fails the build on 16 checks for this skill's rules. Before you
+CI already fails the build on 11 checks for this skill's rules. Before you
 flag a finding or write a checklist, read [`references/enforced-by-ci.md`](references/enforced-by-ci.md)
 and flag only what each check misses.
 <!-- enforced:end -->

@@ -53,8 +53,6 @@ Read the reference that matches the task or the files it changes:
   `fix(Checkout): allow TestBootstrapper to activate Composer plugins`.
 - **PRD-006** After review feedback or a CI failure, push a follow-up commit
   for the fix. Do not amend or force-push unless the user asks.
-- **PRD-007** Never add AI attribution trailers such as `Co-authored-by`,
-  `Co-committed-by` or `Signed-off-by` for an agent, in any capitalisation.
 - **PRD-008** Tick only the checklist items that are true for this PR.
 - **PRD-009** For a diff over about 400 lines, say in section 4 why it is not
   split, or name the follow-up PRs.
