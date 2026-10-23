@@ -1,6 +1,6 @@
 # Skill update automation plan (2026-10)
 
-Status: **accepted** (2026-10-23); phases 0 to 3b done 2026-10-23, phase 4 next · Author: BrocksiNet · Created: 2026-10-23
+Status: **accepted** (2026-10-23); phases 0 to 4 done 2026-10-23, phase 5 next · Author: BrocksiNet · Created: 2026-10-23
 
 Rules go stale because Shopware changes every week. Half of the upkeep is
 automated already: the weekly trunk mining issue and the weekly API index.
@@ -457,6 +457,42 @@ agent only explains them:
 - A run over 30 days with a typical volume stays under a set number of agent
   calls (`SUGGEST_MAX_CLUSTERS`, default 20).
 
+### Step 4: what was built (2026-10-23)
+
+`tools/bin/suggest-rules.ts` with the logic in `tools/src/suggest-*.ts` and
+the ask adapters in `tools/src/agent-ask.ts`; the user guide is
+[`docs/maintenance.md`](../maintenance.md#suggesting-rule-changes).
+Differences from the plan above:
+
+- Clusters are keyed by the rule a signal maps to (a rule-level match),
+  else its reference, else the file area for unmapped signals. Ranking is
+  the sum of the weights: reviewer trust, times 1.5 for an outdated thread
+  and again for a review that requested changes.
+- Routes map a comment only through the lines of its own hunk, so many
+  comments on a topic stay unmapped. Each prompt therefore also lists up to
+  eight rules the signals share words with (BM25 over every active rule).
+  Without it, the first acceptance run proposed `REV-034` again as a new
+  rule from the `area:Core/Framework` cluster.
+- An answer may hold up to three proposals per cluster.
+- Retirement candidates are asked first and count against the cap.
+- Extra options: `--source`, `--offline`, `--out`, `--api-index` and
+  `--baseline`. "Skill owns the topic" means the skill owns at least one
+  topic in the coverage matrix; a `none` may cite a rule of another skill.
+- Nothing is collected from private sources here; the `private` flag on a
+  proposal comes from the review source and blocks a PR in step 5.
+
+**Acceptance run** (claude, haiku; `core-reviews` 2026-09-01 to 2026-10-22,
+default cap): 949 signals, 510 mapped, 53 clusters (13 single-signal
+clusters dropped), 20 agent calls with 35 clusters over the cap, no agent
+errors, about 349k input and 95k output tokens. 52 proposals: 19 `new`, 14
+`update`, 17 `none`, 2 `retire` (`TEST-013` and `PLG-002`, both from an
+`enforced_by` check that is not trunk-only; no API index or A/B candidate).
+48 passed the checks; the 4 that failed were `none` answers citing a rule of
+another skill, which the check accepts since. `REV-034` came out as
+`update` once and `none` three times, `REV-035` as `none` twice; neither as
+`new`. The fake-agent tests cover the schema, an evidence URL outside the
+input, the cap, the clustering and the retirement evidence.
+
 ## Step 5: draft the pull request
 
 `node tools/bin/suggest-rules.ts draft <suggestion-id>` turns one accepted
@@ -511,7 +547,7 @@ enough good PRs to trust it.
 | 2 | **Done.** Signal format and mapper; drift issue grouped by rule | 1 | M | none |
 | 3 | **Done.** Daily review collector and the `review-signals` release | 2 | M | none |
 | 3b | **Done.** Replay tests for mining and the router against recorded history | 3 | M | none |
-| 4 | `suggest-rules` command | 3b | M | local |
+| 4 | **Done.** `suggest-rules` command | 3b | M | local |
 | 5 | `suggest-rules draft` | 4 | L | local |
 
 Each phase includes its documentation; see [Documentation](#documentation).

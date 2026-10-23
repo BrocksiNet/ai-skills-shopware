@@ -27,3 +27,6 @@ tools/node_modules/
 # skills.sh CLI lockfile (local paths; use sw-dev link instead of npx skills add)
 skills-lock.json
 .agents/
+
+# Rule suggestions from review signals (tools/bin/suggest-rules.ts); may quote private reviews
+suggestions/

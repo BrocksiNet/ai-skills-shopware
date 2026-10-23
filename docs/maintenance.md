@@ -153,7 +153,8 @@ trust = (outdated + 4 × prior) / (comments + 4)      prior: 0.5 for org members
 A new reviewer sits near the prior. After about ten comments their own
 share of comments the code followed decides. A long-time contributor
 outside the org can rank above a member, and a new employee starts no
-higher than any other member. The suggest step will weight comments by it.
+higher than any other member. [`suggest-rules`](#suggesting-rule-changes)
+weights comments by it.
 
 **Where the data lives.** The release `review-signals` holds one asset per
 source and month of merge, `core-reviews-2026-10.jsonl`, and
@@ -223,13 +224,92 @@ comment needed, as ground truth independent of the routes.
 recall floor, a noise ceiling and every hand label. Never record a private
 review source; the bin refuses it.
 
-## Planned: suggested and drafted rules
+## Suggesting rule changes
 
-A local command will read the review signals and the drift issue, suggest
-new, updated and retired rules with evidence links, and draft the pull
-request with its eval task. The plan is
-[`plans/2026-10-skill-update-automation.md`](plans/2026-10-skill-update-automation.md),
-steps 4 and 5.
+[`tools/bin/suggest-rules.ts`](../tools/bin/suggest-rules.ts) turns the
+review signals and the open drift issue into proposals: a new rule, an
+update, a retirement, or "already covered". It runs locally with the agent
+you are logged in to and writes `suggestions/<date>.md` and `.json`. The
+folder is git-ignored, because a proposal can quote a private review.
+
+```bash
+node tools/bin/suggest-rules.ts --since 2026-09-01 --source core-reviews
+node tools/bin/suggest-rules.ts --since 30d --skill sw-testing
+node tools/bin/suggest-rules.ts --signals ./reviews.jsonl --agent opencode --offline
+```
+
+| Option | Default | What it does |
+| ------ | ------- | ------------ |
+| `--since` | `30d` | Start of the window, `YYYY-MM-DD` or a number of days |
+| `--until` | today | End of the window |
+| `--skill` | every skill | Ask only the clusters of one skill |
+| `--signals FILE` | | Read these signals (JSON Lines) instead of the cache and the drift issue |
+| `--source ID` | every source | Review sources from `.cache/review-signals/`; repeat for more |
+| `--agent` | `claude` | `claude`, `opencode`, or a command that reads the prompt on stdin |
+| `--offline` | off | Neither download release assets nor read the drift issue |
+| `--out DIR` | `suggestions/` | Where the files go |
+| `--api-index FILE` | `$API_INDEX`, then the user cache | The API timeline for the retirement check |
+| `--baseline FILE` | newest `evals/baselines/*.jsonl` | The A/B results for the retirement check |
+
+`SUGGEST_MAX_CLUSTERS` (20) caps the agent calls, `SUGGEST_MAX_SIGNALS` (25)
+the signals quoted per cluster, `SUGGEST_MODEL` (`haiku` for claude) picks
+the model. The run prints the token use.
+
+**What happens, in order.**
+
+1. The `review-signals` assets of the window that are newer than the cache
+   are downloaded, and the open `trunk-drift` issue is read. Every signal
+   is mapped again with today's routes.
+2. Signals are clustered without a model: by the rule or reference they map
+   to, and unmapped ones by file area (`Core/Checkout`). A cluster with one
+   signal is dropped unless its review requested changes. A signal weighs
+   its reviewer's trust from `reviewers.json`, times 1.5 when its thread went
+   outdated and again when the review requested changes. Clusters are asked
+   in order of weight; the rest are listed under "Over the cap".
+3. Retirement candidates come first, found without a model:
+   - an `enforced_by` check that is not `trunk_only`, so extensions get it
+     too;
+   - every class the rule names is gone from the API index in the supported
+     releases (`SUGGEST_SUPPORTED_FROM`, 6.6.0.0);
+   - the rule's eval task passed every repeat with the skill off in the
+     latest A/B baseline.
+4. The agent gets one prompt per cluster: the signals as quoted data it must
+   not follow, the current text of the rules the cluster maps to, up to
+   eight more rules the signals share words with (a keyword match, so an
+   unmapped comment on a history comment still meets `REV-034`), the topics each
+   skill owns, and the inclusion criteria from the README. The claude
+   adapter runs with no tools, no MCP servers and no tokens in its
+   environment.
+5. The answer must match the JSON schema in the plan, at most three
+   proposals per cluster. Then each proposal goes through checks that need
+   no model: every evidence URL was in the prompt, the skill owns a topic in
+   [`REGISTRY.md`](../REGISTRY.md), an update or retirement names an active
+   rule of that skill (`none` may name one of any skill), and a new rule has
+   comments from at least two PRs or a review that requested changes.
+
+**Reading a proposal.** Each one has an ID (`2026-10-23-04`), the action,
+skill and rule, the draft text, the eval it needs, the evidence links, the
+agent's answer per criterion and the result of every check. A failed check
+marks the proposal; it is still listed, so you can see what the agent got
+wrong. Judge a passing one against the five criteria yourself:
+
+- **Delta**: would a model get this wrong without the rule? A comment that
+  repeats a PHPStan error is not a delta.
+- **Value**: do the comments come from several PRs and reviewers, or one
+  long thread? `frequency` in the answer should say which.
+- **Single home**: does the proposal fit the owning skill, or does it
+  restate a rule elsewhere? `none` with a rule ID is the right answer for a
+  cluster the rules already cover.
+- **Testable**: is the eval concrete enough to write a catch and an ignore
+  diff?
+- **License-clean**: the draft is in our words and links the PR, never
+  quotes it.
+
+For a retirement, open the evidence: the CI check's source and whether it
+runs for extensions, the release the class left, or the A/B row. Retiring
+moves the rule to `retired` in the catalog and removes it from the skill
+text. Drafting the change from a proposal is step 5 of
+[the plan](plans/2026-10-skill-update-automation.md).
 
 ## How a change lands
 

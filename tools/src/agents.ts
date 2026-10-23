@@ -35,8 +35,8 @@ export interface AdapterIo {
 export type Adapter = (prompt: string, env: NodeJS.ProcessEnv, io: AdapterIo, root: string) => Promise<number>;
 
 /** Task adapter exit code for an agent error; run-task never grades it. */
-const AGENT_ERROR = 4;
-const OPENCODE_FREE_MODEL = 'opencode/mimo-v2.6-flash-free';
+export const AGENT_ERROR = 4;
+export const OPENCODE_FREE_MODEL = 'opencode/mimo-v2.6-flash-free';
 
 const positive = (v: string): boolean => /^[1-9][0-9]*$/u.test(v);
 
@@ -45,12 +45,12 @@ function logSkills(env: NodeJS.ProcessEnv, skills: string[]): void {
   if (log !== '') appendFileSync(log, skills.map((s) => `${s}\n`).join(''));
 }
 
-function logUsage(env: NodeJS.ProcessEnv, usage: Usage | null): void {
+export function logUsage(env: NodeJS.ProcessEnv, usage: Usage | null): void {
   const log = envOr(env, 'EVAL_USAGE_LOG', '');
   if (log !== '' && usage !== null) appendFileSync(log, `${usage.input} ${usage.output}\n`);
 }
 
-const scratchDir = (env: NodeJS.ProcessEnv, prefix: string): string =>
+export const scratchDir = (env: NodeJS.ProcessEnv, prefix: string): string =>
   mkdtempSync(join(envOr(env, 'TMPDIR', tmpdir()), prefix));
 
 /** HOME and XDG folders in `scratch`, so no user config, login or global
@@ -70,7 +70,11 @@ function isolatedHome(env: NodeJS.ProcessEnv, scratch: string): { env: NodeJS.Pr
 /** The OpenCode environment for a task run: isolated unless OPENCODE_ISOLATE
  *  is not 1, with OPENCODE_AUTH_FILE copied in as the login. Null when the
  *  auth file is missing. */
-function opencodeTaskEnv(env: NodeJS.ProcessEnv, scratch: string, err: (t: string) => void): NodeJS.ProcessEnv | null {
+export function opencodeTaskEnv(
+  env: NodeJS.ProcessEnv,
+  scratch: string,
+  err: (t: string) => void,
+): NodeJS.ProcessEnv | null {
   if (envOr(env, 'OPENCODE_ISOLATE', '1') !== '1') return env;
   const isolated = isolatedHome(env, scratch);
   const authFile = envOr(env, 'OPENCODE_AUTH_FILE', '');
@@ -86,14 +90,14 @@ function opencodeTaskEnv(env: NodeJS.ProcessEnv, scratch: string, err: (t: strin
   return isolated.env;
 }
 
-const opencodeEnv = (env: NodeJS.ProcessEnv, config: object): NodeJS.ProcessEnv => ({
+export const opencodeEnv = (env: NodeJS.ProcessEnv, config: object): NodeJS.ProcessEnv => ({
   ...env,
   OPENCODE_DISABLE_AUTOUPDATE: '1',
   OPENCODE_DISABLE_LSP_DOWNLOAD: '1',
   OPENCODE_CONFIG_CONTENT: JSON.stringify(config),
 });
 
-const opencodeArgs = (model: string, prompt: string): string[] => [
+export const opencodeArgs = (model: string, prompt: string): string[] => [
   'run',
   '--standalone',
   '--auto',
