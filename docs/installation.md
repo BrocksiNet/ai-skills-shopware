@@ -64,7 +64,7 @@ project and leaves the rules effectively unpinned.
 Pin a release tag for reproducible installs:
 
 ```bash
-npx skills add BrocksiNet/ai-skills-shopware@v0.12.0 --skill sw-php-foundation -a cursor
+npx skills add BrocksiNet/ai-skills-shopware@v0.14.0 --skill sw-php-foundation -a cursor
 ```
 
 ## Update
@@ -79,7 +79,7 @@ set.
 
 ## The `sw-` rename
 
-Since the release after v0.12.0, every skill starts with `sw-`: `php-foundation` became
+Since v0.14.0, every skill starts with `sw-`: `php-foundation` became
 `sw-php-foundation`, and `shopware-<topic>` became `sw-<topic>`. Remove the
 old folders and install the new names:
 

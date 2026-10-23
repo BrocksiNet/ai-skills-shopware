@@ -39,7 +39,9 @@ off), SF-009 (3/3, 0/3) and ADM-009 (2/3, 0/3) win too, and no `-ignore`
 task has more false positives with the skill on (Haiku, 3 repeats). v0.11.0
 (2026-10-22) ships it, with the PR description template from
 shopware/shopware#21627 (PRD-001..009). v0.12.0 (2026-10-22) ships WP11
-phases 0 to 2: the API index and `api-facts`.
+phases 0 to 2: the API index and `api-facts`. v0.13.0 (2026-10-22) ships
+phase 3: routes, entities, feature flags and configuration in the index,
+and `api-diff`.
 
 Suggested milestones, as planned:
 
