@@ -8,6 +8,21 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- Drift mining reads every repository in `rules/sources.json`: core trunk
+  plus `shopwareLabs/ai-coding-tools`, `netresearch/php-modernization-skill`,
+  the `shopware/shopware-cli` skills and `FriendsOfShopware/agent-skills`.
+  `docs/.mining-state.json` has one entry per source; the old single-source
+  shape still reads.
+- The weekly drift issue groups each change by the skill and rule it
+  touches. A change ties to a rule through the catalog (`core_guide_ids`,
+  `enforced_by`, `trunk.source`, the new `upstream` field), then through
+  the skills' `routes.json`, then through the source's skill list. What no
+  rule covers is listed as unmapped. `--signals` writes the mapped changes as
+  JSON Lines for later tooling.
+- `PRD-001` and `PRD-008` record their trunk source, the PR template.
+
 ## [0.14.0] - 2026-10-23
 
 ### Changed
@@ -24,18 +39,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-- Drift mining reads every repository in `rules/sources.json`: core trunk
-  plus `shopwareLabs/ai-coding-tools`, `netresearch/php-modernization-skill`,
-  the `shopware/shopware-cli` skills and `FriendsOfShopware/agent-skills`.
-  `docs/.mining-state.json` has one entry per source; the old single-source
-  shape still reads.
-- The weekly drift issue groups each change by the skill and rule it
-  touches. A change ties to a rule through the catalog (`core_guide_ids`,
-  `enforced_by`, `trunk.source`, the new `upstream` field), then through
-  the skills' `routes.json`, then through the source's skill list. What no
-  rule covers is listed as unmapped. `--signals` writes the mapped changes as
-  JSON Lines for later tooling.
-- `PRD-001` and `PRD-008` record their trunk source, the PR template.
 - `sw-skill-router`: `/sw-skill-router` runs a dependency-free script that
   reads the git diff, a saved diff or planned paths. It detects core,
   plugin, app or project per file, filters by task (build, review, ship,
