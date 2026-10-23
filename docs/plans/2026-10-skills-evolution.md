@@ -30,8 +30,8 @@ criteria. Packages are ordered so that each one only depends on earlier ones.
 | WP12 | Skill update automation | WP8, WP9 | L | local only |
 
 Shipped: everything through WP10 landed in **v0.9.0** (2026-10-21), ahead
-of the milestones below. Still open: WP0 item 7 (waits for #21730) and
-WP12 phases 4 and 5. WP11 phases 0 to 4 (the PHP index, `api-facts`,
+of the milestones below. Still open: WP0 item 7 (waits for #21730). WP12
+is done (2026-10-23). WP11 phases 0 to 4 (the PHP index, `api-facts`,
 `api-diff` for routes, entities, feature flags and configuration, and the
 admin and storefront surfaces) passed their gates. v0.10.0 (2026-10-21) added five rules from a real plugin review
 (ADM-042..044, SEC-008, PLG-032); ADM-044 is the first catch task where the
@@ -1024,7 +1024,7 @@ it would answer has no recorded ground truth.
 
 ## WP12: Skill update automation
 
-Status: **accepted 2026-10-23; phases 0 to 3 done, phase 4 next.** Plan:
+Status: **done 2026-10-23, all phases.** Plan:
 [`2026-10-skill-update-automation.md`](2026-10-skill-update-automation.md).
 
 Goal: turn drift into rule changes with less manual reading. Trunk mining

@@ -11,6 +11,8 @@
 //   error        exit 4 like a failed CLI/API session
 //   suggest      answer a suggest-rules question on stdin instead; FAKE_SUGGEST
 //                picks the answer (tools/src/fake-suggest.ts)
+//   draft        edit the working directory like `suggest-rules draft`;
+//                FAKE_DRAFT picks the edit (tools/src/fake-draft.ts)
 //
 // "Solve" means: replace the workdir with the task's golden fixtures/pass/.
 //
@@ -32,6 +34,7 @@
 import { appendFileSync, cpSync, existsSync, readdirSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { envOr } from './env.ts';
+import { fakeDraft } from './fake-draft.ts';
 import { fakeSuggest } from './fake-suggest.ts';
 import { compareText } from './text.ts';
 
@@ -114,6 +117,7 @@ export function fakeAgent(o: FakeAgentOptions): number {
     o.out(`${answer}\n`);
     return 0;
   }
+  if (envOr(o.env, 'FAKE_AGENT_MODE', '') === 'draft') return fakeDraft(o.cwd, o.prompt ?? '', o.env, o.out);
   const task = envOr(o.env, 'EVAL_TASK', '');
   if (task === '') {
     o.err('fake-agent: EVAL_TASK not set (run through run-task.sh)\n');

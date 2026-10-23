@@ -81,6 +81,7 @@ tools/                        # repo tooling in TypeScript (Node 24, no build st
   bin/collect-reviews.ts      # review comments of merged PRs as mapped signals (daily in CI; private repos locally)
   bin/suggest-rules.ts        # rule proposals from review signals + drift issue via your agent (git-ignored suggestions/)
   src/agent-ask.ts            # one prompt to an agent with no tools (suggest-rules)
+                              # `suggest-rules.ts draft <id>`: worktree, agent edit, free checks, A/B, draft PR (src/draft-*.ts)
   bin/grade.ts                # runs one task's grader (what every grade.sh calls)
   graders/<task>.ts           # one grader per eval task: workdir + transcript -> verdict
   src/grade/                  # grader kit (file search, comment stripping, PHP method, review findings)
@@ -260,6 +261,10 @@ To find candidates, run `node tools/bin/suggest-rules.ts --since 30d`: it
 clusters review comments and drift changes, asks your agent per cluster and
 checks the evidence. A proposal is a starting point for step 1, not a rule;
 see [`docs/maintenance.md`](docs/maintenance.md#suggesting-rule-changes).
+`node tools/bin/suggest-rules.ts draft <id> [--no-pr]` has your agent walk
+these steps for one proposal in a worktree, runs the free checks and the
+A/B, and opens a draft PR; see
+[Drafting a proposal](docs/maintenance.md#drafting-a-proposal).
 
 ## Adding a skill
 

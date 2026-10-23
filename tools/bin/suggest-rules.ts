@@ -19,9 +19,20 @@
 // (haiku for claude), SUGGEST_SUPPORTED_FROM (6.6.0.0) for the API check,
 // GITHUB_REPOSITORY (BrocksiNet/ai-skills-shopware) for the release and the
 // issue. Exit 0 = written, 1 = error, 2 = usage.
+//
+//   node tools/bin/suggest-rules.ts draft 2026-10-23-04 [--no-pr]
+//
+// Drafts one proposal (plan WP12 step 5) in a worktree on the branch
+// rules/<skill>-<slug>: the agent edits with file and test tools only, the
+// free checks run (one retry), eval-local runs the A/B for changed tasks, and
+// a draft PR with the `run-evals` label opens unless --no-pr. --base (main)
+// is the start and PR target, --worktree the folder (.cache/drafts/<branch>).
+// DRAFT_MODEL (haiku), DRAFT_REPEATS (3), DRAFT_MAX_TURNS (60) and
+// DRAFT_MAX_BUDGET_USD (2) set the agent. Exit 0 = drafted, 1 = not.
 import { resolve } from 'node:path';
 import { parseArgs } from 'node:util';
 import { stderr, stdout } from '../src/cli.ts';
+import { draftCommand, draftSummary } from '../src/draft-cli.ts';
 import { errorMessage } from '../src/errors.ts';
 import { suggestCommand } from '../src/suggest-cli.ts';
 
@@ -29,13 +40,20 @@ const ROOT = resolve(import.meta.dirname, '../..');
 const USAGE =
   'usage: suggest-rules.ts [--since YYYY-MM-DD|Nd] [--until YYYY-MM-DD] [--skill NAME] [--signals FILE]\n' +
   '                        [--agent claude|opencode|COMMAND] [--source ID]... [--offline] [--out DIR]\n' +
-  '                        [--api-index FILE] [--baseline FILE]\n';
+  '                        [--api-index FILE] [--baseline FILE]\n' +
+  '       suggest-rules.ts draft ID [--agent claude|opencode|COMMAND] [--no-pr] [--base BRANCH]\n' +
+  '                        [--out DIR] [--worktree DIR]\n';
 
 async function main(): Promise<number> {
   let values;
+  let positionals;
   try {
-    ({ values } = parseArgs({
+    ({ values, positionals } = parseArgs({
+      allowPositionals: true,
       options: {
+        'no-pr': { type: 'boolean', default: false },
+        base: { type: 'string' },
+        worktree: { type: 'string' },
         since: { type: 'string', default: '30d' },
         until: { type: 'string' },
         skill: { type: 'string' },
@@ -52,7 +70,18 @@ async function main(): Promise<number> {
     stderr(`${errorMessage(error)}\n${USAGE}`);
     return 2;
   }
+  const [command, id, ...extra] = positionals;
+  const drafting = command === 'draft';
+  if (command !== undefined && (!drafting || id === undefined || extra.length > 0)) {
+    stderr(USAGE);
+    return 2;
+  }
   try {
+    if (drafting) {
+      const r = await draftCommand(ROOT, id ?? '', values, process.env, stderr);
+      stdout(draftSummary(r));
+      return r.status === 'drafted' || r.status === 'pr-opened' ? 0 : 1;
+    }
     stdout(await suggestCommand(ROOT, values, process.env, stderr));
     return 0;
   } catch (error) {
