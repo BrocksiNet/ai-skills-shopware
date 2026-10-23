@@ -1,0 +1,212 @@
+{
+ "repos/netresearch/php-modernization-skill/commits?sha=main&until=2026-10-05T05%3A00%3A00Z&per_page=1": [
+  {
+   "sha": "cc996e20f7a1f032944db15a0745c0101965cf51",
+   "commit": {
+    "message": "Merge pull request #156 from netresearch/renovate/astral-sh-ruff-pre-commit-0.x",
+    "committer": {
+     "date": "2026-10-01T22:14:26Z"
+    }
+   },
+   "parents": [
+    {
+     "sha": "b1e50b69ed2cb28cc0ccb0a517b25f806e73b69b"
+    },
+    {
+     "sha": "adab0873fd8c61004c8939c99a9457e640e06ee5"
+    }
+   ]
+  }
+ ],
+ "repos/netresearch/php-modernization-skill/compare/9e0e56e1b81f67ebda54af7d90b4cbd5972c9302...cc996e20f7a1f032944db15a0745c0101965cf51?per_page=100&page=1": {
+  "total_commits": 6,
+  "commits": [
+   {
+    "sha": "b1350380bc801b99c023b712fb091a1ef6b73e69",
+    "commit": {
+     "message": "docs(request-dtos): guard finished state on the raw row before fromRow()",
+     "committer": {
+      "date": "2026-10-01T07:14:52Z"
+     }
+    },
+    "parents": [
+     {
+      "sha": "244614fff5d489dc33fc08e7ecdfe4c9ea5cc6a5"
+     }
+    ]
+   },
+   {
+    "sha": "4f05f3b20f63fb0d07f4259f92aaa3dc0349bb42",
+    "commit": {
+     "message": "docs(request-dtos): say which rows reach the error path",
+     "committer": {
+      "date": "2026-10-01T07:29:06Z"
+     }
+    },
+    "parents": [
+     {
+      "sha": "b1350380bc801b99c023b712fb091a1ef6b73e69"
+     }
+    ]
+   },
+   {
+    "sha": "8f3a86b72190e73c13bc9693bb102dbb6775098b",
+    "commit": {
+     "message": "Merge branch 'main' into feat/retro-guard-raw-state-before-strict-parse",
+     "committer": {
+      "date": "2026-10-01T07:49:14Z"
+     }
+    },
+    "parents": [
+     {
+      "sha": "4f05f3b20f63fb0d07f4259f92aaa3dc0349bb42"
+     },
+     {
+      "sha": "9e0e56e1b81f67ebda54af7d90b4cbd5972c9302"
+     }
+    ]
+   },
+   {
+    "sha": "b1e50b69ed2cb28cc0ccb0a517b25f806e73b69b",
+    "commit": {
+     "message": "Merge pull request #155 from netresearch/feat/retro-guard-raw-state-before-strict-parse",
+     "committer": {
+      "date": "2026-10-01T08:28:49Z"
+     }
+    },
+    "parents": [
+     {
+      "sha": "9e0e56e1b81f67ebda54af7d90b4cbd5972c9302"
+     },
+     {
+      "sha": "8f3a86b72190e73c13bc9693bb102dbb6775098b"
+     }
+    ]
+   },
+   {
+    "sha": "adab0873fd8c61004c8939c99a9457e640e06ee5",
+    "commit": {
+     "message": "chore(deps): update pre-commit hook astral-sh/ruff-pre-commit to v0.16.10",
+     "committer": {
+      "date": "2026-10-01T22:12:53Z"
+     }
+    },
+    "parents": [
+     {
+      "sha": "b1e50b69ed2cb28cc0ccb0a517b25f806e73b69b"
+     }
+    ]
+   },
+   {
+    "sha": "cc996e20f7a1f032944db15a0745c0101965cf51",
+    "commit": {
+     "message": "Merge pull request #156 from netresearch/renovate/astral-sh-ruff-pre-commit-0.x",
+     "committer": {
+      "date": "2026-10-01T22:14:26Z"
+     }
+    },
+    "parents": [
+     {
+      "sha": "b1e50b69ed2cb28cc0ccb0a517b25f806e73b69b"
+     },
+     {
+      "sha": "adab0873fd8c61004c8939c99a9457e640e06ee5"
+     }
+    ]
+   }
+  ]
+ },
+ "repos/netresearch/php-modernization-skill/commits?sha=main&path=skills&since=2026-10-01T07%3A14%3A52Z&until=2026-10-05T05%3A00%3A00Z&per_page=100&page=1": [
+  {
+   "sha": "8f3a86b72190e73c13bc9693bb102dbb6775098b",
+   "commit": {
+    "message": "Merge branch 'main' into feat/retro-guard-raw-state-before-strict-parse",
+    "committer": {
+     "date": "2026-10-01T07:49:14Z"
+    }
+   },
+   "parents": [
+    {
+     "sha": "4f05f3b20f63fb0d07f4259f92aaa3dc0349bb42"
+    },
+    {
+     "sha": "9e0e56e1b81f67ebda54af7d90b4cbd5972c9302"
+    }
+   ]
+  },
+  {
+   "sha": "4f05f3b20f63fb0d07f4259f92aaa3dc0349bb42",
+   "commit": {
+    "message": "docs(request-dtos): say which rows reach the error path",
+    "committer": {
+     "date": "2026-10-01T07:29:06Z"
+    }
+   },
+   "parents": [
+    {
+     "sha": "b1350380bc801b99c023b712fb091a1ef6b73e69"
+    }
+   ]
+  },
+  {
+   "sha": "b1350380bc801b99c023b712fb091a1ef6b73e69",
+   "commit": {
+    "message": "docs(request-dtos): guard finished state on the raw row before fromRow()",
+    "committer": {
+     "date": "2026-10-01T07:14:52Z"
+    }
+   },
+   "parents": [
+    {
+     "sha": "244614fff5d489dc33fc08e7ecdfe4c9ea5cc6a5"
+    }
+   ]
+  }
+ ],
+ "repos/netresearch/php-modernization-skill/commits/b1350380bc801b99c023b712fb091a1ef6b73e69": {
+  "sha": "b1350380bc801b99c023b712fb091a1ef6b73e69",
+  "commit": {
+   "message": "docs(request-dtos): guard finished state on the raw row before fromRow()",
+   "committer": {
+    "date": "2026-10-01T07:14:52Z"
+   }
+  },
+  "parents": [
+   {
+    "sha": "244614fff5d489dc33fc08e7ecdfe4c9ea5cc6a5"
+   }
+  ],
+  "files": [
+   {
+    "filename": "skills/php-modernization/references/request-dtos.md",
+    "status": "modified",
+    "additions": 33,
+    "deletions": 0,
+    "patch": "@@ -483,6 +483,38 @@ same `getLastErrors()` check after it.\n+## Value Objects from Database Rows\n+```php\n+```\n@@ -640,6 +672,7 @@ final readonly class ListSecretsQuery"
+   }
+  ]
+ },
+ "repos/netresearch/php-modernization-skill/commits/4f05f3b20f63fb0d07f4259f92aaa3dc0349bb42": {
+  "sha": "4f05f3b20f63fb0d07f4259f92aaa3dc0349bb42",
+  "commit": {
+   "message": "docs(request-dtos): say which rows reach the error path",
+   "committer": {
+    "date": "2026-10-01T07:29:06Z"
+   }
+  },
+  "parents": [
+   {
+    "sha": "b1350380bc801b99c023b712fb091a1ef6b73e69"
+   }
+  ],
+  "files": [
+   {
+    "filename": "skills/php-modernization/references/request-dtos.md",
+    "status": "modified",
+    "additions": 1,
+    "deletions": 1,
+    "patch": "@@ -504,7 +504,7 @@ if (is_string($status) && JobStatus::tryFrom($status)?->isTerminal() === true) {\n ```"
+   }
+  ]
+ }
+}
