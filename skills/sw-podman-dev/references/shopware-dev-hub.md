@@ -22,7 +22,7 @@ lists which skills to symlink; `skills_source` points at that folder. Optional
    `.codex/skills/`. `.agents/skills/` is overlaid only when that skill name is
    not git-tracked. `.claude/skills` is skipped when it is a symlink onto
    `.agents/skills` (core trunk / 6.7 / 6.8). Never replace core's tracked
-   `sw-admin-js` (that deletes `SKILL.md` and `agents/openai.yaml` in
+   `shopware-admin-js` (that deletes `SKILL.md` and `agents/openai.yaml` in
    `git status`).
 
 ## Commands

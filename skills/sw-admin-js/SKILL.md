@@ -18,12 +18,12 @@ metadata:
 # Shopware Admin JS
 
 Rules for Administration TypeScript, Vue, Meteor components, and Jest.
-Mined from core `sw-admin-js` plus
+Mined from core `shopware-admin-js` plus
 `coding-guidelines/administration/` and
 `src/Administration/Resources/app/administration/AGENTS.md`. Rewritten, not
 copied.
 
-> **Upstream (trunk):** If `.agents/skills/sw-admin-js/` exists, prefer
+> **Upstream (trunk):** If `.agents/skills/shopware-admin-js/` exists, prefer
 > it for the short mandatory list. This skill keeps the plugin/project
 > deltas and the Meteor / modern-web gate.
 

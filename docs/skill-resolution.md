@@ -70,8 +70,9 @@ npx skills add BrocksiNet/ai-skills-shopware \
   -a claude-code -a codex -a cursor
 ```
 
-Do **not** `npx skills add --skill sw-admin-js` into a trunk `.agents/skills/`
-tree. Core already owns that name. Cursor/Codex overlay is fine.
+Core trunk ships its own `shopware-admin-js`. Ours is `sw-admin-js`, so both
+can sit in `.agents/skills/` without one replacing the other; core's leads for
+the short mandatory list.
 
 Add `sw-plugin-development` when editing `custom/plugins` in the monorepo.
 
@@ -101,16 +102,16 @@ npx skills add BrocksiNet/ai-skills-shopware \
 | `shopware-pr-hygiene` | PR template, follow-up commits | `sw-pr-description` (copy-paste template) |
 | `shopware-change-scope` | boyscouting, root cause | `sw-review-learnings` (delta findings) |
 | `shopware-release-docs` | RELEASE_INFO / UPGRADE | `sw-core-development` (baseline guardrails) |
-| `sw-admin-js` | Admin JS (trunk only) | `sw-admin-js` (plugin/project + Meteor / MWG gate) |
+| `shopware-admin-js` | Admin JS (trunk only) | `sw-admin-js` (plugin/project + Meteor / MWG gate) |
 
 **Always ours (no core equivalent):** `sw-security`, `sw-architecture`
 (decision layer), `sw-plugin-development`, `sw-app-development`,
 `sw-storefront`, `sw-review-learnings`, `sw-change-impact`,
 eval tasks.
 
-`sw-admin-js` on trunk: keep core's tracked
-`.agents/skills/sw-admin-js/` (including `agents/openai.yaml`). Overlay
-our richer skill into `.cursor/skills/` and `.codex/skills/` only. Core's
+Admin JS on trunk: keep core's tracked `.agents/skills/shopware-admin-js/`
+(including `agents/openai.yaml`). Our `sw-admin-js` has its own name since
+the `sw-` rename, so it no longer replaces core's folder. Core's
 `.claude/skills` is a git symlink to `.agents/skills` — do not replace it.
 
 ## sw-dev link

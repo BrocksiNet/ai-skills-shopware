@@ -3162,7 +3162,7 @@
       "status": "active",
       "since": "2026-10-20",
       "eval": null,
-      "eval_reason": "Process rule; core sw-admin-js owns it on trunk.",
+      "eval_reason": "Process rule; core shopware-admin-js owns it on trunk.",
       "core_guide_ids": [],
       "audience": [
         "core",
@@ -3320,7 +3320,7 @@
       "status": "active",
       "since": "2026-10-20",
       "eval": null,
-      "eval_reason": "Process rule; core sw-admin-js owns it on trunk.",
+      "eval_reason": "Process rule; core shopware-admin-js owns it on trunk.",
       "core_guide_ids": [],
       "audience": [
         "core",
@@ -3352,7 +3352,7 @@
       "status": "active",
       "since": "2026-10-20",
       "eval": null,
-      "eval_reason": "Style rule; core sw-admin-js owns it on trunk.",
+      "eval_reason": "Style rule; core shopware-admin-js owns it on trunk.",
       "core_guide_ids": [],
       "audience": [
         "core",
@@ -3385,7 +3385,7 @@
       "status": "active",
       "since": "2026-10-20",
       "eval": null,
-      "eval_reason": "Style rule; core sw-admin-js owns it on trunk.",
+      "eval_reason": "Style rule; core shopware-admin-js owns it on trunk.",
       "core_guide_ids": [],
       "audience": [
         "core",
@@ -3505,7 +3505,7 @@
       "status": "active",
       "since": "2026-10-20",
       "eval": null,
-      "eval_reason": "Style rule; core sw-admin-js owns it on trunk.",
+      "eval_reason": "Style rule; core shopware-admin-js owns it on trunk.",
       "core_guide_ids": [],
       "audience": [
         "core",
@@ -3538,7 +3538,7 @@
       "status": "active",
       "since": "2026-10-20",
       "eval": null,
-      "eval_reason": "Style rule; core sw-admin-js owns it on trunk.",
+      "eval_reason": "Style rule; core shopware-admin-js owns it on trunk.",
       "core_guide_ids": [
         "ADMF-002",
         "ADMF-003"
@@ -3557,7 +3557,7 @@
       "status": "active",
       "since": "2026-10-20",
       "eval": null,
-      "eval_reason": "Style rule; core sw-admin-js owns it on trunk.",
+      "eval_reason": "Style rule; core shopware-admin-js owns it on trunk.",
       "core_guide_ids": [
         "ADMF-004"
       ],
@@ -3575,7 +3575,7 @@
       "status": "active",
       "since": "2026-10-20",
       "eval": null,
-      "eval_reason": "Style rule; core sw-admin-js owns it on trunk.",
+      "eval_reason": "Style rule; core shopware-admin-js owns it on trunk.",
       "core_guide_ids": [
         "ADMF-005"
       ],
@@ -3593,7 +3593,7 @@
       "status": "active",
       "since": "2026-10-20",
       "eval": null,
-      "eval_reason": "Style rule; core sw-admin-js owns it on trunk.",
+      "eval_reason": "Style rule; core shopware-admin-js owns it on trunk.",
       "core_guide_ids": [
         "BCADM-006"
       ],
@@ -3611,7 +3611,7 @@
       "status": "active",
       "since": "2026-10-20",
       "eval": null,
-      "eval_reason": "Style rule; core sw-admin-js owns it on trunk.",
+      "eval_reason": "Style rule; core shopware-admin-js owns it on trunk.",
       "core_guide_ids": [],
       "audience": [
         "core",
@@ -3627,7 +3627,7 @@
       "status": "active",
       "since": "2026-10-20",
       "eval": null,
-      "eval_reason": "Style rule; core sw-admin-js owns it on trunk.",
+      "eval_reason": "Style rule; core shopware-admin-js owns it on trunk.",
       "core_guide_ids": [],
       "audience": [
         "core",
@@ -3643,7 +3643,7 @@
       "status": "active",
       "since": "2026-10-20",
       "eval": null,
-      "eval_reason": "Style rule; core sw-admin-js owns it on trunk.",
+      "eval_reason": "Style rule; core shopware-admin-js owns it on trunk.",
       "core_guide_ids": [],
       "audience": [
         "core",
@@ -3744,7 +3744,7 @@
       "status": "active",
       "since": "2026-10-20",
       "eval": null,
-      "eval_reason": "Style rule; core sw-admin-js owns it on trunk.",
+      "eval_reason": "Style rule; core shopware-admin-js owns it on trunk.",
       "core_guide_ids": [],
       "audience": [
         "core",
@@ -3777,7 +3777,7 @@
       "status": "active",
       "since": "2026-10-20",
       "eval": null,
-      "eval_reason": "Style rule; core sw-admin-js owns it on trunk.",
+      "eval_reason": "Style rule; core shopware-admin-js owns it on trunk.",
       "core_guide_ids": [],
       "audience": [
         "core",

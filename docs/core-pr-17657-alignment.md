@@ -59,7 +59,7 @@ PR #21725 and then to #21730.
 | `shopware-pr-hygiene` | `sw-pr-description` | **defer** |
 | `shopware-change-scope` | `sw-review-learnings` → change-scope | **defer** |
 | `shopware-release-docs` | `sw-core-development` → release-notes | **defer** |
-| `sw-admin-js` | `sw-admin-js` | **done** (mined; defer short list on trunk) |
+| `shopware-admin-js` | `sw-admin-js` | **done** (mined; defer short list on trunk) |
 | `shopware-knowledge-capture` | `AGENTS.md` / REGISTRY | skip |
 | `nightly-triage` | — | skip (gh-aw CI sweeps) |
 | `sw-triage`, `sw-review`, `sw-bugfixer` | — | skip (gh-aw; explicit invocation only) |
@@ -156,7 +156,7 @@ not tagged yet.
 
 | PR skill / rule | Reason |
 | --------------- | ------ |
-| `sw-admin-js` | mined into our `sw-admin-js`; defer short list on trunk |
+| `shopware-admin-js` | mined into our `sw-admin-js`; defer short list on trunk |
 | `shopware-knowledge-capture` | Overlaps our `AGENTS.md` / REGISTRY curation |
 | `sw-triage`, `sw-bugfixer`, `sw-review`, `nightly-triage` | Core gh-aw CI workflows; explicit invocation only since [#18365](https://github.com/shopware/shopware/pull/18365) |
 
