@@ -1,0 +1,780 @@
+{
+ "repos/shopware/shopware/commits?sha=trunk&until=2026-10-19T23%3A59%3A59Z&per_page=1": [
+  {
+   "sha": "219491014944c6b6463cf6426c7001adea8dae0d",
+   "commit": {
+    "message": "feat(core): validate webhook subscriptions created through the API (#21122)",
+    "committer": {
+     "date": "2026-10-19T19:45:03Z"
+    }
+   },
+   "parents": [
+    {
+     "sha": "459b292debf1cf00b524fe75fc830467ff42886f"
+    }
+   ]
+  }
+ ],
+ "repos/shopware/shopware/commits?sha=trunk&path=.agents&since=2026-10-13T00%3A00%3A00Z&until=2026-10-19T23%3A59%3A59Z&per_page=100&page=1": [
+  {
+   "sha": "0fa3e10a6d6214f479f5e6f188bce9f82b1bdea4",
+   "commit": {
+    "message": "docs(coding-guidelines): add backward-compatibility and HTTP cache guidelines (#21541)",
+    "committer": {
+     "date": "2026-10-19T09:21:53Z"
+    }
+   },
+   "parents": [
+    {
+     "sha": "96a8e5c5a226129234e8df5bf1c123cb07aaff2c"
+    }
+   ]
+  },
+  {
+   "sha": "f2bf3794c9d831fe9c54b670e2d6ae00653468dd",
+   "commit": {
+    "message": "test: forbid assertions inside event hooks and describe how tests observe events (#21438)",
+    "committer": {
+     "date": "2026-10-15T10:03:41Z"
+    }
+   },
+   "parents": [
+    {
+     "sha": "75b0a495c813d9e8e50714aa900a378c451d3399"
+    }
+   ]
+  },
+  {
+   "sha": "75b0a495c813d9e8e50714aa900a378c451d3399",
+   "commit": {
+    "message": "ci(danger): fail every touched test file that covers more than one class (#21572)",
+    "committer": {
+     "date": "2026-10-15T09:14:09Z"
+    }
+   },
+   "parents": [
+    {
+     "sha": "b0b69601efae256583e22669133718099ed832c1"
+    }
+   ]
+  }
+ ],
+ "repos/shopware/shopware/commits?sha=trunk&path=coding-guidelines&since=2026-10-13T00%3A00%3A00Z&until=2026-10-19T23%3A59%3A59Z&per_page=100&page=1": [
+  {
+   "sha": "0fa3e10a6d6214f479f5e6f188bce9f82b1bdea4",
+   "commit": {
+    "message": "docs(coding-guidelines): add backward-compatibility and HTTP cache guidelines (#21541)",
+    "committer": {
+     "date": "2026-10-19T09:21:53Z"
+    }
+   },
+   "parents": [
+    {
+     "sha": "96a8e5c5a226129234e8df5bf1c123cb07aaff2c"
+    }
+   ]
+  },
+  {
+   "sha": "f2bf3794c9d831fe9c54b670e2d6ae00653468dd",
+   "commit": {
+    "message": "test: forbid assertions inside event hooks and describe how tests observe events (#21438)",
+    "committer": {
+     "date": "2026-10-15T10:03:41Z"
+    }
+   },
+   "parents": [
+    {
+     "sha": "75b0a495c813d9e8e50714aa900a378c451d3399"
+    }
+   ]
+  },
+  {
+   "sha": "75b0a495c813d9e8e50714aa900a378c451d3399",
+   "commit": {
+    "message": "ci(danger): fail every touched test file that covers more than one class (#21572)",
+    "committer": {
+     "date": "2026-10-15T09:14:09Z"
+    }
+   },
+   "parents": [
+    {
+     "sha": "b0b69601efae256583e22669133718099ed832c1"
+    }
+   ]
+  },
+  {
+   "sha": "8dc74f24f0f32650ec1553f7ab3b1ac5ffa372ae",
+   "commit": {
+    "message": "refactor(framework): remove exception deprecation reason exemptions (#21400)",
+    "committer": {
+     "date": "2026-10-14T18:10:51Z"
+    }
+   },
+   "parents": [
+    {
+     "sha": "cec20bc4e1c92394951ec78d157d41d611c54fc8"
+    }
+   ]
+  },
+  {
+   "sha": "53a6cceb130892ed385933a3eac502f6d0b9cbfc",
+   "commit": {
+    "message": "chore: Remove last gitlab references and fix links to XSD files (#21565)",
+    "committer": {
+     "date": "2026-10-14T09:33:10Z"
+    }
+   },
+   "parents": [
+    {
+     "sha": "f0e46ffa76c8d7d315c9ca1d9d446794bbc84340"
+    }
+   ]
+  },
+  {
+   "sha": "7ad011f1e2716321e90c385c3918c84e5874afd6",
+   "commit": {
+    "message": "feat(framework): validate deprecated framework callback behavior (#21139)",
+    "committer": {
+     "date": "2026-10-13T07:53:35Z"
+    }
+   },
+   "parents": [
+    {
+     "sha": "9c8320c5ff9901c39ac79d2370c0e2b1c210e157"
+    }
+   ]
+  }
+ ],
+ "repos/shopware/shopware/commits?sha=trunk&path=src%2FCore%2FDevOps%2FStaticAnalyze&since=2026-10-13T00%3A00%3A00Z&until=2026-10-19T23%3A59%3A59Z&per_page=100&page=1": [
+  {
+   "sha": "0e782aa79e93b15cc3b832c1a7eae30c92208786",
+   "commit": {
+    "message": "fix(core): guard deprecated DAL construction without accessor notices (#21660)",
+    "committer": {
+     "date": "2026-10-19T08:10:21Z"
+    }
+   },
+   "parents": [
+    {
+     "sha": "4dafbdcadbc21cd07f3467538e9fe48d89ca08ca"
+    }
+   ]
+  },
+  {
+   "sha": "36e19f9d5228ff0650c487a73a9fee975e6d06e9",
+   "commit": {
+    "message": "feat: telemetry improvements (#21444)",
+    "committer": {
+     "date": "2026-10-15T20:09:43Z"
+    }
+   },
+   "parents": [
+    {
+     "sha": "b0cc8385ccd50b1fcff28d0eca4b253c76685554"
+    }
+   ]
+  },
+  {
+   "sha": "f2bf3794c9d831fe9c54b670e2d6ae00653468dd",
+   "commit": {
+    "message": "test: forbid assertions inside event hooks and describe how tests observe events (#21438)",
+    "committer": {
+     "date": "2026-10-15T10:03:41Z"
+    }
+   },
+   "parents": [
+    {
+     "sha": "75b0a495c813d9e8e50714aa900a378c451d3399"
+    }
+   ]
+  },
+  {
+   "sha": "75b0a495c813d9e8e50714aa900a378c451d3399",
+   "commit": {
+    "message": "ci(danger): fail every touched test file that covers more than one class (#21572)",
+    "committer": {
+     "date": "2026-10-15T09:14:09Z"
+    }
+   },
+   "parents": [
+    {
+     "sha": "b0b69601efae256583e22669133718099ed832c1"
+    }
+   ]
+  },
+  {
+   "sha": "8dc74f24f0f32650ec1553f7ab3b1ac5ffa372ae",
+   "commit": {
+    "message": "refactor(framework): remove exception deprecation reason exemptions (#21400)",
+    "committer": {
+     "date": "2026-10-14T18:10:51Z"
+    }
+   },
+   "parents": [
+    {
+     "sha": "cec20bc4e1c92394951ec78d157d41d611c54fc8"
+    }
+   ]
+  },
+  {
+   "sha": "006893091e935ccdd805444fe746275f00affb80",
+   "commit": {
+    "message": "chore: PHPStan Update 10/2026 (#21323)",
+    "committer": {
+     "date": "2026-10-14T16:23:31Z"
+    }
+   },
+   "parents": [
+    {
+     "sha": "e1f0a3c45eb499ae5ed111e7cbea56cd2d96d097"
+    }
+   ]
+  },
+  {
+   "sha": "190d734b562fead431b6b241211f6579259e4993",
+   "commit": {
+    "message": "test: forbid runtime listener changes on the shared event dispatcher in integration tests (#21343)",
+    "committer": {
+     "date": "2026-10-14T09:34:38Z"
+    }
+   },
+   "parents": [
+    {
+     "sha": "53a6cceb130892ed385933a3eac502f6d0b9cbfc"
+    }
+   ]
+  },
+  {
+   "sha": "f0e46ffa76c8d7d315c9ca1d9d446794bbc84340",
+   "commit": {
+    "message": "fix(core): anchor end-of-string regex patterns with the D modifier (framework) (#21177)",
+    "committer": {
+     "date": "2026-10-14T09:26:32Z"
+    }
+   },
+   "parents": [
+    {
+     "sha": "2c899421f10e3d3c8d1a31d99ed775d5c42b3c62"
+    }
+   ]
+  },
+  {
+   "sha": "d10e3c4f26ea6b7309774afb8c10bb639ba60e78",
+   "commit": {
+    "message": "fix: Allow usage of arrow functions in extension events of store API routes (#21599)",
+    "committer": {
+     "date": "2026-10-14T08:25:46Z"
+    }
+   },
+   "parents": [
+    {
+     "sha": "753e5a5a652a41db18a900aaee723e69ecb575a6"
+    }
+   ]
+  },
+  {
+   "sha": "7ad011f1e2716321e90c385c3918c84e5874afd6",
+   "commit": {
+    "message": "feat(framework): validate deprecated framework callback behavior (#21139)",
+    "committer": {
+     "date": "2026-10-13T07:53:35Z"
+    }
+   },
+   "parents": [
+    {
+     "sha": "9c8320c5ff9901c39ac79d2370c0e2b1c210e157"
+    }
+   ]
+  }
+ ],
+ "repos/shopware/shopware/commits?sha=trunk&path=.github%2FPULL_REQUEST_TEMPLATE.md&since=2026-10-13T00%3A00%3A00Z&until=2026-10-19T23%3A59%3A59Z&per_page=100&page=1": [
+  {
+   "sha": "0fa3e10a6d6214f479f5e6f188bce9f82b1bdea4",
+   "commit": {
+    "message": "docs(coding-guidelines): add backward-compatibility and HTTP cache guidelines (#21541)",
+    "committer": {
+     "date": "2026-10-19T09:21:53Z"
+    }
+   },
+   "parents": [
+    {
+     "sha": "96a8e5c5a226129234e8df5bf1c123cb07aaff2c"
+    }
+   ]
+  }
+ ],
+ "repos/shopware/shopware/commits/7ad011f1e2716321e90c385c3918c84e5874afd6": {
+  "sha": "7ad011f1e2716321e90c385c3918c84e5874afd6",
+  "commit": {
+   "message": "feat(framework): validate deprecated framework callback behavior (#21139)",
+   "committer": {
+    "date": "2026-10-13T07:53:35Z"
+   }
+  },
+  "parents": [
+   {
+    "sha": "9c8320c5ff9901c39ac79d2370c0e2b1c210e157"
+   }
+  ],
+  "files": [
+   {
+    "filename": "coding-guidelines/core/feature-flags.md",
+    "status": "modified",
+    "additions": 5,
+    "deletions": 0,
+    "patch": "@@ -57,6 +57,11 @@ The compiler pass removes the service definition when the flag is active. `shopw\n ```php"
+   },
+   {
+    "filename": "src/Core/DevOps/StaticAnalyze/PHPStan/README.md",
+    "status": "modified",
+    "additions": 6,
+    "deletions": 0,
+    "patch": "@@ -62,6 +62,12 @@ includes:\n ```neon"
+   },
+   {
+    "filename": "src/Core/DevOps/StaticAnalyze/PHPStan/Rules/Deprecation/DeprecatedFrameworkMethodPattern.php",
+    "status": "added",
+    "additions": 208,
+    "deletions": 0
+   },
+   {
+    "filename": "src/Core/DevOps/StaticAnalyze/PHPStan/Rules/Deprecation/DeprecatedMethodsThrowDeprecationRule.php",
+    "status": "modified",
+    "additions": 0,
+    "deletions": 4
+   },
+   {
+    "filename": "src/Core/DevOps/StaticAnalyze/PHPStan/core-rules.neon",
+    "status": "modified",
+    "additions": 4,
+    "deletions": 0
+   }
+  ]
+ },
+ "repos/shopware/shopware/commits/d10e3c4f26ea6b7309774afb8c10bb639ba60e78": {
+  "sha": "d10e3c4f26ea6b7309774afb8c10bb639ba60e78",
+  "commit": {
+   "message": "fix: Allow usage of arrow functions in extension events of store API routes (#21599)",
+   "committer": {
+    "date": "2026-10-14T08:25:46Z"
+   }
+  },
+  "parents": [
+   {
+    "sha": "753e5a5a652a41db18a900aaee723e69ecb575a6"
+   }
+  ],
+  "files": [
+   {
+    "filename": "src/Core/DevOps/StaticAnalyze/PHPStan/Rules/StoreApiRouteExtensionRule.php",
+    "status": "modified",
+    "additions": 6,
+    "deletions": 1
+   }
+  ]
+ },
+ "repos/shopware/shopware/commits/f0e46ffa76c8d7d315c9ca1d9d446794bbc84340": {
+  "sha": "f0e46ffa76c8d7d315c9ca1d9d446794bbc84340",
+  "commit": {
+   "message": "fix(core): anchor end-of-string regex patterns with the D modifier (framework) (#21177)",
+   "committer": {
+    "date": "2026-10-14T09:26:32Z"
+   }
+  },
+  "parents": [
+   {
+    "sha": "2c899421f10e3d3c8d1a31d99ed775d5c42b3c62"
+   }
+  ],
+  "files": [
+   {
+    "filename": "src/Core/DevOps/StaticAnalyze/Danger/Rules/ComposerVersionConstraints.php",
+    "status": "modified",
+    "additions": 2,
+    "deletions": 2
+   },
+   {
+    "filename": "src/Core/DevOps/StaticAnalyze/Danger/Rules/InvalidFileNameCharacters.php",
+    "status": "modified",
+    "additions": 1,
+    "deletions": 1
+   },
+   {
+    "filename": "src/Core/DevOps/StaticAnalyze/Danger/Rules/MissingUnitTests.php",
+    "status": "modified",
+    "additions": 1,
+    "deletions": 1
+   },
+   {
+    "filename": "src/Core/DevOps/StaticAnalyze/PHPStan/Rules/Deprecation/BCChangeAttributeUsageRule.php",
+    "status": "modified",
+    "additions": 2,
+    "deletions": 2
+   },
+   {
+    "filename": "src/Core/DevOps/StaticAnalyze/PHPStan/Rules/NativeTimeReadHelper.php",
+    "status": "modified",
+    "additions": 1,
+    "deletions": 1
+   },
+   {
+    "filename": "src/Core/DevOps/StaticAnalyze/PHPStan/Rules/ServiceDefinitionRule.php",
+    "status": "modified",
+    "additions": 2,
+    "deletions": 2
+   }
+  ]
+ },
+ "repos/shopware/shopware/commits/53a6cceb130892ed385933a3eac502f6d0b9cbfc": {
+  "sha": "53a6cceb130892ed385933a3eac502f6d0b9cbfc",
+  "commit": {
+   "message": "chore: Remove last gitlab references and fix links to XSD files (#21565)",
+   "committer": {
+    "date": "2026-10-14T09:33:10Z"
+   }
+  },
+  "parents": [
+   {
+    "sha": "f0e46ffa76c8d7d315c9ca1d9d446794bbc84340"
+   }
+  ],
+  "files": [
+   {
+    "filename": "coding-guidelines/core/feature-flags.md",
+    "status": "modified",
+    "additions": 99,
+    "deletions": 59,
+    "patch": "@@ -1,19 +1,24 @@\n ```\n ```\n@@ -27,42 +32,60 @@ Omit `major` unless the flag is a sub-feature; in that case, set it to the paren\n ```php\n ```\n ```php\n@@ -84,6 +107,7 @@ class ApiController\n ```\n ```php\n@@ -101,6 +125,7 @@ class ApiController\n ```\n ```php\n@@ -120,6 +145,7 @@ class ApiController\n ```php\n@@ -137,9 +163,8 @@ class ApiController\n ```php\n@@ -159,38 +184,31 @@ public function getDocumentMediaFile(): ?MediaEntity\n ```\n@@ -219,9 +237,13 @@ Do not retain a compatibility subclass or duplicate the implementation. `class_a\n ```php\n@@ -236,9 +258,13 @@ class ProductTest\n ```\n ```php\n@@ -255,9 +281,11 @@ class ProductTest\n ```\n ```javascript\n@@ -268,6 +296,7 @@ Module.register('sw-awesome', {\n ```\n ```\n@@ -279,14 +308,15 @@ featureIsActive(flag) {\n ```\n ```html\n ```\n ```xml\n@@ -298,9 +328,11 @@ When you want to toggle config input fields in config.xml like [basicInformatati\n ```\n ```\n@@ -312,6 +344,7 @@ data() {\n ```\n ```\n@@ -320,18 +353,25 @@ data() {\n ```php"
+   }
+  ]
+ },
+ "repos/shopware/shopware/commits/190d734b562fead431b6b241211f6579259e4993": {
+  "sha": "190d734b562fead431b6b241211f6579259e4993",
+  "commit": {
+   "message": "test: forbid runtime listener changes on the shared event dispatcher in integration tests (#21343)",
+   "committer": {
+    "date": "2026-10-14T09:34:38Z"
+   }
+  },
+  "parents": [
+   {
+    "sha": "53a6cceb130892ed385933a3eac502f6d0b9cbfc"
+   }
+  ],
+  "files": [
+   {
+    "filename": "src/Core/DevOps/StaticAnalyze/PHPStan/Configuration.php",
+    "status": "modified",
+    "additions": 8,
+    "deletions": 0
+   },
+   {
+    "filename": "src/Core/DevOps/StaticAnalyze/PHPStan/Rules/Tests/NoRuntimeListenerOnSharedEventDispatcherRule.php",
+    "status": "added",
+    "additions": 115,
+    "deletions": 0
+   },
+   {
+    "filename": "src/Core/DevOps/StaticAnalyze/PHPStan/common.neon",
+    "status": "modified",
+    "additions": 5,
+    "deletions": 0
+   },
+   {
+    "filename": "src/Core/DevOps/StaticAnalyze/PHPStan/rules.neon",
+    "status": "modified",
+    "additions": 1,
+    "deletions": 0
+   }
+  ]
+ },
+ "repos/shopware/shopware/commits/006893091e935ccdd805444fe746275f00affb80": {
+  "sha": "006893091e935ccdd805444fe746275f00affb80",
+  "commit": {
+   "message": "chore: PHPStan Update 10/2026 (#21323)",
+   "committer": {
+    "date": "2026-10-14T16:23:31Z"
+   }
+  },
+  "parents": [
+   {
+    "sha": "e1f0a3c45eb499ae5ed111e7cbea56cd2d96d097"
+   }
+  ],
+  "files": [
+   {
+    "filename": "src/Core/DevOps/StaticAnalyze/PHPStan/Rules/NoNativeTimeFunctionRule.php",
+    "status": "modified",
+    "additions": 2,
+    "deletions": 2
+   }
+  ]
+ },
+ "repos/shopware/shopware/commits/8dc74f24f0f32650ec1553f7ab3b1ac5ffa372ae": {
+  "sha": "8dc74f24f0f32650ec1553f7ab3b1ac5ffa372ae",
+  "commit": {
+   "message": "refactor(framework): remove exception deprecation reason exemptions (#21400)",
+   "committer": {
+    "date": "2026-10-14T18:10:51Z"
+   }
+  },
+  "parents": [
+   {
+    "sha": "cec20bc4e1c92394951ec78d157d41d611c54fc8"
+   }
+  ],
+  "files": [
+   {
+    "filename": "coding-guidelines/core/feature-flags.md",
+    "status": "modified",
+    "additions": 5,
+    "deletions": 0,
+    "patch": "@@ -75,6 +75,11 @@ Keep `->deprecate(...)` for Symfony's deprecation notice; its version argument i"
+   },
+   {
+    "filename": "src/Core/DevOps/StaticAnalyze/PHPStan/README.md",
+    "status": "modified",
+    "additions": 2,
+    "deletions": 0,
+    "patch": "@@ -62,6 +62,8 @@ includes:"
+   },
+   {
+    "filename": "src/Core/DevOps/StaticAnalyze/PHPStan/Rules/Deprecation/DeprecatedExceptionPattern.php",
+    "status": "added",
+    "additions": 93,
+    "deletions": 0
+   },
+   {
+    "filename": "src/Core/DevOps/StaticAnalyze/PHPStan/Rules/Deprecation/DeprecatedMethodsThrowDeprecationRule.php",
+    "status": "modified",
+    "additions": 0,
+    "deletions": 2
+   },
+   {
+    "filename": "src/Core/DevOps/StaticAnalyze/PHPStan/core-rules.neon",
+    "status": "modified",
+    "additions": 4,
+    "deletions": 0
+   }
+  ]
+ },
+ "repos/shopware/shopware/commits/75b0a495c813d9e8e50714aa900a378c451d3399": {
+  "sha": "75b0a495c813d9e8e50714aa900a378c451d3399",
+  "commit": {
+   "message": "ci(danger): fail every touched test file that covers more than one class (#21572)",
+   "committer": {
+    "date": "2026-10-15T09:14:09Z"
+   }
+  },
+  "parents": [
+   {
+    "sha": "b0b69601efae256583e22669133718099ed832c1"
+   }
+  ],
+  "files": [
+   {
+    "filename": ".agents/skills/shopware-phpunit-tests/SKILL.md",
+    "status": "modified",
+    "additions": 1,
+    "deletions": 1,
+    "patch": "@@ -56,7 +56,7 @@ Tests should read like executable examples.\n-- Declare exactly one `#[CoversClass]` per test file: the covered class decides which domain owns the test. When a second class needs tests, create a second test file. A Danger rule fails new test files covering more than one class.\n+- Declare exactly one `#[CoversClass]` per test file: the covered class decides which domain owns the test. When a second class needs tests, create a second test file. A Danger rule fails every added or modified test file covering more than one class."
+   },
+   {
+    "filename": "coding-guidelines/core/unit-tests.md",
+    "status": "modified",
+    "additions": 1,
+    "deletions": 1,
+    "patch": "@@ -8,7 +8,7 @@ When writing unit tests, the following is important:\n-- **One covered class per test file** - Declare exactly one `#[CoversClass]`. The covered class decides which domain owns the test; several covered classes make the ownership ambiguous and usually mean several subjects share one file. Split it. A Danger rule fails new test files covering more than one class.\n+- **One covered class per test file** - Declare exactly one `#[CoversClass]`. The covered class decides which domain owns the test; several covered classes make the ownership ambiguous and usually mean several subjects share one file. Split it. A Danger rule fails every added or modified test file covering more than one class."
+   },
+   {
+    "filename": "src/Core/DevOps/StaticAnalyze/Danger/Rules/SingleCoversClassInTests.php",
+    "status": "modified",
+    "additions": 9,
+    "deletions": 3
+   }
+  ]
+ },
+ "repos/shopware/shopware/commits/f2bf3794c9d831fe9c54b670e2d6ae00653468dd": {
+  "sha": "f2bf3794c9d831fe9c54b670e2d6ae00653468dd",
+  "commit": {
+   "message": "test: forbid assertions inside event hooks and describe how tests observe events (#21438)",
+   "committer": {
+    "date": "2026-10-15T10:03:41Z"
+   }
+  },
+  "parents": [
+   {
+    "sha": "75b0a495c813d9e8e50714aa900a378c451d3399"
+   }
+  ],
+  "files": [
+   {
+    "filename": ".agents/skills/shopware-phpunit-tests/SKILL.md",
+    "status": "modified",
+    "additions": 1,
+    "deletions": 0,
+    "patch": "@@ -36,6 +36,7 @@ Tests should read like executable examples.\n+- Never add listeners to the shared `event_dispatcher` in a test. Observe an event in a unit test through a dispatcher the test owns, or in an integration test through `EventHookDispatcher::fromContainer()->on()`: capture in the hook, assert after the code under test ran, never inside the hook. See \"Observing events in tests\" in `coding-guidelines/core/unit-tests.md`."
+   },
+   {
+    "filename": "coding-guidelines/core/unit-tests.md",
+    "status": "modified",
+    "additions": 32,
+    "deletions": 0,
+    "patch": "@@ -84,6 +84,38 @@ Option 3 is acceptable when the first two do not fit, under these conditions:\n+## Observing events in tests\n+1. **Unit test with a dispatcher the test owns.** When the behaviour under test is \"this service dispatches this event with this payload\" and the service can be built without the container, construct it with a `CollectingEventDispatcher` or a mock dispatcher and assert on what was dispatched. The event is the contract of that service, and the test proves it without a kernel.\n+2. **Integration test with a hook.** When the point is the wiring, that the real system dispatches the event as a consequence of a write, a request or a flow, get the hook dispatcher from the container and capture the event:\n+   ```php\n+   ```\n+- **Capture in the hook, assert after the code under test ran.** Never put an assertion inside the hook; `NoAssertionInEventHookRule` reports one. Code that catches and logs exceptions around a dispatch (`SendMailAction` around `MailSentEvent`, flow actions, message handlers) swallows the assertion failure and the test stays green. The reference incident is #21105. `fail()` included: it fails the test it is called in, and a listener is not the test. For \"nothing was dispatched\", give the code under test a `CollectingEventDispatcher` and assert on `getEvents()` after the call instead of a sentinel listener.\n+- **Assert that the hook fired.** A captured value that stays `null` must fail the test (`assertNotNull`, `assertCount`), otherwise a renamed event or a changed dispatch path passes silently.\n+- **A hook that changes behaviour (alters the event, stops propagation, throws) is a last resort.** It means the test depends on listener order. Say so in a comment, and prefer a test-only service registered in `services_test.php` when the same intervention is needed in more than one test.\n+- **`subscribe()` for a whole subscriber only when the test is about that subscriber's wiring.** For one event, `on()` with a closure reads better."
+   },
+   {
+    "filename": "src/Core/DevOps/StaticAnalyze/PHPStan/Rules/Tests/NoAssertionInEventHookRule.php",
+    "status": "added",
+    "additions": 242,
+    "deletions": 0
+   },
+   {
+    "filename": "src/Core/DevOps/StaticAnalyze/PHPStan/rules.neon",
+    "status": "modified",
+    "additions": 6,
+    "deletions": 0
+   }
+  ]
+ },
+ "repos/shopware/shopware/commits/36e19f9d5228ff0650c487a73a9fee975e6d06e9": {
+  "sha": "36e19f9d5228ff0650c487a73a9fee975e6d06e9",
+  "commit": {
+   "message": "feat: telemetry improvements (#21444)",
+   "committer": {
+    "date": "2026-10-15T20:09:43Z"
+   }
+  },
+  "parents": [
+   {
+    "sha": "b0cc8385ccd50b1fcff28d0eca4b253c76685554"
+   }
+  ],
+  "files": [
+   {
+    "filename": "src/Core/DevOps/StaticAnalyze/PHPStan/Rules/NoUnconfiguredMetricAllowed.php",
+    "status": "modified",
+    "additions": 4,
+    "deletions": 1
+   }
+  ]
+ },
+ "repos/shopware/shopware/commits/0e782aa79e93b15cc3b832c1a7eae30c92208786": {
+  "sha": "0e782aa79e93b15cc3b832c1a7eae30c92208786",
+  "commit": {
+   "message": "fix(core): guard deprecated DAL construction without accessor notices (#21660)",
+   "committer": {
+    "date": "2026-10-19T08:10:21Z"
+   }
+  },
+  "parents": [
+   {
+    "sha": "4dafbdcadbc21cd07f3467538e9fe48d89ca08ca"
+   }
+  ],
+  "files": [
+   {
+    "filename": "src/Core/DevOps/StaticAnalyze/PHPStan/README.md",
+    "status": "modified",
+    "additions": 2,
+    "deletions": 0,
+    "patch": "@@ -62,6 +62,8 @@ includes:"
+   },
+   {
+    "filename": "src/Core/DevOps/StaticAnalyze/PHPStan/Rules/Deprecation/DeprecatedEntityConstructionRule.php",
+    "status": "added",
+    "additions": 68,
+    "deletions": 0
+   },
+   {
+    "filename": "src/Core/DevOps/StaticAnalyze/PHPStan/Rules/Deprecation/DeprecatedFrameworkMethodPattern.php",
+    "status": "modified",
+    "additions": 3,
+    "deletions": 1
+   },
+   {
+    "filename": "src/Core/DevOps/StaticAnalyze/PHPStan/Rules/Deprecation/DeprecatedMethodsThrowDeprecationRule.php",
+    "status": "modified",
+    "additions": 10,
+    "deletions": 28
+   },
+   {
+    "filename": "src/Core/DevOps/StaticAnalyze/PHPStan/core-rules.neon",
+    "status": "modified",
+    "additions": 1,
+    "deletions": 0
+   }
+  ]
+ },
+ "repos/shopware/shopware/commits/0fa3e10a6d6214f479f5e6f188bce9f82b1bdea4": {
+  "sha": "0fa3e10a6d6214f479f5e6f188bce9f82b1bdea4",
+  "commit": {
+   "message": "docs(coding-guidelines): add backward-compatibility and HTTP cache guidelines (#21541)",
+   "committer": {
+    "date": "2026-10-19T09:21:53Z"
+   }
+  },
+  "parents": [
+   {
+    "sha": "96a8e5c5a226129234e8df5bf1c123cb07aaff2c"
+   }
+  ],
+  "files": [
+   {
+    "filename": ".agents/skills/shopware-php-code/SKILL.md",
+    "status": "modified",
+    "additions": 3,
+    "deletions": 2,
+    "patch": "@@ -48,7 +48,8 @@ Prefer the existing Shopware extension point over a new abstraction.\n-- For any developer-facing deprecation or upcoming BC break, document both the currently available replacement and the future break/removal: use `RELEASE_INFO-6.<minor>.md` to explain the new replacement, why the old behavior/API is deprecated, and who is affected; use `UPGRADE-6.<next-major>.md` to explain what will break or be removed and the concrete migration steps.\n+- For any developer-facing deprecation or upcoming BC break, document both the currently available replacement and the future break/removal: use `RELEASE_INFO-6.<current major line>.md` to explain the new replacement and who is affected; use `UPGRADE-6.<next major>.md` to explain what will break or be removed and the concrete migration steps.\n@@ -60,7 +61,7 @@ Prefer the existing Shopware extension point over a new abstraction.\n-- When creating or migrating Store API routes, follow `coding-guidelines/core/extendability.md`: new routes use extension events, not abstract route classes; existing public contracts remain subject to backward compatibility.\n+- When creating or migrating Store API routes, follow `adr/2026-09-24-replace-abstract-route-classes-with-extension-events.md` and `coding-guidelines/core/extendability.md`: new routes use extension events, not abstract route classes or decorators; existing public contracts remain subject to backward compatibility."
+   },
+   {
+    "filename": ".agents/skills/shopware-release-docs/SKILL.md",
+    "status": "modified",
+    "additions": 8,
+    "deletions": 3,
+    "patch": "@@ -18,21 +18,26 @@ Skip release documentation for narrow local bug fixes, implementation-only refac\n-- Developer-facing notes: add a concise entry to `RELEASE_INFO-6.<minor>.md` in the upcoming section and relevant category.\n+- Developer-facing notes: add a concise entry to `RELEASE_INFO-6.<current major line>.md` in the upcoming section and relevant category.\n-- `UPGRADE-6.<next-major>.md` answers one question: must existing third-party code or configuration (extension, app, integration, theme, hosting setup) change to keep working after the next major?\n+- `UPGRADE-6.<next major>.md` answers one question: must existing third-party code or configuration (extension, app, integration, theme, hosting setup) change to keep working after the next major?"
+   },
+   {
+    "filename": ".github/PULL_REQUEST_TEMPLATE.md",
+    "status": "modified",
+    "additions": 3,
+    "deletions": 2,
+    "patch": "@@ -17,6 +17,7 @@ Please create a second pull request at https://github.com/shopware/docs\n+\n@@ -29,8 +30,8 @@ If the issue exists only in Jira, include a link to the Jira issue.\n-  - Add a short entry to `RELEASE_INFO-6.<major>.md` under “Upcoming” for informational changes, including the consequences of the change and how it affects external developers.\n-  - Add an `UPGRADE` section in `UPGRADE-6.<next-major>.md` for breaking changes (what/why/impact/how to adapt).\n+  - Add a short entry to `RELEASE_INFO-6.<current major line>.md` in the upcoming version section for informational changes: what changed, who is affected, and how to adapt.\n+  - Add an entry to `UPGRADE-6.<next major>.md` for breaking changes and deprecations: what changed, who is affected, and how to adapt."
+   },
+   {
+    "filename": "coding-guidelines/administration/feature-flags-and-deprecations.md",
+    "status": "modified",
+    "additions": 3,
+    "deletions": 1,
+    "patch": "@@ -17,7 +17,9 @@ Follow the general feature-flag rules in [core feature flags](../core/feature-fl\n-- When removing a flag, remove the legacy branch, flag configuration, obsolete tests, and stale documentation in the same change.\n+- At the major, remove the flag checks, the legacy branch, obsolete tests, and stale documentation in the same change."
+   },
+   {
+    "filename": "coding-guidelines/core/backward-compatibility.md",
+    "status": "added",
+    "additions": 324,
+    "deletions": 0,
+    "patch": "@@ -0,0 +1,324 @@\n+# Backward compatibility\n+## What counts as a break\n+- Judge the change by what a third party can observe, not only by whether a class or method signature changed.\n+- Behaviour, configuration and operations changes count even when every existing call still works: a checkout warning that fires in new situations, a stored value that is written differently, a removed snippet key; a removed config key, a changed default, a new required setting or runtime requirement.\n+- Changes to `@internal` and `@experimental` code, private code, protected members of `@final` classes, and tests are not breaks.\n+## When a break is acceptable\n+1. it is intentional,\n+2. it has been announced through a deprecation,\n+3. it has a clear migration path,\n+4. its ecosystem impact is understood,\n+5. and it only takes effect in the next major version.\n+- Ask first whether an adapter or an additive change delivers the same benefit at lower combined cost.\n+- When usage is significant, keep a forwarding shim or a compatibility path: a forwarding template, a class alias, a delegating decorator, a fallback for the old input.\n+- Unknown usage is not evidence of no impact.\n+- A major version is not automatically a container for breaking changes.\n+- What breaks?\n+- Who is affected?\n+- Can we avoid the break?\n+- What do we do with it: keep, make compatible, postpone, remove from the major, or discuss?\n+## Public API is every extension surface\n+- PHP: classes, interfaces, traits, and public or protected methods, properties and constants that are not `@internal`.\n+- DI: public service ids, service aliases, arguments of supported services, and tags with a required contract.\n+- Events: event classes, names and payloads; extension events with their `NAME` and public properties.\n+- Store API and Admin API: routes, methods, request parameters, response fields, headers, status codes and error codes.\n+- Storefront Twig: template paths, blocks, functions, filters, globals and the variables available in each block scope.\n+- Storefront assets: JS plugins with their names, options and emitted events; JS services and helpers; CSS selectors; SCSS variables and mixins; theme config variables; snippet keys.\n+- Administration: components, props, events, slots, Twig blocks, module routes, `Shopware.*` globals, services, stores and Meteor SDK position identifiers.\n+- App system: the manifest schema, app script hooks and the services available in them, webhook event names and payloads.\n+- Configuration: `shopware.yaml` keys, system config keys, environment variables and their defaults; CLI command names, options and machine-readable output.\n+- Major feature flag names, such as `v6.8.0.0`.\n+- New extension points are the exception, not the default.\n+- Mark implementation classes `@internal` and supported concrete classes `@final` ([internal.md](internal.md#final-classes)).\n+- New Store API routes use extension events, not abstract route classes ([ADR](../../adr/2026-09-24-replace-abstract-route-classes-with-extension-events.md)).\n+### New extension points stay open\n+- Use a registry or tagged services instead of a closed enum or a fixed list of core cases in an interface that third parties implement.\n+- Give plugins the mechanism core uses for its own data: typed request objects and DTOs with `Struct` extensions.\n+- A provider-style extension point lets extensions remove or override core defaults, not only add to them.\n+## Deprecation and announcement\n+- The replacement must exist and be usable from extension code (plugins and apps) when the deprecation is announced.\n+- Executable deprecated code calls `Feature::triggerDeprecationOrThrow()`.\n+- Core never triggers its own deprecations.\n+- Use `@deprecated` only when the symbol goes away or is replaced.\n+- Keep legacy behaviour in focused tests that are deleted together with the deprecation.\n+## Flags and experimental\n+- A flag does not make a change backward compatible.\n+- `@experimental` code is outside the BC promise, but consumers who adopted it still pay for a removal.\n+- Test both flag states while both paths are supported; see [feature-flags.md](feature-flags.md) (\"Using flags in tests\").\n+- Major flag names are public API, because plugins use them as a version switch.\n+- State in the PR, per surface, whether the flag is read at build time or at runtime.\n+## Per-surface rules\n+### PHP\n+- Allowed: change the constructor of a DI service; service constructors are `@internal`.\n+- Allowed: change anything private, `@internal` or `@experimental`.\n+- Allowed: add classes, constants, events and event dispatches; add public methods to `@final` classes.\n+- Allowed: add a non-abstract method to an abstract decorator class that has `getDecorated()` ([decorator-pattern.md](decorator-pattern.md#rules-for-the-decorator-pattern)).\n+- Allowed: add a parameter through `func_get_arg()` and announce it with `#[NewOptionalParameter]` or `#[NewRequiredParameter]`.\n+- Allowed: move a class with `#[ClassMoved]` and a class alias.\n+- Not in a minor: remove or rename a public or protected class, method, property or constant.\n+- Not in a minor: change the value of a public constant.\n+- A private constant may change, but check where its value ends up.\n+- Not in a minor: change a type, visibility, `static` or `final`.\n+- A return type change that is neither a narrowing nor a widening has no BC-change attribute.\n+- Not in a minor: add a method to an interface, or an abstract method to an abstract class.\n+- Not in a minor: remove an event, stop dispatching it, or remove a payload field.\n+- Not in a minor: rename or remove a public service id or alias; keep a deprecated alias.\n+### Events and decorators\n+- Not in a minor: dispatch an existing event at a different point, so that listeners see other data.\n+- Not in a minor: read a value from the input before the extension event that may still change it.\n+- Not in a minor: reset or overwrite what listeners added to a shared object, for example sortings added in a criteria event.\n+- Not in a minor: narrow a type hint from the abstract decorator base to the concrete core class, or branch on the exact class (`$service::class === Foo::class`).\n+- When an existing event starts to fire in more situations, document it in the release notes.\n+### Database\n+- Allowed: add tables, nullable columns, columns with defaults, and indexes in `update()`.\n+- Allowed: add entity fields and associations.\n+- Allowed: add a new column, copy the data, and keep the old column until the major.\n+- Not in a minor: drop or rename a table or column.\n+- Not in a minor: break blue-green deployment.\n+- Not in a minor: remove or rename an entity field, or make an optional field required.\n+- Never: change a released migration, or overwrite customized data ([rules 1 and 5](database-migations.md#important-rules)).\n+### Store and Admin API\n+- Allowed: add routes, optional request parameters and response fields.\n+- Store API route classes and Admin API controllers are not `@internal`; the [PHP rules](#php) apply to them in addition to the route contract.\n+- Allowed: mark a new route `Experimental` in its OpenAPI schema while the feature is experimental.\n+- Not in a minor: remove or rename a route, HTTP method, parameter, header or response field.\n+- Not in a minor: add a required parameter, or narrow the accepted values.\n+- Not in a minor: change a field type, its nullability, or the response shape.\n+- Not in a minor: change status codes or error codes that clients branch on.\n+- Not in a minor: change defaults that alter results, such as sorting, limits, loaded associations or write scopes.\n+- Never: add or change a core route without its OpenAPI schema.\n+#### Schema precision\n+- Mark every response field that is always sent as `required`, even when its value can be empty.\n+- Use `enum` or `const` for fixed values.\n+- Describe what each field means and when it is present, and update the description when the meaning changes.\n+- Define every error response a route can return, with its status code.\n+- State whether a parameter is read from the query, the body or a header, and let a schema pattern accept exactly the values the server accepts.\n+- Mark a deprecated route or field as `deprecated` in the schema.\n+### Storefront (Twig, JS, SCSS)\n+- Allowed: add templates, blocks that do not change variable scope, variables, JS plugins, plugin options with defaults, and events.\n+- Allowed: change a Twig variable's value while keeping its type; move a variable definition up to an outer block.\n+- Allowed: change purely visual CSS properties.\n+- Change generic Bootstrap selectors and the properties of generic Bootstrap classes only for small visual fixes.\n+- Allowed: change `@private` JS members freely; they are not a public contract.\n+- Not in a minor: remove, rename or move a Twig block; any move breaks theme overrides.\n+- Not in a minor: wrap existing content in a new block that changes the scope of variables.\n+- Not in a minor: remove or rename Twig variables, functions, filters or templates, or change a variable's type.\n+- Not in a minor: remove HTML sections, or move them into another block.\n+- Not in a minor: rename or remove JS plugins, services, helpers, public methods, options or events, or change event parameters.\n+- Not in a minor: rename or remove CSS selectors (including `is--*`), SCSS variables, mixins, theme variables or snippet keys.\n+- Not in a minor: change structural CSS properties: `display`, `position`, `visibility`, `z-index`, `pointer-events`, `overflow`, `transform`.\n+### Administration\n+- Allowed: add components, optional props with defaults, slots, blocks, events and methods.\n+- Allowed: add optional trailing parameters, or new keys to a destructured object parameter.\n+- Allowed: change `@private` and `_`-prefixed members freely ([ADR](../../adr/2026-08-10-administration-javascript-deprecation-guards.md)).\n+- Not in a minor: rename or remove components, props, slots, Twig blocks, events, methods, module routes or route parameters.\n+- Not in a minor: add a required prop.\n+- Not in a minor: change `ref` attributes, `v-if`, `v-model` or `v-bind` bindings that overrides rely on.\n+- Not in a minor: change the public API of `Shopware.*`, registered services or stores.\n+- Not in a minor: rename or remove position identifiers, assets or imports, functional selectors or root CSS selectors.\n+- Not in a minor: stop calling a method or service that plugins override, for example by switching core to a new method or by ignoring an argument of a documented call signature.\n+- Mark new components, services and methods `@private` until their API is meant to be public.\n+- Put logic in methods or computed properties, not in template expressions, so that overrides can change it through `$super`.\n+### App system\n+- Allowed: add optional manifest elements and attributes.\n+- Allowed: add webhooks, app script hooks, script services and service methods.\n+- Not in a minor: add a required manifest element, or remove or rename an element.\n+- Not in a minor: make manifest validation stricter for existing apps.\n+- Not in a minor: remove or rename webhook events or payload fields.\n+- Not in a minor: remove or rename app script hooks, script services or their methods.\n+- Not in a minor: change install, update or uninstall behaviour that apps rely on, such as custom field identity or precedence.\n+- Keep one manifest working on the current and the next major.\n+### Configuration and operations\n+- Allowed: add config keys, environment variables and CLI options whose defaults keep the current behaviour.\n+- Add every new `shopware.yaml` key to `config-schema.json` and declare its default in the shipped package configuration, not only in the test configuration.\n+- Not in a minor: remove or rename a config key or environment variable.\n+- Not in a minor: change a default that changes behaviour.\n+- Not in a minor: require new infrastructure or setup, such as a new messenger transport to consume or a database setting.\n+- Not in a minor: rename or remove CLI commands, options or machine-readable output fields, change exit codes, or make an existing invocation fail or behave differently.\n+- Raising the minimum PHP, database or search engine version is a hosting requirement change: announce it in `RELEASE_INFO` at least one minor ahead and document it in the system requirements; never ship it silently.\n+- A new scheduled task changes what runs in every shop.\n+## Enforced by CI\n+## Documenting a break"
+   },
+   {
+    "filename": "coding-guidelines/core/database-migations.md",
+    "status": "modified",
+    "additions": 1,
+    "deletions": 1,
+    "patch": "@@ -33,7 +33,7 @@ The migration consists of two separated steps: `update` and `updateDestructive`."
+   },
+   {
+    "filename": "coding-guidelines/core/feature-flags.md",
+    "status": "modified",
+    "additions": 11,
+    "deletions": 10,
+    "patch": "@@ -2,7 +2,7 @@\n@@ -33,23 +33,24 @@ Omit `major` unless the flag is a sub-feature; in that case, set it to the paren\n@@ -263,13 +264,13 @@ class ProductTest\n ```\n ```php\n@@ -321,7 +322,7 @@ When you want to toggle different parts of the template you can use the flag in\n ```xml\n@@ -364,7 +365,7 @@ Among other things, by adding your own flags, but also the use of the major feat"
+   },
+   {
+    "filename": "coding-guidelines/core/http-cache-and-assets.md",
+    "status": "added",
+    "additions": 53,
+    "deletions": 0,
+    "patch": "@@ -0,0 +1,53 @@\n+# HTTP cache and assets\n+## Cached responses reference assets\n+## Grace periods start at the reference change\n+## Cleanup stays asynchronous\n+## Invalidate what you change\n+## Change caching through its policy\n+## Cache keys contain every input, tags stay few"
+   }
+  ]
+ }
+}

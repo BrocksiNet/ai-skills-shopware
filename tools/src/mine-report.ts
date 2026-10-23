@@ -169,6 +169,7 @@ function commitsSection(mined: Mined[], keptBySha: Set<string>): string[] {
       '',
       `### ${m.source.id}`,
       '',
+      ...(m.note === undefined ? [] : [`Note: ${m.note}.`, '']),
       ...(read.length === 0
         ? ['No commit with a delta.']
         : read.map(
