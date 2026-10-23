@@ -3287,12 +3287,11 @@
     {
       "id": "ADM-006",
       "skill": "sw-admin-js",
-      "file": "skills/sw-admin-js/SKILL.md",
+      "file": "skills/sw-admin-js/references/architecture.md",
       "title": "Follow the patterns of the area you touch",
       "status": "active",
       "since": "2026-10-20",
-      "eval": null,
-      "eval_reason": "Documented only; no eval yet.",
+      "eval": "review-admin-area-pattern-catch",
       "core_guide_ids": [],
       "audience": [
         "core",

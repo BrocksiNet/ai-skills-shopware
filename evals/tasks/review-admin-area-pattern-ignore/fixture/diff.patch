@@ -1,0 +1,66 @@
+diff --git a/src/Resources/app/administration/src/module/swag-loyalty/component/swag-loyalty-settings/index.js b/src/Resources/app/administration/src/module/swag-loyalty/component/swag-loyalty-settings/index.js
+index 4c8e2a1..7d3f9b5 100644
+--- a/src/Resources/app/administration/src/module/swag-loyalty/component/swag-loyalty-settings/index.js
++++ b/src/Resources/app/administration/src/module/swag-loyalty/component/swag-loyalty-settings/index.js
+@@ -1,13 +1,15 @@
+ import template from './swag-loyalty-settings.html.twig';
+ import SwagLoyaltyTierHint from './swag-loyalty-tier-hint.vue';
++import SwagLoyaltyPointsPreview from './swag-loyalty-points-preview.vue';
+
+ const { Component, Mixin } = Shopware;
+
+ Component.register('swag-loyalty-settings', {
+     template,
+
+     components: {
+         SwagLoyaltyTierHint,
++        SwagLoyaltyPointsPreview,
+     },
+
+     inject: ['systemConfigApiService'],
+
+diff --git a/src/Resources/app/administration/src/module/swag-loyalty/component/swag-loyalty-settings/swag-loyalty-settings.html.twig b/src/Resources/app/administration/src/module/swag-loyalty/component/swag-loyalty-settings/swag-loyalty-settings.html.twig
+index 9a0d5e3..c2f7b18 100644
+--- a/src/Resources/app/administration/src/module/swag-loyalty/component/swag-loyalty-settings/swag-loyalty-settings.html.twig
++++ b/src/Resources/app/administration/src/module/swag-loyalty/component/swag-loyalty-settings/swag-loyalty-settings.html.twig
+@@ -29,6 +29,10 @@
+     <swag-loyalty-tier-hint />
+     {% endblock %}
+
++    {% block swag_loyalty_settings_preview %}
++    <swag-loyalty-points-preview :settings="settings" />
++    {% endblock %}
++
+     {% block swag_loyalty_settings_actions %}
+     <sw-button
+         variant="primary"
+diff --git a/src/Resources/app/administration/src/module/swag-loyalty/component/swag-loyalty-settings/swag-loyalty-points-preview.vue b/src/Resources/app/administration/src/module/swag-loyalty/component/swag-loyalty-settings/swag-loyalty-points-preview.vue
+new file mode 100644
+index 0000000..5d1e8a2
+--- /dev/null
++++ b/src/Resources/app/administration/src/module/swag-loyalty/component/swag-loyalty-settings/swag-loyalty-points-preview.vue
+@@ -0,0 +1,27 @@
++<template>
++    <sw-card :title="$tc('swag-loyalty.settings.previewTitle')">
++        <p class="swag-loyalty-points-preview__example">
++            {{ $tc('swag-loyalty.settings.previewExample', 0, { points: examplePoints }) }}
++        </p>
++    </sw-card>
++</template>
++
++<script>
++export default {
++    props: {
++        settings: {
++            type: Object,
++            required: true,
++        },
++    },
++
++    computed: {
++        examplePoints() {
++            return Math.floor(100 * this.settings.pointsPerEuro);
++        },
++    },
++};
++</script>
