@@ -1,0 +1,16 @@
+The class-level attribute describes the change the class undergoes.
+
+```json
+{
+  "findings": [
+    {
+      "rule_id": "CORE-011",
+      "severity": "minor",
+      "file": "src/Core/Content/Product/SalesChannel/Price/ProductPriceCalculator.php",
+      "line": 10,
+      "summary": "Use BecomesFinal for the class becoming final, not the generic hierarchy attribute.",
+      "fix": "Replace ClassHierarchyChange with BecomesFinal."
+    }
+  ]
+}
+```

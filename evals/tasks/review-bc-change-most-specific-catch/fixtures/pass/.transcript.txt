@@ -1,0 +1,16 @@
+The class becomes final in v6.8.0, which breaks subclasses. `BecomesFinal` names that change; `ClassHierarchyChange` is the broader attribute.
+
+```json
+{
+  "findings": [
+    {
+      "rule_id": "CORE-014",
+      "severity": "minor",
+      "file": "src/Core/Content/Product/SalesChannel/Price/ProductPriceCalculator.php",
+      "line": 10,
+      "summary": "ClassHierarchyChange is too general for a class that becomes final; use the most specific attribute, BecomesFinal.",
+      "fix": "Replace #[ClassHierarchyChange(version: 'v6.8.0')] with #[BecomesFinal(version: 'v6.8.0')]."
+    }
+  ]
+}
+```

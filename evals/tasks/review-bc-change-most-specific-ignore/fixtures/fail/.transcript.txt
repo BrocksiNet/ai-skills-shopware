@@ -1,0 +1,16 @@
+The class-level attribute looks wrong to me.
+
+```json
+{
+  "findings": [
+    {
+      "rule_id": null,
+      "severity": "minor",
+      "file": "src/Core/Content/Product/SalesChannel/Price/ProductPriceCalculator.php",
+      "line": 10,
+      "summary": "BecomesFinal is the wrong attribute here; ClassHierarchyChange describes this change better.",
+      "fix": "Use ClassHierarchyChange instead."
+    }
+  ]
+}
+```
