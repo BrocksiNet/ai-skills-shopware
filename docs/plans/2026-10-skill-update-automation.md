@@ -340,8 +340,28 @@ enough good PRs to trust it.
 | 4 | `suggest-rules` command | 3 | M | local |
 | 5 | `suggest-rules draft` | 4 | L | local |
 
+Each phase includes its documentation; see [Documentation](#documentation).
+
 Phases 1 and 2 can ship in one release. Phase 0 decides the filter
 thresholds of phase 3 before any code is written.
+
+## Documentation
+
+A phase is done only when its docs describe what was built, not what was
+planned. Each phase updates the docs in the same pull request as the code:
+
+| Phase | Docs to update |
+| ----- | -------------- |
+| 1 | `docs/maintenance.md`: the "Planned: upstream skill sets" section becomes "What runs today", with the source list and how to add a source. README "Trunk mining" paragraph: one job, many sources. |
+| 2 | `docs/maintenance.md`: how to read the drift issue grouped by skill and rule, and what "unmapped" means. `AGENTS.md`: fill `upstream` or `trunk.source` when adding a rule, so the mapper finds it. `rules/catalog.schema.json` describes `upstream`. |
+| 3 | `docs/maintenance.md`: the review collector, what it keeps and drops, where the `review-signals` release is, and how to download a month. The flowchart gets the daily path. |
+| 4 | A new section "Suggesting rule changes" in `docs/maintenance.md`: the command, its options, the proposal format, how to judge a proposal against the five criteria, and the retirement evidence. `AGENTS.md` "Repository layout" and "Adding or changing a rule" point to it. |
+| 5 | `docs/maintenance.md` "How a change lands": the drafted-PR path next to the manual one, the checks it runs, and what a reviewer looks at before merging. `AGENTS.md` lists the draft command. |
+
+After phase 5, `docs/maintenance.md` explains the whole process end to end
+in one place: sources, signals, mapping, suggestions, drafts, gate and
+merge. This plan then gets status **done** and links to that page instead
+of repeating it.
 
 ## Open questions
 
