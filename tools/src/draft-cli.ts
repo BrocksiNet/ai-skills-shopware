@@ -4,7 +4,9 @@ import { resolve } from 'node:path';
 import { OPENCODE_FREE_MODEL } from './agents.ts';
 import { editor } from './draft-agent.ts';
 import { exec, FREE_CHECKS, PREPARE } from './draft-checks.ts';
+import { type DraftSubject, evalSubject } from './draft-prompt.ts';
 import { draft, type DraftResult } from './draft-run.ts';
+import { loadCatalog } from './catalog.ts';
 import { envInt, envOr } from './env.ts';
 import { evalLocal } from './eval-local.ts';
 import { SUGGESTIONS_DIR } from './suggest-run.ts';
@@ -25,6 +27,7 @@ export function draftSummary(r: DraftResult): string {
   if (r.tasks.length > 0)
     lines.push(`  A/B tasks: ${r.tasks.join(', ')}${r.ab?.file === undefined ? '' : ` (${r.ab.file})`}`);
   if (r.pr !== undefined) lines.push(`  PR: ${r.pr}`);
+  else if (r.status === 'no-improvement') lines.push('  no PR: no task improved with the skill on');
   else if (r.status !== 'agent-error') lines.push(`  worktree: ${r.worktree}`);
   return `${lines.join('\n')}\n`;
 }
@@ -32,7 +35,7 @@ export function draftSummary(r: DraftResult): string {
 export function draftCommand(
   root: string,
   id: string,
-  flags: DraftFlags,
+  flags: DraftFlags & { subject?: DraftSubject },
   env: NodeJS.ProcessEnv,
   log: (t: string) => void,
 ): Promise<DraftResult> {
@@ -53,6 +56,19 @@ export function draftCommand(
     repeats: envInt(env, 'DRAFT_REPEATS', 3, 1),
     evalLocal,
     ...(flags.worktree === undefined ? {} : { worktree: flags.worktree }),
+    ...(flags.subject === undefined ? {} : { subject: flags.subject }),
     log,
   });
+}
+
+/** `draft-eval RULE`: an eval for a rule that has none, through the draft pipeline. */
+export function draftEvalCommand(
+  root: string,
+  rule: string,
+  flags: DraftFlags,
+  env: NodeJS.ProcessEnv,
+  log: (t: string) => void,
+): Promise<DraftResult> {
+  const subject = evalSubject(root, loadCatalog(root), rule);
+  return draftCommand(root, subject.id, { ...flags, subject }, env, log);
 }

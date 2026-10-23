@@ -7,11 +7,11 @@ import { cpSync, existsSync, mkdirSync, readFileSync, writeFileSync } from 'node
 import { join } from 'node:path';
 import { describe, test } from 'node:test';
 import { editor } from '../src/draft-agent.ts';
-import { branchName } from '../src/draft-prompt.ts';
+import { branchName, evalSubject } from '../src/draft-prompt.ts';
 import { draft, type DraftOptions } from '../src/draft-run.ts';
 import { FAKE_TASK } from '../src/fake-draft.ts';
 import { run } from '../src/proc.ts';
-import { FAKE, proposal, ROOT, scratch } from './suggest-fixture.ts';
+import { FAKE, proposal, realCatalog, ROOT, scratch } from './suggest-fixture.ts';
 
 const tmp = scratch();
 const repo = join(tmp, 'repo');
@@ -70,10 +70,10 @@ const stubbed: DraftOptions['x'] = (cmd, args, o) => {
   return run(cmd, args, o);
 };
 
-const result = (task: string): string =>
-  `${JSON.stringify({ task, repeats: 1, on: 1, off: 0, on_done: 1, off_done: 1, verdict: 'improved' })}\n`;
+const result = (task: string, verdict = 'improved'): string =>
+  `${JSON.stringify({ task, repeats: 1, on: 1, off: verdict === 'improved' ? 0 : 1, on_done: 1, off_done: 1, verdict })}\n`;
 
-function options(id: string, mode: string, noPr = true): DraftOptions {
+function options(id: string, mode: string, noPr = true, verdict = 'improved'): DraftOptions {
   return {
     root: repo,
     id,
@@ -93,7 +93,7 @@ function options(id: string, mode: string, noPr = true): DraftOptions {
         o.env.EVAL_RESULTS ?? '',
         (o.env.EVAL_TASKS ?? '')
           .split(',')
-          .map((t) => result(t))
+          .map((t) => result(t, verdict))
           .join(''),
       );
       return Promise.resolve(0);
@@ -153,5 +153,47 @@ describe('suggest-rules draft', async () => {
   test('names the branch after the skill and the title', () => {
     const s = { ...proposal({ title: 'Keep history out of comments!' }), id: 'x', cluster: '', checks: [] };
     assert.equal(branchName({ ...s, ok: true, private: false }), 'rules/review-learnings-keep-history-out-of-comments');
+  });
+});
+
+const logged = (): unknown[] =>
+  readFileSync(join(dir, 'evals.jsonl'), 'utf8')
+    .trim()
+    .split('\n')
+    .map((l): unknown => JSON.parse(l));
+
+describe('suggest-rules draft-eval', () => {
+  const catalog = realCatalog();
+  const [first, second] = catalog.rules.filter((r) => r.status === 'active' && r.eval === null);
+  const withEval = catalog.rules.find((r) => r.status === 'active' && r.eval !== null);
+  if (first === undefined || second === undefined || withEval === undefined) throw new Error('catalog fixture');
+  const evalOptions = (rule: string, verdict: string): DraftOptions => ({
+    ...options(`eval-${rule}`, 'ok', false, verdict),
+    subject: evalSubject(ROOT, catalog, rule),
+  });
+  test('only a rule without an eval gets one', () => {
+    assert.throws(() => evalSubject(ROOT, catalog, withEval.id), /already has the eval/u);
+    assert.throws(() => evalSubject(ROOT, catalog, 'XYZ-999'), /is not in/u);
+    const s = evalSubject(ROOT, catalog, first.id);
+    assert.equal(branchName(s), `evals/${first.skill.replace(/^sw-/u, '')}-${first.id.toLowerCase()}`);
+  });
+  test('opens a PR when a task improved, and logs it', async () => {
+    calls.length = 0;
+    const r = await draft(evalOptions(first.id, 'improved'));
+    assert.equal(r.status, 'pr-opened');
+    const gh = calls[1] ?? [];
+    assert.equal(gh[gh.indexOf('--title') + 1], `test(${first.skill}): eval for ${first.id}`);
+    assert.match(r.body ?? '', /draft-eval/u);
+    assert.match(JSON.stringify(logged().at(-1)), new RegExp(`"rule":"${first.id}".*"status":"pr-opened"`, 'u'));
+    assert.match(JSON.stringify(logged().at(-1)), /"pr":"https:\/\/github.com\/o\/r\/pull\/7"/u);
+  });
+  test('opens no PR when nothing improved, and drops the worktree and branch', async () => {
+    calls.length = 0;
+    const r = await draft(evalOptions(second.id, 'held'));
+    assert.equal(r.status, 'no-improvement');
+    assert.equal(calls.length, 0);
+    assert.equal(existsSync(r.worktree), false);
+    assert.equal(await git(['branch', '--list', r.branch]), '');
+    assert.match(JSON.stringify(logged().at(-1)), /"status":"no-improvement"/u);
   });
 });
