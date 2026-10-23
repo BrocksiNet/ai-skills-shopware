@@ -1,0 +1,39 @@
+diff --git a/src/Core/System/SalesChannel/Context/SalesChannelContextPersister.php b/src/Core/System/SalesChannel/Context/SalesChannelContextPersister.php
+--- a/src/Core/System/SalesChannel/Context/SalesChannelContextPersister.php
++++ b/src/Core/System/SalesChannel/Context/SalesChannelContextPersister.php
+@@ @@
++        if (!isset($payload[SalesChannelContextService::CUSTOMER_ID])
++            && \is_string($context['customer_id'] ?? null)
++            && $context['customer_id'] !== ''
++        ) {
++            $payload[SalesChannelContextService::CUSTOMER_ID] = Uuid::fromBytesToHex($context['customer_id']);
++        }
++
+diff --git a/tests/integration/Core/System/SalesChannel/Context/SalesChannelContextPersisterTest.php b/tests/integration/Core/System/SalesChannel/Context/SalesChannelContextPersisterTest.php
+--- a/tests/integration/Core/System/SalesChannel/Context/SalesChannelContextPersisterTest.php
++++ b/tests/integration/Core/System/SalesChannel/Context/SalesChannelContextPersisterTest.php
+@@ @@
++    public function testLoadPromotesCustomerIdFromColumnWhenMissingInPayload(): void
++    {
++        $token = Random::getAlphanumericString(32);
++        $customerId = $this->createCustomer();
++
++        $this->connection->insert('sales_channel_api_context', [
++            'token' => $token,
++            'payload' => json_encode([], \JSON_THROW_ON_ERROR),
++            'sales_channel_id' => Uuid::fromHexToBytes(TestDefaults::SALES_CHANNEL),
++            'customer_id' => Uuid::fromHexToBytes($customerId),
++            'updated_at' => (new \DateTimeImmutable())->format(Defaults::STORAGE_DATE_TIME_FORMAT),
++        ]);
+diff --git a/tests/unit/Core/System/SalesChannel/Context/SalesChannelContextPersisterTest.php b/tests/unit/Core/System/SalesChannel/Context/SalesChannelContextPersisterTest.php
+--- a/tests/unit/Core/System/SalesChannel/Context/SalesChannelContextPersisterTest.php
++++ b/tests/unit/Core/System/SalesChannel/Context/SalesChannelContextPersisterTest.php
+@@ @@
++use Shopware\Core\System\SalesChannel\Context\SalesChannelContextService;
+-            ['type' => 'customer', 'expired' => false, 'token' => $customerToken],
++            [
++                'type' => 'customer',
++                'expired' => false,
++                'token' => $customerToken,
++                SalesChannelContextService::CUSTOMER_ID => $customerId,
++            ],

@@ -1,0 +1,12 @@
+{
+  "repo": "shopware/shopware",
+  "pr": 20739,
+  "title": "fix(api): align Store API request bodies with the actual validation",
+  "url": "https://github.com/shopware/shopware/pull/20739",
+  "expected": {
+    "sw-core-development/references/api-schema.md": [
+      "https://github.com/shopware/shopware/pull/20739#discussion_r4082443321",
+      "https://github.com/shopware/shopware/pull/20739#discussion_r4092917821"
+    ]
+  }
+}

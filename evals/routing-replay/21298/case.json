@@ -1,0 +1,11 @@
+{
+  "repo": "shopware/shopware",
+  "pr": 21298,
+  "title": "fix(storefront): wrap long words in the product description",
+  "url": "https://github.com/shopware/shopware/pull/21298",
+  "expected": {
+    "sw-storefront/references/twig-and-theme.md": [
+      "https://github.com/shopware/shopware/pull/21298#discussion_r4218627736"
+    ]
+  }
+}

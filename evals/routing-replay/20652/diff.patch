@@ -1,0 +1,49 @@
+diff --git a/.agents/skills/shopware-phpunit-tests/SKILL.md b/.agents/skills/shopware-phpunit-tests/SKILL.md
+--- a/.agents/skills/shopware-phpunit-tests/SKILL.md
++++ b/.agents/skills/shopware-phpunit-tests/SKILL.md
+@@ @@
++- When a test explicitly verifies that a behavior throws while a major feature flag is active, mark that test method `@deprecated tag:vX.Y.0` and state that it is removed with the corresponding feature flag. This makes temporary major-mode assertions discoverable and removable with the deprecated behavior.
+diff --git a/src/Core/DevOps/StaticAnalyze/PHPStan/Rules/Deprecation/DeprecatedMethodsThrowDeprecationRule.php b/src/Core/DevOps/StaticAnalyze/PHPStan/Rules/Deprecation/DeprecatedMethodsThrowDeprecationRule.php
+--- a/src/Core/DevOps/StaticAnalyze/PHPStan/Rules/Deprecation/DeprecatedMethodsThrowDeprecationRule.php
++++ b/src/Core/DevOps/StaticAnalyze/PHPStan/Rules/Deprecation/DeprecatedMethodsThrowDeprecationRule.php
+@@ @@
+-        // Only the route on controller will be removed
+-        'reason:remove-route',
+diff --git a/src/Storefront/Controller/CountryStateController.php b/src/Storefront/Controller/CountryStateController.php
+--- a/src/Storefront/Controller/CountryStateController.php
++++ b/src/Storefront/Controller/CountryStateController.php
+@@ @@
++use Shopware\Core\Framework\Feature;
+-     * @deprecated tag:v6.8.0 - reason:remove-route - Remove POST request and use GET instead only
++     * @deprecated tag:v6.8.0 - Remove POST request and use GET instead only
++        if ($request->isMethod(Request::METHOD_POST)) {
++            Feature::triggerDeprecationOrThrow(
++                'v6.8.0.0',
++                'The POST request to /country/country-state-data is deprecated and will be removed in v6.8.0.0. Use a GET request instead.'
++            );
++        }
++
+diff --git a/tests/devops/Core/DevOps/StaticAnalyse/PHPStan/Rules/data/DeprecatedMethodsThrowDeprecationRule/DeprecatedMethods.php b/tests/devops/Core/DevOps/StaticAnalyse/PHPStan/Rules/data/DeprecatedMethodsThrowDeprecationRule/DeprecatedMethods.php
+--- a/tests/devops/Core/DevOps/StaticAnalyse/PHPStan/Rules/data/DeprecatedMethodsThrowDeprecationRule/DeprecatedMethods.php
++++ b/tests/devops/Core/DevOps/StaticAnalyse/PHPStan/Rules/data/DeprecatedMethodsThrowDeprecationRule/DeprecatedMethods.php
+@@ @@
+-     * @deprecated tag:v6.8.0 - reason:remove-command reason:remove-interface reason:remove-phpstan-rule reason:remove-getter-setter reason:blue-green-deployment reason:decoration-will-be-removed reason:remove-constraint-annotation reason:factory-for-deprecation
++     * @deprecated tag:v6.8.0 - reason:remove-command reason:remove-interface reason:remove-phpstan-rule reason:remove-getter-setter reason:blue-green-deployment reason:decoration-will-be-removed reason:remove-constraint-annotation reason:factory-for-deprecation reason:remove-route
+diff --git a/tests/unit/Storefront/Controller/CountryStateControllerTest.php b/tests/unit/Storefront/Controller/CountryStateControllerTest.php
+--- a/tests/unit/Storefront/Controller/CountryStateControllerTest.php
++++ b/tests/unit/Storefront/Controller/CountryStateControllerTest.php
+@@ @@
++use Shopware\Core\Framework\Feature\FeatureException;
++use Shopware\Core\Test\Annotation\DisabledFeatures;
++    #[DisabledFeatures(['v6.8.0.0'])]
+-        $request = new Request([], ['countryId' => 'post-country-id']);
++        $request = Request::create('/country/country-state-data', Request::METHOD_POST, ['countryId' => 'post-country-id']);
++    /**
++     * @deprecated tag:v6.8.0 - Remove when the v6.8.0.0 feature flag is removed
++     */
++    public function testGetCountryDataThrowsForPostRequestsWhenV6800IsActive(): void
++    {
++        $this->pageletLoader->expects($this->never())
++            ->method('load');
++
++        $this->expectExceptionObject(FeatureException::error(

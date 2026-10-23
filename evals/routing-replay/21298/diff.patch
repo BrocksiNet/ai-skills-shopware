@@ -1,0 +1,8 @@
+diff --git a/src/Storefront/Resources/app/storefront/src/scss/page/product-detail/_tabs.scss b/src/Storefront/Resources/app/storefront/src/scss/page/product-detail/_tabs.scss
+--- a/src/Storefront/Resources/app/storefront/src/scss/page/product-detail/_tabs.scss
++++ b/src/Storefront/Resources/app/storefront/src/scss/page/product-detail/_tabs.scss
+@@ @@
++.product-detail-description {
++    overflow-wrap: anywhere;
++}
++

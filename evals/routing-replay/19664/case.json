@@ -1,0 +1,14 @@
+{
+  "repo": "shopware/shopware",
+  "pr": 19664,
+  "title": "fix: honor REST indexing behavior header",
+  "url": "https://github.com/shopware/shopware/pull/19664",
+  "expected": {
+    "sw-testing/references/core-platform-patterns.md": [
+      "https://github.com/shopware/shopware/pull/19664#discussion_r3922623573"
+    ],
+    "sw-testing/references/integration-repository.md": [
+      "https://github.com/shopware/shopware/pull/19664#discussion_r3922623573"
+    ]
+  }
+}

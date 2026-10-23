@@ -1,0 +1,16 @@
+diff --git a/.github/workflows/visual-tests-docker.yml b/.github/workflows/visual-tests-docker.yml
+--- a/.github/workflows/visual-tests-docker.yml
++++ b/.github/workflows/visual-tests-docker.yml
+@@ @@
++      full-rebaseline:
++        description: "Rebaseline ALL snapshots (deliberate full revamp only; the default updates only changed snapshots)"
++        type: boolean
++        default: false
++      full-rebaseline:
++        description: "Rebaseline ALL snapshots (deliberate full revamp only; the default updates only changed snapshots)"
++        type: boolean
++        default: false
+-          UPDATE_SNAPSHOTS: ${{ inputs.update-snapshots && '--update-snapshots=all' || '--update-snapshots=none' }}
++          # `changed` only rewrites snapshots that fail the comparison, so scheduled
++          # runs stop rebaselining every screen with sub-perceptual antialiasing drift.
++          # Real UI changes still fail and update; missing snapshots are still created.

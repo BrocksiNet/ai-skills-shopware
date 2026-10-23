@@ -1,0 +1,30 @@
+{
+  "repo": "shopware/shopware",
+  "pr": 21326,
+  "title": "fix(core): dispatch ProductNoLongerAvailableEvent only for products that became unavailable",
+  "url": "https://github.com/shopware/shopware/pull/21326",
+  "expected": {
+    "sw-architecture/references/progressive-enhancement.md": [
+      "https://github.com/shopware/shopware/pull/21326#discussion_r4206228914"
+    ],
+    "sw-core-development/references/deprecations.md": [
+      "https://github.com/shopware/shopware/pull/21326#discussion_r4206228914"
+    ],
+    "sw-core-development/references/modernization-and-flags.md": [
+      "https://github.com/shopware/shopware/pull/21326#discussion_r4206228914"
+    ],
+    "sw-core-development/references/release-notes-and-adr.md": [
+      "https://github.com/shopware/shopware/pull/21326#discussion_r4214918782",
+      "https://github.com/shopware/shopware/pull/21326#discussion_r4246331324"
+    ],
+    "sw-core-development/references/removals-and-shims.md": [
+      "https://github.com/shopware/shopware/pull/21326#discussion_r4206228914"
+    ],
+    "sw-plugin-development/references/version-compatibility.md": [
+      "https://github.com/shopware/shopware/pull/21326#discussion_r4206228914"
+    ],
+    "sw-review-learnings/references/code-comments.md": [
+      "https://github.com/shopware/shopware/pull/21326#discussion_r4206228914"
+    ]
+  }
+}

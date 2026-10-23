@@ -1,0 +1,11 @@
+{
+  "repo": "shopware/shopware",
+  "pr": 19757,
+  "title": "fix(administration): keep sw tabs legacy in 6.8",
+  "url": "https://github.com/shopware/shopware/pull/19757",
+  "expected": {
+    "sw-admin-js/references/flags-and-modern-web.md": [
+      "https://github.com/shopware/shopware/pull/19757#discussion_r3879374832"
+    ]
+  }
+}

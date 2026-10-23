@@ -1,0 +1,26 @@
+diff --git a/src/Core/Framework/Mcp/Command/DebugMcpCommand.php b/src/Core/Framework/Mcp/Command/DebugMcpCommand.php
+--- a/src/Core/Framework/Mcp/Command/DebugMcpCommand.php
++++ b/src/Core/Framework/Mcp/Command/DebugMcpCommand.php
+@@ @@
+-        $required = \is_array($tool->inputSchema['required']) ? $tool->inputSchema['required'] : [];
++        // the SDK's SchemaGenerator omits the 'required' key when no parameter is required,
++        // and third-party registrations may carry a non-array value there
++        // @phpstan-ignore nullCoalesce.unnecessary (the ToolInputSchema type alias claims the key always exists, contrary to the SchemaGenerator output)
++        $required = \is_array($tool->inputSchema['required'] ?? null) ? $tool->inputSchema['required'] : [];
+diff --git a/tests/unit/Core/Framework/Mcp/Command/DebugMcpCommandTest.php b/tests/unit/Core/Framework/Mcp/Command/DebugMcpCommandTest.php
+--- a/tests/unit/Core/Framework/Mcp/Command/DebugMcpCommandTest.php
++++ b/tests/unit/Core/Framework/Mcp/Command/DebugMcpCommandTest.php
+@@ @@
++    /**
++     * @return iterable<string, array{array<string, mixed>}>
++     */
++    public static function malformedRequiredSchemaProvider(): iterable
++    {
++        yield 'required key omitted, as the SDK SchemaGenerator does when no parameter is required' => [
++            ['type' => 'object', 'properties' => ['limit' => ['type' => 'integer']]],
++        ];
++
++        yield 'required value is not an array, as unvalidated third-party registrations may carry' => [
++            ['type' => 'object', 'properties' => ['limit' => ['type' => 'integer']], 'required' => 'invalid'],
++        ];
++    #[DataProvider('malformedRequiredSchemaProvider')]

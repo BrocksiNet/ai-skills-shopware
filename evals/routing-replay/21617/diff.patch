@@ -1,0 +1,53 @@
+diff --git a/src/Administration/Resources/app/administration/src/module/sw-product-stream/component/sw-product-stream-value/index.js b/src/Administration/Resources/app/administration/src/module/sw-product-stream/component/sw-product-stream-value/index.js
+--- a/src/Administration/Resources/app/administration/src/module/sw-product-stream/component/sw-product-stream-value/index.js
++++ b/src/Administration/Resources/app/administration/src/module/sw-product-stream/component/sw-product-stream-value/index.js
+@@ @@
+-            if (this.isProductEntity) {
+-                return this.productCriteria;
+-            }
+-
+-            const criteria = new Criteria(1, 25);
++            const criteria = this.isProductEntity ? Criteria.fromCriteria(this.productCriteria) : new Criteria(1, 25);
+-                criteria.addQuery(Criteria.contains('name', this.searchTerm), 500);
++                this.customFieldLabelProperties.forEach((labelProperty) => {
++                    criteria.addQuery(Criteria.contains(labelProperty, this.searchTerm), 500);
++                });
++        customFieldLabelProperty() {
++            return this.fieldDefinition?.config?.labelProperty ?? 'name';
++        },
++
+diff --git a/src/Administration/Resources/app/administration/src/module/sw-product-stream/component/sw-product-stream-value/sw-product-stream-value.custom-field-label.spec.ts b/src/Administration/Resources/app/administration/src/module/sw-product-stream/component/sw-product-stream-value/sw-product-stream-value.custom-field-label.spec.ts
+--- /dev/null
++++ b/src/Administration/Resources/app/administration/src/module/sw-product-stream/component/sw-product-stream-value/sw-product-stream-value.custom-field-label.spec.ts
+@@ @@
++/**
++ * @sw-package inventory
++ */
++import { mount, type VueWrapper } from '@vue/test-utils';
++import type { Entity } from '@shopware-ag/meteor-admin-sdk/es/_internals/data/Entity';
++import EntityCollection from 'src/core/data/entity-collection.data';
++import Criteria from 'src/core/data/criteria.data';
++
++const manufacturer = {
++    id: '018f5f4e8c1a70c58f3b2d6e9a4c7b10',
++    name: 'Manufacturer',
++    description: 'Location A',
++            ? new EntityCollection('/test', 'customer', Shopware.Context.api, new Criteria(), [customer])
++            : new EntityCollection('/test', 'product_manufacturer', Shopware.Context.api, new Criteria(), [manufacturer]);
++        await flushPromises();
++        await flushPromises();
++        await flushPromises();
+diff --git a/src/Administration/Resources/app/administration/src/module/sw-product-stream/component/sw-product-stream-value/sw-product-stream-value.html.twig b/src/Administration/Resources/app/administration/src/module/sw-product-stream/component/sw-product-stream-value/sw-product-stream-value.html.twig
+--- a/src/Administration/Resources/app/administration/src/module/sw-product-stream/component/sw-product-stream-value/sw-product-stream-value.html.twig
++++ b/src/Administration/Resources/app/administration/src/module/sw-product-stream/component/sw-product-stream-value/sw-product-stream-value.html.twig
+@@ @@
+-                :criteria="isProductEntity ? productCriteria : customFieldCriteria"
++                :criteria="customFieldCriteria"
++                :label-property="customFieldLabelProperty"
+-                        {{ item.translated?.name || item.name }}
++                        {{ getCustomFieldLabel(item) }}
++                :label-property="customFieldLabelProperty"
+-                            {{ item.translated?.name || item.name }}
++                            {{ getCustomFieldLabel(item) }}
+-                            {{ item.translated?.name || item.name }}
++                            {{ getCustomFieldLabel(item) }}

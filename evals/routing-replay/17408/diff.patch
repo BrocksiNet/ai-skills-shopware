@@ -1,0 +1,16 @@
+diff --git a/tests/acceptance/tests/Checkout/CheckoutWithPromotionRule.spec.ts b/tests/acceptance/tests/Checkout/CheckoutWithPromotionRule.spec.ts
+--- /dev/null
++++ b/tests/acceptance/tests/Checkout/CheckoutWithPromotionRule.spec.ts
+@@ @@
++import { test, formatPrice, type Product } from '@fixtures/AcceptanceTest';
++
++const promotionName = 'Newsletter Recipient Promotion';
++const productGrossPrice = 50;
++const discountPrice = 45.0;
++const discountValue = 5.0;
++const discountPercentage = 10;
++
++test.describe('Newsletter recipient promotion', () => {
++    // Guest and Registered both create products in beforeEach. Running them in parallel
++    // races MariaDB snapshot isolation on system_config (SQLSTATE 1020).
++    test.describe.configure({ mode: 'serial' });

@@ -1,0 +1,87 @@
+diff --git a/RELEASE_INFO-6.7.md b/RELEASE_INFO-6.7.md
+--- a/RELEASE_INFO-6.7.md
++++ b/RELEASE_INFO-6.7.md
+@@ @@
++### New `ProductBackInStockEvent` replaces `ProductNoLongerAvailableEvent` for products that become available
++
++The new `Shopware\Core\Content\Product\Events\ProductBackInStockEvent` is dispatched with the ids of products whose `available` flag changed from `false` to `true`, for example after a restock of a closeout product.
++
++`Shopware\Core\Content\Product\Events\ProductNoLongerAvailableEvent` now only contains products whose `available` flag changed from `true` to `false`. If your subscriber reacts to both directions, for example to invalidate caches, subscribe to both events.
++
+diff --git a/src/Core/Content/Product/Events/ProductBackInStockEvent.php b/src/Core/Content/Product/Events/ProductBackInStockEvent.php
+--- /dev/null
++++ b/src/Core/Content/Product/Events/ProductBackInStockEvent.php
+@@ @@
++<?php declare(strict_types=1);
++
++namespace Shopware\Core\Content\Product\Events;
++
++use Shopware\Core\Framework\Context;
++use Shopware\Core\Framework\Event\ShopwareEvent;
++use Shopware\Core\Framework\Log\Package;
++use Symfony\Contracts\EventDispatcher\Event;
++
++/**
++ * Dispatched with the ids of products whose `available` flag changed from false to true.
++ *
++ * @codeCoverageIgnore
++class ProductBackInStockEvent extends Event implements ShopwareEvent, ProductChangedEventInterface
+diff --git a/src/Core/Content/Product/Events/ProductNoLongerAvailableEvent.php b/src/Core/Content/Product/Events/ProductNoLongerAvailableEvent.php
+--- a/src/Core/Content/Product/Events/ProductNoLongerAvailableEvent.php
++++ b/src/Core/Content/Product/Events/ProductNoLongerAvailableEvent.php
+@@ @@
++ * Dispatched with the ids of products whose `available` flag changed from true to false.
++ * Products which became available are dispatched with the `ProductBackInStockEvent`.
++ *
+diff --git a/src/Core/Content/Product/Stock/StockStorage.php b/src/Core/Content/Product/Stock/StockStorage.php
+--- a/src/Core/Content/Product/Stock/StockStorage.php
++++ b/src/Core/Content/Product/Stock/StockStorage.php
+@@ @@
++use Shopware\Core\Content\Product\Events\ProductBackInStockEvent;
+-        $updated = [];
++        $noLongerAvailable = [];
++        $backInStock = [];
+-            if ($available !== $after[$id]) {
+-                $updated[] = (string) $id;
++            if ((bool) $available === (bool) $after[$id]) {
++                continue;
++
++            if ((bool) $available) {
++                $noLongerAvailable[] = (string) $id;
++
+diff --git a/tests/integration/Core/Content/Product/Stock/StockStorageTest.php b/tests/integration/Core/Content/Product/Stock/StockStorageTest.php
+--- a/tests/integration/Core/Content/Product/Stock/StockStorageTest.php
++++ b/tests/integration/Core/Content/Product/Stock/StockStorageTest.php
+@@ @@
++use Shopware\Core\Content\Product\Events\ProductBackInStockEvent;
+-use Shopware\Core\Framework\Test\TestCaseHelper\CallableClass;
++    /**
++     * @var list<string>
++     */
++    private array $noLongerAvailableIds = [];
++
++    /**
++     * @var list<string>
++     */
++    private array $backInStockIds = [];
++
+-    #[DataProvider('triggerProductNoLongerAvailableEventOnCreateProvider')]
++    #[DataProvider('availabilityEventsOnCreateProvider')]
+-    #[DataProvider('eventTriggeredOnAlterProvider')]
++    #[DataProvider('availabilityEventsOnAlterProvider')]
+diff --git a/tests/unit/Core/Content/Product/Stock/StockStorageTest.php b/tests/unit/Core/Content/Product/Stock/StockStorageTest.php
+--- a/tests/unit/Core/Content/Product/Stock/StockStorageTest.php
++++ b/tests/unit/Core/Content/Product/Stock/StockStorageTest.php
+@@ @@
++use Shopware\Core\Content\Product\Events\ProductBackInStockEvent;
++use Shopware\Core\Content\Product\Events\ProductNoLongerAvailableEvent;
++use Shopware\Core\Test\Stub\EventDispatcher\CollectingEventDispatcher;
++
++    public function testIndexDispatchesEventsByAvailabilityDirection(): void
++    {
++        $ids = new IdsCollection();
++        $dispatcher = new CollectingEventDispatcher();
++
++        $stockStorage = new StockStorage($this->createAvailabilityConnection($ids), $dispatcher);
++        $stockStorage->index(array_values($ids->getList(['lost', 'gained', 'unchanged'])), Context::createDefaultContext());
++

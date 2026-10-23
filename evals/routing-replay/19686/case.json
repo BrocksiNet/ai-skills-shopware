@@ -1,0 +1,14 @@
+{
+  "repo": "shopware/shopware",
+  "pr": 19686,
+  "title": "fix: include seo urls in store-api responses for headless sales channels",
+  "url": "https://github.com/shopware/shopware/pull/19686",
+  "expected": {
+    "sw-core-development/references/release-notes-and-adr.md": [
+      "https://github.com/shopware/shopware/pull/19686#discussion_r3932502566"
+    ],
+    "sw-review-learnings/references/api-aware.md": [
+      "https://github.com/shopware/shopware/pull/19686#discussion_r3932266452"
+    ]
+  }
+}

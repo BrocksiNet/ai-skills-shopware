@@ -1,0 +1,103 @@
+diff --git a/RELEASE_INFO-6.7.md b/RELEASE_INFO-6.7.md
+--- a/RELEASE_INFO-6.7.md
++++ b/RELEASE_INFO-6.7.md
+@@ @@
++### Store API schema describes line item payloads per type
++
++
++
+diff --git a/src/Core/Framework/Api/ApiDefinition/Generator/Schema/StoreApi/components/schemas/JsonApiBase.json b/src/Core/Framework/Api/ApiDefinition/Generator/Schema/StoreApi/components/schemas/JsonApiBase.json
+--- a/src/Core/Framework/Api/ApiDefinition/Generator/Schema/StoreApi/components/schemas/JsonApiBase.json
++++ b/src/Core/Framework/Api/ApiDefinition/Generator/Schema/StoreApi/components/schemas/JsonApiBase.json
+@@ @@
+-            "resource": {
+-                "description": "\"Resource objects\" appear in a JSON API document to represent resources.",
+-                "type": "object",
+-                "required": [
+-                    "type",
+-                    "id"
+-                ],
+-                "properties": {
+-                    "type": {
+-                        "type": "string"
+-                    },
+-                    "id": {
+diff --git a/src/Core/Framework/Api/ApiDefinition/Generator/Schema/StoreApi/components/schemas/LineItem.json b/src/Core/Framework/Api/ApiDefinition/Generator/Schema/StoreApi/components/schemas/LineItem.json
+--- a/src/Core/Framework/Api/ApiDefinition/Generator/Schema/StoreApi/components/schemas/LineItem.json
++++ b/src/Core/Framework/Api/ApiDefinition/Generator/Schema/StoreApi/components/schemas/LineItem.json
+@@ @@
+-                        "$ref": "#/components/schemas/ProductJsonApi"
++                        "$ref": "#/components/schemas/OrderLineItem/properties/payload"
+-                        "deprecated": true,
++                ],
++                "allOf": [
++                    {
++                        "if": {
++                            "required": ["type"],
++                            "properties": {
++                                "type": {
++                                    "const": "product"
++                                }
+diff --git a/src/Core/Framework/Api/ApiDefinition/Generator/Schema/StoreApi/components/schemas/OrderLineItem.json b/src/Core/Framework/Api/ApiDefinition/Generator/Schema/StoreApi/components/schemas/OrderLineItem.json
+--- a/src/Core/Framework/Api/ApiDefinition/Generator/Schema/StoreApi/components/schemas/OrderLineItem.json
++++ b/src/Core/Framework/Api/ApiDefinition/Generator/Schema/StoreApi/components/schemas/OrderLineItem.json
+@@ @@
+-                        "description": "Snapshot data of the referenced item. Product line items contain the product data listed below; other line item types may carry different keys or an empty array.",
+-                        "properties": {
+-                            "categoryIds": {
+-                                "type": ["array", "null"],
+-                                "items": {
+-                                    "type": "string",
+-                                    "pattern": "^[0-9a-f]{32}$"
+-                                },
+-                                "readOnly": true
+-                            },
+-                            "createdAt": {
+diff --git a/src/Core/Framework/Api/ApiDefinition/Generator/Schema/StoreApi/components/schemas/ProductJsonApi.json b/src/Core/Framework/Api/ApiDefinition/Generator/Schema/StoreApi/components/schemas/ProductJsonApi.json
+--- a/src/Core/Framework/Api/ApiDefinition/Generator/Schema/StoreApi/components/schemas/ProductJsonApi.json
++++ /dev/null
+@@ @@
+-{
+-    "openapi": "3.2.0",
+-    "info": [],
+-    "paths": [],
+-    "components": {
+-        "schemas": {
+-            "ProductJsonApi": {
+-                "description": "Added since version: 6.0.0.0",
+-                "allOf": [
+-                    {
+-                        "$ref": "#/components/schemas/resource",
+-                        "required": [
+diff --git a/src/Core/Framework/Api/ApiDefinition/Generator/Schema/StoreApi/components/schemas/ProductLineItemPayload.json b/src/Core/Framework/Api/ApiDefinition/Generator/Schema/StoreApi/components/schemas/ProductLineItemPayload.json
+--- /dev/null
++++ b/src/Core/Framework/Api/ApiDefinition/Generator/Schema/StoreApi/components/schemas/ProductLineItemPayload.json
+@@ @@
++{
++    "openapi": "3.2.0",
++    "info": [],
++    "paths": [],
++    "components": {
++        "schemas": {
++            "ProductLineItemPayload": {
++                "description": "Payload of a `product` line item: a snapshot of the product taken when the line item was calculated. An order keeps the payload of the version that placed it, so orders from older versions can lack keys added since. Extensions declare the keys they add in their own Store API schema files, which adds them here; undeclared keys aren't part of this schema.",
++                "type": "object",
++                "required": [
++                    "categoryIds",
++                    "createdAt",
+diff --git a/src/Core/Framework/Api/ApiDefinition/Generator/Schema/StoreApi/components/schemas/PromotionLineItemPayload.json b/src/Core/Framework/Api/ApiDefinition/Generator/Schema/StoreApi/components/schemas/PromotionLineItemPayload.json
+--- /dev/null
++++ b/src/Core/Framework/Api/ApiDefinition/Generator/Schema/StoreApi/components/schemas/PromotionLineItemPayload.json
+@@ @@
++{
++    "openapi": "3.2.0",
++    "info": [],
++    "paths": [],
++    "components": {
++        "schemas": {
++            "PromotionLineItemPayload": {
++                "description": "Payload of a `promotion` line item: the discount it applies and the promotion it belongs to. An order keeps the payload of the version that placed it, so orders from older versions can lack keys added since. Extensions declare the keys they add in their own Store API schema files, which adds them here; undeclared keys aren't part of this schema.",
++                "type": "object",
++                "required": [
++                    "code",
++                    "conditionRuleIds",

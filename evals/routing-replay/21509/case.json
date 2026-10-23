@@ -1,0 +1,11 @@
+{
+  "repo": "shopware/shopware",
+  "pr": 21509,
+  "title": "fix(administration): use last known locale until session locale is resolved",
+  "url": "https://github.com/shopware/shopware/pull/21509",
+  "expected": {
+    "sw-admin-js/references/testing.md": [
+      "https://github.com/shopware/shopware/pull/21509#discussion_r4255303480"
+    ]
+  }
+}

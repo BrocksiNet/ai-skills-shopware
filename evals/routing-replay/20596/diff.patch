@@ -1,0 +1,134 @@
+diff --git a/src/Administration/Resources/app/administration/src/module/sw-settings-currency/page/sw-settings-currency-detail/index.js b/src/Administration/Resources/app/administration/src/module/sw-settings-currency/page/sw-settings-currency-detail/index.js
+--- a/src/Administration/Resources/app/administration/src/module/sw-settings-currency/page/sw-settings-currency-detail/index.js
++++ b/src/Administration/Resources/app/administration/src/module/sw-settings-currency/page/sw-settings-currency-detail/index.js
+@@ @@
+-                .catch(() => {
++                .catch((error) => {
++                    const errorCode = error?.response?.data?.errors?.[0]?.code;
++                    const isoCode = error?.response?.data?.errors?.[0]?.meta?.parameters?.isoCode;
++
+-                        message: this.$t('sw-settings-currency.detail.notificationErrorMessage'),
++                        message:
++                            errorCode === 'SYSTEM__CURRENCY_ISO_CODE_NOT_UNIQUE'
++                                ? this.$t('sw-settings-currency.detail.notificationIsoCodeAlreadyExists', { isoCode })
++                                : this.$t('sw-settings-currency.detail.notificationErrorMessage'),
+diff --git a/src/Administration/Resources/app/administration/src/module/sw-settings-currency/page/sw-settings-currency-detail/sw-settings-currency-detail.spec.js b/src/Administration/Resources/app/administration/src/module/sw-settings-currency/page/sw-settings-currency-detail/sw-settings-currency-detail.spec.js
+--- a/src/Administration/Resources/app/administration/src/module/sw-settings-currency/page/sw-settings-currency-detail/sw-settings-currency-detail.spec.js
++++ b/src/Administration/Resources/app/administration/src/module/sw-settings-currency/page/sw-settings-currency-detail/sw-settings-currency-detail.spec.js
+@@ @@
++    const currencyRepository = {
++        create: () => {
++            return {
++                name: '',
++                isoCode: '',
++                shortName: '',
++                symbol: '',
++                factor: 1,
++                decimalPrecision: 1,
++            };
++        },
++        save: jest.fn(),
+diff --git a/src/Administration/Resources/app/administration/src/module/sw-settings-currency/snippet/de.json b/src/Administration/Resources/app/administration/src/module/sw-settings-currency/snippet/de.json
+--- a/src/Administration/Resources/app/administration/src/module/sw-settings-currency/snippet/de.json
++++ b/src/Administration/Resources/app/administration/src/module/sw-settings-currency/snippet/de.json
+@@ @@
++      "notificationIsoCodeAlreadyExists": "Der ISO-Code \"{isoCode}\" wird bereits verwendet.",
+diff --git a/src/Administration/Resources/app/administration/src/module/sw-settings-currency/snippet/en.json b/src/Administration/Resources/app/administration/src/module/sw-settings-currency/snippet/en.json
+--- a/src/Administration/Resources/app/administration/src/module/sw-settings-currency/snippet/en.json
++++ b/src/Administration/Resources/app/administration/src/module/sw-settings-currency/snippet/en.json
+@@ @@
++      "notificationIsoCodeAlreadyExists": "The ISO code \"{isoCode}\" is already in use.",
+diff --git a/src/Core/System/Currency/CurrencyException.php b/src/Core/System/Currency/CurrencyException.php
+--- /dev/null
++++ b/src/Core/System/Currency/CurrencyException.php
+@@ @@
++<?php declare(strict_types=1);
++
++namespace Shopware\Core\System\Currency;
++
++use Shopware\Core\Framework\HttpException;
++use Shopware\Core\Framework\Log\Package;
++use Symfony\Component\HttpFoundation\Response;
++
++#[Package('fundamentals@framework')]
++class CurrencyException extends HttpException
++{
++    final public const ISO_CODE_NOT_UNIQUE = 'SYSTEM__CURRENCY_ISO_CODE_NOT_UNIQUE';
+diff --git a/src/Core/System/Currency/CurrencyExceptionHandler.php b/src/Core/System/Currency/CurrencyExceptionHandler.php
+--- /dev/null
++++ b/src/Core/System/Currency/CurrencyExceptionHandler.php
+@@ @@
++<?php declare(strict_types=1);
++
++namespace Shopware\Core\System\Currency;
++
++use Shopware\Core\Framework\DataAbstractionLayer\Dbal\ExceptionHandlerInterface;
++use Shopware\Core\Framework\Log\Package;
++
++#[Package('fundamentals@framework')]
++class CurrencyExceptionHandler implements ExceptionHandlerInterface
++{
++    public function getPriority(): int
++    {
+diff --git a/src/Core/System/DependencyInjection/currency.php b/src/Core/System/DependencyInjection/currency.php
+--- a/src/Core/System/DependencyInjection/currency.php
++++ b/src/Core/System/DependencyInjection/currency.php
+@@ @@
++use Shopware\Core\System\Currency\CurrencyExceptionHandler;
++    $services->set(CurrencyExceptionHandler::class)
++        ->tag('shopware.dal.exception_handler');
++
+diff --git a/tests/integration/Core/System/Currency/Repository/CurrencyRepositoryTest.php b/tests/integration/Core/System/Currency/Repository/CurrencyRepositoryTest.php
+--- a/tests/integration/Core/System/Currency/Repository/CurrencyRepositoryTest.php
++++ b/tests/integration/Core/System/Currency/Repository/CurrencyRepositoryTest.php
+@@ @@
++use Shopware\Core\System\Currency\CurrencyException;
++
++    public function testCreateDuplicateIsoCodeReturnsCurrencyException(): void
++    {
++        $this->expectExceptionObject(CurrencyException::isoCodeNotUnique('EUR'));
++
++        $this->currencyRepository->create([[
++            'id' => Uuid::randomHex(),
++            'decimalPrecision' => 2,
++            'name' => 'Euro Austria',
++            'isoCode' => 'EUR',
++            'shortName' => 'Euro Austria',
++            'factor' => 1.1,
+diff --git a/tests/unit/Core/System/Currency/CurrencyExceptionHandlerTest.php b/tests/unit/Core/System/Currency/CurrencyExceptionHandlerTest.php
+--- /dev/null
++++ b/tests/unit/Core/System/Currency/CurrencyExceptionHandlerTest.php
+@@ @@
++<?php declare(strict_types=1);
++
++namespace Shopware\Tests\Unit\Core\System\Currency;
++
++use PHPUnit\Framework\Attributes\CoversClass;
++use PHPUnit\Framework\Attributes\DataProvider;
++use PHPUnit\Framework\TestCase;
++use Shopware\Core\Framework\DataAbstractionLayer\Dbal\ExceptionHandlerInterface;
++use Shopware\Core\Framework\Log\Package;
++use Shopware\Core\System\Currency\CurrencyException;
++use Shopware\Core\System\Currency\CurrencyExceptionHandler;
++
++ * @internal
++#[CoversClass(CurrencyExceptionHandler::class)]
++    #[DataProvider('duplicateIsoCodeDatabaseExceptions')]
+diff --git a/tests/unit/Core/System/Currency/CurrencyExceptionTest.php b/tests/unit/Core/System/Currency/CurrencyExceptionTest.php
+--- /dev/null
++++ b/tests/unit/Core/System/Currency/CurrencyExceptionTest.php
+@@ @@
++<?php declare(strict_types=1);
++
++namespace Shopware\Tests\Unit\Core\System\Currency;
++
++use PHPUnit\Framework\Attributes\CoversClass;
++use PHPUnit\Framework\TestCase;
++use Shopware\Core\Framework\Log\Package;
++use Shopware\Core\System\Currency\CurrencyException;
++use Symfony\Component\HttpFoundation\Response;
++
++/**
++ * @internal
++ */
++#[CoversClass(CurrencyException::class)]

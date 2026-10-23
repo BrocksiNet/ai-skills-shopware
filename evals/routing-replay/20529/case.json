@@ -1,0 +1,17 @@
+{
+  "repo": "shopware/shopware",
+  "pr": 20529,
+  "title": "fix(core): roll back a service whose installation failed",
+  "url": "https://github.com/shopware/shopware/pull/20529",
+  "expected": {
+    "sw-architecture/references/progressive-enhancement.md": [
+      "https://github.com/shopware/shopware/pull/20529#discussion_r4034566833"
+    ],
+    "sw-core-development/references/modernization-and-flags.md": [
+      "https://github.com/shopware/shopware/pull/20529#discussion_r4034566833"
+    ],
+    "sw-plugin-development/references/version-compatibility.md": [
+      "https://github.com/shopware/shopware/pull/20529#discussion_r4034566833"
+    ]
+  }
+}
