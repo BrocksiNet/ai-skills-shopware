@@ -1,6 +1,6 @@
 # Skill update automation plan (2026-10)
 
-Status: **accepted** (2026-10-23); phases 0 to 3b done 2026-10-23, phase 4 next · Author: BrocksiNet · Created: 2026-10-23
+Status: **accepted** (2026-10-23); phases 0 to 4 done 2026-10-23, phase 5 next · Author: BrocksiNet · Created: 2026-10-23
 
 Rules go stale because Shopware changes every week. Half of the upkeep is
 automated already: the weekly trunk mining issue and the weekly API index.
@@ -511,7 +511,7 @@ enough good PRs to trust it.
 | 2 | **Done.** Signal format and mapper; drift issue grouped by rule | 1 | M | none |
 | 3 | **Done.** Daily review collector and the `review-signals` release | 2 | M | none |
 | 3b | **Done.** Replay tests for mining and the router against recorded history | 3 | M | none |
-| 4 | `suggest-rules` command | 3b | M | local |
+| 4 | **Done.** `suggest-rules` command | 3b | M | local |
 | 5 | `suggest-rules draft` | 4 | L | local |
 
 Each phase includes its documentation; see [Documentation](#documentation).

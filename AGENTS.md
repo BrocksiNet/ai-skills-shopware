@@ -79,6 +79,8 @@ tools/                        # repo tooling in TypeScript (Node 24, no build st
   bin/mine-trunk.ts           # weekly drift report over rules/sources.json, and the /mined state update
   src/map-signal.ts           # ties a change (signal) to the skills, references and rules it touches
   bin/collect-reviews.ts      # review comments of merged PRs as mapped signals (daily in CI; private repos locally)
+  bin/suggest-rules.ts        # rule proposals from review signals + drift issue via your agent (git-ignored suggestions/)
+  src/agent-ask.ts            # one prompt to an agent with no tools (suggest-rules)
   bin/grade.ts                # runs one task's grader (what every grade.sh calls)
   graders/<task>.ts           # one grader per eval task: workdir + transcript -> verdict
   src/grade/                  # grader kit (file search, comment stripping, PHP method, review findings)
@@ -253,6 +255,11 @@ Tagged so far: `sw-testing`, `sw-plugin-development`,
 
 For recurring real-world findings, prefer `sw-review-learnings` and point
 at the owning skill rather than re-defining the topic.
+
+To find candidates, run `node tools/bin/suggest-rules.ts --since 30d`: it
+clusters review comments and drift changes, asks your agent per cluster and
+checks the evidence. A proposal is a starting point for step 1, not a rule;
+see [`docs/maintenance.md`](docs/maintenance.md#suggesting-rule-changes).
 
 ## Adding a skill
 

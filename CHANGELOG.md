@@ -51,6 +51,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   of 34 public PRs in `evals/routing-replay/` keeps a recall floor in CI.
 - `tools/bin/agent-preflight.ts`: the evals workflow checks that the CI
   model answers before the shards start.
+- `tools/bin/suggest-rules.ts` proposes new, updated and retired rules from
+  the `review-signals` release and the open drift issue, with the agent you
+  are logged in to. It clusters the signals without a model, weighted by
+  reviewer trust, asks the agent once per cluster (`SUGGEST_MAX_CLUSTERS`,
+  default 20) with the signals as quoted data, validates the JSON answer,
+  and checks that every evidence URL was in the input, the skill owns a
+  topic and a new rule has two PRs or a review that requested changes.
+  Retirement candidates come from `enforced_by` checks that are not
+  trunk-only, classes gone from the API index and A/B baselines where the
+  skill-off arm passes every repeat. Output goes to the git-ignored
+  `suggestions/`. See `docs/maintenance.md#suggesting-rule-changes`.
 
 ### Changed
 
