@@ -12,7 +12,9 @@
 // (default claude; a COMMAND reads the prompt on stdin and prints the
 // answer), --source ID (repeatable; review sources from the cache),
 // --offline (no download, no drift issue), --out DIR, --api-index FILE,
-// --baseline FILE (default the latest evals/baselines/*.jsonl).
+// --baseline FILE (default the latest evals/baselines/*.jsonl), --continue
+// FILE (an earlier suggestions/<date>.json: ask only the clusters it did
+// not, in its window, and write both runs into one result).
 //
 // Environment: SUGGEST_MAX_CLUSTERS (20) caps the agent calls,
 // SUGGEST_MAX_SIGNALS (25) the signals quoted per cluster, SUGGEST_MODEL
@@ -40,7 +42,7 @@ const ROOT = resolve(import.meta.dirname, '../..');
 const USAGE =
   'usage: suggest-rules.ts [--since YYYY-MM-DD|Nd] [--until YYYY-MM-DD] [--skill NAME] [--signals FILE]\n' +
   '                        [--agent claude|opencode|COMMAND] [--source ID]... [--offline] [--out DIR]\n' +
-  '                        [--api-index FILE] [--baseline FILE]\n' +
+  '                        [--api-index FILE] [--baseline FILE] [--continue FILE]\n' +
   '       suggest-rules.ts draft ID [--agent claude|opencode|COMMAND] [--no-pr] [--base BRANCH]\n' +
   '                        [--out DIR] [--worktree DIR]\n';
 
@@ -54,7 +56,7 @@ async function main(): Promise<number> {
         'no-pr': { type: 'boolean', default: false },
         base: { type: 'string' },
         worktree: { type: 'string' },
-        since: { type: 'string', default: '30d' },
+        since: { type: 'string' },
         until: { type: 'string' },
         skill: { type: 'string' },
         signals: { type: 'string' },
@@ -64,6 +66,7 @@ async function main(): Promise<number> {
         out: { type: 'string' },
         'api-index': { type: 'string' },
         baseline: { type: 'string' },
+        continue: { type: 'string' },
       },
     }));
   } catch (error) {

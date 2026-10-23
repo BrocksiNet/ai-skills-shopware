@@ -10,11 +10,11 @@ import { githubApi } from './github.ts';
 import { parseSince } from './suggest-load.ts';
 import { writeSuggestions } from './suggest-render.ts';
 import { latestBaseline } from './suggest-retire.ts';
-import { DEFAULT_MAX_CLUSTERS, DEFAULT_MAX_SIGNALS, SUGGESTIONS_DIR, suggest } from './suggest-run.ts';
+import { DEFAULT_MAX_CLUSTERS, DEFAULT_MAX_SIGNALS, readResult, SUGGESTIONS_DIR, suggest } from './suggest-run.ts';
 
 /** The parsed flags; tools/bin/suggest-rules.ts documents them. */
 export interface SuggestFlags {
-  since: string;
+  since?: string | undefined;
   until?: string | undefined;
   skill?: string | undefined;
   signals?: string | undefined;
@@ -24,7 +24,10 @@ export interface SuggestFlags {
   out?: string | undefined;
   'api-index'?: string | undefined;
   baseline?: string | undefined;
+  continue?: string | undefined;
 }
+
+export const DEFAULT_SINCE = '30d';
 
 /** `--api-index`, `$API_INDEX`, or the cache api-facts downloads into. */
 export function apiIndexPath(explicit: string | undefined, env: NodeJS.ProcessEnv): string {
@@ -70,11 +73,16 @@ export async function suggestCommand(
   const env = { ...baseEnv, EVAL_USAGE_LOG: usageLog };
   try {
     const baseline = f.baseline ?? latestBaseline(root);
+    const previous = f.continue === undefined ? undefined : readResult(resolve(f.continue));
+    if (previous !== undefined && (f.since !== undefined || f.until !== undefined))
+      throw new Error('--continue takes the window of the earlier run; drop --since and --until');
     const result = await suggest({
       root,
       now,
-      since: parseSince(f.since, now),
-      until: f.until === undefined ? now.toISOString().slice(0, 10) : parseSince(f.until, now),
+      since: previous?.window.since ?? parseSince(f.since ?? DEFAULT_SINCE, now),
+      until:
+        previous?.window.until ?? (f.until === undefined ? now.toISOString().slice(0, 10) : parseSince(f.until, now)),
+      ...(previous === undefined ? {} : { previous }),
       ...(f.skill === undefined ? {} : { skill: f.skill }),
       sources: f.source,
       ...(f.signals === undefined ? {} : { signalsFile: resolve(f.signals) }),

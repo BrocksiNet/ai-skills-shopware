@@ -3,10 +3,27 @@
 import { mkdirSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
 import type { Suggestion } from './suggest-ask.ts';
+import { inRankOrder } from './suggest-rank.ts';
 import type { ClusterSummary, SuggestResult } from './suggest-run.ts';
 
 const cell = (t: string): string => t.replaceAll('|', '\\|').replaceAll(/\s+/gu, ' ').trim();
 const link = (u: string): string => (u.startsWith('https://') ? `<${u}>` : `\`${u}\``);
+
+function rankLine(s: Suggestion): string[] {
+  const r = s.rank;
+  if (r === undefined) return [];
+  if (r.unranked !== undefined) return [`Not ranked: ${r.unranked}.`, ''];
+  return [
+    `Rank ${String(r.position)}, score ${String(r.score)}: ${String(r.prs)} PR(s), ${String(r.changes_requested)} with changes requested, ${r.extensions ? 'for extension developers' : 'core only'}${r.overlaps === undefined ? '' : `, overlaps ${r.overlaps}`}.`,
+    '',
+  ];
+}
+
+const rankCell = (s: Suggestion): string => {
+  const r = s.rank;
+  if (r === undefined || r.position === 0) return '-';
+  return String(r.position);
+};
 
 function proposal(s: Suggestion): string[] {
   const failed = s.checks.filter((c) => !c.ok);
@@ -15,6 +32,7 @@ function proposal(s: Suggestion): string[] {
     '',
     `**${cell(s.title)}**`,
     '',
+    ...rankLine(s),
     `Cluster \`${s.cluster}\`. Checks: ${failed.length === 0 ? 'all passed' : `**failed**: ${failed.map((c) => `${c.name} (${c.detail})`).join('; ')}`}.${s.private ? ' Evidence from a private source: cite no link in public text.' : ''}`,
     '',
     ...(s.reason === undefined || s.reason === '' ? [] : [`Reason: ${s.reason}`, '']),
@@ -50,13 +68,17 @@ export function renderSuggestions(r: SuggestResult): string {
     '| ------- | ------ | -------- | ---------------- | ----------- | ------------ | ------------ | --------- | ------------- |',
     `| ${[n.signals, n.mapped, n.clusters, n.dropped_single, n.asked, n.over_cap, n.agent_errors, n.proposals, n.passed].map(String).join(' | ')} |`,
     '',
-    '| ID | Action | Rule | Skill | Title | Checks |',
-    '| -- | ------ | ---- | ----- | ----- | ------ |',
-    ...r.suggestions.map(
-      (s) => `| ${s.id} | ${s.action} | ${s.rule} | ${s.skill} | ${cell(s.title)} | ${s.ok ? 'ok' : 'failed'} |`,
+    'Ranked by evidence per PR (reviewer trust, outdated threads, requested changes), halved for a core-only',
+    'rule and again for an overlap with a higher proposal of the same skill. Draft from the top.',
+    '',
+    '| Rank | Score | ID | Action | Rule | Skill | Title | PRs | Extensions | Overlaps | Checks |',
+    '| ---- | ----- | -- | ------ | ---- | ----- | ----- | --- | ---------- | -------- | ------ |',
+    ...inRankOrder(r.suggestions).map(
+      (s) =>
+        `| ${rankCell(s)} | ${String(s.rank?.score ?? '-')} | ${s.id} | ${s.action} | ${s.rule} | ${s.skill} | ${cell(s.title)} | ${String(s.rank?.prs ?? '-')} | ${s.rank?.extensions === true ? 'yes' : 'no'} | ${s.rank?.overlaps ?? ''} | ${s.ok ? 'ok' : 'failed'} |`,
     ),
   ];
-  for (const s of r.suggestions) lines.push('', ...proposal(s));
+  for (const s of inRankOrder(r.suggestions)) lines.push('', ...proposal(s));
   const retire =
     r.retirements.length === 0
       ? ['None.']

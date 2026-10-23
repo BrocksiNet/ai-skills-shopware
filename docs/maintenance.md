@@ -250,10 +250,21 @@ node tools/bin/suggest-rules.ts --signals ./reviews.jsonl --agent opencode --off
 | `--out DIR` | `suggestions/` | Where the files go |
 | `--api-index FILE` | `$API_INDEX`, then the user cache | The API timeline for the retirement check |
 | `--baseline FILE` | newest `evals/baselines/*.jsonl` | The A/B results for the retirement check |
+| `--continue FILE` | | An earlier `suggestions/<date>.json`: ask only the clusters it did not, in its window |
 
 `SUGGEST_MAX_CLUSTERS` (20) caps the agent calls, `SUGGEST_MAX_SIGNALS` (25)
 the signals quoted per cluster, `SUGGEST_MODEL` (`haiku` for claude) picks
 the model. The run prints the token use.
+
+**A second pass.** The clusters over the cap are not lost. Continue the
+run, and it asks the next ones and writes one result with both:
+
+```bash
+SUGGEST_MAX_CLUSTERS=40 node tools/bin/suggest-rules.ts --continue suggestions/2026-10-23.json --source core-reviews
+```
+
+The window comes from the earlier run, and new IDs follow its last one.
+On the same day the result replaces the earlier file, which it contains.
 
 **What happens, in order.**
 
@@ -267,8 +278,10 @@ the model. The run prints the token use.
    outdated and again when the review requested changes. Clusters are asked
    in order of weight; the rest are listed under "Over the cap".
 3. Retirement candidates come first, found without a model:
-   - an `enforced_by` check that is not `trunk_only`, so extensions get it
-     too;
+   - an `enforced_by` check whose `extensions_run` proves that plugins and
+     apps run it with no setup of their own. Not being `trunk_only` is not
+     enough: `phpstan-deprecation-rules` runs only where a plugin installs
+     it, and `CompletionGuard` only under Shopware's `TestBootstrapper`;
    - every class the rule names is gone from the API index in the supported
      releases (`SUGGEST_SUPPORTED_FROM`, 6.6.0.0);
    - the rule's eval task passed every repeat with the skill off in the
@@ -286,6 +299,14 @@ the model. The run prints the token use.
    [`REGISTRY.md`](../REGISTRY.md), an update or retirement names an active
    rule of that skill (`none` may name one of any skill), and a new rule has
    comments from at least two PRs or a review that requested changes.
+6. The proposals that passed are ranked, without a model. A proposal
+   scores its evidence once per PR, at the heaviest signal of that PR, so
+   several PRs and trusted reviewers beat one long thread. The score
+   halves when the rule is for core only (its `audience`, else the skill's
+   `metadata.contexts`), because this library is for extension developers
+   too. It halves again when a higher proposal of the same skill shares
+   most of its words (`overlaps` names that one). The table at the top of
+   the file is in rank order; draft from the top.
 
 **Reading a proposal.** Each one has an ID (`2026-10-23-04`), the action,
 skill and rule, the draft text, the eval it needs, the evidence links, the

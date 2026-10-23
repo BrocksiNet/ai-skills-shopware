@@ -5,19 +5,9 @@ import { existsSync, readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import type { Catalog, Rule } from './catalog.ts';
 import { tail } from './proc.ts';
-import type { Suggestion } from './suggest-ask.ts';
-import { isProposal } from './suggest-schema.ts';
+import { isSuggestion, type Suggestion } from './suggest-ask.ts';
 
 const isRecord = (v: unknown): v is Record<string, unknown> => typeof v === 'object' && v !== null;
-
-const isSuggestion = (v: unknown): v is Suggestion =>
-  isProposal(v) &&
-  isRecord(v) &&
-  typeof v.id === 'string' &&
-  typeof v.cluster === 'string' &&
-  typeof v.ok === 'boolean' &&
-  typeof v.private === 'boolean' &&
-  Array.isArray(v.checks);
 
 /** The suggestion `id` (`2026-10-23-04`) from `<dir>/<date>.json`. */
 export function loadSuggestion(dir: string, id: string): Suggestion {

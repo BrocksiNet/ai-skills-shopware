@@ -28,6 +28,11 @@ export interface Enforcement {
    *  default (core-only config, or opt-in Shopware PHPStan rules whose
    *  default namespaces are Shopware\Tests\...). */
   trunk_only: boolean;
+  /** Proof that a plugin or app project runs the check with no setup of
+   *  its own: where shopware-cli, the plugin template or Shopware's default
+   *  config wires it in, as a path or link. A check without it never makes
+   *  its rule a retirement candidate. */
+  extensions_run?: string;
 }
 
 export interface TrunkSource {
@@ -93,6 +98,10 @@ function enforcementErrors(label: string, e: unknown): string[] {
   }
   if (!oneOf(ENFORCEMENT_KINDS, e.kind)) errors.push(`${label}.kind must be one of ${ENFORCEMENT_KINDS.join(', ')}`);
   if (typeof e.trunk_only !== 'boolean') errors.push(`${label}.trunk_only must be true or false`);
+  if (e.extensions_run !== undefined) {
+    if (!isText(e.extensions_run)) errors.push(`${label}.extensions_run must be a non-empty string`);
+    else if (e.trunk_only === true) errors.push(`${label}.extensions_run contradicts trunk_only: true`);
+  }
   return errors;
 }
 
