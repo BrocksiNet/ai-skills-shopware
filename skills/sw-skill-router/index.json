@@ -947,6 +947,16 @@
           ]
         },
         {
+          "reference": "sw-review-learnings/references/change-scope.md",
+          "when": "A fix grows beyond the bug.",
+          "on_demand": true,
+          "exclude_paths": [
+            "**/tests/**",
+            "**/Test/**",
+            "**/*.md"
+          ]
+        },
+        {
           "reference": "sw-testing/references/test-shape-and-flags.md",
           "when": "You need data providers, feature flags or coverage attributes, or a change edits an assertion.",
           "anchors_any": [

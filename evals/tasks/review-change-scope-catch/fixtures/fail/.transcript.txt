@@ -1,0 +1,17 @@
+The fix itself is fine. The MoneyFormatter change is the part to look at, and
+REV-032 is the guideline that covers it.
+
+```json
+{
+  "findings": [
+    {
+      "rule_id": "REV-026",
+      "severity": "major",
+      "file": "src/Export/OrderCsvExporter.php",
+      "line": 13,
+      "summary": "The sweep changes shared number formatting without grepping its callers.",
+      "fix": "Grep callers of number_format before touching them."
+    }
+  ]
+}
+```
