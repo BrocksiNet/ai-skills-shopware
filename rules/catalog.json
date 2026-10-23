@@ -2199,11 +2199,10 @@
       "id": "CORE-022",
       "skill": "sw-core-development",
       "file": "skills/sw-core-development/references/deprecations.md",
-      "title": "@deprecated on executable PHP pairs with triggerDeprecationOrThrow()",
+      "title": "@deprecated on executable PHP pairs with a runtime trigger, and silentUntil keeps the marker",
       "status": "active",
       "since": "2026-10-20",
-      "eval": null,
-      "eval_reason": "Documented only; no eval yet.",
+      "eval": "review-deprecation-trigger-catch",
       "core_guide_ids": [],
       "audience": [
         "core"

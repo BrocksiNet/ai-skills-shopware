@@ -1,0 +1,22 @@
+```json
+{
+  "findings": [
+    {
+      "rule_id": "CORE-022",
+      "severity": "nit",
+      "file": "src/Core/Content/Media/MediaPathBuilder.php",
+      "line": 11,
+      "summary": "Consider mentioning triggerDeprecationOrThrow() in the docblock.",
+      "fix": "Add a sentence to the docblock."
+    },
+    {
+      "rule_id": "CORE-017",
+      "severity": "major",
+      "file": "src/Core/Content/Media/MediaPathBuilder.php",
+      "line": 11,
+      "summary": "The replacement class is missing from the deprecation message.",
+      "fix": "Name MediaPathBuilderV2::build() in the message."
+    }
+  ]
+}
+```

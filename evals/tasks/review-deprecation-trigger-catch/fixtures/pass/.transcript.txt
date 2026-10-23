@@ -1,0 +1,14 @@
+```json
+{
+  "findings": [
+    {
+      "rule_id": null,
+      "severity": "major",
+      "file": "src/Core/Content/Media/MediaPathBuilder.php",
+      "line": 11,
+      "summary": "buildPath() is deprecated with an exception reason but has no runtime trigger, and no silentUntil marker says when the notice comes back.",
+      "fix": "Call Feature::triggerDeprecationOrThrow() in the method, and pass silentUntil with the version that re-enables it if the notice must stay quiet for now."
+    }
+  ]
+}
+```

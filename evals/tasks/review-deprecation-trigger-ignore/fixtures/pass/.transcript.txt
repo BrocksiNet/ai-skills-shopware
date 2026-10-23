@@ -1,0 +1,14 @@
+```json
+{
+  "findings": [
+    {
+      "rule_id": null,
+      "severity": "nit",
+      "file": "src/Core/Content/Media/MediaPathBuilder.php",
+      "line": 21,
+      "summary": "The silentUntil version could name the release that removes the flag.",
+      "fix": "Add the release to the docblock."
+    }
+  ]
+}
+```

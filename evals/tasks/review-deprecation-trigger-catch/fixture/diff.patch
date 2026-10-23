@@ -1,0 +1,16 @@
+diff --git a/src/Core/Content/Media/MediaPathBuilder.php b/src/Core/Content/Media/MediaPathBuilder.php
+index 3c1a9e2..7d40b1f 100644
+--- a/src/Core/Content/Media/MediaPathBuilder.php
++++ b/src/Core/Content/Media/MediaPathBuilder.php
+@@ -8,10 +8,12 @@ class MediaPathBuilder
+ {
+     /**
++     * @deprecated tag:v6.8.0 reason:becomes-internal - Will be removed. Use MediaPathBuilderV2::build() instead.
++     *
+      * @param string $fileName
+      */
+     public function buildPath(string $mediaId, string $fileName): string
+     {
+         return sprintf('media/%s/%s', $mediaId, $fileName);
+     }
+ }

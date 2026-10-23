@@ -99,9 +99,11 @@ public function oldHandle(Context $context): void
   removed.
 - **CORE-021** **Do not add new code paths** that call deprecated functionality. Move internal
   callers to the replacement API and keep legacy behavior only in focused BC tests.
-- **CORE-022** When adding `@deprecated` on executable PHP, add matching
-  `Feature::triggerDeprecationOrThrow()` unless the deprecation uses an explicit
-  exception reason allowed by the PHPStan deprecation rule.
+- **CORE-022** When you add `@deprecated` on executable PHP, pair it with
+  `Feature::triggerDeprecationOrThrow()`, even when the deprecation has an exception
+  reason. If the notice has to stay quiet until a later release, pass `silentUntil:`
+  with the version that re-enables it, so the notice comes back when that flag is
+  removed and nothing is forgotten.
 - **CORE-023** For **private implementation cleanup** (not a public deprecation cycle), use a
   short inline comment: `// @deprecated tag:vX.Y.Z - …` near the branch to remove
   later — not a method-level `@deprecated` annotation.

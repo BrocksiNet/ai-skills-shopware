@@ -1,0 +1,14 @@
+```json
+{
+  "findings": [
+    {
+      "rule_id": "CORE-022",
+      "severity": "minor",
+      "file": "src/Core/Content/Media/MediaPathBuilder.php",
+      "line": 21,
+      "summary": "The trigger is present, but silentUntil is missing, so the notice will fire today.",
+      "fix": "Add silentUntil with the version that re-enables it."
+    }
+  ]
+}
+```
