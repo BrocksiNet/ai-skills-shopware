@@ -16,6 +16,8 @@ paths and would be noise on a DAL-only change.
 | `sw-research-and-escalation` | Versioned docs + Modern Web Guidance CLI after primitives. |
 | `sw-review-learnings` | Recurring frontend findings (uncached listing AJAX, …). |
 | `sw-change-impact` | After a feature works: shared cache and checkout cost, not only the new UI. |
+| `sw-skill-router` | Lists the skills and references a diff or plan needs (`/sw-skill-router`). |
+| `sw-help` | What every skill is for, with example prompts (`/sw-help`). |
 
 PHP behind a storefront controller or Admin route still needs the plugin /
 core / app surface skill from the other use-cases.
@@ -24,6 +26,8 @@ core / app surface skill from the other use-cases.
 
 ```bash
 npx skills add BrocksiNet/ai-skills-shopware \
+  --skill sw-skill-router \
+  --skill sw-help \
   --skill sw-storefront \
   --skill sw-admin-js \
   --skill sw-research-and-escalation \

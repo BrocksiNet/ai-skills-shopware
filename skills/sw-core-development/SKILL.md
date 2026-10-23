@@ -8,6 +8,9 @@ description: >-
   (sw-plugin-development), an app (sw-app-development), or generic
   PHP style (sw-php-foundation).
 license: MIT
+metadata:
+  contexts: core
+  tasks: build review ship
 ---
 
 # Shopware platform / core development (strict surface)

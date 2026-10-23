@@ -11,6 +11,9 @@ description: >-
   or for a private bugfix with one obvious edit (shopware-php-code or
   sw-plugin-development).
 license: MIT
+metadata:
+  contexts: core plugin app project
+  tasks: build review
 ---
 
 # Shopware architecture (patterns + evolution)

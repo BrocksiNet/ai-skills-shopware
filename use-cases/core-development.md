@@ -20,11 +20,15 @@ etc. Install **delta overlay** from this repo:
 | `sw-change-impact` | After a feature works: blast radius before ship |
 | `sw-pr-review` | GitHub review thread triage |
 | `sw-podman-dev` | Podman/MCP execution |
+| `sw-skill-router` | Lists the skills and references a diff or plan needs (`/sw-skill-router`). |
+| `sw-help` | What every skill is for, with example prompts (`/sw-help`). |
 
 Add `sw-plugin-development` when editing `custom/plugins` in the monorepo.
 
 ```bash
 npx skills add BrocksiNet/ai-skills-shopware \
+  --skill sw-skill-router \
+  --skill sw-help \
   --skill sw-architecture \
   --skill sw-security \
   --skill sw-research-and-escalation \
@@ -56,6 +60,8 @@ Full platform skill set — core in-repo skills are **not** present:
 
 ```bash
 npx skills add BrocksiNet/ai-skills-shopware \
+  --skill sw-skill-router \
+  --skill sw-help \
   --skill sw-php-foundation \
   --skill sw-architecture \
   --skill sw-security \

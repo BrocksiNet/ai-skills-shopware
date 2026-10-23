@@ -10,6 +10,9 @@ description: >-
   DAL/services (surface PHP skills), or generic modern CSS lectures (research
   + Modern Web Guidance after Shopware primitives are checked).
 license: MIT
+metadata:
+  contexts: core plugin app project
+  tasks: build review
 ---
 
 # Shopware Storefront

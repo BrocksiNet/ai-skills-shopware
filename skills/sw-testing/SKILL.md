@@ -7,6 +7,10 @@ description: >-
   add-a-test request. Do NOT use for storefront E2E, Administration Jest, or
   running the suite (sw-podman-dev).
 license: MIT
+metadata:
+  contexts: core plugin project
+  tasks: build review
+  paths: "**/tests/**/*Test.php"
 ---
 
 # Shopware testing (PHPUnit)

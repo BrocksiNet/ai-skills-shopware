@@ -8,6 +8,9 @@ description: >-
   writing the initial PR body (sw-pr-description) or idiomatic code
   review without GitHub threads (sw-review-learnings).
 license: MIT
+metadata:
+  contexts: core
+  tasks: review
 ---
 
 # Shopware PR review reactions

@@ -15,12 +15,16 @@ DI container and no DAL in the shop process.
 | `sw-research-and-escalation` | Verify against installed source; escalate instead of guessing. |
 | `sw-review-learnings` | Recurring real-world findings. |
 | `sw-change-impact` | After a feature works: blast radius, who pays, easier vs more complex. |
+| `sw-skill-router` | Lists the skills and references a diff or plan needs (`/sw-skill-router`). |
+| `sw-help` | What every skill is for, with example prompts (`/sw-help`). |
 
 ## Install (one-liner)
 
 ```bash
 # Cursor (use -a claude-code, -a codex or -a opencode for the other tools)
 npx skills add BrocksiNet/ai-skills-shopware \
+  --skill sw-skill-router \
+  --skill sw-help \
   --skill sw-php-foundation \
   --skill sw-app-development \
   --skill sw-security \

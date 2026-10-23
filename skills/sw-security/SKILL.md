@@ -7,6 +7,9 @@ description: >-
   (sw-testing), or OpenAPI shape without a privilege or credential
   (sw-plugin-development).
 license: MIT
+metadata:
+  contexts: core plugin app project
+  tasks: build review
 ---
 
 # Shopware security

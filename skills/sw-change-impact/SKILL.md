@@ -9,6 +9,10 @@ description: >-
   implementing the change (shopware-php-code or sw-plugin-development),
   or running the test suite (sw-podman-dev).
 license: MIT
+metadata:
+  contexts: core plugin app project
+  tasks: review ship
+  load_for: ship
 ---
 
 # Change impact (after the feature works)

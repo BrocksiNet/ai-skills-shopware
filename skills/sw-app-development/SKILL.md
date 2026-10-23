@@ -11,6 +11,9 @@ description: >-
   platform itself (sw-core-development), or for generic PHP style
   (sw-php-foundation).
 license: MIT
+metadata:
+  contexts: app project
+  tasks: build review answer
 ---
 
 # Shopware app development (declarative extension surface)

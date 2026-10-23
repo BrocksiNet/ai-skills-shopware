@@ -9,6 +9,10 @@ description: >-
   substitute for the surface-skill rules (DAL, cache, testing): it tells you
   when and how to verify, not the rules themselves.
 license: MIT
+metadata:
+  contexts: core plugin app project
+  tasks: build review answer
+  load_for: answer
 ---
 
 # Shopware research & escalation

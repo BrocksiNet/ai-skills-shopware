@@ -12,6 +12,9 @@ description: >-
   with a manifest.xml (sw-app-development), generic PHP style
   (sw-php-foundation), or test authoring (sw-testing).
 license: MIT
+metadata:
+  contexts: plugin project
+  tasks: build review
 ---
 
 # Shopware plugin / project development (pragmatic surface)

@@ -9,6 +9,10 @@ description: >-
   extension validate). Do NOT use for CI log interpretation, PR descriptions,
   or PHPUnit test structure rules (sw-testing).
 license: MIT
+metadata:
+  contexts: core plugin project
+  tasks: run
+  load_for: run
 ---
 
 # Shopware local execution (Podman and CLI)

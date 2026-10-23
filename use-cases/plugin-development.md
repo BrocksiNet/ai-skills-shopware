@@ -16,11 +16,15 @@ and customer-project code. In-repo core skills are usually **absent** — use th
 | `sw-research-and-escalation` | Verify against installed source. |
 | `sw-review-learnings` | Recurring real-world findings. |
 | `sw-change-impact` | After a feature works: blast radius, who pays, easier vs more complex. |
+| `sw-skill-router` | Lists the skills and references a diff or plan needs (`/sw-skill-router`). |
+| `sw-help` | What every skill is for, with example prompts (`/sw-help`). |
 
 ## Install (one-liner)
 
 ```bash
 npx skills add BrocksiNet/ai-skills-shopware \
+  --skill sw-skill-router \
+  --skill sw-help \
   --skill sw-php-foundation \
   --skill sw-architecture \
   --skill sw-security \

@@ -10,6 +10,9 @@ description: >-
   (sw-storefront), PHPUnit (sw-testing), or PHP DAL/services
   (surface PHP skills).
 license: MIT
+metadata:
+  contexts: core plugin app project
+  tasks: build review
 ---
 
 # Shopware Admin JS

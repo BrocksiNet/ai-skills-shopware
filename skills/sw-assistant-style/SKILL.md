@@ -8,6 +8,10 @@ description: >-
   filler, and no em dashes. Do NOT use for code rules, PR templates, or
   release-note content; those belong to the surface and workflow skills.
 license: MIT
+metadata:
+  contexts: core plugin app project
+  tasks: answer
+  load_for: answer
 ---
 
 # Shopware assistant communication style

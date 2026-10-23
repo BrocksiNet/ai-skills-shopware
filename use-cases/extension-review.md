@@ -23,11 +23,15 @@ reviews those on trunk.
 | `sw-review-learnings` | API-aware and DAL performance findings. |
 | `sw-testing` | Test shape, integration tests, exception assertions. |
 | `sw-change-impact` | The blast radius hand-off after the review. |
+| `sw-skill-router` | Lists the skills and references a diff or plan needs (`/sw-skill-router`). |
+| `sw-help` | What every skill is for, with example prompts (`/sw-help`). |
 
 ## Install (one-liner)
 
 ```bash
 npx skills add BrocksiNet/ai-skills-shopware \
+  --skill sw-skill-router \
+  --skill sw-help \
   --skill sw-extension-review \
   --skill sw-plugin-development \
   --skill sw-app-development \

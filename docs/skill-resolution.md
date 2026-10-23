@@ -34,6 +34,8 @@ Use when in-repo core skills are **absent**.
 
 ```bash
 npx skills add BrocksiNet/ai-skills-shopware \
+  --skill sw-skill-router \
+  --skill sw-help \
   --skill sw-php-foundation \
   --skill sw-architecture \
   --skill sw-security \
@@ -55,6 +57,8 @@ In-repo skills cover `shopware-php-code`, `shopware-phpunit-tests`,
 
 ```bash
 npx skills add BrocksiNet/ai-skills-shopware \
+  --skill sw-skill-router \
+  --skill sw-help \
   --skill sw-architecture \
   --skill sw-security \
   --skill sw-research-and-escalation \
@@ -75,6 +79,8 @@ Add `sw-plugin-development` when editing `custom/plugins` in the monorepo.
 
 ```bash
 npx skills add BrocksiNet/ai-skills-shopware \
+  --skill sw-skill-router \
+  --skill sw-help \
   --skill sw-php-foundation \
   --skill sw-architecture \
   --skill sw-security \

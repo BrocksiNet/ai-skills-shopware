@@ -11,6 +11,10 @@ description: >-
   for writing or fixing the code, or for the blast radius of a finished
   feature (sw-change-impact).
 license: MIT
+metadata:
+  contexts: plugin app project
+  tasks: review
+  load_for: review
 ---
 
 # Extension review (plugin and app diffs)

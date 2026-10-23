@@ -8,6 +8,10 @@ description: >-
   (sw-core-development), or when the request is only that the tests are
   green and the PR should be opened.
 license: MIT
+metadata:
+  contexts: core
+  tasks: ship
+  load_for: ship
 ---
 
 # Shopware core PR descriptions

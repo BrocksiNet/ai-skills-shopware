@@ -8,6 +8,10 @@ description: >-
   PHPUnit test authoring (use sw-testing), or for Shopware-specific
   framework topics like DAL, cache, or migrations (use the surface skills).
 license: MIT
+metadata:
+  contexts: core plugin project
+  tasks: build review
+  paths: "**/*.php"
 ---
 
 # PHP foundation (Shopware-aligned)

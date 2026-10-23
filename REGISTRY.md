@@ -33,6 +33,8 @@ the surface skills can all be installed together without contradicting (see
 | `sw-podman-dev` | maintainer | linked Podman checkout or Shopware CLI project | Running php/composer/phpunit/console/npm in shopware-dev, or shopware-cli project/extension validate | Test structure, PR text, release notes |
 | `sw-storefront` | maintainer | storefront (Twig/theme/JS) | Storefront plugins, Twig blocks, theme SCSS, HTTP-cache-safe AJAX | Admin Vue, PHP DAL, generic CSS lectures |
 | `sw-admin-js` | maintainer | Administration JS/TS/Vue | Admin Vue/TS, Meteor `mt-*`, Jest specs, Admin ACL | Storefront Twig, PHPUnit, PHP services |
+| `sw-skill-router` | maintainer | any (the library itself) | "Which skill should I use", the start of Shopware work, a diff or a plan to route; runs `scripts/route.mjs` | Explaining the library (`sw-help`), the topics themselves |
+| `sw-help` | maintainer | any (the library itself) | "What can the Shopware skills do", new users, an overview with example prompts | Routing a concrete diff (`sw-skill-router`), Shopware questions |
 
 ## Coverage matrix (one topic → one owning skill)
 
@@ -102,6 +104,8 @@ the surface skills can all be installed together without contradicting (see
 | Administration Vue/TS, Meteor `mt-*`, Jest next to code, Admin ACL + privilege migrations (no `system_config` grants in plugin roles), component overrides with `$super`, form field binding across 6.5 and 6.6+; experimental SFC is not the 6.8 upgrade | `sw-admin-js` |
 | Administration extension API (component props, blocks, `swDefinePublic`, `blocks-list.json`, position identifiers) | `sw-admin-js` |
 | Generic modern CSS/HTML/JS lookup (Modern Web Guidance CLI) after Shopware primitives | `sw-research-and-escalation` |
+| Picking skills and references for a change, plan or task (context and task filters, `index.json`) | `sw-skill-router` |
+| Overview of the library: what each skill is for, example prompts, install | `sw-help` |
 
 ### Precedence (when more than one applies)
 
@@ -126,6 +130,9 @@ the right one activates. There is no project-level "core vs plugin" choice.
    Administration Vue/TS → `sw-admin-js`. Those can sit next to a PHP
    surface skill in the same plugin. Generic modern CSS/JS lookup after
    primitives are checked → `sw-research-and-escalation`.
+6. **Unsure which applies?** `sw-skill-router` reads the diff or planned
+   paths, detects core, plugin, app or project, and lists the skills to load.
+   It never replaces them: each topic still has one owner above.
 
 ## Sources behind the seed (rewritten, not copied)
 

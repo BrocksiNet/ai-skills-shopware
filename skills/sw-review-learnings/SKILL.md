@@ -10,6 +10,10 @@ description: >-
   topics already owned by the surface skills; this skill records findings and
   points at the owning skill.
 license: MIT
+metadata:
+  contexts: core plugin app project
+  tasks: review
+  load_for: review
 ---
 
 # Shopware review learnings
