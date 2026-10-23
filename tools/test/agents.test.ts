@@ -220,14 +220,17 @@ describe('opencode-task adapter', () => {
     const r = await call(opencodeTask, { FAKE_OUT: join(FIXTURES, 'opencode-task.jsonl') });
     assert.deepEqual([r.rc, r.out, r.skills, r.usage], [0, 'DONE\n', 'sw-testing\n', '11620 317\n']);
   });
-  test('runs isolated with the step cap, the prompt as an argument', async () => {
+  test('runs isolated with the step cap and no web search, the prompt as an argument', async () => {
     const r = await call(opencodeTask, {
       FAKE_OUT: join(FIXTURES, 'opencode-task.jsonl'),
       TASK_MAX_TURNS: '3',
       TASK_MODEL: 'p/m',
     });
     assert.match(r.env ?? '', /HOME=.*opencode-task\.[^/]+\/home\n/u);
-    assert.match(r.env ?? '', /CFG=\{"agent":\{"build":\{"steps":3\}\},"permission":\{"question":"deny"\}\}/u);
+    assert.match(
+      r.env ?? '',
+      /CFG=\{"agent":\{"build":\{"steps":3\}\},"permission":\{"question":"deny"\},"tools":\{"websearch":false\}\}/u,
+    );
     assert.equal(r.args, 'run\n--standalone\n--auto\n--format\njson\n-m\np/m\ndo it\n');
   });
   test('an auth file is copied into the throwaway HOME', async () => {

@@ -42,6 +42,9 @@
 # Some free providers log prompts to improve their models. Eval fixtures are
 # public code, so that is acceptable here; do not point this at private code.
 #
+# Web search is off: in --standalone mode it is always cancelled, and a session
+# with a cancelled search exits 1 although it finished.
+#
 # Permissions are auto-approved because the workdir is a throwaway temp copy of
 # a fixture. Do not point this adapter at a real checkout.
 #
