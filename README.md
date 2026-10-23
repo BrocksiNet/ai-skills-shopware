@@ -23,8 +23,9 @@ plugin. Most skill sets add more text. This one measures what the text does.
 - **Built for the real surfaces.** Core, plugins, apps, shop projects,
   Storefront and Administration each get their own rules. The router detects
   which one you are in.
-- **Kept current.** A weekly job reports what changed on Shopware trunk, and
-  the API index rebuilds weekly.
+- **Kept current.** A weekly job reports what changed on Shopware trunk and
+  in upstream skill sets, a daily job collects review comments from merged
+  core PRs, and the API index rebuilds weekly.
 
 ## Results
 
