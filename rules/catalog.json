@@ -3152,7 +3152,18 @@
         "plugin",
         "admin"
       ],
-      "defer_on_trunk": false
+      "defer_on_trunk": false,
+      "trunk": {
+        "enforced_by": [
+          {
+            "tool": "filename-rules/not-match",
+            "kind": "eslint",
+            "catches": "reports every `.js` file under Administration `src`, specs excluded, with inline disables blocked",
+            "misses": "`<script>` blocks without `lang=\"ts\"` in `.vue` files, and plugin or app Administration code",
+            "trunk_only": true
+          }
+        ]
+      }
     },
     {
       "id": "ADM-002",
@@ -3234,7 +3245,7 @@
       "skill": "sw-admin-js",
       "file": "skills/sw-admin-js/SKILL.md",
       "title": "Follow the patterns of the area you touch",
-      "status": "active",
+      "status": "superseded:ADM-041",
       "since": "2026-10-20",
       "eval": null,
       "eval_reason": "Documented only; no eval yet.",
@@ -3253,15 +3264,25 @@
       "title": "Composables for new shared Vue logic; no new mixins",
       "status": "active",
       "since": "2026-10-20",
-      "eval": null,
-      "eval_reason": "Documented only; no eval yet.",
+      "eval": "admin-component-wrap-config",
       "core_guide_ids": [],
       "audience": [
         "core",
         "plugin",
         "admin"
       ],
-      "defer_on_trunk": false
+      "defer_on_trunk": false,
+      "trunk": {
+        "enforced_by": [
+          {
+            "tool": "sw-core-rules/no-new-mixins",
+            "kind": "eslint",
+            "catches": "reports `Mixin.register()` and `Shopware.Mixin.register()` in Administration `src` files, specs excluded, with inline disables blocked",
+            "misses": "inline mixin objects in a `mixins` array, a renamed alias such as `const M = Shopware.Mixin`, `.vue` files, and a new component that pulls in an existing mixin through `Mixin.getByName()`",
+            "trunk_only": true
+          }
+        ]
+      }
     },
     {
       "id": "ADM-008",
@@ -3829,6 +3850,22 @@
       "trunk": {
         "source": "coding-guidelines/core/backward-compatibility.md#administration"
       }
+    },
+    {
+      "id": "ADM-041",
+      "skill": "sw-admin-js",
+      "file": "skills/sw-admin-js/SKILL.md",
+      "title": "New components use wrapComponentConfig() and follow the reference implementations",
+      "status": "active",
+      "since": "2026-10-20",
+      "eval": "admin-component-wrap-config",
+      "core_guide_ids": [],
+      "audience": [
+        "core",
+        "plugin",
+        "admin"
+      ],
+      "defer_on_trunk": false
     },
     {
       "id": "ADM-042",

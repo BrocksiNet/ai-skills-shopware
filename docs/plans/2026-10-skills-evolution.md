@@ -73,7 +73,7 @@ review guides before adding anything new.
 | 4 | Change "Danger fails new test files" to "every added or modified test file" | `skills/sw-testing/references/core-platform-patterns.md` | trunk 75b0a495 (#21572) | existing `one-covers-class-per-file` |
 | 5 | Add "observing events in tests": no listeners on the shared `event_dispatcher`; unit tests use a dispatcher the test owns (`CollectingEventDispatcher`); integration tests use `EventHookDispatcher::fromContainer()->on()`; capture in the hook, assert afterwards, assert that the hook fired | `skills/sw-testing/references/test-shape-and-flags.md` + one checklist line in `SKILL.md` | trunk f2bf3794 (#21438), 190d734b (#21343) | new `event-hook-capture-then-assert` |
 | 6 | Reconcile `final` vs `@internal` advice into one rule | `skills/sw-core-development/references/platform-architecture.md` and `service-architecture.md` | BCPHP-010 | none |
-| 7 | Add `wrapComponentConfig()` for new Administration components | `skills/sw-admin-js/SKILL.md` | open #21730, #21722 | after #21730 merges |
+| 7 | Add `wrapComponentConfig()` for new Administration components | `skills/sw-admin-js/SKILL.md` | open #21730 (#21722 closed) | prepared as ADM-041 with eval `admin-component-wrap-config`; merge after #21730 |
 
 ### Eval spec: `event-hook-capture-then-assert`
 

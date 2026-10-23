@@ -1,0 +1,6 @@
+{% block sw_stock_badge %}
+<mt-card :title="$tc('sw-stock.badge.title')">
+    {{ product?.stock }}
+    <mt-button @click="save">{{ $tc('global.default.save') }}</mt-button>
+</mt-card>
+{% endblock %}
