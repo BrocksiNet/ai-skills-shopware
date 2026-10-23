@@ -1,0 +1,7 @@
+The leaderboard clamps limit and offset before they reach the DAL.
+
+```json
+{
+  "findings": []
+}
+```
