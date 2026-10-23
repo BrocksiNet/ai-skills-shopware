@@ -1,0 +1,14 @@
+```json
+{
+  "findings": [
+    {
+      "rule_id": "CORE-015",
+      "severity": "nit",
+      "file": "src/Core/Content/Media/Thumbnail/ThumbnailSizeResolver.php",
+      "line": 14,
+      "summary": "Consider adding a short docblock to the resolve() method.",
+      "fix": "Add a one-line summary above the attribute."
+    }
+  ]
+}
+```

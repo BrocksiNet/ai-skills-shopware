@@ -2072,8 +2072,7 @@
       "title": "BCChange attribute values stay machine-readable",
       "status": "active",
       "since": "2026-10-20",
-      "eval": null,
-      "eval_reason": "Documented only; no eval yet.",
+      "eval": "review-bc-change-machine-readable-catch",
       "core_guide_ids": [],
       "audience": [
         "core"

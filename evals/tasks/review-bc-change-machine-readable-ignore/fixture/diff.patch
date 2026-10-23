@@ -1,0 +1,20 @@
+diff --git a/src/Core/Content/Media/Thumbnail/ThumbnailSizeResolver.php b/src/Core/Content/Media/Thumbnail/ThumbnailSizeResolver.php
+index 3c1a9f2..5d07e61 100644
+--- a/src/Core/Content/Media/Thumbnail/ThumbnailSizeResolver.php
++++ b/src/Core/Content/Media/Thumbnail/ThumbnailSizeResolver.php
+@@ -2,6 +2,7 @@
+
+ namespace Shopware\Core\Content\Media\Thumbnail;
+
++use Shopware\Core\Framework\Deprecation\BCChange\ParameterTypeNarrowing;
+ use Shopware\Core\Framework\Log\Package;
+
+ #[Package('buyers-experience')]
+@@ -10,6 +11,7 @@ class ThumbnailSizeResolver
+     /**
+      * @return array{0: int, 1: int}
+      */
++    #[ParameterTypeNarrowing(version: 'v6.8.0', parameterName: 'size', newType: 'string')]
+     public function resolve(string|int $size): array
+     {
+         if (is_int($size)) {
