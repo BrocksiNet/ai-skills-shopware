@@ -83,10 +83,15 @@ export function parseOpencode(text: string): OpencodeSession {
         if (t.trim() !== '') s.texts.push(t);
         break;
       }
-      case 'tool_use':
+      case 'tool_use': {
         s.tools++;
-        if (part.tool === 'skill') addOnce(s.skills, skillName(obj(part.state).input, ['id', 'name', 'skill']));
+        const state = obj(part.state);
+        // A failed call, such as a skill name that is not installed, loaded
+        // nothing. Counting it made skill-off runs look like a leak.
+        if (part.tool === 'skill' && state.status !== 'error')
+          addOnce(s.skills, skillName(state.input, ['id', 'name', 'skill']));
         break;
+      }
       case 'step_finish': {
         const tok = obj(part.tokens);
         if (Object.keys(tok).length === 0) break;
@@ -123,7 +128,19 @@ export interface ClaudeSession {
 
 export function parseClaude(text: string): ClaudeSession {
   const s: ClaudeSession = { texts: [], skills: [], result: null };
+  // Skill calls by tool_use id, and the ids whose tool_result is an error
+  // (for example "Unknown skill"): those loaded nothing.
+  const calls: { id: string; name: string }[] = [];
+  const failed = new Set<string>();
   for (const msg of jsonLines(text)) {
+    if (msg.type === 'user') {
+      const content = obj(msg.message).content;
+      for (const block of Array.isArray(content) ? content : []) {
+        const b = obj(block);
+        if (b.type === 'tool_result' && b.is_error === true) failed.add(str(b.tool_use_id));
+      }
+      continue;
+    }
     if (msg.type === 'result') {
       const u = obj(msg.usage);
       s.result = {
@@ -144,9 +161,11 @@ export function parseClaude(text: string): ClaudeSession {
     for (const block of Array.isArray(content) ? content : []) {
       const b = obj(block);
       if (b.type === 'text' && str(b.text).trim() !== '') s.texts.push(str(b.text));
-      if (b.type === 'tool_use' && b.name === 'Skill') addOnce(s.skills, skillName(b.input, ['skill', 'command']));
+      if (b.type === 'tool_use' && b.name === 'Skill')
+        calls.push({ id: str(b.id), name: skillName(b.input, ['skill', 'command']) });
     }
   }
+  for (const call of calls) if (call.id === '' || !failed.has(call.id)) addOnce(s.skills, call.name);
   return s;
 }
 
