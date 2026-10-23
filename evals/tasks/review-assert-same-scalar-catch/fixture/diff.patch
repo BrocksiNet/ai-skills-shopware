@@ -1,0 +1,47 @@
+diff --git a/src/Service/LoyaltyBalance.php b/src/Service/LoyaltyBalance.php
+index 3c1f0a2..8d4e6b1 100644
+--- a/src/Service/LoyaltyBalance.php
++++ b/src/Service/LoyaltyBalance.php
+@@ -9,7 +9,7 @@ class LoyaltyBalance
+     }
+
+-    public function forCustomer(string $customerId): int
++    public function forCustomer(string $customerId): int|string
+     {
+-        return (int) $this->ledger->sumFor($customerId);
++        return $this->ledger->sumFor($customerId);
+     }
+ }
+diff --git a/tests/unit/Service/LoyaltyBalanceTest.php b/tests/unit/Service/LoyaltyBalanceTest.php
+new file mode 100644
+index 0000000..5b2e9c7
+--- /dev/null
++++ b/tests/unit/Service/LoyaltyBalanceTest.php
+@@ -0,0 +1,27 @@
++<?php declare(strict_types=1);
++
++namespace Swag\Loyalty\Tests\Unit\Service;
++
++use PHPUnit\Framework\Attributes\CoversClass;
++use PHPUnit\Framework\TestCase;
++use Swag\Loyalty\Service\LoyaltyBalance;
++use Swag\Loyalty\Service\PointsLedger;
++
++/**
++ * @internal
++ */
++#[CoversClass(LoyaltyBalance::class)]
++class LoyaltyBalanceTest extends TestCase
++{
++    public function testBalanceIsTheLedgerSum(): void
++    {
++        $ledger = new class implements PointsLedger {
++            public function sumFor(string $customerId): string
++            {
++                return '120';
++            }
++        };
++
++        static::assertEquals(120, (new LoyaltyBalance($ledger))->forCustomer('customer-1'));
++    }
++}
