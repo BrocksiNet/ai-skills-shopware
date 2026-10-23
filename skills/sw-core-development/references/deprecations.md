@@ -149,3 +149,7 @@ service/event/route; tightening a parameter type; changing default behavior;
 renaming a public property or constant. Internal-only (`@internal`) symbols are
 exempt — but verify the `@internal` was there before your change, not added by
 you to dodge the policy.
+
+## Eval
+
+`review-bc-change-most-specific-catch` / `-ignore` (CORE-014).
