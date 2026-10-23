@@ -6,6 +6,9 @@ behavior.
 
 ## Test shape
 
+- **TEST-034** If the test **does not need** the kernel, container, DAL, or HTTP: it belongs in
+  `tests/unit/`, not `tests/integration/`. Reviewers routinely request moving pure logic
+  tests out of the integration suite.
 - **TEST-025** Write each test as an **executable example**: scenario setup, action, and
   assertions should be easy to follow in the test method body.
 - **TEST-026** Move **stable boilerplate** (mock services, class under test, command testers,
