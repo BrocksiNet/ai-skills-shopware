@@ -706,8 +706,8 @@ IMP-008, ADM-039, ADM-040, ARCH-005 and CORE-063, each with a review pair
 existing rule already states were mapped onto it in `core_guide_ids`
 instead of becoming a second rule (DOCS-*, REMOVAL-001/003, SCOPE-001/003/006,
 BCPHP-001, MIG-001/003/005, ADMF-*, BCADM-006/009). `defer_on_trunk` is true
-only where the rule's source is on trunk; the SCOPE rules cite the guides of the
-open core PR #21455 and stay false. The IDs were checked against #21455 at
+only where the rule's source is on trunk; the SCOPE rules cited the guides of the
+then open core PR #21455 and stayed false until it merged. The IDs were checked against #21455 at
 `1e641ecf`, and again on 2026-10-23 at the final head `d97c7fbb`: the same
 111 IDs, all 77 we map still exist. Two mapped rules were reworded after
 `1e641ecf`. MIG-002 (`PLG-030`) only adds a core CI hint, the nightly
@@ -717,9 +717,9 @@ under test, unless the PR announces the behavior change. `TEST-035` does not
 cover that half yet; it is a candidate for a new `sw-testing` rule with a
 review pair. Core's guides reuse our `TEST` prefix (TEST-001..010 mean
 different rules there), so a core ID appears only in `core_guide_ids` and
-never bare in skill text. When #21455 merges, the SCOPE rules (`CORE-030`,
-`CORE-072..074`, `IMP-003`) and `REV-033` defer on trunk, with the guide as
-`trunk.source`. `sw-security` (SEC-001..007) and `sw-change-impact`
+never bare in skill text. #21455 merged on 2026-10-23 as `f31fb198` with the
+same guides, so the SCOPE rules (`CORE-030`, `CORE-072..074`, `IMP-003`) and
+`REV-033` now defer on trunk, with the guide as `trunk.source`. `sw-security` (SEC-001..007) and `sw-change-impact`
 (IMP-001..008) are now tagged as well.
 
 Goal: adopt the core review-guide rules that matter for plugin and app
@@ -812,8 +812,8 @@ deltas.
   - added or removed bullets in `.agents/skills/**/SKILL.md`
   - new headings in `coding-guidelines/**`
   - new PHPStan or Danger rule classes
-  - rule IDs added to or retired from `sw-review/guides/*.md` frontmatter,
-    once #21455 merges
+  - rule IDs added to or retired from `sw-review/guides/*.md` frontmatter
+    (on trunk since #21455 merged on 2026-10-23)
 - **Cross-check against `rules/catalog.json`**:
   - A core guide ID with no `core_guide_ids` match is **unmapped**.
   - A PHPStan or Danger class with no `enforced_by` match is **unmapped**.
@@ -855,7 +855,7 @@ WP8 using `gh pr view --json state,mergedAt`:
 
 | PR | Topic | Our impact | Prepared branch |
 | -- | ----- | ---------- | --------------- |
-| #21455 | `sw-review` topic guides with rule IDs | WP2 `core_guide_ids`, WP7 | none yet |
+| #21455 | `sw-review` topic guides with rule IDs | WP2 `core_guide_ids`, WP7 | merged 2026-10-23; [#59](https://github.com/BrocksiNet/ai-skills-shopware/pull/59) |
 | #21541 | BC and HTTP-cache guidelines | WP7 phase B links | none yet |
 | #21627 | PR template: What and why / How / Testing / Additional notes / Checklist | rewrite `sw-pr-description/references/pr-body-template.md` and the `pr-no-ai-trailers` fixtures | prepare now |
 | #21730 | Admin lint: no `.js` in `src`, no new mixins, `wrapComponentConfig()` required | WP0 #7, `admin-js-implementation-to-ts` grader | prepare now |

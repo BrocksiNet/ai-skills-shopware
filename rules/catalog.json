@@ -1775,7 +1775,8 @@
       ],
       "defer_on_trunk": true,
       "trunk": {
-        "source": ".agents/skills/sw-review/guides/scheduled-tasks-and-queue.md#check"
+        "source": ".agents/skills/sw-review/guides/scheduled-tasks-and-queue.md#check",
+        "commit": "f31fb198"
       }
     },
     {
@@ -2306,7 +2307,8 @@
       ],
       "defer_on_trunk": true,
       "trunk": {
-        "source": ".agents/skills/sw-review/guides/platform-scope.md#check"
+        "source": ".agents/skills/sw-review/guides/platform-scope.md#check",
+        "commit": "f31fb198"
       }
     },
     {
@@ -3050,7 +3052,8 @@
       ],
       "defer_on_trunk": true,
       "trunk": {
-        "source": ".agents/skills/sw-review/guides/platform-scope.md#check"
+        "source": ".agents/skills/sw-review/guides/platform-scope.md#check",
+        "commit": "f31fb198"
       }
     },
     {
@@ -3070,7 +3073,8 @@
       ],
       "defer_on_trunk": true,
       "trunk": {
-        "source": ".agents/skills/sw-review/guides/platform-scope.md#check"
+        "source": ".agents/skills/sw-review/guides/platform-scope.md#check",
+        "commit": "f31fb198"
       }
     },
     {
@@ -3090,7 +3094,8 @@
       ],
       "defer_on_trunk": true,
       "trunk": {
-        "source": ".agents/skills/sw-review/guides/platform-scope.md#check"
+        "source": ".agents/skills/sw-review/guides/platform-scope.md#check",
+        "commit": "f31fb198"
       }
     },
     {
@@ -4376,7 +4381,8 @@
       ],
       "defer_on_trunk": true,
       "trunk": {
-        "source": ".agents/skills/sw-review/guides/platform-scope.md#check"
+        "source": ".agents/skills/sw-review/guides/platform-scope.md#check",
+        "commit": "f31fb198"
       }
     },
     {
@@ -4475,7 +4481,9 @@
       "since": "2026-10-20",
       "eval": null,
       "eval_reason": "Documented only; no eval yet.",
-      "trunk": { "source": ".github/PULL_REQUEST_TEMPLATE.md" },
+      "trunk": {
+        "source": ".github/PULL_REQUEST_TEMPLATE.md"
+      },
       "core_guide_ids": [],
       "audience": [
         "core"
@@ -4580,7 +4588,9 @@
       "since": "2026-10-20",
       "eval": null,
       "eval_reason": "Documented only; no eval yet.",
-      "trunk": { "source": ".github/PULL_REQUEST_TEMPLATE.md#5-checklist" },
+      "trunk": {
+        "source": ".github/PULL_REQUEST_TEMPLATE.md#5-checklist"
+      },
       "core_guide_ids": [],
       "audience": [
         "core"
