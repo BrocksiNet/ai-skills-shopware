@@ -1304,12 +1304,11 @@
     {
       "id": "REV-005",
       "skill": "sw-review-learnings",
-      "file": "skills/sw-review-learnings/SKILL.md",
+      "file": "skills/sw-review-learnings/references/pr-size.md",
       "title": "Keep PRs under about 400 changed lines or explain why",
       "status": "active",
       "since": "2026-10-20",
-      "eval": null,
-      "eval_reason": "Process rule; not gradable from a diff.",
+      "eval": "review-pr-size-catch",
       "core_guide_ids": [],
       "audience": [
         "core",

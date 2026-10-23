@@ -921,6 +921,16 @@
           ]
         },
         {
+          "reference": "sw-review-learnings/references/pr-size.md",
+          "when": "Any review of a change: the changed-line count and whether it bundles separate concerns.",
+          "always": true,
+          "exclude_paths": [
+            "**/tests/**",
+            "**/Test/**",
+            "**/*.md"
+          ]
+        },
+        {
           "reference": "sw-review-learnings/references/version-guards.md",
           "when": "The change adds or keeps a class_exists or method_exists check for Shopware API.",
           "anchors_any": [
@@ -1327,6 +1337,16 @@
             "^\\s*(//|#|\\*|/\\*).*(^|[\\s(])#\\d{5}\\b",
             "^\\s*(//|#|\\*|/\\*).*\\binstead would\\b"
           ],
+          "exclude_paths": [
+            "**/tests/**",
+            "**/Test/**",
+            "**/*.md"
+          ]
+        },
+        {
+          "reference": "sw-review-learnings/references/pr-size.md",
+          "when": "Any review of a change: the changed-line count and whether it bundles separate concerns.",
+          "always": true,
           "exclude_paths": [
             "**/tests/**",
             "**/Test/**",
