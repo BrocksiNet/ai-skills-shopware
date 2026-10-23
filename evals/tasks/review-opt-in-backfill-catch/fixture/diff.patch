@@ -1,0 +1,103 @@
+diff --git a/src/Subscriber/CheckoutFinishSubscriber.php b/src/Subscriber/CheckoutFinishSubscriber.php
+index 3b1f0a2..9c4d7e1 100644
+--- a/src/Subscriber/CheckoutFinishSubscriber.php
++++ b/src/Subscriber/CheckoutFinishSubscriber.php
+@@ -3,9 +3,11 @@ declare(strict_types=1);
+ namespace Swag\LoyaltyPoints\Subscriber;
+
+ use Shopware\Core\Framework\Struct\ArrayStruct;
++use Shopware\Core\System\SystemConfig\SystemConfigService;
+ use Shopware\Storefront\Page\Checkout\Finish\CheckoutFinishPageLoadedEvent;
+ use Symfony\Component\EventDispatcher\EventSubscriberInterface;
+
+ class CheckoutFinishSubscriber implements EventSubscriberInterface
+ {
++    public function __construct(private readonly SystemConfigService $systemConfig)
++    {
++    }
++
+     public static function getSubscribedEvents(): array
+@@ -21,9 +23,15 @@ class CheckoutFinishSubscriber implements EventSubscriberInterface
+         $page = $event->getPage();
+         $order = $page->getOrder();
+
+         $page->addExtension('swagLoyaltyTier', new ArrayStruct([
+             'tier' => $order->getCustomFields()['swag_loyalty_tier'] ?? 'basic',
+         ]));
++
++        if (!$this->systemConfig->getBool('SwagLoyaltyPoints.config.showPointsOnFinish')) {
++            return;
++        }
++
++        $page->addExtension('swagLoyaltyPoints', new ArrayStruct([
++            'points' => (int) ($order->getCustomFields()['swag_loyalty_points'] ?? 0),
++        ]));
+     }
+ }
+
+diff --git a/src/Command/BackfillLoyaltyPointsCommand.php b/src/Command/BackfillLoyaltyPointsCommand.php
+new file mode 100644
+index 0000000..5e2a7b4
+--- /dev/null
++++ b/src/Command/BackfillLoyaltyPointsCommand.php
+@@ -0,0 +1,62 @@
++<?php declare(strict_types=1);
++
++namespace Swag\LoyaltyPoints\Command;
++
++use Shopware\Core\Checkout\Order\OrderEntity;
++use Shopware\Core\Framework\Context;
++use Shopware\Core\Framework\DataAbstractionLayer\EntityRepository;
++use Shopware\Core\Framework\DataAbstractionLayer\Search\Criteria;
++use Shopware\Core\Framework\DataAbstractionLayer\Search\Filter\EqualsFilter;
++use Symfony\Component\Console\Attribute\AsCommand;
++use Symfony\Component\Console\Command\Command;
++use Symfony\Component\Console\Input\InputInterface;
++use Symfony\Component\Console\Output\OutputInterface;
++
++#[AsCommand(name: 'swag:loyalty:backfill', description: 'Writes loyalty points to orders placed before the plugin was installed')]
++class BackfillLoyaltyPointsCommand extends Command
++{
++    public function __construct(private readonly EntityRepository $orderRepository)
++    {
++        parent::__construct();
++    }
++
++    protected function execute(InputInterface $input, OutputInterface $output): int
++    {
++        $context = Context::createDefaultContext();
++        $criteria = (new Criteria())->setLimit(200);
++        $criteria->addFilter(new EqualsFilter('customFields.swag_loyalty_points', null));
++        $criteria->addAssociation('lineItems');
++
++        $updated = 0;
++        do {
++            $orders = $this->orderRepository->search($criteria, $context)->getEntities();
++            $payload = [];
++            foreach ($orders as $order) {
++                $payload[] = [
++                    'id' => $order->getId(),
++                    'customFields' => ['swag_loyalty_points' => $this->pointsFor($order)],
++                ];
++            }
++            if ($payload !== []) {
++                $this->orderRepository->update($payload, $context);
++                $updated += \count($payload);
++            }
++        } while ($payload !== []);
++
++        $output->writeln(sprintf('Updated %d orders.', $updated));
++
++        return Command::SUCCESS;
++    }
++
++    private function pointsFor(OrderEntity $order): int
++    {
++        $points = 0;
++        foreach ($order->getLineItems()?->getElements() ?? [] as $item) {
++            $points += (int) floor($item->getTotalPrice());
++        }
++
++        return $points;
++    }
++}

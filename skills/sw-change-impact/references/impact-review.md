@@ -88,6 +88,9 @@ no container per feature flag, sales channel, or other condition.
 
 ## Easier, not more complex
 
+- **IMP-005** **Easier beats more complete.** A new setting, header, or ritual
+  that only makes the feature work has made the shop harder. Prefer the change
+  that removes a step.
 - Making the feature work by adding a header the caller must now send, a new
   config field, or a second code path is added complexity. Call that out.
 - The better change removes work: reuse an existing extension point, keep the
