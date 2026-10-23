@@ -30,7 +30,7 @@ Read only the reference that matches the task or the files it changes:
 | Read | When | Or the change touches |
 | ---- | ---- | --------------------- |
 | [`exception-assertions.md`](references/exception-assertions.md) | A test asserts an exception. | `->expectException(Object\|Message\|Code)?(` |
-| [`test-shape-and-flags.md`](references/test-shape-and-flags.md) | You need data providers, feature flags or coverage attributes. | `#[DataProvider(`, … |
+| [`test-shape-and-flags.md`](references/test-shape-and-flags.md) | You need data providers, feature flags or coverage attributes, or a change edits an assertion. | `#[DataProvider(`, … |
 | [`integration-repository.md`](references/integration-repository.md) | An integration test reads or writes through a repository. | `tests/integration/**/*Test.php`, `IntegrationTestBehaviour` |
 | [`core-platform-patterns.md`](references/core-platform-patterns.md) | The test lives in shopware/shopware (migrations, Codecov, `#[CoversClass]`). | `tests/migration/**`, `tests/devops/**`, `@codeCoverageIgnore`, … |
 | [`external-inspiration.md`](references/external-inspiration.md) | You want plugin test patterns from FriendsOfShopware. | `custom/plugins/*/tests/**`, `custom/static-plugins/*/tests/**` |
@@ -120,6 +120,9 @@ These match PHPStan rules and reviewer expectations on core PRs:
 - **TEST-022** **Deterministic** — no `sleep`, no unordered shared state.
 - **A test must be able to fail**: no assertions behind a null guard, and a
   mocked callback runs its closure. See `test-shape-and-flags.md`.
+- **Keep existing expectations**: a PR that changes code does not flip,
+  loosen or skip an old assertion unless it announces the behavior change.
+  See `test-shape-and-flags.md`.
 
 ## Platform core extras
 

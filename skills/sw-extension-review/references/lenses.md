@@ -89,6 +89,8 @@ points at a replacement the extenders can use today: `CORE-063`.
 
 - Can the new test fail? An assertion inside a hook or listener that never
   runs proves nothing: `TEST-016`, `TEST-035`.
+- Did the diff change an existing test's expectation along with the code,
+  without announcing the behavior change: `TEST-036`?
 - Does the test cover the case the diff changes, not only the happy path?
 
 ## Near misses

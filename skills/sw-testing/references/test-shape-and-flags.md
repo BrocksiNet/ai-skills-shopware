@@ -33,6 +33,17 @@ behavior.
   check its fields; never guard assertions with `if ($captured !== null)`. A
   mocked `transactional()` or callback must run the closure it receives, or
   the code under test never executes and the test passes on nothing.
+- **TEST-036** **Keep an existing expectation unless the PR says the
+  behavior changes.** When a PR changes production code, check the test
+  files that existed before it. A removed or rewritten assertion, expected
+  value, data-provider case, snapshot or fixture, a new `markTestSkipped()`
+  or `markTestIncomplete()`, a looser matcher (`assertSame` to
+  `assertEquals`, an exact value to `assertNotNull`), or a broader expected
+  exception makes the old test agree with the new code. It stays green
+  while the behavior it pinned breaks. Keep the old expectation, or
+  announce the behavior change in the PR description and the changelog or
+  upgrade notes (`CHANGELOG.md`, `RELEASE_INFO`, `UPGRADE`). A new test
+  file, or an expectation that only follows a rename, is not covered.
 
 ## Never terminate the test process
 

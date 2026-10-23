@@ -1,0 +1,7 @@
+The calculator now rounds to the nearest point, the test case follows, and CHANGELOG_en-GB.md announces that 19.99 earns 2 points. Nothing to report.
+
+```json
+{
+  "findings": []
+}
+```

@@ -1,0 +1,33 @@
+diff --git a/src/Service/LoyaltyCalculator.php b/src/Service/LoyaltyCalculator.php
+index 20d8c45..6b97afa 100644
+--- a/src/Service/LoyaltyCalculator.php
++++ b/src/Service/LoyaltyCalculator.php
+@@ -3,7 +3,7 @@
+ namespace Swag\Loyalty\Service;
+ 
+ /**
+- * Loyalty points a customer earns for an order total: one point per 10 units.
++ * Loyalty points a customer earns for an order total: one point per 10 units, rounded to the nearest point.
+  */
+ class LoyaltyCalculator
+ {
+@@ -15,6 +15,6 @@ class LoyaltyCalculator
+             return 0;
+         }
+ 
+-        return (int) floor($total / self::UNITS_PER_POINT);
++        return (int) round($total / self::UNITS_PER_POINT);
+     }
+ }
+diff --git a/tests/unit/Service/LoyaltyCalculatorTest.php b/tests/unit/Service/LoyaltyCalculatorTest.php
+index d5aeebc..8e30ebd 100644
+--- a/tests/unit/Service/LoyaltyCalculatorTest.php
++++ b/tests/unit/Service/LoyaltyCalculatorTest.php
+@@ -24,6 +24,6 @@ class LoyaltyCalculatorTest extends TestCase
+         yield 'zero total' => [0.0, 0];
+         yield 'negative total' => [-5.0, 0];
+         yield 'exactly one point' => [10.0, 1];
+-        yield 'rounds down below the next point' => [19.99, 1];
++        yield 'rounds to the nearest point' => [19.99, 2];
+     }
+ }
