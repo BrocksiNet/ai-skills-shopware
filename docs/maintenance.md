@@ -308,8 +308,46 @@ wrong. Judge a passing one against the five criteria yourself:
 For a retirement, open the evidence: the CI check's source and whether it
 runs for extensions, the release the class left, or the A/B row. Retiring
 moves the rule to `retired` in the catalog and removes it from the skill
-text. Drafting the change from a proposal is step 5 of
-[the plan](plans/2026-10-skill-update-automation.md).
+text. To have the agent write the change, see
+[Drafting a proposal](#drafting-a-proposal).
+
+## Drafting a proposal
+
+```bash
+node tools/bin/suggest-rules.ts draft 2026-10-23-04 --no-pr   # branch and worktree only
+node tools/bin/suggest-rules.ts draft 2026-10-23-04           # and a draft PR
+```
+
+`draft` takes a proposal ID from `suggestions/` that passed its checks and
+is not `none`:
+
+1. It creates the branch `rules/<skill>-<slug>` from `--base` (`main`) in a
+   worktree under `.cache/drafts/`.
+2. The agent makes the change by the steps in `AGENTS.md`: for a new rule
+   the next free ID, the catalog entry and an eval task with golden
+   fixtures; for an update the new text; for a retirement the catalog
+   status and the removed bullet. It gets the proposal, not the review
+   comments. Claude runs with file tools and `Bash` limited to `node`,
+   `npm` scripts and the repo's own scripts, with no web tools, no MCP
+   servers and no GitHub or package token.
+3. The generators `AGENTS.md` names (`render-routes`, `render-enforced`,
+   `render-router-index`) and `npm run format` run, then the free checks CI
+   runs on every push:
+   `validate-skills.sh`, the tools type check, lint and tests, the golden
+   graders and Markdown lint. On a failure the agent gets the output once
+   more; when the checks still fail, the command stops and leaves the
+   worktree for you.
+4. It commits, then runs `eval-local` for the eval tasks the change adds or
+   edits, plus an updated rule's own task (`DRAFT_REPEATS`, default 3).
+   The results go to `suggestions/<id>-ab.jsonl`.
+5. It writes the PR body to `suggestions/<id>-pr.md`: the evidence links,
+   the criteria answers, the free checks and the A/B table, row by row
+   from the results file. Without `--no-pr` it pushes the branch and opens
+   a draft PR with the `run-evals` label, so CI repeats the A/B. A proposal
+   with private evidence never gets a PR.
+
+`DRAFT_MODEL` (`haiku`), `DRAFT_MAX_TURNS` (60) and `DRAFT_MAX_BUDGET_USD`
+(2) bound the agent. Remove a kept worktree with `git worktree remove`.
 
 ## How a change lands
 
@@ -318,10 +356,16 @@ text. Drafting the change from a proposal is step 5 of
    catalog (`trunk.source` or `upstream`, as `path#heading-anchor`), so the
    next drift issue files changes there under the rule.
 2. The rule changes in its one owning skill (see [`REGISTRY.md`](../REGISTRY.md)),
-   with its ID and catalog entry.
+   with its ID and catalog entry. Either you write it, or `suggest-rules`
+   proposes it and `suggest-rules draft` writes it into a draft PR.
 3. An eval task proves it, or the catalog records why it cannot.
 4. CI checks structure on every push. The model evals and the A/B gate run
-   before a release.
-5. Users get it with `npx skills update`.
+   before a release; a drafted PR has the `run-evals` label, so they run
+   on it too.
+5. Before merging a drafted PR, read it like any other: does the rule pass
+   the five criteria, is it in our words, does the eval's `fixtures/fail/`
+   come close to passing, and does the skill win the A/B? A draft the
+   skill does not win stays a draft.
+6. Users get it with `npx skills update`.
 
 Contributor details: [`AGENTS.md`](../AGENTS.md).

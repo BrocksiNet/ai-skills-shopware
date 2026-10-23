@@ -62,6 +62,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   trunk-only, classes gone from the API index and A/B baselines where the
   skill-off arm passes every repeat. Output goes to the git-ignored
   `suggestions/`. See `docs/maintenance.md#suggesting-rule-changes`.
+- `suggest-rules draft <id>` turns one proposal into a branch
+  `rules/<skill>-<slug>` in its own worktree. The agent makes the change by
+  the steps in `AGENTS.md` with file and test tools only; the free checks
+  run (one retry with their output), `eval-local` runs the A/B for the
+  changed tasks, and a draft PR opens with the evidence, the criteria
+  answers, the checks and the A/B table, labelled `run-evals`. `--no-pr`
+  stops before the push. See `docs/maintenance.md#drafting-a-proposal`.
 
 ### Changed
 

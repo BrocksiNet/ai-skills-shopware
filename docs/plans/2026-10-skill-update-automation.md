@@ -1,6 +1,6 @@
 # Skill update automation plan (2026-10)
 
-Status: **accepted** (2026-10-23); phases 0 to 4 done 2026-10-23, phase 5 next · Author: BrocksiNet · Created: 2026-10-23
+Status: **done** (2026-10-23), all phases; how it works today is in [`docs/maintenance.md`](../maintenance.md) · Author: BrocksiNet · Created: 2026-10-23
 
 Rules go stale because Shopware changes every week. Half of the upkeep is
 automated already: the weekly trunk mining issue and the weekly API index.
@@ -524,6 +524,49 @@ enough good PRs to trust it.
   three of five proposals from the backfill.
 - The A/B table in the PR body matches the `eval-local` results file.
 
+### Step 5: what was built (2026-10-23)
+
+`node tools/bin/suggest-rules.ts draft <id>` with the logic in
+`tools/src/draft-*.ts`; the user guide is
+[`docs/maintenance.md`](../maintenance.md#drafting-a-proposal).
+Differences from the plan above:
+
+- The worktree goes to `.cache/drafts/<branch>` and starts from
+  `origin/<base>`. The installed `node_modules` are linked in, not
+  installed again, and kept out of the commit.
+- Before the checks, the command runs the generators that `AGENTS.md`
+  names (`render-routes`, `render-enforced`, `render-router-index`) and
+  `npm run format`. In the first acceptance pass a new reference with a
+  stale router index failed `validate-skills` twice.
+- The free checks include the tools type check and lint, because CI fails
+  on them too.
+- Claude runs with `--tools Read,Edit,Write,Glob,Grep,Bash`, `Bash` allowed
+  only for `node`, `npm test`/`npm run`, `bash scripts/` and `bash evals/`,
+  `--permission-mode dontAsk`, `--strict-mcp-config` and no tokens.
+  `--restricted` would confine the file tools too, but under `dontAsk` it
+  denies every `Bash` call.
+- The A/B takes the tasks the change adds or edits, plus the eval of an
+  updated rule. The PR body reads the table back from the results file.
+- A proposal that failed its checks, a `none`, or (for a PR) one with
+  private evidence is refused.
+
+**Acceptance run** (claude, haiku, `--no-pr`, `DRAFT_REPEATS=1`): five
+proposals from the step 4 run.
+
+| Proposal | Change | Attempts | Free checks | A/B (on / off) |
+| -------- | ------ | -------- | ----------- | -------------- |
+| update `REV-034` | text, title, catch grader and fixture | 1 | all pass | catch 1/1 vs 1/1, held |
+| new `REV-036`, anchored admin pattern | rule, new reference and route, review pair | 1 | all pass | catch and ignore 1/1 vs 1/1, held |
+| new `REV-036`, subset lookup as a filter | rule, review pair | 1 | all pass | catch 0/1 vs 0/1; ignore 1/1 vs 0/1; gate FAIL |
+| retire `TEST-013` | catalog status, bullet removed | 1 | all pass | no task changed |
+| update `TEST-035` | text in `SKILL.md` and the reference | 1 | all pass | catch 1/1 vs 1/1, held |
+
+All five pass every free check without manual edits (target: three). Every
+A/B table in the five PR bodies matches its results file row for row. The
+subset-lookup draft is one that stays a draft: its catch task fails with
+the skill on. No PR was opened; the worktrees and `rules/*` branches were
+removed afterwards.
+
 ## Safety and cost
 
 - **Untrusted input.** Review comments and upstream files are text from
@@ -548,7 +591,7 @@ enough good PRs to trust it.
 | 3 | **Done.** Daily review collector and the `review-signals` release | 2 | M | none |
 | 3b | **Done.** Replay tests for mining and the router against recorded history | 3 | M | none |
 | 4 | **Done.** `suggest-rules` command | 3b | M | local |
-| 5 | `suggest-rules draft` | 4 | L | local |
+| 5 | **Done.** `suggest-rules draft` | 4 | L | local |
 
 Each phase includes its documentation; see [Documentation](#documentation).
 
