@@ -30,7 +30,7 @@
 // a draft PR with the `run-evals` label opens unless --no-pr. --base (main)
 // is the start and PR target, --worktree the folder (.cache/drafts/<branch>).
 // DRAFT_MODEL (haiku), DRAFT_REPEATS (3), DRAFT_MAX_TURNS (60) and
-// DRAFT_MAX_BUDGET_USD (2) set the agent. Exit 0 = drafted, 1 = not.
+// DRAFT_MAX_BUDGET_USD (2) and DRAFT_TIMEOUT_MINUTES (20) set the agent. Exit 0 = drafted, 1 = not.
 //
 //   node tools/bin/suggest-rules.ts draft-eval TEST-020 [--no-pr]
 //

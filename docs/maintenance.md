@@ -368,8 +368,8 @@ is not `none`:
    a draft PR with the `run-evals` label, so CI repeats the A/B. A proposal
    with private evidence never gets a PR.
 
-`DRAFT_MODEL` (`haiku`), `DRAFT_MAX_TURNS` (60) and `DRAFT_MAX_BUDGET_USD`
-(2) bound the agent. Remove a kept worktree with `git worktree remove`.
+`DRAFT_MODEL` (`haiku`), `DRAFT_MAX_TURNS` (60), `DRAFT_MAX_BUDGET_USD`
+(2) and `DRAFT_TIMEOUT_MINUTES` (20, per session) bound the agent. Remove a kept worktree with `git worktree remove`.
 
 ### Drafting an eval for a rule
 
