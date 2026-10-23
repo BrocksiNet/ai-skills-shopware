@@ -144,6 +144,8 @@ function logEval(o: DraftOptions, s: DraftSubject, r: DraftResult): void {
       off: a.off,
       repeats: a.repeats,
       verdict: a.verdict,
+      // 0 means the skill-on arm never loaded the skill: no verdict on the rule.
+      loaded_on: a.loaded_on ?? null,
     })),
     ...(r.pr === undefined ? {} : { pr: r.pr }),
     at: new Date().toISOString(),
