@@ -1,0 +1,7 @@
+The new entries() method wraps the existing balance, and the tests pin the scalar and the list correctly. No problems found.
+
+```json
+{
+  "findings": []
+}
+```

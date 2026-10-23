@@ -1,0 +1,16 @@
+The entries() test compares an array with assertEquals, which is loose.
+
+```json
+{
+  "findings": [
+    {
+      "rule_id": "TEST-018",
+      "severity": "minor",
+      "file": "tests/unit/Service/LoyaltyBalanceTest.php",
+      "line": 37,
+      "summary": "assertEquals on the entries array is loose and should be assertSame.",
+      "fix": "Use assertSame for the array."
+    }
+  ]
+}
+```
