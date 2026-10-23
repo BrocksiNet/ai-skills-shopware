@@ -110,7 +110,7 @@ Measured over PRs merged into `shopware/shopware` trunk from 2026-09-01 to
 
 What this changes:
 
-- **Volume is small.** About 15 kept threads a day, from about 20
+- **Volume is small.** About 15 kept threads a day, from 51
   reviewers. Storage and API limits are not a concern.
 - **Resolved means nothing.** Almost every thread on a merged PR is
   resolved, so the collector does not store it.
