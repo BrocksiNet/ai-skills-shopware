@@ -1,6 +1,6 @@
 # Skill update automation plan (2026-10)
 
-Status: **accepted** (2026-10-23); phases 0 to 3 done 2026-10-23, phase 4 next · Author: BrocksiNet · Created: 2026-10-23
+Status: **accepted** (2026-10-23); phases 0 to 3b done 2026-10-23, phase 4 next · Author: BrocksiNet · Created: 2026-10-23
 
 Rules go stale because Shopware changes every week. Half of the upkeep is
 automated already: the weekly trunk mining issue and the weekly API index.
@@ -338,6 +338,62 @@ Acceptance, on a live backfill over 2026-09-01..2026-10-20:
 - The GitHub API is stubbed in `tools/test/collect-reviews.test.ts` with
   the two PRs as recorded on 2026-10-23.
 
+## Phase 3b: replay tests (done 2026-10-23)
+
+Step 4 reads what mining and the review collector map. Before a model
+proposes rules from that data, both are replayed against recorded history,
+so a mapping fault shows up as a failing test and not as a wrong proposal.
+Built in #67 (mining) and #66 (router).
+
+**Mining.** Ten recorded weeks across every source, each checked against a
+hand reading of the commits. The replay found eight faults, all fixed:
+commits merged after the state but dated before it were skipped, merge
+commits were read twice, unwatched Markdown and change logs were read, code
+blocks and frontmatter came out as rules, review persona bullets were
+missed, helper classes counted as rule classes, commits were cut at 300
+files, and the workflow closed drift issues the new report did not cover.
+
+| Window | Commits with a change found |
+| ------ | --------------------------- |
+| shopware 2026-10-13..19 (the WP8 golden window) | 8/8 |
+| shopware 2026-10-05..11 | 5/5 (was 4/5) |
+| shopware 2026-09-28..10-04 | 8/8 |
+| php-modernization 2026-09-28..10-04 | 4/4 |
+| php-modernization from a state commit | 2/2 (0/2 by date) |
+| ai-coding-tools 2026-09-01..07 | 4/4 |
+| shopware-cli 2026-10-13..19 | 1/1 |
+
+Noise on the upstream sources fell sharply: on ai-coding-tools from 193
+lines and nine unmapped items to 123 lines and none. `--dry-run` and a
+per-source `/mined <source>` came with it.
+
+**Router.** `tools/bin/replay-routes.ts` replays merged core PRs from the
+`core-reviews` backfill (2026-09-01..2026-10-20, 235 PRs with review
+comments) and compares the references the router selects with the ones the
+comments map to. The comments are mapped through the same routes, on their
+own hunk, so recall is a consistency check; the hand labels in the corpus
+are the independent part.
+
+| Measure | Value |
+| ------- | ----- |
+| Recall over comment-mapped references | 88.5 % (407/460) |
+| References selected per PR | 5.59 |
+| Of those, with no matching comment | 3.86 |
+
+Every miss came from code no longer in the merged diff: the file was gone
+(33) or the hunk changed, mostly outdated threads (30). The noisiest
+references are `core-platform-patterns.md`, `test-shape-and-flags.md` and
+`release-notes-and-adr.md`. `REV-034` now has a route that reaches the
+history comment on #19917. A corpus of 34 PRs in `evals/routing-replay/` keeps
+a recall floor of 0.76 and at most five references per PR in CI.
+
+Left open: catalog entries for three new trunk checks that land in
+Unmapped (`StoreApiRouteExtensionRule` for `ARCH-004`,
+`NoFeatureSkipInUnitTestsRule` for `TEST-006`, `NoReflectionInUnitTestsRule`
+next to `TEST-012`), the noisy "used to" and "no longer" anchors on
+`code-comments.md`, and replaying each comment at its own commit instead of
+the merged diff.
+
 ## Step 4: suggest rules with a local command
 
 `node tools/bin/suggest-rules.ts` reads signals and proposes changes. It runs
@@ -454,7 +510,8 @@ enough good PRs to trust it.
 | 1 | **Done.** Source list and per-source state | none | M | none |
 | 2 | **Done.** Signal format and mapper; drift issue grouped by rule | 1 | M | none |
 | 3 | **Done.** Daily review collector and the `review-signals` release | 2 | M | none |
-| 4 | `suggest-rules` command | 3 | M | local |
+| 3b | **Done.** Replay tests for mining and the router against recorded history | 3 | M | none |
+| 4 | `suggest-rules` command | 3b | M | local |
 | 5 | `suggest-rules draft` | 4 | L | local |
 
 Each phase includes its documentation; see [Documentation](#documentation).

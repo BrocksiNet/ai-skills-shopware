@@ -40,6 +40,44 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   higher for org members. It lands in `reviewers.json` next to the signals.
 - The weekly drift issue has a "Review comments" section: the week's
   review comments counted per skill and reference, with the PRs.
+- Replay tests for drift mining: ten recorded weeks across all sources,
+  checked against a hand reading. `mine-trunk.ts run --dry-run` prints the
+  report and the issue actions without touching issues or the state file;
+  the workflow has a `dry_run` input. `/mined <source>` moves only the
+  named sources.
+- `tools/bin/replay-routes.ts` replays the router over merged core PRs and
+  measures recall against the references their review comments map to,
+  and the references selected with no matching comment. A recorded corpus
+  of 34 public PRs in `evals/routing-replay/` keeps a recall floor in CI.
+- `tools/bin/agent-preflight.ts`: the evals workflow checks that the CI
+  model answers before the shards start.
+
+### Changed
+
+- The CI eval model is `opencode/mimo-v2.6-flash-free`; LongCat is no
+  longer offered. OpenCode web search is off in eval sessions, and the
+  workflow runs 16 shards with a 330 minute A/B timeout.
+- The README shows the version facts A/B with all three arms, the
+  `ADM-009` result and the `api-diff` precision and recall, and describes
+  the mining and review collection that run today.
+- The `code-comments.md` route for `REV-034` also fires on "instead would"
+  and on any bare issue number in a comment.
+
+### Fixed
+
+- Drift mining skipped commits merged after the state but dated before it.
+  It now reads the commit range from the state's commit, and falls back to
+  dates when that commit is gone.
+- Drift mining read merge commits again, read Markdown outside the watched
+  paths and change logs, took code blocks and frontmatter for rules, missed
+  review persona bullets, reported helper classes as rule classes, and cut
+  commits at 300 files.
+- The mining workflow closed every older drift issue. It now closes one
+  only when the new report reaches as far in every source it lists.
+- Eval runs: a failed skill call no longer counts as a loaded skill, a
+  session that tried web search no longer counts as an agent error, and the
+  gate and baseline jobs need a successful plan. The baseline job refuses
+  empty results.
 
 ## [0.14.0] - 2026-10-23
 
