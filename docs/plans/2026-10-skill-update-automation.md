@@ -1,6 +1,6 @@
 # Skill update automation plan (2026-10)
 
-Status: **proposed** (2026-10-23) · Author: BrocksiNet · Created: 2026-10-23
+Status: **accepted** (2026-10-23); phase 0 done, phases 1 and 2 in progress · Author: BrocksiNet · Created: 2026-10-23
 
 Rules go stale because Shopware changes every week. Half of the upkeep is
 automated already: the weekly trunk mining issue and the weekly API index.
@@ -81,7 +81,7 @@ renderer and the suggest command share one parser in `tools/src/signals.ts`.
   "path": "src/Core/Content/Category/Service/CategoryBreadcrumbBuilder.php",
   "diff_hunk": "@@ -120,6 +120,14 @@ …",
   "text": "This docblock describes what the PR changed, not what the code does …",
-  "thread": { "replies": 2, "resolved": true, "author_changed_code": true },
+  "thread": { "replies": 1, "outdated": true },
   "map": [
     { "skill": "sw-review-learnings", "reference": "references/code-comments.md", "rules": ["REV-034"], "via": "anchors_any" }
   ]
@@ -92,6 +92,37 @@ Kinds: `skill-bullet`, `guideline-heading`, `guide-id`, `rule-class`,
 `template-line` (today's trunk deltas), `upstream-line` (an upstream skill
 repo), `review-comment`, `review-body`, and `api-break` (from `check-breaks`).
 The `id` is stable, so a re-run never duplicates a signal.
+
+## Phase 0 results (2026-10-23)
+
+Measured over PRs merged into `shopware/shopware` trunk from 2026-09-01 to
+2026-10-22, with a one-off script outside the repo:
+
+| Measure | Count |
+| ------- | ----- |
+| Merged PRs | 709 |
+| Review threads | 1207 |
+| Threads started by a maintainer, not the PR author, not a bot | 994 |
+| Of those, at least 40 characters without suggestion blocks | 799 |
+| Of those, outdated (the code changed after the comment) | 513 |
+| Merged PRs with at least one kept thread | 245 |
+| Maintainer review bodies of at least 40 characters | 139 |
+
+What this changes:
+
+- **Volume is small.** About 15 kept threads a day, from about 20
+  reviewers. Storage and API limits are not a concern.
+- **Resolved means nothing.** Almost every thread on a merged PR is
+  resolved, so the collector does not store it.
+- **Outdated is a weight, not a filter.** Keeping only outdated threads
+  would leave 43%, but it drops the `REV-035` source: the blocking Dynamic
+  Access finding on #19917 was answered in another file and never went
+  outdated. The suggest step weights outdated threads higher instead.
+- **Both #55 sources are in the data.** #20855 (merged 2026-10-13) and
+  #19917 (merged 2026-10-20) carry the comments behind `REV-034` and
+  `REV-035`, so the step 3 backfill acceptance holds.
+- **About a fifth of kept threads end in a question.** They stay. A
+  question that leads to a code change is often the finding.
 
 ## Step 1: one mining job, many sources
 
@@ -181,22 +212,23 @@ A daily workflow, `.github/workflows/collect-reviews.yml`, runs
 `shopware/shopware` trunk since the last run and turns their review comments
 into signals. No model calls and no secrets beyond `GITHUB_TOKEN`.
 
-**What it reads, per merged PR**:
-
-- review comments on the diff (`pulls/{n}/comments`), with `path` and
-  `diff_hunk`
-- review bodies with state `CHANGES_REQUESTED` or a non-empty `COMMENTED`
-  body (`pulls/{n}/reviews`)
+**What it reads**: one GraphQL search for PRs merged into trunk since the
+cursor (`is:pr is:merged base:trunk merged:>…`), 25 PRs per page. Each page
+brings the review threads with their first comment, `path`, `isOutdated`
+and the comment count, and the review bodies. Phase 0 needed about 30
+queries for 52 days, so a daily run is one or two queries.
 
 **What it keeps**:
 
 - Authors with `author_association` `MEMBER` or `OWNER`, minus bots and the
   PR's own author. A maintainer team list can replace this later.
 - Thread starters only. Replies are counted in `thread.replies`, not stored.
-- `thread.author_changed_code`: a commit touched the commented lines after
-  the comment. A comment the author acted on is a stronger signal.
-- It drops comments under a minimum length, approvals without text, and
-  pure suggestion blocks that only fix a typo.
+- `thread.outdated`: the diff under the comment changed later, so the author
+  most likely acted on it. It is a weight for the suggest step, not a filter:
+  the blocking finding behind `REV-035` was never outdated.
+- Review bodies of at least 40 characters, as kind `review-body`.
+- It drops thread starters under 40 characters once `suggestion` blocks and
+  HTML comments are removed. Most of them are typo fixes or "nit".
 
 **Where the data lives**: a release named `review-signals`, like the
 `api-index` release, with one asset per month (`reviews-2026-10.jsonl`).
@@ -217,8 +249,8 @@ like everything else in the library, and links the PR as its source.
 
 - A backfill run over 2026-09-01..2026-10-20 contains the #19917 and #20855
   comments behind `REV-034` and `REV-035`, mapped to those rules.
-- Phase 0 numbers (below) show the daily volume fits the API limits and
-  the noise filter keeps fewer than half of all comments.
+- A daily run makes at most a few GraphQL queries and keeps what the
+  phase 0 filter keeps: about 15 signals a day.
 - The GitHub API is stubbed in `tools/test/collect-reviews.test.ts`.
 
 ## Step 4: suggest rules with a local command
@@ -324,8 +356,8 @@ enough good PRs to trust it.
 - **No silent changes.** CI never edits skills. Only the local command
   writes rule text, and only into a draft PR.
 - **Cost.** Steps 1 to 3 need no model. Steps 4 and 5 use your agent plan
-  and are capped per run. The daily collector makes about three API calls
-  per merged PR.
+  and are capped per run. The daily collector makes one or two GraphQL
+  queries.
 - **License.** Upstream and review text informs a rule; it is never copied
   into one. CC-BY-SA sources stay rewrite-only, as `REGISTRY.md` says.
 
