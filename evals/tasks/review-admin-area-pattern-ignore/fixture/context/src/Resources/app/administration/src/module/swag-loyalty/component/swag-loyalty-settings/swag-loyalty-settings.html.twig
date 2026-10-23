@@ -1,0 +1,42 @@
+{% block swag_loyalty_settings %}
+<div class="swag-loyalty-settings">
+    {% block swag_loyalty_settings_general %}
+    <sw-card
+        :title="$tc('swag-loyalty.settings.generalTitle')"
+        :is-loading="isLoading"
+    >
+        <sw-switch-field
+            v-model:value="settings.enabled"
+            :label="$tc('swag-loyalty.settings.enabled')"
+        />
+
+        <sw-number-field
+            v-model:value="settings.pointsPerEuro"
+            number-type="int"
+            :min="0"
+            :label="$tc('swag-loyalty.settings.pointsPerEuro')"
+        />
+
+        <sw-single-select
+            v-model:value="settings.expiryMode"
+            :options="expiryModeOptions"
+            :label="$tc('swag-loyalty.settings.expiryMode')"
+        />
+    </sw-card>
+    {% endblock %}
+
+    {% block swag_loyalty_settings_tier %}
+    <swag-loyalty-tier-hint />
+    {% endblock %}
+
+    {% block swag_loyalty_settings_actions %}
+    <sw-button
+        variant="primary"
+        :is-loading="isLoading"
+        @click="onSave"
+    >
+        {{ $tc('global.default.save') }}
+    </sw-button>
+    {% endblock %}
+</div>
+{% endblock %}

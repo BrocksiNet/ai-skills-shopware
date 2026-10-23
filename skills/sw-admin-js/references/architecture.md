@@ -16,6 +16,8 @@ Load when adding modules, components, services, or ACL-backed UI.
 
 ## Modules and UI
 
+- **ADM-006** Follow the patterns in the area you touch: component factory / Twig.JS
+  blocks on core, Vue SFC where the extension system already uses it.
 - **ADM-016** Protect routes, navigation, and templates with the required ACL
   privileges.
 - **ADM-004** **New Admin UI that reads or persists a DAL entity updates the

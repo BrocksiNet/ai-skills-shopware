@@ -1,0 +1,16 @@
+The module builds every component with Component.register and a Twig template, and its blocks are how other extensions extend the page. The new card is a Vue SFC mounted through `components`, so it has no Twig block of its own and cannot be extended the way its neighbours can.
+
+```json
+{
+  "findings": [
+    {
+      "rule_id": "ADM-006",
+      "severity": "minor",
+      "file": "src/Resources/app/administration/src/module/swag-loyalty/component/swag-loyalty-settings/swag-loyalty-points-preview.vue",
+      "line": 1,
+      "summary": "The preview card is a Vue SFC in a module whose components are Component.register factories with Twig blocks, so it breaks the pattern of the area and other extensions cannot override it through a block.",
+      "fix": "Build the card as a Component.register factory with a Twig template and a named block, like the other sections of the settings page."
+    }
+  ]
+}
+```
