@@ -1,0 +1,20 @@
+This change is one PR of about 550 changed lines. It adds the digest command,
+the CSV formatter, an event and a log subscriber, the service wiring, a
+changelog entry and tests, and it also moves the uninstall config key into a
+constant. The feature parts are sound, but the PR mixes several concerns and
+is far over the size the guide asks for.
+
+```json
+{
+  "findings": [
+    {
+      "rule_id": "REV-005",
+      "severity": "minor",
+      "file": "src/Command/LowStockDigestCommand.php",
+      "line": 1,
+      "summary": "The PR is about 550 changed lines, well over the ~400 line guide, and mixes the digest command, the CSV export and the event logging.",
+      "fix": "Split the CSV export and the event logging into follow-up PRs, or explain in the description why they must ship together."
+    }
+  ]
+}
+```

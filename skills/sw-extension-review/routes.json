@@ -90,6 +90,9 @@
       "reference": "../sw-review-learnings/references/dal-and-performance.md"
     },
     {
+      "reference": "../sw-review-learnings/references/pr-size.md"
+    },
+    {
       "reference": "../sw-review-learnings/references/version-guards.md"
     },
     {
