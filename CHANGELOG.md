@@ -38,6 +38,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - The router ranks skills and references by how many files matched, names
   the base branch, merge base and commit count, warns on large diffs, and
   says which core trunk skill leads a topic (`defers_to` metadata).
+- `REV-034` in `sw-review-learnings`: comments and docblocks describe the
+  code, not the history of the change. From shopware/shopware review
+  findings on #19917 and #20855. Routed by history words in comment lines,
+  with a review catch and ignore pair and the routing case `history-comment`.
+- `REV-035`: a visibility check by ID with `searchIds()` misses
+  restrictions set on `sales_channel.<entity>.loaded`, such as Dynamic
+  Access hiding categories. `->searchIds(` now selects the DAL review
+  reference. Review catch and ignore pair included.
 - `sw-help`: what every skill is for, grouped by task, with example prompts.
 - `validate-skills` checks the skill metadata, that the router index is up
   to date, and that `sw-help` names every skill.

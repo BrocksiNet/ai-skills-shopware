@@ -1,0 +1,10 @@
+{
+  "sw-extension-review": [
+    "../sw-review-learnings/references/dal-and-performance.md",
+    "../sw-review-learnings/references/code-comments.md"
+  ],
+  "sw-review-learnings": [
+    "references/dal-and-performance.md",
+    "references/code-comments.md"
+  ]
+}

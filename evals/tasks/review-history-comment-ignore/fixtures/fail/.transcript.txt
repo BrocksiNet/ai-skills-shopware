@@ -1,0 +1,14 @@
+```json
+{
+  "findings": [
+    {
+      "rule_id": null,
+      "severity": "minor",
+      "file": "src/Listing/ListingCriteriaSubscriber.php",
+      "line": 31,
+      "summary": "The docblock explains the history of the setting rather than the code.",
+      "fix": "Drop the second sentence."
+    }
+  ]
+}
+```

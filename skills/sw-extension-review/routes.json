@@ -93,6 +93,9 @@
       "reference": "../sw-review-learnings/references/version-guards.md"
     },
     {
+      "reference": "../sw-review-learnings/references/code-comments.md"
+    },
+    {
       "reference": "../sw-testing/references/test-shape-and-flags.md"
     },
     {

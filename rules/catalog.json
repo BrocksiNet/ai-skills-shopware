@@ -4581,6 +4581,37 @@
         "core"
       ],
       "defer_on_trunk": false
+    },
+    {
+      "id": "REV-034",
+      "skill": "sw-review-learnings",
+      "file": "skills/sw-review-learnings/references/code-comments.md",
+      "title": "Comments describe the code, not the history of the change",
+      "status": "active",
+      "since": "2026-10-23",
+      "eval": "review-history-comment-catch",
+      "core_guide_ids": [],
+      "audience": [
+        "core",
+        "plugin",
+        "app"
+      ],
+      "defer_on_trunk": false
+    },
+    {
+      "id": "REV-035",
+      "skill": "sw-review-learnings",
+      "file": "skills/sw-review-learnings/references/dal-and-performance.md",
+      "title": "A visibility check by ID misses restrictions set on loaded entities",
+      "status": "active",
+      "since": "2026-10-23",
+      "eval": "review-loaded-event-visibility-catch",
+      "core_guide_ids": [],
+      "audience": [
+        "core",
+        "plugin"
+      ],
+      "defer_on_trunk": false
     }
   ]
 }
