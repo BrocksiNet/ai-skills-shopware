@@ -156,8 +156,9 @@ describe('suggest-rules draft', async () => {
   });
 });
 
+const evalDir = join(tmp, 'evals-out');
 const logged = (): unknown[] =>
-  readFileSync(join(dir, 'evals.jsonl'), 'utf8')
+  readFileSync(join(evalDir, 'evals.jsonl'), 'utf8')
     .trim()
     .split('\n')
     .map((l): unknown => JSON.parse(l));
@@ -169,6 +170,8 @@ describe('suggest-rules draft-eval', () => {
   if (first === undefined || second === undefined || withEval === undefined) throw new Error('catalog fixture');
   const evalOptions = (rule: string, verdict: string): DraftOptions => ({
     ...options(`eval-${rule}`, 'ok', false, verdict),
+    // A folder that does not exist yet, as --out for a first run.
+    dir: evalDir,
     subject: evalSubject(ROOT, catalog, rule),
   });
   test('only a rule without an eval gets one', () => {

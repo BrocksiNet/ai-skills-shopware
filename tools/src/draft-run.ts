@@ -85,6 +85,7 @@ async function abRun(o: DraftOptions, wt: string, tasks: string[]): Promise<AbSe
   const section: AbSection = { results: [], agent: o.agent, model: o.model };
   if (tasks.length === 0) return section;
   const file = resolve(o.dir, `${o.id}-ab.jsonl`);
+  mkdirSync(o.dir, { recursive: true });
   writeFileSync(file, '');
   const agent = o.agent === 'opencode' ? 'opencode' : 'claude';
   const env = {
