@@ -82,8 +82,9 @@ describe('shopware 2026-10-13..2026-10-19, the WP8 window', () => {
 
   // The hand pass found five commits. #21541 adds the BC and HTTP cache
   // guidelines, #21660 a PHPStan rule, #21177 touches the rule CORE-015
-  // cites. Four commits change only classes nobody cites or prose.
-  test('reads the eight commits with a change and lists the other four as quiet', async () => {
+  // cites, d10e3c4f the check ARCH-004 cites. Three commits change only
+  // classes nobody cites or prose.
+  test('reads the nine commits with a change and lists the other three as quiet', async () => {
     const { read, quiet } = commits(await text, 'shopware');
     for (const sha of ['f2bf3794', '75b0a495', '190d734b', '8dc74f24', '7ad011f1']) assert.ok(read.includes(sha), sha);
     // 0e782aa7 is #21660, 0fa3e10a #21541, f0e46ffa #21177.
@@ -94,10 +95,11 @@ describe('shopware 2026-10-13..2026-10-19, the WP8 window', () => {
       '75b0a495',
       '7ad011f1',
       '8dc74f24',
+      'd10e3c4f',
       'f0e46ffa',
       'f2bf3794',
     ]);
-    assert.deepEqual(quiet.toSorted(), ['00689309', '36e19f9d', '53a6cceb', 'd10e3c4f']);
+    assert.deepEqual(quiet.toSorted(), ['00689309', '36e19f9d', '53a6cceb']);
   });
   test('#21660 adds DeprecatedEntityConstructionRule, which no rule cites', async () => {
     assert.match(
@@ -180,9 +182,14 @@ describe('shopware 2026-10-05..2026-10-11', () => {
         'Removed guideline heading in `coding-guidelines/core/feature-flags.md`: `## While two majors are in flight`',
         'Added guideline heading in `coding-guidelines/core/feature-flags.md`: `## Major CI`',
         'Rule class `TraitUsageInNewUnitTests` (danger) added',
-        'Rule class `NoReflectionInUnitTestsRule` (phpstan) added',
         'Added guideline heading in `coding-guidelines/administration/feature-flags-and-deprecations.md`: `### Runtime guards`',
       ],
+    );
+  });
+  test('#21227 adds NoReflectionInUnitTestsRule, filed under TEST-012', async () => {
+    assert.match(
+      group(await text, 'sw-testing', 'TEST-012'),
+      /- Rule class `NoReflectionInUnitTestsRule` \(phpstan\) added \(\[c64d7402\]/u,
     );
   });
   test('the feature flag bullet lands on the sw-testing reference that holds the flag rules', async () => {
@@ -199,10 +206,11 @@ describe('shopware 2026-09-28..2026-10-04', () => {
   const text = week('shopware-2026-09-28..2026-10-04.json', 'shopware', '2026-09-28', '2026-10-04');
 
   // Six new PHPStan rules, two guideline sections and three bullets of the
-  // PHP skill. Four commits only touch rule classes nobody cites
-  // (NoCreateMockWithoutExpectationsRule, StoreApiRouteExtensionRule,
-  // DomainExceptionRule) or no rule class at all.
-  test('reads eight commits and lists four as quiet', async () => {
+  // PHP skill; 00e31c8e changes StoreApiRouteExtensionRule, which ARCH-004
+  // cites. Three commits only touch rule classes nobody cites
+  // (NoCreateMockWithoutExpectationsRule, DomainExceptionRule) or no rule
+  // class at all.
+  test('reads nine commits and lists three as quiet', async () => {
     const { read, quiet } = commits(await text, 'shopware');
     assert.deepEqual(read, [
       '61184ef8',
@@ -211,10 +219,11 @@ describe('shopware 2026-09-28..2026-10-04', () => {
       '09faff0f',
       '013305a1',
       '06ca9e60',
+      '00e31c8e',
       '738a0642',
       '4ac77655',
     ]);
-    assert.deepEqual(quiet, ['71acb1c0', '00e31c8e', 'f5f124a5', '5e9b5c87']);
+    assert.deepEqual(quiet, ['71acb1c0', 'f5f124a5', '5e9b5c87']);
   });
   test('changes to cited checks land under their rules', async () => {
     const t = await text;
@@ -229,20 +238,21 @@ describe('shopware 2026-09-28..2026-10-04', () => {
     // rule relies on changed, even though this change is about another use.
     assert.match(group(t, 'sw-testing', 'TEST-010'), /InternalClassRule` \(phpstan\) modified \(\[4ac77655\]/u);
   });
-  // A human files #20815 (StoreApiRouteExtensionRule) under ARCH-004 and
-  // #20830 (NoFeatureSkipInUnitTestsRule) under TEST-006. Neither rule cites
-  // the check yet, so the mapper cannot: a catalog gap, reported as such.
-  test('new checks nobody cites are unmapped, including the two a human would file under ARCH-004 and TEST-006', async () => {
-    const unmapped = items(section(await text, 'Unmapped')).map((l) => l.slice(2).replace(/ \(\[.*$/u, ''));
+  // #20815 (StoreApiRouteExtensionRule) lands under ARCH-004 and #20830
+  // (NoFeatureSkipInUnitTestsRule) under TEST-006, since both rules cite
+  // the check. The other new checks are a catalog gap, reported as such.
+  test('new checks land under the rule that cites them; the rest are unmapped', async () => {
+    const t = await text;
+    assert.match(group(t, 'sw-architecture', 'ARCH-004'), /Rule class `StoreApiRouteExtensionRule` \(phpstan\) added/u);
+    assert.match(group(t, 'sw-testing', 'TEST-006'), /Rule class `NoFeatureSkipInUnitTestsRule` \(phpstan\) added/u);
+    const unmapped = items(section(t, 'Unmapped')).map((l) => l.slice(2).replace(/ \(\[.*$/u, ''));
     assert.deepEqual(unmapped, [
-      'Rule class `StoreApiRouteExtensionRule` (phpstan) added',
       'Added guideline heading in `coding-guidelines/core/extendability.md`: `#### Extension events`',
       'Rule class `FeatureFlagVersionRule` (phpstan) added',
       'Rule class `NoUnreachableAssertionAfterExpectExceptionRule` (phpstan) added',
       'Added guideline heading in `coding-guidelines/core/feature-flags.md`: `### Using flags for services`',
       'Rule class `DeprecatedServiceDefinitionFeatureTagRule` (phpstan) added',
       'Rule class `DeprecatedServiceFeatureTagRule` (phpstan) added',
-      'Rule class `NoFeatureSkipInUnitTestsRule` (phpstan) added',
       'Added guideline heading in `coding-guidelines/core/internal.md`: `## Compiler passes`',
     ]);
   });

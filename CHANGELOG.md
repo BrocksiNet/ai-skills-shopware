@@ -54,6 +54,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- Three new core checks are cited in the catalog, so the drift issue files
+  their changes under the rule and the "Already enforced by CI" sections
+  list them: `StoreApiRouteExtensionRule` for `ARCH-004`,
+  `NoFeatureSkipInUnitTestsRule` for `TEST-006` and
+  `NoReflectionInUnitTestsRule` for `TEST-012`.
 - The CI eval model is `opencode/mimo-v2.6-flash-free`; LongCat is no
   longer offered. OpenCode web search is off in eval sessions, and the
   workflow runs 16 shards with a 330 minute A/B timeout.

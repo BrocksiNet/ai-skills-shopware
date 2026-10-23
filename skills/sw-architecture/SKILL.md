@@ -78,3 +78,14 @@ Read only the reference that matches the task or the files it changes:
 
 - Core trunk skills: `.agents/skills/shopware-php-code`, `shopware-change-scope`
 - Install profiles: [`docs/skill-resolution.md`](../../docs/skill-resolution.md)
+
+## Already enforced by CI (do not repeat)
+
+<!-- enforced:start: generated from rules/catalog.json by `node tools/bin/render-enforced.ts`; do not edit -->
+CI already fails the build on these, so do not repeat them in reviews or
+checklists. Flag only what each check misses.
+Checks marked *trunk only* are not active in plugin or app projects by
+default; there the rule still needs a reviewer.
+
+- `ARCH-004` `StoreApiRouteExtensionRule` (PHPStan, trunk only) reports a Store API route method that does not return `ExtensionDispatcher::publish()` with an `Extension` object and a private route-body method, and one that keeps an abstract route or decorator contract (`getDecorated()` or an abstract parent method). It misses routes on the legacy allow-list, routes outside the `store-api` scope, and the extension itself: any `Extension` subclass and any name pass, so a generic or reused extension is not reported; flag those.
+<!-- enforced:end -->

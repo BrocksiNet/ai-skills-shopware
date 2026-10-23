@@ -387,12 +387,12 @@ references are `core-platform-patterns.md`, `test-shape-and-flags.md` and
 history comment on #19917. A corpus of 34 PRs in `evals/routing-replay/` keeps
 a recall floor of 0.76 and at most five references per PR in CI.
 
-Left open: catalog entries for three new trunk checks that land in
-Unmapped (`StoreApiRouteExtensionRule` for `ARCH-004`,
-`NoFeatureSkipInUnitTestsRule` for `TEST-006`, `NoReflectionInUnitTestsRule`
-next to `TEST-012`), the noisy "used to" and "no longer" anchors on
-`code-comments.md`, and replaying each comment at its own commit instead of
-the merged diff.
+The three new trunk checks the replay listed as unmapped now have catalog
+entries: `StoreApiRouteExtensionRule` under `ARCH-004`,
+`NoFeatureSkipInUnitTestsRule` under `TEST-006` and
+`NoReflectionInUnitTestsRule` under `TEST-012`. Left open: the noisy "used
+to" and "no longer" anchors on `code-comments.md`, and replaying each
+comment at its own commit instead of the merged diff.
 
 ## Step 4: suggest rules with a local command
 

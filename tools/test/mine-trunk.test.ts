@@ -51,6 +51,7 @@ describe('the 2026-10-13..2026-10-19 window', () => {
     for (const sha of HAND_MINED) assert.ok(commits.includes(sha), sha);
     assert.deepEqual(commits, [
       '7ad011f1',
+      'd10e3c4f',
       'f0e46ffa',
       '190d734b',
       '8dc74f24',
@@ -59,8 +60,8 @@ describe('the 2026-10-13..2026-10-19 window', () => {
       '0e782aa7',
       '0fa3e10a',
     ]);
-    assert.match(await text, /^Without a delta: \[d10e3c4f\].*\[53a6cceb\].*\[00689309\].*\[36e19f9d\]/mu);
-    assert.match(await text, /^\| `shopware` \| 2026-10-13 \| 12 \| 8 \| \[21949101\]/mu);
+    assert.match(await text, /^Without a delta: \[53a6cceb\].*\[00689309\].*\[36e19f9d\]/mu);
+    assert.match(await text, /^\| `shopware` \| 2026-10-13 \| 12 \| 9 \| \[21949101\]/mu);
   });
   test('rule classes land under the rule whose enforced_by cites them', async () => {
     const t = await text;
@@ -71,7 +72,11 @@ describe('the 2026-10-13..2026-10-19 window', () => {
     assert.match(group(t, 'sw-testing', 'TEST-016'), /Matched by `enforced_by`, `trunk\.source`\./u);
     assert.match(group(t, 'sw-testing', 'TEST-011'), /- Rule class `SingleCoversClassInTests` \(danger\) modified/u);
     assert.match(section(t, 'Unmapped'), /- Rule class `DeprecatedEntityConstructionRule` \(phpstan\) added/u);
-    assert.doesNotMatch(t, /StoreApiRouteExtensionRule/u, 'a modified class nobody cites is noise');
+    assert.match(
+      group(t, 'sw-architecture', 'ARCH-004'),
+      /- Rule class `StoreApiRouteExtensionRule` \(phpstan\) modified \(\[d10e3c4f\]/u,
+    );
+    assert.doesNotMatch(t, /ServiceDefinitionRule/u, 'a modified class nobody cites is noise');
   });
   test('guideline headings map through trunk.source anchors', async () => {
     const t = await text;
