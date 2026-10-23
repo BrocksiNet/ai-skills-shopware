@@ -1,26 +1,19 @@
-# Breaks the UPGRADE files do not name
+# 6.8 breaks the UPGRADE file does not name
 
-`check-breaks` compares the public API index between two Shopware refs with
-the headings in the matching `UPGRADE-6.x.md`. Every break it reports that no
-UPGRADE heading covers was checked by hand against the source. This page lists
-the 29 reports confirmed as real breaks with no UPGRADE entry: 25 for 6.8 and
-4 for 6.6. No undocumented break was confirmed for 6.7.
+`check-breaks` compares the public API index of `v6.7.0.0` with trunk and
+matches every reported break against the headings in `UPGRADE-6.8.md`. Each
+unmatched report was checked by hand against the source. This page lists the
+25 confirmed as real breaks: trunk changes them, `UPGRADE-6.8.md` has no entry
+for them, and `v6.7.0.0` carries no deprecation for them.
 
-The list is a readable copy of the `confirmed` section of
+The list is a readable copy of the 6.8 entries in the `confirmed` section of
 [`tools/api-index/known-breaks.json`](../tools/api-index/known-breaks.json),
 as of 2026-10-23. The JSON stays the source of truth.
 
-| Major | Base | Head | What the base should already show |
-| ----- | ---- | ---- | --------------------------------- |
-| 6.8 | `v6.7.0.0` | `trunk` | a deprecation |
-| 6.6 | `v6.5.8.7` | `v6.6.0.0` | a deprecation before the removal |
-
-Line numbers refer to the base tag and to trunk at the time of the check.
+Line numbers refer to `v6.7.0.0` and to trunk at the time of the check.
 Commits are in [`shopware/shopware`](https://github.com/shopware/shopware).
 
-## 6.8 (v6.7.0.0 to trunk)
-
-### Entity fields: type changes
+## Entity fields: type changes
 
 The SEO fields were limited in [`b578add4802`](https://github.com/shopware/shopware/commit/b578add4802).
 A `LongTextField` became a `StringField`, so longer values are now rejected by
@@ -45,7 +38,7 @@ that reads or writes `link` on the manufacturer entity directly, or uses raw
 SQL on `product_manufacturer.link`, now has to go through the translation.
 The base definition and entity carry no deprecation.
 
-### Entity fields: flags added or removed
+## Entity fields: flags added or removed
 
 These fields keep their type but gain or lose a flag. A new `Immutable` flag
 rejects updates after create. A new `WriteProtected(Context::SYSTEM_SCOPE)`
@@ -62,7 +55,7 @@ and most extension code. None of them is deprecated on the base.
 | `plugin.path` | `StringField('path')`, `PluginDefinition.php:62` | adds `WriteProtected(SYSTEM_SCOPE)`, `:63` | Write only in system scope |
 | `webhook.appId` | `FkField('app_id')`, `WebhookDefinition.php:64` | adds `WriteProtected(SYSTEM_SCOPE)`, `:81` | Write only in system scope |
 
-### Admin API routes removed
+## Admin API routes removed
 
 The controllers behind these routes are marked `@internal`, the app URL ones
 for use by the app system only. They were still callable over HTTP and
@@ -78,7 +71,7 @@ carried no deprecation, so integrations that called them break.
 | `api.usage_data.revoke_consent` | `ConsentController.php:66` | `1d47cf27f8c` | new consent system |
 | `api.usage_data.hide_consent_banner` | `ConsentController.php:79` | `1d47cf27f8c` | new consent system |
 
-### Storefront routes moved
+## Storefront routes moved
 
 The route names stay, but the paths moved under `/_esi/global/` in
 [`80b7e7394a6`](https://github.com/shopware/shopware/commit/80b7e7394a6).
@@ -91,7 +84,7 @@ name is unaffected.
 | `frontend.header` | `/header`, `NavigationController.php:75` | `/_esi/global/header` |
 | `frontend.footer` | `/footer`, `NavigationController.php:88` | `/_esi/global/footer`, `NavigationController.php:143` |
 
-### Configuration
+## Configuration
 
 `shopware.feature.flags.*.major` changed from
 `booleanNode('major')->defaultFalse()` (`Configuration.php:339`) to
@@ -99,20 +92,6 @@ name is unaffected.
 `v\d+.\d+.0.0` (trunk `:675`). A feature flag defined with `major: true` in a
 `feature.yaml` or a bundle configuration is now rejected. It needs a version
 string such as `v6.8.0.0`. The base has no deprecation.
-
-## 6.6 (v6.5.8.7 to v6.6.0.0)
-
-| Item | Before (`v6.5.8.7`) | `v6.6.0.0` |
-| ---- | ------------------- | ---------- |
-| `config:elasticsearch.logger_level` | `scalarNode('logger_level')` with a default, Elasticsearch `Configuration.php:29`, no deprecation | Removed in [`8be34dbdf54`](https://github.com/shopware/shopware/commit/8be34dbdf54) (NEXT-31739) |
-| `config:storefront.http_cache` | `arrayNode('http_cache')`, Storefront `Configuration.php:55`, no deprecation | Moved to `shopware.http_cache` |
-| `config:storefront.reverse_proxy` | `arrayNode('reverse_proxy')`, Storefront `Configuration.php:23`, no deprecation | Moved to `shopware.http_cache.reverse_proxy` |
-| `feature:STOCK_HANDLING` | In `feature.yaml:28`, `default: false`, `major: false`, no description or deprecation | Flag removed; the new stock handling is the default |
-
-The two `storefront.*` keys are covered by the 6.6 changelog
-`2023-11-24-remove-http-cache-deprecations.md`. That changelog names the move,
-but `UPGRADE-6.6.md` has no heading for it and the old keys carried no
-in-code deprecation.
 
 ## Keeping this page current
 
