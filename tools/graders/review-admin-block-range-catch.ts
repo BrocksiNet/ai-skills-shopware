@@ -1,4 +1,4 @@
-// Grader: review-admin-block-range-catch (shopware-plugin-development, PLG-001)
+// Grader: review-admin-block-range-catch (sw-plugin-development, PLG-001)
 // SwagCustomerInsights 3.3.0 allows shopware/core ~6.6.0 || ~6.7.0 and
 // overrides block sw_customer_base_metadata_default_payment of
 // sw-customer-base-info. Core removed the block (with the default payment

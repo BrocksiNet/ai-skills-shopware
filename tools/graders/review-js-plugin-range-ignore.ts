@@ -1,4 +1,4 @@
-// Grader: review-js-plugin-range-ignore (shopware-plugin-development, PLG-001)
+// Grader: review-js-plugin-range-ignore (sw-plugin-development, PLG-001)
 // The same change, but composer.json requires shopware/core ~6.6.0, and
 // every 6.6 release registers FlyoutMenu. A minor+ finding that names PLG-001
 // or calls the plugin missing in 6.7 is a false positive.

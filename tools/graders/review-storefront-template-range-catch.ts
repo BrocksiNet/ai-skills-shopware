@@ -1,4 +1,4 @@
-// Grader: review-storefront-template-range-catch (shopware-plugin-development, PLG-001)
+// Grader: review-storefront-template-range-catch (sw-plugin-development, PLG-001)
 // SwagNavigationTeaser 1.4.0 allows shopware/core ~6.6.0 || ~6.7.0 and
 // extends @Storefront/storefront/layout/navigation/flyout.html.twig to add a
 // teaser image. Core removed that template in 6.7.0.0 (the navbar replaced

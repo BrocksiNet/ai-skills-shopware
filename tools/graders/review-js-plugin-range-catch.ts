@@ -1,4 +1,4 @@
-// Grader: review-js-plugin-range-catch (shopware-plugin-development, PLG-001)
+// Grader: review-js-plugin-range-catch (sw-plugin-development, PLG-001)
 // SwagHoverIntent 2.1.0 allows shopware/core ~6.6.0 || ~6.7.0 and overrides
 // the FlyoutMenu storefront plugin, extending its class from
 // src/plugin/main-menu/flyout-menu.plugin. Core removed FlyoutMenu in

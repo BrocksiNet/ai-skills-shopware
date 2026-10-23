@@ -1,4 +1,4 @@
-// Grader: review-storefront-template-range-ignore (shopware-plugin-development, PLG-001)
+// Grader: review-storefront-template-range-ignore (sw-plugin-development, PLG-001)
 // The same change, but composer.json requires shopware/core ~6.6.0, and
 // every 6.6 release ships the template. A minor+ finding that names PLG-001
 // or calls the template missing in 6.7 is a false positive.

@@ -467,7 +467,7 @@ in 6.7. Haiku, five runs per arm.
   missing or removed.
 - **The admin catch cited the wrong rule.** With skills on, the model found
   the missing block but cited `ADM-039`, the API core's components offer.
-  The lens table in `shopware-extension-review` now maps a core block,
+  The lens table in `sw-extension-review` now maps a core block,
   template or JS plugin missing in the range to `PLG-001`.
 
 Each phase can stop the plan. Phases 3 and 4 do not start until phase 2
