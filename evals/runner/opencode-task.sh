@@ -21,7 +21,7 @@
 # an agent error, never as a failed task.
 #
 # Env:
-#   TASK_MODEL            provider/model (default: opencode/longcat-2.5-preview-free)
+#   TASK_MODEL            provider/model (default: opencode/mimo-v2.6-flash-free)
 #   TASK_MAX_TURNS        agent steps per task (default: 12)
 #   TASK_TIMEOUT_SECONDS  wall clock per session (default: 600)
 #   OPENCODE_ISOLATE      1 = throwaway HOME/XDG (default); 0 = your own config
@@ -41,6 +41,9 @@
 # current ones with: opencode models --standalone | grep -E 'free|pickle'
 # Some free providers log prompts to improve their models. Eval fixtures are
 # public code, so that is acceptable here; do not point this at private code.
+#
+# Web search is off: in --standalone mode it is always cancelled, and a session
+# with a cancelled search exits 1 although it finished.
 #
 # Permissions are auto-approved because the workdir is a throwaway temp copy of
 # a fixture. Do not point this adapter at a real checkout.

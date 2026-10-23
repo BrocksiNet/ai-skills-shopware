@@ -172,7 +172,7 @@ Ready adapters:
 
 | Adapter | Agent | Needs | Default `TASK_MODEL` |
 | ------- | ----- | ----- | -------------------- |
-| `runner/opencode-task.sh` | OpenCode CLI v2 | nothing for free models | `opencode/longcat-2.5-preview-free` |
+| `runner/opencode-task.sh` | OpenCode CLI v2 | nothing for free models | `opencode/mimo-v2.6-flash-free` |
 | `runner/claude-task.sh` | Claude Code CLI | `ANTHROPIC_API_KEY` or `claude auth login` | `sonnet` |
 
 ```bash
@@ -224,8 +224,8 @@ Free OpenCode models measured on 2026-10-20 (8 tasks, skill on, one run each):
 
 | Model | Loaded a task skill | Passed | Avg. session |
 | ----- | ------------------- | ------ | ------------ |
-| `opencode/longcat-2.5-preview-free` (default) | 5/8 | 5/8 | ~115 s |
-| `opencode/mimo-v2.6-flash-free` | 5/8 | 5/8 | ~115 s |
+| `opencode/longcat-2.5-preview-free` (gone since 2026-10-23) | 5/8 | 5/8 | ~115 s |
+| `opencode/mimo-v2.6-flash-free` (default) | 5/8 | 5/8 | ~115 s |
 | `opencode/big-pickle` | 2/8 | 5/8 | ~115 s |
 | `opencode/nemotron-3-ultra-free` | 1/8 | 6/8 | ~35 s |
 | `opencode/nemotron-3.5-lightning-free` | 0/8 | 4/8 | ~35 s |
@@ -292,7 +292,10 @@ wrong rule in `sw-plugin-development`, which turned the gate red.
 | Manual dispatch | `agent`, `tasks`, `repeats`, `max_tasks`, `shards`, `model` inputs | `activation` input | `baseline` input |
 
 The default agent is OpenCode with a free model, so the workflow needs no
-secret. `agent=claude` on dispatch uses Claude Code and needs the repository
+secret. Before the shards start, the plan job runs one tiny session
+(`tools/bin/agent-preflight.ts`); when the model is gone ("Endpoint is
+unavailable", "Model unavailable"), the run fails there in a minute with a
+hint, instead of every shard retrying agent errors for hours. `agent=claude` on dispatch uses Claude Code and needs the repository
 secret `ANTHROPIC_API_KEY`; without it that run fails on purpose.
 
 For baseline PRs, enable *Settings > Actions > General > Allow GitHub Actions to

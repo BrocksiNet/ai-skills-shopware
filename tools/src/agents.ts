@@ -36,7 +36,7 @@ export type Adapter = (prompt: string, env: NodeJS.ProcessEnv, io: AdapterIo, ro
 
 /** Task adapter exit code for an agent error; run-task never grades it. */
 const AGENT_ERROR = 4;
-const OPENCODE_FREE_MODEL = 'opencode/longcat-2.5-preview-free';
+const OPENCODE_FREE_MODEL = 'opencode/mimo-v2.6-flash-free';
 
 const positive = (v: string): boolean => /^[1-9][0-9]*$/u.test(v);
 
@@ -117,9 +117,15 @@ export const opencodeTask: Adapter = async (prompt, env, { out, err }) => {
     const baseEnv = opencodeTaskEnv(env, scratch, err);
     if (baseEnv === null) return AGENT_ERROR;
     // Cap the agent loop; a headless run must never stop to ask a question.
+    // No web search: with --standalone every search is "cancelled", and a
+    // session with a cancelled search ends with exit 1 and no error event
+    // although it finished (OpenCode 2.0.27). Tasks that invite research,
+    // such as prepare-plugin-for-6-8, then lost every skill-off run as an
+    // agent error.
     const childEnv = opencodeEnv(baseEnv, {
       agent: { build: { steps: Number(maxTurns) } },
       permission: { question: 'deny' },
+      tools: { websearch: false },
     });
     const proc = await run('opencode', opencodeArgs(model, prompt), { env: childEnv, timeoutSeconds: Number(timeout) });
 

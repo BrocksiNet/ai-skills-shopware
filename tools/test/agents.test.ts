@@ -49,6 +49,17 @@ describe('recorded Claude Code session', () => {
   });
 });
 
+const claudeSkillUse = (id: string, skill: string): string =>
+  JSON.stringify({
+    type: 'assistant',
+    message: { content: [{ type: 'tool_use', id, name: 'Skill', input: { skill } }] },
+  });
+const claudeToolResult = (id: string, isError: boolean): string =>
+  JSON.stringify({
+    type: 'user',
+    message: { content: [{ type: 'tool_result', tool_use_id: id, is_error: isError, content: 'x' }] },
+  });
+
 describe('event parsing edge cases', () => {
   test('skips lines that are not JSON objects', () => {
     const s = parseOpencode('progress...\n[1]\n"x"\n{"type":"text","part":{"text":"hi"}}\n');
@@ -70,6 +81,30 @@ describe('event parsing edge cases', () => {
     assert.equal(skillName({ command: '/plug:sw-testing ' }, ['skill', 'command']), 'sw-testing');
     assert.equal(skillName({ skill: '', command: 'x' }, ['skill', 'command']), 'x');
     assert.equal(skillName(null, ['skill']), '');
+  });
+  test('a failed OpenCode skill call loaded nothing', () => {
+    // A skill-off run where the model guessed a skill name: OpenCode reports
+    // the call with status "error". It is not a leak into the baseline.
+    const s = parseOpencode(
+      [
+        '{"type":"tool_use","part":{"tool":"skill","state":{"status":"error","input":{"name":"sw-plugin-development"},"error":"Skill not found"}}}',
+        '{"type":"tool_use","part":{"tool":"skill","state":{"status":"completed","input":{"name":"sw-testing"}}}}',
+      ].join('\n'),
+    );
+    assert.deepEqual([s.skills, s.tools], [['sw-testing'], 2]);
+  });
+  test('a failed Claude Skill call loaded nothing', () => {
+    const s = parseClaude(
+      [
+        claudeSkillUse('t1', 'sw-plugin-development'),
+        claudeToolResult('t1', true),
+        claudeSkillUse('t2', 'sw-testing'),
+        claudeToolResult('t2', false),
+        claudeSkillUse('t3', 'sw-plugin-development'),
+      ].join('\n'),
+    );
+    // t3 has no result (the session was cut off): the call still counts.
+    assert.deepEqual(s.skills, ['sw-testing', 'sw-plugin-development']);
   });
   test('a Claude session without a result', () => {
     const s = parseClaude('{"type":"assistant","message":{"content":[{"type":"text","text":"A"}]}}\n');
@@ -185,14 +220,17 @@ describe('opencode-task adapter', () => {
     const r = await call(opencodeTask, { FAKE_OUT: join(FIXTURES, 'opencode-task.jsonl') });
     assert.deepEqual([r.rc, r.out, r.skills, r.usage], [0, 'DONE\n', 'sw-testing\n', '11620 317\n']);
   });
-  test('runs isolated with the step cap, the prompt as an argument', async () => {
+  test('runs isolated with the step cap and no web search, the prompt as an argument', async () => {
     const r = await call(opencodeTask, {
       FAKE_OUT: join(FIXTURES, 'opencode-task.jsonl'),
       TASK_MAX_TURNS: '3',
       TASK_MODEL: 'p/m',
     });
     assert.match(r.env ?? '', /HOME=.*opencode-task\.[^/]+\/home\n/u);
-    assert.match(r.env ?? '', /CFG=\{"agent":\{"build":\{"steps":3\}\},"permission":\{"question":"deny"\}\}/u);
+    assert.match(
+      r.env ?? '',
+      /CFG=\{"agent":\{"build":\{"steps":3\}\},"permission":\{"question":"deny"\},"tools":\{"websearch":false\}\}/u,
+    );
     assert.equal(r.args, 'run\n--standalone\n--auto\n--format\njson\n-m\np/m\ndo it\n');
   });
   test('an auth file is copied into the throwaway HOME', async () => {
