@@ -1135,7 +1135,7 @@
       "file": "skills/sw-plugin-development/references/version-compatibility.md",
       "title": "6.8-targeted plugins register Symfony DI in PHP",
       "status": "retired",
-      "retired_reason": "No measured effect (2026-10-23): with the skill off, `plugin-xml-config-to-php` passed every repeat on claude/haiku (3/3, local) and on opencode/mimo-v2.6-flash-free (3/3, evals.yml run 39960913122). Models already do this without the rule. The task stays as a canary: a model that fails it with the skill off brings the rule back.",
+      "retired_reason": "No measured effect (2026-10-23): with the skill off, `plugin-xml-config-to-php` passed every repeat on claude/haiku (3/3, local) and on opencode/mimo-v2.6-flash-free (3/3, evals.yml run 39960913122). The review pair `review-services-xml-68-*` held 3/3 with the skill on and off on claude/haiku too. Models already do this without the rule. The task stays as a canary: a model that fails it with the skill off brings the rule back.",
       "since": "2026-10-20",
       "eval": "plugin-xml-config-to-php",
       "core_guide_ids": [],
@@ -3887,7 +3887,7 @@
       "file": "skills/sw-admin-js/references/extension-api.md",
       "title": "blocks-list.json entries and position identifiers are a contract",
       "status": "retired",
-      "retired_reason": "No measured effect (2026-10-23): with the skill off, `review-admin-position-identifier-catch` passed every repeat on claude/haiku (3/3, local) and on opencode/mimo-v2.6-flash-free (3/3, evals.yml run 39960913122). Models already do this without the rule. The task stays as a canary: a model that fails it with the skill off brings the rule back.",
+      "retired_reason": "No measured effect (2026-10-23): with the skill off, `review-admin-position-identifier-catch` passed every repeat on claude/haiku (3/3, local) and on opencode/mimo-v2.6-flash-free (3/3, evals.yml run 39960913122). The review pair `review-admin-position-identifier-*` held 3/3 with the skill on and off on claude/haiku too. Models already do this without the rule. The task stays as a canary: a model that fails it with the skill off brings the rule back.",
       "since": "2026-10-21",
       "eval": "review-admin-position-identifier-catch",
       "core_guide_ids": [
