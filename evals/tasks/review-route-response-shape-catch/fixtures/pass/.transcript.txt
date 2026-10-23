@@ -1,0 +1,16 @@
+The new Store-API route returns an ArrayStruct wrapping an untyped array, so the response has no typed or documented shape.
+
+```json
+{
+  "findings": [
+    {
+      "rule_id": "PLG-012",
+      "severity": "minor",
+      "file": "src/StoreApi/LoyaltyHistoryRoute.php",
+      "line": 33,
+      "summary": "The route responds with an ad-hoc untyped array inside an ArrayStruct, so clients get no typed or documented response shape.",
+      "fix": "Return a typed struct with entries and total as typed properties and document them."
+    }
+  ]
+}
+```

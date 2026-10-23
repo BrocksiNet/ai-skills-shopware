@@ -913,8 +913,7 @@
       "title": "Routes return a typed, documented response shape",
       "status": "active",
       "since": "2026-10-20",
-      "eval": null,
-      "eval_reason": "Documented only; no eval yet.",
+      "eval": "review-route-response-shape-catch",
       "core_guide_ids": [],
       "audience": [
         "plugin",

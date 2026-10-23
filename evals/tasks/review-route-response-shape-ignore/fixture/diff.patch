@@ -1,0 +1,103 @@
+diff --git a/src/Resources/config/routes.php b/src/Resources/config/routes.php
+--- a/src/Resources/config/routes.php
++++ b/src/Resources/config/routes.php
+@@ -3,5 +3,6 @@
+ use Symfony\Component\Routing\Loader\Configurator\RoutingConfigurator;
+
+ return static function (RoutingConfigurator $routes): void {
+     $routes->import('../../Controller/Api/', 'attribute');
++    $routes->import('../../StoreApi/', 'attribute');
+ };
+diff --git a/src/Resources/config/services.php b/src/Resources/config/services.php
+--- a/src/Resources/config/services.php
++++ b/src/Resources/config/services.php
+@@ -2,6 +2,7 @@
+
+ use Swag\Loyalty\Points\PointsCalculator;
+ use Swag\Loyalty\Points\PointsLedger;
++use Swag\Loyalty\StoreApi\LoyaltyHistoryRoute;
+ use Symfony\Component\DependencyInjection\Loader\Configurator\ContainerConfigurator;
+
+ return static function (ContainerConfigurator $container): void {
+@@ -12,4 +13,7 @@ return static function (ContainerConfigurator $container): void {
+
+     $services->set(PointsLedger::class);
+     $services->set(PointsCalculator::class);
++
++    $services->set(LoyaltyHistoryRoute::class)
++        ->public();
+ };
+diff --git a/src/StoreApi/LoyaltyHistoryRoute.php b/src/StoreApi/LoyaltyHistoryRoute.php
+new file mode 100644
+--- /dev/null
++++ b/src/StoreApi/LoyaltyHistoryRoute.php
+@@ -0,0 +1,34 @@
++<?php declare(strict_types=1);
++
++namespace Swag\Loyalty\StoreApi;
++
++use Shopware\Core\Checkout\Customer\CustomerEntity;
++use Shopware\Core\Framework\Log\Package;
++use Shopware\Core\System\SalesChannel\SalesChannelContext;
++use Shopware\Core\System\SalesChannel\StoreApiResponse;
++use Swag\Loyalty\Points\PointsCalculator;
++use Symfony\Component\HttpFoundation\Request;
++use Symfony\Component\Routing\Attribute\Route;
++
++#[Route(defaults: ['_routeScope' => ['store-api']])]
++#[Package('checkout')]
++class LoyaltyHistoryRoute
++{
++    public function __construct(private readonly PointsCalculator $points)
++    {
++    }
++
++    #[Route(
++        path: '/store-api/loyalty/history',
++        name: 'store-api.loyalty.history',
++        defaults: ['_loginRequired' => true],
++        methods: ['POST'],
++    )]
++    public function load(Request $request, SalesChannelContext $context, CustomerEntity $customer): StoreApiResponse
++    {
++        $limit = $request->request->getInt('limit', 20);
++        $entries = $this->points->history($customer->getId(), $context->getContext(), $limit);
++
++        return new StoreApiResponse(new LoyaltyHistoryStruct($entries));
++    }
++}
+diff --git a/src/StoreApi/LoyaltyHistoryStruct.php b/src/StoreApi/LoyaltyHistoryStruct.php
+new file mode 100644
+--- /dev/null
++++ b/src/StoreApi/LoyaltyHistoryStruct.php
+@@ -0,0 +1,30 @@
++<?php declare(strict_types=1);
++
++namespace Swag\Loyalty\StoreApi;
++
++use Shopware\Core\Framework\Log\Package;
++use Shopware\Core\Framework\Struct\Struct;
++
++#[Package('checkout')]
++final class LoyaltyHistoryStruct extends Struct
++{
++    /**
++     * @param list<array{date: \DateTimeImmutable, points: int, reason: string}> $entries
++     */
++    public function __construct(private readonly array $entries)
++    {
++    }
++
++    /**
++     * @return list<array{date: \DateTimeImmutable, points: int, reason: string}>
++     */
++    public function getEntries(): array
++    {
++        return $this->entries;
++    }
++
++    public function getApiAlias(): string
++    {
++        return 'swag_loyalty_history';
++    }
++}
