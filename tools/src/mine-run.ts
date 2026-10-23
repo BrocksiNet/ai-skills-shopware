@@ -12,6 +12,7 @@ import {
   mineSource,
   type MiningStates,
   parseStates,
+  readsFurther,
   STATE_PATH,
   windowAfter,
   windowOfDays,
@@ -76,10 +77,30 @@ export async function report(o: ReportOptions): Promise<string> {
   return renderReport(mined, catalog, index, reviews);
 }
 
-/** Merges the states a report recorded into the state file; sources the
- *  report did not cover keep theirs. Returns the merged states. */
-export function advance(root: string, issueBody: string): MiningStates {
-  const states = { ...readStates(root), ...stateFromReport(issueBody) };
+/** The sources a `/mined` comment names: `/mined` alone means every source
+ *  of the report, `/mined shopware php-modernization` only those. */
+export function minedSources(comment: string): string[] | undefined {
+  const [first = ''] = comment.trim().split('\n');
+  const [command, ...ids] = first.trim().split(/\s+/u);
+  if (command !== '/mined') throw new Error('the comment does not start with /mined');
+  return ids.length === 0 ? undefined : ids;
+}
+
+/** Merges the states a report recorded into the state file. Only the
+ *  sources in `only` move when given; sources the report did not cover keep
+ *  theirs, and a state already past the report's end never moves back (a
+ *  `/mined` on an older, superseded issue). Returns the merged states. */
+export function advance(root: string, issueBody: string, only?: string[]): MiningStates {
+  const current = readStates(root);
+  const recorded = stateFromReport(issueBody);
+  const unknown = (only ?? []).filter((id) => recorded[id] === undefined);
+  if (unknown.length > 0) throw new Error(`the report records no state for ${unknown.join(', ')}`);
+  const moved = Object.entries(recorded).filter(([id, next]) => {
+    const now = current[id];
+    if (only !== undefined && !only.includes(id)) return false;
+    return now === undefined || readsFurther(next, now);
+  });
+  const states = { ...current, ...Object.fromEntries(moved) };
   writeFileSync(join(root, STATE_PATH), `${JSON.stringify(states, null, 2)}\n`);
   return states;
 }
