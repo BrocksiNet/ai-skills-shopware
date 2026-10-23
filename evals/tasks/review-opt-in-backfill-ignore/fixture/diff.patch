@@ -1,0 +1,36 @@
+diff --git a/src/Subscriber/CheckoutFinishSubscriber.php b/src/Subscriber/CheckoutFinishSubscriber.php
+index 3b1f0a2..6d2e8c0 100644
+--- a/src/Subscriber/CheckoutFinishSubscriber.php
++++ b/src/Subscriber/CheckoutFinishSubscriber.php
+@@ -2,6 +2,7 @@ declare(strict_types=1);
+
+ namespace Swag\LoyaltyPoints\Subscriber;
+
++use Shopware\Core\Checkout\Order\OrderEntity;
+ use Shopware\Core\Framework\Struct\ArrayStruct;
+ use Shopware\Storefront\Page\Checkout\Finish\CheckoutFinishPageLoadedEvent;
+ use Symfony\Component\EventDispatcher\EventSubscriberInterface;
+@@ -21,9 +22,21 @@ class CheckoutFinishSubscriber implements EventSubscriberInterface
+         $page = $event->getPage();
+         $order = $page->getOrder();
+
+         $page->addExtension('swagLoyaltyTier', new ArrayStruct([
+             'tier' => $order->getCustomFields()['swag_loyalty_tier'] ?? 'basic',
+         ]));
++
++        $page->addExtension('swagLoyaltyPoints', new ArrayStruct([
++            'points' => $this->pointsFor($order),
++        ]));
+     }
++
++    private function pointsFor(OrderEntity $order): int
++    {
++        $points = 0;
++        foreach ($order->getLineItems()?->getElements() ?? [] as $item) {
++            // One point per whole currency unit of each line.
++            $points += (int) floor($item->getTotalPrice());
++        }
++
++        return $points;
++    }
+ }

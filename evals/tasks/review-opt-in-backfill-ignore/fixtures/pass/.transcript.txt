@@ -1,0 +1,7 @@
+The points come from the order lines the finish page already loaded, so the change adds no query and no config.
+
+```json
+{
+  "findings": []
+}
+```
