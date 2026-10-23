@@ -1,0 +1,14 @@
+```json
+{
+  "findings": [
+    {
+      "rule_id": "CORE-015",
+      "severity": "major",
+      "file": "src/Core/Content/Media/Thumbnail/ThumbnailSizeResolver.php",
+      "line": 14,
+      "summary": "parameterName is '$size' with the dollar sign, so it does not match the parameter in the signature.",
+      "fix": "Use the bare parameter name: parameterName: 'size'."
+    }
+  ]
+}
+```
