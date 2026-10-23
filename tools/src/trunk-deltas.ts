@@ -1,6 +1,9 @@
-// What one trunk commit changes that a skill author has to look at (plan
-// WP8): agent skill bullets, coding guideline headings, review guide rule
-// IDs, the PR template and the PHPStan and Danger rule classes.
+// What one commit changes that a skill author has to look at. On
+// shopware/shopware trunk (plan WP8): agent skill bullets, coding guideline
+// headings, review guide rule IDs, the PR template and the PHPStan and Danger
+// rule classes. In an upstream skill repository (plan WP12): the bullets and
+// headings of every Markdown file.
+import type { Extractor } from './sources.ts';
 
 /** A file of a commit, as the GitHub API returns it. `patch` is missing for
  *  binary files and for diffs that are too large to show. */
@@ -39,9 +42,11 @@ export interface ClassDelta {
 }
 
 export interface CommitDeltas {
-  /** Bullets added to or removed from `.agents/skills/<skill>/SKILL.md`. */
+  /** Bullets added to or removed from `.agents/skills/<skill>/SKILL.md`, or
+   *  from any Markdown file of an upstream source. */
   bullets: LineDelta[];
-  /** Headings added to or removed from `coding-guidelines/**`. */
+  /** Headings added to or removed from `coding-guidelines/**`, or from any
+   *  Markdown file of an upstream source. */
   headings: LineDelta[];
   /** Rule IDs added to or removed from review guide frontmatter. */
   guideIds: LineDelta[];
@@ -87,7 +92,22 @@ export function ruleClass(file: TrunkFile): ClassDelta | undefined {
   return { file: file.filename, name, kind: tool === 'Danger' ? 'danger' : 'phpstan', status: file.status };
 }
 
-export function commitDeltas(commit: TrunkCommit): CommitDeltas {
+/** Bullets and headings of the Markdown files of an upstream commit. */
+function markdownDeltas(commit: TrunkCommit): CommitDeltas {
+  const deltas: CommitDeltas = { bullets: [], headings: [], guideIds: [], template: [], classes: [], truncated: [] };
+  for (const file of commit.files.filter((f) => f.filename.endsWith('.md'))) {
+    if (file.patch === undefined) {
+      deltas.truncated.push(file.filename);
+      continue;
+    }
+    deltas.bullets.push(...changedLines(file.filename, file.patch, BULLET));
+    deltas.headings.push(...changedLines(file.filename, file.patch, HEADING));
+  }
+  return deltas;
+}
+
+export function commitDeltas(commit: TrunkCommit, extractor: Extractor = 'shopware-trunk'): CommitDeltas {
+  if (extractor === 'markdown') return markdownDeltas(commit);
   const deltas: CommitDeltas = { bullets: [], headings: [], guideIds: [], template: [], classes: [], truncated: [] };
   for (const file of commit.files) {
     const cls = ruleClass(file);

@@ -1,6 +1,6 @@
 # Skill update automation plan (2026-10)
 
-Status: **accepted** (2026-10-23); phase 0 done, phases 1 and 2 in progress · Author: BrocksiNet · Created: 2026-10-23
+Status: **accepted** (2026-10-23); phases 0 to 2 done 2026-10-23, phase 3 next · Author: BrocksiNet · Created: 2026-10-23
 
 Rules go stale because Shopware changes every week. Half of the upkeep is
 automated already: the weekly trunk mining issue and the weekly API index.
@@ -70,20 +70,25 @@ renderer and the suggest command share one parser in `tools/src/signals.ts`.
 
 ```json
 {
-  "id": "shopware/shopware#19917/review-comment/1834455012",
+  "id": "shopware/shopware#19917/review-comment/4102108586",
   "source": "core-reviews",
   "kind": "review-comment",
   "repo": "shopware/shopware",
-  "url": "https://github.com/shopware/shopware/pull/19917#discussion_r1834455012",
-  "date": "2026-10-14T09:12:00Z",
-  "pr": { "number": 19917, "title": "…", "merged_at": "2026-10-16T11:02:00Z" },
-  "author": { "login": "dgrothaus", "association": "MEMBER" },
-  "path": "src/Core/Content/Category/Service/CategoryBreadcrumbBuilder.php",
-  "diff_hunk": "@@ -120,6 +120,14 @@ …",
-  "text": "This docblock describes what the PR changed, not what the code does …",
-  "thread": { "replies": 1, "outdated": true },
+  "url": "https://github.com/shopware/shopware/pull/19917#discussion_r4102108586",
+  "date": "2026-09-25T07:12:51Z",
+  "pr": { "number": 19917, "title": "…", "merged_at": "2026-10-20T14:30:08Z" },
+  "author": { "login": "dgrothaus-sw", "association": "MEMBER" },
+  "path": "src/Storefront/Framework/SystemCheck/ProductDetailReadinessCheck.php",
+  "text": "(blocking) The category lookup does not see Dynamic Access restrictions …",
+  "lines": ["        $criteria = new Criteria();", "…"],
+  "thread": { "replies": 1, "outdated": false },
   "map": [
-    { "skill": "sw-review-learnings", "reference": "references/code-comments.md", "rules": ["REV-034"], "via": "anchors_any" }
+    {
+      "skill": "sw-review-learnings",
+      "reference": "references/dal-and-performance.md",
+      "rules": ["REV-021", "REV-022", "REV-023", "REV-024", "REV-033", "REV-035"],
+      "via": "routes"
+    }
   ]
 }
 ```
@@ -91,7 +96,9 @@ renderer and the suggest command share one parser in `tools/src/signals.ts`.
 Kinds: `skill-bullet`, `guideline-heading`, `guide-id`, `rule-class`,
 `template-line` (today's trunk deltas), `upstream-line` (an upstream skill
 repo), `review-comment`, `review-body`, and `api-break` (from `check-breaks`).
-The `id` is stable, so a re-run never duplicates a signal.
+The `id` is stable, so a re-run never duplicates a signal. `lines` are the
+added and removed lines the route anchors run on: the diff hunk for a
+review comment, the changed line itself for a drift change.
 
 ## Phase 0 results (2026-10-23)
 
@@ -161,7 +168,8 @@ comment still moves all of them, and never past unread deltas.
 **Acceptance**:
 
 - The 2026-10-13..2026-10-19 window still reports the eight commits WP8
-  reported. The tests in `tools/test/mine-trunk.test.ts` pass unchanged.
+  reported. The WP8 assertions in `tools/test/mine-trunk.test.ts` still
+  hold, rewritten for the grouped layout.
 - A stubbed upstream commit that adds a bullet shows up under its source.
 - `rules/sources.json` has a schema and `validate-skills.sh` checks it.
 
@@ -199,11 +207,42 @@ new rules; mapped ones are candidates for an update.
 
 **Acceptance**:
 
-- Every existing report item lands under a skill. Items that used to be
-  listed flat appear under the rule `core_guide_ids` or `enforced_by` names.
-- A routing test: the #19917 docblock comment maps to `REV-034` through
-  `anchors_any` (fixture under `tools/test/fixtures/signals/`).
+- Every existing report item lands under a skill or in **Unmapped**. Items
+  that used to be listed flat appear under the rule `core_guide_ids` or
+  `enforced_by` names.
+- A routing test on the real #19917 review comments (fixture under
+  `tools/test/fixtures/signals/`): the blocking Dynamic Access finding maps
+  to the reference that holds `REV-035`.
 - The catalog schema has `upstream`, and `validate-rules` accepts it.
+
+### Steps 1 and 2: what was built (2026-10-23)
+
+Both steps shipped together. Differences from the spec above:
+
+- **No label rename.** The issue title is now "Drift: week of …"; the label
+  stays `trunk-drift`, so old issues still close as superseded.
+- **Sources start at today's head.** `.mining-state.json` got an entry for
+  every upstream source at its branch head on 2026-10-23. A source added
+  later without an entry gets a first pass that only records its head.
+- **Routes run per signal, not through `routeDiff()`.** The mapper calls
+  `routeMatches()` for each route of each skill and skips borrowed routes,
+  so a change is filed under the owning skill once. A changed line in a
+  guideline or skill file has no code path, so only anchors can match it;
+  a review comment has its file path and the diff hunk.
+- **Rule-level matches win.** Routes only run when no rule matched, and the
+  source's skill list only when no route matched either.
+- **An uncited guide ID is not unmapped.** It falls back to the skills that
+  read core's review guides, under "No rule yet".
+- **`REV-034` is out of reach for the mapper.** The history-comment
+  findings on #19917 and #20855 sit in hunks without history words in a
+  comment line, so no route anchor matches them. Recognising them as
+  covered is left to step 4, whose acceptance already asks for it.
+- **`PRD-001` and `PRD-008` got a `trunk.source`.** The first live run had
+  114 changes from the PR template restructure (#21627) that only reached
+  the skill. With the link they land under `PRD-001`, and a change to the
+  checklist heading under `PRD-008`.
+- **`--signals FILE`** writes the mapped changes as JSON Lines, the input
+  step 4 will read.
 
 ## Step 3: collect merged-PR reviews daily
 
@@ -365,9 +404,9 @@ enough good PRs to trust it.
 
 | Phase | Work | Depends on | Size | Model cost |
 | ----- | ---- | ---------- | ---- | ---------- |
-| 0 | Measure: count maintainer review comments on trunk for September and October 2026, and how many pass the noise filter | none | S | none |
-| 1 | Source list and per-source state | none | M | none |
-| 2 | Signal format and mapper; drift issue grouped by rule | 1 | M | none |
+| 0 | **Done.** Measure: count maintainer review comments on trunk for September and October 2026, and how many pass the noise filter | none | S | none |
+| 1 | **Done.** Source list and per-source state | none | M | none |
+| 2 | **Done.** Signal format and mapper; drift issue grouped by rule | 1 | M | none |
 | 3 | Daily review collector and the `review-signals` release | 2 | M | none |
 | 4 | `suggest-rules` command | 3 | M | local |
 | 5 | `suggest-rules draft` | 4 | L | local |
@@ -384,7 +423,7 @@ planned. Each phase updates the docs in the same pull request as the code:
 
 | Phase | Docs to update |
 | ----- | -------------- |
-| 1 | `docs/maintenance.md`: the "Planned: upstream skill sets" section becomes "What runs today", with the source list and how to add a source. README "Trunk mining" paragraph: one job, many sources. |
+| 1 | `docs/maintenance.md`: the "Planned: upstream skill sets" section becomes "What runs today", with the source list and how to add a source. The short README has no mining paragraph any more, so the maintenance page carries it. |
 | 2 | `docs/maintenance.md`: how to read the drift issue grouped by skill and rule, and what "unmapped" means. `AGENTS.md`: fill `upstream` or `trunk.source` when adding a rule, so the mapper finds it. `rules/catalog.schema.json` describes `upstream`. |
 | 3 | `docs/maintenance.md`: the review collector, what it keeps and drops, where the `review-signals` release is, and how to download a month. The flowchart gets the daily path. |
 | 4 | A new section "Suggesting rule changes" in `docs/maintenance.md`: the command, its options, the proposal format, how to judge a proposal against the five criteria, and the retirement evidence. `AGENTS.md` "Repository layout" and "Adding or changing a rule" point to it. |

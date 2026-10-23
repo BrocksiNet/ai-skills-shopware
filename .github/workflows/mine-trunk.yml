@@ -1,17 +1,21 @@
 name: mine-trunk
 
-# Weekly trunk mining (plan WP8). Lists what changed on shopware/shopware
-# trunk since docs/.mining-state.json: agent skill bullets, coding guideline
-# headings, review guide rule IDs, the PR template, and PHPStan and Danger
-# rule classes, each checked against rules/catalog.json.
+# Weekly drift mining (plan WP8, WP12). Lists what changed in every source
+# of rules/sources.json since docs/.mining-state.json. On shopware/shopware
+# trunk: agent skill bullets, coding guideline headings, review guide rule
+# IDs, the PR template, and PHPStan and Danger rule classes. In the upstream
+# skill repositories: Markdown bullets and headings. Each change is mapped to
+# the skill and rule it touches through rules/catalog.json and the skills'
+# routes.json.
 #
 #   - schedule (Monday 05:00 UTC, before evals.yml) and manual dispatch open
 #     or update this week's issue labeled `trunk-drift`. Older open
 #     `trunk-drift` issues are closed as superseded: the new report covers
 #     their window too, because the state has not moved.
 #   - a `/mined` comment by a member or collaborator on a `trunk-drift` issue
-#     opens a PR that moves the state to the trunk commit the report ends
-#     at, then closes the issue. The state never moves past unread deltas.
+#     opens a PR that moves every source's state to the commit the report
+#     ends at, then closes the issue. The state never moves past unread
+#     deltas.
 #
 # No model calls and no secrets beyond GITHUB_TOKEN.
 
@@ -40,7 +44,7 @@ jobs:
         with:
           node-version: '24'
 
-      - name: Mine trunk since the last state
+      - name: Mine every source since its last state
         env:
           GH_TOKEN: ${{ github.token }}
         run: node tools/bin/mine-trunk.ts report > "$RUNNER_TEMP/report.md"
@@ -70,9 +74,9 @@ jobs:
           fi
 
           monday="$(date -u -d "$(date -u +%Y-%m-%d) -$(( $(date -u +%u) - 1 )) days" +%Y-%m-%d)"
-          title="Trunk drift: week of ${monday}"
+          title="Drift: week of ${monday}"
           gh label create trunk-drift --color D93F0B \
-            --description "Weekly trunk mining report (mine-trunk.yml)" --force
+            --description "Weekly drift mining report (mine-trunk.yml)" --force
 
           current="$(gh issue list --label trunk-drift --state open --json number,title \
             --jq "map(select(.title == \"${title}\")) | .[0].number // empty")"
@@ -120,16 +124,16 @@ jobs:
             gh issue close "$ISSUE" --comment "The mining state is already at the end of this report."
             exit 0
           fi
-          sha="$(node -p 'require("./docs/.mining-state.json").last_sha.slice(0, 8)')"
+          sha="$(node -p 'require("./docs/.mining-state.json").shopware.last_sha.slice(0, 8)')"
           branch="mining-state/${ISSUE}-${sha}"
 
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git switch -c "$branch"
           git add docs/.mining-state.json
-          git commit -m "chore(mining): trunk mined up to ${sha}"
+          git commit -m "chore(mining): mined up to trunk ${sha}"
           git push origin "$branch"
           url="$(gh pr create --base main --head "$branch" \
-            --title "chore(mining): trunk mined up to ${sha}" \
+            --title "chore(mining): mined up to trunk ${sha}" \
             --body "Moves \`docs/.mining-state.json\` to the end of #${ISSUE}, marked mined by @${ACTOR}.")"
           gh issue close "$ISSUE" --comment "Marked mined by @${ACTOR}. State PR: ${url}"
