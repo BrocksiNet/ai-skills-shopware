@@ -1,0 +1,16 @@
+The @see annotation should follow the usual import style of the test docblocks.
+
+```json
+{
+  "findings": [
+    {
+      "rule_id": "TEST-033",
+      "severity": "minor",
+      "file": "src/Core/Checkout/Cart/CartNormalizer.php",
+      "line": 6,
+      "summary": "The @see uses a leading-backslash FQCN where a use import with the short name is expected.",
+      "fix": "Import CartNormalizerIntegrationTest and reference it by its short name."
+    }
+  ]
+}
+```

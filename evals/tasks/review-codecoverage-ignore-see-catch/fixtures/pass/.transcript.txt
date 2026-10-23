@@ -1,0 +1,16 @@
+The class is marked @codeCoverageIgnore and its @see names the integration test, but the test class is imported only for that annotation. The annotation should name the test by its leading-backslash FQCN.
+
+```json
+{
+  "findings": [
+    {
+      "rule_id": "TEST-033",
+      "severity": "minor",
+      "file": "src/Core/Checkout/Cart/CartNormalizer.php",
+      "line": 5,
+      "summary": "The use import of the integration test exists only for the @see, so the annotation uses a short name instead of the leading-backslash FQCN.",
+      "fix": "Remove the use line and write the @see with the leading-backslash FQCN of CartNormalizerIntegrationTest."
+    }
+  ]
+}
+```
