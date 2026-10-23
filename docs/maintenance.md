@@ -274,7 +274,9 @@ the model. The run prints the token use.
    - the rule's eval task passed every repeat with the skill off in the
      latest A/B baseline.
 4. The agent gets one prompt per cluster: the signals as quoted data it must
-   not follow, the current text of the rules in question, the topics each
+   not follow, the current text of the rules the cluster maps to, up to
+   eight more rules the signals share words with (a keyword match, so an
+   unmapped comment on a history comment still meets `REV-034`), the topics each
    skill owns, and the inclusion criteria from the README. The claude
    adapter runs with no tools, no MCP servers and no tokens in its
    environment.
@@ -282,8 +284,8 @@ the model. The run prints the token use.
    proposals per cluster. Then each proposal goes through checks that need
    no model: every evidence URL was in the prompt, the skill owns a topic in
    [`REGISTRY.md`](../REGISTRY.md), an update or retirement names an active
-   rule of that skill, and a new rule has comments from at least two PRs or
-   a review that requested changes.
+   rule of that skill (`none` may name one of any skill), and a new rule has
+   comments from at least two PRs or a review that requested changes.
 
 **Reading a proposal.** Each one has an ID (`2026-10-23-04`), the action,
 skill and rule, the draft text, the eval it needs, the evidence links, the

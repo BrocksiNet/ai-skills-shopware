@@ -99,11 +99,13 @@ export function checkProposal(p: Proposal, o: CheckContext): Check[] {
   });
   if (p.action === 'update' || p.action === 'retire' || (p.action === 'none' && p.rule !== '')) {
     const rule = o.catalog.rules.find((r) => r.id === p.rule);
-    const ok = rule !== undefined && isActive(rule) && rule.skill === p.skill;
-    let detail = `${p.rule} is active in ${p.skill}`;
+    // A covering rule may sit in another skill; a change must be in its own.
+    const sameSkill = p.action === 'none' || rule?.skill === p.skill;
+    const ok = rule !== undefined && isActive(rule) && sameSkill;
+    let detail = `${p.rule} is active in ${rule?.skill ?? p.skill}`;
     if (rule === undefined) detail = `${p.rule} is not in the catalog`;
     else if (!isActive(rule)) detail = `${p.rule} is ${rule.status}`;
-    else if (rule.skill !== p.skill) detail = `${p.rule} belongs to ${rule.skill}`;
+    else if (!sameSkill) detail = `${p.rule} belongs to ${rule.skill}`;
     checks.push({ name: 'rule exists', ok, detail });
   }
   if (p.action === 'new') {

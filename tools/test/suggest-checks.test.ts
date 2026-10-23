@@ -64,6 +64,7 @@ describe('checks without a model', () => {
     assert.deepEqual(failed(proposal({ action: 'update', rule: 'REV-034', evidence: [a.url] })), []);
     assert.deepEqual(failed(proposal({ action: 'retire', rule: 'REV-999', evidence: [a.url] })), ['rule exists']);
     assert.deepEqual(failed(proposal({ action: 'update', rule: 'TEST-013', evidence: [a.url] })), ['rule exists']);
+    assert.deepEqual(failed(proposal({ action: 'none', rule: 'TEST-013', evidence: [a.url] })), []);
     assert.deepEqual(failed(proposal({ skill: 'sw-help', action: 'none', rule: '', evidence: [a.url] })), [
       'skill owns topic',
     ]);
