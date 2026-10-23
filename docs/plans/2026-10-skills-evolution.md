@@ -1012,7 +1012,7 @@ it would answer has no recorded ground truth.
 
 ## WP12: Skill update automation
 
-Status: **proposed 2026-10-23.** Plan:
+Status: **accepted 2026-10-23; phases 0 to 2 done, phase 3 next.** Plan:
 [`2026-10-skill-update-automation.md`](2026-10-skill-update-automation.md).
 
 Goal: turn drift into rule changes with less manual reading. Trunk mining

@@ -1,15 +1,30 @@
-// Trunk mining (plan WP8). The GitHub API is stubbed with responses recorded
-// for 2026-10-13..2026-10-19, trimmed to the watched files and changed lines.
+// Drift mining (plan WP8, WP12). The GitHub API is stubbed with responses
+// recorded for 2026-10-13..2026-10-19, trimmed to the watched files and
+// changed lines.
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { join, resolve } from 'node:path';
 import { describe, test } from 'node:test';
 import { type Catalog, loadCatalog } from '../src/catalog.ts';
 import { allPages, type GitHubApi } from '../src/github.ts';
+import { mapIndex } from '../src/map-signal.ts';
 import { renderReport, stateFromReport } from '../src/mine-report.ts';
-import { type Mined, mineTrunk, parseState, windowAfter, windowCommits, windowOfDays } from '../src/mine-trunk.ts';
+import {
+  firstPass,
+  type Mined,
+  mineSource,
+  parseStates,
+  windowAfter,
+  windowCommits,
+  windowOfDays,
+} from '../src/mine-trunk.ts';
+import { loadSources, type Source } from '../src/sources.ts';
 
 const ROOT = resolve(import.meta.dirname, '../..');
+const SOURCES = loadSources(ROOT);
+const TRUNK: Source = SOURCES.find((s) => s.id === 'shopware') ?? SOURCES[0] ?? assert.fail('no shopware source');
+const report = (mined: Mined[], catalog: Catalog = loadCatalog(ROOT)): string =>
+  renderReport(mined, catalog, mapIndex(ROOT, catalog, SOURCES));
 const FIXTURE = join(import.meta.dirname, 'fixtures/mine-trunk/2026-10-13..2026-10-19.json');
 const HAND_MINED = ['f2bf3794', '75b0a495', '190d734b', '8dc74f24', '7ad011f1'];
 
@@ -21,14 +36,17 @@ function recorded(): GitHubApi {
 
 const shortShas = (section: string): string[] =>
   Array.from(section.matchAll(/^- \[([0-9a-f]{8})\]/gmu), (m) => m[1] ?? '');
-const section = (report: string, title: string): string => report.split(`## ${title}\n`)[1]?.split('\n## ')[0] ?? '';
+const section = (text: string, title: string): string => text.split(`## ${title}\n`)[1]?.split('\n## ')[0] ?? '';
+/** One `### ` group of a skill section. */
+const group = (text: string, skill: string, title: string): string =>
+  section(text, skill).split(`### ${title}`)[1]?.split('\n### ')[0] ?? '';
 
 describe('the 2026-10-13..2026-10-19 window', () => {
-  const mined = mineTrunk(recorded(), windowOfDays('2026-10-13', '2026-10-19'));
-  const report = mined.then((m) => renderReport(m, loadCatalog(ROOT)));
+  const mined = mineSource(recorded(), TRUNK, windowOfDays('2026-10-13', '2026-10-19'));
+  const text = mined.then((m) => report([m]));
 
   test('reports the five commits found by hand', async () => {
-    const commits = shortShas(section(await report, 'Commits'));
+    const commits = shortShas(section(await text, 'Commits'));
     for (const sha of HAND_MINED) assert.ok(commits.includes(sha), sha);
     assert.deepEqual(commits, [
       '7ad011f1',
@@ -40,42 +58,139 @@ describe('the 2026-10-13..2026-10-19 window', () => {
       '0e782aa7',
       '0fa3e10a',
     ]);
-    assert.match(await report, /^Without a delta: \[d10e3c4f\].*\[53a6cceb\].*\[00689309\].*\[36e19f9d\]/mu);
+    assert.match(await text, /^Without a delta: \[d10e3c4f\].*\[53a6cceb\].*\[00689309\].*\[36e19f9d\]/mu);
+    assert.match(await text, /^\| `shopware` \| 2026-10-13 \| 12 \| 8 \| \[21949101\]/mu);
   });
-  test('rule classes against enforced_by', async () => {
-    const enforcement = section(await report, 'New enforcement');
+  test('rule classes land under the rule whose enforced_by cites them', async () => {
+    const t = await text;
     assert.match(
-      enforcement,
-      /\| `DeprecatedEntityConstructionRule` \| phpstan \| added \| .* \| \*\*unmapped\*\* \|/u,
+      group(t, 'sw-testing', 'TEST-016'),
+      /- Rule class `NoAssertionInEventHookRule` \(phpstan\) added \(\[f2bf3794\]/u,
     );
-    assert.match(enforcement, /\| `NoAssertionInEventHookRule` \| phpstan \| added \| .* \| TEST-016 \|/u);
-    assert.match(enforcement, /\| `SingleCoversClassInTests` \| danger \| modified \| .* \| TEST-011 \|/u);
-    assert.doesNotMatch(enforcement, /StoreApiRouteExtensionRule/u, 'a modified class nobody cites is noise');
+    assert.match(group(t, 'sw-testing', 'TEST-016'), /Matched by `enforced_by`, `trunk\.source`\./u);
+    assert.match(group(t, 'sw-testing', 'TEST-011'), /- Rule class `SingleCoversClassInTests` \(danger\) modified/u);
+    assert.match(section(t, 'Unmapped'), /- Rule class `DeprecatedEntityConstructionRule` \(phpstan\) added/u);
+    assert.doesNotMatch(t, /StoreApiRouteExtensionRule/u, 'a modified class nobody cites is noise');
   });
-  test('headings, skill bullets and the PR template', async () => {
-    const text = await report;
+  test('guideline headings map through trunk.source anchors', async () => {
+    const t = await text;
+    assert.match(group(t, 'sw-testing', 'TEST-016'), /- Added guideline heading in .*`## Observing events in tests`/u);
+    for (const id of ['CORE-069', 'CORE-070', 'CORE-071']) {
+      assert.match(group(t, 'sw-core-development', id), /`### Configuration and operations`/u, id);
+    }
+    assert.match(section(t, 'Unmapped'), /`## What counts as a break`/u, 'a heading no rule cites');
+  });
+  test('skill bullets map through routes or the source skill list; template lines through PRD-001', async () => {
+    const t = await text;
     assert.match(
-      section(text, 'Changed guideline headings'),
-      /- Added: `## Observing events in tests` \(\[f2bf3794\]/u,
+      group(t, 'sw-testing', '`references/test-shape-and-flags.md`'),
+      /Matched by its route\. Rules there: TEST-016.*\n\n- Removed agent skill bullet .*#\[CoversClass\]/su,
     );
-    const bullets = section(text, 'Agent skill bullets');
-    assert.match(bullets, /`\.agents\/skills\/shopware-phpunit-tests\/SKILL\.md`/u);
-    assert.match(bullets, /- Added: `` Never add listeners to the shared `event_dispatcher`/u);
-    assert.match(section(text, 'PR template'), /- Removed: .*RELEASE_INFO-6\.<major>\.md/u);
-    assert.equal(section(text, 'Unmapped core guide IDs').trim(), 'None.');
+    assert.match(
+      group(t, 'sw-testing', 'No rule yet'),
+      /- Added agent skill bullet .*Never add listeners to the shared `event_dispatcher`/u,
+    );
+    const template = group(t, 'sw-pr-description', 'PRD-001');
+    assert.match(template, /Matched by `trunk\.source`\./u);
+    assert.match(template, /- Removed PR template line: .*RELEASE_INFO-6\.<major>\.md/u);
   });
   test('the report records trunk head as the next state', async () => {
-    assert.deepEqual(stateFromReport(await report), {
-      last_sha: '219491014944c6b6463cf6426c7001adea8dae0d',
-      last_date: '2026-10-19T19:45:03Z',
+    assert.deepEqual(stateFromReport(await text), {
+      shopware: { last_sha: '219491014944c6b6463cf6426c7001adea8dae0d', last_date: '2026-10-19T19:45:03Z' },
     });
   });
-  test('the committed state is mined up to this window or later', async () => {
+  test('the committed state is mined up to this window or later, for every source', async () => {
     // `/mined` moves docs/.mining-state.json on, so it only ever passes the
     // recorded window; it never equals it for long.
-    const state = parseState(JSON.parse(readFileSync(join(ROOT, 'docs/.mining-state.json'), 'utf8')));
-    assert.match(state.last_sha, /^[0-9a-f]{40}$/u);
-    assert.ok(state.last_date >= stateFromReport(await report).last_date, state.last_date);
+    const states = parseStates(JSON.parse(readFileSync(join(ROOT, 'docs/.mining-state.json'), 'utf8')));
+    const trunk = states.shopware ?? assert.fail('no shopware state');
+    assert.match(trunk.last_sha, /^[0-9a-f]{40}$/u);
+    assert.ok(trunk.last_date >= (stateFromReport(await text).shopware?.last_date ?? ''), trunk.last_date);
+    assert.deepEqual(Object.keys(states).toSorted(), SOURCES.map((s) => s.id).toSorted());
+  });
+});
+
+describe('more than one source', () => {
+  const upstream: Source = {
+    id: 'up',
+    repo: 'acme/skills',
+    branch: 'main',
+    extractor: 'markdown',
+    paths: ['skills'],
+    skills: [{ path: 'skills/phpunit', skills: ['sw-testing'] }],
+  };
+  const commit = {
+    sha: 'c'.repeat(40),
+    title: 'docs: phpunit',
+    date: '2026-10-22T08:00:00Z',
+    files: [
+      {
+        filename: 'skills/phpunit/SKILL.md',
+        status: 'modified',
+        additions: 2,
+        deletions: 0,
+        patch: '@@ -1,1 +1,3 @@\n # PHPUnit\n+## Data providers\n+- Name every data set.',
+      },
+    ],
+  };
+  const api: GitHubApi = (path) => {
+    if (path.startsWith('repos/acme/skills/commits?sha=main&until='))
+      return Promise.resolve([{ sha: commit.sha, commit: { committer: { date: commit.date } } }]);
+    if (path.startsWith('repos/acme/skills/commits?sha=main&path=skills'))
+      return Promise.resolve([{ sha: commit.sha, commit: { committer: { date: commit.date } } }]);
+    if (path === `repos/acme/skills/commits/${commit.sha}`)
+      return Promise.resolve({
+        sha: commit.sha,
+        commit: { message: commit.title, committer: { date: commit.date } },
+        files: commit.files,
+      });
+    return Promise.reject(new Error(path));
+  };
+
+  test('an upstream Markdown change maps to the source skill; a new source gets a first pass', async () => {
+    const w = windowOfDays('2026-10-20', '2026-10-26');
+    const sources = [...SOURCES, upstream];
+    const catalog = loadCatalog(ROOT);
+    const mined = [await mineSource(api, upstream, w), await firstPass(api, { ...upstream, id: 'new' }, w.to)];
+    const t = renderReport(mined, catalog, mapIndex(ROOT, catalog, sources));
+    const noRule = group(t, 'sw-testing', 'No rule yet');
+    assert.match(
+      noRule,
+      /- Added line in `skills\/phpunit\/SKILL\.md`: `## Data providers` \(\[cccccccc\]\(.*\), up\)/u,
+    );
+    assert.match(noRule, /- Added line in `skills\/phpunit\/SKILL\.md`: `Name every data set\.`/u);
+    assert.match(t, /^\| `new` \| \| first pass \| \| \[cccccccc\]/mu);
+    assert.match(section(t, 'Commits'), /### new\n\nFirst pass: the next report starts after \[cccccccc\]/u);
+    assert.deepEqual(Object.keys(stateFromReport(t)), ['up', 'new']);
+  });
+  test('a rule citing an upstream heading takes the change', () => {
+    const base = loadCatalog(ROOT);
+    const rule = base.rules.find((r) => r.id === 'TEST-014') ?? assert.fail('TEST-014');
+    const cited = { ...rule, upstream: [{ source: 'up', path: 'skills/phpunit/SKILL.md#data-providers' }] };
+    const catalog: Catalog = { ...base, rules: base.rules.map((r) => (r === rule ? cited : r)) };
+    const mined: Mined = {
+      source: upstream,
+      window: windowOfDays('2026-10-20', '2026-10-26'),
+      head: { sha: commit.sha, date: commit.date },
+      commits: [
+        {
+          commit,
+          deltas: {
+            bullets: [],
+            headings: [{ file: 'skills/phpunit/SKILL.md', change: '+', text: '## Data providers' }],
+            guideIds: [],
+            template: [],
+            classes: [],
+            truncated: [],
+          },
+        },
+      ],
+    };
+    const t = renderReport([mined], catalog, mapIndex(ROOT, catalog, [...SOURCES, upstream]));
+    assert.match(
+      group(t, 'sw-testing', 'TEST-014'),
+      /Matched by `upstream`\.\n\n- Added line in .*`## Data providers`/u,
+    );
   });
 });
 
@@ -114,6 +229,7 @@ function guideMined(patch: string): Mined {
     ],
   };
   return {
+    source: TRUNK,
     window: windowOfDays('2026-10-20', '2026-10-26'),
     head: { sha: commit.sha, date: commit.date },
     commits: [{ commit, deltas }],
@@ -121,17 +237,20 @@ function guideMined(patch: string): Mined {
 }
 
 describe('core guide IDs', () => {
-  test('unmapped when no rule cites them; a retired ID still cited is named', () => {
+  test('a guide ID no rule cites goes to the review skills; a removed ID still cited lands under its rule', () => {
     const catalog: Catalog = {
       prefixes: {},
       rules: [{ ...loadCatalog(ROOT).rules[0], id: 'CORE-900', core_guide_ids: ['BCPHP-001', 'BCPHP-002'] }].filter(
         (r): r is Catalog['rules'][number] => r.skill !== undefined,
       ),
     };
-    const ids = section(renderReport(guideMined(''), catalog), 'Unmapped core guide IDs');
-    assert.match(ids, /^- BCPHP-011 in `\.agents\/skills\/sw-review\/guides\/bc-php\.md`/mu);
-    assert.doesNotMatch(ids, /^- BCPHP-001/mu);
-    assert.match(ids, /Retired, still cited by CORE-900: BCPHP-002/u);
+    const t = report([guideMined('')], catalog);
+    const noRule = group(t, 'sw-extension-review', 'No rule yet');
+    assert.match(noRule, /^- Added core guide ID BCPHP-011 in `\.agents\/skills\/sw-review\/guides\/bc-php\.md`/mu);
+    assert.doesNotMatch(noRule, /BCPHP-00[12]/u);
+    const skill = catalog.rules[0]?.skill ?? '';
+    assert.match(group(t, skill, 'CORE-900'), /Matched by `core_guide_ids`\.\n\n- Added core guide ID BCPHP-001/u);
+    assert.match(group(t, skill, 'CORE-900'), /- Removed core guide ID BCPHP-002/u);
   });
 });
 
@@ -147,11 +266,16 @@ describe('windows and state', () => {
       skip: 'x',
     });
     assert.throws(() => windowOfDays('2026-10-13', 'now'), /YYYY-MM-DD/u);
-    assert.throws(() => parseState({ last_sha: 1 }), /needs last_sha and last_date/u);
+    assert.throws(() => parseStates({ shopware: { last_sha: 1 } }), /needs last_sha and last_date/u);
     assert.throws(() => stateFromReport('no marker'), /no mine-trunk-state marker/u);
   });
+  test('the single-source state and report marker from before WP12 read as shopware', () => {
+    const old = { last_sha: 'x', last_date: '2026-10-19' };
+    assert.deepEqual(parseStates(old), { shopware: old });
+    assert.deepEqual(stateFromReport(`body\n<!-- mine-trunk-state: ${JSON.stringify(old)} -->\n`), { shopware: old });
+  });
   test('commits come from every watched path once, oldest first, without the skipped one', async () => {
-    const refs = await windowCommits(twoPaths, { from: '2026-10-20T00:00:00Z', to: 'T', skip: 'old' });
+    const refs = await windowCommits(twoPaths, TRUNK, { from: '2026-10-20T00:00:00Z', to: 'T', skip: 'old' });
     assert.deepEqual(
       refs.map((r) => r.sha),
       ['a', 'b'],

@@ -20,6 +20,7 @@ import {
   triggerPhrases,
 } from './skill-checks.ts';
 import { routerErrors } from './router-index.ts';
+import { sourceErrors } from './sources.ts';
 import { compareText } from './text.ts';
 
 const MAX_DESCRIPTION = 1024;
@@ -89,6 +90,8 @@ export function validateSkills(o: ValidateSkillsOptions): number {
   if (checkRules(o.root, o.out, o.err) !== 0) report('rule catalog check failed (see above)');
   o.out('\nChecking reference routes\n');
   if (checkRoutes(o.root, o.out) !== 0) report('reference routing check failed (see above)');
+  o.out('\nChecking drift sources\n');
+  for (const e of sourceErrors(o.root, skills)) report(e);
   o.out('\nChecking sw-skill-router index and sw-help\n');
   for (const e of routerErrors(o.root)) report(e);
 
