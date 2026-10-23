@@ -1,0 +1,16 @@
+The loyalty-points logic is new shared Vue logic, and it is added as a mixin. New shared logic should be a composable.
+
+```json
+{
+  "findings": [
+    {
+      "rule_id": "ADM-007",
+      "severity": "minor",
+      "file": "src/Resources/app/administration/src/app/mixin/loyalty-points.mixin.ts",
+      "line": 3,
+      "summary": "The loyalty-points state and loader are new shared logic added as a mixin; new shared logic should be a composable.",
+      "fix": "Move loyaltyPoints, loyaltyLoading and loadLoyaltyPoints into a composable such as useLoyaltyPoints() and call it from setup()."
+    }
+  ]
+}
+```

@@ -67,8 +67,7 @@ Read only the reference that matches the task or the files it changes:
 - Modules stay independent — no direct import from another module.
 - Core (`src/core`) stays Vue-free. Shared non-Vue helpers can be imported
   from `core`.
-- **ADM-007** Prefer composables for new shared Vue logic. Do not add new mixins unless
-  extending legacy code.
+- Prefer composables for new shared Vue logic over new mixins (`ADM-007`).
 - **ADM-008** BEM + Meteor design tokens. No inline styles. Snippets for visible text.
 - Reload an entity after a repository save so origin / change-set stay in
   sync.

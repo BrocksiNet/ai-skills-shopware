@@ -1,0 +1,16 @@
+The loader in the mixin reads the balance from the service and resets the loading flag in finally.
+
+```json
+{
+  "findings": [
+    {
+      "rule_id": "ADM-006",
+      "severity": "minor",
+      "file": "src/Resources/app/administration/src/app/mixin/loyalty-points.mixin.ts",
+      "line": 3,
+      "summary": "A mixin is registered here for the badge component to use.",
+      "fix": "Follow the component factory pattern used in the area."
+    }
+  ]
+}
+```

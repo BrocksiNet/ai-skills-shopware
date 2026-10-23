@@ -1,0 +1,22 @@
+{
+    "name": "swag/loyalty",
+    "description": "Loyalty points for customers",
+    "type": "shopware-platform-plugin",
+    "license": "MIT",
+    "require": {
+        "shopware/core": "~6.6.0",
+        "shopware/administration": "~6.6.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "Swag\\Loyalty\\": "src/"
+        }
+    },
+    "extra": {
+        "shopware-plugin-class": "Swag\\Loyalty\\SwagLoyalty",
+        "label": {
+            "de-DE": "Treuepunkte",
+            "en-GB": "Loyalty points"
+        }
+    }
+}
