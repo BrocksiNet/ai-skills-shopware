@@ -1,0 +1,22 @@
+```json
+{
+  "findings": [
+    {
+      "rule_id": "CORE-012",
+      "severity": "nit",
+      "file": "src/Core/Content/Product/DataAbstractionLayer/LegacyProductStockSubscriber.php",
+      "line": 20,
+      "summary": "getSubscribedEvents() could return [] when the flag is active.",
+      "fix": "Consider an early return."
+    },
+    {
+      "rule_id": "CORE-011",
+      "severity": "major",
+      "file": "src/Core/Content/Product/DataAbstractionLayer/LegacyProductStockSubscriber.php",
+      "line": 20,
+      "summary": "The throwIfActive call as the first statement is the correct pattern for a deprecated subscriber.",
+      "fix": "None."
+    }
+  ]
+}
+```

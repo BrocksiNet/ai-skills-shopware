@@ -1,0 +1,14 @@
+```json
+{
+  "findings": [
+    {
+      "rule_id": "CORE-012",
+      "severity": "major",
+      "file": "src/Core/Content/Product/DataAbstractionLayer/LegacyProductStockSubscriber.php",
+      "line": 20,
+      "summary": "getSubscribedEvents() is a discovery method; once the removal flag is active it must return [] instead of throwing, so the throwIfActive call breaks event discovery.",
+      "fix": "Replace the throwIfActive call with a Feature::isActive('v6.8.0.0') check that returns []."
+    }
+  ]
+}
+```
