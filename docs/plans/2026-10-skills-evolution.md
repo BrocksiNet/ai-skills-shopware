@@ -27,6 +27,7 @@ criteria. Packages are ordered so that each one only depends on earlier ones.
 | WP9 | Upstream watchlist | none | S | none |
 | WP10 | Eval runner in TypeScript | none | M | none |
 | WP11 | Public API index and version facts | WP6 | L | weekly build |
+| WP12 | Skill update automation | WP8, WP9 | L | local only |
 
 Shipped: everything through WP10 landed in **v0.9.0** (2026-10-21), ahead
 of the milestones below. Still open: WP0 item 7 (waits for #21730) and
@@ -1005,6 +1006,19 @@ This replaces the Kev classifier experiment first planned here. The same
 model was already measured for triage in shopware/framework-team#120; the
 facts, not the model, were the bottleneck there, and the routing question
 it would answer has no recorded ground truth.
+
+---
+
+## WP12: Skill update automation
+
+Status: **proposed 2026-10-23.** Plan:
+[`2026-10-skill-update-automation.md`](2026-10-skill-update-automation.md).
+
+Goal: turn drift into rule changes with less manual reading. Trunk mining
+reads a list of sources and maps each change to the rule it touches. A
+daily job collects maintainer review comments from merged core PRs. A local
+command with your agent login proposes new, updated and retired rules and
+drafts the pull request. The A/B gate and a human merge stay in place.
 
 ---
 
