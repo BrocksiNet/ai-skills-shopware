@@ -9,7 +9,7 @@ import { describe, test } from 'node:test';
 import { asker } from '../src/agent-ask.ts';
 import { renderSuggestions } from '../src/suggest-render.ts';
 import { suggest, type SuggestOptions } from '../src/suggest-run.ts';
-import { FAKE, ROOT, scratch, signal } from './suggest-fixture.ts';
+import { abResult, FAKE, ROOT, scratch, signal } from './suggest-fixture.ts';
 
 const tmp = scratch();
 
@@ -85,9 +85,43 @@ describe('suggest with the fake agent', () => {
     assert.equal(broken.counts.agent_errors, 1);
   });
   test('a retirement candidate is explained through the same checks', async () => {
-    const r = await suggest({ ...options('retire'), skill: 'sw-testing' });
-    const s = r.suggestions.find((x) => x.cluster === 'retire:enforced:TEST-013') ?? assert.fail('no TEST-013');
+    const baseline = join(tmp, 'baseline.jsonl');
+    writeFileSync(baseline, `${JSON.stringify(abResult('unit-test-exception-object', 3, '2026-10-01'))}\n`);
+    const r = await suggest({ ...options('retire'), skill: 'sw-testing', baseline });
+    const s = r.suggestions.find((x) => x.cluster === 'retire:ab:TEST-001') ?? assert.fail('no TEST-001');
     assert.equal(s.action, 'retire');
     assert.equal(s.ok, true);
+  });
+  test('no rule is a retirement candidate for a check plugins may not run', async () => {
+    const r = await suggest({ ...options('retire'), skill: 'sw-testing' });
+    assert.equal(
+      r.retirements.find((c) => c.kind === 'enforced'),
+      undefined,
+    );
+  });
+  test('passing proposals are ranked, from 1 on', async () => {
+    const r = await suggest(unmapped(options('new')));
+    const ranked = r.suggestions.flatMap((s) => (s.rank === undefined || s.rank.position === 0 ? [] : [s.rank]));
+    assert.ok(ranked.length > 0);
+    assert.deepEqual(
+      ranked.map((k) => k.position).toSorted((a, b) => a - b),
+      ranked.map((_, i) => i + 1),
+    );
+    assert.ok(ranked.every((k) => k.prs === 2));
+    assert.match(renderSuggestions(r), /\| Rank \| Score \|/u);
+  });
+  test('a second pass asks only the clusters the first did not, and keeps both', async () => {
+    const first = await suggest(unmapped(options('new', 1)));
+    calls = 0;
+    const second = await suggest({ ...unmapped(options('new', 20)), previous: first });
+    assert.equal(calls, first.counts.over_cap);
+    assert.equal(second.counts.over_cap, 0);
+    assert.equal(second.counts.asked, first.counts.asked + first.counts.over_cap);
+    const ids = second.suggestions.map((s) => s.id);
+    assert.equal(new Set(ids).size, ids.length);
+    assert.deepEqual(
+      ids.slice(0, first.suggestions.length),
+      first.suggestions.map((s) => s.id),
+    );
   });
 });

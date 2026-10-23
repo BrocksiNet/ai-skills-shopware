@@ -238,6 +238,7 @@ contract: [`evals/README.md`](evals/README.md#review-tasks-review-rule-catch---i
    `superseded:<ID>` and leaves the skill text.
    When a CI check already catches the rule, add it to `trunk.enforced_by`
    (`tool`, `kind`, `catches`, `misses`, `trunk_only`) from the check's source,
+   and `extensions_run` only with proof that plugins and apps run it by default,
    then run `node tools/bin/render-enforced.ts`. It writes the skill's
    `## Already enforced by CI (do not repeat)` section; never edit that
    block by hand.

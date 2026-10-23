@@ -82,14 +82,17 @@ describe('retirement evidence', () => {
   const catalog: Catalog = {
     prefixes: {},
     rules: [
-      rule('TEST-901', { trunk: { enforced_by: [{ ...check, tool: 'A', trunk_only: false }] } }),
+      rule('TEST-901', {
+        trunk: { enforced_by: [{ ...check, tool: 'A', trunk_only: false, extensions_run: 'shopware-cli' }] },
+      }),
+      rule('TEST-906', { trunk: { enforced_by: [{ ...check, tool: 'D', trunk_only: false }] } }),
       rule('TEST-902', { trunk: { enforced_by: [{ ...check, tool: 'B', trunk_only: true }] } }),
       rule('TEST-903', { eval: 'task-a' }),
       rule('TEST-904', { eval: 'task-b' }),
       rule('TEST-905', { status: 'retired', trunk: { enforced_by: [{ ...check, tool: 'C', trunk_only: false }] } }),
     ],
   };
-  test('a check that is not trunk-only', () => {
+  test('a check extensions provably run; not trunk-only alone', () => {
     assert.deepEqual(
       enforcedCandidates(catalog).map((c) => c.rule),
       ['TEST-901'],

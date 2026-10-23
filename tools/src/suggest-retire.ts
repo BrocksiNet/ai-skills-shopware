@@ -1,8 +1,9 @@
 // Retirement candidates for `suggest-rules` (plan WP12 step 4), from
 // deterministic evidence only; the agent only explains them:
 //
-//   enforced  a check in `enforced_by` catches the rule in plugins too
-//             (`trunk_only: false`), so it belongs in "Already enforced"
+//   enforced  a check in `enforced_by` catches the rule, and its
+//             `extensions_run` proves plugins and apps run it, so it
+//             belongs in "Already enforced"
 //   api       every class the rule names is gone from the API index in
 //             every supported release
 //   ab        the latest A/B baseline passes the rule's task with the skill
@@ -29,10 +30,13 @@ export interface RetireCandidate {
   evidence: string;
 }
 
-/** Rules whose `enforced_by` has a check that is not trunk-only. */
+/** Rules whose `enforced_by` has a check that extensions provably run.
+ *  "Not trunk-only" is not enough: an opt-in PHPStan package or a guard
+ *  that needs Shopware's test bootstrap exists outside core, yet most
+ *  plugins never run it. */
 export function enforcedCandidates(catalog: Catalog): RetireCandidate[] {
   return catalog.rules.filter(isActive).flatMap((r) => {
-    const checks = (r.trunk?.enforced_by ?? []).filter((e) => !e.trunk_only);
+    const checks = (r.trunk?.enforced_by ?? []).filter((e) => !e.trunk_only && e.extensions_run !== undefined);
     return checks.length === 0
       ? []
       : [
@@ -40,7 +44,9 @@ export function enforcedCandidates(catalog: Catalog): RetireCandidate[] {
             rule: r.id,
             skill: r.skill,
             kind: 'enforced' as const,
-            evidence: `${checks.map((e) => `\`${e.tool}\` (${e.kind})`).join(', ')} catches it outside trunk too`,
+            evidence: checks
+              .map((e) => `\`${e.tool}\` (${e.kind}) runs in extensions: ${e.extensions_run ?? ''}`)
+              .join('; '),
           },
         ];
   });

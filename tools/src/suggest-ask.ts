@@ -7,8 +7,9 @@ import type { Signal } from './signals.ts';
 import { type Check, checkProposal, currentRuleText, inclusionCriteria, registryTopics } from './suggest-checks.ts';
 import type { Cluster } from './suggest-cluster.ts';
 import { buildPrompt } from './suggest-prompt.ts';
+import type { Rank } from './suggest-rank.ts';
 import { catalogIndex, relatedRules, type RuleIndex } from './suggest-related.ts';
-import { parseAnswer, type Proposal } from './suggest-schema.ts';
+import { isProposal, parseAnswer, type Proposal } from './suggest-schema.ts';
 
 export const MAX_PROPOSALS = 3;
 /** Rules found by keyword match, on top of the cluster's mapped rules. */
@@ -23,7 +24,21 @@ export interface Suggestion extends Proposal {
   ok: boolean;
   /** Some evidence comes from a private review source. */
   private: boolean;
+  /** Where to draft it, set after every question is answered. */
+  rank?: Rank;
 }
+
+const isRecord = (v: unknown): v is Record<string, unknown> => typeof v === 'object' && v !== null;
+
+/** A suggestion read back from `suggestions/<date>.json`. */
+export const isSuggestion = (v: unknown): v is Suggestion =>
+  isProposal(v) &&
+  isRecord(v) &&
+  typeof v.id === 'string' &&
+  typeof v.cluster === 'string' &&
+  typeof v.ok === 'boolean' &&
+  typeof v.private === 'boolean' &&
+  Array.isArray(v.checks);
 
 /** What every question of a run shares. */
 export interface AskContext {
