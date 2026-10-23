@@ -40,9 +40,9 @@ on:
         default: "0"
       shards:
         description: "Parallel A/B jobs"
-        default: "8"
+        default: "16"
       model:
-        description: "Model (empty = opencode/longcat-2.5-preview-free, or sonnet for claude)"
+        description: "Model (empty = opencode/mimo-v2.6-flash-free, or sonnet for claude)"
         default: ""
       activation:
         description: "Run Layer 1 activation evals (~260 short sessions)"
@@ -64,8 +64,8 @@ env:
   EVAL_AGENT: ${{ inputs.agent || 'opencode' }}
   OPENCODE_VERSION: "2.0.27"
   CLAUDE_CODE_VERSION: "2.1.301"
-  TASK_MODEL: ${{ inputs.model || (inputs.agent == 'claude' && 'sonnet' || 'opencode/longcat-2.5-preview-free') }}
-  ACTIVATION_MODEL: ${{ inputs.model || (inputs.agent == 'claude' && 'sonnet' || 'opencode/longcat-2.5-preview-free') }}
+  TASK_MODEL: ${{ inputs.model || (inputs.agent == 'claude' && 'sonnet' || 'opencode/mimo-v2.6-flash-free') }}
+  ACTIVATION_MODEL: ${{ inputs.model || (inputs.agent == 'claude' && 'sonnet' || 'opencode/mimo-v2.6-flash-free') }}
   TASK_MAX_BUDGET_USD: "0.50"
   REPEATS: ${{ inputs.repeats || '3' }}
 
@@ -113,7 +113,7 @@ jobs:
         env:
           EVAL_TASKS: ${{ inputs.tasks || '' }}
           EVAL_MAX_TASKS: ${{ inputs.max_tasks || '0' }}
-          EVAL_SHARDS: ${{ inputs.shards || '8' }}
+          EVAL_SHARDS: ${{ inputs.shards || '16' }}
           BASE_SHA: ${{ github.event.pull_request.base.sha }}
         run: |
           if [ "${{ github.event_name }}" = "pull_request" ] && [ -z "$EVAL_TASKS" ]; then
@@ -125,6 +125,20 @@ jobs:
           echo "count=$(jq '.count' <<<"$plan")" >> "$GITHUB_OUTPUT"
           echo "shards=$(jq -c '.shards' <<<"$plan")" >> "$GITHUB_OUTPUT"
           echo "Agent \`$EVAL_AGENT\`, model \`$TASK_MODEL\`: $(jq '.count' <<<"$plan") task(s) in $(jq '.shards | length' <<<"$plan") shard(s)." >> "$GITHUB_STEP_SUMMARY"
+
+      # Free models come and go. A gone model makes every session an agent
+      # error, and each shard would retry for hours; fail here instead.
+      - name: Install agent CLI
+        if: steps.guard.outputs.run == 'true' && steps.plan.outputs.count != '0'
+        run: bash evals/runner/install-agent.sh "$EVAL_AGENT"
+
+      - name: Preflight - the model answers
+        if: steps.guard.outputs.run == 'true' && steps.plan.outputs.count != '0'
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          SKILLS_AGENT_CMD: ${{ github.workspace }}/evals/runner/${{ inputs.agent || 'opencode' }}-task.sh
+          EVAL_AGENT_RETRY_WAIT: "30"
+        run: node tools/bin/agent-preflight.ts
 
   activation:
     needs: plan
@@ -154,7 +168,10 @@ jobs:
     needs: plan
     if: needs.plan.outputs.run == 'true' && needs.plan.outputs.count != '0'
     runs-on: ubuntu-latest
-    timeout-minutes: 240
+    # 150 tasks x 2 modes x 3 repeats at about 2 min per free-model session
+    # take about 2 h per shard with 16 shards. Results are appended per task
+    # and uploaded even on timeout, so a slow shard loses one task, not all.
+    timeout-minutes: 330
     strategy:
       fail-fast: false
       matrix:
@@ -202,7 +219,7 @@ jobs:
 
   gate:
     needs: [plan, ab]
-    if: always() && needs.plan.outputs.run == 'true' && needs.plan.outputs.count != '0'
+    if: always() && needs.plan.result == 'success' && needs.plan.outputs.run == 'true' && needs.plan.outputs.count != '0'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v5
@@ -225,7 +242,10 @@ jobs:
 
       - name: Compare with the latest baseline
         run: |
-          latest="$(find evals/baselines -name '*.jsonl' 2>/dev/null | sort | tail -n1)"
+          latest=""
+          if [ -d evals/baselines ]; then
+            latest="$(find evals/baselines -name '*.jsonl' | sort | tail -n1)"
+          fi
           if [ -n "$latest" ]; then
             bash scripts/eval-diff.sh "$latest" evals/.results/ab.jsonl >> "$GITHUB_STEP_SUMMARY"
           fi
@@ -244,7 +264,7 @@ jobs:
   baseline:
     needs: [plan, gate]
     if: >-
-      always() && needs.plan.outputs.run == 'true' && needs.plan.outputs.count != '0' &&
+      always() && needs.plan.result == 'success' && needs.plan.outputs.run == 'true' && needs.plan.outputs.count != '0' &&
       (github.event_name == 'schedule' || inputs.baseline == true) &&
       (needs.gate.result == 'success' || needs.gate.result == 'failure')
     runs-on: ubuntu-latest
@@ -269,8 +289,13 @@ jobs:
         run: |
           day="$(date -u +%Y-%m-%d)"
           branch="eval-baseline/${day}-${GITHUB_RUN_ID}"
-          previous="$(find evals/baselines -name '*.jsonl' 2>/dev/null | sort | tail -n1)"
+          if [ ! -s "$RUNNER_TEMP/results/ab.jsonl" ]; then
+            echo "::error::No A/B results to record; no baseline PR."
+            exit 1
+          fi
+          # Before find: the folder does not exist until the first baseline.
           mkdir -p evals/baselines
+          previous="$(find evals/baselines -name '*.jsonl' | sort | tail -n1)"
           cp "$RUNNER_TEMP/results/ab.jsonl" "evals/baselines/${day}.jsonl"
 
           {

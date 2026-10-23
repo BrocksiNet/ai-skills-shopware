@@ -36,7 +36,7 @@ export type Adapter = (prompt: string, env: NodeJS.ProcessEnv, io: AdapterIo, ro
 
 /** Task adapter exit code for an agent error; run-task never grades it. */
 const AGENT_ERROR = 4;
-const OPENCODE_FREE_MODEL = 'opencode/longcat-2.5-preview-free';
+const OPENCODE_FREE_MODEL = 'opencode/mimo-v2.6-flash-free';
 
 const positive = (v: string): boolean => /^[1-9][0-9]*$/u.test(v);
 

@@ -17,7 +17,7 @@
 #
 # Env:
 #   ACTIVATION_SKILLS_DIR  skills folder to expose (default: <repo>/skills)
-#   ACTIVATION_MODEL       provider/model (default: opencode/longcat-2.5-preview-free)
+#   ACTIVATION_MODEL       provider/model (default: opencode/mimo-v2.6-flash-free)
 #   ACTIVATION_MAX_TURNS   agent steps per prompt (default: 3)
 #
 # The adapter is TypeScript in tools/ (plan WP10); this wrapper keeps the

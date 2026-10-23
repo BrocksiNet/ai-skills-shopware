@@ -21,7 +21,7 @@
 # an agent error, never as a failed task.
 #
 # Env:
-#   TASK_MODEL            provider/model (default: opencode/longcat-2.5-preview-free)
+#   TASK_MODEL            provider/model (default: opencode/mimo-v2.6-flash-free)
 #   TASK_MAX_TURNS        agent steps per task (default: 12)
 #   TASK_TIMEOUT_SECONDS  wall clock per session (default: 600)
 #   OPENCODE_ISOLATE      1 = throwaway HOME/XDG (default); 0 = your own config

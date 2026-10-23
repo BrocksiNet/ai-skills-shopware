@@ -69,6 +69,7 @@ tools/                        # repo tooling in TypeScript (Node 24, no build st
   bin/eval-{plan,gate,diff}.ts  # eval task plan, A/B gate, baseline diff
   bin/{ab,run-task}.ts        # A/B runner behind evals/runner/{ab,run-task}.sh
   bin/adapter.ts              # agent adapters behind evals/runner/*-{task,activation}.sh
+  bin/agent-preflight.ts      # one tiny session before evals.yml starts the shards (model still there?)
   bin/skills-profile.ts       # skills on/off per eval workdir
   bin/activation.ts           # Layer 1 activation evals
   bin/eval-local.ts           # local model evals with your agent login, then the gate
