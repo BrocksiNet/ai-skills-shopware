@@ -707,7 +707,18 @@ instead of becoming a second rule (DOCS-*, REMOVAL-001/003, SCOPE-001/003/006,
 BCPHP-001, MIG-001/003/005, ADMF-*, BCADM-006/009). `defer_on_trunk` is true
 only where the rule's source is on trunk; the SCOPE rules cite the guides of the
 open core PR #21455 and stay false. The IDs were checked against #21455 at
-`1e641ecf`. `sw-security` (SEC-001..007) and `sw-change-impact`
+`1e641ecf`, and again on 2026-10-23 at the final head `d97c7fbb`: the same
+111 IDs, all 77 we map still exist. Two mapped rules were reworded after
+`1e641ecf`. MIG-002 (`PLG-030`) only adds a core CI hint, the nightly
+blue-green lane, so nothing changes for plugins. TEST-002 (`TEST-035`) now
+also flags an existing test expectation changed in the same PR as the code
+under test, unless the PR announces the behavior change. `TEST-035` does not
+cover that half yet; it is a candidate for a new `sw-testing` rule with a
+review pair. Core's guides reuse our `TEST` prefix (TEST-001..010 mean
+different rules there), so a core ID appears only in `core_guide_ids` and
+never bare in skill text. When #21455 merges, the SCOPE rules (`CORE-030`,
+`CORE-072..074`, `IMP-003`) and `REV-033` defer on trunk, with the guide as
+`trunk.source`. `sw-security` (SEC-001..007) and `sw-change-impact`
 (IMP-001..008) are now tagged as well.
 
 Goal: adopt the core review-guide rules that matter for plugin and app

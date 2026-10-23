@@ -1773,7 +1773,10 @@
         "plugin",
         "app"
       ],
-      "defer_on_trunk": false
+      "defer_on_trunk": true,
+      "trunk": {
+        "source": ".agents/skills/sw-review/guides/scheduled-tasks-and-queue.md#check"
+      }
     },
     {
       "id": "CORE-001",
@@ -2301,7 +2304,10 @@
       "audience": [
         "core"
       ],
-      "defer_on_trunk": false
+      "defer_on_trunk": true,
+      "trunk": {
+        "source": ".agents/skills/sw-review/guides/platform-scope.md#check"
+      }
     },
     {
       "id": "CORE-031",
@@ -3042,7 +3048,10 @@
       "audience": [
         "core"
       ],
-      "defer_on_trunk": false
+      "defer_on_trunk": true,
+      "trunk": {
+        "source": ".agents/skills/sw-review/guides/platform-scope.md#check"
+      }
     },
     {
       "id": "CORE-073",
@@ -3059,7 +3068,10 @@
       "audience": [
         "core"
       ],
-      "defer_on_trunk": false
+      "defer_on_trunk": true,
+      "trunk": {
+        "source": ".agents/skills/sw-review/guides/platform-scope.md#check"
+      }
     },
     {
       "id": "CORE-074",
@@ -3076,7 +3088,10 @@
       "audience": [
         "core"
       ],
-      "defer_on_trunk": false
+      "defer_on_trunk": true,
+      "trunk": {
+        "source": ".agents/skills/sw-review/guides/platform-scope.md#check"
+      }
     },
     {
       "id": "CORE-075",
@@ -4359,7 +4374,10 @@
         "plugin",
         "app"
       ],
-      "defer_on_trunk": false
+      "defer_on_trunk": true,
+      "trunk": {
+        "source": ".agents/skills/sw-review/guides/platform-scope.md#check"
+      }
     },
     {
       "id": "IMP-004",

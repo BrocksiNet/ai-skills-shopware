@@ -39,7 +39,7 @@ row to the next mining pass.
 
 | PR | Topic | State | Our impact | Prepared branch |
 | -- | ----- | ----- | ---------- | --------------- |
-| [#21455](https://github.com/shopware/shopware/pull/21455) | `sw-review` topic guides with rule IDs | open | WP2 `core_guide_ids`, WP7 | none yet |
+| [#21455](https://github.com/shopware/shopware/pull/21455) | `sw-review` topic guides with rule IDs | open, approved; re-checked 2026-10-23 at `d97c7fbb` | WP2 `core_guide_ids`, WP7; SCOPE rules and `REV-033` defer on trunk | draft (this branch) |
 | [#21541](https://github.com/shopware/shopware/pull/21541) | Backward-compatibility and HTTP cache guidelines | merged 2026-10-19 | WP7 phase B rules link to the guidelines; unblocked | not needed |
 | [#21627](https://github.com/shopware/shopware/pull/21627) | PR template: What and why / How / Testing / Additional notes / Checklist | open | rewrite `sw-pr-description/references/pr-body-template.md` and the `pr-no-ai-trailers` fixtures | draft [#23](https://github.com/BrocksiNet/ai-skills-shopware/pull/23) |
 | [#21730](https://github.com/shopware/shopware/pull/21730) | Admin lint: no new `.js` in `src`, no new mixins; agent docs point at reference implementations, examples use `wrapComponentConfig()` | open | WP0 item 7, `admin-js-implementation-to-ts` grader; point `sw-admin-js` at the named component, composable and store | draft [#24](https://github.com/BrocksiNet/ai-skills-shopware/pull/24) |
