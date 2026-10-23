@@ -1,4 +1,4 @@
-// Grader: review-sw-csrf-catch (shopware-storefront, SF-009)
+// Grader: review-sw-csrf-catch (sw-storefront, SF-009)
 // SwagLoyalty supports Shopware 6.6 and 6.7. The change adds an account page
 // with a redeem form that calls sw_csrf(), a Twig function removed in 6.5.
 // The template no longer compiles ("Unknown function"), so every page that

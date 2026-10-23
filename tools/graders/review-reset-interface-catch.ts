@@ -1,4 +1,4 @@
-// Grader: review-reset-interface-catch (shopware-architecture, ARCH-001)
+// Grader: review-reset-interface-catch (sw-architecture, ARCH-001)
 // LoyaltyConfigReader memoizes per-sales-channel config in properties and
 // never clears them. Workers and other long-running processes keep the old
 // rates after the merchant changes the config. Needs a major+ finding in

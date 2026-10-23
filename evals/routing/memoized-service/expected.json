@@ -1,8 +1,8 @@
 {
-  "shopware-architecture": [
+  "sw-architecture": [
     "references/symfony-in-shopware.md"
   ],
-  "shopware-extension-review": [
-    "../shopware-architecture/references/symfony-in-shopware.md"
+  "sw-extension-review": [
+    "../sw-architecture/references/symfony-in-shopware.md"
   ]
 }

@@ -1,4 +1,4 @@
-// Grader: review-admin-webpack-config-catch (shopware-admin-js, ADM-009)
+// Grader: review-admin-webpack-config-catch (sw-admin-js, ADM-009)
 // SwagLoyalty requires shopware/core ~6.7.0. The change adds
 // build/webpack.config.js with an @loyalty alias and a component importing
 // from it. 6.7 builds the Administration with Vite and does not read the

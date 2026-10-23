@@ -1,4 +1,4 @@
-// Grader: review-storefront-default-context-catch (shopware-plugin-development, PLG-016)
+// Grader: review-storefront-default-context-catch (sw-plugin-development, PLG-016)
 // The change adds a "recommended for your tier" pagelet on the account page
 // that searches product.repository with Context::createDefaultContext(). That
 // skips the sales channel availability filter (inactive, not visible) and uses

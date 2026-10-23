@@ -1,4 +1,4 @@
-// Grader: review-store-api-stricter-request-catch (shopware-plugin-development, PLG-031)
+// Grader: review-store-api-stricter-request-catch (sw-plugin-development, PLG-031)
 // The released /store-api/swag-wishlist/add route now requires `list` and a
 // new `note` parameter and no longer accepts `later`. Clients that worked
 // before get 400 errors. Needs a major+ finding in src/ that names PLG-031

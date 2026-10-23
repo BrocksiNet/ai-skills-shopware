@@ -1,4 +1,4 @@
-// Grader: review-later-member-guard-ignore (shopware-plugin-development, PLG-024)
+// Grader: review-later-member-guard-ignore (sw-plugin-development, PLG-024)
 // The same subscriber, but the getHash() call sits behind
 // method_exists(HttpCacheCookieEvent::class, 'getHash'), and the class guard
 // in services.php covers 6.6.0.0 to 6.6.5.x. Every release is safe. A minor+

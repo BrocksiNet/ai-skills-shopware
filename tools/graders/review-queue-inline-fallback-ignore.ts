@@ -1,4 +1,4 @@
-// Grader: review-queue-inline-fallback-ignore (shopware-review-learnings, REV-033)
+// Grader: review-queue-inline-fallback-ignore (sw-review-learnings, REV-033)
 // The subscriber only dispatches the message (with an early return for free
 // orders); the handler does the export. A minor+ finding that names REV-033
 // or calls the export synchronous is a false positive.

@@ -105,7 +105,7 @@ describe('validateSkills', () => {
   test('the repository is valid', () => {
     const r = validate(ROOT);
     assert.equal(r.rc, 0, r.out);
-    assert.match(r.out, /^Checking shopware-testing$/mu);
+    assert.match(r.out, /^Checking sw-testing$/mu);
     assert.match(r.out, /\nvalidate-skills: OK\n$/u);
   });
   test('reports every error and counts them', () => {

@@ -1,0 +1,28 @@
+diff --git a/src/Core/Framework/Framework.php b/src/Core/Framework/Framework.php
+index 17f6d345cf8c..5c60feb506ac 100644
+--- a/src/Core/Framework/Framework.php
++++ b/src/Core/Framework/Framework.php
+@@ -187,7 +187,7 @@ public function boot(): void
+         // ServicesResetter only resets initialized services; Symfony 8.1 removes this requirement.
+         // https://github.com/symfony/symfony/pull/63751
+         // The test verifies whether the Symfony fix resolves this and lets us remove this workaround safely.
+-        // @see \Shopware\Tests\Integration\Core\Framework\Adapter\Database\ReplicaConnectionResetterTest::testServicesResetterInitializesReplicaConnectionResetter()
++        // @see \Shopware\Tests\DevOps\Core\Framework\Adapter\Database\ReplicaConnectionResetterTest::testServicesResetterInitializesReplicaConnectionResetter()
+         $this->container->get(ReplicaConnectionResetter::class);
+     }
+ }
+diff --git a/tests/integration/Core/Framework/Adapter/Cache/CacheTagCollectorResetTest.php b/tests/devops/Core/Framework/Adapter/Cache/CacheTagCollectorResetTest.php
+similarity index 96%
+rename from tests/integration/Core/Framework/Adapter/Cache/CacheTagCollectorResetTest.php
+rename to tests/devops/Core/Framework/Adapter/Cache/CacheTagCollectorResetTest.php
+index a3e618723848..e3b6078c0d09 100644
+--- a/tests/integration/Core/Framework/Adapter/Cache/CacheTagCollectorResetTest.php
++++ b/tests/devops/Core/Framework/Adapter/Cache/CacheTagCollectorResetTest.php
+@@ -1,6 +1,6 @@
+ <?php declare(strict_types=1);
+ 
+-namespace Shopware\Tests\Integration\Core\Framework\Adapter\Cache;
++namespace Shopware\Tests\DevOps\Core\Framework\Adapter\Cache;
+ 
+ use PHPUnit\Framework\TestCase;
+ use Shopware\Core\Framework\Adapter\Cache\CacheTagCollector;

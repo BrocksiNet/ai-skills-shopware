@@ -1,4 +1,4 @@
-// Grader: review-admin-prop-removed-ignore (shopware-admin-js, ADM-039)
+// Grader: review-admin-prop-removed-ignore (sw-admin-js, ADM-039)
 // The change adds an optional showTier prop with a default and a new
 // swag_loyalty_card_tier block, and keeps every existing prop and block.
 // A minor+ finding that names ADM-039 or calls it a breaking change for

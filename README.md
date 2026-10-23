@@ -1,434 +1,151 @@
 # ai-skills-shopware
 
-Provider-independent [Agent Skills](https://code.claude.com/docs/en/skills) for
-Shopware 6 development. One `SKILL.md` source of truth that works unchanged in
-**Cursor**, **Claude Code**, **Codex**, and **OpenCode** (and any other tool that
-implements the open Agent Skills standard).
+Agent Skills for Shopware 6 that are tested, not assumed. They teach Claude
+Code, Cursor, Codex and OpenCode what a general model gets wrong about
+Shopware. Each rule has an ID and an eval, and the router loads only what your
+change needs.
 
-This repository is the central, team-controlled library. You install the skills
-into your IDE with [`skills.sh`](https://github.com/vercel-labs/skills), pin to a
-release tag, and run `npx skills update` to pull improvements.
+## Why use it
 
-> Status: early. The skill set starts small and high-value on purpose (see
-> [curation](#curation--governance)) and grows from real review findings.
+General models write plausible Shopware code for the wrong version. They
+subscribe to events core stopped dispatching, guard on classes whose methods
+arrived a minor release later, and register services the 6.8 way in a 6.6
+plugin. Most skill sets add more text. This one measures what the text does.
 
-## Why this exists
+- **Proven per rule.** Every rule has an ID such as `PLG-007` and an eval
+  task. An A/B run with the skills on and off shows whether the rule changes
+  the result. A gate blocks a release when a rule makes things worse.
+- **Version facts, not guesses.** A public API index of every release since
+  6.5 tells the review what exists, what is deprecated and what changed in
+  your `composer.json` range.
+- **Lean context.** References load by the files you change. `/sw-skill-router`
+  tells you, and your agent, which skills a diff or a plan needs.
+- **Built for the real surfaces.** Core, plugins, apps, shop projects,
+  Storefront and Administration each get their own rules. The router detects
+  which one you are in.
+- **Kept current.** A weekly job reports what changed on Shopware trunk, and
+  the API index rebuilds weekly.
 
-- **One source of truth.** Stop copying rules between `.cursor/`, `~/.claude/skills/`,
-  and `~/.codex/skills/`. Author once, project everywhere.
-- **No per-provider drift.** The same skill behaves the same in every tool.
-- **Organised by surface, not persona.** Skills key on *what you are editing* —
-  the platform (`src/Core`), a plugin/project (`custom/plugins`), or an app
-  (`custom/apps`). The right one activates from the path/context, so context
-  stays lean and a monorepo that spans surfaces just works.
-- **Proven, not assumed.** Every rule ships with evals so we can show it changes
-  the model's output (see [Validating skills](#validating-skills)).
+## Results
 
-## Skill index
+From A/B runs with Claude Haiku, graded by scripts:
 
-| Skill | Surface | Purpose |
-| ----- | ------- | ------- |
-| [`php-foundation`](skills/php-foundation/SKILL.md) | any PHP | Strict PHP 8.x base: `strict_types`, enums/DTOs over arrays, PER-CS, `list<>` over `array<>`. |
-| [`shopware-architecture`](skills/shopware-architecture/SKILL.md) | any PHP refactor | Patterns, DAL boundaries, progressive enhancement, anti-patterns; defers to core on trunk. |
-| [`shopware-security`](skills/shopware-security/SKILL.md) | any PHP/API/config | Secrets, access keys, ACL, app least privilege — not covered by core skills. |
-| [`shopware-core-development`](skills/shopware-core-development/SKILL.md) | platform (`shopware/shopware`, `src/`) | A platform diff that can break extensions: public API, deprecations, PHPStan baseline, RELEASE_INFO/UPGRADE + ADRs. A private bugfix stays with core's `shopware-php-code` on trunk. |
-| [`shopware-plugin-development`](skills/shopware-plugin-development/SKILL.md) | plugin / project (`custom/plugins`) | Pragmatic PHP-extension rules: smallest safe change, 6.6–6.8 compat, DAL usage, HTTP cache tags (6.7+), migrations, PHP DI on 6.8, Symfony-first components, decoration. |
-| [`shopware-app-development`](skills/shopware-app-development/SKILL.md) | app (`custom/apps`, `manifest.xml`) | Declarative app rules: manifest, least-privilege permissions, sandboxed Twig app scripts, webhooks + Admin API, Meteor Admin SDK. |
-| [`shopware-testing`](skills/shopware-testing/SKILL.md) | any test | PHPUnit standards: unit vs integration placement, `IntegrationTestBehaviour`, data providers, no real I/O in unit tests. |
-| [`shopware-storefront`](skills/shopware-storefront/SKILL.md) | storefront (Twig/theme/JS) | PluginManager, Twig/theme inheritance, Bootstrap SCSS, cache-safe AJAX; Modern Web Guidance only after Shopware primitives. |
-| [`shopware-admin-js`](skills/shopware-admin-js/SKILL.md) | Administration JS/TS/Vue | TypeScript, Meteor `mt-*`, Jest next to code, Admin ACL; defers to core `shopware-admin-js` on trunk. |
-| [`shopware-review-learnings`](skills/shopware-review-learnings/SKILL.md) | any review | Recurring findings from real plugin/app/PR reviews. Grows over time. |
-| [`shopware-change-impact`](skills/shopware-change-impact/SKILL.md) | after a feature works | Blast radius: shared cache, who pays, easier vs more complex, assets only tested locally, one compiled container. Not a line-level review. |
-| [`shopware-research-and-escalation`](skills/shopware-research-and-escalation/SKILL.md) | any | When to research vs. proceed, the Shopware docs map, Context7 for libraries, and the when-stuck ladder. |
-| [`shopware-pr-description`](skills/shopware-pr-description/SKILL.md) | core PR workflow | GitHub PR body template for `shopware/shopware` contributions (copy-paste ready). |
-| [`shopware-assistant-style`](skills/shopware-assistant-style/SKILL.md) | any communication | Plain, concise answers; support-ticket replies in one copy block. |
-| [`shopware-pr-review`](skills/shopware-pr-review/SKILL.md) | PR review | Triage GitHub review threads; fix, reply, or push back with confidence. |
-| [`shopware-extension-review`](skills/shopware-extension-review/SKILL.md) | plugin / app review | Review a plugin or app diff as a whole: rules picked by changed path, findings with rule IDs and severities. Reads the topic skills' references. |
-| [`shopware-podman-dev`](skills/shopware-podman-dev/SKILL.md) | linked Podman or CLI project | **Optional.** Podman on `~/shopware-dev`; `shopware-cli` when `.shopware-project.yml` exists; MCP never blocks a fallback. |
+| Planted problem | Skills off | Skills on |
+| --------------- | ---------- | --------- |
+| A 6.7 subscriber to a cache-tags event core no longer dispatches (`PLG-007`) | 0/3 | 3/3 |
+| A storefront form that still uses `sw_csrf` (`SF-009`) | 0/3 | 3/3 |
+| One Admin bundle for 6.5 and 6.6+ binding form fields the old way (`ADM-044`) | 0/3 | 3/3 |
+| Version-guard mistakes with API no skill names, rules alone vs rules plus `api-facts` | 5/15 | 15/15 |
 
-See [`docs/tooling-stack.md`](docs/tooling-stack.md) for how this repo fits with
-shopware-ai-coding-tools and a multi-instance proxy setup.
+No clean twin task got more false findings with the skills on. The full
+numbers are in [`docs/results.md`](docs/results.md), including where the
+skills made no difference.
 
-See [`REGISTRY.md`](REGISTRY.md) for the full catalog with ownership and the
-topic → owning-skill coverage matrix that keeps skills from contradicting each
-other.
+## Quick start
 
-See [`AGENTS.md`](AGENTS.md) for repo layout, local validation commands, and how
-to add or change skills and eval tasks.
+Start with the two skills that help you find the rest:
 
-We **own** our skill library — maintainer rules from shopware/shopware (merged in
-[#17657](https://github.com/shopware/shopware/pull/17657)) are mined, not copied;
-see [`docs/core-pr-17657-alignment.md`](docs/core-pr-17657-alignment.md) and
-[`docs/skill-resolution.md`](docs/skill-resolution.md) for trunk overlay vs full install.
+```bash
+npx skills add BrocksiNet/ai-skills-shopware \
+  --skill sw-skill-router --skill sw-help \
+  -a claude-code -a cursor -a codex
+```
+
+Then, in your agent:
+
+- `/sw-help` shows what every skill is for, with example prompts.
+- `/sw-skill-router` reads your branch, detects core, plugin, app or project,
+  and lists the skills and references to load. It prints the install command
+  for any that are missing.
+
+To install the full set for your kind of work, pick one of the use-case
+pages:
+[plugins](use-cases/plugin-development.md),
+[apps](use-cases/app-development.md),
+[core](use-cases/core-development.md),
+[Storefront and Administration](use-cases/storefront-development.md), or
+[extension review](use-cases/extension-review.md).
+Pinning, updating and tool folders are covered in
+[`docs/installation.md`](docs/installation.md).
+
+## What is inside
+
+| You want to | Skills |
+| ----------- | ------ |
+| Build | `sw-plugin-development`, `sw-app-development`, `sw-core-development`, `sw-admin-js`, `sw-storefront`, `sw-php-foundation`, `sw-testing`, `sw-security`, `sw-architecture` |
+| Ship | `sw-change-impact`, `sw-pr-description` |
+| Review | `sw-extension-review`, `sw-review-learnings`, `sw-pr-review` |
+| Run, research, answer | `sw-podman-dev`, `sw-research-and-escalation`, `sw-assistant-style` |
+| Find your way | `sw-skill-router`, `sw-help` |
+
+[`REGISTRY.md`](REGISTRY.md) lists what each skill owns. Every topic has
+exactly one owner, so two skills never give conflicting advice.
 
 ## How it works
 
-Six ideas carry the library. Each one is checked on every push.
-
-| Idea | In one sentence | Where |
-| ---- | --------------- | ----- |
-| **Rules have IDs** | Every rule starts with a bold ID like `**PLG-028**`, and `rules/catalog.json` records its owner, its eval and whether core already enforces it. | [`rules/catalog.json`](rules/catalog.json) |
-| **One owner per topic** | A topic belongs to exactly one skill; other skills point at the rule by its ID instead of repeating it. | [`REGISTRY.md`](REGISTRY.md) |
-| **References load by diff** | A skill's `routes.json` says which reference file to read for which changed paths or lines, so a migration change reads `migrations.md` and nothing else. The table in `SKILL.md` is generated from it. | `skills/*/routes.json` |
-| **Reviews borrow, not copy** | `shopware-extension-review` owns no rules: its routes point at the other skills' references (`../shopware-plugin-development/references/migrations.md`) and take their triggers, so the review and the rule cannot drift apart. | [`skills/shopware-extension-review/`](skills/shopware-extension-review/SKILL.md) |
-| **Every rule is tested** | A task gives an agent a real change and a script grades the result. Review rules come in pairs: `-catch` must find the problem, `-ignore` must stay quiet on a clean change that only looks like it. | [`evals/tasks/`](evals/tasks/) |
-| **Trunk is watched** | A weekly job lists what changed in Shopware's own agent skills, guidelines and PHPStan rules, so we notice when core adds or drops a rule we mirror. | [`mine-trunk.yml`](.github/workflows/mine-trunk.yml) |
-
-A rule's life, end to end:
-
-```text
-rule text in a skill (**PLG-028**)  ->  catalog entry (owner, eval, audience)
-        |                                        |
-routes.json picks the reference        evals/tasks/review-...-catch / -ignore
-        |                                        |
-the agent reads it for that diff       A/B run: does the skill change the answer?
+```mermaid
+flowchart LR
+  CHANGE["Your change<br/>or plan"] --> ROUTER["sw-skill-router<br/>context + task"]
+  ROUTER --> SKILLS["Skills for this<br/>context and task"]
+  SKILLS --> REFS["Only the references<br/>the files touch"]
+  REFS --> AGENT["Agent works<br/>with rule IDs"]
+  RULES["Rule IDs in<br/>rules/catalog.json"] --> EVALS["Eval tasks<br/>A/B on vs off"]
+  EVALS -- "gate" --> REFS
 ```
 
-`audience` in the catalog says who a rule is for: `core`, `plugin`, `app`,
-`storefront` or `admin`. The extension review reports only `plugin` and `app`
-rules; CI fails when a core-only rule lands in a reference it reads and the
-review does not list it as one to skip.
+A skill is a short `SKILL.md`, references that hold the rules, and a
+`routes.json` that maps changed files and lines to references. Review skills
+borrow the topic skills' references instead of copying them, so a review
+and its rule cannot drift apart. Diagrams and the eval layers are in
+[`docs/architecture.md`](docs/architecture.md).
 
-The repo tooling (validators, renderers, eval runner, task graders) is
-TypeScript in [`tools/`](tools/), run directly by Node 24.
+## Staying current
 
-## Install
+Weekly jobs report trunk changes to Shopware's own agent skills, guidelines
+and PHPStan rules, and rebuild the API index for each new release. Model
+evals run monthly and before releases. Next, the same weekly reports will
+watch upstream skill sets such as `shopwareLabs/ai-coding-tools` and
+`netresearch/php-modernization-skill`, plus a planned PHPUnit skill. See
+[`docs/maintenance.md`](docs/maintenance.md).
 
-Requires Node.js (for `npx`). There is no single "install everything" command on
-purpose: you install the skills for the use-case you are working on, so the
-context stays lean. The surface skills (`core` / `plugin` / `app`) are **not**
-install-time exclusive: they disambiguate on the target you are editing, so only
-the right one activates per task. Installing several use-case sets together is
-safe; in a monorepo, editing `src/Core` fires the platform rules while editing
-`custom/plugins` fires the plugin rules.
+## Documentation
 
-Canonical one-liners live in [`use-cases/`](use-cases/):
-[`plugin-development.md`](use-cases/plugin-development.md),
-[`app-development.md`](use-cases/app-development.md),
-[`core-development.md`](use-cases/core-development.md),
-[`storefront-development.md`](use-cases/storefront-development.md)
-(Twig/theme/Admin JS — install beside a PHP use-case, not instead of one), and
-[`extension-review.md`](use-cases/extension-review.md) (plugin and app review).
-
-Each use-case below lists one ready-to-copy command per supported tool. The only
-difference between tools is the `-a` target.
-
-### Plugin / project development (most people)
-
-#### Cursor
-
-```bash
-npx skills add BrocksiNet/ai-skills-shopware \
-  --skill php-foundation \
-  --skill shopware-plugin-development \
-  --skill shopware-testing \
-  --skill shopware-research-and-escalation \
-  --skill shopware-review-learnings \
-  --skill shopware-change-impact \
-  -a cursor
-```
-
-#### Claude Code
-
-```bash
-npx skills add BrocksiNet/ai-skills-shopware \
-  --skill php-foundation \
-  --skill shopware-plugin-development \
-  --skill shopware-testing \
-  --skill shopware-research-and-escalation \
-  --skill shopware-review-learnings \
-  --skill shopware-change-impact \
-  -a claude-code
-```
-
-#### Codex
-
-```bash
-npx skills add BrocksiNet/ai-skills-shopware \
-  --skill php-foundation \
-  --skill shopware-plugin-development \
-  --skill shopware-testing \
-  --skill shopware-research-and-escalation \
-  --skill shopware-review-learnings \
-  --skill shopware-change-impact \
-  -a codex
-```
-
-#### OpenCode
-
-```bash
-npx skills add BrocksiNet/ai-skills-shopware \
-  --skill php-foundation \
-  --skill shopware-plugin-development \
-  --skill shopware-testing \
-  --skill shopware-research-and-escalation \
-  --skill shopware-review-learnings \
-  --skill shopware-change-impact \
-  -a opencode
-```
-
-### App development
-
-#### Cursor
-
-```bash
-npx skills add BrocksiNet/ai-skills-shopware \
-  --skill php-foundation \
-  --skill shopware-app-development \
-  --skill shopware-testing \
-  --skill shopware-research-and-escalation \
-  --skill shopware-review-learnings \
-  --skill shopware-change-impact \
-  -a cursor
-```
-
-#### Claude Code
-
-```bash
-npx skills add BrocksiNet/ai-skills-shopware \
-  --skill php-foundation \
-  --skill shopware-app-development \
-  --skill shopware-testing \
-  --skill shopware-research-and-escalation \
-  --skill shopware-review-learnings \
-  --skill shopware-change-impact \
-  -a claude-code
-```
-
-#### Codex
-
-```bash
-npx skills add BrocksiNet/ai-skills-shopware \
-  --skill php-foundation \
-  --skill shopware-app-development \
-  --skill shopware-testing \
-  --skill shopware-research-and-escalation \
-  --skill shopware-review-learnings \
-  --skill shopware-change-impact \
-  -a codex
-```
-
-#### OpenCode
-
-```bash
-npx skills add BrocksiNet/ai-skills-shopware \
-  --skill php-foundation \
-  --skill shopware-app-development \
-  --skill shopware-testing \
-  --skill shopware-research-and-escalation \
-  --skill shopware-review-learnings \
-  --skill shopware-change-impact \
-  -a opencode
-```
-
-### Shopware platform / core contribution
-
-#### Cursor
-
-```bash
-npx skills add BrocksiNet/ai-skills-shopware \
-  --skill php-foundation \
-  --skill shopware-core-development \
-  --skill shopware-testing \
-  --skill shopware-research-and-escalation \
-  --skill shopware-review-learnings \
-  --skill shopware-change-impact \
-  -a cursor
-```
-
-#### Claude Code
-
-```bash
-npx skills add BrocksiNet/ai-skills-shopware \
-  --skill php-foundation \
-  --skill shopware-core-development \
-  --skill shopware-testing \
-  --skill shopware-research-and-escalation \
-  --skill shopware-review-learnings \
-  --skill shopware-change-impact \
-  -a claude-code
-```
-
-#### Codex
-
-```bash
-npx skills add BrocksiNet/ai-skills-shopware \
-  --skill php-foundation \
-  --skill shopware-core-development \
-  --skill shopware-testing \
-  --skill shopware-research-and-escalation \
-  --skill shopware-review-learnings \
-  --skill shopware-change-impact \
-  -a codex
-```
-
-#### OpenCode
-
-```bash
-npx skills add BrocksiNet/ai-skills-shopware \
-  --skill php-foundation \
-  --skill shopware-core-development \
-  --skill shopware-testing \
-  --skill shopware-research-and-escalation \
-  --skill shopware-review-learnings \
-  --skill shopware-change-impact \
-  -a opencode
-```
-
-Building across more than one use-case (e.g. a monorepo with platform and
-extensions)? Add each use-case's surface skill: the surface routing keeps strict
-and pragmatic rules from firing on the wrong code.
-
-### Plugin and app review
-
-`shopware-extension-review` reads the references of the topic skills, so
-install it with them (any `-a` target):
-
-```bash
-npx skills add BrocksiNet/ai-skills-shopware \
-  --skill shopware-extension-review \
-  --skill shopware-plugin-development \
-  --skill shopware-app-development \
-  --skill shopware-security \
-  --skill shopware-storefront \
-  --skill shopware-admin-js \
-  --skill shopware-architecture \
-  --skill shopware-review-learnings \
-  --skill shopware-testing \
-  --skill shopware-change-impact \
-  -a claude-code
-```
-
-### Prefer a project-level install
-
-Install into the **current project** (the default — no `-g`), not user-level.
-Skills are pinned per release and tuned to a project's Shopware version and
-surface, so a per-project install stays reproducible for the whole team and
-never fires stale or version-mismatched rules on an unrelated repo. The `-g`
-flag installs user-level (all projects), but the rules are then global and
-effectively unpinned — only reach for it if you work on Shopware almost
-exclusively and accept that trade-off.
-
-### Pin a version
-
-```bash
-# Pin to a release tag for reproducibility
-npx skills add BrocksiNet/ai-skills-shopware@v0.13.0 --skill php-foundation -a cursor
-```
-
-## Update
-
-```bash
-npx skills update                 # update installed skills to latest
-./scripts/check-update.sh         # report whether a newer release tag exists
-```
-
-`check-update.sh` compares your pinned version against the latest GitHub release
-tag and prints the exact `npx skills update` command to run. It needs Node 24
-and uses `GH_TOKEN` or `GITHUB_TOKEN` when set.
-
-## Where skills load (per provider)
-
-A skill is a folder containing a `SKILL.md` whose `name` frontmatter matches the
-folder name. Each tool discovers them from its own directories:
-
-- **Cursor:** `.cursor/skills/`, `.agents/skills/`, `~/.cursor/skills/`, `~/.agents/skills/` (plus legacy `.claude/skills/`, `.codex/skills/`).
-- **Claude Code:** `.claude/skills/`, `~/.claude/skills/`.
-- **Codex:** `.codex/skills/`, `~/.codex/skills/`.
-- **OpenCode:** `.opencode/skills/`, `~/.config/opencode/skills/`, plus the shared `.agents/skills/` and `.claude/skills/` (project and global).
-
-`skills.sh` handles writing into the right directory for the `-a` target. By
-default it **symlinks** the skill into each tool's folder rather than copying, so
-there is no manual step and one `npx skills update` reaches every tool at once.
-Use `--copy` if you want real file copies (e.g. to commit skills into a repo).
-OpenCode enforces a slightly stricter `name` rule (lowercase, single hyphens,
-matching the folder); every skill in this repo already complies.
-
-## Validating skills
-
-We do not assume the rules are applied — we test it. See [`evals/README.md`](evals/README.md)
-and [`AGENTS.md`](AGENTS.md) for the full workflow.
-
-### Eval layers (model-dependent)
-
-1. **Activation (Layer 1):** `scripts/run-activation-evals.sh` runs each skill's
-   `skills/<skill>/evals/should-trigger.md` / `should-not-trigger.md` prompts and
-   checks the right skill loads (and the wrong ones stay quiet).
-2. **Behavioral (Layer 2):** `evals/tasks/<rule>/` give the agent a real task and
-   grade the output with deterministic Shopware tooling (PHPStan/ECS/PHPUnit + grep).
-3. **A/B ablation (Layer 3):** `evals/runner/` or [`evals/smoke/smoke.sh`](evals/smoke/smoke.sh)
-   run each task with the skill set on and off and compare pass rates — proof the
-   skill earns its context budget.
-
-### Deterministic CI (every push, no model calls)
-
-The [`validate`](.github/workflows/validate.yml) workflow runs on every push/PR:
-
-| Job | What it checks |
-| --- | -------------- |
-| `validate-skills` | Skill structure, budgets, REGISTRY conflicts; activation evals in `--dry` mode |
-| `shellcheck` | Shell scripts under `scripts/`, `evals/smoke/`, `evals/runner/`, top-level `evals/*.sh` |
-| `grader-golden` | `./evals/test-graders.sh` — each task's `fixtures/pass/` must pass and `fixture/` / `fixtures/fail/` must fail |
-| `tools` | `tools/`: type check, type-aware oxlint, oxfmt and unit tests, including the eval runner, gate and wrappers driven by a fake agent |
-| `markdown-lint` | All `**/*.md` files |
-
-Run the same checks locally:
-
-```bash
-bash scripts/validate-skills.sh
-bash scripts/run-activation-evals.sh          # dry by default without an agent
-bash evals/test-graders.sh
-( cd tools && npm ci && npm test )           # eval pipeline with a fake agent, and the repo tooling
-# shellcheck (see validate.yml for the file list)
-./evals/smoke/smoke.sh graders               # smoke harness dry-run of graders
-```
-
-Model evals (Layers 1–3 against real agents) run only monthly, on manual
-dispatch, or when a PR carries the `run-evals` label — see
-[`.github/workflows/evals.yml`](.github/workflows/evals.yml). They use OpenCode
-with a free model by default, so they need no API key or secret. Details:
-[`evals/README.md`](evals/README.md#model-evals-in-ci-evalsyml). Local A/B smoke:
-[`docs/smoke-evals.md`](docs/smoke-evals.md).
-
-Trunk mining runs weekly in
-[`.github/workflows/mine-trunk.yml`](.github/workflows/mine-trunk.yml). It
-opens an issue labeled `trunk-drift` that lists what changed on
-`shopware/shopware` trunk since
-[`docs/.mining-state.json`](docs/.mining-state.json), checked against
-`rules/catalog.json`. A `/mined` comment from a member opens a PR that moves
-the state forward. That PR needs **Settings → Actions → General → Workflow
-permissions → "Allow GitHub Actions to create and approve pull requests"**
-enabled on the repository. Run it locally with
-`node tools/bin/mine-trunk.ts report`.
-
-For a hands-on, real-instance check, follow
-[`docs/local-validation.md`](docs/local-validation.md): install the skills for
-your use-case, point them at your own local Shopware, run a task, verify with the
-project's own tooling, and send feedback.
+| Doc | For |
+| --- | --- |
+| [`docs/installation.md`](docs/installation.md) | Install, pin, update, the `sw-` rename, where each tool loads skills |
+| [`docs/architecture.md`](docs/architecture.md) | Parts, routing, the router, eval layers, version facts |
+| [`docs/results.md`](docs/results.md) | What the A/B runs showed |
+| [`docs/maintenance.md`](docs/maintenance.md) | Automation that keeps rules current, and what is planned |
+| [`docs/skill-resolution.md`](docs/skill-resolution.md) | Core trunk's own skills next to ours |
+| [`docs/local-validation.md`](docs/local-validation.md) | Try the skills on your own shop and send feedback |
+| [`evals/README.md`](evals/README.md) | Writing and running eval tasks |
+| [`AGENTS.md`](AGENTS.md) | Contributing: repo layout, checks, adding rules and skills |
 
 ## Curation & governance
 
-This is a curated library, not a dumping ground. A rule is included only if it:
+This is a curated library. A rule gets in only when it meets all five tests:
 
-1. **Delta principle** — the base model gets it wrong *for Shopware* (we do not
-   re-teach generic PHP/Symfony).
-2. **Value/frequency** — maps to a recurring review finding or high-impact area.
-3. **Single home** — belongs to exactly one skill (enforced by the coverage matrix).
-4. **Testable** — has an eval; if we cannot test it, it is documentation, not a rule.
-   Every rule has a stable ID (`TEST-014`) in [`rules/catalog.json`](rules/catalog.json),
-   which links it to its eval. A rule without an eval records why, so the
-   untested ones are a visible backlog.
-5. **License-clean** — written in our own words. Upstream is inspiration, not a
-   dependency. MIT content may be vendored as a pinned, attributed snapshot;
-   CC-BY-SA content is rewritten.
+1. **Delta.** The base model gets it wrong for Shopware. We do not re-teach
+   generic PHP or Symfony.
+2. **Value.** It maps to a recurring review finding or a high-impact area.
+3. **Single home.** It belongs to exactly one skill, as the coverage matrix
+   in [`REGISTRY.md`](REGISTRY.md) enforces.
+4. **Testable.** It has an eval. A rule without one records why in
+   [`rules/catalog.json`](rules/catalog.json), so the untested rules are a
+   visible backlog.
+5. **License-clean.** It is written in our own words. Upstream is
+   inspiration: MIT content may be vendored as a pinned, attributed snapshot,
+   and CC-BY-SA content is rewritten.
 
-Ownership: the `shopware-core-development` skill is platform/maintainer-controlled.
-Propose changes via PR; recurring real-world findings go through the
-[issue templates](.github/ISSUE_TEMPLATE) and become review-learnings + eval tasks.
+`sw-core-development` is maintainer-controlled. Propose changes by pull
+request. Recurring findings from real reviews come in through the
+[issue templates](.github/ISSUE_TEMPLATE) and become rules with eval tasks.
+Maintainer rules from `shopware/shopware` are mined, not copied. See
+[`docs/core-pr-17657-alignment.md`](docs/core-pr-17657-alignment.md).
 
 ## Credits
 
-Built on the shoulders of (and rewritten from, not copied):
+Built on, and rewritten from:
 [`shopwareLabs/ai-coding-tools`](https://github.com/shopwareLabs/ai-coding-tools),
 [`bartundmett/skills`](https://github.com/bartundmett/skills),
 [`biotech-shopware/claude-shopware-skill`](https://github.com/biotech-shopware/claude-shopware-skill),

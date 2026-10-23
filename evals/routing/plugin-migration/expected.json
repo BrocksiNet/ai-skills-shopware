@@ -1,11 +1,11 @@
 {
-  "shopware-architecture": [
+  "sw-architecture": [
     "references/anti-patterns.md"
   ],
-  "shopware-extension-review": [
-    "../shopware-plugin-development/references/migrations.md"
+  "sw-extension-review": [
+    "../sw-plugin-development/references/migrations.md"
   ],
-  "shopware-plugin-development": [
+  "sw-plugin-development": [
     "references/migrations.md"
   ]
 }

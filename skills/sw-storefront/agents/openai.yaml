@@ -1,0 +1,4 @@
+interface:
+  display_name: "Shopware Storefront"
+  short_description: "Apply Shopware Storefront Twig, theme, SCSS and JS rules."
+  default_prompt: "Use $sw-storefront to implement this Shopware Storefront change."

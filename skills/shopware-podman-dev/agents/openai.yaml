@@ -1,4 +1,0 @@
-interface:
-  display_name: "Shopware Podman Dev"
-  short_description: "Run Shopware dev commands in the right environment."
-  default_prompt: "Use $shopware-podman-dev to run the tests for this Shopware change."

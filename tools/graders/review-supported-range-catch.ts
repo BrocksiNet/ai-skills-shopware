@@ -1,4 +1,4 @@
-// Grader: review-supported-range-catch (shopware-plugin-development, PLG-001)
+// Grader: review-supported-range-catch (sw-plugin-development, PLG-001)
 // SwagPaymentSync 2.4.1 keeps shopware/core ~6.6.0 || ~6.7.0 and swaps the
 // deprecated OrderTransactionStateHandler::payPartially() for paidPartially().
 // paidPartially() only exists from 6.7.0.0, so every 6.6 shop fails with an

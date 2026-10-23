@@ -6,7 +6,7 @@
 // under 500 lines, both activation eval files exist, and every
 // `](references/x.md)` link resolves. Across skills: no trigger phrase is
 // claimed twice and no REGISTRY.md topic has two owners. Then the rule ID
-// and reference route checks.
+// and reference route checks, then the router index and the help skill.
 import { existsSync, readdirSync, readFileSync, statSync } from 'node:fs';
 import { join } from 'node:path';
 import { checkRoutes, checkRules } from './check-reports.ts';
@@ -19,6 +19,7 @@ import {
   textLength,
   triggerPhrases,
 } from './skill-checks.ts';
+import { routerErrors } from './router-index.ts';
 import { compareText } from './text.ts';
 
 const MAX_DESCRIPTION = 1024;
@@ -88,6 +89,8 @@ export function validateSkills(o: ValidateSkillsOptions): number {
   if (checkRules(o.root, o.out, o.err) !== 0) report('rule catalog check failed (see above)');
   o.out('\nChecking reference routes\n');
   if (checkRoutes(o.root, o.out) !== 0) report('reference routing check failed (see above)');
+  o.out('\nChecking sw-skill-router index and sw-help\n');
+  for (const e of routerErrors(o.root)) report(e);
 
   o.out(errors === 0 ? '\nvalidate-skills: OK\n' : `\nvalidate-skills: ${errors} error(s)\n`);
   return errors === 0 ? 0 : 1;

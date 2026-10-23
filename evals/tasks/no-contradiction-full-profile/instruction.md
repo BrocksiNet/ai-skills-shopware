@@ -1,9 +1,9 @@
 # Task: full-profile composability (no contradictions)
 
 Run this task with a FULL set of skills installed (e.g. the plugin + app
-use-cases together: php-foundation + shopware-plugin-development +
-shopware-app-development + shopware-testing + shopware-research-and-escalation +
-shopware-review-learnings).
+use-cases together: sw-php-foundation + sw-plugin-development +
+sw-app-development + sw-testing + sw-research-and-escalation +
+sw-review-learnings).
 
 Task: In `fixture/ProductLoader.php`, add a cache tag for the loaded product
 (Shopware 6.7) and then write a unit test for the loader's `tagFor()` helper.

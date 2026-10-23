@@ -1,4 +1,4 @@
-// Grader: review-cache-key-missing-input-ignore (shopware-change-impact, IMP-008)
+// Grader: review-cache-key-missing-input-ignore (sw-change-impact, IMP-008)
 // The cache key hashes every input (product, limit, sales channel, language,
 // currency, customer group). A minor+ finding that names IMP-008 or calls
 // the key incomplete is a false positive.

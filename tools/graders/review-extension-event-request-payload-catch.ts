@@ -1,4 +1,4 @@
-// Grader: review-extension-event-request-payload-catch (shopware-architecture, ARCH-005)
+// Grader: review-extension-event-request-payload-catch (sw-architecture, ARCH-005)
 // LoyaltyPointsCalculateEvent drops its public salesChannelId and
 // customerGroupId properties and carries the whole Request instead. Existing
 // listeners break, and the event cannot be built outside an HTTP request

@@ -1,4 +1,4 @@
-// Grader: review-acl-system-config-catch (shopware-admin-js, ADM-043)
+// Grader: review-acl-system-config-catch (sw-admin-js, ADM-043)
 // A new Loyalty settings card loads and saves through systemConfigApiService,
 // so the plugin's role mapping now grants system_config:read and
 // system_config:update. That lets a loyalty user read and change every

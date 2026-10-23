@@ -1,4 +1,4 @@
-// Grader: review-in-minor-range-catch (shopware-plugin-development, PLG-001)
+// Grader: review-in-minor-range-catch (sw-plugin-development, PLG-001)
 // SwagOrderExport 1.3.1 keeps shopware/core ~6.7.0 and reads the payment
 // status from OrderEntity::getPrimaryOrderTransaction(), which arrived in
 // 6.7.1.0. On 6.7.0.0 and 6.7.0.1 every export fails with an undefined

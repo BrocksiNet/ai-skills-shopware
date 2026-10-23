@@ -1,4 +1,4 @@
-// Grader: review-migration-unbatched-backfill-catch (shopware-plugin-development, PLG-019)
+// Grader: review-migration-unbatched-backfill-catch (sw-plugin-development, PLG-019)
 // The backfill updates every swag_review row in one statement with a
 // correlated subquery over order_line_item. Needs a major+ finding in
 // src/Migration/ that names PLG-019 or asks for batches.

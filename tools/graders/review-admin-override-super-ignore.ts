@@ -1,4 +1,4 @@
-// Grader: review-admin-override-super-ignore (shopware-admin-js, ADM-042)
+// Grader: review-admin-override-super-ignore (sw-admin-js, ADM-042)
 // The override of sw-order-list starts from this.$super for orderCriteria
 // and getOrderColumns and only inserts the loyalty points column. A minor+
 // finding that names ADM-042 or says the override drops core or other

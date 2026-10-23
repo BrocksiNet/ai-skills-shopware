@@ -1,0 +1,12 @@
+# sw-core-development — should NOT trigger
+
+- Build a plugin that adds a custom product field. (-> sw-plugin-development)
+- Add a cache tag to my plugin's product loader. (-> sw-plugin-development)
+- Add a webhook to my app's manifest.xml. (-> sw-app-development)
+- Refactor this generic PHP helper to use enums. (-> sw-php-foundation)
+- Write a unit test for my plugin service. (-> sw-testing)
+- How do I register a service in my plugin's services.php? (-> sw-plugin-development)
+- The cart total is wrong for a percentage discount. Fix it in CartProcessor. (-> shopware-php-code)
+- These session features keep working today and fail silently when the session is gone. Is this the right shape? (-> sw-architecture)
+- We are introducing a new way for extensions to plug into this flow. What structure should they follow? (-> sw-architecture)
+- This cart change might break the existing calculation path without the diff saying so. (-> sw-architecture)

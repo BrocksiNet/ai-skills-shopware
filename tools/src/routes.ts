@@ -12,6 +12,11 @@
 // beyond the bug); the router never selects them and the model decides from
 // `when`. Both are reported apart from the diff-selected references.
 //
+// `exclude_paths` are globs of files a route ignores, for its paths and its
+// anchors: a production-code rule should not fire on a line in a test, an
+// ADR or the release notes. A routes.json can set a default at the top that
+// every route without its own list takes; `"exclude_paths": []` opts out.
+//
 // A route can borrow another skill's reference: `reference` is
 // `../<skill>/references/<file>.md`, and with no triggers, `always` or
 // `on_demand` of its own it takes them, and `when` if it has none, from that
@@ -22,6 +27,7 @@ import { join, matchesGlob } from 'node:path';
 import { errorMessage } from './errors.ts';
 import { BORROWED, resolveBorrowed, ROUTES_FILE } from './route-borrow.ts';
 import { compareText } from './text.ts';
+import { parseDiff, type ChangedFile } from './diff.ts';
 
 export interface Route {
   /** Skill-relative path, e.g. `references/migrations.md`, or a borrowed
@@ -35,12 +41,16 @@ export interface Route {
   always?: boolean;
   /** Picked by the task, not the diff: the router never selects it. */
   on_demand?: boolean;
+  /** Changed files this route ignores, for paths and anchors alike. */
+  exclude_paths?: string[];
 }
 
 export { ROUTES_FILE } from './route-borrow.ts';
 
 export interface RouteFile {
   $comment?: string;
+  /** Default `exclude_paths` for every route that has no list of its own. */
+  exclude_paths?: string[];
   routes: Route[];
 }
 
@@ -48,36 +58,8 @@ export const START =
   '<!-- routes:start: generated from routes.json by `node tools/bin/render-routes.ts`; do not edit -->';
 export const END = '<!-- routes:end -->';
 
-/** One file of a unified diff. */
-export interface ChangedFile {
-  path: string;
-  /** Added and removed lines, without the +/- marker. */
-  lines: string[];
-}
-
-export function parseDiff(diff: string): ChangedFile[] {
-  const files: ChangedFile[] = [];
-  let current: ChangedFile | null = null;
-  let oldPath = '';
-  for (const line of diff.split('\n')) {
-    if (line.startsWith('diff --git ')) {
-      current = null;
-      continue;
-    }
-    if (line.startsWith('--- ')) {
-      oldPath = line.slice(4).replace(/^a\//u, '').trim();
-      continue;
-    }
-    if (line.startsWith('+++ ')) {
-      const newPath = line.slice(4).replace(/^b\//u, '').trim();
-      current = { path: newPath === '/dev/null' ? oldPath : newPath, lines: [] };
-      files.push(current);
-      continue;
-    }
-    if (current !== null && (line.startsWith('+') || line.startsWith('-'))) current.lines.push(line.slice(1));
-  }
-  return files;
-}
+export type { ChangedFile } from './diff.ts';
+export { parseDiff } from './diff.ts';
 
 // ---- validation ----------------------------------------------------------------
 
@@ -117,6 +99,9 @@ function routeShapeErrors(r: unknown, here: string, skillDir: string | null): st
   if (r.on_demand !== undefined && typeof r.on_demand !== 'boolean') {
     errors.push(`${here}.on_demand must be true or false`);
   }
+  if (r.exclude_paths !== undefined && !(Array.isArray(r.exclude_paths) && r.exclude_paths.every((g) => isText(g)))) {
+    errors.push(`${here}.exclude_paths must be a list of globs`);
+  }
   const paths = isTextList(r.paths_any) ? r.paths_any : [];
   const hasTriggers = paths.length + anchors.length > 0;
   const kinds = [hasTriggers, r.always === true, r.on_demand === true].filter(Boolean).length;
@@ -130,7 +115,11 @@ function shapeErrors(value: unknown, at: string, skillDir: string | null = null)
   if (!isRecord(value) || !Array.isArray(value.routes) || value.routes.length === 0) {
     return [`${at}: routes must be a non-empty list`];
   }
-  return value.routes.flatMap((r, i) => routeShapeErrors(r, `${at}: routes[${i}]`, skillDir));
+  const top = value.exclude_paths !== undefined && !isTextList(value.exclude_paths);
+  return [
+    ...(top ? [`${at}: exclude_paths must be a list of globs`] : []),
+    ...value.routes.flatMap((r, i) => routeShapeErrors(r, `${at}: routes[${i}]`, skillDir)),
+  ];
 }
 
 const isRouteFile = (value: unknown): value is RouteFile => shapeErrors(value, '').length === 0;
@@ -143,9 +132,10 @@ export function routeMatches(route: Route, files: ChangedFile[]): boolean {
   if (route.always === true || route.on_demand === true) return false;
   const paths = route.paths_any ?? [];
   const anchors = (route.anchors_any ?? []).map((a) => anchorRegex(a)).filter((re) => re !== null);
-  return files.some(
-    (f) => paths.some((g) => matchesGlob(f.path, g)) || anchors.some((re) => f.lines.some((l) => re.test(l))),
-  );
+  const excluded = route.exclude_paths ?? [];
+  return files
+    .filter((f) => !excluded.some((g) => matchesGlob(f.path, g)))
+    .some((f) => paths.some((g) => matchesGlob(f.path, g)) || anchors.some((re) => f.lines.some((l) => re.test(l))));
 }
 
 const unique = (refs: string[]): string[] => [...new Set(refs)];
@@ -160,6 +150,16 @@ export function fixedReferences(routes: RouteFile, kind: 'always' | 'on_demand')
   return unique(routes.routes.filter((r) => r[kind] === true).map((r) => r.reference));
 }
 
+/** Routes with the file's default `exclude_paths` where they have none. */
+export function withDefaultExcludes(file: RouteFile): RouteFile {
+  const defaults = file.exclude_paths;
+  if (defaults === undefined) return file;
+  return {
+    ...file,
+    routes: file.routes.map((r) => (r.exclude_paths === undefined ? { ...r, exclude_paths: defaults } : r)),
+  };
+}
+
 /** A skill's routes.json, or null when it has none. Throws when the file is
  *  not JSON or not a valid route file. */
 export function loadRoutes(skillDir: string): RouteFile | null {
@@ -168,7 +168,7 @@ export function loadRoutes(skillDir: string): RouteFile | null {
   const { value, errors } = resolveBorrowed(skillDir, JSON.parse(readFileSync(path, 'utf8')));
   if (errors.length > 0) throw new Error(errors.join('; '));
   if (!isRouteFile(value)) throw new Error(shapeErrors(value, ROUTES_FILE).join('; '));
-  return value;
+  return withDefaultExcludes(value);
 }
 
 export interface RouteReport {
@@ -223,7 +223,7 @@ function triggers(route: Route): string {
 export function renderTable(routes: RouteFile): string {
   const rows = routes.routes.map((r) => {
     const name = r.reference.replace(/^references\//u, '').replace(BORROWED, (_, skill: string, file: string) => {
-      return `${skill.replace(/^shopware-/u, '')}: ${file.replace(/^references\//u, '')}`;
+      return `${skill.replace(/^sw-/u, '')}: ${file.replace(/^references\//u, '')}`;
     });
     return `| [\`${name}\`](${r.reference}) | ${cell(r.when)} | ${triggers(r)} |`;
   });

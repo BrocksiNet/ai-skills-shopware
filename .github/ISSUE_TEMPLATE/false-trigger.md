@@ -7,7 +7,7 @@ labels: ["false-trigger"]
 
 ## Which skill fired incorrectly
 
-<!-- e.g. shopware-core-development fired on plugin code -->
+<!-- e.g. sw-core-development fired on plugin code -->
 
 ## The prompt / situation
 

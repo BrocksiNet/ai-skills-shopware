@@ -4,7 +4,7 @@ The automated eval suite proves the skills change model output in fixtures. This
 guide is the **human-in-the-loop** counterpart: install the skills in your own
 IDE, point it at a **real local Shopware instance**, run real tasks, and judge
 the result with the project's own tooling — not by guessing. Findings here feed
-new entries into `shopware-review-learnings` and new `evals/tasks/`.
+new entries into `sw-review-learnings` and new `evals/tasks/`.
 
 You should be able to follow this end-to-end on your own machine.
 
@@ -21,18 +21,18 @@ You should be able to follow this end-to-end on your own machine.
 ## 2. Install the skills
 
 Install the skills for the use-case the instance exercises. Plugin/project
-development is the common choice (swap in `shopware-app-development` for apps, or
-`shopware-core-development` for a platform checkout):
+development is the common choice (swap in `sw-app-development` for apps, or
+`sw-core-development` for a platform checkout):
 
 ```bash
 # Plugin / project development (most common), into the current project
 npx skills add BrocksiNet/ai-skills-shopware \
-  --skill php-foundation \
-  --skill shopware-plugin-development \
-  --skill shopware-testing \
-  --skill shopware-research-and-escalation \
-  --skill shopware-review-learnings \
-  --skill shopware-change-impact \
+  --skill sw-php-foundation \
+  --skill sw-plugin-development \
+  --skill sw-testing \
+  --skill sw-research-and-escalation \
+  --skill sw-review-learnings \
+  --skill sw-change-impact \
   -a cursor    # or -a claude-code / -a codex / -a opencode
 ```
 
@@ -100,7 +100,7 @@ Open an issue using a template so your finding becomes a rule + an eval:
   noisy/irrelevant guidance).
 - **Improvement** — a better rule, reference, or trigger phrasing.
 
-Each accepted finding becomes a line in `shopware-review-learnings` (or the
+Each accepted finding becomes a line in `sw-review-learnings` (or the
 owning skill) and a new `evals/tasks/<rule>/` so the regression is caught
 automatically next time.
 

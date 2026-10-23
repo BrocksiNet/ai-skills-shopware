@@ -1,0 +1,4 @@
+interface:
+  display_name: "Shopware Skills Help"
+  short_description: "What the Shopware skills can do and how to start."
+  default_prompt: "Use $sw-help to show what the Shopware skills can do for me."

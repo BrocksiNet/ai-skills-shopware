@@ -1,4 +1,4 @@
-// Grader: review-cache-tags-event-ignore (shopware-plugin-development, PLG-007)
+// Grader: review-cache-tags-event-ignore (sw-plugin-development, PLG-007)
 // The same badge feature on ~6.7.0, but the product page subscriber
 // dispatches AddCacheTagEvent, which reaches the HTTP cache from 6.6.6.0 on, and
 // the writer invalidates the same tag. A minor+ finding that names PLG-007

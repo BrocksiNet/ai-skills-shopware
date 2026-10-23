@@ -1,4 +1,4 @@
-// Grader: review-event-hook-assert-ignore (shopware-testing, TEST-016)
+// Grader: review-event-hook-assert-ignore (sw-testing, TEST-016)
 // The test captures the event in the hook and asserts after redeem(),
 // including that the hook fired. A minor+ finding that names TEST-016 or
 // describes assertions in the hook is a false positive.

@@ -1,4 +1,4 @@
-// Grader: review-services-xml-68-ignore (shopware-plugin-development, PLG-026)
+// Grader: review-services-xml-68-ignore (sw-plugin-development, PLG-026)
 // The change registers the same services in services.php and adds fields to
 // config.xml. config.xml is plugin configuration, not DI, and keeps working
 // on 6.8. A minor+ finding that names PLG-026 or calls an XML file a 6.8

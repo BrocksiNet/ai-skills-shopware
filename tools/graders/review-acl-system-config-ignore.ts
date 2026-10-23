@@ -1,4 +1,4 @@
-// Grader: review-acl-system-config-ignore (shopware-admin-js, ADM-043)
+// Grader: review-acl-system-config-ignore (sw-admin-js, ADM-043)
 // The settings card goes through the plugin's own Admin API route, guarded by
 // swag_loyalty.viewer and swag_loyalty.editor, which reads and writes only
 // SwagLoyalty.config keys; the role mapping adds swag_loyalty_tier:read only.

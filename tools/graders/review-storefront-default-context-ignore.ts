@@ -1,4 +1,4 @@
-// Grader: review-storefront-default-context-ignore (shopware-plugin-development, PLG-016)
+// Grader: review-storefront-default-context-ignore (sw-plugin-development, PLG-016)
 // The change adds the same pagelet but searches sales_channel.product.repository
 // with the SalesChannelContext and renders calculatedPrice, like the existing
 // highlights loader. A minor+ finding that names PLG-016 or calls the context

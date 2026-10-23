@@ -1,4 +1,4 @@
-// Grader: review-admin-override-super-catch (shopware-admin-js, ADM-042)
+// Grader: review-admin-override-super-catch (sw-admin-js, ADM-042)
 // The plugin overrides sw-order-list to add a loyalty points column. Its
 // orderCriteria calls this.$super, but getOrderColumns copies the core column
 // list and appends one entry without calling this.$super, so columns from

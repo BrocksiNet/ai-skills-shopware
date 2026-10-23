@@ -11,11 +11,13 @@ paths and would be noise on a DAL-only change.
 
 | Skill | Why |
 | ----- | --- |
-| `shopware-storefront` | Twig/theme, PluginManager, Bootstrap SCSS, cache-safe AJAX. |
-| `shopware-admin-js` | Admin TypeScript, Meteor `mt-*`, Jest, Admin ACL. |
-| `shopware-research-and-escalation` | Versioned docs + Modern Web Guidance CLI after primitives. |
-| `shopware-review-learnings` | Recurring frontend findings (uncached listing AJAX, …). |
-| `shopware-change-impact` | After a feature works: shared cache and checkout cost, not only the new UI. |
+| `sw-storefront` | Twig/theme, PluginManager, Bootstrap SCSS, cache-safe AJAX. |
+| `sw-admin-js` | Admin TypeScript, Meteor `mt-*`, Jest, Admin ACL. |
+| `sw-research-and-escalation` | Versioned docs + Modern Web Guidance CLI after primitives. |
+| `sw-review-learnings` | Recurring frontend findings (uncached listing AJAX, …). |
+| `sw-change-impact` | After a feature works: shared cache and checkout cost, not only the new UI. |
+| `sw-skill-router` | Lists the skills and references a diff or plan needs (`/sw-skill-router`). |
+| `sw-help` | What every skill is for, with example prompts (`/sw-help`). |
 
 PHP behind a storefront controller or Admin route still needs the plugin /
 core / app surface skill from the other use-cases.
@@ -24,11 +26,13 @@ core / app surface skill from the other use-cases.
 
 ```bash
 npx skills add BrocksiNet/ai-skills-shopware \
-  --skill shopware-storefront \
-  --skill shopware-admin-js \
-  --skill shopware-research-and-escalation \
-  --skill shopware-review-learnings \
-  --skill shopware-change-impact \
+  --skill sw-skill-router \
+  --skill sw-help \
+  --skill sw-storefront \
+  --skill sw-admin-js \
+  --skill sw-research-and-escalation \
+  --skill sw-review-learnings \
+  --skill sw-change-impact \
   -a claude-code -a codex -a cursor
 ```
 
@@ -45,7 +49,7 @@ npx -y modern-web-guidance@latest search "optimize product image LCP"
 ```
 
 See [`docs/tooling-stack.md`](../docs/tooling-stack.md) and
-`skills/shopware-research-and-escalation/references/modern-web-guidance.md`.
+`skills/sw-research-and-escalation/references/modern-web-guidance.md`.
 Set `DISABLE_TELEMETRY=1` to opt out of Google search-string telemetry.
 
 ## Mixing use-cases

@@ -1,4 +1,4 @@
-// Grader: support-reply-single-block (shopware-assistant-style)
+// Grader: support-reply-single-block (sw-assistant-style)
 // The reply must be one outer fenced block (copy-ready), with no nested fences,
 // no em dashes, no AI filler, and it must name the cache as the cause.
 import { existsSync } from 'node:fs';

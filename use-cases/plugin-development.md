@@ -8,27 +8,31 @@ and customer-project code. In-repo core skills are usually **absent** — use th
 
 | Skill | Why |
 | ----- | --- |
-| `php-foundation` | Shared strict PHP 8.x base. |
-| `shopware-architecture` | DAL boundaries, extension mechanisms, thin controllers. |
-| `shopware-security` | Access keys, ACL, safe API exposure. |
-| `shopware-plugin-development` | DAL, cache tags, migrations, decoration, 6.6/6.7 compat, OpenAPI. |
-| `shopware-testing` | PHPUnit unit/integration standards. |
-| `shopware-research-and-escalation` | Verify against installed source. |
-| `shopware-review-learnings` | Recurring real-world findings. |
-| `shopware-change-impact` | After a feature works: blast radius, who pays, easier vs more complex. |
+| `sw-php-foundation` | Shared strict PHP 8.x base. |
+| `sw-architecture` | DAL boundaries, extension mechanisms, thin controllers. |
+| `sw-security` | Access keys, ACL, safe API exposure. |
+| `sw-plugin-development` | DAL, cache tags, migrations, decoration, 6.6/6.7 compat, OpenAPI. |
+| `sw-testing` | PHPUnit unit/integration standards. |
+| `sw-research-and-escalation` | Verify against installed source. |
+| `sw-review-learnings` | Recurring real-world findings. |
+| `sw-change-impact` | After a feature works: blast radius, who pays, easier vs more complex. |
+| `sw-skill-router` | Lists the skills and references a diff or plan needs (`/sw-skill-router`). |
+| `sw-help` | What every skill is for, with example prompts (`/sw-help`). |
 
 ## Install (one-liner)
 
 ```bash
 npx skills add BrocksiNet/ai-skills-shopware \
-  --skill php-foundation \
-  --skill shopware-architecture \
-  --skill shopware-security \
-  --skill shopware-plugin-development \
-  --skill shopware-testing \
-  --skill shopware-research-and-escalation \
-  --skill shopware-review-learnings \
-  --skill shopware-change-impact \
+  --skill sw-skill-router \
+  --skill sw-help \
+  --skill sw-php-foundation \
+  --skill sw-architecture \
+  --skill sw-security \
+  --skill sw-plugin-development \
+  --skill sw-testing \
+  --skill sw-research-and-escalation \
+  --skill sw-review-learnings \
+  --skill sw-change-impact \
   -a claude-code -a codex -a cursor
 ```
 

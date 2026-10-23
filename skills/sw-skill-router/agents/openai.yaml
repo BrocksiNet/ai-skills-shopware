@@ -1,0 +1,4 @@
+interface:
+  display_name: "Shopware Skill Router"
+  short_description: "List the Shopware skills and references a change needs."
+  default_prompt: "Use $sw-skill-router to find the Shopware skills this change needs."

@@ -1,4 +1,4 @@
-// Grader: review-admin-field-event-catch (shopware-admin-js, ADM-044)
+// Grader: review-admin-field-event-catch (sw-admin-js, ADM-044)
 // SwagLoyalty supports Shopware 6.5 and 6.6. The change adds an
 // sw-switch-field and an sw-single-select bound with :value and @change.
 // 6.6 fields emit only update:value, so the handlers never run and the

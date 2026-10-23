@@ -1,12 +1,8 @@
 {
-  "shopware-extension-review": [
-    "../shopware-plugin-development/references/dal-usage.md",
-    "../shopware-testing/references/integration-repository.md"
+  "sw-extension-review": [
+    "../sw-testing/references/integration-repository.md"
   ],
-  "shopware-plugin-development": [
-    "references/dal-usage.md"
-  ],
-  "shopware-testing": [
+  "sw-testing": [
     "references/integration-repository.md",
     "references/core-platform-patterns.md"
   ]

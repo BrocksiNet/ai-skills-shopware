@@ -1,4 +1,4 @@
-// Grader: no-empty-explicit — php-foundation trunk habit (review-backed).
+// Grader: no-empty-explicit — sw-php-foundation trunk habit (review-backed).
 // UserValidator must not call empty() and must compare explicitly.
 import { fail, findFile, type Grader, hasLine, read, verdict } from '../src/grade/kit.ts';
 
