@@ -13,6 +13,7 @@ license: MIT
 metadata:
   contexts: core plugin app project
   tasks: build review
+  defers_to: shopware-admin-js
 ---
 
 # Shopware Admin JS

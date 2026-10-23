@@ -1,10 +1,6 @@
 {
   "sw-extension-review": [
-    "../sw-plugin-development/references/dal-usage.md",
     "../sw-testing/references/integration-repository.md"
-  ],
-  "sw-plugin-development": [
-    "references/dal-usage.md"
   ],
   "sw-testing": [
     "references/integration-repository.md",

@@ -9,6 +9,7 @@
 //     tasks: build review             # what the user is doing
 //     load_for: review                # tasks it loads for with no file match
 //     paths: "**/*.php"               # files that load it with no reference
+//     defers_to: shopware-php-code    # core trunk skills that lead on its topic
 //
 // `node tools/bin/render-router-index.ts` writes the index; validate-skills
 // fails when it is out of date or a skill's metadata is missing or unknown.
@@ -34,6 +35,7 @@ export interface SkillMetadata {
   tasks: string[];
   load_for: string[];
   paths: string[];
+  defers_to: string[];
 }
 
 /** The `metadata:` block of the frontmatter as key -> value. Values are
@@ -68,6 +70,7 @@ export function skillMetadata(markdown: string): { meta: SkillMetadata; errors: 
     tasks: words(block.get('tasks')),
     load_for: words(block.get('load_for')),
     paths: words(block.get('paths')),
+    defers_to: words(block.get('defers_to')),
   };
   const errors = [
     ...(meta.contexts.length === 0 ? [`metadata.contexts is missing (${CONTEXTS.join(' ')})`] : []),
@@ -75,6 +78,9 @@ export function skillMetadata(markdown: string): { meta: SkillMetadata; errors: 
     ...known(meta.contexts, CONTEXTS, 'contexts'),
     ...known(meta.tasks, TASKS, 'tasks'),
     ...known(meta.load_for, meta.tasks, 'load_for (must be one of its tasks)'),
+    ...meta.defers_to
+      .filter((n) => !/^[a-z0-9-]+$/u.test(n))
+      .map((n) => `metadata.defers_to: '${n}' is not a skill name`),
   ];
   return { meta, errors };
 }
@@ -87,6 +93,7 @@ export interface IndexRoute {
   anchors_any?: string[];
   always?: boolean;
   on_demand?: boolean;
+  exclude_paths?: string[];
 }
 
 export interface IndexSkill extends SkillMetadata {
@@ -125,6 +132,7 @@ function indexSkill(root: string, skill: string): IndexSkill {
     if (r.anchors_any !== undefined) route.anchors_any = r.anchors_any;
     if (r.always === true) route.always = true;
     if (r.on_demand === true) route.on_demand = true;
+    if (r.exclude_paths !== undefined && r.exclude_paths.length > 0) route.exclude_paths = r.exclude_paths;
     return route;
   });
   return { name: skill, summary: summary(frontmatter(text).description), ...meta, routes };

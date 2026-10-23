@@ -57,14 +57,21 @@ Pick `--task` from what the user asked for:
 ## Act on the output
 
 1. Read the `SKILL.md` of every skill under **Load these skills**, then each
-   reference listed under it. The paths are the installed files.
-2. Read an **on demand** reference only when its "when" matches the task.
-3. **Also fits** lists skills no file selected. Load one only when the
+   reference listed under it. The paths are the installed files. Skills and
+   references come most-matched first.
+2. When a skill says **core leads here**, read that core skill in
+   `.agents/skills/` first and treat ours as the overlay.
+3. Read an **on demand** reference only when its "when" matches the task.
+4. **Also fits** lists skills no file selected. Load one only when the
    request is about its topic.
-4. **Recommended but not installed** prints the install command. Tell the
+5. **Recommended but not installed** prints the install command. Tell the
    user; do not install skills without asking.
-5. Tell the user in one line which skills you loaded and why, then do the
+6. Tell the user in one line which skills you loaded and why, then do the
    work.
+
+The header names the base branch, the merge base and how many commits the
+branch has. A note about many changed files usually means a stale base:
+run `git fetch`, or pass `--base` or `--diff`.
 
 Run it again when the plan changes or new files join the change. An empty
 **Load** section on a fresh branch is normal: plan the files, then route

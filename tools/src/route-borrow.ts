@@ -19,7 +19,10 @@ function lendingRoute(skillDir: string, skill: string, reference: string): Json 
   const value: unknown = JSON.parse(readFileSync(path, 'utf8'));
   const routes: unknown[] = isRecord(value) && Array.isArray(value.routes) ? value.routes : [];
   const found = routes.find((r) => isRecord(r) && r.reference === reference);
-  return isRecord(found) ? found : `${skill} has no route for ${reference}`;
+  if (!isRecord(found)) return `${skill} has no route for ${reference}`;
+  // The lender's default exclusions travel with its route.
+  const defaults = isRecord(value) ? value.exclude_paths : undefined;
+  return found.exclude_paths === undefined && defaults !== undefined ? { ...found, exclude_paths: defaults } : found;
 }
 
 /** Borrowed routes filled in from the lending skill; `errors` names the
@@ -39,7 +42,7 @@ export function resolveBorrowed(skillDir: string, value: unknown): { value: unkn
       return r;
     }
     const borrowed: Json = { when: source.when };
-    for (const k of OWN_KINDS) if (source[k] !== undefined) borrowed[k] = source[k];
+    for (const k of [...OWN_KINDS, 'exclude_paths']) if (source[k] !== undefined) borrowed[k] = source[k];
     return Object.assign(borrowed, r);
   });
   return { value: { ...value, routes }, errors };

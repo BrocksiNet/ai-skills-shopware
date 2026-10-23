@@ -14,6 +14,7 @@ metadata:
   contexts: core plugin app project
   tasks: review
   load_for: review
+  defers_to: shopware-change-scope sw-review
 ---
 
 # Shopware review learnings

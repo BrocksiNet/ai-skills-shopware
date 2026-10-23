@@ -12,6 +12,7 @@ metadata:
   contexts: core
   tasks: ship
   load_for: ship
+  defers_to: shopware-pr-hygiene
 ---
 
 # Shopware core PR descriptions

@@ -144,6 +144,9 @@ describe('route.mjs glob matching', () => {
   });
 });
 
+const loadedRefs = (r: unknown): string[] =>
+  list(field(r, 'load')).flatMap((s) => list(field(s, 'references')).map((x) => text(field(x, 'reference'))));
+
 describe('route.mjs routing', () => {
   test('selects what tools/bin/route.ts selects for every routing case, with no filter', () => {
     const cases = join(ROOT, 'evals/routing');
@@ -154,12 +157,16 @@ describe('route.mjs routing', () => {
       for (const [skill, refs] of Object.entries(
         typeof expectedRaw === 'object' && expectedRaw !== null ? expectedRaw : {},
       )) {
-        expected[skill] = list(refs).map((r) => (text(r).startsWith('../') ? text(r).slice(3) : `${skill}/${text(r)}`));
+        expected[skill] = list(refs)
+          .map((r) => (text(r).startsWith('../') ? text(r).slice(3) : `${skill}/${text(r)}`))
+          .toSorted();
       }
       const result = route({ files: call('parseDiff', diff), kind: 'any', task: 'any' });
       const selected: Record<string, string[]> = {};
       for (const s of list(field(result, 'load'))) {
-        const refs = list(field(s, 'references')).map((r) => text(field(r, 'reference')));
+        const refs = list(field(s, 'references'))
+          .map((r) => text(field(r, 'reference')))
+          .toSorted();
         if (refs.length > 0) selected[text(field(s, 'name'))] = refs;
       }
       assert.deepEqual(selected, expected, name);
@@ -189,6 +196,48 @@ describe('route.mjs routing', () => {
     assert.deepEqual(names(field(route({ files: [], kind: 'core', task: 'ship' }), 'load')), [
       'sw-change-impact',
       'sw-pr-description',
+    ]);
+  });
+
+  test('a production rule stays quiet on tests, a test rule does not', () => {
+    const conn = [
+      {
+        path: 'src/Core/Framework/Test/Helper.php',
+        lines: ['use Doctrine\\DBAL\\Connection;', 'use Shopware\\Storefront\\Page;'],
+      },
+    ];
+    const got = loadedRefs(route({ files: conn, kind: 'core', task: 'build' }));
+    assert.ok(got.includes('sw-architecture/references/anti-patterns.md'));
+    assert.ok(!got.includes('sw-architecture/references/component-independence.md'));
+    assert.ok(!got.includes('sw-core-development/references/platform-architecture.md'));
+  });
+
+  test('same-bundle imports do not trigger component independence', () => {
+    const storefront = [{ path: 'src/Storefront/Controller/X.php', lines: ['use Shopware\\Storefront\\Page\\Y;'] }];
+    const r = route({ files: storefront, kind: 'core', task: 'build' });
+    const arch = list(field(r, 'load')).find((s) => text(field(s, 'name')) === 'sw-architecture');
+    const refs = list(field(arch, 'references')).map((x) => text(field(x, 'reference')));
+    assert.ok(!refs.includes('sw-architecture/references/component-independence.md'));
+  });
+
+  test('references count their files and prefer a production path in the reason', () => {
+    const changed = [
+      { path: 'tests/integration/Core/AFooTest.php', lines: [] },
+      { path: 'tests/integration/Core/BFooTest.php', lines: [] },
+    ];
+    const r = route({ files: changed, kind: 'core', task: 'build' });
+    const testing = list(field(r, 'load')).find((s) => text(field(s, 'name')) === 'sw-testing');
+    const first = list(field(testing, 'references'))[0];
+    assert.equal(field(first, 'hits'), 2);
+    assert.match(text(field(first, 'why')), /and 1 more file\(s\)$/u);
+    assert.deepEqual(field(testing, 'defers_to'), ['shopware-phpunit-tests']);
+  });
+
+  test('the script parses renames like tools/src/diff.ts', () => {
+    const diff = 'diff --git a/a.php b/b.php\nrename from a.php\nrename to b.php\n';
+    assert.deepEqual(call('parseDiff', diff), [
+      { path: 'a.php', lines: [] },
+      { path: 'b.php', lines: [] },
     ]);
   });
 
@@ -245,7 +294,11 @@ describe('route.mjs context detection', () => {
     const out: unknown = JSON.parse(run.stdout);
     assert.equal(text(field(field(out, 'context'), 'kind')), 'plugin');
     assert.equal(text(field(out, 'source')), 'planned paths');
-    assert.deepEqual(names(field(out, 'load')), ['sw-architecture', 'sw-php-foundation', 'sw-plugin-development']);
+    assert.deepEqual(names(field(out, 'load')).toSorted(), [
+      'sw-architecture',
+      'sw-php-foundation',
+      'sw-plugin-development',
+    ]);
   });
 
   test('a wrong task fails with a message', () => {

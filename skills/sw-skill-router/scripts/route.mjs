@@ -58,6 +58,8 @@ export function parseArgs(argv) {
   return o;
 }
 
+const LARGE_DIFF = 50;
+
 // ---- changes -------------------------------------------------------------------
 
 function git(root, args) {
@@ -68,19 +70,37 @@ function git(root, args) {
   }
 }
 
-/** Added and removed lines per file of a unified diff. */
+/** Added and removed lines per file of a unified diff. A renamed or moved
+ *  file is listed under both paths, the old one without lines. `---` and
+ *  `+++` are headers only before a file's first hunk, so a removed SQL
+ *  comment is a line. Mirrors parseDiff in tools/src/routes.ts. */
 export function parseDiff(diff) {
   const files = [];
   let current = null;
   let oldPath = '';
+  let inHunk = false;
+  const add = (path) => {
+    const found = files.find((f) => f.path === path);
+    if (found !== undefined) return found;
+    const file = { path, lines: [] };
+    files.push(file);
+    return file;
+  };
   for (const line of diff.split('\n')) {
-    if (line.startsWith('diff --git ')) current = null;
-    else if (line.startsWith('--- ')) oldPath = line.slice(4).replace(/^a\//u, '').trim();
-    else if (line.startsWith('+++ ')) {
-      const newPath = line.slice(4).replace(/^b\//u, '').trim();
-      current = { path: newPath === '/dev/null' ? oldPath : newPath, lines: [] };
-      files.push(current);
-    } else if (current !== null && (line.startsWith('+') || line.startsWith('-'))) current.lines.push(line.slice(1));
+    if (line.startsWith('diff --git ')) [current, oldPath, inHunk] = [null, '', false];
+    else if (!inHunk && line.startsWith('rename from ')) oldPath = line.slice('rename from '.length).trim();
+    else if (!inHunk && line.startsWith('rename to ')) {
+      add(oldPath);
+      current = add(line.slice('rename to '.length).trim());
+    } else if (!inHunk && line.startsWith('--- ')) {
+      const path = line.slice(4).replace(/^a\//u, '').trim();
+      if (path !== '/dev/null') oldPath = path;
+    } else if (!inHunk && line.startsWith('+++ ')) {
+      const path = line.slice(4).replace(/^b\//u, '').trim();
+      if (path !== '/dev/null' && oldPath !== '' && path !== oldPath) add(oldPath);
+      current = add(path === '/dev/null' ? oldPath : path);
+    } else if (line.startsWith('@@')) inHunk = true;
+    else if (current !== null && inHunk && (line.startsWith('+') || line.startsWith('-'))) current.lines.push(line.slice(1));
   }
   return files;
 }
@@ -112,13 +132,15 @@ function collectChanges(o, root) {
   if (git(root, ['rev-parse', '--is-inside-work-tree']) === null) return { files: [], source: 'no git repository' };
   const base = o.base ?? defaultBase(root);
   const from = base === null ? 'HEAD' : (git(root, ['merge-base', 'HEAD', base])?.trim() ?? base);
-  const files = parseDiff(git(root, ['diff', from]) ?? '');
+  const files = parseDiff(git(root, ['diff', '-M', from]) ?? '');
   const seen = new Set(files.map((f) => f.path));
   for (const p of (git(root, ['ls-files', '--others', '--exclude-standard']) ?? '').split('\n')) {
     if (p !== '' && !seen.has(p)) files.push({ path: p, lines: newFileLines(join(root, p)) });
   }
-  const label = base === null ? 'uncommitted changes' : `git diff against ${base}, plus uncommitted and untracked files`;
-  return { files, source: label };
+  if (base === null) return { files, source: 'uncommitted changes' };
+  const commits = Number(git(root, ['rev-list', '--count', `${from}..HEAD`])?.trim() ?? '0');
+  const short = from.slice(0, 10);
+  return { files, source: `git diff against ${base} (merge base ${short}, ${commits} commit(s) on this branch), plus uncommitted and untracked files`, base: { ref: base, merge_base: from, commits } };
 }
 
 // ---- globs ---------------------------------------------------------------------
@@ -224,14 +246,28 @@ function coreSkills(root) {
 
 // ---- routing -------------------------------------------------------------------
 
+const TESTISH = ['**/tests/**', '**/Test/**', '**/*.test.{js,ts}', '**/*.spec.{js,ts}', '**/*.md'];
+
+/** Why a route fires, or null: every file it matches, counted, and the best
+ *  reason to show. A path match in production code beats one in a test or
+ *  a doc, and a path match beats a changed line. */
 function routeHit(route, files) {
+  const excluded = route.exclude_paths ?? [];
+  const reasons = [];
   for (const f of files) {
+    if (excluded.some((g) => matchesGlob(f.path, g))) continue;
+    const testish = TESTISH.some((g) => matchesGlob(f.path, g));
     const glob = (route.paths_any ?? []).find((g) => matchesGlob(f.path, g));
-    if (glob !== undefined) return `${f.path} matches \`${glob}\``;
+    if (glob !== undefined) {
+      reasons.push({ rank: testish ? 2 : 0, text: `${f.path} matches \`${glob}\`` });
+      continue;
+    }
     const anchor = (route.anchors_any ?? []).find((a) => f.lines.some((l) => new RegExp(a, 'u').test(l)));
-    if (anchor !== undefined) return `a changed line in ${f.path} matches \`${anchor}\``;
+    if (anchor !== undefined) reasons.push({ rank: testish ? 3 : 1, text: `a changed line in ${f.path} matches \`${anchor}\`` });
   }
-  return null;
+  if (reasons.length === 0) return null;
+  const best = reasons.reduce((a, b) => (b.rank < a.rank ? b : a));
+  return { why: reasons.length > 1 ? `${best.text}, and ${reasons.length - 1} more file(s)` : best.text, hits: reasons.length };
 }
 
 /** The recommendation for one set of changes, context and task. */
@@ -247,9 +283,10 @@ export function route({ files, kind, task }) {
     const taskOk = fits(skill.tasks, task);
     const references = [];
     for (const r of skill.routes) {
-      const why = routeHit(r, inContext);
-      if (why !== null) references.push({ reference: r.reference, why });
+      const hit = routeHit(r, inContext);
+      if (hit !== null) references.push({ reference: r.reference, ...hit });
     }
+    references.sort((a, b) => b.hits - a.hits);
     const why = [];
     const pathHit = skill.paths.map((g) => inContext.find((f) => matchesGlob(f.path, g))).find(Boolean);
     if (pathHit !== undefined) why.push(`${pathHit.path} matches \`${skill.paths.find((g) => matchesGlob(pathHit.path, g))}\``);
@@ -264,12 +301,15 @@ export function route({ files, kind, task }) {
       name: skill.name,
       summary: skill.summary,
       why,
+      hits: references.reduce((n, r) => n + r.hits, 0),
+      defers_to: skill.defers_to ?? [],
       references,
       always: skill.routes.filter((r) => r.always).map((r) => r.reference),
       on_demand: skill.routes.filter((r) => r.on_demand).map((r) => ({ reference: r.reference, when: r.when })),
     };
     (why.length > 0 ? load : other).push(entry);
   }
+  load.sort((a, b) => b.hits - a.hits);
   return { contexts, load, other, skipped };
 }
 
@@ -294,6 +334,8 @@ function markdown(r, installed) {
       out.push(`- **${s.name}**${dir === undefined ? ' (not installed)' : `: ${join(dir, 'SKILL.md')}`}`);
       for (const w of s.why.filter((x) => !x.endsWith('matched'))) out.push(`  - because ${w}`);
       for (const ref of s.references) out.push(`  - read ${inSkill(s.name, ref.reference)}, because ${ref.why}`);
+      const lead = s.defers_to.filter((n) => r.core.includes(n));
+      if (lead.length > 0) out.push(`  - core leads here: read ${lead.map((n) => `.agents/skills/${n}`).join(' and ')} first`);
       for (const ref of s.always) out.push(`  - read ${inSkill(s.name, ref)}, every time this skill loads`);
       for (const ref of s.on_demand) out.push(`  - on demand: ${inSkill(s.name, ref.reference)}, when ${ref.when.replace(/^\w/u, (c) => c.toLowerCase())}`);
     }
@@ -341,15 +383,18 @@ export function main(argv) {
   }
   const detected = detectContext(root);
   const context = o.context === 'auto' ? detected : { kind: o.context, reason: 'set with --context' };
-  const { files, source } = collectChanges(o, root);
+  const { files, source, base } = collectChanges(o, root);
   const result = route({ files, kind: context.kind, task: o.task });
   const notes = [];
   const core = coreSkills(root);
   if (context.kind === 'core' && core.length > 0) {
     notes.push(`this checkout ships ${core.length} core skills in .agents/skills. Use them for platform work; the sw- skills are an overlay.`);
   }
+  if (files.length > LARGE_DIFF) {
+    notes.push(`${files.length} changed files is a lot for one change. If the base is stale, run git fetch, or pass --base <ref> or --diff.`);
+  }
   if (o.task === 'any') notes.push('no --task given. Pass build, review, ship, answer or run to load the skills of that task too.');
-  const report = { context, task: o.task, source, changes: files.length, ...result, notes };
+  const report = { context, task: o.task, source, base: base ?? null, changes: files.length, core: context.kind === 'core' ? core : [], ...result, notes };
   report.missing = result.load.map((s) => s.name).filter((n) => !installed.has(n));
   process.stdout.write(o.json ? `${JSON.stringify(report, null, 2)}\n` : markdown(report, installed));
   return 0;

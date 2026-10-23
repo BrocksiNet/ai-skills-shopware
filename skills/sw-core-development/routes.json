@@ -1,5 +1,10 @@
 {
   "$comment": "Which reference to read for a change (plan WP4). paths_any: globs on changed files; anchors_any: regexes on added or removed lines; always: every change; on_demand: the task decides, the diff cannot. Render the SKILL.md table with node tools/bin/render-routes.ts.",
+  "exclude_paths": [
+    "**/tests/**",
+    "**/Test/**",
+    "**/*.md"
+  ],
   "routes": [
     {
       "reference": "references/deprecations.md",
@@ -53,7 +58,8 @@
         "UPGRADE-*.md",
         "adr/**",
         "changelog/_unreleased/*.md"
-      ]
+      ],
+      "exclude_paths": []
     },
     {
       "reference": "references/static-analysis-baseline.md",

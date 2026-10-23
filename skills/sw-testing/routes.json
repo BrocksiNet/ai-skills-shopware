@@ -4,7 +4,9 @@
     {
       "reference": "references/exception-assertions.md",
       "when": "A test asserts an exception.",
-      "anchors_any": ["->expectException(Object|Message|Code)?\\("]
+      "anchors_any": [
+        "->expectException(Object|Message|Code)?\\("
+      ]
     },
     {
       "reference": "references/test-shape-and-flags.md",
@@ -20,19 +22,32 @@
     {
       "reference": "references/integration-repository.md",
       "when": "An integration test reads or writes through a repository.",
-      "paths_any": ["**/tests/integration/**/*Test.php"],
-      "anchors_any": ["IntegrationTestBehaviour"]
+      "paths_any": [
+        "**/tests/integration/**/*Test.php"
+      ],
+      "anchors_any": [
+        "IntegrationTestBehaviour"
+      ]
     },
     {
       "reference": "references/core-platform-patterns.md",
       "when": "The test lives in shopware/shopware (migrations, Codecov, `#[CoversClass]`).",
-      "paths_any": ["tests/migration/**", "tests/{unit,integration}/{Core,Storefront,Administration,Elasticsearch}/**"],
-      "anchors_any": ["@codeCoverageIgnore"]
+      "paths_any": [
+        "tests/migration/**",
+        "tests/devops/**",
+        "tests/{unit,integration}/{Core,Storefront,Administration,Elasticsearch}/**"
+      ],
+      "anchors_any": [
+        "@codeCoverageIgnore"
+      ]
     },
     {
       "reference": "references/external-inspiration.md",
       "when": "You want plugin test patterns from FriendsOfShopware.",
-      "paths_any": ["**/custom/plugins/*/tests/**", "**/custom/static-plugins/*/tests/**"]
+      "paths_any": [
+        "**/custom/plugins/*/tests/**",
+        "**/custom/static-plugins/*/tests/**"
+      ]
     }
   ]
 }

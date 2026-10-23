@@ -14,6 +14,7 @@ license: MIT
 metadata:
   contexts: core plugin app project
   tasks: build review
+  defers_to: shopware-php-code
 ---
 
 # Shopware architecture (patterns + evolution)

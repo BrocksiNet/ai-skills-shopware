@@ -30,6 +30,9 @@
       ],
       "load_for": [],
       "paths": [],
+      "defers_to": [
+        "shopware-admin-js"
+      ],
       "routes": [
         {
           "reference": "sw-admin-js/references/architecture.md",
@@ -44,6 +47,9 @@
             "addPrivilegeMappingEntry\\(",
             "system_config:(read|update)",
             "enrichPrivileges\\("
+          ],
+          "exclude_paths": [
+            "**/*.md"
           ]
         },
         {
@@ -56,6 +62,9 @@
             "positionIdentifier",
             "swDefinePublic\\(",
             "Component\\.override\\("
+          ],
+          "exclude_paths": [
+            "**/*.md"
           ]
         },
         {
@@ -67,6 +76,9 @@
           "anchors_any": [
             "shallowMount\\(",
             "flushPromises\\("
+          ],
+          "exclude_paths": [
+            "**/*.md"
           ]
         },
         {
@@ -77,6 +89,9 @@
             "Shopware\\.Utils\\.debug\\.warn\\(",
             "<dialog[ >]",
             "\\bpopover="
+          ],
+          "exclude_paths": [
+            "**/*.md"
           ]
         }
       ]
@@ -95,6 +110,7 @@
       ],
       "load_for": [],
       "paths": [],
+      "defers_to": [],
       "routes": [
         {
           "reference": "sw-app-development/references/manifest-and-permissions.md",
@@ -130,6 +146,9 @@
       ],
       "load_for": [],
       "paths": [],
+      "defers_to": [
+        "shopware-php-code"
+      ],
       "routes": [
         {
           "reference": "sw-architecture/references/progressive-enhancement.md",
@@ -137,6 +156,11 @@
           "anchors_any": [
             "Feature::isActive\\(",
             "@deprecated tag:v"
+          ],
+          "exclude_paths": [
+            "**/tests/**",
+            "**/Test/**",
+            "**/*.md"
           ]
         },
         {
@@ -144,6 +168,14 @@
           "when": "A change couples two components or bundles.",
           "anchors_any": [
             "use Shopware\\\\(Storefront|Administration|Elasticsearch)\\\\"
+          ],
+          "exclude_paths": [
+            "**/tests/**",
+            "**/Test/**",
+            "**/*.md",
+            "src/Storefront/**",
+            "src/Administration/**",
+            "src/Elasticsearch/**"
           ]
         },
         {
@@ -157,6 +189,11 @@
             "extends (Entity|EntityTranslation|MappingEntity)Definition",
             "extends EntityExtension",
             "EntityRepository"
+          ],
+          "exclude_paths": [
+            "**/tests/**",
+            "**/Test/**",
+            "**/*.md"
           ]
         },
         {
@@ -169,6 +206,11 @@
             "ResetInterface",
             "kernel\\.reset",
             "\\$this->[A-Za-z]+\\[[^\\]]+\\] \\?\\?="
+          ],
+          "exclude_paths": [
+            "**/tests/**",
+            "**/Test/**",
+            "**/*.md"
           ]
         },
         {
@@ -184,6 +226,11 @@
             "getSubscribedEvents\\(",
             "ExtensionDispatcher",
             "extends (Event|Extension|NestedEvent)\\b"
+          ],
+          "exclude_paths": [
+            "**/tests/**",
+            "**/Test/**",
+            "**/*.md"
           ]
         },
         {
@@ -195,6 +242,9 @@
           "anchors_any": [
             "Doctrine\\\\DBAL\\\\Connection",
             "Feature::fake\\("
+          ],
+          "exclude_paths": [
+            "**/*.md"
           ]
         },
         {
@@ -204,6 +254,9 @@
             "[ (!]time\\(\\)",
             "CacheTagsEvent",
             "#\\[CoversNothing\\]"
+          ],
+          "exclude_paths": [
+            "**/*.md"
           ]
         }
       ]
@@ -224,6 +277,7 @@
         "answer"
       ],
       "paths": [],
+      "defers_to": [],
       "routes": []
     },
     {
@@ -243,6 +297,7 @@
         "ship"
       ],
       "paths": [],
+      "defers_to": [],
       "routes": [
         {
           "reference": "sw-change-impact/references/impact-review.md",
@@ -264,6 +319,10 @@
       ],
       "load_for": [],
       "paths": [],
+      "defers_to": [
+        "shopware-php-code",
+        "shopware-release-docs"
+      ],
       "routes": [
         {
           "reference": "sw-core-development/references/deprecations.md",
@@ -273,6 +332,11 @@
             "@major-deprecated",
             "Feature::triggerDeprecationOrThrow\\(",
             "(CompatibilityChange|TypeNarrowing)\\("
+          ],
+          "exclude_paths": [
+            "**/tests/**",
+            "**/Test/**",
+            "**/*.md"
           ]
         },
         {
@@ -285,6 +349,11 @@
           "anchors_any": [
             "\\* @(internal|final)$",
             "@experimental stableVersion"
+          ],
+          "exclude_paths": [
+            "**/tests/**",
+            "**/Test/**",
+            "**/*.md"
           ]
         },
         {
@@ -295,6 +364,11 @@
           ],
           "anchors_any": [
             "#\\[Route\\("
+          ],
+          "exclude_paths": [
+            "**/tests/**",
+            "**/Test/**",
+            "**/*.md"
           ]
         },
         {
@@ -307,6 +381,11 @@
             "Feature::isActive\\(",
             "HttpClientInterface",
             "ClockInterface"
+          ],
+          "exclude_paths": [
+            "**/tests/**",
+            "**/Test/**",
+            "**/*.md"
           ]
         },
         {
@@ -326,6 +405,11 @@
             "**/phpstan-baseline.neon",
             "**/phpstan*.neon",
             "**/phpstan*.neon.dist"
+          ],
+          "exclude_paths": [
+            "**/tests/**",
+            "**/Test/**",
+            "**/*.md"
           ]
         },
         {
@@ -339,6 +423,11 @@
             "#\\[AsEventListener",
             "getSubscribedEvents\\(",
             "->getSession\\("
+          ],
+          "exclude_paths": [
+            "**/tests/**",
+            "**/Test/**",
+            "**/*.md"
           ]
         },
         {
@@ -349,6 +438,11 @@
             "triggerDeprecationOrThrow\\(",
             "silentUntil",
             "#\\[BCChange"
+          ],
+          "exclude_paths": [
+            "**/tests/**",
+            "**/Test/**",
+            "**/*.md"
           ]
         },
         {
@@ -366,6 +460,11 @@
             "autoload: ",
             "#\\[AsCommand\\(",
             "->addOption\\("
+          ],
+          "exclude_paths": [
+            "**/tests/**",
+            "**/Test/**",
+            "**/*.md"
           ]
         },
         {
@@ -377,6 +476,11 @@
             "is_writable\\(",
             "function_exists\\(",
             "class_exists\\("
+          ],
+          "exclude_paths": [
+            "**/tests/**",
+            "**/Test/**",
+            "**/*.md"
           ]
         },
         {
@@ -387,6 +491,11 @@
             "\\.retired",
             "->deleteDirectory\\(",
             "theme/<hash>|themeHash"
+          ],
+          "exclude_paths": [
+            "**/tests/**",
+            "**/Test/**",
+            "**/*.md"
           ]
         }
       ]
@@ -406,6 +515,7 @@
         "review"
       ],
       "paths": [],
+      "defers_to": [],
       "routes": [
         {
           "reference": "sw-extension-review/references/lenses.md",
@@ -430,6 +540,11 @@
             "EntityRepository",
             "->search\\(",
             "->upsert\\("
+          ],
+          "exclude_paths": [
+            "**/tests/**",
+            "**/Test/**",
+            "**/*.md"
           ]
         },
         {
@@ -443,6 +558,11 @@
           "anchors_any": [
             "#\\[Route\\(",
             "_routeScope"
+          ],
+          "exclude_paths": [
+            "**/tests/**",
+            "**/Test/**",
+            "**/*.md"
           ]
         },
         {
@@ -452,6 +572,11 @@
             "CacheTagCollector",
             "CacheTagsEvent",
             "CacheInvalidator"
+          ],
+          "exclude_paths": [
+            "**/tests/**",
+            "**/Test/**",
+            "**/*.md"
           ]
         },
         {
@@ -463,6 +588,11 @@
           "anchors_any": [
             "extends MigrationStep",
             "updateDestructive\\("
+          ],
+          "exclude_paths": [
+            "**/tests/**",
+            "**/Test/**",
+            "**/*.md"
           ]
         },
         {
@@ -479,6 +609,11 @@
             "InstalledVersions::isInstalled\\(",
             "StorefrontRouteScope",
             "extends StorefrontController"
+          ],
+          "exclude_paths": [
+            "**/tests/**",
+            "**/Test/**",
+            "**/*.md"
           ]
         },
         {
@@ -488,6 +623,11 @@
             "file_put_contents\\(",
             "curl_init\\(",
             "mkdir\\("
+          ],
+          "exclude_paths": [
+            "**/tests/**",
+            "**/Test/**",
+            "**/*.md"
           ]
         },
         {
@@ -535,6 +675,11 @@
             "[Ii]dempotency",
             "addPrivilegeMappingEntry\\(",
             "\\$request->(get\\(|query->|request->)"
+          ],
+          "exclude_paths": [
+            "**/tests/**",
+            "**/Test/**",
+            "**/*.md"
           ]
         },
         {
@@ -547,6 +692,11 @@
             "shopware-(shop|app)-signature",
             "<webhook\\b",
             "hash_hmac\\("
+          ],
+          "exclude_paths": [
+            "**/tests/**",
+            "**/Test/**",
+            "**/*.md"
           ]
         },
         {
@@ -558,6 +708,13 @@
           "anchors_any": [
             "PluginManager\\.register\\(",
             "extends Plugin\\b"
+          ],
+          "exclude_paths": [
+            "**/tests/**",
+            "**/Test/**",
+            "**/*.md",
+            "**/*.test.{js,ts}",
+            "**/*.spec.{js,ts}"
           ]
         },
         {
@@ -572,6 +729,13 @@
           ],
           "anchors_any": [
             "\\{% sw_extends"
+          ],
+          "exclude_paths": [
+            "**/tests/**",
+            "**/Test/**",
+            "**/*.md",
+            "**/*.test.{js,ts}",
+            "**/*.spec.{js,ts}"
           ]
         },
         {
@@ -586,6 +750,13 @@
             "Cache-Control",
             "->setPrivate\\(",
             "BeforeSendResponseEvent"
+          ],
+          "exclude_paths": [
+            "**/tests/**",
+            "**/Test/**",
+            "**/*.md",
+            "**/*.test.{js,ts}",
+            "**/*.spec.{js,ts}"
           ]
         },
         {
@@ -601,6 +772,9 @@
             "addPrivilegeMappingEntry\\(",
             "system_config:(read|update)",
             "enrichPrivileges\\("
+          ],
+          "exclude_paths": [
+            "**/*.md"
           ]
         },
         {
@@ -613,6 +787,9 @@
             "positionIdentifier",
             "swDefinePublic\\(",
             "Component\\.override\\("
+          ],
+          "exclude_paths": [
+            "**/*.md"
           ]
         },
         {
@@ -625,6 +802,11 @@
             "ResetInterface",
             "kernel\\.reset",
             "\\$this->[A-Za-z]+\\[[^\\]]+\\] \\?\\?="
+          ],
+          "exclude_paths": [
+            "**/tests/**",
+            "**/Test/**",
+            "**/*.md"
           ]
         },
         {
@@ -635,6 +817,11 @@
             "triggerDeprecationOrThrow\\(",
             "silentUntil",
             "#\\[BCChange"
+          ],
+          "exclude_paths": [
+            "**/tests/**",
+            "**/Test/**",
+            "**/*.md"
           ]
         },
         {
@@ -658,6 +845,11 @@
             "getSubscribedEvents\\(",
             "ExtensionDispatcher",
             "extends (Event|Extension|NestedEvent)\\b"
+          ],
+          "exclude_paths": [
+            "**/tests/**",
+            "**/Test/**",
+            "**/*.md"
           ]
         },
         {
@@ -671,6 +863,11 @@
             "extends (Entity|EntityTranslation|MappingEntity)Definition",
             "extends EntityExtension",
             "EntityRepository"
+          ],
+          "exclude_paths": [
+            "**/tests/**",
+            "**/Test/**",
+            "**/*.md"
           ]
         },
         {
@@ -684,6 +881,11 @@
             "store-api",
             "StoreApiResponse",
             "extends Abstract[A-Za-z]+Route\\b"
+          ],
+          "exclude_paths": [
+            "**/tests/**",
+            "**/Test/**",
+            "**/*.md"
           ]
         },
         {
@@ -696,6 +898,11 @@
             "->addAssociation\\(",
             "EqualsFilter\\(",
             "->fetch(All|One|Associative|FirstColumn)[A-Za-z]*\\("
+          ],
+          "exclude_paths": [
+            "**/tests/**",
+            "**/Test/**",
+            "**/*.md"
           ]
         },
         {
@@ -703,6 +910,11 @@
           "when": "The change adds or keeps a class_exists or method_exists check for Shopware API.",
           "anchors_any": [
             "(class|method|interface)_exists\\((\\\\?Shopware\\b|[A-Z][A-Za-z]+::class)"
+          ],
+          "exclude_paths": [
+            "**/tests/**",
+            "**/Test/**",
+            "**/*.md"
           ]
         },
         {
@@ -751,6 +963,7 @@
       "paths": [
         "**/*.php"
       ],
+      "defers_to": [],
       "routes": []
     },
     {
@@ -766,6 +979,7 @@
       ],
       "load_for": [],
       "paths": [],
+      "defers_to": [],
       "routes": [
         {
           "reference": "sw-plugin-development/references/dal-usage.md",
@@ -780,6 +994,11 @@
             "EntityRepository",
             "->search\\(",
             "->upsert\\("
+          ],
+          "exclude_paths": [
+            "**/tests/**",
+            "**/Test/**",
+            "**/*.md"
           ]
         },
         {
@@ -793,6 +1012,11 @@
           "anchors_any": [
             "#\\[Route\\(",
             "_routeScope"
+          ],
+          "exclude_paths": [
+            "**/tests/**",
+            "**/Test/**",
+            "**/*.md"
           ]
         },
         {
@@ -802,6 +1026,11 @@
             "CacheTagCollector",
             "CacheTagsEvent",
             "CacheInvalidator"
+          ],
+          "exclude_paths": [
+            "**/tests/**",
+            "**/Test/**",
+            "**/*.md"
           ]
         },
         {
@@ -813,6 +1042,11 @@
           "anchors_any": [
             "extends MigrationStep",
             "updateDestructive\\("
+          ],
+          "exclude_paths": [
+            "**/tests/**",
+            "**/Test/**",
+            "**/*.md"
           ]
         },
         {
@@ -829,6 +1063,11 @@
             "InstalledVersions::isInstalled\\(",
             "StorefrontRouteScope",
             "extends StorefrontController"
+          ],
+          "exclude_paths": [
+            "**/tests/**",
+            "**/Test/**",
+            "**/*.md"
           ]
         },
         {
@@ -838,6 +1077,11 @@
             "file_put_contents\\(",
             "curl_init\\(",
             "mkdir\\("
+          ],
+          "exclude_paths": [
+            "**/tests/**",
+            "**/Test/**",
+            "**/*.md"
           ]
         }
       ]
@@ -857,6 +1101,7 @@
         "run"
       ],
       "paths": [],
+      "defers_to": [],
       "routes": [
         {
           "reference": "sw-podman-dev/references/shopware-dev-hub.md",
@@ -890,6 +1135,9 @@
         "ship"
       ],
       "paths": [],
+      "defers_to": [
+        "shopware-pr-hygiene"
+      ],
       "routes": [
         {
           "reference": "sw-pr-description/references/pr-body-template.md",
@@ -909,6 +1157,7 @@
       ],
       "load_for": [],
       "paths": [],
+      "defers_to": [],
       "routes": [
         {
           "reference": "sw-pr-review/references/review-workflow.md",
@@ -935,6 +1184,7 @@
         "answer"
       ],
       "paths": [],
+      "defers_to": [],
       "routes": [
         {
           "reference": "sw-research-and-escalation/references/docs-map.md",
@@ -985,6 +1235,10 @@
         "review"
       ],
       "paths": [],
+      "defers_to": [
+        "shopware-change-scope",
+        "sw-review"
+      ],
       "routes": [
         {
           "reference": "sw-review-learnings/references/api-aware.md",
@@ -997,6 +1251,11 @@
             "store-api",
             "StoreApiResponse",
             "extends Abstract[A-Za-z]+Route\\b"
+          ],
+          "exclude_paths": [
+            "**/tests/**",
+            "**/Test/**",
+            "**/*.md"
           ]
         },
         {
@@ -1009,6 +1268,11 @@
             "->addAssociation\\(",
             "EqualsFilter\\(",
             "->fetch(All|One|Associative|FirstColumn)[A-Za-z]*\\("
+          ],
+          "exclude_paths": [
+            "**/tests/**",
+            "**/Test/**",
+            "**/*.md"
           ]
         },
         {
@@ -1016,12 +1280,22 @@
           "when": "The change adds or keeps a class_exists or method_exists check for Shopware API.",
           "anchors_any": [
             "(class|method|interface)_exists\\((\\\\?Shopware\\b|[A-Z][A-Za-z]+::class)"
+          ],
+          "exclude_paths": [
+            "**/tests/**",
+            "**/Test/**",
+            "**/*.md"
           ]
         },
         {
           "reference": "sw-review-learnings/references/change-scope.md",
           "when": "A fix grows beyond the bug.",
-          "on_demand": true
+          "on_demand": true,
+          "exclude_paths": [
+            "**/tests/**",
+            "**/Test/**",
+            "**/*.md"
+          ]
         }
       ]
     },
@@ -1040,6 +1314,7 @@
       ],
       "load_for": [],
       "paths": [],
+      "defers_to": [],
       "routes": [
         {
           "reference": "sw-security/references/secrets-and-config.md",
@@ -1069,6 +1344,11 @@
             "[Ii]dempotency",
             "addPrivilegeMappingEntry\\(",
             "\\$request->(get\\(|query->|request->)"
+          ],
+          "exclude_paths": [
+            "**/tests/**",
+            "**/Test/**",
+            "**/*.md"
           ]
         },
         {
@@ -1081,6 +1361,11 @@
             "shopware-(shop|app)-signature",
             "<webhook\\b",
             "hash_hmac\\("
+          ],
+          "exclude_paths": [
+            "**/tests/**",
+            "**/Test/**",
+            "**/*.md"
           ]
         }
       ]
@@ -1100,6 +1385,7 @@
       ],
       "load_for": [],
       "paths": [],
+      "defers_to": [],
       "routes": [
         {
           "reference": "sw-storefront/references/js-plugins.md",
@@ -1110,6 +1396,13 @@
           "anchors_any": [
             "PluginManager\\.register\\(",
             "extends Plugin\\b"
+          ],
+          "exclude_paths": [
+            "**/tests/**",
+            "**/Test/**",
+            "**/*.md",
+            "**/*.test.{js,ts}",
+            "**/*.spec.{js,ts}"
           ]
         },
         {
@@ -1124,6 +1417,13 @@
           ],
           "anchors_any": [
             "\\{% sw_extends"
+          ],
+          "exclude_paths": [
+            "**/tests/**",
+            "**/Test/**",
+            "**/*.md",
+            "**/*.test.{js,ts}",
+            "**/*.spec.{js,ts}"
           ]
         },
         {
@@ -1138,6 +1438,13 @@
             "Cache-Control",
             "->setPrivate\\(",
             "BeforeSendResponseEvent"
+          ],
+          "exclude_paths": [
+            "**/tests/**",
+            "**/Test/**",
+            "**/*.md",
+            "**/*.test.{js,ts}",
+            "**/*.spec.{js,ts}"
           ]
         }
       ]
@@ -1157,6 +1464,9 @@
       "load_for": [],
       "paths": [
         "**/tests/**/*Test.php"
+      ],
+      "defers_to": [
+        "shopware-phpunit-tests"
       ],
       "routes": [
         {
@@ -1192,6 +1502,7 @@
           "when": "The test lives in shopware/shopware (migrations, Codecov, `#[CoversClass]`).",
           "paths_any": [
             "tests/migration/**",
+            "tests/devops/**",
             "tests/{unit,integration}/{Core,Storefront,Administration,Elasticsearch}/**"
           ],
           "anchors_any": [

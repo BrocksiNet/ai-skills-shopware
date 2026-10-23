@@ -11,6 +11,7 @@ metadata:
   contexts: core plugin project
   tasks: build review
   paths: "**/tests/**/*Test.php"
+  defers_to: shopware-phpunit-tests
 ---
 
 # Shopware testing (PHPUnit)
@@ -31,7 +32,7 @@ Read only the reference that matches the task or the files it changes:
 | [`exception-assertions.md`](references/exception-assertions.md) | A test asserts an exception. | `->expectException(Object\|Message\|Code)?(` |
 | [`test-shape-and-flags.md`](references/test-shape-and-flags.md) | You need data providers, feature flags or coverage attributes. | `#[DataProvider(`, … |
 | [`integration-repository.md`](references/integration-repository.md) | An integration test reads or writes through a repository. | `tests/integration/**/*Test.php`, `IntegrationTestBehaviour` |
-| [`core-platform-patterns.md`](references/core-platform-patterns.md) | The test lives in shopware/shopware (migrations, Codecov, `#[CoversClass]`). | `tests/migration/**`, `tests/{unit,integration}/{Core,Storefront,Administration,Elasticsearch}/**`, `@codeCoverageIgnore` |
+| [`core-platform-patterns.md`](references/core-platform-patterns.md) | The test lives in shopware/shopware (migrations, Codecov, `#[CoversClass]`). | `tests/migration/**`, `tests/devops/**`, `@codeCoverageIgnore`, … |
 | [`external-inspiration.md`](references/external-inspiration.md) | You want plugin test patterns from FriendsOfShopware. | `custom/plugins/*/tests/**`, `custom/static-plugins/*/tests/**` |
 <!-- routes:end -->
 

@@ -1,11 +1,5 @@
 {
   "sw-core-development": [
     "references/release-notes-and-adr.md"
-  ],
-  "sw-extension-review": [
-    "../sw-review-learnings/references/api-aware.md"
-  ],
-  "sw-review-learnings": [
-    "references/api-aware.md"
   ]
 }

@@ -42,6 +42,17 @@ describe('resolveBorrowed', () => {
     assert.deepEqual(when, { routes: [{ when: 'Mine.', anchors_any: ['new Criteria\\('], reference: BORROW }] });
   });
 
+  test('a borrowed route takes the lender exclusions, its own or the lender file default', () => {
+    skill('sw-excluder', { exclude_paths: ['**/tests/**'], routes: [lender] }, ['dal.md']);
+    const borrowed = '../sw-excluder/references/dal.md';
+    const { value } = resolveBorrowed(dir, { routes: [{ reference: borrowed }] });
+    assert.deepEqual(value, {
+      routes: [
+        { when: 'DAL reads.', anchors_any: ['new Criteria\\('], exclude_paths: ['**/tests/**'], reference: borrowed },
+      ],
+    });
+  });
+
   test('a missing lending skill or route is an error', () => {
     const { errors } = resolveBorrowed(dir, {
       routes: [{ reference: '../sw-none/references/a.md' }, { reference: '../sw-lender/references/x.md' }],

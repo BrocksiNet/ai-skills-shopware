@@ -1,0 +1,9 @@
+{
+  "sw-extension-review": [
+    "../sw-testing/references/integration-repository.md"
+  ],
+  "sw-testing": [
+    "references/integration-repository.md",
+    "references/core-platform-patterns.md"
+  ]
+}

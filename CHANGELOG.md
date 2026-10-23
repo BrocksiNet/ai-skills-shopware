@@ -29,6 +29,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   or line that triggered each. It also prints the install command for
   missing skills. Its `index.json` is generated from a new `metadata` block
   in every `SKILL.md` and from the routes.
+- Routes take `exclude_paths`, with a per-file default: production-code
+  references no longer fire on tests, ADRs or release notes, and a
+  Storefront file importing Storefront no longer selects the component
+  independence rules. A renamed file routes under its old and new path.
+  `tests/devops/` selects the core test patterns. New routing case
+  `test-suite-move`.
+- The router ranks skills and references by how many files matched, names
+  the base branch, merge base and commit count, warns on large diffs, and
+  says which core trunk skill leads a topic (`defers_to` metadata).
 - `sw-help`: what every skill is for, grouped by task, with example prompts.
 - `validate-skills` checks the skill metadata, that the router index is up
   to date, and that `sw-help` names every skill.

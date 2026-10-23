@@ -11,6 +11,7 @@ license: MIT
 metadata:
   contexts: core
   tasks: build review ship
+  defers_to: shopware-php-code shopware-release-docs
 ---
 
 # Shopware platform / core development (strict surface)
