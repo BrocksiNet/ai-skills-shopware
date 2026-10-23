@@ -37,6 +37,14 @@ export interface TrunkSource {
   enforced_by?: Enforcement[];
 }
 
+/** Where in an upstream source (rules/sources.json) a rule was learned. */
+export interface Upstream {
+  /** Source ID from rules/sources.json. */
+  source: string;
+  /** `path#anchor` in that repository; the anchor is a heading slug. */
+  path: string;
+}
+
 export interface Rule {
   id: RuleId;
   skill: string;
@@ -49,6 +57,8 @@ export interface Rule {
   eval: string | null;
   eval_reason?: string;
   trunk?: TrunkSource;
+  /** Upstream skill sets the rule was learned from (plan WP12). */
+  upstream?: Upstream[];
   core_guide_ids: string[];
   audience: Audience[];
   defer_on_trunk: boolean;
@@ -97,6 +107,16 @@ function trunkErrors(label: string, t: unknown): string[] {
   return [...errors, ...t.enforced_by.flatMap((e, i) => enforcementErrors(`${label}: trunk.enforced_by[${i}]`, e))];
 }
 
+function upstreamErrors(label: string, u: unknown): string[] {
+  if (u === undefined) return [];
+  if (!Array.isArray(u)) return [`${label}: upstream must be a list`];
+  return u.flatMap((e, i) =>
+    isRecord(e) && isText(e.source) && isText(e.path) && Object.keys(e).length === 2
+      ? []
+      : [`${label}: upstream[${i}] needs exactly a source and a path`],
+  );
+}
+
 /** Field errors of one catalog entry; empty when it is a valid Rule. */
 export function ruleErrors(r: unknown): string[] {
   if (!isRecord(r)) return [`${JSON.stringify(r)}: rule must be an object`];
@@ -116,7 +136,7 @@ export function ruleErrors(r: unknown): string[] {
   }
   if (typeof r.defer_on_trunk !== 'boolean') errors.push(`${label}: defer_on_trunk must be true or false`);
   if (r.see !== undefined && !isStringArray(r.see)) errors.push(`${label}: see must be a list of IDs`);
-  return [...errors, ...trunkErrors(label, r.trunk)];
+  return [...errors, ...trunkErrors(label, r.trunk), ...upstreamErrors(label, r.upstream)];
 }
 
 const isRule = (r: unknown): r is Rule => ruleErrors(r).length === 0;

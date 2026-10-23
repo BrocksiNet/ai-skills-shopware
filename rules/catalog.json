@@ -4475,6 +4475,7 @@
       "since": "2026-10-20",
       "eval": null,
       "eval_reason": "Documented only; no eval yet.",
+      "trunk": { "source": ".github/PULL_REQUEST_TEMPLATE.md" },
       "core_guide_ids": [],
       "audience": [
         "core"
@@ -4579,6 +4580,7 @@
       "since": "2026-10-20",
       "eval": null,
       "eval_reason": "Documented only; no eval yet.",
+      "trunk": { "source": ".github/PULL_REQUEST_TEMPLATE.md#5-checklist" },
       "core_guide_ids": [],
       "audience": [
         "core"

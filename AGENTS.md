@@ -25,7 +25,7 @@ The terms the rest of this guide uses. Details follow in the sections linked.
 | Near-miss task | `review-<topic>-near-miss`: a real problem next to a rule that does not cover it. The finding must report it without citing that decoy rule. Guards against the most common review error, a plausible but wrong rule ID. |
 | Golden fixtures | `fixtures/pass/` and `fixtures/fail/` of a task: known answers the grader must pass and fail on every push, so a grader cannot silently go soft. |
 | Enforced by CI | A generated `SKILL.md` section listing rules an existing check (PHPStan, ECS, ESLint, Danger, a core test) already catches, so the agent does not repeat them. |
-| Trunk mining | The weekly `trunk-drift` issue about changes on `shopware/shopware` trunk; `docs/.mining-state.json` marks how far it has been read. |
+| Drift mining | The weekly `trunk-drift` issue about changes on `shopware/shopware` trunk and the upstream skill sets in `rules/sources.json`, grouped by the skill and rule each change touches; `docs/.mining-state.json` marks how far each source has been read. See [`docs/maintenance.md`](docs/maintenance.md#reading-the-drift-issue). |
 
 ## Repository layout
 
@@ -53,8 +53,10 @@ evals/tools/ast/              # Node AST graders (php-parser + @babel/parser)
 evals/routing/<case>/         # diff.patch + expected.json for reference routing
 
 rules/
-  catalog.json                # rule IDs: owning skill, file, eval, trunk source
+  catalog.json                # rule IDs: owning skill, file, eval, trunk and upstream source
   catalog.schema.json         # field reference for catalog.json
+  sources.json                # repositories drift mining reads, and our skills per path
+  sources.schema.json         # field reference for sources.json
 
 tools/                        # repo tooling in TypeScript (Node 24, no build step)
   src/                        # typed modules (catalog, rule validator, renderers)
@@ -71,7 +73,8 @@ tools/                        # repo tooling in TypeScript (Node 24, no build st
   bin/activation.ts           # Layer 1 activation evals
   bin/eval-local.ts           # local model evals with your agent login, then the gate
   bin/validate-skills.ts      # skill structure, budgets, conflicts, rule IDs, routes
-  bin/mine-trunk.ts           # weekly trunk drift report, and the /mined state update
+  bin/mine-trunk.ts           # weekly drift report over rules/sources.json, and the /mined state update
+  src/map-signal.ts           # ties a change (signal) to the skills, references and rules it touches
   bin/grade.ts                # runs one task's grader (what every grade.sh calls)
   graders/<task>.ts           # one grader per eval task: workdir + transcript -> verdict
   src/grade/                  # grader kit (file search, comment stripping, PHP method, review findings)
@@ -95,7 +98,7 @@ docs/                         # local validation, smoke evals, tooling stack
 .github/workflows/
   validate.yml                # cheap CI on every push (no model calls)
   evals.yml                   # model evals (gated: schedule, label, dispatch)
-  mine-trunk.yml              # weekly trunk-drift issue; /mined moves docs/.mining-state.json
+  mine-trunk.yml              # weekly drift issue for every source; /mined moves docs/.mining-state.json
   api-index.yml               # weekly public API index build, published as the `api-index` release
 ```
 
@@ -220,7 +223,9 @@ contract: [`evals/README.md`](evals/README.md#review-tasks-review-rule-catch---i
    point at another rule with a code span, `` `PLG-011` ``.
 5. Add the catalog entry: `file`, `title`, `eval` (task name) or `eval: null`
    with an `eval_reason`, and `trunk` / `defer_on_trunk` when core has the
-   rule. Never reuse an ID; a dropped rule becomes `retired` or
+   rule. When the rule comes from a trunk guideline or an upstream skill
+   set, set `trunk.source` or `upstream` to `path#heading-anchor`, so the
+   weekly drift issue files later changes there under this rule. Never reuse an ID; a dropped rule becomes `retired` or
    `superseded:<ID>` and leaves the skill text.
    When a CI check already catches the rule, add it to `trunk.enforced_by`
    (`tool`, `kind`, `catches`, `misses`, `trunk_only`) from the check's source,
