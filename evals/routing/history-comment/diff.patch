@@ -1,0 +1,47 @@
+diff --git a/src/Listing/ListingCriteriaSubscriber.php b/src/Listing/ListingCriteriaSubscriber.php
+index 3c1d2e4..8f0a7b1 100644
+--- a/src/Listing/ListingCriteriaSubscriber.php
++++ b/src/Listing/ListingCriteriaSubscriber.php
+@@ -3,6 +3,10 @@
+ namespace Swag\ListingTools\Listing;
+ 
+ use Shopware\Core\Content\Product\Events\ProductListingCriteriaEvent;
++use Shopware\Core\Framework\DataAbstractionLayer\Search\Criteria;
++use Shopware\Core\Framework\DataAbstractionLayer\Search\Filter\EqualsFilter;
++use Shopware\Core\Framework\DataAbstractionLayer\Search\Filter\NotFilter;
++use Shopware\Core\System\SalesChannel\SalesChannelContext;
+ use Shopware\Core\System\SystemConfig\SystemConfigService;
+ use Symfony\Component\EventDispatcher\EventSubscriberInterface;
+ 
+@@ -20,5 +24,31 @@ class ListingCriteriaSubscriber implements EventSubscriberInterface
+     public function onCriteria(ProductListingCriteriaEvent $event): void
+     {
+         $event->getCriteria()->addAssociation('cover');
++        $this->addCloseoutFilter($event->getCriteria(), $event->getSalesChannelContext());
++    }
++
++    /**
++     * Hides sold-out closeout products, like ProductDetailRoute::addCloseoutFilter().
++     *
++     * An earlier revision of this change filtered on `available` instead, but that kept
++     * dropping closeout products after an admin turned the setting off, so the filter now
++     * reads the system config first. Previously this method also added the `visibilities`
++     * association; that was removed again in review (see #482).
++     */
++    private function addCloseoutFilter(Criteria $criteria, SalesChannelContext $context): void
++    {
++        $hide = $this->config->getBool(
++            'core.listing.hideCloseoutProductsWhenOutOfStock',
++            $context->getSalesChannelId(),
++        );
++
++        if (!$hide) {
++            return;
++        }
++
++        $criteria->addFilter(new NotFilter(NotFilter::CONNECTION_AND, [
++            new EqualsFilter('product.isCloseout', true),
++            new EqualsFilter('product.available', false),
++        ]));
+     }
+ }

@@ -1,0 +1,14 @@
+```json
+{
+  "findings": [
+    {
+      "rule_id": "REV-035",
+      "severity": "major",
+      "file": "src/Check/CategoryProbe.php",
+      "line": 39,
+      "summary": "searchIds() never dispatches sales_channel.category.loaded, so categories that Dynamic Access deactivates on load still count as visible and the probe requests a page the storefront rejects.",
+      "fix": "Load the candidates with search() and return the first one whose getActive() is true."
+    }
+  ]
+}
+```
