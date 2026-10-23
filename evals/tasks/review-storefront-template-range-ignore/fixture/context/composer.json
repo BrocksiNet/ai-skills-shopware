@@ -1,0 +1,22 @@
+{
+    "name": "swag/navigation-teaser",
+    "description": "Category teasers in the main navigation",
+    "type": "shopware-platform-plugin",
+    "version": "1.3.0",
+    "license": "MIT",
+    "require": {
+        "shopware/core": "~6.6.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "Swag\\NavigationTeaser\\": "src/"
+        }
+    },
+    "extra": {
+        "shopware-plugin-class": "Swag\\NavigationTeaser\\SwagNavigationTeaser",
+        "label": {
+            "de-DE": "Navigations-Teaser",
+            "en-GB": "Navigation teaser"
+        }
+    }
+}

@@ -26,8 +26,9 @@ Ask what else this change touches, even if those files are not in the diff.
 If you cannot name who else is affected, you have not reviewed the change.
 For the public API, `node tools/api-index/bin/api-diff.ts --repo .
 --base origin/trunk --head HEAD` (ai-skills-shopware tools) names the
-routes, entity fields, feature flags and configuration keys the change
-removes, changes or deprecates.
+routes, entity fields, feature flags, configuration keys, admin components
+and blocks, storefront templates, blocks and JS plugins, and Twig functions
+the change removes, changes or deprecates.
 
 ## Who pays
 

@@ -8,7 +8,9 @@ Operators and integrations notice after the update. With the
 ai-skills-shopware tools, `node tools/api-index/bin/api-diff.ts --repo .
 --base origin/trunk --head HEAD` lists the routes, entity fields and flags,
 feature flags and configuration keys a branch removes or changes without a
-deprecation, and what it newly deprecates.
+deprecation, and what it newly deprecates. `--surface admin,storefront,twig`
+does the same for admin components, props and blocks, storefront templates,
+blocks and JS plugins, and Twig functions.
 
 ## Rules
 

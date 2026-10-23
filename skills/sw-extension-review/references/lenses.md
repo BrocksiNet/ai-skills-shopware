@@ -32,9 +32,12 @@ points at a replacement the extenders can use today: `CORE-063`.
   when only the method is new: `PLG-024`?
 - When `api-facts` output comes with the task, or the ai-skills-shopware
   tools are at hand (`node tools/api-index/bin/api-facts.ts --apply
-  diff.patch <extension>`), use its facts for the two questions above. They
-  are facts about Shopware's source per release, not findings: check each
-  against the diff before you report it.
+  diff.patch <extension>`), use its facts for the two questions above. It
+  also covers the admin components and blocks, storefront templates and
+  blocks, JS plugins and Twig functions the change overrides or calls; one
+  missing from a release of the range is `PLG-001` too. They are facts about
+  Shopware's source per release, not findings: check each against the diff
+  before you report it.
 - Does code that loads on every request use a package that `composer.json`
   only suggests, outside its guard: `PLG-032`?
 - Does an admin override replace a core method without `$super`:
@@ -100,6 +103,7 @@ problem with `null`, or with the rule that does cover it:
 | An HTTP call made synchronously in the request, with no queue anywhere | `REV-033` (inline fallback when queueing fails) | `null` |
 | An idempotency key or stored response not scoped to the caller | `SEC-005` (input validation) | `SEC-008` |
 | An admin override of a core component that skips `$super` | `ADM-039` (the API a shipped component offers) | `ADM-042` |
+| An override of a core admin block, storefront template or block, or JS plugin that a release in the `shopware/core` range lacks | `ADM-039`, `SF-001`, `SF-011` (the API the extension itself offers) | `PLG-001` |
 | Plugin ACL roles that grant `system_config` read or write | `ADM-016` (UI checks of privileges) | `ADM-043` |
 
 ## Core-only rules

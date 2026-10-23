@@ -1,0 +1,14 @@
+```json
+{
+  "findings": [
+    {
+      "rule_id": null,
+      "severity": "nit",
+      "file": "src/Resources/app/storefront/src/main.js",
+      "line": 7,
+      "summary": "Core deprecates this for 6.7.0; plan the move before raising the range.",
+      "fix": "Track it for the 6.7 release of the plugin."
+    }
+  ]
+}
+```

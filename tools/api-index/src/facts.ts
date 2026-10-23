@@ -4,6 +4,7 @@
 // index can use it as is.
 import { builtinMembers } from './builtin.ts';
 import { parseConstraint } from './constraint.ts';
+import { memberOwner, parentOwner } from './surfaces.ts';
 import { compareReleases, fromRanges, type Timeline, type TimelineItem, type Tracked } from './timeline.ts';
 
 /** Releases of the timeline in the range, oldest first. Trunk is never in a range. */
@@ -63,6 +64,18 @@ export class Lookup {
       if (set.has(index)) return span.value;
     }
     return undefined;
+  }
+
+  /** A frontend member at a release: its own item, or the one of the
+   *  component or template its owner extends. */
+  inherited(id: string, index: number, depth = 0): TimelineItem | undefined {
+    const own = this.get(id);
+    if (own !== undefined && this.present(own, index)) return own;
+    const owner = memberOwner(id);
+    const item = owner === undefined || depth > 12 ? undefined : this.get(owner);
+    if (owner === undefined || item === undefined || !this.present(item, index)) return undefined;
+    const parent = parentOwner(owner, this.value(item, 'signature', index));
+    return parent === undefined ? undefined : this.inherited(`${parent}${id.slice(owner.length)}`, index, depth + 1);
   }
 
   /** The item that declares `member` for `owner` at a release: the class
@@ -203,16 +216,23 @@ export function presentThroughout(lookup: Lookup, target: string, range: string[
   });
 }
 
+function phpItem(lookup: Lookup, target: string, index: number): TimelineItem | 'external' | undefined {
+  const [owner = '', member] = target.replace(/^php:/u, '').split('::');
+  return member === undefined ? lookup.get(target) : lookup.member(owner, member, index);
+}
+
 /** Facts about one target over the releases of a range. A member inherits
  *  `internal`, `deprecated` and `experimental` from its class. */
 export function factsFor(lookup: Lookup, target: string, how: string, range: string[]): Fact[] {
   const names = lookup.names;
   const indexes = range.map((release) => names.indexOf(release)).filter((index) => index !== -1);
   const [owner = '', member] = target.replace(/^php:/u, '').split('::');
+  // A frontend member inherits from its component or template, as a PHP member from its class.
+  const frontend = memberOwner(target);
   const found = indexes.map((index) => ({
     index,
-    klass: lookup.get(`php:${owner}`),
-    item: member === undefined ? lookup.get(target) : lookup.member(owner, member, index),
+    klass: lookup.get(frontend ?? `php:${owner}`),
+    item: frontend === undefined ? phpItem(lookup, target, index) : lookup.inherited(target, index),
   }));
   if (found.every(({ klass, item }) => klass === undefined && item === undefined)) {
     return [{ target, kind: 'unknown', releases: [] }];
@@ -237,7 +257,7 @@ export function factsFor(lookup: Lookup, target: string, how: string, range: str
       ),
     });
   }
-  facts.push(...flagFacts(lookup, target, member !== undefined, resolved, indexes));
+  facts.push(...flagFacts(lookup, target, member !== undefined || frontend !== undefined, resolved, indexes));
   if (how === 'extends') {
     const final = resolved
       .filter(({ index, item }) => item !== undefined && lookup.value(item, 'final', index) !== undefined)

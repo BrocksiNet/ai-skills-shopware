@@ -1,0 +1,6 @@
+{% block sw_customer_list_grid_columns %}
+    {% parent %}
+    <template #column-swagOrderCount="{ item }">
+        {{ item.extensions.swagCustomerInsights?.orderCount ?? 0 }}
+    </template>
+{% endblock %}

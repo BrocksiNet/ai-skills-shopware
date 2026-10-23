@@ -154,25 +154,35 @@ export function fromRanges(ranges: Range[], names: string[]): Set<number> {
 }
 
 interface Accumulator {
-  item: Item;
+  kind: ItemKind;
+  file: string;
   present: number[];
   values: Map<Tracked, Map<string, number[]>>;
 }
 
-/** Merges snapshots into a timeline. The snapshots are ordered by release
- *  version; a ref that is not a version (trunk) goes last. */
-export function mergeSnapshots(snapshots: Snapshot[]): Timeline {
-  const ordered = snapshots.toSorted((a, b) => compareReleases(releaseName(a.ref), releaseName(b.ref)));
-  const names = ordered.map((snapshot) => releaseName(snapshot.ref));
-  const items = new Map<string, Accumulator>();
-  ordered.forEach((snapshot, index) => {
+/** Merges snapshots into a timeline one at a time, oldest release first, so
+ *  a caller never holds every snapshot at once. */
+export class TimelineBuilder {
+  readonly #items = new Map<string, Accumulator>();
+  readonly #releases: Release[] = [];
+
+  add(snapshot: Snapshot): void {
+    const index = this.#releases.length;
+    this.#releases.push({
+      release: releaseName(snapshot.ref),
+      ref: snapshot.ref,
+      sha: snapshot.sha,
+      builtAt: snapshot.builtAt,
+      generator: snapshot.generator,
+    });
     for (const item of snapshot.items) {
-      let entry = items.get(item.id);
+      let entry = this.#items.get(item.id);
       if (entry === undefined) {
-        entry = { item, present: [], values: new Map() };
-        items.set(item.id, entry);
+        entry = { kind: item.kind, file: item.file, present: [], values: new Map() };
+        this.#items.set(item.id, entry);
       }
-      entry.item = item;
+      entry.kind = item.kind;
+      entry.file = item.file;
       entry.present.push(index);
       for (const field of TRACKED) {
         const value = fieldValue(item, field);
@@ -182,33 +192,37 @@ export function mergeSnapshots(snapshots: Snapshot[]): Timeline {
           byValue = new Map();
           entry.values.set(field, byValue);
         }
-        byValue.set(value, [...(byValue.get(value) ?? []), index]);
+        const indexes = byValue.get(value);
+        if (indexes === undefined) byValue.set(value, [index]);
+        else indexes.push(index);
       }
     }
-  });
-  const merged: TimelineItem[] = [];
-  for (const { item, present, values } of items.values()) {
-    const history: Partial<Record<Tracked, Span[]>> = {};
-    for (const field of TRACKED) {
-      const byValue = values.get(field);
-      if (byValue === undefined) continue;
-      history[field] = [...byValue].map(([value, indexes]) => ({ value, ranges: toRanges(indexes, names) }));
-    }
-    merged.push({ id: item.id, kind: item.kind, file: item.file, present: toRanges(present, names), history });
   }
-  merged.sort((a, b) => (a.id < b.id ? -1 : a.id > b.id ? 1 : 0));
-  return {
-    schema: SCHEMA,
-    generator: GENERATOR,
-    releases: ordered.map((snapshot) => ({
-      release: releaseName(snapshot.ref),
-      ref: snapshot.ref,
-      sha: snapshot.sha,
-      builtAt: snapshot.builtAt,
-      generator: snapshot.generator,
-    })),
-    items: merged,
-  };
+
+  build(): Timeline {
+    const names = this.#releases.map((release) => release.release);
+    const merged: TimelineItem[] = [];
+    for (const [id, { kind, file, present, values }] of this.#items) {
+      const history: Partial<Record<Tracked, Span[]>> = {};
+      for (const field of TRACKED) {
+        const byValue = values.get(field);
+        if (byValue === undefined) continue;
+        history[field] = [...byValue].map(([value, indexes]) => ({ value, ranges: toRanges(indexes, names) }));
+      }
+      merged.push({ id, kind, file, present: toRanges(present, names), history });
+    }
+    merged.sort((a, b) => (a.id < b.id ? -1 : a.id > b.id ? 1 : 0));
+    return { schema: SCHEMA, generator: GENERATOR, releases: [...this.#releases], items: merged };
+  }
+}
+
+/** Merges snapshots into a timeline. The snapshots are ordered by release
+ *  version; a ref that is not a version (trunk) goes last. */
+export function mergeSnapshots(snapshots: Snapshot[]): Timeline {
+  const builder = new TimelineBuilder();
+  for (const snapshot of snapshots.toSorted((a, b) => compareReleases(releaseName(a.ref), releaseName(b.ref))))
+    builder.add(snapshot);
+  return builder.build();
 }
 
 /** What a timeline says about one item at one release. */

@@ -1,0 +1,16 @@
+composer.json still allows shopware/core ~6.7.0.
+
+```json
+{
+  "findings": [
+    {
+      "rule_id": "PLG-001",
+      "severity": "blocking",
+      "file": "src/Resources/app/administration/src/extension/sw-customer-base-info/sw-customer-base-info.html.twig",
+      "line": 1,
+      "summary": "Core removed block sw_customer_base_metadata_default_payment from sw-customer-base-info in 6.7.0.0, so on 6.7 the last used payment method silently never renders, although composer.json allows ~6.7.0.",
+      "fix": "Override a block that 6.7 still has, or limit shopware/core to ~6.6.0."
+    }
+  ]
+}
+```

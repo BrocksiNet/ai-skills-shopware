@@ -1,0 +1,45 @@
+diff --git a/CHANGELOG_en-GB.md b/CHANGELOG_en-GB.md
+index 4b0598c..b8c435e 100644
+--- a/CHANGELOG_en-GB.md
++++ b/CHANGELOG_en-GB.md
+@@ -1,3 +1,7 @@
++# 1.4.0
++
++- Show the category's teaser image in the navigation flyout.
++
+ # 1.3.0
+ 
+ - Teaser text per category.
+diff --git a/src/Resources/snippet/en_GB/storefront.en-GB.json b/src/Resources/snippet/en_GB/storefront.en-GB.json
+index 13d5e41..d677f3c 100644
+--- a/src/Resources/snippet/en_GB/storefront.en-GB.json
++++ b/src/Resources/snippet/en_GB/storefront.en-GB.json
+@@ -1,5 +1,6 @@
+ {
+     "swagNavigationTeaser": {
+-        "label": "Teaser"
++        "label": "Teaser",
++        "imageAlt": "Teaser of %name%"
+     }
+ }
+diff --git a/src/Resources/views/storefront/layout/navigation/flyout.html.twig b/src/Resources/views/storefront/layout/navigation/flyout.html.twig
+new file mode 100644
+index 0000000..5e1beda
+--- /dev/null
++++ b/src/Resources/views/storefront/layout/navigation/flyout.html.twig
+@@ -0,0 +1,15 @@
++{% sw_extends '@Storefront/storefront/layout/navigation/flyout.html.twig' %}
++
++{% block layout_navigation_flyout_bar_category %}
++    {{ parent() }}
++    {% set teaser = category.extensions.swagNavigationTeaser.media ?? null %}
++    {% if teaser %}
++        <div class="col-auto swag-navigation-teaser">
++            {% sw_thumbnails 'swag-navigation-teaser-thumbnails' with {
++                media: teaser,
++                sizes: { default: '200px' },
++                attributes: { class: 'swag-navigation-teaser-image', alt: 'swagNavigationTeaser.imageAlt'|trans({ '%name%': name })|striptags }
++            } %}
++        </div>
++    {% endif %}
++{% endblock %}

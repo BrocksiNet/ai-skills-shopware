@@ -7,7 +7,8 @@
 //
 // With --repo, base and head are refs of a shopware/shopware clone, built
 // (and cached) on the spot. Without it, they are releases in the index.
-//     --surface <list>  route,entity,feature,config,php (default: all but php)
+//     --surface <list>  route,entity,feature,config,admin,storefront,twig,build,php
+//                       (default: all but php)
 //     --index <file>    api-index.json.gz; else $API_INDEX or the cached release asset
 //     --cache <dir>     where built snapshots are cached
 //     --no-fetch        never download the index
@@ -30,7 +31,7 @@ async function main(): Promise<number> {
       repo: { type: 'string' },
       base: { type: 'string' },
       head: { type: 'string' },
-      surface: { type: 'string', default: 'route,entity,feature,config' },
+      surface: { type: 'string', default: SURFACES.filter((surface) => surface !== 'php').join(',') },
       index: { type: 'string' },
       cache: { type: 'string' },
       'no-fetch': { type: 'boolean', default: false },

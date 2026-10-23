@@ -13,6 +13,9 @@ const BLIND: Record<string, string[]> = {
   'review-later-member-guard': ['HttpCacheCookieEvent', 'getHash'],
   'review-in-minor-range': ['getPrimaryOrderTransaction'],
   'review-unneeded-guard': ['UpdateMediaPathEvent', 'MediaUploadService'],
+  'review-storefront-template-range': ['navigation/flyout.html.twig', 'layout_navigation_flyout'],
+  'review-js-plugin-range': ['FlyoutMenu', 'flyout-menu.plugin'],
+  'review-admin-block-range': ['sw_customer_base_metadata_default_payment', 'sw-customer-base-info'],
 };
 
 function markdown(dir: string): string[] {

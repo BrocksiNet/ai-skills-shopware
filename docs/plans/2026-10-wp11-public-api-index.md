@@ -1,6 +1,6 @@
 # WP11, rethought: a public API index of Shopware
 
-Status: **accepted 2026-10-22; phases 0 to 3 done, phase 4 next.** Replaces the Kev
+Status: **accepted 2026-10-22; phases 0 to 4 done.** Replaces the Kev
 experiment in
 [WP11 of the skills evolution plan](2026-10-skills-evolution.md#wp11-public-api-index).
 The decisions are at the end.
@@ -440,6 +440,35 @@ The weekly index workflow runs the check after it publishes.
 position identifiers, the `Shopware.*` global, storefront blocks and JS
 plugins. Both tools learn them; ADM-009, SF-009 and the block-rename cases
 get the same A/B as phase 2.
+
+**Phase 4 result (done 2026-10-23): the A/B gate passed.** The index
+covers admin components (props, methods, emits, slots, template blocks),
+position identifiers, the `Shopware` global, storefront templates, blocks
+and JS plugins, Twig functions, filters and tags, and the bundler.
+Generator `api-index/0.4.0`. Three blind `PLG-001` pairs, each an
+extension for `~6.6.0 || ~6.7.0` that overrides frontend API core removed
+in 6.7. Haiku, five runs per arm.
+
+| Task | Skills off | Skills on | On plus facts |
+| ---- | ---------- | --------- | ------------- |
+| `review-storefront-template-range-catch` | 0/5 | 1/5 | 5/5 |
+| `review-storefront-template-range-ignore` | 5/5 | 5/5 | 5/5 |
+| `review-js-plugin-range-catch` | 0/5 | 0/5 | 5/5 |
+| `review-js-plugin-range-ignore` | 5/5 | 5/5 | 5/5 |
+| `review-admin-block-range-catch` | 0/5 | 0/5 | 5/5 |
+| `review-admin-block-range-ignore` | 5/5 | 5/5 | 5/5 |
+
+- **Facts carry the win.** Skills off plus facts also passes 30 of 30, so
+  the gain comes from the facts, not from the skill text.
+- **The ignore halves first failed with facts.** The facts list the 6.7
+  deprecation, and the model reported it as a minor migration note. That
+  note is true for a `~6.6.0` extension. The ignore graders now accept a
+  finding that calls the API deprecated, and still fail one that calls it
+  missing or removed.
+- **The admin catch cited the wrong rule.** With skills on, the model found
+  the missing block but cited `ADM-039`, the API core's components offer.
+  The lens table in `sw-extension-review` now maps a core block,
+  template or JS plugin missing in the range to `PLG-001`.
 
 Each phase can stop the plan. Phases 3 and 4 do not start until phase 2
 has shipped and shown a win.

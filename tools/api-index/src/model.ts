@@ -2,7 +2,7 @@
 // symbol. docs/plans/2026-10-wp11-public-api-index.md explains the surfaces.
 
 export const SCHEMA = 1;
-export const GENERATOR = 'api-index/0.3.0';
+export const GENERATOR = 'api-index/0.4.0';
 
 export type ItemKind =
   | 'class'
@@ -17,7 +17,20 @@ export type ItemKind =
   | 'entity'
   | 'field'
   | 'feature'
-  | 'config';
+  | 'config'
+  | 'component'
+  | 'prop'
+  | 'js-method'
+  | 'emit'
+  | 'slot'
+  | 'block'
+  | 'position'
+  | 'global'
+  | 'template'
+  | 'js-plugin'
+  | 'option'
+  | 'twig'
+  | 'build';
 
 /** Status that decides whether an item is covered by the BC promise. */
 export interface Flags {
@@ -36,7 +49,12 @@ export interface Flags {
 export interface Item {
   /** `php:Fqcn`, `php:Fqcn::method()`, `php:Fqcn::$property`, `php:Fqcn::CONSTANT`;
    *  `route:name`, `entity:name`, `field:entity.property`, `feature:NAME`,
-   *  `config:shopware.key.path`. */
+   *  `config:shopware.key.path`; `admin:sw-name`, `admin:sw-name.prop.x`
+   *  (also `js-method`, `emit`, `slot`), `admin:sw-name#block`,
+   *  `position:id`, `global:Shopware.X`; `storefront:@Storefront/…twig`,
+   *  `storefront:@Storefront/…twig#block`, `js-plugin:Name`,
+   *  `js-plugin:Name.option.x`, `js-plugin:Name.js-method.x`;
+   *  `twig:function:name` (also `filter`, `tag`); `build:admin`. */
   id: string;
   kind: ItemKind;
   /** Path in the repository. */
