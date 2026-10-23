@@ -304,8 +304,9 @@ On the same day the result replaces the earlier file, which it contains.
    several PRs and trusted reviewers beat one long thread. The score
    halves when the rule is for core only (its `audience`, else the skill's
    `metadata.contexts`), because this library is for extension developers
-   too. It halves again when a higher proposal of the same skill shares
-   most of its words (`overlaps` names that one). The table at the top of
+   too. It halves again when a higher proposal, of any skill, shares most
+   of its words (`overlaps` names that one); two skills proposing one
+   topic would give it two owners. The table at the top of
    the file is in rank order; draft from the top.
 
 **Reading a proposal.** Each one has an ID (`2026-10-23-04`), the action,

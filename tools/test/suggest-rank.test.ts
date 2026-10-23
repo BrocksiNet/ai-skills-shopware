@@ -49,6 +49,19 @@ describe('rank', () => {
     assert.equal(e.score, 0.75 + 0.75);
   });
 
+  test('an overlap across skills counts too', () => {
+    const list = [
+      suggestion('e-01', { title: 'Admin routes declare an ACL privilege', evidence: [a2.url, b.url] }),
+      suggestion('e-02', {
+        skill: 'sw-core-development',
+        title: 'Admin routes declare their ACL privilege',
+        evidence: [a2.url],
+      }),
+    ];
+    const by = new Map(rankSuggestions(list, x).map((s) => [s.id, s.rank]));
+    assert.equal(by.get('e-02')?.overlaps, 'e-01');
+  });
+
   test('core-only rules and overlaps are halved; failed and none are unranked', () => {
     const list = [
       suggestion('d-01', {

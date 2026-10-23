@@ -69,7 +69,7 @@ export function renderSuggestions(r: SuggestResult): string {
     `| ${[n.signals, n.mapped, n.clusters, n.dropped_single, n.asked, n.over_cap, n.agent_errors, n.proposals, n.passed].map(String).join(' | ')} |`,
     '',
     'Ranked by evidence per PR (reviewer trust, outdated threads, requested changes), halved for a core-only',
-    'rule and again for an overlap with a higher proposal of the same skill. Draft from the top.',
+    'rule and again for an overlap with a higher proposal. Draft from the top.',
     '',
     '| Rank | Score | ID | Action | Rule | Skill | Title | PRs | Extensions | Overlaps | Checks |',
     '| ---- | ----- | -- | ------ | ---- | ----- | ----- | --- | ---------- | -------- | ------ |',

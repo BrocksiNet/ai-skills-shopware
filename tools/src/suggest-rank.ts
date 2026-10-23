@@ -4,8 +4,8 @@
 // went outdated and when the review requested changes). That favours
 // several PRs and trusted reviewers over one long thread. The score halves
 // when the rule is for core only, since this library is for extension
-// developers too, and halves again when a higher proposal of the same skill
-// says much the same. A proposal that failed a check, or proposes no
+// developers too, and halves again when a higher proposal says much the
+// same, in any skill: a second owner of one topic is the worse duplicate. A proposal that failed a check, or proposes no
 // change, gets no rank.
 import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
@@ -19,11 +19,13 @@ import { compareText } from './text.ts';
 
 /** Factor for a proposal whose rule is not for plugins or apps. */
 export const CORE_ONLY_FACTOR = 0.5;
-/** Factor for a proposal that overlaps a higher one of the same skill. */
+/** Factor for a proposal that overlaps a higher one. */
 export const OVERLAP_FACTOR = 0.5;
 /** Shared share of words (title and draft) from which two proposals
- *  overlap. Set on the first full run: it marks the two route deprecation
- *  updates and the test placement proposals, and nothing else. */
+ *  overlap. Set on the first full run of 129 proposals: it marks the two
+ *  route deprecation updates, the test placement proposals, the two
+ *  kernel reset updates and three skills' Admin API ACL rules, and
+ *  nothing else. */
 export const OVERLAP_THRESHOLD = 0.18;
 
 export interface Rank {
@@ -35,7 +37,7 @@ export interface Rank {
   changes_requested: number;
   /** The rule is for plugin or app developers. */
   extensions: boolean;
-  /** A higher proposal of the same skill that says much the same. */
+  /** A higher proposal, of any skill, that says much the same. */
   overlaps?: string;
   /** Why there is no rank. */
   unranked?: string;
@@ -129,13 +131,12 @@ export function rankSuggestions(list: Suggestion[], x: RankContext): Suggestion[
   });
   const byScore = (a: (typeof scored)[number], b: (typeof scored)[number]): number =>
     b.rank.score - a.rank.score || compareText(a.s.id, b.s.id);
-  // Overlaps: walk from the top; a proposal close to a higher one of its
-  // skill is marked and loses half its score.
+  // Overlaps: walk from the top; a proposal close to a higher one is
+  // marked and loses half its score.
   const kept: { s: Suggestion; w: Set<string> }[] = [];
   for (const item of scored.filter((i) => i.rank.unranked === undefined).toSorted(byScore)) {
     const w = words(item.s);
     const close = kept
-      .filter((k) => k.s.skill === item.s.skill)
       .map((k) => ({ id: k.s.id, o: overlap(w, k.w) }))
       .filter((k) => k.o >= OVERLAP_THRESHOLD)
       .toSorted((a, b) => b.o - a.o)[0];
