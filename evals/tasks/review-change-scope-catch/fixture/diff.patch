@@ -1,0 +1,81 @@
+diff --git a/src/Shipping/ShippingCostResolver.php b/src/Shipping/ShippingCostResolver.php
+index 3c1e9a2..7b04d5f 100644
+--- a/src/Shipping/ShippingCostResolver.php
++++ b/src/Shipping/ShippingCostResolver.php
+@@ -9,5 +9,11 @@ class ShippingCostResolver
+     public function resolve(OrderEntity $order): float
+     {
+-        return $order->getDeliveries()->first()->getShippingCosts()->getTotalPrice();
++        $delivery = $order->getDeliveries()->first();
++
++        if ($delivery === null) {
++            return 0.0;
++        }
++
++        return $delivery->getShippingCosts()->getTotalPrice();
+     }
+ }
+diff --git a/src/Support/MoneyFormatter.php b/src/Support/MoneyFormatter.php
+new file mode 100644
+index 0000000..5d2c8e1
+--- /dev/null
++++ b/src/Support/MoneyFormatter.php
+@@ -0,0 +1,14 @@
++<?php declare(strict_types=1);
++
++namespace Swag\OrderTools\Support;
++
++class MoneyFormatter
++{
++    /**
++     * One place for the German number format the plugin prints.
++     */
++    public static function format(float $amount): string
++    {
++        return number_format($amount, 2, ',', '.');
++    }
++}
+diff --git a/src/Export/OrderCsvExporter.php b/src/Export/OrderCsvExporter.php
+index 9e21b07..c4a6f03 100644
+--- a/src/Export/OrderCsvExporter.php
++++ b/src/Export/OrderCsvExporter.php
+@@ -1,17 +1,18 @@
+ <?php declare(strict_types=1);
+
+ namespace Swag\OrderTools\Export;
+
+ use Shopware\Core\Checkout\Order\OrderEntity;
++use Swag\OrderTools\Support\MoneyFormatter;
+
+ class OrderCsvExporter
+ {
+     public function row(OrderEntity $order): array
+     {
+         return [
+             $order->getOrderNumber(),
+-            number_format($order->getAmountTotal(), 2, ',', '.'),
+-            number_format($order->getShippingTotal(), 2, ',', '.'),
++            MoneyFormatter::format($order->getAmountTotal()),
++            MoneyFormatter::format($order->getShippingTotal()),
+         ];
+     }
+ }
+diff --git a/src/Reporting/RevenueReport.php b/src/Reporting/RevenueReport.php
+index 6a0d4e2..b13f5c8 100644
+--- a/src/Reporting/RevenueReport.php
++++ b/src/Reporting/RevenueReport.php
+@@ -1,11 +1,13 @@
+ <?php declare(strict_types=1);
+
+ namespace Swag\OrderTools\Reporting;
+
++use Swag\OrderTools\Support\MoneyFormatter;
++
+ class RevenueReport
+ {
+     public function line(string $month, float $revenue): string
+     {
+-        return sprintf('%s: %s', $month, number_format($revenue, 2, ',', '.'));
++        return sprintf('%s: %s', $month, MoneyFormatter::format($revenue));
+     }
+ }

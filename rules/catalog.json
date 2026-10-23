@@ -1781,8 +1781,7 @@
       "title": "Do not turn a focused fix into a refactor",
       "status": "active",
       "since": "2026-10-20",
-      "eval": null,
-      "eval_reason": "Process rule; core shopware-change-scope owns it on trunk.",
+      "eval": "review-change-scope-catch",
       "core_guide_ids": [],
       "audience": [
         "core",

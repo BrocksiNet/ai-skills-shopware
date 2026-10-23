@@ -1,0 +1,14 @@
+```json
+{
+  "findings": [
+    {
+      "rule_id": "REV-032",
+      "severity": "minor",
+      "file": "tests/Unit/Shipping/ShippingCostResolverTest.php",
+      "line": 10,
+      "summary": "The new test is out of scope for a focused fix.",
+      "fix": "Drop the test and add it in a follow-up PR."
+    }
+  ]
+}
+```

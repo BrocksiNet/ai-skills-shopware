@@ -1,0 +1,44 @@
+diff --git a/src/Shipping/ShippingCostResolver.php b/src/Shipping/ShippingCostResolver.php
+index 3c1e9a2..7b04d5f 100644
+--- a/src/Shipping/ShippingCostResolver.php
++++ b/src/Shipping/ShippingCostResolver.php
+@@ -9,5 +9,11 @@ class ShippingCostResolver
+     public function resolve(OrderEntity $order): float
+     {
+-        return $order->getDeliveries()->first()->getShippingCosts()->getTotalPrice();
++        $delivery = $order->getDeliveries()->first();
++
++        if ($delivery === null) {
++            return 0.0;
++        }
++
++        return $delivery->getShippingCosts()->getTotalPrice();
+     }
+ }
+diff --git a/tests/Unit/Shipping/ShippingCostResolverTest.php b/tests/Unit/Shipping/ShippingCostResolverTest.php
+new file mode 100644
+index 0000000..e2a9d41
+--- /dev/null
++++ b/tests/Unit/Shipping/ShippingCostResolverTest.php
+@@ -0,0 +1,22 @@
++<?php declare(strict_types=1);
++
++namespace Swag\OrderTools\Tests\Unit\Shipping;
++
++use PHPUnit\Framework\Attributes\CoversClass;
++use PHPUnit\Framework\TestCase;
++use Shopware\Core\Checkout\Order\OrderDeliveryCollection;
++use Shopware\Core\Checkout\Order\OrderEntity;
++use Swag\OrderTools\Shipping\ShippingCostResolver;
++
++#[CoversClass(ShippingCostResolver::class)]
++class ShippingCostResolverTest extends TestCase
++{
++    public function testOrderWithoutDeliveryCostsNothing(): void
++    {
++        $order = new OrderEntity();
++        $order->setDeliveries(new OrderDeliveryCollection());
++
++        static::assertSame(0.0, (new ShippingCostResolver())->resolve($order));
++    }
++}
