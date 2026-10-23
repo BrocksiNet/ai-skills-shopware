@@ -1959,8 +1959,7 @@
       "title": "Cover new or changed core API routes with ApiRoutesHaveASchemaTest",
       "status": "active",
       "since": "2026-10-20",
-      "eval": null,
-      "eval_reason": "Process rule; core shopware-php-code owns it on trunk.",
+      "eval": "review-api-route-schema-test-catch",
       "core_guide_ids": [],
       "audience": [
         "core"
