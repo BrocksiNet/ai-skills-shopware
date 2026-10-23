@@ -58,5 +58,9 @@
         { "path": "skills/shopware-admin-crud-module", "skills": ["sw-admin-js"] }
       ]
     }
+  ],
+  "reviews": [
+    { "id": "core-reviews", "repo": "shopware/shopware", "base": "trunk", "private": false },
+    { "id": "commercial-reviews", "repo": "shopware/SwagCommercial", "base": "trunk", "private": true }
   ]
 }

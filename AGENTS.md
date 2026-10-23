@@ -55,7 +55,7 @@ evals/routing/<case>/         # diff.patch + expected.json for reference routing
 rules/
   catalog.json                # rule IDs: owning skill, file, eval, trunk and upstream source
   catalog.schema.json         # field reference for catalog.json
-  sources.json                # repositories drift mining reads, and our skills per path
+  sources.json                # repositories drift mining reads, our skills per path, and the review sources
   sources.schema.json         # field reference for sources.json
 
 tools/                        # repo tooling in TypeScript (Node 24, no build step)
@@ -75,6 +75,7 @@ tools/                        # repo tooling in TypeScript (Node 24, no build st
   bin/validate-skills.ts      # skill structure, budgets, conflicts, rule IDs, routes
   bin/mine-trunk.ts           # weekly drift report over rules/sources.json, and the /mined state update
   src/map-signal.ts           # ties a change (signal) to the skills, references and rules it touches
+  bin/collect-reviews.ts      # review comments of merged PRs as mapped signals (daily in CI; private repos locally)
   bin/grade.ts                # runs one task's grader (what every grade.sh calls)
   graders/<task>.ts           # one grader per eval task: workdir + transcript -> verdict
   src/grade/                  # grader kit (file search, comment stripping, PHP method, review findings)
@@ -100,6 +101,7 @@ docs/                         # local validation, smoke evals, tooling stack
   evals.yml                   # model evals (gated: schedule, label, dispatch)
   mine-trunk.yml              # weekly drift issue for every source; /mined moves docs/.mining-state.json
   api-index.yml               # weekly public API index build, published as the `api-index` release
+  collect-reviews.yml         # daily review comments of merged core PRs, published as the `review-signals` release
 ```
 
 Skills install into provider-specific folders (`.cursor/skills/`, `.claude/skills/`,

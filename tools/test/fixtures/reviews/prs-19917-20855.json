@@ -1,0 +1,1149 @@
+{
+ "search": {
+  "issueCount": 2,
+  "pageInfo": {
+   "hasNextPage": false,
+   "endCursor": null
+  },
+  "nodes": [
+   {
+    "number": 20855,
+    "title": "fix(framework): rate-limit the MCP endpoints with a sliding window",
+    "url": "https://github.com/shopware/shopware/pull/20855",
+    "mergedAt": "2026-10-13T13:58:58Z",
+    "author": {
+     "login": "BrocksiNet"
+    },
+    "reviewThreads": {
+     "nodes": [
+      {
+       "isOutdated": true,
+       "path": "src/Core/Framework/Mcp/RateLimit/McpRateLimiter.php",
+       "comments": {
+        "totalCount": 3,
+        "nodes": [
+         {
+          "databaseId": 4101680371,
+          "url": "https://github.com/shopware/shopware/pull/20855#discussion_r4101680371",
+          "body": "**<sub><sub>![P1 Badge](https://img.shields.io/badge/P1-orange?style=flat)</sub></sub>  Tie the exemption to a real handshake**\n\nAny authenticated Store API caller can repeatedly POST a body whose method is `notifications/initialized`, even without an MCP session header, and return before both the p",
+          "createdAt": "2026-09-25T06:12:32Z",
+          "diffHunk": "@@ -39,6 +61,10 @@ public function enforceForAdminApi(Request $request): void\n \n     public function enforceForStoreApi(Request $request): void\n     {",
+          "authorAssociation": "NONE",
+          "author": {
+           "login": "chatgpt-codex-connector",
+           "kind": "Bot"
+          },
+          "pullRequestReview": {
+           "state": "COMMENTED"
+          }
+         }
+        ]
+       }
+      },
+      {
+       "isOutdated": true,
+       "path": "src/Core/Framework/Mcp/RateLimit/McpRateLimiter.php",
+       "comments": {
+        "totalCount": 2,
+        "nodes": [
+         {
+          "databaseId": 4101680379,
+          "url": "https://github.com/shopware/shopware/pull/20855#discussion_r4101680379",
+          "body": "**<sub><sub>![P2 Badge](https://img.shields.io/badge/P2-yellow?style=flat)</sub></sub>  Decode before filtering valid initialized notifications**\n\nThe raw substring pre-check rejects valid JSON encodings before examining their decoded method. For example, `{\"jsonrpc\":\"2.0\",\"method\":\"notifications/\\u",
+          "createdAt": "2026-09-25T06:12:32Z",
+          "diffHunk": "@@ -54,6 +80,45 @@ public function enforceForStoreApi(Request $request): void\n         $this->enforce(RateLimiter::MCP_STORE_API, $request->getClientIp() ?: 'unknown');\n     }\n ",
+          "authorAssociation": "NONE",
+          "author": {
+           "login": "chatgpt-codex-connector",
+           "kind": "Bot"
+          },
+          "pullRequestReview": {
+           "state": "COMMENTED"
+          }
+         }
+        ]
+       }
+      },
+      {
+       "isOutdated": true,
+       "path": "src/Core/Framework/Mcp/RateLimit/McpRateLimiter.php",
+       "comments": {
+        "totalCount": 3,
+        "nodes": [
+         {
+          "databaseId": 4121893916,
+          "url": "https://github.com/shopware/shopware/pull/20855#discussion_r4121893916",
+          "body": "**<sub><sub>![P2 Badge](https://img.shields.io/badge/P2-yellow?style=flat)</sub></sub>  Route oversized initialized notifications to the handshake bucket**\n\nWhen a valid `notifications/initialized` payload exceeds 4 KiB—for example because it contains legal JSON whitespace or an extended `_meta` obj",
+          "createdAt": "2026-09-28T12:02:14Z",
+          "diffHunk": "@@ -54,6 +94,42 @@ public function enforceForStoreApi(Request $request): void\n         $this->enforce(RateLimiter::MCP_STORE_API, $request->getClientIp() ?: 'unknown');\n     }\n ",
+          "authorAssociation": "NONE",
+          "author": {
+           "login": "chatgpt-codex-connector",
+           "kind": "Bot"
+          },
+          "pullRequestReview": {
+           "state": "COMMENTED"
+          }
+         }
+        ]
+       }
+      },
+      {
+       "isOutdated": true,
+       "path": "src/Core/Framework/Mcp/RateLimit/McpRateLimiter.php",
+       "comments": {
+        "totalCount": 2,
+        "nodes": [
+         {
+          "databaseId": 4154597209,
+          "url": "https://github.com/shopware/shopware/pull/20855#discussion_r4154597209",
+          "body": "After this change, the handshake completes, but the first real request still gets HTTP 429, so #18906 stays unresolved. `TimeBackoffLimiter::consume()` restarts `timer` on every accepted request and never lowers `attempts` (`TimeBackoffLimiter.php:68-77`), so once a key has passed 300 requests, `tools/list` right after `initialize` hits `elapsed 0 < 60` (`TimeBackoff.php:98-105`) and gets 429.\n\n`RateLimiterFactory.php:93-98` already passes any other policy to Symfony, so the cause can be fixed in configuration:\n\n~~~yaml\nmcp_admin_api:\n    enabled: true\n    policy: 'sliding_window'\n    limit: 300\n    interval: '60 seconds'\n~~~\n\nI suggest switching both `mcp_admin_api` and `mcp_store_api` to `sliding_window` and dropping the special case here. That needs a `RELEASE_INFO-6.7.md` entry for operators and an update of the rate-limiting docs.",
+          "createdAt": "2026-10-01T10:55:27Z",
+          "diffHunk": "@@ -34,11 +61,24 @@ public function enforceForAdminApi(Request $request): void\n             ?: $request->getClientIp()\n             ?: 'unknown';\n \n+        if ($this->isInitializedNotificationOnlyRequest($request)) {",
+          "authorAssociation": "MEMBER",
+          "author": {
+           "login": "dgrothaus-sw",
+           "kind": "User"
+          },
+          "pullRequestReview": {
+           "state": "CHANGES_REQUESTED"
+          }
+         }
+        ]
+       }
+      },
+      {
+       "isOutdated": true,
+       "path": "tests/unit/Core/Framework/Mcp/RateLimit/McpRateLimiterTest.php",
+       "comments": {
+        "totalCount": 2,
+        "nodes": [
+         {
+          "databaseId": 4154603948,
+          "url": "https://github.com/shopware/shopware/pull/20855#discussion_r4154603948",
+          "body": "This test is described as reproducing #18906, but `RateLimiter` is a mock that accepts every call (`:328-332`), so it pins the routing and never runs `time_backoff`. With the real limiter, the `tools/list` call at `:351` would be the request that gets 429. `RateLimiterFactoryTest.php:80-104` shows how to build a real `RateLimiterFactory` over `InMemoryStorage` and `MockClock`:\n\n~~~php\n$factory = new RateLimiterFactory(\n    [\n        'enabled' => true,\n        'id' => RateLimiter::MCP_ADMIN_API,\n        'policy' => 'time_backoff',\n        'reset' => '1 hours',\n        'limits' => [\n            ['limit' => 300, 'interval' => '60 seconds'],\n            ['limit' => 1000, 'interval' => '10 minutes'],\n        ],\n    ],\n    new InMemoryStorage(),\n    static::createStub(SystemConfigService::class),\n    $clock = new MockClock(),\n);\n\n$rateLimiter = new RateLimiter();\n$rateLimiter->registerLimiterFactory(RateLimiter::MCP_ADMIN_API, $factory);\n$mcpRateLimiter = new McpRateLimiter($rateLimiter);\n\nfor ($i = 0; $i < 300; ++$i) {\n    $mcpRateLimiter->enforceForAdminApi($tokenRequest('tools/list', $i));\n}\n$clock->sleep(60);\n\n$mcpRateLimiter->enforceForAdminApi($tokenRequest('initialize', 1));\n$mcpRateLimiter->enforceForAdminApi($tokenRequest('notifications/initialized'));\n$mcpRateLimiter->enforceForAdminApi($tokenRequest('tools/list', 2));\n~~~\n\nPlease replace the test with one like this. Its outcome for the last line also settles the `tools/list` question from the other comment.",
+          "createdAt": "2026-10-01T10:56:16Z",
+          "diffHunk": "@@ -130,4 +130,244 @@ public function testEnforceForStoreApiTranslatesRateLimitException(): void\n+        yield 'oversized body' => ['{\"jsonrpc\":\"2.0\",\"method\":\"notifications/initialized\",\"params\":{\"padding\":\"' . str_repeat('x', 4096) . '\"}}'];\n+    }\n+\n+    #[DataProvider('limitedPostBodyProvider')]\n+    public function testEnforceForAdminApiStillLimitsNonInitializedPostBodies(string $content): void\n+    {\n+        $this->rateLimiter->expects($this->once())\n+            ->method('ensureAccepted')\n+            ->with(RateLimiter::MCP_ADMIN_API, '127.0.0.1');\n+\n+        $this->mcpRateLimiter->enforceForAdminApi(Request::create('/api/_mcp', 'POST', content: $content));\n+    }\n+\n+    /**\n+     * @return iterable<string, array{string}>\n+     */\n+    public static function escapedInitializedBodyProvider(): iterable\n+    {\n+        yield 'escaped slash' => ['{\"jsonrpc\":\"2.0\",\"method\":\"notifications\\/initialized\"}'];\n+        yield 'unicode escape' => ['{\"jsonrpc\":\"2.0\",\"method\":\"notifications/\\u0069nitialized\"}'];\n+    }\n+\n+    #[DataProvider('escapedInitializedBodyProvider')]\n+    public function testEnforceForAdminApiRecognisesEscapedInitializedNotification(string $content): void\n+    {\n+        $this->rateLimiter->expects($this->once())\n+            ->method('ensureAccepted')\n+            ->with(RateLimiter::MCP_ADMIN_API, 'initialized-127.0.0.1');\n+\n+        $this->mcpRateLimiter->enforceForAdminApi(Request::create('/api/_mcp', 'POST', content: $content));\n+    }\n+\n+    /**\n+     * Reproduces #18906: after time_backoff accepts one post-wait request,\n+     * initialize consumes that slot; the mandatory notifications/initialized\n+     * follow-up uses its own key so the handshake can finish. tools/list\n+     * is back on the endpoint key.\n+     */\n+    public function testPostBackoffHandshakeSequenceKeepsInitializedOffTheInitializeKey(): void",
+          "authorAssociation": "MEMBER",
+          "author": {
+           "login": "dgrothaus-sw",
+           "kind": "User"
+          },
+          "pullRequestReview": {
+           "state": "CHANGES_REQUESTED"
+          }
+         }
+        ]
+       }
+      },
+      {
+       "isOutdated": true,
+       "path": "src/Core/Framework/Mcp/RateLimit/McpRateLimiter.php",
+       "comments": {
+        "totalCount": 2,
+        "nodes": [
+         {
+          "databaseId": 4154612229,
+          "url": "https://github.com/shopware/shopware/pull/20855#discussion_r4154612229",
+          "body": "The class docblock tells the #18906 story (what `time_backoff` does, \"would otherwise get HTTP 429 (see #18906)\"), and `AGENTS.md:198` repeats it almost word for word. The constant docblock at `:34-39` restates the method docblock at `:97-101`. The constraint worth keeping in source is one sentence: the follow-up must not share a counter with `initialize`, because `time_backoff` accepts a single request after the wait. The history belongs in the PR and the commit. If F1 is fixed by changing the policy, all three go.",
+          "createdAt": "2026-10-01T10:57:17Z",
+          "diffHunk": "@@ -17,10 +17,37 @@\n  * shared, while the rate-limit key and the configured limits differ per API:\n  * the Admin API keys on the OAuth access token, the Store API on the\n  * sales-channel context plus a stable per-IP backstop.\n+ *\n+ * The handshake-era follow-up {@see self::INITIALIZED_NOTIFICATION_METHOD} draws",
+          "authorAssociation": "MEMBER",
+          "author": {
+           "login": "dgrothaus-sw",
+           "kind": "User"
+          },
+          "pullRequestReview": {
+           "state": "CHANGES_REQUESTED"
+          }
+         }
+        ]
+       }
+      },
+      {
+       "isOutdated": true,
+       "path": "src/Core/Framework/Mcp/RateLimit/McpRateLimiter.php",
+       "comments": {
+        "totalCount": 2,
+        "nodes": [
+         {
+          "databaseId": 4154619489,
+          "url": "https://github.com/shopware/shopware/pull/20855#discussion_r4154619489",
+          "body": "`McpServerController.php:176` compares against `CallToolRequest::getMethod()`. The SDK ships `Mcp\\Schema\\Notification\\InitializedNotification::getMethod()`, which returns `'notifications/initialized'`, and `mcp/sdk` is a hard `require` (`composer.json`, `src/Core/composer.json`). A `const` cannot hold a method call, so the comparison at `:125` would use it inline.",
+          "createdAt": "2026-10-01T10:58:07Z",
+          "diffHunk": "@@ -17,10 +17,37 @@\n  * shared, while the rate-limit key and the configured limits differ per API:\n  * the Admin API keys on the OAuth access token, the Store API on the\n  * sales-channel context plus a stable per-IP backstop.\n+ *\n+ * The handshake-era follow-up {@see self::INITIALIZED_NOTIFICATION_METHOD} draws\n+ * from its own key on the same route. The MCP Streamable HTTP handshake requires\n+ * `initialize` then `notifications/initialized` back-to-back; Shopware's\n+ * `time_backoff` policy accepts only one request after a wait, so once\n+ * `initialize` has consumed that slot the mandatory follow-up would otherwise get\n+ * HTTP 429 (see #18906). Route + key form independent buckets, so the follow-up\n+ * keeps the endpoint's limits without sharing the `initialize` counter and without\n+ * a separate configuration. `initialize`, tool calls and every other method stay\n+ * on the endpoint key. The 2026-07-28 modern era has no such pair.\n  */\n #[Package('framework')]\n class McpRateLimiter\n {\n+    /**\n+     * Handshake-era JSON-RPC notification that completes session setup after\n+     * `initialize`. Kept as a single-method allowlist so `initialize` and every\n+     * other protocol method (including tool abuse paths) still draw from the\n+     * endpoint key.\n+     */\n+    private const INITIALIZED_NOTIFICATION_METHOD = 'notifications/initialized';",
+          "authorAssociation": "MEMBER",
+          "author": {
+           "login": "dgrothaus-sw",
+           "kind": "User"
+          },
+          "pullRequestReview": {
+           "state": "CHANGES_REQUESTED"
+          }
+         }
+        ]
+       }
+      },
+      {
+       "isOutdated": true,
+       "path": "tests/unit/Core/Framework/Mcp/RateLimit/McpRateLimiterPolicyTest.php",
+       "comments": {
+        "totalCount": 2,
+        "nodes": [
+         {
+          "databaseId": 4195309136,
+          "url": "https://github.com/shopware/shopware/pull/20855#discussion_r4195309136",
+          "body": "If you want to test the real limits and load a production configuration file, this should be an integration test.\n\nIn unit you can keep very similar test but then we do not need to load a real yaml file.\nWhat is important is to test the minimum limit possible and not the real values",
+          "createdAt": "2026-10-06T12:36:58Z",
+          "diffHunk": "@@ -0,0 +1,151 @@\n+    #[DataProvider('endpointProvider')]\n+    public function testAClientOverItsLimitIsThrottled(string $route, \\Closure $enforce, \\Closure $request): void\n+    {\n+        $config = $this->shippedConfig($route);\n+        $limiter = $this->limiter($route, $config);\n+        $limit = $config['limit'] ?? $config['limits'][0]['limit'] ?? 0;\n+\n+        for ($i = 0; $i < $limit; ++$i) {\n+            $enforce($limiter, $request());\n+        }\n+\n+        $this->expectException(McpException::class);\n+\n+        $enforce($limiter, $request());\n+    }\n+\n+    /**\n+     * @param array{id: string, enabled: bool, policy: string, limit?: int, interval?: string, reset?: string, limits?: list<array{limit: int, interval: string}>} $config\n+     */\n+    private function limiter(string $route, array $config): McpRateLimiter\n+    {\n+        $rateLimiter = new RateLimiter();\n+        $rateLimiter->registerLimiterFactory($route, new RateLimiterFactory(\n+            [...$config, 'id' => $route],\n+            new InMemoryStorage(),\n+            static::createStub(SystemConfigService::class),\n+            $this->clock,\n+        ));\n+\n+        return new McpRateLimiter($rateLimiter);\n+    }\n+\n+    /**\n+     * @return array{id: string, enabled: bool, policy: string, limit?: int, interval?: string, reset?: string, limits?: list<array{limit: int, interval: string}>}\n+     */\n+    private function shippedConfig(string $route): array\n+    {\n+        /** @var array{shopware: array{api: array{rate_limiter: array<string, array{id: string, enabled: bool, policy: string, limit?: int, interval?: string, reset?: string, limits?: list<array{limit: int, interval: string}>}>}}} $config */\n+        $config = Yaml::parseFile(\\dirname(__DIR__, 6) . '/src/Core/Framework/Resources/config/packages/shopware.yaml');",
+          "authorAssociation": "MEMBER",
+          "author": {
+           "login": "nfortier-shopware",
+           "kind": "User"
+          },
+          "pullRequestReview": {
+           "state": "CHANGES_REQUESTED"
+          }
+         }
+        ]
+       }
+      },
+      {
+       "isOutdated": true,
+       "path": "tests/unit/Core/Framework/Mcp/RateLimit/McpRateLimiterPolicyTest.php",
+       "comments": {
+        "totalCount": 2,
+        "nodes": [
+         {
+          "databaseId": 4195330321,
+          "url": "https://github.com/shopware/shopware/pull/20855#discussion_r4195330321",
+          "body": "for unit, see the comment below, we should not loop 300 times or 120, this should be kept to a very low minimum to prove a limit is applied, nothing more",
+          "createdAt": "2026-10-06T12:38:48Z",
+          "diffHunk": "@@ -0,0 +1,151 @@\n+    {\n+        ClockMock::withClockMock(false);\n+    }\n+\n+    /**\n+     * @return iterable<string, array{string, \\Closure(McpRateLimiter, Request): void, \\Closure(): Request}>\n+     */\n+    public static function endpointProvider(): iterable\n+    {\n+        yield 'Admin API' => [\n+            RateLimiter::MCP_ADMIN_API,\n+            static fn (McpRateLimiter $limiter, Request $request) => $limiter->enforceForAdminApi($request),\n+            static function (): Request {\n+                $request = new Request();\n+                $request->attributes->set(PlatformRequest::ATTRIBUTE_OAUTH_ACCESS_TOKEN_ID, 'token-id');\n+\n+                return $request;\n+            },\n+        ];\n+\n+        yield 'Store API' => [\n+            RateLimiter::MCP_STORE_API,\n+            static fn (McpRateLimiter $limiter, Request $request) => $limiter->enforceForStoreApi($request),\n+            static fn (): Request => new Request(server: ['REMOTE_ADDR' => '192.0.2.1']),\n+        ];\n+    }\n+\n+    /**\n+     * @param \\Closure(McpRateLimiter, Request): void $enforce\n+     * @param \\Closure(): Request $request\n+     */\n+    #[DataProvider('endpointProvider')]\n+    public function testAClientThatUsedUpItsLimitIsServedAgainAfterAPause(string $route, \\Closure $enforce, \\Closure $request): void\n+    {\n+        $config = $this->shippedConfig($route);\n+        $limiter = $this->limiter($route, $config);\n+        $limit = $config['limit'] ?? $config['limits'][0]['limit'] ?? 0;\n+\n+        for ($i = 0; $i < $limit; ++$i) {",
+          "authorAssociation": "MEMBER",
+          "author": {
+           "login": "nfortier-shopware",
+           "kind": "User"
+          },
+          "pullRequestReview": {
+           "state": "CHANGES_REQUESTED"
+          }
+         }
+        ]
+       }
+      },
+      {
+       "isOutdated": true,
+       "path": "tests/unit/Core/Framework/Mcp/RateLimit/McpRateLimiterPolicyTest.php",
+       "comments": {
+        "totalCount": 2,
+        "nodes": [
+         {
+          "databaseId": 4195344567,
+          "url": "https://github.com/shopware/shopware/pull/20855#discussion_r4195344567",
+          "body": "this entire test is questionable, no assertions should be avoided as much as possible\n\nCount the accepted requests instead, with a minimal inline config. It fails on exactly what `time_backoff` broke (one request accepted after the pause, then throttled), and it makes `testAClientOverItsLimitIsThrottled` redundant:\n\n```php\n#[DataProvider('endpointProvider')]\npublic function testTheFullLimitIsAvailableAgainAfterThePause(string $route, \\Closure $enforce, \\Closure $request): void\n{\n    $limiter = $this->limiter($route, ['policy' => 'sliding_window', 'limit' => 2, 'interval' => '1 minute', 'enabled' => true]);\n\n    static::assertSame(2, $this->acceptedUntilThrottled($limiter, $enforce, $request));\n\n    // a sliding window is empty again after two intervals without requests\n    $this->sleep(120);\n\n    static::assertSame(2, $this->acceptedUntilThrottled($limiter, $enforce, $request));\n}\n\nprivate function acceptedUntilThrottled(McpRateLimiter $limiter, \\Closure $enforce, \\Closure $request): int\n{\n    $accepted = 0;\n    try {\n        while ($accepted < 10) {\n            $enforce($limiter, $request());\n            ++$accepted;\n        }\n    } catch (McpException) {\n    }\n\n    return $accepted;\n}\n```",
+          "createdAt": "2026-10-06T12:40:02Z",
+          "diffHunk": "@@ -0,0 +1,151 @@\n+                $request = new Request();\n+                $request->attributes->set(PlatformRequest::ATTRIBUTE_OAUTH_ACCESS_TOKEN_ID, 'token-id');\n+\n+                return $request;\n+            },\n+        ];\n+\n+        yield 'Store API' => [\n+            RateLimiter::MCP_STORE_API,\n+            static fn (McpRateLimiter $limiter, Request $request) => $limiter->enforceForStoreApi($request),\n+            static fn (): Request => new Request(server: ['REMOTE_ADDR' => '192.0.2.1']),\n+        ];\n+    }\n+\n+    /**\n+     * @param \\Closure(McpRateLimiter, Request): void $enforce\n+     * @param \\Closure(): Request $request\n+     */\n+    #[DataProvider('endpointProvider')]\n+    public function testAClientThatUsedUpItsLimitIsServedAgainAfterAPause(string $route, \\Closure $enforce, \\Closure $request): void\n+    {\n+        $config = $this->shippedConfig($route);\n+        $limiter = $this->limiter($route, $config);\n+        $limit = $config['limit'] ?? $config['limits'][0]['limit'] ?? 0;\n+\n+        for ($i = 0; $i < $limit; ++$i) {\n+            $enforce($limiter, $request());\n+        }\n+\n+        // A sliding window frees capacity gradually; after two intervals without requests it is empty.\n+        // time_backoff accepted one request here and throttled the next for another interval (#18906).\n+        $this->sleep(120);\n+\n+        // A new handshake followed by the first real call.\n+        $enforce($limiter, $request());\n+        $enforce($limiter, $request());\n+        $enforce($limiter, $request());\n+\n+        $this->expectNotToPerformAssertions();",
+          "authorAssociation": "MEMBER",
+          "author": {
+           "login": "nfortier-shopware",
+           "kind": "User"
+          },
+          "pullRequestReview": {
+           "state": "CHANGES_REQUESTED"
+          }
+         }
+        ]
+       }
+      },
+      {
+       "isOutdated": true,
+       "path": "tests/unit/Core/Framework/Mcp/RateLimit/McpRateLimiterPolicyTest.php",
+       "comments": {
+        "totalCount": 2,
+        "nodes": [
+         {
+          "databaseId": 4195351216,
+          "url": "https://github.com/shopware/shopware/pull/20855#discussion_r4195351216",
+          "body": "same as previous comment about limits",
+          "createdAt": "2026-10-06T12:40:36Z",
+          "diffHunk": "@@ -0,0 +1,151 @@\n+    /**\n+     * @param \\Closure(McpRateLimiter, Request): void $enforce\n+     * @param \\Closure(): Request $request\n+     */\n+    #[DataProvider('endpointProvider')]\n+    public function testAClientThatUsedUpItsLimitIsServedAgainAfterAPause(string $route, \\Closure $enforce, \\Closure $request): void\n+    {\n+        $config = $this->shippedConfig($route);\n+        $limiter = $this->limiter($route, $config);\n+        $limit = $config['limit'] ?? $config['limits'][0]['limit'] ?? 0;\n+\n+        for ($i = 0; $i < $limit; ++$i) {\n+            $enforce($limiter, $request());\n+        }\n+\n+        // A sliding window frees capacity gradually; after two intervals without requests it is empty.\n+        // time_backoff accepted one request here and throttled the next for another interval (#18906).\n+        $this->sleep(120);\n+\n+        // A new handshake followed by the first real call.\n+        $enforce($limiter, $request());\n+        $enforce($limiter, $request());\n+        $enforce($limiter, $request());\n+\n+        $this->expectNotToPerformAssertions();\n+    }\n+\n+    /**\n+     * @param \\Closure(McpRateLimiter, Request): void $enforce\n+     * @param \\Closure(): Request $request\n+     */\n+    #[DataProvider('endpointProvider')]\n+    public function testAClientOverItsLimitIsThrottled(string $route, \\Closure $enforce, \\Closure $request): void\n+    {\n+        $config = $this->shippedConfig($route);\n+        $limiter = $this->limiter($route, $config);\n+        $limit = $config['limit'] ?? $config['limits'][0]['limit'] ?? 0;\n+\n+        for ($i = 0; $i < $limit; ++$i) {",
+          "authorAssociation": "MEMBER",
+          "author": {
+           "login": "nfortier-shopware",
+           "kind": "User"
+          },
+          "pullRequestReview": {
+           "state": "CHANGES_REQUESTED"
+          }
+         }
+        ]
+       }
+      }
+     ]
+    },
+    "reviews": {
+     "nodes": [
+      {
+       "databaseId": 5314134448,
+       "url": "https://github.com/shopware/shopware/pull/20855#pullrequestreview-5314134448",
+       "body": "\n### 💡 Codex Review\n\nHere are some automated review suggestions for this pull request.\n\n**Reviewed commit:** `6a647411b2`\n    \n\n<details> <summary>ℹ️ About Codex in GitHub</summary>\n<br/>\n\n[Your team has set up Codex to review pull requests in this repo](https://chatgpt.com/codex/cloud/settings/gen",
+       "state": "COMMENTED",
+       "submittedAt": "2026-09-25T06:12:32Z",
+       "authorAssociation": "NONE",
+       "author": {
+        "login": "chatgpt-codex-connector",
+        "kind": "Bot"
+       }
+      },
+      {
+       "databaseId": 5314263886,
+       "url": "https://github.com/shopware/shopware/pull/20855#pullrequestreview-5314263886",
+       "body": "",
+       "state": "COMMENTED",
+       "submittedAt": "2026-09-25T06:26:45Z",
+       "authorAssociation": "MEMBER",
+       "author": {
+        "login": "BrocksiNet",
+        "kind": "User"
+       }
+      },
+      {
+       "databaseId": 5314264177,
+       "url": "https://github.com/shopware/shopware/pull/20855#pullrequestreview-5314264177",
+       "body": "",
+       "state": "COMMENTED",
+       "submittedAt": "2026-09-25T06:26:46Z",
+       "authorAssociation": "MEMBER",
+       "author": {
+        "login": "BrocksiNet",
+        "kind": "User"
+       }
+      },
+      {
+       "databaseId": 5314942374,
+       "url": "https://github.com/shopware/shopware/pull/20855#pullrequestreview-5314942374",
+       "body": "",
+       "state": "COMMENTED",
+       "submittedAt": "2026-09-25T07:39:14Z",
+       "authorAssociation": "MEMBER",
+       "author": {
+        "login": "BrocksiNet",
+        "kind": "User"
+       }
+      },
+      {
+       "databaseId": 5338280488,
+       "url": "https://github.com/shopware/shopware/pull/20855#pullrequestreview-5338280488",
+       "body": "\n### 💡 Codex Review\n\nHere are some automated review suggestions for this pull request.\n\n**Reviewed commit:** `2236dbda9d`\n    \n\n<details> <summary>ℹ️ About Codex in GitHub</summary>\n<br/>\n\n[Your team has set up Codex to review pull requests in this repo](https://chatgpt.com/codex/cloud/settings/gen",
+       "state": "COMMENTED",
+       "submittedAt": "2026-09-28T12:02:14Z",
+       "authorAssociation": "NONE",
+       "author": {
+        "login": "chatgpt-codex-connector",
+        "kind": "Bot"
+       }
+      },
+      {
+       "databaseId": 5338922537,
+       "url": "https://github.com/shopware/shopware/pull/20855#pullrequestreview-5338922537",
+       "body": "",
+       "state": "COMMENTED",
+       "submittedAt": "2026-09-28T12:55:56Z",
+       "authorAssociation": "MEMBER",
+       "author": {
+        "login": "BrocksiNet",
+        "kind": "User"
+       }
+      },
+      {
+       "databaseId": 5378312850,
+       "url": "https://github.com/shopware/shopware/pull/20855#pullrequestreview-5378312850",
+       "body": "",
+       "state": "CHANGES_REQUESTED",
+       "submittedAt": "2026-10-01T10:58:22Z",
+       "authorAssociation": "MEMBER",
+       "author": {
+        "login": "dgrothaus-sw",
+        "kind": "User"
+       }
+      },
+      {
+       "databaseId": 5389525463,
+       "url": "https://github.com/shopware/shopware/pull/20855#pullrequestreview-5389525463",
+       "body": "",
+       "state": "COMMENTED",
+       "submittedAt": "2026-10-02T08:03:29Z",
+       "authorAssociation": "MEMBER",
+       "author": {
+        "login": "BrocksiNet",
+        "kind": "User"
+       }
+      },
+      {
+       "databaseId": 5389525669,
+       "url": "https://github.com/shopware/shopware/pull/20855#pullrequestreview-5389525669",
+       "body": "",
+       "state": "COMMENTED",
+       "submittedAt": "2026-10-02T08:03:30Z",
+       "authorAssociation": "MEMBER",
+       "author": {
+        "login": "BrocksiNet",
+        "kind": "User"
+       }
+      },
+      {
+       "databaseId": 5389525888,
+       "url": "https://github.com/shopware/shopware/pull/20855#pullrequestreview-5389525888",
+       "body": "",
+       "state": "COMMENTED",
+       "submittedAt": "2026-10-02T08:03:32Z",
+       "authorAssociation": "MEMBER",
+       "author": {
+        "login": "BrocksiNet",
+        "kind": "User"
+       }
+      },
+      {
+       "databaseId": 5389526074,
+       "url": "https://github.com/shopware/shopware/pull/20855#pullrequestreview-5389526074",
+       "body": "",
+       "state": "COMMENTED",
+       "submittedAt": "2026-10-02T08:03:34Z",
+       "authorAssociation": "MEMBER",
+       "author": {
+        "login": "BrocksiNet",
+        "kind": "User"
+       }
+      },
+      {
+       "databaseId": 5389526393,
+       "url": "https://github.com/shopware/shopware/pull/20855#pullrequestreview-5389526393",
+       "body": "",
+       "state": "COMMENTED",
+       "submittedAt": "2026-10-02T08:03:36Z",
+       "authorAssociation": "MEMBER",
+       "author": {
+        "login": "BrocksiNet",
+        "kind": "User"
+       }
+      },
+      {
+       "databaseId": 5428410662,
+       "url": "https://github.com/shopware/shopware/pull/20855#pullrequestreview-5428410662",
+       "body": "",
+       "state": "CHANGES_REQUESTED",
+       "submittedAt": "2026-10-06T12:47:08Z",
+       "authorAssociation": "MEMBER",
+       "author": {
+        "login": "nfortier-shopware",
+        "kind": "User"
+       }
+      },
+      {
+       "databaseId": 5432907657,
+       "url": "https://github.com/shopware/shopware/pull/20855#pullrequestreview-5432907657",
+       "body": "",
+       "state": "COMMENTED",
+       "submittedAt": "2026-10-06T18:27:11Z",
+       "authorAssociation": "MEMBER",
+       "author": {
+        "login": "BrocksiNet",
+        "kind": "User"
+       }
+      },
+      {
+       "databaseId": 5432908098,
+       "url": "https://github.com/shopware/shopware/pull/20855#pullrequestreview-5432908098",
+       "body": "",
+       "state": "COMMENTED",
+       "submittedAt": "2026-10-06T18:27:14Z",
+       "authorAssociation": "MEMBER",
+       "author": {
+        "login": "BrocksiNet",
+        "kind": "User"
+       }
+      },
+      {
+       "databaseId": 5432908429,
+       "url": "https://github.com/shopware/shopware/pull/20855#pullrequestreview-5432908429",
+       "body": "",
+       "state": "COMMENTED",
+       "submittedAt": "2026-10-06T18:27:16Z",
+       "authorAssociation": "MEMBER",
+       "author": {
+        "login": "BrocksiNet",
+        "kind": "User"
+       }
+      },
+      {
+       "databaseId": 5432908731,
+       "url": "https://github.com/shopware/shopware/pull/20855#pullrequestreview-5432908731",
+       "body": "",
+       "state": "COMMENTED",
+       "submittedAt": "2026-10-06T18:27:17Z",
+       "authorAssociation": "MEMBER",
+       "author": {
+        "login": "BrocksiNet",
+        "kind": "User"
+       }
+      },
+      {
+       "databaseId": 5441245900,
+       "url": "https://github.com/shopware/shopware/pull/20855#pullrequestreview-5441245900",
+       "body": "",
+       "state": "APPROVED",
+       "submittedAt": "2026-10-07T10:55:16Z",
+       "authorAssociation": "MEMBER",
+       "author": {
+        "login": "nfortier-shopware",
+        "kind": "User"
+       }
+      },
+      {
+       "databaseId": 5469292775,
+       "url": "https://github.com/shopware/shopware/pull/20855#pullrequestreview-5469292775",
+       "body": "The hosting guide still lists both MCP limiters with `time_backoff` and the 10-minute limits in `rate-limiter.md` ([source](https://github.com/shopware/docs/blob/73ce177459f113e90146fc391155f8819179eb79/guides/hosting/infrastructure/rate-limiter.md#L38-L39)). shopware/docs#2571 names only `configuration.md` and `store-api.md` for this change. I think the table in `rate-limiter.md` belongs in its open points as well.",
+       "state": "APPROVED",
+       "submittedAt": "2026-10-09T11:14:40Z",
+       "authorAssociation": "MEMBER",
+       "author": {
+        "login": "dgrothaus-sw",
+        "kind": "User"
+       }
+      }
+     ]
+    }
+   },
+   {
+    "number": 19917,
+    "title": "fix(storefront): probe only storefront-visible pages in readiness checks",
+    "url": "https://github.com/shopware/shopware/pull/19917",
+    "mergedAt": "2026-10-20T14:30:08Z",
+    "author": {
+     "login": "BrocksiNet"
+    },
+    "reviewThreads": {
+     "nodes": [
+      {
+       "isOutdated": true,
+       "path": "src/Storefront/Framework/SystemCheck/ProductDetailReadinessCheck.php",
+       "comments": {
+        "totalCount": 2,
+        "nodes": [
+         {
+          "databaseId": 3979966807,
+          "url": "https://github.com/shopware/shopware/pull/19917#discussion_r3979966807",
+          "body": "**<sub><sub>![P2 Badge](https://img.shields.io/badge/P2-yellow?style=flat)</sub></sub>  Use the probed domain's sales-channel context**\n\nWhen a sales channel has a domain with a non-default language or currency, this factory call creates the visibility context using only the sales-channel defaults, ",
+          "createdAt": "2026-09-10T14:11:00Z",
+          "diffHunk": "@@ -99,28 +107,26 @@ private function doRun(): Result\n         );\n     }\n ",
+          "authorAssociation": "NONE",
+          "author": {
+           "login": "chatgpt-codex-connector",
+           "kind": "Bot"
+          },
+          "pullRequestReview": {
+           "state": "COMMENTED"
+          }
+         }
+        ]
+       }
+      },
+      {
+       "isOutdated": true,
+       "path": "src/Storefront/Framework/SystemCheck/ProductDetailReadinessCheck.php",
+       "comments": {
+        "totalCount": 2,
+        "nodes": [
+         {
+          "databaseId": 3979966819,
+          "url": "https://github.com/shopware/shopware/pull/19917#discussion_r3979966819",
+          "body": "**<sub><sub>![P2 Badge](https://img.shields.io/badge/P2-yellow?style=flat)</sub></sub>  Respect the closeout visibility configuration**\n\nWhen `core.listing.hideCloseoutProductsWhenOutOfStock` is disabled, `ProductDetailRoute::addCloseoutFilter()` deliberately does not filter on stock availability, b",
+          "createdAt": "2026-09-10T14:11:00Z",
+          "diffHunk": "@@ -99,28 +107,26 @@ private function doRun(): Result\n \n-    private function fetchActiveProductIdBySalesChannelId(string $salesChannelId): ?string\n+    /**",
+          "authorAssociation": "NONE",
+          "author": {
+           "login": "chatgpt-codex-connector",
+           "kind": "Bot"
+          },
+          "pullRequestReview": {
+           "state": "COMMENTED"
+          }
+         }
+        ]
+       }
+      },
+      {
+       "isOutdated": true,
+       "path": "src/Storefront/Framework/SystemCheck/ProductDetailReadinessCheck.php",
+       "comments": {
+        "totalCount": 2,
+        "nodes": [
+         {
+          "databaseId": 4071885036,
+          "url": "https://github.com/shopware/shopware/pull/19917#discussion_r4071885036",
+          "body": "**<sub><sub>![P1 Badge](https://img.shields.io/badge/P1-orange?style=flat)</sub></sub>  Resolve candidates with the request's anonymous rule IDs**\n\nWhen an extension exposes a product or category only for a rule that matches an anonymous visitor (for example a currency, country, customer-group, or a",
+          "createdAt": "2026-09-22T13:02:00Z",
+          "diffHunk": "@@ -99,28 +112,43 @@ private function doRun(): Result\n+     * (for example via the sales_channel.product.process.criteria event) are taken into account as well.\n+     * Otherwise the check could pick a product the storefront refuses to render for an anonymous visitor,\n+     * which would report an intentional restriction as an unhealthy product detail page.",
+          "authorAssociation": "NONE",
+          "author": {
+           "login": "chatgpt-codex-connector",
+           "kind": "Bot"
+          },
+          "pullRequestReview": {
+           "state": "COMMENTED"
+          }
+         }
+        ]
+       }
+      },
+      {
+       "isOutdated": false,
+       "path": "src/Storefront/Framework/SystemCheck/Util/SalesChannelDomainContextFactory.php",
+       "comments": {
+        "totalCount": 2,
+        "nodes": [
+         {
+          "databaseId": 4093160817,
+          "url": "https://github.com/shopware/shopware/pull/19917#discussion_r4093160817",
+          "body": "**<sub><sub>![P2 Badge](https://img.shields.io/badge/P2-yellow?style=flat)</sub></sub>  Preserve context lifecycle events for candidate lookup**\n\nWhen an extension exposes products or categories only after handling `SalesChannelContextCreatedEvent` or `SalesChannelContextResolvedEvent` (for example,",
+          "createdAt": "2026-09-24T11:39:43Z",
+          "diffHunk": "@@ -0,0 +1,51 @@\n+use Shopware\\Core\\Checkout\\Cart\\CartRuleLoader;\n+use Shopware\\Core\\Framework\\Log\\Package;\n+use Shopware\\Core\\Framework\\Uuid\\Uuid;",
+          "authorAssociation": "NONE",
+          "author": {
+           "login": "chatgpt-codex-connector",
+           "kind": "Bot"
+          },
+          "pullRequestReview": {
+           "state": "COMMENTED"
+          }
+         }
+        ]
+       }
+      },
+      {
+       "isOutdated": true,
+       "path": "src/Storefront/Framework/SystemCheck/Util/SalesChannelDomainContextFactory.php",
+       "comments": {
+        "totalCount": 2,
+        "nodes": [
+         {
+          "databaseId": 4093160827,
+          "url": "https://github.com/shopware/shopware/pull/19917#discussion_r4093160827",
+          "body": "**<sub><sub>![P2 Badge](https://img.shields.io/badge/P2-yellow?style=flat)</sub></sub>  Avoid persisting the synthetic rule-matching cart**\n\nWhen a cart processor or `CheckoutCartRuleLoaderExtension` adds a line item or error while calculating this empty cart, `CartRuleLoader::load()` calls the cart",
+          "createdAt": "2026-09-24T11:39:43Z",
+          "diffHunk": "@@ -0,0 +1,51 @@\n+use Shopware\\Core\\Framework\\Uuid\\Uuid;\n+use Shopware\\Core\\System\\SalesChannel\\Context\\AbstractSalesChannelContextFactory;\n+use Shopware\\Core\\System\\SalesChannel\\Context\\SalesChannelContextService;",
+          "authorAssociation": "NONE",
+          "author": {
+           "login": "chatgpt-codex-connector",
+           "kind": "Bot"
+          },
+          "pullRequestReview": {
+           "state": "COMMENTED"
+          }
+         }
+        ]
+       }
+      },
+      {
+       "isOutdated": true,
+       "path": "src/Storefront/Framework/SystemCheck/Util/SalesChannelDomainContextFactory.php",
+       "comments": {
+        "totalCount": 2,
+        "nodes": [
+         {
+          "databaseId": 4093405720,
+          "url": "https://github.com/shopware/shopware/pull/19917#discussion_r4093405720",
+          "body": "**<sub><sub>![P2 Badge](https://img.shields.io/badge/P2-yellow?style=flat)</sub></sub>  Create the synthetic cart through CartFactory**\n\nWhen an extension listens to `CartCreatedEvent` to seed a new anonymous cart—for example, by adding a line item that makes a visibility rule match—this direct `new",
+          "createdAt": "2026-09-24T12:08:38Z",
+          "diffHunk": "@@ -0,0 +1,58 @@\n+ * @internal\n+ *\n+ * Creates the sales channel context an anonymous visitor gets on the given domain, so the readiness checks",
+          "authorAssociation": "NONE",
+          "author": {
+           "login": "chatgpt-codex-connector",
+           "kind": "Bot"
+          },
+          "pullRequestReview": {
+           "state": "COMMENTED"
+          }
+         }
+        ]
+       }
+      },
+      {
+       "isOutdated": false,
+       "path": "src/Storefront/Framework/SystemCheck/ProductDetailReadinessCheck.php",
+       "comments": {
+        "totalCount": 2,
+        "nodes": [
+         {
+          "databaseId": 4102108586,
+          "url": "https://github.com/shopware/shopware/pull/19917#discussion_r4102108586",
+          "body": "=== src/Storefront/Framework/SystemCheck/ProductListingReadinessCheck.php:141 (blocking)\n\nThe category lookup does not see Dynamic Access restrictions, so the listing check still probes a restricted category and keeps failing for the plugin this PR was written for. Dynamic Access restricts products via `sales_channel.product.process.criteria`, but not categories: from 4.4.0 up to the current 4.5.3 it subscribes to `sales_channel.category.loaded` and sets restricted categories to `active = false` on the loaded entities (`SwagDynamicAccess` `SalesChannelCriteriaSubscriber::addCategoryRuleFilter()`; the `process.criteria` variant is deprecated and no longer registered). That event is dispatched only from `SalesChannelRepository::read()` (`src/Core/System/SalesChannel/Entity/SalesChannelRepository.php:216-231`), which `searchIds()` never reaches (`:187-194`). The probe itself then fails in `NavigationPageLoader::load()` on `if (!$category->getActive())` (`src/Storefront/Page/Navigation/NavigationPageLoader.php:48-49`), not in `CategoryRoute::loadCategory()` as the description says. The new integration tests restrict via `sales_channel.category.process.criteria`, which is why they pass anyway.\n\nI suggest loading the candidates and applying the same `active` check the storefront applies, which covers both criteria-based and loaded-event-based restrictions:\n\n~~~php\n$categories = $this->categoryRepository->search($criteria, $context)->getEntities();\n\n// keep the order of the candidates, so child listing pages are preferred over the navigation category\nforeach ($candidateIds as $candidateId) {\n    if ($categories->get($candidateId)?->getActive()) {\n        return $candidateId;\n    }\n}\n~~~\n\nCould we also add an integration test that restricts through a `sales_channel.category.loaded` listener calling `setActive(false)`, the mechanism the plugin actually uses?",
+          "createdAt": "2026-09-25T07:12:51Z",
+          "diffHunk": "@@ -99,28 +110,36 @@ private function doRun(): Result\n+     */\n+    private function fetchVisibleProductId(SalesChannelDomain $domain): ?string\n     {\n-        $sql = <<<'SQL'\n-            SELECT LOWER(HEX(p.id)) as product_id\n-            FROM product p\n-            WHERE\n-                p.version_id = :versionId\n-                AND p.active = 1\n-                AND p.stock > 0\n-                AND EXISTS (\n-                    SELECT 1 FROM product_visibility pv\n-                    WHERE pv.product_id = p.id\n-                        AND pv.product_version_id = p.version_id\n-                        AND pv.sales_channel_id = :salesChannelId\n-                )\n-            ORDER BY p.id\n-            LIMIT 1;\n-        SQL;\n-\n-        return $this->connection->fetchOne(\n-            $sql,\n-            ['salesChannelId' => Uuid::fromHexToBytes($salesChannelId), 'versionId' => Uuid::fromHexToBytes(Defaults::LIVE_VERSION)],\n-        ) ?: null;\n+        $context = $this->contextFactory->create($domain);\n+\n+        $criteria = new Criteria();\n+        $criteria->setTitle('product-detail-readiness-check');\n+        // Mirrors ProductDetailRoute::addCloseoutFilter(): only closeout products out of stock are\n+        // unrenderable, and only while the setting hides them. Filtering on `available` instead would\n+        // also drop a non-closeout product with no stock, whose detail page renders fine, and would\n+        // keep dropping closeout products after an admin turned the setting off.\n+        if ($this->systemConfigService->getBool('core.listing.hideCloseoutProductsWhenOutOfStock', $domain->salesChannelId)) {\n+            $criteria->addFilter($this->productCloseoutFilterFactory->create($context));\n+        }\n+\n+        // pick the same product on every run, so the check result is reproducible\n+        $criteria->addSorting(new FieldSorting('id'));\n+        $criteria->setLimit(1);",
+          "authorAssociation": "MEMBER",
+          "author": {
+           "login": "dgrothaus-sw",
+           "kind": "User"
+          },
+          "pullRequestReview": {
+           "state": "CHANGES_REQUESTED"
+          }
+         }
+        ]
+       }
+      },
+      {
+       "isOutdated": true,
+       "path": "src/Storefront/Framework/SystemCheck/ProductListingReadinessCheck.php",
+       "comments": {
+        "totalCount": 2,
+        "nodes": [
+         {
+          "databaseId": 4102110925,
+          "url": "https://github.com/shopware/shopware/pull/19917#discussion_r4102110925",
+          "body": "Both halves of the `UNION ALL` bind the same list under two names. DBAL expands every occurrence of a named parameter from the same value (`vendor/doctrine/dbal/src/ExpandArrayParameters.php:55-64`), so one `:salesChannelIds` placeholder in both halves does the same job with half the parameter and type entries. Optional.",
+          "createdAt": "2026-09-25T07:13:15Z",
+          "diffHunk": "@@ -105,50 +115,106 @@ private function doRun(): Result\n+            INNER JOIN `cms_page` `cms_page_child`\n                 ON `category_child`.`cms_page_id` = `cms_page_child`.`id`\n                 AND `category_child`.`version_id` = `cms_page_child`.`version_id`\n                 AND `cms_page_child`.`type` = 'product_list'\n-            LEFT JOIN `cms_page` `cms_page_root`\n+            WHERE `category_root`.`active` = 1\n+                AND `sales_channel`.`id` IN (:childSalesChannelIds)\n+            UNION ALL\n+            SELECT LOWER(HEX(`sales_channel`.`id`)) AS `sales_channel_id`,\n+                   LOWER(HEX(`category_root`.`id`)) AS `category_id`,\n+                   1 AS `is_navigation_category`\n+            FROM `category` `category_root`\n+            INNER JOIN `sales_channel`\n+                ON `sales_channel`.`navigation_category_id` = `category_root`.`id`\n+                AND `sales_channel`.`navigation_category_version_id` = `category_root`.`version_id`\n+            INNER JOIN `cms_page` `cms_page_root`\n                 ON `category_root`.`cms_page_id` = `cms_page_root`.`id`\n                 AND `category_root`.`version_id` = `cms_page_root`.`version_id`\n                 AND `cms_page_root`.`type` = 'product_list'\n-            INNER JOIN `sales_channel`\n-                ON `sales_channel`.`navigation_category_id` = `category_root`.`id`\n-                and `sales_channel`.`navigation_category_version_id` = `category_root`.`version_id`\n             WHERE `category_root`.`active` = 1\n-                AND `sales_channel`.`id` IN (:salesChannelIds)\n-                AND (\n-                    `cms_page_child`.`id` IS NOT NULL\n-                    OR `cms_page_root`.`id` IS NOT NULL\n-                )\n-            GROUP BY `sales_channel`.`id`\n+                AND `sales_channel`.`id` IN (:rootSalesChannelIds)\n+            ORDER BY `sales_channel_id`, `is_navigation_category`, `category_id`\n         SQL;\n \n         $result = $this->connection->fetchAllAssociative(\n             $sql,\n-            ['salesChannelIds' => Uuid::fromHexToBytesList($salesChannelIds)],\n-            ['salesChannelIds' => ArrayParameterType::BINARY]\n+            [\n+                'childSalesChannelIds' => Uuid::fromHexToBytesList($salesChannelIds),",
+          "authorAssociation": "MEMBER",
+          "author": {
+           "login": "dgrothaus-sw",
+           "kind": "User"
+          },
+          "pullRequestReview": {
+           "state": "CHANGES_REQUESTED"
+          }
+         }
+        ]
+       }
+      },
+      {
+       "isOutdated": false,
+       "path": "src/Storefront/Framework/SystemCheck/ProductDetailReadinessCheck.php",
+       "comments": {
+        "totalCount": 2,
+        "nodes": [
+         {
+          "databaseId": 4102116944,
+          "url": "https://github.com/shopware/shopware/pull/19917#discussion_r4102116944",
+          "body": "A domain that cannot produce a context now takes the whole check down, not just its own sales channel. `SalesChannelDomainContextFactory::create()` throws from `BaseSalesChannelContextFactory` when, for example, the domain's currency is no longer assigned to the sales channel (`src/Core/System/SalesChannel/Context/BaseSalesChannelContextFactory.php:114-121`). The exception escapes `doRun()` and `SystemChecker::runChecks()` turns it into a single `Failed to run the check with ERROR` result (`src/Core/Framework/SystemCheck/SystemChecker.php:73-77`), so the remaining sales channels are never probed and their `extra` entries are lost. The status stays `FAILURE`, so this is about diagnosability, not grading. Could we catch it per domain and record it as that domain's failure, like `SalesChannelDomainUtil::handleRequest()` does for the request? The same applies to `ProductListingReadinessCheck.php:135",
+          "createdAt": "2026-09-25T07:14:17Z",
+          "diffHunk": "@@ -99,28 +110,36 @@ private function doRun(): Result\n     }\n \n-    private function fetchActiveProductIdBySalesChannelId(string $salesChannelId): ?string\n+    /**\n+     * @description The product is resolved through the sales channel repository on purpose, so the same criteria\n+     * processing the storefront applies is used: SalesChannelProductDefinition::processCriteria() adds the\n+     * ProductAvailableFilter that ProductDetailRoute uses, and extensions restricting product visibility by rules\n+     * (for example via the sales_channel.product.process.criteria event) are taken into account as well.\n+     * Otherwise the check could pick a product the storefront refuses to render for an anonymous visitor,\n+     * which would report an intentional restriction as an unhealthy product detail page.\n+     *\n+     * The context is the one an anonymous visitor gets on the probed domain, including the rules matching for\n+     * them, see SalesChannelDomainContextFactory. A restriction is otherwise evaluated against a different\n+     * context than the request that follows.\n+     */\n+    private function fetchVisibleProductId(SalesChannelDomain $domain): ?string\n     {\n-        $sql = <<<'SQL'\n-            SELECT LOWER(HEX(p.id)) as product_id\n-            FROM product p\n-            WHERE\n-                p.version_id = :versionId\n-                AND p.active = 1\n-                AND p.stock > 0\n-                AND EXISTS (\n-                    SELECT 1 FROM product_visibility pv\n-                    WHERE pv.product_id = p.id\n-                        AND pv.product_version_id = p.version_id\n-                        AND pv.sales_channel_id = :salesChannelId\n-                )\n-            ORDER BY p.id\n-            LIMIT 1;\n-        SQL;\n-\n-        return $this->connection->fetchOne(\n-            $sql,\n-            ['salesChannelId' => Uuid::fromHexToBytes($salesChannelId), 'versionId' => Uuid::fromHexToBytes(Defaults::LIVE_VERSION)],\n-        ) ?: null;\n+        $context = $this->contextFactory->create($domain);",
+          "authorAssociation": "MEMBER",
+          "author": {
+           "login": "dgrothaus-sw",
+           "kind": "User"
+          },
+          "pullRequestReview": {
+           "state": "CHANGES_REQUESTED"
+          }
+         }
+        ]
+       }
+      },
+      {
+       "isOutdated": true,
+       "path": "src/Storefront/Framework/SystemCheck/ProductDetailReadinessCheck.php",
+       "comments": {
+        "totalCount": 2,
+        "nodes": [
+         {
+          "databaseId": 4102119373,
+          "url": "https://github.com/shopware/shopware/pull/19917#discussion_r4102119373",
+          "body": "The comment describes earlier revisions of this PR rather than the code. \"Filtering on `available` instead would … keep dropping closeout products after an admin turned the setting off\" argues against a filter that is no longer here. The same happens in `SalesChannelDomainProvider.php:26` (\"which `GROUP BY sales_channel.id` alone does not\"). `SalesChannelDomainContextFactory.php:36` also has a 162-character line in the middle of the docblock, and both checks repeat the same paragraph about the lookup context, which the factory's own docblock already covers. I suggest keeping the first sentence here (\"Mirrors ProductDetailRoute::addCloseoutFilter()\"), dropping the references to removed code, and linking the checks to the factory instead of repeating it.",
+          "createdAt": "2026-09-25T07:14:44Z",
+          "diffHunk": "@@ -99,28 +110,36 @@ private function doRun(): Result\n+     * @description The product is resolved through the sales channel repository on purpose, so the same criteria\n+     * processing the storefront applies is used: SalesChannelProductDefinition::processCriteria() adds the\n+     * ProductAvailableFilter that ProductDetailRoute uses, and extensions restricting product visibility by rules\n+     * (for example via the sales_channel.product.process.criteria event) are taken into account as well.\n+     * Otherwise the check could pick a product the storefront refuses to render for an anonymous visitor,\n+     * which would report an intentional restriction as an unhealthy product detail page.\n+     *\n+     * The context is the one an anonymous visitor gets on the probed domain, including the rules matching for\n+     * them, see SalesChannelDomainContextFactory. A restriction is otherwise evaluated against a different\n+     * context than the request that follows.\n+     */\n+    private function fetchVisibleProductId(SalesChannelDomain $domain): ?string\n     {\n-        $sql = <<<'SQL'\n-            SELECT LOWER(HEX(p.id)) as product_id\n-            FROM product p\n-            WHERE\n-                p.version_id = :versionId\n-                AND p.active = 1\n-                AND p.stock > 0\n-                AND EXISTS (\n-                    SELECT 1 FROM product_visibility pv\n-                    WHERE pv.product_id = p.id\n-                        AND pv.product_version_id = p.version_id\n-                        AND pv.sales_channel_id = :salesChannelId\n-                )\n-            ORDER BY p.id\n-            LIMIT 1;\n-        SQL;\n-\n-        return $this->connection->fetchOne(\n-            $sql,\n-            ['salesChannelId' => Uuid::fromHexToBytes($salesChannelId), 'versionId' => Uuid::fromHexToBytes(Defaults::LIVE_VERSION)],\n-        ) ?: null;\n+        $context = $this->contextFactory->create($domain);\n+\n+        $criteria = new Criteria();\n+        $criteria->setTitle('product-detail-readiness-check');\n+        // Mirrors ProductDetailRoute::addCloseoutFilter(): only closeout products out of stock are",
+          "authorAssociation": "MEMBER",
+          "author": {
+           "login": "dgrothaus-sw",
+           "kind": "User"
+          },
+          "pullRequestReview": {
+           "state": "CHANGES_REQUESTED"
+          }
+         }
+        ]
+       }
+      },
+      {
+       "isOutdated": true,
+       "path": "src/Storefront/Framework/SystemCheck/Util/SalesChannelDomainUtil.php",
+       "comments": {
+        "totalCount": 2,
+        "nodes": [
+         {
+          "databaseId": 4102319361,
+          "url": "https://github.com/shopware/shopware/pull/19917#discussion_r4102319361",
+          "body": "When `'request' => null`, the log line then doesn't say which domain failed. Adding 'url' => $url to the log context would make the log useful on its own.",
+          "createdAt": "2026-09-25T07:41:59Z",
+          "diffHunk": "@@ -88,6 +88,17 @@ public function createEmptyResult(string $name, string $message): Result\n         );\n     }\n \n+    /**\n+     * @description Records an exception that prevented a storefront page from being probed as the failed result\n+     * of that page, so the check can go on with the other sales channels and still report what went wrong.\n+     */\n+    public function createExceptionResult(string $url, \\Exception $e, float $responseTime = 0.0, ?Request $request = null): StorefrontHealthCheckResult\n+    {\n+        $this->logger->error(\\sprintf('Error during systemcheck: \"%s\"', $e->getMessage()), ['exception' => $e, 'request' => $request]);",
+          "authorAssociation": "MEMBER",
+          "author": {
+           "login": "dgrothaus-sw",
+           "kind": "User"
+          },
+          "pullRequestReview": {
+           "state": "APPROVED"
+          }
+         }
+        ]
+       }
+      },
+      {
+       "isOutdated": true,
+       "path": "src/Storefront/Framework/SystemCheck/ProductDetailReadinessCheck.php",
+       "comments": {
+        "totalCount": 2,
+        "nodes": [
+         {
+          "databaseId": 4268568451,
+          "url": "https://github.com/shopware/shopware/pull/19917#discussion_r4268568451",
+          "body": "```suggestion\n            } catch (\\Throwable $e) {\n```\nmaybe? 🤔 ",
+          "createdAt": "2026-10-14T08:39:54Z",
+          "diffHunk": "@@ -65,7 +76,15 @@ private function doRun(): Result\n         $extra = [];\n         $requestStatus = [];\n         foreach ($domains as $salesChannelId => $domain) {\n-            $productId = $this->fetchActiveProductIdBySalesChannelId($salesChannelId);\n+            try {\n+                $productId = $this->fetchVisibleProductId($domain);\n+            } catch (\\Exception $e) {",
+          "authorAssociation": "MEMBER",
+          "author": {
+           "login": "mitelg",
+           "kind": "User"
+          },
+          "pullRequestReview": {
+           "state": "APPROVED"
+          }
+         }
+        ]
+       }
+      },
+      {
+       "isOutdated": true,
+       "path": "src/Storefront/Framework/SystemCheck/ProductListingReadinessCheck.php",
+       "comments": {
+        "totalCount": 2,
+        "nodes": [
+         {
+          "databaseId": 4268589071,
+          "url": "https://github.com/shopware/shopware/pull/19917#discussion_r4268589071",
+          "body": "```suggestion\n            } catch (\\Throwable $e) {\n```",
+          "createdAt": "2026-10-14T08:42:08Z",
+          "diffHunk": "@@ -65,12 +75,20 @@ private function doRun(): Result\n     {\n         $domains = $this->domainProvider->fetchSalesChannelDomains();\n         $salesChannelIds = $domains->getKeys();\n-        $navigationIds = $salesChannelIds ? $this->fetchNavigationIds($salesChannelIds) : null;\n+        $navigationIds = $salesChannelIds ? $this->fetchNavigationIds($salesChannelIds) : [];\n \n         $extra = [];\n         $requestStatus = [];\n         foreach ($domains as $salesChannelId => $domain) {\n-            $navigationId = $navigationIds[$salesChannelId] ?? null;\n+            try {\n+                $navigationId = $this->resolveVisibleNavigationId($domain, $navigationIds[$salesChannelId] ?? []);\n+            } catch (\\Exception $e) {",
+          "authorAssociation": "MEMBER",
+          "author": {
+           "login": "mitelg",
+           "kind": "User"
+          },
+          "pullRequestReview": {
+           "state": "APPROVED"
+          }
+         }
+        ]
+       }
+      },
+      {
+       "isOutdated": false,
+       "path": "src/Storefront/Framework/SystemCheck/ProductListingReadinessCheck.php",
+       "comments": {
+        "totalCount": 2,
+        "nodes": [
+         {
+          "databaseId": 4268604037,
+          "url": "https://github.com/shopware/shopware/pull/19917#discussion_r4268604037",
+          "body": "no sorting here? 🤔 ",
+          "createdAt": "2026-10-14T08:43:40Z",
+          "diffHunk": "@@ -105,42 +123,87 @@ private function doRun(): Result\n     }\n \n     /**\n-     * @description This query is necessary to determine the correct navigation category for each sales channel that is configured for storefront listing pages.\n-     * It covers cases where the navigation category itself or one of its direct child categories is assigned a CMS page of type 'product_list'.\n-     * This ensures that the check works for both direct and nested category assignments, and only considers active categories and sales channels.\n+     * @description The categories are loaded through the sales channel repository with the context of\n+     * SalesChannelDomainContextFactory, so extensions restricting category visibility are taken into account,\n+     * whether they filter the criteria (sales_channel.category.process.criteria) or deactivate loaded categories\n+     * (sales_channel.category.loaded), as Dynamic Access does. The latter is only dispatched when entities are\n+     * read, so the IDs alone are not enough. Otherwise the check could pick a category the storefront refuses to\n+     * render for an anonymous visitor, which would report an intentional restriction as an unhealthy product\n+     * listing page.\n+     *\n+     * @param list<string> $candidateIds\n+     */\n+    private function resolveVisibleNavigationId(SalesChannelDomain $domain, array $candidateIds): ?string\n+    {\n+        if ($candidateIds === []) {\n+            return null;\n+        }\n+\n+        $context = $this->contextFactory->create($domain);\n+\n+        $criteria = new Criteria($candidateIds);\n+        $criteria->setTitle('product-listing-readiness-check');\n+        $criteria->addFilter(new EqualsFilter('active', true));\n+\n+        $categories = $this->categoryRepository->search($criteria, $context)->getEntities();",
+          "authorAssociation": "MEMBER",
+          "author": {
+           "login": "mitelg",
+           "kind": "User"
+          },
+          "pullRequestReview": {
+           "state": "APPROVED"
+          }
+         }
+        ]
+       }
+      }
+     ]
+    },
+    "reviews": {
+     "nodes": [
+      {
+       "databaseId": 5168170909,
+       "url": "https://github.com/shopware/shopware/pull/19917#pullrequestreview-5168170909",
+       "body": "\n### 💡 Codex Review\n\nHere are some automated review suggestions for this pull request.\n\n**Reviewed commit:** `568dc66f78`\n    \n\n<details> <summary>ℹ️ About Codex in GitHub</summary>\n<br/>\n\n[Your team has set up Codex to review pull requests in this repo](https://chatgpt.com/codex/cloud/settings/gen",
+       "state": "COMMENTED",
+       "submittedAt": "2026-09-10T14:11:00Z",
+       "authorAssociation": "NONE",
+       "author": {
+        "login": "chatgpt-codex-connector",
+        "kind": "Bot"
+       }
+      },
+      {
+       "databaseId": 5168669897,
+       "url": "https://github.com/shopware/shopware/pull/19917#pullrequestreview-5168669897",
+       "body": "",
+       "state": "COMMENTED",
+       "submittedAt": "2026-09-10T14:54:14Z",
+       "authorAssociation": "MEMBER",
+       "author": {
+        "login": "BrocksiNet",
+        "kind": "User"
+       }
+      },
+      {
+       "databaseId": 5168670230,
+       "url": "https://github.com/shopware/shopware/pull/19917#pullrequestreview-5168670230",
+       "body": "",
+       "state": "COMMENTED",
+       "submittedAt": "2026-09-10T14:54:15Z",
+       "authorAssociation": "MEMBER",
+       "author": {
+        "login": "BrocksiNet",
+        "kind": "User"
+       }
+      },
+      {
+       "databaseId": 5278392373,
+       "url": "https://github.com/shopware/shopware/pull/19917#pullrequestreview-5278392373",
+       "body": "\n### 💡 Codex Review\n\nHere are some automated review suggestions for this pull request.\n\n**Reviewed commit:** `c584b4aeac`\n    \n\n<details> <summary>ℹ️ About Codex in GitHub</summary>\n<br/>\n\n[Your team has set up Codex to review pull requests in this repo](https://chatgpt.com/codex/cloud/settings/gen",
+       "state": "COMMENTED",
+       "submittedAt": "2026-09-22T13:02:00Z",
+       "authorAssociation": "NONE",
+       "author": {
+        "login": "chatgpt-codex-connector",
+        "kind": "Bot"
+       }
+      },
+      {
+       "databaseId": 5302988461,
+       "url": "https://github.com/shopware/shopware/pull/19917#pullrequestreview-5302988461",
+       "body": "",
+       "state": "COMMENTED",
+       "submittedAt": "2026-09-24T10:13:43Z",
+       "authorAssociation": "MEMBER",
+       "author": {
+        "login": "BrocksiNet",
+        "kind": "User"
+       }
+      },
+      {
+       "databaseId": 5303884518,
+       "url": "https://github.com/shopware/shopware/pull/19917#pullrequestreview-5303884518",
+       "body": "\n### 💡 Codex Review\n\nHere are some automated review suggestions for this pull request.\n\n**Reviewed commit:** `770d1edd87`\n    \n\n<details> <summary>ℹ️ About Codex in GitHub</summary>\n<br/>\n\n[Your team has set up Codex to review pull requests in this repo](https://chatgpt.com/codex/cloud/settings/gen",
+       "state": "COMMENTED",
+       "submittedAt": "2026-09-24T11:39:43Z",
+       "authorAssociation": "NONE",
+       "author": {
+        "login": "chatgpt-codex-connector",
+        "kind": "Bot"
+       }
+      },
+      {
+       "databaseId": 5304079308,
+       "url": "https://github.com/shopware/shopware/pull/19917#pullrequestreview-5304079308",
+       "body": "",
+       "state": "COMMENTED",
+       "submittedAt": "2026-09-24T11:59:04Z",
+       "authorAssociation": "MEMBER",
+       "author": {
+        "login": "BrocksiNet",
+        "kind": "User"
+       }
+      },
+      {
+       "databaseId": 5304079593,
+       "url": "https://github.com/shopware/shopware/pull/19917#pullrequestreview-5304079593",
+       "body": "",
+       "state": "COMMENTED",
+       "submittedAt": "2026-09-24T11:59:06Z",
+       "authorAssociation": "MEMBER",
+       "author": {
+        "login": "BrocksiNet",
+        "kind": "User"
+       }
+      },
+      {
+       "databaseId": 5304182994,
+       "url": "https://github.com/shopware/shopware/pull/19917#pullrequestreview-5304182994",
+       "body": "\n### 💡 Codex Review\n\nHere are some automated review suggestions for this pull request.\n\n**Reviewed commit:** `4d31921b48`\n    \n\n<details> <summary>ℹ️ About Codex in GitHub</summary>\n<br/>\n\n[Your team has set up Codex to review pull requests in this repo](https://chatgpt.com/codex/cloud/settings/gen",
+       "state": "COMMENTED",
+       "submittedAt": "2026-09-24T12:08:38Z",
+       "authorAssociation": "NONE",
+       "author": {
+        "login": "chatgpt-codex-connector",
+        "kind": "Bot"
+       }
+      },
+      {
+       "databaseId": 5306053810,
+       "url": "https://github.com/shopware/shopware/pull/19917#pullrequestreview-5306053810",
+       "body": "",
+       "state": "COMMENTED",
+       "submittedAt": "2026-09-24T14:48:22Z",
+       "authorAssociation": "MEMBER",
+       "author": {
+        "login": "BrocksiNet",
+        "kind": "User"
+       }
+      },
+      {
+       "databaseId": 5314707516,
+       "url": "https://github.com/shopware/shopware/pull/19917#pullrequestreview-5314707516",
+       "body": "",
+       "state": "CHANGES_REQUESTED",
+       "submittedAt": "2026-09-25T07:16:09Z",
+       "authorAssociation": "MEMBER",
+       "author": {
+        "login": "dgrothaus-sw",
+        "kind": "User"
+       }
+      },
+      {
+       "databaseId": 5314855778,
+       "url": "https://github.com/shopware/shopware/pull/19917#pullrequestreview-5314855778",
+       "body": "",
+       "state": "COMMENTED",
+       "submittedAt": "2026-09-25T07:30:04Z",
+       "authorAssociation": "MEMBER",
+       "author": {
+        "login": "BrocksiNet",
+        "kind": "User"
+       }
+      },
+      {
+       "databaseId": 5314855978,
+       "url": "https://github.com/shopware/shopware/pull/19917#pullrequestreview-5314855978",
+       "body": "",
+       "state": "COMMENTED",
+       "submittedAt": "2026-09-25T07:30:05Z",
+       "authorAssociation": "MEMBER",
+       "author": {
+        "login": "BrocksiNet",
+        "kind": "User"
+       }
+      },
+      {
+       "databaseId": 5314856163,
+       "url": "https://github.com/shopware/shopware/pull/19917#pullrequestreview-5314856163",
+       "body": "",
+       "state": "COMMENTED",
+       "submittedAt": "2026-09-25T07:30:07Z",
+       "authorAssociation": "MEMBER",
+       "author": {
+        "login": "BrocksiNet",
+        "kind": "User"
+       }
+      },
+      {
+       "databaseId": 5314856372,
+       "url": "https://github.com/shopware/shopware/pull/19917#pullrequestreview-5314856372",
+       "body": "",
+       "state": "COMMENTED",
+       "submittedAt": "2026-09-25T07:30:08Z",
+       "authorAssociation": "MEMBER",
+       "author": {
+        "login": "BrocksiNet",
+        "kind": "User"
+       }
+      },
+      {
+       "databaseId": 5314970044,
+       "url": "https://github.com/shopware/shopware/pull/19917#pullrequestreview-5314970044",
+       "body": "",
+       "state": "APPROVED",
+       "submittedAt": "2026-09-25T07:42:06Z",
+       "authorAssociation": "MEMBER",
+       "author": {
+        "login": "dgrothaus-sw",
+        "kind": "User"
+       }
+      },
+      {
+       "databaseId": 5500875535,
+       "url": "https://github.com/shopware/shopware/pull/19917#pullrequestreview-5500875535",
+       "body": "",
+       "state": "COMMENTED",
+       "submittedAt": "2026-10-13T08:35:52Z",
+       "authorAssociation": "MEMBER",
+       "author": {
+        "login": "BrocksiNet",
+        "kind": "User"
+       }
+      },
+      {
+       "databaseId": 5515235267,
+       "url": "https://github.com/shopware/shopware/pull/19917#pullrequestreview-5515235267",
+       "body": "",
+       "state": "APPROVED",
+       "submittedAt": "2026-10-14T08:44:35Z",
+       "authorAssociation": "MEMBER",
+       "author": {
+        "login": "mitelg",
+        "kind": "User"
+       }
+      },
+      {
+       "databaseId": 5546330907,
+       "url": "https://github.com/shopware/shopware/pull/19917#pullrequestreview-5546330907",
+       "body": "please make the tests compatible regarding event listener (PHPStan now has a rule for such)",
+       "state": "CHANGES_REQUESTED",
+       "submittedAt": "2026-10-16T10:18:02Z",
+       "authorAssociation": "MEMBER",
+       "author": {
+        "login": "nfortier-shopware",
+        "kind": "User"
+       }
+      },
+      {
+       "databaseId": 5548016658,
+       "url": "https://github.com/shopware/shopware/pull/19917#pullrequestreview-5548016658",
+       "body": "",
+       "state": "COMMENTED",
+       "submittedAt": "2026-10-16T12:52:29Z",
+       "authorAssociation": "MEMBER",
+       "author": {
+        "login": "BrocksiNet",
+        "kind": "User"
+       }
+      },
+      {
+       "databaseId": 5548017125,
+       "url": "https://github.com/shopware/shopware/pull/19917#pullrequestreview-5548017125",
+       "body": "",
+       "state": "COMMENTED",
+       "submittedAt": "2026-10-16T12:52:31Z",
+       "authorAssociation": "MEMBER",
+       "author": {
+        "login": "BrocksiNet",
+        "kind": "User"
+       }
+      },
+      {
+       "databaseId": 5548017555,
+       "url": "https://github.com/shopware/shopware/pull/19917#pullrequestreview-5548017555",
+       "body": "",
+       "state": "COMMENTED",
+       "submittedAt": "2026-10-16T12:52:33Z",
+       "authorAssociation": "MEMBER",
+       "author": {
+        "login": "BrocksiNet",
+        "kind": "User"
+       }
+      },
+      {
+       "databaseId": 5570318624,
+       "url": "https://github.com/shopware/shopware/pull/19917#pullrequestreview-5570318624",
+       "body": "",
+       "state": "APPROVED",
+       "submittedAt": "2026-10-19T10:36:09Z",
+       "authorAssociation": "MEMBER",
+       "author": {
+        "login": "nfortier-shopware",
+        "kind": "User"
+       }
+      }
+     ]
+    }
+   }
+  ]
+ }
+}

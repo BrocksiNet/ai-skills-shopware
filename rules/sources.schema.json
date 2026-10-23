@@ -1,7 +1,7 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "title": "Drift mining sources",
-  "description": "Repositories the weekly drift job reads (tools/bin/mine-trunk.ts). Checked by validate-skills.",
+  "title": "Drift mining and review sources",
+  "description": "Repositories the weekly drift job reads (tools/bin/mine-trunk.ts) and the ones whose merged-PR reviews the daily collector reads (tools/bin/collect-reviews.ts). Checked by validate-skills.",
   "type": "object",
   "required": ["sources"],
   "additionalProperties": false,
@@ -10,9 +10,32 @@
     "sources": {
       "type": "array",
       "items": { "$ref": "#/$defs/source" }
+    },
+    "reviews": {
+      "type": "array",
+      "description": "Repositories whose merged-PR review comments the daily collector turns into signals.",
+      "items": { "$ref": "#/$defs/review" }
     }
   },
   "$defs": {
+    "review": {
+      "type": "object",
+      "required": ["id", "repo", "base", "private"],
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^[a-z0-9-]+$",
+          "description": "The signals' `source` and the prefix of the monthly files (`<id>-YYYY-MM.jsonl`). Never renamed; must not reuse a drift source ID."
+        },
+        "repo": { "type": "string", "pattern": "^[A-Za-z0-9_.-]+/[A-Za-z0-9_.-]+$" },
+        "base": { "type": "string", "minLength": 1, "description": "Only PRs merged into this branch count." },
+        "private": {
+          "type": "boolean",
+          "description": "A private repository is collected only on a maintainer's machine, into the git-ignored .cache/review-signals/. Its text never goes into the public review-signals release."
+        }
+      }
+    },
     "source": {
       "type": "object",
       "required": ["id", "repo", "branch", "extractor", "paths", "skills"],

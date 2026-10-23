@@ -5,6 +5,7 @@
 //   node tools/bin/mine-trunk.ts report --since 2026-10-13 --until 2026-10-19
 //   node tools/bin/mine-trunk.ts report --source shopware    # one source only
 //   node tools/bin/mine-trunk.ts report --signals out.jsonl  # also write the mapped signals
+//   node tools/bin/mine-trunk.ts report --reviews DIR        # add the week's review comments from a review-signals store
 //   node tools/bin/mine-trunk.ts advance < issue-body.md     # write the states the report recorded
 //
 // `report` prints the Markdown issue body. A source without a state gets a
@@ -22,7 +23,7 @@ import { readStdin } from '../src/proc.ts';
 const ROOT = resolve(import.meta.dirname, '../..');
 const USAGE =
   'usage: mine-trunk.ts report [--since YYYY-MM-DD --until YYYY-MM-DD] [--source ID] [--signals FILE]' +
-  ' | advance < issue-body.md\n';
+  ' [--reviews DIR] | advance < issue-body.md\n';
 
 async function main(): Promise<number> {
   const { positionals, values } = parseArgs({
@@ -32,6 +33,7 @@ async function main(): Promise<number> {
       until: { type: 'string' },
       source: { type: 'string' },
       signals: { type: 'string' },
+      reviews: { type: 'string' },
     },
   });
   const [command] = positionals;

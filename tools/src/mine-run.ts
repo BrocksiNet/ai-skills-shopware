@@ -5,8 +5,7 @@ import { existsSync, readFileSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { loadCatalog } from './catalog.ts';
 import type { GitHubApi } from './github.ts';
-import { mapIndex } from './map-signal.ts';
-import { renderReport, reportSignals, stateFromReport } from './mine-report.ts';
+import { renderReport, reportJsonLines, stateFromReport } from './mine-report.ts';
 import {
   firstPass,
   type Mined,
@@ -17,9 +16,10 @@ import {
   windowAfter,
   windowOfDays,
 } from './mine-trunk.ts';
+import { storedReviewWeek } from './review-report.ts';
 import { inSeries } from './series.ts';
-import { toJsonLines } from './signals.ts';
-import { loadSources, type Source } from './sources.ts';
+import { mapIndex } from './map-signal.ts';
+import { loadReviewSources, loadSources, type Source } from './sources.ts';
 
 export interface ReportOptions {
   root: string;
@@ -31,6 +31,9 @@ export interface ReportOptions {
   source?: string;
   /** Also write the mapped signals as JSON Lines here. */
   signals?: string;
+  /** A review-signals store: adds the review comments of the week up to
+   *  the report's end, mapped again with today's rules. */
+  reviews?: string;
   /** End of the window when it follows the state; tests fix it. */
   now?: string;
 }
@@ -57,8 +60,20 @@ export async function report(o: ReportOptions): Promise<string> {
   const mined = await inSeries(sources, (s) => mine(o, s, states, to));
   const catalog = loadCatalog(o.root);
   const index = mapIndex(o.root, catalog, all);
-  if (o.signals !== undefined) writeFileSync(o.signals, toJsonLines(reportSignals(mined, index)));
-  return renderReport(mined, catalog, index);
+  if (o.signals !== undefined) writeFileSync(o.signals, reportJsonLines(mined, index));
+  const end = o.until ?? to;
+  const reviews =
+    o.reviews === undefined
+      ? undefined
+      : storedReviewWeek(
+          o.reviews,
+          index,
+          end,
+          loadReviewSources(o.root)
+            .filter((r) => r.private)
+            .map((r) => r.id),
+        );
+  return renderReport(mined, catalog, index, reviews);
 }
 
 /** Merges the states a report recorded into the state file; sources the

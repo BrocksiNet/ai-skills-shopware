@@ -4,7 +4,8 @@
 import type { Catalog } from './catalog.ts';
 import { type MapIndex, mapSignals } from './map-signal.ts';
 import { type Mined, type MiningStates, parseStates } from './mine-trunk.ts';
-import { commitSignals, type Signal, type SignalMap } from './signals.ts';
+import { renderReviewSection, type ReviewWeek } from './review-report.ts';
+import { commitSignals, type Signal, type SignalMap, toJsonLines } from './signals.ts';
 import { compareText } from './text.ts';
 
 const MARKER = /<!-- mine-trunk-state: (\{.*\}) -->/u;
@@ -188,8 +189,12 @@ export function reportSignals(mined: Mined[], index: MapIndex): Signal[] {
   return mapSignals(raw, index).filter((s) => kept(s));
 }
 
-/** The issue body. It ends with the states a `/mined` comment moves to. */
-export function renderReport(mined: Mined[], catalog: Catalog, index: MapIndex): string {
+/** The mapped signals as JSON Lines, for `--signals`. */
+export const reportJsonLines = (mined: Mined[], index: MapIndex): string => toJsonLines(reportSignals(mined, index));
+
+/** The issue body. It ends with the states a `/mined` comment moves to.
+ *  `reviews`, when given, adds the week's review comments. */
+export function renderReport(mined: Mined[], catalog: Catalog, index: MapIndex, reviews?: ReviewWeek): string {
   const signals = reportSignals(mined, index);
   const keptBySha = new Set(signals.flatMap((s) => (s.commit === undefined ? [] : [s.commit.sha])));
   const deltas = new Map(mined.map((m) => [m, m.commits.filter((c) => hasDelta(c, keptBySha)).length]));
@@ -211,6 +216,7 @@ export function renderReport(mined: Mined[], catalog: Catalog, index: MapIndex):
     ],
     ...skillSections(signals, catalog),
     unmappedSection(signals),
+    ...(reviews === undefined ? [] : [renderReviewSection(reviews)].filter((r) => r.length > 0)),
     commitsSection(mined, keptBySha),
     [
       'Comment `/mined` once every change is mapped, ticketed or dismissed. That opens a PR that moves ' +
