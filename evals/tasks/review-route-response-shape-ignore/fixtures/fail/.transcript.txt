@@ -1,0 +1,16 @@
+The struct's entries are an untyped array shape, which breaks the response shape rule.
+
+```json
+{
+  "findings": [
+    {
+      "rule_id": "PLG-012",
+      "severity": "minor",
+      "file": "src/StoreApi/LoyaltyHistoryStruct.php",
+      "line": 14,
+      "summary": "The entries are an untyped array, so the response shape is not typed.",
+      "fix": "Replace the array with a typed entry class."
+    }
+  ]
+}
+```

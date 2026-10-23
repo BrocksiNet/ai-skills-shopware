@@ -1,0 +1,16 @@
+The new route has no OpenAPI documentation for its ArrayStruct response.
+
+```json
+{
+  "findings": [
+    {
+      "rule_id": "PLG-011",
+      "severity": "minor",
+      "file": "src/StoreApi/LoyaltyHistoryRoute.php",
+      "line": 33,
+      "summary": "The route is missing OpenAPI documentation, and its untyped ArrayStruct response is not described anywhere.",
+      "fix": "Add OpenApi attributes to the route and a schema file under Resources/Schema/StoreApi."
+    }
+  ]
+}
+```

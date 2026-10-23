@@ -1,0 +1,7 @@
+The new route returns a typed LoyaltyHistoryStruct whose fields are documented, and the route is registered with the same service setup as the rest of the plugin. Nothing to report.
+
+```json
+{
+  "findings": []
+}
+```
