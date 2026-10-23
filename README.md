@@ -23,8 +23,9 @@ plugin. Most skill sets add more text. This one measures what the text does.
 - **Built for the real surfaces.** Core, plugins, apps, shop projects,
   Storefront and Administration each get their own rules. The router detects
   which one you are in.
-- **Kept current.** A weekly job reports what changed on Shopware trunk, and
-  the API index rebuilds weekly.
+- **Kept current.** A weekly job reports what changed on Shopware trunk and
+  in upstream skill sets, a daily job collects review comments from merged
+  core PRs, and the API index rebuilds weekly.
 
 ## Results
 
@@ -35,11 +36,21 @@ From A/B runs with Claude Haiku, graded by scripts:
 | A 6.7 subscriber to a cache-tags event core no longer dispatches (`PLG-007`) | 0/3 | 3/3 |
 | A storefront form that still uses `sw_csrf` (`SF-009`) | 0/3 | 3/3 |
 | One Admin bundle for 6.5 and 6.6+ binding form fields the old way (`ADM-044`) | 0/3 | 3/3 |
-| Version-guard mistakes with API no skill names, rules alone vs rules plus `api-facts` | 5/15 | 15/15 |
+| A new `webpack.config.js` where the Administration builds with Vite (`ADM-009`) | 0/3 | 2/3 |
 
-No clean twin task got more false findings with the skills on. The full
-numbers are in [`docs/results.md`](docs/results.md), including where the
-skills made no difference.
+No clean twin task got more false findings with the skills on.
+
+Rules alone are not enough for API that no skill names. Three version-guard
+mistakes, five runs each:
+
+| Skills off | Skills on | Skills on plus `api-facts` |
+| ---------- | --------- | -------------------------- |
+| 0/15 | 5/15 | 15/15 |
+
+`api-diff` finds the breaks named in the 6.6, 6.7 and 6.8 UPGRADE files with
+97.2 % recall and 97.1 % precision. The full numbers are in
+[`docs/results.md`](docs/results.md), including where the skills made no
+difference.
 
 ## Quick start
 
@@ -101,11 +112,13 @@ and its rule cannot drift apart. Diagrams and the eval layers are in
 
 ## Staying current
 
-Weekly jobs report trunk changes to Shopware's own agent skills, guidelines
-and PHPStan rules, and rebuild the API index for each new release. Model
-evals run monthly and before releases. Next, the same weekly reports will
-watch upstream skill sets such as `shopwareLabs/ai-coding-tools` and
-`netresearch/php-modernization-skill`, plus a planned PHPUnit skill. See
+A weekly job reads Shopware trunk (agent skills, guidelines, PHPStan rules)
+and four upstream skill sets: `shopwareLabs/ai-coding-tools`,
+`netresearch/php-modernization-skill`, `shopware/shopware-cli` and
+`FriendsOfShopware/agent-skills`. It opens one issue that maps each change to
+the skill and rule it touches. A daily job collects review comments from
+merged core PRs into the `review-signals` release. The API index rebuilds
+weekly, and model evals run monthly and before releases. See
 [`docs/maintenance.md`](docs/maintenance.md).
 
 ## Documentation
