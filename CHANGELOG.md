@@ -10,6 +10,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- `TEST-036` in `sw-testing`: a PR that changes code keeps the existing
+  test expectations. A flipped, loosened or skipped assertion, or an edited
+  data-provider case, needs the behavior change announced in the PR and the
+  changelog. It is the second half of core review guide TEST-002, which
+  `TEST-035` does not cover. Review pair
+  `review-test-changed-expectation-*`; the `test-shape-and-flags.md` route
+  now also fires on assertion edits and named data-provider cases.
 - Drift mining reads every repository in `rules/sources.json`: core trunk
   plus `shopwareLabs/ai-coding-tools`, `netresearch/php-modernization-skill`,
   the `shopware/shopware-cli` skills and `FriendsOfShopware/agent-skills`.

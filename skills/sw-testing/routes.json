@@ -10,9 +10,11 @@
     },
     {
       "reference": "references/test-shape-and-flags.md",
-      "when": "You need data providers, feature flags or coverage attributes.",
+      "when": "You need data providers, feature flags or coverage attributes, or a change edits an assertion.",
       "anchors_any": [
         "#\\[DataProvider\\(",
+        "(::|->)(assert[A-Z]\\w*|markTest(Skipped|Incomplete))\\(",
+        "^\\s*yield\\s+(['\"]).*\\1\\s*=>",
         "Feature::(fake|skipTestIf(In)?Active)\\(",
         "#\\[Covers(Class|Function|Nothing)[(\\]]",
         "new \\\\?Reflection(Class|Property|Method)\\(",

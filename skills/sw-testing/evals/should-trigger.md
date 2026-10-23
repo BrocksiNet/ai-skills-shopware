@@ -20,3 +20,4 @@
 - This repository integration test only needs the container — drop IntegrationTestBehaviour.
 - This test expects an exception while the major flag is active — mark the method deprecated with the flag.
 - This integration test only asserts inside if ($event !== null). Can it ever fail?
+- This PR changes the route and flips assertArrayHasKey to assertArrayNotHasKey in the old test. Is that fine?

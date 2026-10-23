@@ -1,0 +1,22 @@
+```json
+{
+  "findings": [
+    {
+      "rule_id": "TEST-036",
+      "severity": "nit",
+      "file": "tests/unit/Service/LoyaltyCalculatorTest.php",
+      "line": 27,
+      "summary": "The case name could say which way it rounds.",
+      "fix": "Rename the case."
+    },
+    {
+      "rule_id": null,
+      "severity": "major",
+      "file": "src/Service/LoyaltyCalculator.php",
+      "line": 18,
+      "summary": "round() gives customers more points than before; the expected value changed for every total with a fraction above .5.",
+      "fix": "Check that this is wanted."
+    }
+  ]
+}
+```

@@ -1,8 +1,10 @@
 {
   "sw-extension-review": [
+    "../sw-testing/references/test-shape-and-flags.md",
     "../sw-testing/references/integration-repository.md"
   ],
   "sw-testing": [
+    "references/test-shape-and-flags.md",
     "references/integration-repository.md",
     "references/core-platform-patterns.md"
   ]

@@ -1,0 +1,16 @@
+The calculator now rounds instead of flooring, and the old data-provider case was rewritten to the new result in the same diff, so the test agrees with whatever the code does.
+
+```json
+{
+  "findings": [
+    {
+      "rule_id": "TEST-036",
+      "severity": "major",
+      "file": "tests/unit/Service/LoyaltyCalculatorTest.php",
+      "line": 27,
+      "summary": "The existing case for 19.99 was changed from 1 to 2 points together with the code, and neither the diff nor the changelog announces the new rounding.",
+      "fix": "Keep the old expectation, or add a CHANGELOG_en-GB.md entry that announces the rounding change and why."
+    }
+  ]
+}
+```

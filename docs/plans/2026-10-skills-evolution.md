@@ -714,8 +714,8 @@ then open core PR #21455 and stayed false until it merged. The IDs were checked 
 blue-green lane, so nothing changes for plugins. TEST-002 (`TEST-035`) now
 also flags an existing test expectation changed in the same PR as the code
 under test, unless the PR announces the behavior change. `TEST-035` does not
-cover that half yet; it is a candidate for a new `sw-testing` rule with a
-review pair. Core's guides reuse our `TEST` prefix (TEST-001..010 mean
+cover that half; `TEST-036` does, with the review pair
+`review-test-changed-expectation-*`. Core's guides reuse our `TEST` prefix (TEST-001..010 mean
 different rules there), so a core ID appears only in `core_guide_ids` and
 never bare in skill text. #21455 merged on 2026-10-23 as `f31fb198` with the
 same guides, so the SCOPE rules (`CORE-030`, `CORE-072..074`, `IMP-003`) and
