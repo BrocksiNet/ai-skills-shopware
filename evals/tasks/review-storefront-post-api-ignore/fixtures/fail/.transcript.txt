@@ -1,0 +1,14 @@
+```json
+{
+  "findings": [
+    {
+      "rule_id": "REV-018",
+      "severity": "major",
+      "file": "src/Storefront/Controller/GiftWrapController.php",
+      "line": 19,
+      "summary": "The storefront add has no Store-API equivalent.",
+      "fix": "Add a Store-API POST route."
+    }
+  ]
+}
+```

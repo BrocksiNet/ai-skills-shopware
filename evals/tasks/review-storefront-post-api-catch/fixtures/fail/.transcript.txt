@@ -1,0 +1,14 @@
+```json
+{
+  "findings": [
+    {
+      "rule_id": "REV-018",
+      "severity": "nit",
+      "file": "src/Storefront/Controller/GiftWrapController.php",
+      "line": 19,
+      "summary": "Adding gift wrap is a storefront-only POST; the Store-API lists the options but no route performs the add, so headless clients cannot add it.",
+      "fix": "Add a Store-API POST route that calls GiftWrapService::add() and returns a Store-API response instead of a redirect."
+    }
+  ]
+}
+```
