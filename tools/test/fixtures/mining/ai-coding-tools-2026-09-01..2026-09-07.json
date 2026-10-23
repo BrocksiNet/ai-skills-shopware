@@ -1,0 +1,892 @@
+{
+ "repos/shopwareLabs/ai-coding-tools/commits?sha=main&until=2026-09-07T23%3A59%3A59Z&per_page=1": [
+  {
+   "sha": "46569de98a81f818a077c8993e237817b966cb24",
+   "commit": {
+    "message": "fix(test-writing): correct rule catalog and scope suggested fixes (#180)",
+    "committer": {
+     "date": "2026-09-06T11:57:13Z"
+    }
+   },
+   "parents": [
+    {
+     "sha": "07e21489dc1dd965d16bb05c2a5ca4057b366cec"
+    }
+   ]
+  }
+ ],
+ "repos/shopwareLabs/ai-coding-tools/commits?sha=main&path=plugins%2Ftest-writing&since=2026-09-01T00%3A00%3A00Z&until=2026-09-07T23%3A59%3A59Z&per_page=100&page=1": [
+  {
+   "sha": "46569de98a81f818a077c8993e237817b966cb24",
+   "commit": {
+    "message": "fix(test-writing): correct rule catalog and scope suggested fixes (#180)",
+    "committer": {
+     "date": "2026-09-06T11:57:13Z"
+    }
+   },
+   "parents": [
+    {
+     "sha": "07e21489dc1dd965d16bb05c2a5ca4057b366cec"
+    }
+   ]
+  },
+  {
+   "sha": "07e21489dc1dd965d16bb05c2a5ca4057b366cec",
+   "commit": {
+    "message": "fix(test-writing): degrade malformed defense stances and gate evidence (#177)",
+    "committer": {
+     "date": "2026-09-05T18:51:29Z"
+    }
+   },
+   "parents": [
+    {
+     "sha": "0b39f0a8e28ac6960d4354eb59fb910c5506dac7"
+    }
+   ]
+  },
+  {
+   "sha": "9adaf09e51710c00ce9bfe91216880508d0dea4f",
+   "commit": {
+    "message": "refactor: vendor the MCP protocol handler from bash-mcp-sdk (#170)",
+    "committer": {
+     "date": "2026-09-03T19:43:36Z"
+    }
+   },
+   "parents": [
+    {
+     "sha": "7dc35a9479d73fd22dd9baa2eb931b0dc8fb9292"
+    }
+   ]
+  }
+ ],
+ "repos/shopwareLabs/ai-coding-tools/commits?sha=main&path=plugins%2Fcontributor-writing&since=2026-09-01T00%3A00%3A00Z&until=2026-09-07T23%3A59%3A59Z&per_page=100&page=1": [],
+ "repos/shopwareLabs/ai-coding-tools/commits?sha=main&path=plugins%2Fcode-migration&since=2026-09-01T00%3A00%3A00Z&until=2026-09-07T23%3A59%3A59Z&per_page=100&page=1": [
+  {
+   "sha": "0b39f0a8e28ac6960d4354eb59fb910c5506dac7",
+   "commit": {
+    "message": "feat(code-migration): add technical-migration plugin with XML-to-PHP config skill (#142)",
+    "committer": {
+     "date": "2026-09-04T13:05:55Z"
+    }
+   },
+   "parents": [
+    {
+     "sha": "a80b8421157c6c194a0fe6a89090602bc5f65bf0"
+    }
+   ]
+  }
+ ],
+ "repos/shopwareLabs/ai-coding-tools/commits?sha=main&path=plugins%2Fdev-tooling&since=2026-09-01T00%3A00%3A00Z&until=2026-09-07T23%3A59%3A59Z&per_page=100&page=1": [
+  {
+   "sha": "a80b8421157c6c194a0fe6a89090602bc5f65bf0",
+   "commit": {
+    "message": "feat(dev-tooling): add console_run feature_all parameter (#172)",
+    "committer": {
+     "date": "2026-09-04T01:56:14Z"
+    }
+   },
+   "parents": [
+    {
+     "sha": "d7b5ce34dfc3a3534e68979424d98a98e4d50a2a"
+    }
+   ]
+  },
+  {
+   "sha": "d7b5ce34dfc3a3534e68979424d98a98e4d50a2a",
+   "commit": {
+    "message": "feat(dev-tooling): add console_run output_file and arbitrary envs (#171)",
+    "committer": {
+     "date": "2026-09-03T23:23:33Z"
+    }
+   },
+   "parents": [
+    {
+     "sha": "9adaf09e51710c00ce9bfe91216880508d0dea4f"
+    }
+   ]
+  },
+  {
+   "sha": "9adaf09e51710c00ce9bfe91216880508d0dea4f",
+   "commit": {
+    "message": "refactor: vendor the MCP protocol handler from bash-mcp-sdk (#170)",
+    "committer": {
+     "date": "2026-09-03T19:43:36Z"
+    }
+   },
+   "parents": [
+    {
+     "sha": "7dc35a9479d73fd22dd9baa2eb931b0dc8fb9292"
+    }
+   ]
+  }
+ ],
+ "repos/shopwareLabs/ai-coding-tools/commits/9adaf09e51710c00ce9bfe91216880508d0dea4f": {
+  "sha": "9adaf09e51710c00ce9bfe91216880508d0dea4f",
+  "commit": {
+   "message": "refactor: vendor the MCP protocol handler from bash-mcp-sdk (#170)",
+   "committer": {
+    "date": "2026-09-03T19:43:36Z"
+   }
+  },
+  "parents": [
+   {
+    "sha": "7dc35a9479d73fd22dd9baa2eb931b0dc8fb9292"
+   }
+  ],
+  "files": [
+   {
+    "filename": ".claude/extensions/software-writer/writing-code.md",
+    "status": "modified",
+    "additions": 1,
+    "deletions": 1,
+    "patch": "@@ -20,7 +20,7 @@"
+   },
+   {
+    "filename": ".claude/rules/template-sync.md",
+    "status": "modified",
+    "additions": 7,
+    "deletions": 4,
+    "patch": "@@ -13,7 +13,9 @@ paths:\n@@ -27,8 +29,8 @@ The script invocation in the workflow step above is authoritative. Adding or rem\n@@ -37,12 +39,13 @@ The script invocation in the workflow step above is authoritative. Adding or rem"
+   },
+   {
+    "filename": "AGENTS.md",
+    "status": "modified",
+    "additions": 1,
+    "deletions": 1,
+    "patch": "@@ -182,7 +182,7 @@ claude plugin validate .\n ```"
+   },
+   {
+    "filename": "plugin-tests/AGENTS.md",
+    "status": "modified",
+    "additions": 4,
+    "deletions": 1,
+    "patch": "@@ -14,7 +14,8 @@ Tests use BATS (Bash Automated Testing System) with these libraries:\n@@ -80,3 +81,5 @@ Tests validate scripts and shared modules located in the plugins directory:"
+   },
+   {
+    "filename": "plugin-tests/README.md",
+    "status": "modified",
+    "additions": 3,
+    "deletions": 3,
+    "patch": "@@ -55,8 +55,6 @@ plugin-tests/\n@@ -131,7 +129,7 @@ SCRIPTS_DIR=\"${REPO_ROOT}/plugins/<plugin-name>/hooks/scripts\"\n ```bash\n@@ -165,6 +163,8 @@ setup() {"
+   },
+   {
+    "filename": "plugins/dev-tooling/.claude-plugin/plugin.json",
+    "status": "modified",
+    "additions": 1,
+    "deletions": 1
+   },
+   {
+    "filename": "plugins/dev-tooling/AGENTS.md",
+    "status": "modified",
+    "additions": 6,
+    "deletions": 8,
+    "patch": "@@ -225,11 +225,11 @@ Both handle environment-specific execution (native/docker/docker-compose/vagrant\n@@ -315,10 +315,8 @@ The modules this plugin consumes from `templates/mcp-shared/` are covered once,\n ```bash\n@@ -327,5 +325,5 @@ Run tests:\n-- [Bash MCP SDK](https://github.com/muthuishere/mcp-server-bash-sdk) - SDK this server is based on\n+- [bash-mcp-sdk](https://github.com/shopwareLabs/bash-mcp-sdk) - the server's protocol handler is vendored from here"
+   },
+   {
+    "filename": "plugins/dev-tooling/CHANGELOG.md",
+    "status": "modified",
+    "additions": 6,
+    "deletions": 0,
+    "patch": "@@ -5,6 +5,12 @@ All notable changes to this project will be documented in this file.\n+## [3.18.0] - 2026-09-03\n+### Changed\n+- **`shared/mcpserver_core.sh` is now vendored from [shopwareLabs/bash-mcp-sdk](https://github.com/shopwareLabs/bash-mcp-sdk) at the release pinned in the repository-level `.mcp-sdk.lock`, instead of template-synced from `templates/mcp-shared/`.** Protocol changes go upstream, get released there, and land here through `.github/scripts/vendor-mcp-sdk.sh`; the protocol handler's test suites live upstream as well. The other three `shared/` modules stay template-synced.\n+- **The vendored v3.0.0 argument validator enforces schema constraints the previous copy did not.** A declared `type` (including a union list of alternatives), `pattern`, array `items.type`/`items.enum`, and the numeric range bounds `minimum`/`maximum`/`exclusiveMinimum`/`exclusiveMaximum` are now checked on every tool call across all three servers, with diagnostic precedence missing > unknown > type > pattern > range > items > enum. Arguments that violate a declared constraint now return an `isError` result instead of reaching the tool function. Calls that satisfy the declared schemas behave unchanged."
+   },
+   {
+    "filename": "plugins/dev-tooling/shared/mcpserver_core.sh",
+    "status": "modified",
+    "additions": 112,
+    "deletions": 22
+   },
+   {
+    "filename": "plugins/shopware-env/AGENTS.md",
+    "status": "modified",
+    "additions": 5,
+    "deletions": 4,
+    "patch": "@@ -123,7 +123,7 @@ Both hooks share `lib/common.sh` which provides `parse_hook_input()`, `load_mcp_\n@@ -170,7 +170,8 @@ Run tests:\n@@ -180,13 +181,13 @@ Run tests:\n-- The same shared framework files (`shared/*.sh`) — byte-identical copies derived from the same templates\n+- The same shared framework files (`shared/*.sh`) — `config.sh`, `docker-compose.sh`, and `environment.sh` are byte-identical copies derived from the same templates; `mcpserver_core.sh` is vendored from `shopwareLabs/bash-mcp-sdk` at the release pinned in `.mcp-sdk.lock`\n-- [Bash MCP SDK](https://github.com/muthuishere/mcp-server-bash-sdk) — SDK this server is based on\n+- [bash-mcp-sdk](https://github.com/shopwareLabs/bash-mcp-sdk) — the server's protocol handler is vendored from here"
+   },
+   {
+    "filename": "plugins/shopware-env/CHANGELOG.md",
+    "status": "modified",
+    "additions": 6,
+    "deletions": 0,
+    "patch": "@@ -5,6 +5,12 @@ All notable changes to this project will be documented in this file.\n+## [1.3.0] - 2026-09-03\n+### Changed\n+- **`shared/mcpserver_core.sh` is now vendored from [shopwareLabs/bash-mcp-sdk](https://github.com/shopwareLabs/bash-mcp-sdk) at the release pinned in the repository-level `.mcp-sdk.lock`, instead of template-synced from `templates/mcp-shared/`.** Protocol changes go upstream, get released there, and land here through `.github/scripts/vendor-mcp-sdk.sh`; the protocol handler's test suites live upstream as well. `config.sh`, `environment.sh`, and `docker-compose.sh` stay template-synced.\n+- **The vendored v3.0.0 argument validator enforces schema constraints the previous copy did not.** A declared `type` (including a union list of alternatives), `pattern`, array `items.type`/`items.enum`, and the numeric range bounds `minimum`/`maximum`/`exclusiveMinimum`/`exclusiveMaximum` are now checked on every `lifecycle-tooling` call, with diagnostic precedence missing > unknown > type > pattern > range > items > enum. Arguments that violate a declared constraint now return an `isError` result instead of reaching the tool function — for this plugin that guard sits in front of `database_reset` and the other lifecycle tools. Calls that satisfy the declared schemas behave unchanged."
+   },
+   {
+    "filename": "plugins/shopware-env/skills/dev-environment-bootstrapping/SKILL.md",
+    "status": "modified",
+    "additions": 1,
+    "deletions": 1,
+    "patch": "@@ -1,6 +1,6 @@\n ---"
+   },
+   {
+    "filename": "plugins/test-writing/.claude-plugin/plugin.json",
+    "status": "modified",
+    "additions": 1,
+    "deletions": 1
+   },
+   {
+    "filename": "plugins/test-writing/CHANGELOG.md",
+    "status": "modified",
+    "additions": 6,
+    "deletions": 0,
+    "patch": "@@ -5,6 +5,12 @@ All notable changes to this project will be documented in this file.\n+## [5.1.0] - 2026-09-03\n+### Changed\n+- **`shared/mcpserver_core.sh` is now vendored from [shopwareLabs/bash-mcp-sdk](https://github.com/shopwareLabs/bash-mcp-sdk) at the release pinned in the repository-level `.mcp-sdk.lock`, instead of template-synced from `templates/mcp-shared/`.** Protocol changes go upstream, get released there, and land here through `.github/scripts/vendor-mcp-sdk.sh`; the protocol handler's test suites live upstream as well. It is the only shared module this plugin carries.\n+- **The vendored v3.0.0 argument validator enforces schema constraints the previous copy did not.** A declared `type` (including a union list of alternatives), `pattern`, array `items.type`/`items.enum`, and the numeric range bounds `minimum`/`maximum`/`exclusiveMinimum`/`exclusiveMaximum` are now checked on every `test-rules` call, with diagnostic precedence missing > unknown > type > pattern > range > items > enum. Arguments that violate a declared constraint now return an `isError` result instead of reaching the tool function. Calls that satisfy the declared schemas behave unchanged."
+   },
+   {
+    "filename": "plugins/test-writing/shared/mcpserver_core.sh",
+    "status": "modified",
+    "additions": 112,
+    "deletions": 22
+   },
+   {
+    "filename": "plugins/test-writing/skills/phpunit-integration-test-generation/SKILL.md",
+    "status": "modified",
+    "additions": 1,
+    "deletions": 1,
+    "patch": "@@ -1,6 +1,6 @@\n ---"
+   },
+   {
+    "filename": "plugins/test-writing/skills/phpunit-integration-test-reviewing/SKILL.md",
+    "status": "modified",
+    "additions": 1,
+    "deletions": 1,
+    "patch": "@@ -1,6 +1,6 @@\n ---"
+   },
+   {
+    "filename": "plugins/test-writing/skills/phpunit-integration-to-unit-migrating/SKILL.md",
+    "status": "modified",
+    "additions": 1,
+    "deletions": 1,
+    "patch": "@@ -1,6 +1,6 @@\n ---"
+   },
+   {
+    "filename": "plugins/test-writing/skills/phpunit-migration-test-generation/SKILL.md",
+    "status": "modified",
+    "additions": 1,
+    "deletions": 1,
+    "patch": "@@ -1,6 +1,6 @@\n ---"
+   },
+   {
+    "filename": "plugins/test-writing/skills/phpunit-migration-test-reviewing/SKILL.md",
+    "status": "modified",
+    "additions": 1,
+    "deletions": 1,
+    "patch": "@@ -1,6 +1,6 @@\n ---"
+   },
+   {
+    "filename": "plugins/test-writing/skills/phpunit-test-adversarial-reviewing/SKILL.md",
+    "status": "modified",
+    "additions": 1,
+    "deletions": 1,
+    "patch": "@@ -1,6 +1,6 @@\n ---"
+   },
+   {
+    "filename": "plugins/test-writing/skills/phpunit-test-reconciling/SKILL.md",
+    "status": "modified",
+    "additions": 1,
+    "deletions": 1,
+    "patch": "@@ -1,6 +1,6 @@\n ---"
+   },
+   {
+    "filename": "plugins/test-writing/skills/phpunit-test-team-reviewing/SKILL.md",
+    "status": "modified",
+    "additions": 1,
+    "deletions": 1,
+    "patch": "@@ -1,6 +1,6 @@\n ---\n ---"
+   },
+   {
+    "filename": "plugins/test-writing/skills/phpunit-unit-test-generation/SKILL.md",
+    "status": "modified",
+    "additions": 1,
+    "deletions": 1,
+    "patch": "@@ -1,6 +1,6 @@\n ---"
+   },
+   {
+    "filename": "plugins/test-writing/skills/phpunit-unit-test-reviewing/SKILL.md",
+    "status": "modified",
+    "additions": 1,
+    "deletions": 1,
+    "patch": "@@ -1,6 +1,6 @@\n ---"
+   },
+   {
+    "filename": "plugins/test-writing/skills/phpunit-unit-test-writing/SKILL.md",
+    "status": "modified",
+    "additions": 1,
+    "deletions": 1,
+    "patch": "@@ -1,6 +1,6 @@\n ---\n ---"
+   },
+   {
+    "filename": "templates/README.md",
+    "status": "modified",
+    "additions": 3,
+    "deletions": 1,
+    "patch": "@@ -7,7 +7,7 @@ Source of truth for shared code copied into plugins. Plugin copies must be byte-\n@@ -32,6 +32,8 @@ Source of truth for shared code copied into plugins. Plugin copies must be byte-"
+   }
+  ]
+ },
+ "repos/shopwareLabs/ai-coding-tools/commits/d7b5ce34dfc3a3534e68979424d98a98e4d50a2a": {
+  "sha": "d7b5ce34dfc3a3534e68979424d98a98e4d50a2a",
+  "commit": {
+   "message": "feat(dev-tooling): add console_run output_file and arbitrary envs (#171)",
+   "committer": {
+    "date": "2026-09-03T23:23:33Z"
+   }
+  },
+  "parents": [
+   {
+    "sha": "9adaf09e51710c00ce9bfe91216880508d0dea4f"
+   }
+  ],
+  "files": [
+   {
+    "filename": "plugins/dev-tooling/.claude-plugin/plugin.json",
+    "status": "modified",
+    "additions": 1,
+    "deletions": 1
+   },
+   {
+    "filename": "plugins/dev-tooling/CHANGELOG.md",
+    "status": "modified",
+    "additions": 8,
+    "deletions": 0,
+    "patch": "@@ -5,6 +5,14 @@ All notable changes to this project will be documented in this file.\n+## [3.19.0] - 2026-09-04\n+### Added\n+- **`console_run` can write the command's stdout to a file instead of the response.** A new optional `output_file` parameter captures raw stdout host-side; the response then carries a summary — resolved path, byte count, exit status — plus the noise-filtered stderr. The write is atomic (a temp sibling is renamed onto the target only after the command exits zero), a failed command leaves an existing target untouched and returns its stdout in the response as diagnostics, and a target that is a symlink or not a regular file is refused. A relative path resolves against the project root, a leading `-` is normalized with `./`, parent directories are created, and a value over 4096 bytes is refused. Calls without `output_file` behave exactly as before.\n+### Changed\n+- **`console_run`'s `env` parameter accepts any Symfony environment name.** The schema constraint widens from the `dev`/`prod`/`test` enum to the pattern `^[A-Za-z0-9_]{1,32}$`, since Symfony environments are arbitrary names (`staging`, `e2e`, …). The length bound lives inside the pattern because the vendored validator enforces `pattern` but not `maxLength`. Runtime behavior is unchanged: the value still lands as `--env=<value>`, and the `.console.env` config default still applies when the parameter is absent."
+   },
+   {
+    "filename": "plugins/dev-tooling/docs/reference.md",
+    "status": "modified",
+    "additions": 5,
+    "deletions": 1,
+    "patch": "@@ -77,6 +77,7 @@ Symfony Console. `console_run` executes a command; `console_list` returns availa\n ```\n ```\n@@ -87,11 +88,14 @@ Use console_list with namespace \"cache\""
+   },
+   {
+    "filename": "plugins/dev-tooling/mcp-server-php/lib/console.sh",
+    "status": "modified",
+    "additions": 157,
+    "deletions": 3
+   },
+   {
+    "filename": "plugins/dev-tooling/mcp-server-php/tools.json",
+    "status": "modified",
+    "additions": 6,
+    "deletions": 2
+   }
+  ]
+ },
+ "repos/shopwareLabs/ai-coding-tools/commits/a80b8421157c6c194a0fe6a89090602bc5f65bf0": {
+  "sha": "a80b8421157c6c194a0fe6a89090602bc5f65bf0",
+  "commit": {
+   "message": "feat(dev-tooling): add console_run feature_all parameter (#172)",
+   "committer": {
+    "date": "2026-09-04T01:56:14Z"
+   }
+  },
+  "parents": [
+   {
+    "sha": "d7b5ce34dfc3a3534e68979424d98a98e4d50a2a"
+   }
+  ],
+  "files": [
+   {
+    "filename": "plugins/dev-tooling/.claude-plugin/plugin.json",
+    "status": "modified",
+    "additions": 1,
+    "deletions": 1
+   },
+   {
+    "filename": "plugins/dev-tooling/CHANGELOG.md",
+    "status": "modified",
+    "additions": 5,
+    "deletions": 0,
+    "patch": "@@ -5,6 +5,11 @@ All notable changes to this project will be documented in this file.\n+## [3.20.0] - 2026-09-04\n+### Added\n+- **`console_run` can set Shopware's `FEATURE_ALL` for one command.** A new optional `feature_all` parameter takes `major` or `true` and prefixes `FEATURE_ALL=<value>` onto the wrapped command, so the shell that runs it — the container's, the VM's, or the host's — puts the variable in the command's own process environment. That makes the deprecation gate `FEATURE_ALL=major bin/console cache:clear` one MCP call instead of a raw wrapper command. The two values are the whole accepted surface: the schema declares them as an enum and the tool checks them again before building the command, so no caller text ever reaches the shell here. `feature_all` combines with `env`, `output_file` and the other parameters; calls without it construct the command exactly as before."
+   },
+   {
+    "filename": "plugins/dev-tooling/docs/reference.md",
+    "status": "modified",
+    "additions": 2,
+    "deletions": 0,
+    "patch": "@@ -78,6 +78,7 @@ Symfony Console. `console_run` executes a command; `console_list` returns availa\n ```\n@@ -90,6 +91,7 @@ Use console_list with namespace \"cache\""
+   },
+   {
+    "filename": "plugins/dev-tooling/mcp-server-php/lib/console.sh",
+    "status": "modified",
+    "additions": 20,
+    "deletions": 3
+   },
+   {
+    "filename": "plugins/dev-tooling/mcp-server-php/tools.json",
+    "status": "modified",
+    "additions": 5,
+    "deletions": 0
+   }
+  ]
+ },
+ "repos/shopwareLabs/ai-coding-tools/commits/0b39f0a8e28ac6960d4354eb59fb910c5506dac7": {
+  "sha": "0b39f0a8e28ac6960d4354eb59fb910c5506dac7",
+  "commit": {
+   "message": "feat(code-migration): add technical-migration plugin with XML-to-PHP config skill (#142)",
+   "committer": {
+    "date": "2026-09-04T13:05:55Z"
+   }
+  },
+  "parents": [
+   {
+    "sha": "a80b8421157c6c194a0fe6a89090602bc5f65bf0"
+   }
+  ],
+  "files": [
+   {
+    "filename": "README.md",
+    "status": "modified",
+    "additions": 13,
+    "deletions": 0,
+    "patch": "@@ -35,6 +35,7 @@ These plugins work best alongside a few Claude Code tweaks. Turn on `ENABLE_TOOL\n@@ -176,6 +177,18 @@ The `dev-environment-bootstrapping` skill activates automatically. No prerequisi\n+### code-migration\n+```bash\n+```"
+   },
+   {
+    "filename": "plugins/code-migration/.claude-plugin/plugin.json",
+    "status": "added",
+    "additions": 10,
+    "deletions": 0
+   },
+   {
+    "filename": "plugins/code-migration/CHANGELOG.md",
+    "status": "added",
+    "additions": 10,
+    "deletions": 0,
+    "patch": "@@ -0,0 +1,10 @@\n+# Changelog\n+## [1.0.0] - 2026-07-30\n+- Initial release with the `xml-config-migrating` skill: migrates extension XML configuration (service definitions, routes, package config) 1:1 to PHP configurators — package config to PHP or YAML — proves container and route equivalence via `debug:container` / `debug:router` dump diffs, runs the extension's tests, and reports the result in a fixed verification format.\n+- The dumps are taken by Claude as console commands, four per environment, with the environment selected by `--env=<env>` on the command line rather than an `APP_ENV` variable, which a docker, ddev, or vagrant wrapper shell drops. Each dump's output goes straight to a file under `var/xml-migration/`, so the bytes never enter the conversation.\n+- Three bundled scripts make the workflow machine-verified: `inventory.sh` (in-scope XML files with their type and environments), `verify-dumps.sh` (required-set check, kernel-environment identity check, dump normalization, before/after diff, inert classification, XML/PHP coexistence and leftover-reference checks, verification table), and `check-class-imports.sh` (missing `use` statements in migrated PHP). The verification table in the report is the script's output, not a hand-read diff.\n+- `inventory.sh` classifies a file whose basename and location match no rule by the Symfony namespace the file itself carries — DI documents become `services`, routing documents become `routes` — and skips an XML carrying neither with a stderr notice, so one foreign schema file no longer ends the scan and discards everything already classified.\n+- The skill names the one thing its instruments cannot check: a plugin's `packages/**` config is loaded by no bundle of the plugin's own, so the dump diff and the `FEATURE_ALL=major` gate see nothing whatever those files contain, and a packages row is reported as migrated with manual review rather than as verified.\n+- `verify-dumps.sh` holds each environment's parameter dumps to the environment their filename claims, so a set taken with `default` passed as a literal environment name can no longer certify a migration: that boots an environment nothing configures, and the dump records `kernel.environment` as `default` rather than the environment a request actually runs in."
+   },
+   {
+    "filename": "plugins/code-migration/README.md",
+    "status": "added",
+    "additions": 50,
+    "deletions": 0,
+    "patch": "@@ -0,0 +1,50 @@\n+# code-migration\n+## 🧩 Skills\n+### xml-config-migrating\n+## 📦 Installation\n+```bash\n+```\n+## 📌 Requirements\n+- A Shopware 6.6+ installation with the extension installed and active, and a working `bin/console`.\n+- `jq`, used by `verify-dumps.sh` to normalize the dumps before diffing them.\n+## 🧪 Tests\n+```bash\n+```"
+   },
+   {
+    "filename": "plugins/code-migration/skills/xml-config-migrating/SKILL.md",
+    "status": "added",
+    "additions": 203,
+    "deletions": 0,
+    "patch": "@@ -0,0 +1,203 @@\n+---\n+---\n+# Migrate Shopware Extension XML Configuration to PHP\n+## Scope\n+## Prerequisites\n+- A working Shopware installation (6.6+) with the extension installed and active, and `bin/console` working. Run every console command through the project's development environment.\n+- `jq` available on the host for `verify-dumps.sh`.\n+- The dump directory and the extension sources readable from where the bundled scripts run.\n+## Workflow\n+```dot\n+```\n+### Step 1: Inventory\n+```\n+```\n+### Step 2: Baseline dumps\n+### Step 3: Migrate one XML file to one PHP file\n+1. Same directory, same basename: `services.xml` → `services.php`, `services_test.xml` → `services_test.php`, `routes.xml` → `routes.php`. Package XML may go to YAML or PHP.\n+2. Delete the XML file in the same change. The plugin system globs `services.*` and loads every match — with both present, both load and the XML silently wins on collision.\n+3. Convention-discovered files need no loader or bundle-class change: `Bundle::registerContainerFile()`, `configureRoutes()`, and `buildDefaultConfig()` already discover `.php` and `.yaml` files. Where the plugin loads XML manually (an `XmlFileLoader` in `Plugin::build()`, or a bundle's `loadExtension()`), replace that `$loader->load('....xml')` line with a `PhpFileLoader` equivalent at the same position — load order is behavior.\n+4. Preserve 1:1: service ids, class names, argument values and order, tags with all attributes and priorities, method calls, factories, configurators, decoration (priority + on-invalid), public/private, lazy, shared, synthetic, abstract, deprecations, aliases, parameters, `<defaults>`. Change nothing beyond the format — no added autowiring, renamed ids, reordering, merged or split files, added or removed services.\n+### Step 4: Import pre-check\n+```\n+```\n+### Step 5: Add the missing imports\n+### Step 6: After dumps\n+### Step 7: Verify\n+```\n+```\n+- Exit 0 — every pair identical or inert.\n+- Exit 1 — a real diff, a surviving XML/replacement pair, or a leftover `.xml` reference.\n+- Exit 2 — invalid invocation, a missing dump from the required set, a dump that is not valid JSON, a missing counterpart dump, a parameter dump recording no `kernel.environment`, a recorded kernel environment contradicting its counterpart or its filename, or an environment/scan failure.\n+### Step 8: Fix the PHP file\n+### Step 9: Tests and deprecation gate\n+1. Run the extension's own test suite (PHPUnit; Jest/E2E where config-relevant) and its static analysis and code style tools where configured. A suite counts as passing only when it executed a nonzero number of tests: an empty suite exits 0 and reports that no tests were executed, which is not a pass. Record a suite that executed zero tests, and an extension that has no test suite at all, as `absent` / `0 tests` in the report — never as passing. A suite that starts but cannot execute — a bootstrap crash, a broken test database — is a distinct outcome: record it as `suite could not execute — <reason>`; it ends at \"Report: NOT done\" only when the cause is the migration, and a pre-existing, migration-unrelated cause is recorded with its reason instead of being folded into `absent` or into a failure.\n+2. `cache:clear` succeeds with `FEATURE_ALL=major` in the console process's environment. With the major flag, remaining XML config throws instead of logging, so a clean exit is itself the deprecation check — nothing separate has to be read out of a log. Deliver the variable by whatever mechanism your runner provides for setting a variable in the command's own process environment. Delivery is never assumed: a variable set where the command is launched can fail to reach the console process, and the gate then succeeds while testing nothing — which is exactly what the control below exists to rule out.\n+### Step 10: Report\n+```markdown\n+## XML → PHP configuration migration: <ExtensionName>\n+### Verification\n+```"
+   },
+   {
+    "filename": "plugins/code-migration/skills/xml-config-migrating/references/xml-to-php-translation.md",
+    "status": "added",
+    "additions": 193,
+    "deletions": 0,
+    "patch": "@@ -0,0 +1,193 @@\n+# XML → PHP Configuration Translation Reference\n+## File skeletons\n+```php\n+```\n+```php\n+```\n+## Style rules\n+- Every class reference: `use` statement + short `Foo::class` in the body — services, `service()` references, factories, configurators, aliases, `decorate()` targets, class-valued tag attributes. No inline FQCN strings.\n+- Name collisions between imported classes: import alias (`use Swag\\A\\Handler as AHandler;`).\n+- Global PHP classes (e.g. `\\ArrayIterator::class`) keep the leading backslash in namespaced files — code-style fixers strip `use ArrayIterator;`.\n+- Plain string ids (e.g. `shopware.filesystem.private`) stay strings.\n+## Translation table\n+## Gotchas\n+- **Anonymous inline services** can never be byte-identical: the XML loader hoists them to hidden `.N_Class~<hash>` services, `inline_service()` keeps them inline. This is the only acceptable (\"inert\") dump diff — document it, don't chase it.\n+- **Services `<when env>` needs the array-return file form**, not the closure: the loader registers the `.container.known_envs` parameter from a `when@<env>` key, and only the array-return branch produces one, so the closure translation drops the parameter and `verify-dumps.sh` reports DIFFERS on the params and container dumps. In the XML, `<when env>` is a child of `<container>` and a sibling of `<services>` — the XSD rejects it inside `<services>`. Every definition in the resulting PHP file follows the array-return dialect below, not the fluent translation table above.\n+  ```php\n+  ```\n+- **Dashed tag attributes**: the XML loader duplicates `option-name=\"x\"` as BOTH `option-name` and `option_name` keys. The PHP file must emit both, or the dump differs.\n+- **Scalar casting**: XML strings like `\"true\"` / `\"0\"` are cast by the loader. If the dump differs on a scalar, match the dump, not the XML text.\n+- **Multiline parameters**: preserved verbatim including whitespace — copy exactly.\n+- **Empty env-default parameter** `<parameter key=\"env(X)\"/>` is the empty string `''`, not null.\n+- **`services_test.*`** loads only in the test env — its dumps must be taken with the test environment selected on the console command itself.\n+- **Empty `<services/>` file**: delete the XML without replacement; a config file is optional.\n+- **`Resources/config/config.xml` is not Symfony config** — plugin settings schema, stays XML, never migrate it.\n+## Array-return dialect\n+```xml\n+```\n+```php\n+```"
+   },
+   {
+    "filename": "plugins/code-migration/skills/xml-config-migrating/scripts/check-class-imports.sh",
+    "status": "added",
+    "additions": 145,
+    "deletions": 0
+   },
+   {
+    "filename": "plugins/code-migration/skills/xml-config-migrating/scripts/inventory.sh",
+    "status": "added",
+    "additions": 280,
+    "deletions": 0
+   },
+   {
+    "filename": "plugins/code-migration/skills/xml-config-migrating/scripts/verify-dumps.sh",
+    "status": "added",
+    "additions": 571,
+    "deletions": 0
+   }
+  ]
+ },
+ "repos/shopwareLabs/ai-coding-tools/commits/07e21489dc1dd965d16bb05c2a5ca4057b366cec": {
+  "sha": "07e21489dc1dd965d16bb05c2a5ca4057b366cec",
+  "commit": {
+   "message": "fix(test-writing): degrade malformed defense stances and gate evidence (#177)",
+   "committer": {
+    "date": "2026-09-05T18:51:29Z"
+   }
+  },
+  "parents": [
+   {
+    "sha": "0b39f0a8e28ac6960d4354eb59fb910c5506dac7"
+   }
+  ],
+  "files": [
+   {
+    "filename": "plugins/test-writing/.claude-plugin/plugin.json",
+    "status": "modified",
+    "additions": 1,
+    "deletions": 1
+   },
+   {
+    "filename": "plugins/test-writing/AGENTS.md",
+    "status": "modified",
+    "additions": 3,
+    "deletions": 1,
+    "patch": "@@ -76,7 +76,9 @@ plugins/test-writing/"
+   },
+   {
+    "filename": "plugins/test-writing/CHANGELOG.md",
+    "status": "modified",
+    "additions": 12,
+    "deletions": 0,
+    "patch": "@@ -5,6 +5,18 @@ All notable changes to this project will be documented in this file.\n+## [5.1.1] - 2026-09-05\n+### Fixed\n+- **A malformed defense stance no longer aborts the adversarial run.** A defense reconciler listing an adopted finding under both `adopted_new` and `findings` hit an integrity throw at the wave boundary that discarded every completed agent in the run. The duplicate entry is now skipped as an already-cast vote, `defensePrompt` states explicitly that the four response arrays are disjoint, and any defense stance entry failing an integrity guard takes the degrade-by-role path from `references/error-handling.md` instead of throwing: the entry is dropped, the finding it named keeps its prior consensus binding, and each drop is recorded in `red_team.defense_degraded` and rendered as a CAUTION block in the report.\n+- **A defender's re-characterization of a maintained finding now survives into the report.** The merge picked the descriptive owner by remediation length, so a defender correcting a finding's location, method, and remediation with a terser fix lost every corrected field back to the stale original. Maintained findings now merge through `recharacterize`, which makes the defender's payload the descriptive owner whenever it proposed a remediation; a payload without one keeps the original's fields so `current` and `suggested` still describe one change.\n+### Added\n+- **Deterministic manifest gate** (`workflow/verify-method-counts.sh`): before the Phase-1 manifest freezes, the skill re-extracts every entry's test method names from disk, replaces a mismatched `method_count`/`test_methods` with the extracted truth, logs each replacement, and fails hard on a corrupted entry instead of repairing it.\n+- **Deterministic evidence gate** (`workflow/verify-finding-evidence.sh`): before the Phase-5 merge, a kept finding whose non-empty `current` block does not occur in the target file under whitespace normalization is demoted to `contested` with an outcome naming the failed match, synced into `adversarial_input` so it never reaches the red team; findings that quoted no code are exempt.\n+- **Scrutiny labels**: every rendered finding carries `adversary-tested` or `consensus-only`, derived from which stage produced the finding's final state, so consensus-only findings are distinguishable from red-team-survived ones.\n+- **`references/fix-application.md`**: the contract for applying a report's remediations — verbatim `suggested` application, scoped self-review of the fix diff (redundancy, tautological tests, static gates), whole-suite-only mutation judgments, premise re-verification for `consensus-only` must-fix findings, and `git merge-base --is-ancestor` verification of reported commits."
+   },
+   {
+    "filename": "plugins/test-writing/README.md",
+    "status": "modified",
+    "additions": 1,
+    "deletions": 1,
+    "patch": "@@ -511,7 +511,7 @@ Reference files provide detailed guidance:\n-- **Team review**: `skills/phpunit-test-team-reviewing/references/` (input-resolution, workflow-design, agent-guardrails, reviewer-allocation, red-team-context, consensus-and-verdicts, report-format, error-handling)\n+- **Team review**: `skills/phpunit-test-team-reviewing/references/` (input-resolution, workflow-design, agent-guardrails, reviewer-allocation, red-team-context, consensus-and-verdicts, report-format, error-handling, fix-application)"
+   },
+   {
+    "filename": "plugins/test-writing/skills/phpunit-integration-test-generation/SKILL.md",
+    "status": "modified",
+    "additions": 1,
+    "deletions": 1,
+    "patch": "@@ -1,6 +1,6 @@\n ---"
+   },
+   {
+    "filename": "plugins/test-writing/skills/phpunit-integration-test-reviewing/SKILL.md",
+    "status": "modified",
+    "additions": 1,
+    "deletions": 1,
+    "patch": "@@ -1,6 +1,6 @@\n ---"
+   },
+   {
+    "filename": "plugins/test-writing/skills/phpunit-integration-to-unit-migrating/SKILL.md",
+    "status": "modified",
+    "additions": 1,
+    "deletions": 1,
+    "patch": "@@ -1,6 +1,6 @@\n ---"
+   },
+   {
+    "filename": "plugins/test-writing/skills/phpunit-migration-test-generation/SKILL.md",
+    "status": "modified",
+    "additions": 1,
+    "deletions": 1,
+    "patch": "@@ -1,6 +1,6 @@\n ---"
+   },
+   {
+    "filename": "plugins/test-writing/skills/phpunit-migration-test-reviewing/SKILL.md",
+    "status": "modified",
+    "additions": 1,
+    "deletions": 1,
+    "patch": "@@ -1,6 +1,6 @@\n ---"
+   },
+   {
+    "filename": "plugins/test-writing/skills/phpunit-test-adversarial-reviewing/SKILL.md",
+    "status": "modified",
+    "additions": 1,
+    "deletions": 1,
+    "patch": "@@ -1,6 +1,6 @@\n ---"
+   },
+   {
+    "filename": "plugins/test-writing/skills/phpunit-test-reconciling/SKILL.md",
+    "status": "modified",
+    "additions": 1,
+    "deletions": 1,
+    "patch": "@@ -1,6 +1,6 @@\n ---"
+   },
+   {
+    "filename": "plugins/test-writing/skills/phpunit-test-team-reviewing/SKILL.md",
+    "status": "modified",
+    "additions": 18,
+    "deletions": 7,
+    "patch": "@@ -1,6 +1,6 @@\n ---\n ---\n@@ -19,6 +19,7 @@ digraph team_review {\n@@ -27,6 +28,7 @@ digraph team_review {\n@@ -39,7 +41,8 @@ digraph team_review {\n@@ -48,7 +51,8 @@ digraph team_review {\n@@ -68,6 +72,8 @@ Then build each file's entry **in parallel**: spawn one `general-purpose` subage\n@@ -125,9 +131,10 @@ Build each stage's run-script with `${CLAUDE_SKILL_DIR}/workflow/build-run-scrip\n-1. **Combined verdicts.** Concatenate the shard results' `files` arrays; aggregate `kept_findings`, `contested_findings`, and `concession_rate` (weighted by each shard's `wave0` finding keys) from the shard summaries.\n-2. **SUT-coverage map.** Join every manifest entry's `source_paths` to its test path; report each SUT covered by ≥ 2 test files as `{ sut, covered_by: [{path, test_type}], note }`, noting `integration test redundant with existing unit coverage of this SUT` when the covering set mixes unit and integration (references/report-format.md §Coverage Map).\n-3. **Placement flags.** Flag an integration file when (a) its merged result carries an `INTEGRATION-008` informational finding, and/or (b) the coverage map shows it redundant with unit coverage. Each flag points at `phpunit-integration-to-unit-migrating` and never raises status.\n+1. **Verify finding evidence.** For every persisted `$CAMPAIGN/shard-k.result.json`, run `${CLAUDE_SKILL_DIR}/workflow/verify-finding-evidence.sh $CAMPAIGN/shard-k.result.json <repo_root>` and overwrite the file with its stdout. A kept finding whose `current` fails the evidence check is moved into `contested` (tagged with an `outcome` reason) and synced out of that file's `adversarial_input.kept` — so a fabricated quote never reaches this merge, Phase 6's `args-adversarial.json`, or the report as kept. A referenced file missing on disk or an invalid result JSON fails the script hard; treat it as a stage result failure (references/error-handling.md).\n+2. **Combined verdicts.** Concatenate the (now evidence-checked) shard results' `files` arrays; aggregate `kept_findings`, `contested_findings`, and `concession_rate` (weighted by each shard's `wave0` finding keys) from the shard summaries.\n+3. **SUT-coverage map.** Join every manifest entry's `source_paths` to its test path; report each SUT covered by ≥ 2 test files as `{ sut, covered_by: [{path, test_type}], note }`, noting `integration test redundant with existing unit coverage of this SUT` when the covering set mixes unit and integration (references/report-format.md §Coverage Map).\n+4. **Placement flags.** Flag an integration file when (a) its merged result carries an `INTEGRATION-008` informational finding, and/or (b) the coverage map shows it redundant with unit coverage. Each flag points at `phpunit-integration-to-unit-migrating` and never raises status.\n@@ -138,7 +145,7 @@ The adversarial stage (red team + defense + arbitration) is the opus-priced part\n-4. On **run**: assemble `$CAMPAIGN/args-adversarial.json` — `mode: \"adversarial\"`, ALL files, the same `rule_packages` / `preset` / `models` / `base`, plus `consensus`: the array of every file's `adversarial_input` object extracted from the shard results (`jq`, by path). Build, launch, persist to `$CAMPAIGN/adversarial.result.json` with the same stop-on-partial policy as Phase 4.\n+4. On **run**: assemble `$CAMPAIGN/args-adversarial.json` — `mode: \"adversarial\"`, ALL files, the same `rule_packages` / `preset` / `models` / `base`, plus `consensus`: the array of every file's `adversarial_input` object extracted from the shard results (`jq`, by path) — Phase 5 already ran `verify-finding-evidence.sh` over these shard results, so a demoted finding is already out of `adversarial_input.kept` before this extraction. Build, launch, persist to `$CAMPAIGN/adversarial.result.json` with the same stop-on-partial policy as Phase 4.\n@@ -147,6 +154,10 @@ Each file's section states that file entry's `baseline` directly under its `## F"
+   },
+   {
+    "filename": "plugins/test-writing/skills/phpunit-test-team-reviewing/references/error-handling.md",
+    "status": "modified",
+    "additions": 2,
+    "deletions": 1,
+    "patch": "@@ -71,7 +71,7 @@ When a wave of ≥ `WAVE_NULL_MIN` agents loses ≥ `WAVE_NULL_RATE` of them to\n@@ -80,6 +80,7 @@ Only after a unit burns `RESPAWN_MAX` does its role's graceful degradation apply"
+   },
+   {
+    "filename": "plugins/test-writing/skills/phpunit-test-team-reviewing/references/fix-application.md",
+    "status": "added",
+    "additions": 28,
+    "deletions": 0,
+    "patch": "@@ -0,0 +1,28 @@\n+# Fix-Application Contract\n+## Remediation Fidelity\n+- Apply a finding's `suggested` field verbatim — the report's final value for that finding (the adversarial stage's, when it superseded the file's consensus-stage entry; the consensus stage's otherwise) — never a paraphrase, never a re-derivation from `current` and `summary`.\n+- A finding's remaining `suggested_variants` entries are alternatives for a human to choose between. Never apply one as a remediation in its place, and never drop it from what you show the human.\n+## Self-Review Before Committing\n+- **Redundancy.** Apply DESIGN-003 (data-provider consolidation for 3+ similar variations) and DESIGN-004 (unjustified case/method redundancy) across every file the fix touches together, not only the file the finding named.\n+- **Tautology.** For every test the fix adds, check that the assertion's expected value does not derive from the code under test or from the test's own fixture computation. An expected value computed the same way the SUT computes it passes on a broken SUT.\n+- **Static gates.** Run PHPStan (`mcp__plugin_dev-tooling_php-tooling__phpstan_analyze`) and php-cs-fixer (`mcp__plugin_dev-tooling_php-tooling__ecs_check` / `ecs_fix`) over the fix diff — the same gates the reviewed code passes through.\n+## Mutation Checks\n+## Re-Verifying a Consensus-Only Must-Fix Finding\n+## Verifying Landed Commits Before Reporting Completion"
+   },
+   {
+    "filename": "plugins/test-writing/skills/phpunit-test-team-reviewing/references/input-resolution.md",
+    "status": "modified",
+    "additions": 1,
+    "deletions": 1,
+    "patch": "@@ -35,7 +35,7 @@ The orchestrator resolves the file list (Resolution Strategies) and classifies e\n-- Counts come from `wc -l` / exhaustive `grep`, never estimation. Enumerate **every** `public function test*` into `test_methods` — this list drives the shard count.\n+- Counts come from `wc -l` / exhaustive `grep`, never estimation. Enumerate **every** `public function test*` into `test_methods` — this list drives the shard count. These subagent-reported `method_count`/`test_methods` values are provisional: before the manifest freezes, the skill re-counts them deterministically from the file on disk via `workflow/verify-method-counts.sh` (SKILL.md Phase 1), replacing a mismatch with the extracted truth and logging the replacement — never merely a warning."
+   },
+   {
+    "filename": "plugins/test-writing/skills/phpunit-test-team-reviewing/references/report-format.md",
+    "status": "modified",
+    "additions": 14,
+    "deletions": 2,
+    "patch": "@@ -79,6 +79,7 @@ Model combos ({model_combos}) change cost, not agent count. The bounds are upper\n+- **Scrutiny**: adversary-tested\n@@ -96,6 +97,7 @@ Model combos ({model_combos}) change cost, not agent count. The bounds are upper\n+- **Scrutiny**: consensus-only\n@@ -106,6 +108,7 @@ Model combos ({model_combos}) change cost, not agent count. The bounds are upper\n+- **Scrutiny**: adversary-tested\n@@ -116,6 +119,7 @@ Model combos ({model_combos}) change cost, not agent count. The bounds are upper\n+- **Scrutiny**: adversary-tested\n@@ -125,6 +129,7 @@ Model combos ({model_combos}) change cost, not agent count. The bounds are upper\n+- **Scrutiny**: adversary-tested\n@@ -156,14 +161,15 @@ Findings reported by only 1 reviewer, or refuted by an arbiter (excluded from ab\n+- **Scrutiny**: consensus-only | adversary-tested\n-- **Outcome**: not flagged by reviewer-{a}, reviewer-{b} / arbiter refuted: \"reasoning\"\n+- **Outcome**: not flagged by reviewer-{a}, reviewer-{b} / arbiter refuted: \"reasoning\" / evidence check: current block not found in `ProductTest.php` under whitespace normalization (a `verify-finding-evidence.sh` demotion — the finding's `current` did not match the file's real content)\n   ```php\n@@ -249,6 +255,9 @@ Findings whose fix cannot be made in the test alone — they imply a production\n ---\n@@ -268,6 +277,7 @@ Apply to every finding (errors, warnings, informational, contested):\n+- **Scrutiny on every finding** — render `**Scrutiny**: adversary-tested | consensus-only` on ALL findings. `adversary-tested` when the file's findings passed through the adversarial stage's superseding verdicts (an `adversarial.result.json` file entry replaced the consensus-stage one, per the Merge rule above); `consensus-only` otherwise (the adversarial stage was skipped, or never reached this file). Derived deterministically from which stage produced the finding's final state — never asserted independently per finding.\n@@ -310,6 +320,7 @@ files:\n@@ -325,7 +336,7 @@ files:\n@@ -386,6 +397,7 @@ red_team:                                          # from the adversarial stage"
+   },
+   {
+    "filename": "plugins/test-writing/skills/phpunit-test-team-reviewing/workflow/team-review.workflow.mjs",
+    "status": "modified",
+    "additions": 98,
+    "deletions": 17
+   },
+   {
+    "filename": "plugins/test-writing/skills/phpunit-test-team-reviewing/workflow/verify-finding-evidence.sh",
+    "status": "added",
+    "additions": 243,
+    "deletions": 0
+   },
+   {
+    "filename": "plugins/test-writing/skills/phpunit-test-team-reviewing/workflow/verify-method-counts.sh",
+    "status": "added",
+    "additions": 174,
+    "deletions": 0
+   },
+   {
+    "filename": "plugins/test-writing/skills/phpunit-unit-test-generation/SKILL.md",
+    "status": "modified",
+    "additions": 1,
+    "deletions": 1,
+    "patch": "@@ -1,6 +1,6 @@\n ---"
+   },
+   {
+    "filename": "plugins/test-writing/skills/phpunit-unit-test-reviewing/SKILL.md",
+    "status": "modified",
+    "additions": 1,
+    "deletions": 1,
+    "patch": "@@ -1,6 +1,6 @@\n ---"
+   },
+   {
+    "filename": "plugins/test-writing/skills/phpunit-unit-test-writing/SKILL.md",
+    "status": "modified",
+    "additions": 1,
+    "deletions": 1,
+    "patch": "@@ -1,6 +1,6 @@\n ---\n ---"
+   }
+  ]
+ },
+ "repos/shopwareLabs/ai-coding-tools/commits/46569de98a81f818a077c8993e237817b966cb24": {
+  "sha": "46569de98a81f818a077c8993e237817b966cb24",
+  "commit": {
+   "message": "fix(test-writing): correct rule catalog and scope suggested fixes (#180)",
+   "committer": {
+    "date": "2026-09-06T11:57:13Z"
+   }
+  },
+  "parents": [
+   {
+    "sha": "07e21489dc1dd965d16bb05c2a5ca4057b366cec"
+   }
+  ],
+  "files": [
+   {
+    "filename": "README.md",
+    "status": "modified",
+    "additions": 1,
+    "deletions": 1,
+    "patch": "@@ -69,7 +69,7 @@ If you previously installed `gh-tooling` from this marketplace, Claude Code drop\n ```bash"
+   },
+   {
+    "filename": "plugins/test-writing/.claude-plugin/plugin.json",
+    "status": "modified",
+    "additions": 1,
+    "deletions": 1
+   },
+   {
+    "filename": "plugins/test-writing/AGENTS.md",
+    "status": "modified",
+    "additions": 2,
+    "deletions": 2,
+    "patch": "@@ -40,12 +40,12 @@ plugins/test-writing/"
+   },
+   {
+    "filename": "plugins/test-writing/CHANGELOG.md",
+    "status": "modified",
+    "additions": 21,
+    "deletions": 0,
+    "patch": "@@ -5,6 +5,27 @@ All notable changes to this project will be documented in this file.\n+## [5.2.0] - 2026-09-05\n+### Removed\n+- **CONV-007 (test class member ordering) and MIGRATION-007 (assertSame over assertEquals in migration tests).** Both duplicate deterministic gates verified active in the target repository: php-cs-fixer's `ordered_class_elements` runs over `tests/` and its default group order covers all six of CONV-007's member slots (the `phpunit` group places setUp/tearDown ahead of test methods, and a `public static` provider sorts before private helpers), and phpstan-phpunit's `AssertEqualsIsDiscouragedRule` is active on every analyzed path including `tests/migration`. Same pattern as the CONV-015/UNIT-002 removals in 5.0.0. The unit-review catalog drops from 44 rules to 43.\n+### Fixed\n+- **UNIT-004 no longer prescribes remediations the PHPStan gate rejects.** A shared `createMock()` double whose sibling methods set expectations is exempt from the drop-`expects()` remedy (`NoCreateMockWithoutExpectationsRule` requires every method touching such a double to carry an expectation), UNIT-004 and UNIT-003 defer to that rule where it already reports a double, a cross-method `never()`/`once()` reachability pairing counts as the assertion that pins which branch ran, and the remediation notes quote the Shopware guideline's two stub-conversion gotchas (`->with()` exists on mocks only; a fixture-helper parameter takes `Foo&Stub`, not `MockObject`) that pass PHPUnit and fail only in PHPStan.\n+- **CONV-014 no longer relocates position-load-bearing assertions.** An assertion between two actions is intentional when moving it past the next action changes the observed value — reported at most as `consider`, with no relocation suggested — and the rule's own Fix example no longer moves an `assertCount` past a call that could mutate the counted collection.\n+- **DESIGN-003 detection compares assertions, not bodies.** Merging is safe only when neither test asserts the distinguishing detail, and a fold into an existing provider names that provider and respects its documented scope.\n+- **DESIGN-004 keeps boundary inputs whose distinctness the implementation deliberately erases** — the equivalence between them is itself the contract under test.\n+- **CONV-011 suppresses annotations that mechanically expand the method name**, decided by a deterministic camelCase-split comparison run before the finding is emitted.\n+- **The migration reviewing skill's `warnings` example matches CONV-014's semantics**: reorder-only, with empty `deleted_methods`/`removed_assertions`.\n+### Changed\n+- **CONV-005 is a `consider` rule with a single-category exemption.** A class deliberately holding one half of a split (for example only the error cases, with the happy paths in a sibling class) is no longer told to grow the categories it does not contain.\n+- **UNIT-001 findings name the enforcing mechanism** — return type, PHPStan level, constructor contract, or a named rule such as `NoCreateMockWithoutExpectationsRule` — so a partially wrong triviality premise is checkable before any assertion is removed.\n+- **CONV-017 reconciles with the guideline's `setUp()` stance.** State reused across test methods stays in `setUp()`; the identity/accumulated-setup exemption applies only when the property is read more than once inside its single referencing method and those reads must observe the same instance.\n+### Added\n+- **Remediation invariant** in the three reviewing skills' output requirements and the four team-review prompt builders (reviewer, reconcile, red team, defense): a suggested fix never changes what an existing assertion pins and never introduces an assertion as a means of satisfying a structural, layout, naming, or style constraint; coverage-gap rules (MIGRATION-008, DESIGN-006, INTEGRATION-007) carry new assertions as the finding's explicit deliverable; deletions ride `removed_assertions`; re-expressing the same pinned fact (CONV-012's `assertSame` conversion) stays legal."
+   },
+   {
+    "filename": "plugins/test-writing/README.md",
+    "status": "modified",
+    "additions": 4,
+    "deletions": 7,
+    "patch": "@@ -17,7 +17,7 @@ Generate and validate PHPUnit unit tests for Shopware 6. Automatically analyzes\n-- **Migration Test Reviewing**: 9 migration-specific rules covering idempotency, cleanup, assertion patterns, and Shopware conventions\n+- **Migration Test Reviewing**: 8 migration-specific rules covering idempotency, cleanup, assertion patterns, and Shopware conventions\n@@ -137,7 +137,6 @@ The generator analyzes the migration's SQL operations and selects appropriate te\n@@ -270,7 +269,6 @@ Rules are organized by group and enforce level.\n@@ -295,7 +293,6 @@ Rules are organized by group and enforce level.\n@@ -313,6 +310,7 @@ Rules are organized by group and enforce level.\n@@ -324,7 +322,6 @@ Rules are organized by group and enforce level.\n@@ -517,12 +514,12 @@ Reference files provide detailed guidance:\n-- `rules/convention/` — PHPUnit and Shopware coding conventions (CONV-001 through CONV-017, less CONV-015)\n+- `rules/convention/` — PHPUnit and Shopware coding conventions (CONV-001..006, CONV-008..014, CONV-016, CONV-017)\n-- `rules/migration/` — Migration test rules (MIGRATION-001 through MIGRATION-009)\n+- `rules/migration/` — Migration test rules (MIGRATION-001..006, MIGRATION-008, MIGRATION-009)"
+   },
+   {
+    "filename": "plugins/test-writing/rules/convention/CONV-005.md",
+    "status": "modified",
+    "additions": 6,
+    "deletions": 2,
+    "patch": "@@ -2,7 +2,7 @@\n@@ -12,7 +12,7 @@ scoped-review: exclude\n@@ -76,6 +76,10 @@ A name can match more than one row. Apply the rows in this precedence and take t\n+### Single-Category Exemption"
+   },
+   {
+    "filename": "plugins/test-writing/rules/convention/CONV-007.md",
+    "status": "removed",
+    "additions": 0,
+    "deletions": 78,
+    "patch": "@@ -1,78 +0,0 @@\n----\n----\n-## Class Structure Order\n-### Required Order\n-```php\n-```\n-### Detection\n-```php\n-```\n-### Fix\n-1. Traits (`use Trait;`)\n-2. Constants (`public const`)\n-3. Properties (`private $repo;`)\n-4. setUp/tearDown methods\n-5. Test methods (following CONV-005 ordering)\n-6. Helper methods (private functions)"
+   },
+   {
+    "filename": "plugins/test-writing/rules/convention/CONV-011.md",
+    "status": "modified",
+    "additions": 11,
+    "deletions": 0,
+    "patch": "@@ -38,3 +38,14 @@ public function testCalculatesPrice(float $gross, float $net, float $tax): void\n ```\n+### Suppression: Mechanical Expansion of the Method Name\n+```php\n+#[DataProvider('priceProvider')]\n+#[TestDox('calculates price')]\n+```"
+   },
+   {
+    "filename": "plugins/test-writing/rules/convention/CONV-014.md",
+    "status": "modified",
+    "additions": 23,
+    "deletions": 1,
+    "patch": "@@ -42,6 +42,8 @@ public function testProcessesOrder(): void\n ```php\n@@ -51,10 +53,30 @@ public function testProcessesOrder(): void\n ```\n+### Position-Load-Bearing Carve-Out\n+```php\n+```"
+   },
+   {
+    "filename": "plugins/test-writing/rules/convention/CONV-017.md",
+    "status": "modified",
+    "additions": 2,
+    "deletions": 0,
+    "patch": "@@ -51,6 +51,8 @@ Do NOT flag when:"
+   },
+   {
+    "filename": "plugins/test-writing/rules/design/DESIGN-003.md",
+    "status": "modified",
+    "additions": 8,
+    "deletions": 0,
+    "patch": "@@ -83,3 +83,11 @@ public function testAcceptsValidEmail(string $email): void\n+### Similar Bodies Are Not Enough — Check the Assertions Too"
+   },
+   {
+    "filename": "plugins/test-writing/rules/design/DESIGN-004.md",
+    "status": "modified",
+    "additions": 4,
+    "deletions": 0,
+    "patch": "@@ -207,6 +207,10 @@ If none apply, the case is redundant (DESIGN-004).\n+### Boundary-Input Carve-Out"
+   },
+   {
+    "filename": "plugins/test-writing/rules/migration/MIGRATION-007.md",
+    "status": "removed",
+    "additions": 0,
+    "deletions": 35,
+    "patch": "@@ -1,35 +0,0 @@\n----\n----\n-## assertSame over assertEquals\n-### Detection\n-```php\n-```\n-### Fix\n-```php\n-```"
+   },
+   {
+    "filename": "plugins/test-writing/rules/migration/MIGRATION-008.md",
+    "status": "modified",
+    "additions": 1,
+    "deletions": 1,
+    "patch": "@@ -44,7 +44,7 @@ public function testGetCreationTimestamp(): void\n ```php"
+   },
+   {
+    "filename": "plugins/test-writing/rules/unit/UNIT-001.md",
+    "status": "modified",
+    "additions": 14,
+    "deletions": 0,
+    "patch": "@@ -165,6 +165,20 @@ public function testFullNameCombinesFirstAndLastName(): void\n ```\n+### Name the Enforcing Mechanism\n+- **Return types** — a method with a single non-nullable return type already guarantees what an `assertInstanceOf`/`assertIsArray`/etc. against that exact type would re-check (see \"When Type Assertions ARE Valid\" above for the narrowing exception). This is the exact declared type only: a return type that is a base class or an interface does not guarantee a narrower concrete type (an `EntityDefinition`-typed return does not guarantee `ProductDefinition`), so an assertion narrowing to a specific subtype is not covered by this mechanism\n+- **PHPStan level** — a null-safety or type-coercion property the configured PHPStan level already rejects at compile time\n+- **Constructor contract** — a property-assignment constructor with no validation logic, whose invariant is the parameter's own type\n+- **`NoCreateMockWithoutExpectationsRule`** — guarantees a `createMock()` double is never left without an `->expects()`; an assertion re-checking \"was this mock called\" duplicates what the PHPStan rule already guarantees in Shopware's unit/DevOps test namespaces\n+- **`CodeCoverageIgnoreEvaluationRule`** — guarantees a method annotated `@codeCoverageIgnore` is truly pass-through (no branching, mutation, or side-effecting calls) *when no `@see` to a dedicated integration/DevOps test lifts the check*; a `@see` present on the annotation means the rule no longer enforces pass-through-only, so this mechanism does not apply and an assertion proving the method's actual behavior is not redundant\n+- **`TestPackageMatchRule`** — guarantees a test's `#[Package]` attribute matches its covered class's package; an assertion re-checking that pairing duplicates the PHPStan rule\n+- **`shopware.reflectionOnNonPublicMethod`** — guarantees reflective access to a non-public method of a Shopware class is rejected; an assertion whose only purpose is proving such access is unreachable duplicates that rule"
+   },
+   {
+    "filename": "plugins/test-writing/rules/unit/UNIT-003.md",
+    "status": "modified",
+    "additions": 1,
+    "deletions": 0,
+    "patch": "@@ -34,6 +34,7 @@ Three-tier dependency substitution hierarchy:\n+- Where `NoCreateMockWithoutExpectationsRule` has already reported a double as never expected, UNIT-003 defers to it rather than re-deriving the same stub-or-expectation transform as a separate finding — suppress the finding and cite the PHPStan rule instead. `NoCreateMockWithoutExpectationsRule` is enabled for `Shopware\\Tests\\Unit\\` and `Shopware\\Tests\\DevOps\\`; UNIT-003's own `test-types: unit` scope means this deferral is live wherever UNIT-003 fires."
+   },
+   {
+    "filename": "plugins/test-writing/rules/unit/UNIT-004.md",
+    "status": "modified",
+    "additions": 35,
+    "deletions": 0,
+    "patch": "@@ -75,6 +75,14 @@ public function testLoadsProductWithCriteriaVerification(): void\n ```\n+### Exception: Shared Mock With Sibling Expectations\n+### Deferral to NoCreateMockWithoutExpectationsRule\n@@ -124,3 +132,30 @@ $this->filesystem\n ```\n+```php\n+```\n+### Remediation Notes — Stub Conversion Gotchas"
+   },
+   {
+    "filename": "plugins/test-writing/skills/phpunit-integration-test-generation/SKILL.md",
+    "status": "modified",
+    "additions": 1,
+    "deletions": 1,
+    "patch": "@@ -1,6 +1,6 @@\n ---"
+   },
+   {
+    "filename": "plugins/test-writing/skills/phpunit-integration-test-reviewing/SKILL.md",
+    "status": "modified",
+    "additions": 4,
+    "deletions": 2,
+    "patch": "@@ -1,6 +1,6 @@\n ---\n@@ -105,7 +105,7 @@ When `{methods}` is provided, apply detection only to the named methods and thei\n-- Force `review_unit=class-structure`. In Phase 4, call `get_rules(test_type=integration, review_unit=class-structure)` with NO `scoped_review`. Apply whatever rules the filter returns — the composed catalog's class-structure rules are CONV-005 and CONV-007. When `{rules}` is also set, instead select the class-structure rules from the inline text per Inline-Rules Mode (`Review unit` == `class-structure`).\n+- Force `review_unit=class-structure`. In Phase 4, call `get_rules(test_type=integration, review_unit=class-structure)` with NO `scoped_review`. Apply whatever rules the filter returns — the composed catalog's only class-structure rule is CONV-005. When `{rules}` is also set, instead select the class-structure rules from the inline text per Inline-Rules Mode (`Review unit` == `class-structure`).\n@@ -144,6 +144,8 @@ Include for each issue:"
+   },
+   {
+    "filename": "plugins/test-writing/skills/phpunit-integration-to-unit-migrating/SKILL.md",
+    "status": "modified",
+    "additions": 1,
+    "deletions": 1,
+    "patch": "@@ -1,6 +1,6 @@\n ---"
+   },
+   {
+    "filename": "plugins/test-writing/skills/phpunit-migration-test-generation/SKILL.md",
+    "status": "modified",
+    "additions": 1,
+    "deletions": 1,
+    "patch": "@@ -1,6 +1,6 @@\n ---"
+   },
+   {
+    "filename": "plugins/test-writing/skills/phpunit-migration-test-reviewing/SKILL.md",
+    "status": "modified",
+    "additions": 12,
+    "deletions": 12,
+    "patch": "@@ -1,6 +1,6 @@\n ---\n@@ -12,7 +12,7 @@ Review a Shopware PHPUnit migration test for compliance with migration testing c\n@@ -105,7 +105,7 @@ When `{methods}` is provided, apply detection only to the named methods and thei\n-- Force `review_unit=class-structure`. In Phase 4, call `get_rules(test_type=migration, review_unit=class-structure)` with NO `scoped_review`. Apply whatever rules the filter returns — the composed catalog's class-structure rules are CONV-005, CONV-007, and MIGRATION-008. When `{rules}` is also set, instead select the class-structure rules from the inline text per Inline-Rules Mode (`Review unit` == `class-structure`).\n+- Force `review_unit=class-structure`. In Phase 4, call `get_rules(test_type=migration, review_unit=class-structure)` with NO `scoped_review`. Apply whatever rules the filter returns — the composed catalog's class-structure rules are CONV-005 and MIGRATION-008. When `{rules}` is also set, instead select the class-structure rules from the inline text per Inline-Rules Mode (`Review unit` == `class-structure`).\n@@ -143,6 +143,8 @@ Include for each issue:\n@@ -163,22 +165,20 @@ errors:\n-  - rule_id: CONV-005\n+  - rule_id: CONV-014\n-      - assertion: \"static::assertTrue(TableHelper::columnExists($this->connection, 'foo', 'bar'))\"\n@@ -205,7 +205,7 @@ Set `implies_src_change: true` on a finding whose fix cannot be made in the test"
+   },
+   {
+    "filename": "plugins/test-writing/skills/phpunit-migration-test-reviewing/references/output-format.md",
+    "status": "modified",
+    "additions": 2,
+    "deletions": 2,
+    "patch": "@@ -100,7 +100,7 @@ Every other finding carries `implies_src_change: false` and omits the line. The\n@@ -141,7 +141,7 @@ MIGRATION-001 through MIGRATION-009 are all must-fix. The composed catalog also\n-- ✓ assertSame over assertEquals (MIGRATION-007)\n+- ✓ testGetCreationTimestamp present (MIGRATION-008)\n ```"
+   },
+   {
+    "filename": "plugins/test-writing/skills/phpunit-test-adversarial-reviewing/SKILL.md",
+    "status": "modified",
+    "additions": 1,
+    "deletions": 1,
+    "patch": "@@ -1,6 +1,6 @@\n ---"
+   },
+   {
+    "filename": "plugins/test-writing/skills/phpunit-test-reconciling/SKILL.md",
+    "status": "modified",
+    "additions": 1,
+    "deletions": 1,
+    "patch": "@@ -1,6 +1,6 @@\n ---"
+   },
+   {
+    "filename": "plugins/test-writing/skills/phpunit-test-team-reviewing/SKILL.md",
+    "status": "modified",
+    "additions": 1,
+    "deletions": 1,
+    "patch": "@@ -1,6 +1,6 @@\n ---\n ---"
+   },
+   {
+    "filename": "plugins/test-writing/skills/phpunit-test-team-reviewing/references/red-team-context.md",
+    "status": "modified",
+    "additions": 2,
+    "deletions": 2,
+    "patch": "@@ -8,8 +8,8 @@ Each file gets **K independent adversaries, one per active lens** — `K` is the\n-- **L1 — Tautology hunter** *(does it run for real?)*: would the test pass even if the SUT were broken — over-mocking the SUT or its real collaborators, asserting on stubs/doubles, call-count coupling, guard-clause leakage. (Unit catalog instances: UNIT-001/003/004/005, ISOLATION-001/002, DESIGN-010; integration: INTEGRATION-002 over-mock; migration: idempotency/verification gaps.)\n-- **L2 — Weak-assertion hunter** *(does it assert enough?)*: do assertions pin the real contract, and are edge and error cases covered? (Unit: CONV-009, DESIGN-005/006, PROVIDER-*; integration: INTEGRATION-007 setup/assertion ratio; migration: MIGRATION-007 assertSame.)\n+- **L1 — Tautology hunter** *(does it run for real?)*: would the test pass even if the SUT were broken — over-mocking the SUT or its real collaborators, asserting on stubs/doubles, call-count coupling, guard-clause leakage. (Unit catalog instances: UNIT-001/003/004, ISOLATION-001/002, DESIGN-010; integration: INTEGRATION-002 over-mock; migration: idempotency/verification gaps.)\n+- **L2 — Weak-assertion hunter** *(does it assert enough?)*: do assertions pin the real contract, and are edge and error cases covered? (Unit: CONV-009, DESIGN-005/006, PROVIDER-*; integration: INTEGRATION-007 setup/assertion ratio; migration: CONV-012 assertion-method choice.)"
+   },
+   {
+    "filename": "plugins/test-writing/skills/phpunit-test-team-reviewing/workflow/team-review.workflow.mjs",
+    "status": "modified",
+    "additions": 4,
+    "deletions": 0
+   },
+   {
+    "filename": "plugins/test-writing/skills/phpunit-unit-test-generation/SKILL.md",
+    "status": "modified",
+    "additions": 1,
+    "deletions": 1,
+    "patch": "@@ -1,6 +1,6 @@\n ---"
+   },
+   {
+    "filename": "plugins/test-writing/skills/phpunit-unit-test-reviewing/SKILL.md",
+    "status": "modified",
+    "additions": 3,
+    "deletions": 1,
+    "patch": "@@ -1,6 +1,6 @@\n ---\n@@ -148,6 +148,8 @@ Include for each issue:"
+   },
+   {
+    "filename": "plugins/test-writing/skills/phpunit-unit-test-writing/SKILL.md",
+    "status": "modified",
+    "additions": 1,
+    "deletions": 1,
+    "patch": "@@ -1,6 +1,6 @@\n ---\n ---"
+   }
+  ]
+ }
+}

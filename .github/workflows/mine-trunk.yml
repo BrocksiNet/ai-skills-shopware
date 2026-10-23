@@ -9,13 +9,17 @@ name: mine-trunk
 # routes.json.
 #
 #   - schedule (Monday 05:00 UTC, before evals.yml) and manual dispatch open
-#     or update this week's issue labeled `trunk-drift`. Older open
-#     `trunk-drift` issues are closed as superseded: the new report covers
-#     their window too, because the state has not moved.
+#     or update this week's issue labeled `trunk-drift` (`mine-trunk.ts run`).
+#     An older open `trunk-drift` issue is closed as superseded when the new
+#     report reaches at least as far in every source it lists; the others
+#     stay open. A dispatch with `dry_run` only prints the report and the
+#     issue plan to the job log and the artifact.
 #   - a `/mined` comment by a member or collaborator on a `trunk-drift` issue
 #     opens a PR that moves every source's state to the commit the report
-#     ends at, then closes the issue. The state never moves past unread
-#     deltas.
+#     ends at, then closes the issue. `/mined shopware php-modernization`
+#     moves only those sources and leaves the issue open. A state only ever
+#     moves to the end of a report, so never past unread deltas, and never
+#     back.
 #
 # No model calls and no secrets beyond GITHUB_TOKEN.
 
@@ -23,6 +27,11 @@ on:
   schedule:
     - cron: "0 5 * * 1" # Monday 05:00 UTC
   workflow_dispatch:
+    inputs:
+      dry_run:
+        description: Print the report and the issue plan; open, update or close no issue
+        type: boolean
+        default: false
   issue_comment:
     types: [created]
 
@@ -55,54 +64,22 @@ jobs:
             gh release download review-signals --dir "$RUNNER_TEMP/review-signals" --pattern '*.jsonl' || true
           fi
 
-      - name: Mine every source since its last state
+      - name: Mine every source since its last state and file the issue
         env:
           GH_TOKEN: ${{ github.token }}
-        run: node tools/bin/mine-trunk.ts report --reviews "$RUNNER_TEMP/review-signals" > "$RUNNER_TEMP/report.md"
+          DRY_RUN: ${{ inputs.dry_run && '--dry-run' || '' }}
+        run: |
+          # shellcheck disable=SC2086 # DRY_RUN is empty or one flag
+          node tools/bin/mine-trunk.ts run $DRY_RUN --reviews "$RUNNER_TEMP/review-signals" \
+            --repo "$GITHUB_REPOSITORY" --out "$RUNNER_TEMP/report.md" \
+            --run-url "${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}/actions/runs/${GITHUB_RUN_ID}"
 
       - uses: actions/upload-artifact@v4
+        if: always()
         with:
           name: trunk-drift
           path: ${{ runner.temp }}/report.md
-
-      - name: Open or update this week's issue
-        env:
-          GH_TOKEN: ${{ github.token }}
-        run: |
-          body="$RUNNER_TEMP/report.md"
-          # An issue body holds 65536 characters. Keep the state marker.
-          if [ "$(wc -c < "$body")" -gt 60000 ]; then
-            marker="$(grep -m1 '^<!-- mine-trunk-state: ' "$body")"
-            run_url="${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}/actions/runs/${GITHUB_RUN_ID}"
-            {
-              head -c 58000 "$body" | sed '$d'
-              echo
-              echo "The report is cut here. The full report is the \`trunk-drift\` artifact of ${run_url}."
-              echo
-              echo "$marker"
-            } > "$RUNNER_TEMP/issue.md"
-            body="$RUNNER_TEMP/issue.md"
-          fi
-
-          monday="$(date -u -d "$(date -u +%Y-%m-%d) -$(( $(date -u +%u) - 1 )) days" +%Y-%m-%d)"
-          title="Drift: week of ${monday}"
-          gh label create trunk-drift --color D93F0B \
-            --description "Weekly drift mining report (mine-trunk.yml)" --force
-
-          current="$(gh issue list --label trunk-drift --state open --json number,title \
-            --jq "map(select(.title == \"${title}\")) | .[0].number // empty")"
-          if [ -n "$current" ]; then
-            gh issue edit "$current" --body-file "$body"
-          else
-            url="$(gh issue create --label trunk-drift --title "$title" --body-file "$body")"
-            current="${url##*/}"
-          fi
-
-          for old in $(gh issue list --label trunk-drift --state open --json number \
-            --jq ".[] | select(.number != ${current}) | .number"); do
-            gh issue close "$old" --reason "not planned" \
-              --comment "Superseded by #${current}, which covers this window too."
-          done
+          if-no-files-found: ignore
 
   mined:
     if: >-
@@ -129,10 +106,17 @@ jobs:
           BODY: ${{ github.event.issue.body }}
           ISSUE: ${{ github.event.issue.number }}
           ACTOR: ${{ github.event.comment.user.login }}
+          COMMENT: ${{ github.event.comment.body }}
         run: |
-          printf '%s' "$BODY" | node tools/bin/mine-trunk.ts advance
+          printf '%s' "$BODY" | node tools/bin/mine-trunk.ts advance --comment "$COMMENT"
+          # `/mined` alone covers the whole report; with source names, the issue stays open.
+          all="$(printf '%s' "$COMMENT" | head -n1 | tr -d '[:space:]')"
           if git diff --quiet -- docs/.mining-state.json; then
-            gh issue close "$ISSUE" --comment "The mining state is already at the end of this report."
+            if [ "$all" = "/mined" ]; then
+              gh issue close "$ISSUE" --comment "The mining state is already at the end of this report."
+            else
+              gh issue comment "$ISSUE" --body "The named sources are already at the end of this report."
+            fi
             exit 0
           fi
           sha="$(node -p 'require("./docs/.mining-state.json").shopware.last_sha.slice(0, 8)')"
@@ -147,4 +131,8 @@ jobs:
           url="$(gh pr create --base main --head "$branch" \
             --title "chore(mining): mined up to trunk ${sha}" \
             --body "Moves \`docs/.mining-state.json\` to the end of #${ISSUE}, marked mined by @${ACTOR}.")"
-          gh issue close "$ISSUE" --comment "Marked mined by @${ACTOR}. State PR: ${url}"
+          if [ "$all" = "/mined" ]; then
+            gh issue close "$ISSUE" --comment "Marked mined by @${ACTOR}. State PR: ${url}"
+          else
+            gh issue comment "$ISSUE" --body "Sources marked mined by @${ACTOR}. State PR: ${url}"
+          fi

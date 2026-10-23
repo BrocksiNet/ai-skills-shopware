@@ -1,0 +1,813 @@
+{
+ "repos/netresearch/php-modernization-skill/commits?sha=main&until=2026-10-04T23%3A59%3A59Z&per_page=1": [
+  {
+   "sha": "cc996e20f7a1f032944db15a0745c0101965cf51",
+   "commit": {
+    "message": "Merge pull request #156 from netresearch/renovate/astral-sh-ruff-pre-commit-0.x",
+    "committer": {
+     "date": "2026-10-01T22:14:26Z"
+    }
+   },
+   "parents": [
+    {
+     "sha": "b1e50b69ed2cb28cc0ccb0a517b25f806e73b69b"
+    },
+    {
+     "sha": "adab0873fd8c61004c8939c99a9457e640e06ee5"
+    }
+   ]
+  }
+ ],
+ "repos/netresearch/php-modernization-skill/commits?sha=main&path=skills&since=2026-09-28T00%3A00%3A00Z&until=2026-10-04T23%3A59%3A59Z&per_page=100&page=1": [
+  {
+   "sha": "8f3a86b72190e73c13bc9693bb102dbb6775098b",
+   "commit": {
+    "message": "Merge branch 'main' into feat/retro-guard-raw-state-before-strict-parse",
+    "committer": {
+     "date": "2026-10-01T07:49:14Z"
+    }
+   },
+   "parents": [
+    {
+     "sha": "4f05f3b20f63fb0d07f4259f92aaa3dc0349bb42"
+    },
+    {
+     "sha": "9e0e56e1b81f67ebda54af7d90b4cbd5972c9302"
+    }
+   ]
+  },
+  {
+   "sha": "4f05f3b20f63fb0d07f4259f92aaa3dc0349bb42",
+   "commit": {
+    "message": "docs(request-dtos): say which rows reach the error path",
+    "committer": {
+     "date": "2026-10-01T07:29:06Z"
+    }
+   },
+   "parents": [
+    {
+     "sha": "b1350380bc801b99c023b712fb091a1ef6b73e69"
+    }
+   ]
+  },
+  {
+   "sha": "b1350380bc801b99c023b712fb091a1ef6b73e69",
+   "commit": {
+    "message": "docs(request-dtos): guard finished state on the raw row before fromRow()",
+    "committer": {
+     "date": "2026-10-01T07:14:52Z"
+    }
+   },
+   "parents": [
+    {
+     "sha": "244614fff5d489dc33fc08e7ecdfe4c9ea5cc6a5"
+    }
+   ]
+  },
+  {
+   "sha": "2132c17a68d22076da7c81fba728984e6c72d2c0",
+   "commit": {
+    "message": "docs(phpstan): find stale baseline entries without regenerating",
+    "committer": {
+     "date": "2026-10-01T06:22:49Z"
+    }
+   },
+   "parents": [
+    {
+     "sha": "244614fff5d489dc33fc08e7ecdfe4c9ea5cc6a5"
+    }
+   ]
+  },
+  {
+   "sha": "950e141ab92b8370c28f7bca26769611e56f3ca7",
+   "commit": {
+    "message": "fix(template): pass github.base_ref to the orchestrator through env",
+    "committer": {
+     "date": "2026-10-01T05:37:22Z"
+    }
+   },
+   "parents": [
+    {
+     "sha": "e5bc7710a9d6fd4c18b81e57df9e659e5cfde8ec"
+    }
+   ]
+  },
+  {
+   "sha": "6dd665418bf4718168ea1ad93f45daf1b778c26a",
+   "commit": {
+    "message": "fix(common): treat a composer.json that is not an object as missing",
+    "committer": {
+     "date": "2026-10-01T02:15:19Z"
+    }
+   },
+   "parents": [
+    {
+     "sha": "1dc46a9fd697b64cf54efa49e778f68dd2b1cd66"
+    }
+   ]
+  },
+  {
+   "sha": "1dc46a9fd697b64cf54efa49e778f68dd2b1cd66",
+   "commit": {
+    "message": "fix(verify): key the report cache by the skill version",
+    "committer": {
+     "date": "2026-10-01T02:15:14Z"
+    }
+   },
+   "parents": [
+    {
+     "sha": "4e285a1ad5cfd55ff04f1a606b6575d317de80cc"
+    }
+   ]
+  },
+  {
+   "sha": "6ff3d68215359e34bcdac52fc221cf1b8b248dde",
+   "commit": {
+    "message": "chore: add SPDX licence and copyright notices to authored files",
+    "committer": {
+     "date": "2026-10-01T02:03:29Z"
+    }
+   },
+   "parents": [
+    {
+     "sha": "619b779b28243f3bae5fc955c4561b46d77d539c"
+    }
+   ]
+  },
+  {
+   "sha": "a79d45d0ce617788fa665107085d8c21a84401b3",
+   "commit": {
+    "message": "fix(scripts): report the released skill version",
+    "committer": {
+     "date": "2026-10-01T02:03:29Z"
+    }
+   },
+   "parents": [
+    {
+     "sha": "674ad52dbbf58440202ffd6d6b07c241ac941a0b"
+    }
+   ]
+  },
+  {
+   "sha": "59f11024766826ba17b2ee63398af698d731b281",
+   "commit": {
+    "message": "docs(type-safety): recommend \\A...\\z, since m reopens ^ and D",
+    "committer": {
+     "date": "2026-09-30T13:45:18Z"
+    }
+   },
+   "parents": [
+    {
+     "sha": "e55de9c7a294c4740f844057ef60bceef9e5f77e"
+    }
+   ]
+  },
+  {
+   "sha": "e55de9c7a294c4740f844057ef60bceef9e5f77e",
+   "commit": {
+    "message": "docs(type-safety): anchor whole-string validation with \\z, not $",
+    "committer": {
+     "date": "2026-09-30T13:04:50Z"
+    }
+   },
+   "parents": [
+    {
+     "sha": "52b833359a78a9214ddcc2a1da7a7896722e0ada"
+    }
+   ]
+  },
+  {
+   "sha": "493511ae1865678a6ff9638439f6f5e6857a53b8",
+   "commit": {
+    "message": "fix(checkpoints): ignore rule names inside comments in the PM checks",
+    "committer": {
+     "date": "2026-09-29T02:21:14Z"
+    }
+   },
+   "parents": [
+    {
+     "sha": "0ee0a10c99d30bd0490257d62fc64160b6102383"
+    }
+   ]
+  },
+  {
+   "sha": "0ee0a10c99d30bd0490257d62fc64160b6102383",
+   "commit": {
+    "message": "fix(checkpoints): ignore a require of the shared config on comment lines",
+    "committer": {
+     "date": "2026-09-29T01:58:01Z"
+    }
+   },
+   "parents": [
+    {
+     "sha": "5cd3c56cafbf9eeb4642de57a6377c66ea7dadd1"
+    }
+   ]
+  }
+ ],
+ "repos/netresearch/php-modernization-skill/commits/0ee0a10c99d30bd0490257d62fc64160b6102383": {
+  "sha": "0ee0a10c99d30bd0490257d62fc64160b6102383",
+  "commit": {
+   "message": "fix(checkpoints): ignore a require of the shared config on comment lines",
+   "committer": {
+    "date": "2026-09-29T01:58:01Z"
+   }
+  },
+  "parents": [
+   {
+    "sha": "5cd3c56cafbf9eeb4642de57a6377c66ea7dadd1"
+   }
+  ],
+  "files": [
+   {
+    "filename": "CHANGELOG.md",
+    "status": "modified",
+    "additions": 3,
+    "deletions": 3,
+    "patch": "@@ -10,11 +10,11 @@ Section ordering within a release: **Added → Changed → Deprecated → Remove\n-- PM-05 (checkpoint and verifier) no longer fails a project whose `.php-cs-fixer.dist.php` requires the shared `netresearch/typo3-ci-workflows` config: that config enables `@PER-CS3x0` in `config/php-cs-fixer/rules.php`, but the project file carries no literal `@PER-CS`, and the resolved rule set is not readable before `composer install`. New regression fixture `typo3-extension-shared-cs-config`. Only a `require` of the shared config counts; a comment naming its path no longer satisfies PM-05\n+- PM-05 (checkpoint and verifier) no longer fails a project whose `.php-cs-fixer.dist.php` requires the shared `netresearch/typo3-ci-workflows` config: that config enables `@PER-CS3x0` in `config/php-cs-fixer/rules.php`, but the project file carries no literal `@PER-CS`, and the resolved rule set is not readable before `composer install`. New regression fixtures `typo3-extension-shared-cs-config` and `typo3-extension-shared-cs-config-comment`. Only a `require` of the shared config counts; a comment naming its path, a commented-out `require` or a copied usage docblock does not satisfy PM-05\n-- PM-06 no longer passes on the config file's own `declare(strict_types=1)`: it needs the `declare_strict_types` rule, directly or via the shared config\n-- PM-24 no longer passes on `setRiskyAllowed(true)`, a comment or another `:risky` set: it needs a PER-CS risky set by name. The shared config enables `@PER-CS3x0`, not its risky variant, so it does not satisfy PM-24\n+- PM-06 no longer passes on the config file's own `declare(strict_types=1)`: it needs the `declare_strict_types` rule switched on, directly or via the shared config; a commented-out rule or `require` does not count, and neither does one in PM-10/11/12/30\n+- PM-24 no longer passes on `setRiskyAllowed(true)`, a comment or another `:risky` set: it needs a PER-CS risky set by name, switched on with `=> true` outside a comment. The shared config enables `@PER-CS3x0`, not its risky variant, so it does not satisfy PM-24"
+   },
+   {
+    "filename": "fixtures/README.md",
+    "status": "modified",
+    "additions": 1,
+    "deletions": 0,
+    "patch": "@@ -16,6 +16,7 @@ that shape:"
+   },
+   {
+    "filename": "skills/php-modernization/checkpoints.yaml",
+    "status": "modified",
+    "additions": 18,
+    "deletions": 12
+   },
+   {
+    "filename": "skills/php-modernization/scripts/verify_php_project.py",
+    "status": "modified",
+    "additions": 5,
+    "deletions": 2
+   }
+  ]
+ },
+ "repos/netresearch/php-modernization-skill/commits/493511ae1865678a6ff9638439f6f5e6857a53b8": {
+  "sha": "493511ae1865678a6ff9638439f6f5e6857a53b8",
+  "commit": {
+   "message": "fix(checkpoints): ignore rule names inside comments in the PM checks",
+   "committer": {
+    "date": "2026-09-29T02:21:14Z"
+   }
+  },
+  "parents": [
+   {
+    "sha": "0ee0a10c99d30bd0490257d62fc64160b6102383"
+   }
+  ],
+  "files": [
+   {
+    "filename": "CHANGELOG.md",
+    "status": "modified",
+    "additions": 2,
+    "deletions": 2,
+    "patch": "@@ -10,10 +10,10 @@ Section ordering within a release: **Added → Changed → Deprecated → Remove\n-- PM-05 (checkpoint and verifier) no longer fails a project whose `.php-cs-fixer.dist.php` requires the shared `netresearch/typo3-ci-workflows` config: that config enables `@PER-CS3x0` in `config/php-cs-fixer/rules.php`, but the project file carries no literal `@PER-CS`, and the resolved rule set is not readable before `composer install`. New regression fixtures `typo3-extension-shared-cs-config` and `typo3-extension-shared-cs-config-comment`. Only a `require` of the shared config counts; a comment naming its path, a commented-out `require` or a copied usage docblock does not satisfy PM-05\n+- PM-05 (checkpoint and verifier) no longer fails a project whose `.php-cs-fixer.dist.php` requires the shared `netresearch/typo3-ci-workflows` config: that config enables `@PER-CS3x0` in `config/php-cs-fixer/rules.php`, but the project file carries no literal `@PER-CS`, and the resolved rule set is not readable before `composer install`. New regression fixtures `typo3-extension-shared-cs-config` and `typo3-extension-shared-cs-config-comment`. Only a `require` of the shared config counts; a comment naming its path, a commented-out `require` or a copied usage docblock does not satisfy PM-05. Neither does `@PER-CS` inside a comment (new fixture `typo3-extension-per-cs-comment`)\n-- PM-06 no longer passes on the config file's own `declare(strict_types=1)`: it needs the `declare_strict_types` rule switched on, directly or via the shared config; a commented-out rule or `require` does not count, and neither does one in PM-10/11/12/30\n+- PM-06 no longer passes on the config file's own `declare(strict_types=1)`: it needs the `declare_strict_types` rule switched on, directly or via the shared config. In PM-05, PM-06, PM-10/11/12, PM-24 and PM-30 a rule, set or `require` inside a comment (a comment line, a docblock or a trailing `// ...`) no longer counts, and PM-10 needs `LevelSetList::` rather than its `use` import"
+   },
+   {
+    "filename": "fixtures/README.md",
+    "status": "modified",
+    "additions": 1,
+    "deletions": 0,
+    "patch": "@@ -17,6 +17,7 @@ that shape:"
+   },
+   {
+    "filename": "skills/php-modernization/checkpoints.yaml",
+    "status": "modified",
+    "additions": 19,
+    "deletions": 11
+   },
+   {
+    "filename": "skills/php-modernization/scripts/verify_php_project.py",
+    "status": "modified",
+    "additions": 7,
+    "deletions": 8
+   }
+  ]
+ },
+ "repos/netresearch/php-modernization-skill/commits/e55de9c7a294c4740f844057ef60bceef9e5f77e": {
+  "sha": "e55de9c7a294c4740f844057ef60bceef9e5f77e",
+  "commit": {
+   "message": "docs(type-safety): anchor whole-string validation with \\z, not $",
+   "committer": {
+    "date": "2026-09-30T13:04:50Z"
+   }
+  },
+  "parents": [
+   {
+    "sha": "52b833359a78a9214ddcc2a1da7a7896722e0ada"
+   }
+  ],
+  "files": [
+   {
+    "filename": "skills/php-modernization/references/type-safety.md",
+    "status": "modified",
+    "additions": 24,
+    "deletions": 0,
+    "patch": "@@ -401,6 +401,30 @@ attributed to whatever template called it, naming neither the input nor its\n+### `$` accepts a trailing newline — anchor validation with `\\z`\n+```php\n+```\n ```php"
+   }
+  ]
+ },
+ "repos/netresearch/php-modernization-skill/commits/59f11024766826ba17b2ee63398af698d731b281": {
+  "sha": "59f11024766826ba17b2ee63398af698d731b281",
+  "commit": {
+   "message": "docs(type-safety): recommend \\A...\\z, since m reopens ^ and D",
+   "committer": {
+    "date": "2026-09-30T13:45:18Z"
+   }
+  },
+  "parents": [
+   {
+    "sha": "e55de9c7a294c4740f844057ef60bceef9e5f77e"
+   }
+  ],
+  "files": [
+   {
+    "filename": "skills/php-modernization/references/type-safety.md",
+    "status": "modified",
+    "additions": 8,
+    "deletions": 4,
+    "patch": "@@ -401,7 +401,7 @@ attributed to whatever template called it, naming neither the input nor its\n-### `$` accepts a trailing newline — anchor validation with `\\z`\n+### `$` accepts a trailing newline — anchor validation with `\\A…\\z`\n@@ -412,12 +412,16 @@ preg_match('/^[a-z0-9._-]+$/', \"file.html\\n\");    // 1 - the newline gets throug\n ```"
+   }
+  ]
+ },
+ "repos/netresearch/php-modernization-skill/commits/6ff3d68215359e34bcdac52fc221cf1b8b248dde": {
+  "sha": "6ff3d68215359e34bcdac52fc221cf1b8b248dde",
+  "commit": {
+   "message": "chore: add SPDX licence and copyright notices to authored files",
+   "committer": {
+    "date": "2026-10-01T02:03:29Z"
+   }
+  },
+  "parents": [
+   {
+    "sha": "619b779b28243f3bae5fc955c4561b46d77d539c"
+   }
+  ],
+  "files": [
+   {
+    "filename": "AGENTS.md",
+    "status": "modified",
+    "additions": 3,
+    "deletions": 0,
+    "patch": "@@ -1,3 +1,6 @@"
+   },
+   {
+    "filename": "CHANGELOG.md",
+    "status": "modified",
+    "additions": 3,
+    "deletions": 0,
+    "patch": "@@ -1,3 +1,6 @@"
+   },
+   {
+    "filename": "README.md",
+    "status": "modified",
+    "additions": 3,
+    "deletions": 0,
+    "patch": "@@ -1,3 +1,6 @@"
+   },
+   {
+    "filename": "docs/ARCHITECTURE.md",
+    "status": "modified",
+    "additions": 3,
+    "deletions": 0,
+    "patch": "@@ -1,3 +1,6 @@"
+   },
+   {
+    "filename": "docs/php-rules.md",
+    "status": "modified",
+    "additions": 3,
+    "deletions": 0,
+    "patch": "@@ -1,3 +1,6 @@"
+   },
+   {
+    "filename": "fixtures/README.md",
+    "status": "modified",
+    "additions": 3,
+    "deletions": 0,
+    "patch": "@@ -1,3 +1,6 @@"
+   },
+   {
+    "filename": "skills/php-modernization/SKILL.md",
+    "status": "modified",
+    "additions": 2,
+    "deletions": 0,
+    "patch": "@@ -1,4 +1,6 @@\n ---\n+# SPDX-License-Identifier: CC-BY-SA-4.0\n+# SPDX-FileCopyrightText: Netresearch DTT GmbH"
+   },
+   {
+    "filename": "skills/php-modernization/checkpoints.yaml",
+    "status": "modified",
+    "additions": 3,
+    "deletions": 0
+   },
+   {
+    "filename": "skills/php-modernization/references/adapter-registry-pattern.md",
+    "status": "modified",
+    "additions": 3,
+    "deletions": 0,
+    "patch": "@@ -1,3 +1,6 @@"
+   },
+   {
+    "filename": "skills/php-modernization/references/api-platform-edges.md",
+    "status": "modified",
+    "additions": 3,
+    "deletions": 0,
+    "patch": "@@ -1,3 +1,6 @@"
+   },
+   {
+    "filename": "skills/php-modernization/references/composer-package-metadata.md",
+    "status": "modified",
+    "additions": 3,
+    "deletions": 0,
+    "patch": "@@ -1,3 +1,6 @@"
+   },
+   {
+    "filename": "skills/php-modernization/references/contracts-and-invariants.md",
+    "status": "modified",
+    "additions": 3,
+    "deletions": 0,
+    "patch": "@@ -1,3 +1,6 @@"
+   },
+   {
+    "filename": "skills/php-modernization/references/core-rules.md",
+    "status": "modified",
+    "additions": 3,
+    "deletions": 0,
+    "patch": "@@ -1,3 +1,6 @@"
+   },
+   {
+    "filename": "skills/php-modernization/references/doctrine-modernization-edges.md",
+    "status": "modified",
+    "additions": 3,
+    "deletions": 0,
+    "patch": "@@ -1,3 +1,6 @@"
+   },
+   {
+    "filename": "skills/php-modernization/references/immutability-boundaries.md",
+    "status": "modified",
+    "additions": 3,
+    "deletions": 0,
+    "patch": "@@ -1,3 +1,6 @@"
+   },
+   {
+    "filename": "skills/php-modernization/references/lexing-php-across-versions.md",
+    "status": "modified",
+    "additions": 3,
+    "deletions": 0,
+    "patch": "@@ -1,3 +1,6 @@"
+   },
+   {
+    "filename": "skills/php-modernization/references/migration-strategies.md",
+    "status": "modified",
+    "additions": 3,
+    "deletions": 0,
+    "patch": "@@ -1,3 +1,6 @@"
+   },
+   {
+    "filename": "skills/php-modernization/references/multi-agent-pitfalls.md",
+    "status": "modified",
+    "additions": 3,
+    "deletions": 0,
+    "patch": "@@ -1,3 +1,6 @@"
+   },
+   {
+    "filename": "skills/php-modernization/references/multi-version-adapters.md",
+    "status": "modified",
+    "additions": 3,
+    "deletions": 0,
+    "patch": "@@ -1,3 +1,6 @@"
+   },
+   {
+    "filename": "skills/php-modernization/references/mutation-testing.md",
+    "status": "modified",
+    "additions": 3,
+    "deletions": 0,
+    "patch": "@@ -1,3 +1,6 @@"
+   },
+   {
+    "filename": "skills/php-modernization/references/php-8.4.md",
+    "status": "modified",
+    "additions": 3,
+    "deletions": 0,
+    "patch": "@@ -1,3 +1,6 @@"
+   },
+   {
+    "filename": "skills/php-modernization/references/php-8.5.md",
+    "status": "modified",
+    "additions": 3,
+    "deletions": 0,
+    "patch": "@@ -1,3 +1,6 @@"
+   },
+   {
+    "filename": "skills/php-modernization/references/php-cs-fixer-deprecations.md",
+    "status": "modified",
+    "additions": 3,
+    "deletions": 0,
+    "patch": "@@ -1,3 +1,6 @@"
+   },
+   {
+    "filename": "skills/php-modernization/references/php8-features.md",
+    "status": "modified",
+    "additions": 3,
+    "deletions": 0,
+    "patch": "@@ -1,3 +1,6 @@"
+   },
+   {
+    "filename": "skills/php-modernization/references/phpstan-compliance.md",
+    "status": "modified",
+    "additions": 3,
+    "deletions": 0,
+    "patch": "@@ -1,3 +1,6 @@"
+   },
+   {
+    "filename": "skills/php-modernization/references/phpunit-modernization.md",
+    "status": "modified",
+    "additions": 3,
+    "deletions": 0,
+    "patch": "@@ -1,3 +1,6 @@"
+   },
+   {
+    "filename": "skills/php-modernization/references/psr-per-compliance.md",
+    "status": "modified",
+    "additions": 3,
+    "deletions": 0,
+    "patch": "@@ -1,3 +1,6 @@"
+   },
+   {
+    "filename": "skills/php-modernization/references/psr15-middleware-architecture.md",
+    "status": "modified",
+    "additions": 3,
+    "deletions": 0,
+    "patch": "@@ -1,3 +1,6 @@"
+   },
+   {
+    "filename": "skills/php-modernization/references/public-api-inventory.md",
+    "status": "modified",
+    "additions": 3,
+    "deletions": 0,
+    "patch": "@@ -1,3 +1,6 @@"
+   },
+   {
+    "filename": "skills/php-modernization/references/reading-php-config-safely.md",
+    "status": "modified",
+    "additions": 3,
+    "deletions": 0,
+    "patch": "@@ -1,3 +1,6 @@"
+   },
+   {
+    "filename": "skills/php-modernization/references/request-dtos.md",
+    "status": "modified",
+    "additions": 3,
+    "deletions": 0,
+    "patch": "@@ -1,3 +1,6 @@"
+   },
+   {
+    "filename": "skills/php-modernization/references/static-analysis-tools.md",
+    "status": "modified",
+    "additions": 3,
+    "deletions": 0,
+    "patch": "@@ -1,3 +1,6 @@"
+   },
+   {
+    "filename": "skills/php-modernization/references/symfony-patterns.md",
+    "status": "modified",
+    "additions": 3,
+    "deletions": 0,
+    "patch": "@@ -1,3 +1,6 @@"
+   },
+   {
+    "filename": "skills/php-modernization/references/type-safety.md",
+    "status": "modified",
+    "additions": 3,
+    "deletions": 0,
+    "patch": "@@ -1,3 +1,6 @@"
+   },
+   {
+    "filename": "skills/php-modernization/scripts/_common.py",
+    "status": "modified",
+    "additions": 2,
+    "deletions": 0
+   },
+   {
+    "filename": "skills/php-modernization/scripts/introspect.py",
+    "status": "modified",
+    "additions": 2,
+    "deletions": 0
+   },
+   {
+    "filename": "skills/php-modernization/scripts/modernize_loop.py",
+    "status": "modified",
+    "additions": 2,
+    "deletions": 0
+   },
+   {
+    "filename": "skills/php-modernization/scripts/verify-php-project.sh",
+    "status": "modified",
+    "additions": 2,
+    "deletions": 0
+   },
+   {
+    "filename": "skills/php-modernization/scripts/verify_php_project.py",
+    "status": "modified",
+    "additions": 2,
+    "deletions": 0
+   },
+   {
+    "filename": "skills/php-modernization/templates/README.md",
+    "status": "modified",
+    "additions": 3,
+    "deletions": 0,
+    "patch": "@@ -1,3 +1,6 @@"
+   }
+  ]
+ },
+ "repos/netresearch/php-modernization-skill/commits/a79d45d0ce617788fa665107085d8c21a84401b3": {
+  "sha": "a79d45d0ce617788fa665107085d8c21a84401b3",
+  "commit": {
+   "message": "fix(scripts): report the released skill version",
+   "committer": {
+    "date": "2026-10-01T02:03:29Z"
+   }
+  },
+  "parents": [
+   {
+    "sha": "674ad52dbbf58440202ffd6d6b07c241ac941a0b"
+   }
+  ],
+  "files": [
+   {
+    "filename": "fixtures/README.md",
+    "status": "modified",
+    "additions": 5,
+    "deletions": 3,
+    "patch": "@@ -64,9 +64,11 @@ intend the new shape to become the contract. Common triggers:\n-- `skill_version` was bumped (the version is hardcoded in the verifier source\n+- `skill_version` was bumped (the version is hardcoded as `SKILL_VERSION` in"
+   },
+   {
+    "filename": "skills/php-modernization/scripts/_common.py",
+    "status": "modified",
+    "additions": 3,
+    "deletions": 1
+   }
+  ]
+ },
+ "repos/netresearch/php-modernization-skill/commits/1dc46a9fd697b64cf54efa49e778f68dd2b1cd66": {
+  "sha": "1dc46a9fd697b64cf54efa49e778f68dd2b1cd66",
+  "commit": {
+   "message": "fix(verify): key the report cache by the skill version",
+   "committer": {
+    "date": "2026-10-01T02:15:14Z"
+   }
+  },
+  "parents": [
+   {
+    "sha": "4e285a1ad5cfd55ff04f1a606b6575d317de80cc"
+   }
+  ],
+  "files": [
+   {
+    "filename": "docs/SECURITY-ASSURANCE.md",
+    "status": "modified",
+    "additions": 1,
+    "deletions": 1,
+    "patch": "@@ -49,7 +49,7 @@ The Python tools use only the Python standard library (`dependencies = []` in th"
+   },
+   {
+    "filename": "skills/php-modernization/scripts/verify_php_project.py",
+    "status": "modified",
+    "additions": 3,
+    "deletions": 1
+   }
+  ]
+ },
+ "repos/netresearch/php-modernization-skill/commits/6dd665418bf4718168ea1ad93f45daf1b778c26a": {
+  "sha": "6dd665418bf4718168ea1ad93f45daf1b778c26a",
+  "commit": {
+   "message": "fix(common): treat a composer.json that is not an object as missing",
+   "committer": {
+    "date": "2026-10-01T02:15:19Z"
+   }
+  },
+  "parents": [
+   {
+    "sha": "1dc46a9fd697b64cf54efa49e778f68dd2b1cd66"
+   }
+  ],
+  "files": [
+   {
+    "filename": "docs/SECURITY-ASSURANCE.md",
+    "status": "modified",
+    "additions": 1,
+    "deletions": 1,
+    "patch": "@@ -47,7 +47,7 @@ The Python tools use only the Python standard library (`dependencies = []` in th"
+   },
+   {
+    "filename": "skills/php-modernization/scripts/_common.py",
+    "status": "modified",
+    "additions": 7,
+    "deletions": 2
+   }
+  ]
+ },
+ "repos/netresearch/php-modernization-skill/commits/950e141ab92b8370c28f7bca26769611e56f3ca7": {
+  "sha": "950e141ab92b8370c28f7bca26769611e56f3ca7",
+  "commit": {
+   "message": "fix(template): pass github.base_ref to the orchestrator through env",
+   "committer": {
+    "date": "2026-10-01T05:37:22Z"
+   }
+  },
+  "parents": [
+   {
+    "sha": "e5bc7710a9d6fd4c18b81e57df9e659e5cfde8ec"
+   }
+  ],
+  "files": [
+   {
+    "filename": "skills/php-modernization/references/mutation-testing.md",
+    "status": "modified",
+    "additions": 2,
+    "deletions": 1,
+    "patch": "@@ -125,12 +125,13 @@ GitHub Actions, diff mode on PRs:\n ```"
+   },
+   {
+    "filename": "skills/php-modernization/templates/github-actions/php-modernization.yml",
+    "status": "modified",
+    "additions": 3,
+    "deletions": 1
+   }
+  ]
+ },
+ "repos/netresearch/php-modernization-skill/commits/2132c17a68d22076da7c81fba728984e6c72d2c0": {
+  "sha": "2132c17a68d22076da7c81fba728984e6c72d2c0",
+  "commit": {
+   "message": "docs(phpstan): find stale baseline entries without regenerating",
+   "committer": {
+    "date": "2026-10-01T06:22:49Z"
+   }
+  },
+  "parents": [
+   {
+    "sha": "244614fff5d489dc33fc08e7ecdfe4c9ea5cc6a5"
+   }
+  ],
+  "files": [
+   {
+    "filename": "skills/php-modernization/references/phpstan-compliance.md",
+    "status": "modified",
+    "additions": 22,
+    "deletions": 3,
+    "patch": "@@ -475,11 +475,30 @@ vendor/bin/phpstan analyse --generate-baseline\n+```\n-# Gradually fix errors by regenerating baseline\n+### Finding Stale Baseline Entries\n+```neon\n+# /tmp/phpstan-stale/stale.neon (scratch file, never committed)\n+    - /absolute/path/to/project/phpstan.neon\n ```\n+```bash\n+```\n@@ -536,7 +555,7 @@ if (!is_array($firstItem)) {\n-6. Re-generate baseline for remaining unfixable entries\n+6. Remove the entries the fixes made stale (see Finding Stale Baseline Entries) instead of regenerating"
+   }
+  ]
+ },
+ "repos/netresearch/php-modernization-skill/commits/b1350380bc801b99c023b712fb091a1ef6b73e69": {
+  "sha": "b1350380bc801b99c023b712fb091a1ef6b73e69",
+  "commit": {
+   "message": "docs(request-dtos): guard finished state on the raw row before fromRow()",
+   "committer": {
+    "date": "2026-10-01T07:14:52Z"
+   }
+  },
+  "parents": [
+   {
+    "sha": "244614fff5d489dc33fc08e7ecdfe4c9ea5cc6a5"
+   }
+  ],
+  "files": [
+   {
+    "filename": "skills/php-modernization/references/request-dtos.md",
+    "status": "modified",
+    "additions": 33,
+    "deletions": 0,
+    "patch": "@@ -483,6 +483,38 @@ same `getLastErrors()` check after it.\n+## Value Objects from Database Rows\n+```php\n+```\n@@ -640,6 +672,7 @@ final readonly class ListSecretsQuery"
+   }
+  ]
+ },
+ "repos/netresearch/php-modernization-skill/commits/4f05f3b20f63fb0d07f4259f92aaa3dc0349bb42": {
+  "sha": "4f05f3b20f63fb0d07f4259f92aaa3dc0349bb42",
+  "commit": {
+   "message": "docs(request-dtos): say which rows reach the error path",
+   "committer": {
+    "date": "2026-10-01T07:29:06Z"
+   }
+  },
+  "parents": [
+   {
+    "sha": "b1350380bc801b99c023b712fb091a1ef6b73e69"
+   }
+  ],
+  "files": [
+   {
+    "filename": "skills/php-modernization/references/request-dtos.md",
+    "status": "modified",
+    "additions": 1,
+    "deletions": 1,
+    "patch": "@@ -504,7 +504,7 @@ if (is_string($status) && JobStatus::tryFrom($status)?->isTerminal() === true) {\n ```"
+   }
+  ]
+ }
+}

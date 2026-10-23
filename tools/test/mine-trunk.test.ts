@@ -14,6 +14,7 @@ import {
   type Mined,
   mineSource,
   parseStates,
+  rangeCommits,
   windowAfter,
   windowCommits,
   windowOfDays,
@@ -25,7 +26,7 @@ const SOURCES = loadSources(ROOT);
 const TRUNK: Source = SOURCES.find((s) => s.id === 'shopware') ?? SOURCES[0] ?? assert.fail('no shopware source');
 const report = (mined: Mined[], catalog: Catalog = loadCatalog(ROOT)): string =>
   renderReport(mined, catalog, mapIndex(ROOT, catalog, SOURCES));
-const FIXTURE = join(import.meta.dirname, 'fixtures/mine-trunk/2026-10-13..2026-10-19.json');
+const FIXTURE = join(import.meta.dirname, 'fixtures/mining/shopware-2026-10-13..2026-10-19.json');
 const HAND_MINED = ['f2bf3794', '75b0a495', '190d734b', '8dc74f24', '7ad011f1'];
 
 function recorded(): GitHubApi {
@@ -292,5 +293,67 @@ describe('windows and state', () => {
       'repos/x/commits?sha=trunk&per_page=100&page=1',
       'repos/x/commits?sha=trunk&per_page=100&page=2',
     ]);
+  });
+});
+
+const ref = (n: number): unknown => ({
+  sha: `c${n}`,
+  commit: { committer: { date: '2026-10-20T00:00:00Z' } },
+  parents: [{}],
+});
+const file = (filename: string): unknown => ({ filename, status: 'added', additions: 1, deletions: 0 });
+
+describe('pagination', () => {
+  test('the compare API is read page by page until total_commits', async () => {
+    const asked: string[] = [];
+    const api: GitHubApi = (path) => {
+      asked.push(path);
+      const page = Number(/page=(\d+)$/u.exec(path)?.[1]);
+      const count = page === 3 ? 5 : 100;
+      return Promise.resolve({
+        total_commits: 205,
+        commits: Array.from({ length: count }, (_, i) => ref((page - 1) * 100 + i)),
+      });
+    };
+    const refs = await rangeCommits(api, TRUNK, 'a', 'b');
+    assert.equal(refs.length, 205);
+    assert.equal(asked.length, 3);
+    assert.equal(asked[2], `repos/${TRUNK.repo}/compare/a...b?per_page=100&page=3`);
+  });
+
+  // A commit with more than 300 files lists the rest on further pages; a
+  // rule class on page 2 is still a change.
+  test('the files of a large commit are read past the first 300', async () => {
+    const detail = `repos/${TRUNK.repo}/commits/big`;
+    const api: GitHubApi = (path) => {
+      if (path.endsWith('&per_page=1')) return Promise.resolve([ref(0)]);
+      if (path.startsWith(`repos/${TRUNK.repo}/commits?`)) {
+        return Promise.resolve(
+          path.includes('path=src') ? [{ sha: 'big', commit: { committer: { date: '2026-10-14T00:00:00Z' } } }] : [],
+        );
+      }
+      if (path === detail) {
+        return Promise.resolve({
+          sha: 'big',
+          commit: { message: 'Big', committer: { date: '2026-10-14T00:00:00Z' } },
+          files: Array.from({ length: 300 }, (_, i) => file(`src/Core/F${i}.php`)),
+        });
+      }
+      if (path === `${detail}?page=2`) {
+        return Promise.resolve({
+          sha: 'big',
+          commit: { message: 'Big', committer: { date: '2026-10-14T00:00:00Z' } },
+          files: [file('src/Core/DevOps/StaticAnalyze/PHPStan/Rules/NoLateRule.php')],
+        });
+      }
+      return Promise.reject(new Error(`unexpected ${path}`));
+    };
+    const mined = await mineSource(api, TRUNK, windowOfDays('2026-10-13', '2026-10-19'));
+    const big = mined.commits[0] ?? assert.fail('the commit is not mined');
+    assert.equal(big.commit.files.length, 301);
+    assert.deepEqual(
+      big.deltas.classes.map((c) => c.name),
+      ['NoLateRule'],
+    );
   });
 });

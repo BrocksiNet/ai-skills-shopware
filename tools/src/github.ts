@@ -27,6 +27,30 @@ export function githubApi(env: NodeJS.ProcessEnv): GitHubApi {
   };
 }
 
+/** POST or PATCH one API path with a JSON body; returns the parsed reply. */
+export type GitHubWrite = (method: 'POST' | 'PATCH', path: string, body: Record<string, unknown>) => Promise<unknown>;
+
+/** Writes need GH_TOKEN or GITHUB_TOKEN. */
+export function githubWrite(env: NodeJS.ProcessEnv): GitHubWrite {
+  const token = githubToken(env);
+  if (token === '') throw new Error('writing to GitHub needs GH_TOKEN or GITHUB_TOKEN');
+  return async (method, path, body) => {
+    const init: RequestInit = {
+      method,
+      headers: {
+        accept: 'application/vnd.github+json',
+        authorization: `Bearer ${token}`,
+        'content-type': 'application/json',
+      },
+      body: JSON.stringify(body),
+    };
+    const response = await fetch(`https://api.github.com/${path}`, init);
+    if (!response.ok) throw new Error(`GitHub API ${method} ${path}: HTTP ${response.status}`);
+    const reply: unknown = await response.json();
+    return reply;
+  };
+}
+
 /** Every item of a list endpoint, one page of 100 after another. */
 export async function allPages(api: GitHubApi, path: string, page = 1): Promise<unknown[]> {
   const separator = path.includes('?') ? '&' : '?';

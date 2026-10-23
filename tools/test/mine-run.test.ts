@@ -9,7 +9,7 @@ import type { GitHubApi } from '../src/github.ts';
 import { advance, readStates, report as runReport } from '../src/mine-run.ts';
 
 const ROOT = resolve(import.meta.dirname, '../..');
-const FIXTURE = join(import.meta.dirname, 'fixtures/mine-trunk/2026-10-13..2026-10-19.json');
+const FIXTURE = join(import.meta.dirname, 'fixtures/mining/shopware-2026-10-13..2026-10-19.json');
 
 function recorded(): GitHubApi {
   const body: unknown = JSON.parse(readFileSync(FIXTURE, 'utf8'));

@@ -107,7 +107,18 @@ row in the release; a row that keeps coming back is a candidate for a rule.
 
 The **Commits** section lists, per source, the commits with a change, diffs
 too large for the API, and the commits without one. Comment `/mined` once
-every change is handled.
+every change is handled. `/mined shopware php-modernization` moves only the
+sources it names and leaves the issue open for the rest. A state only moves
+to where the report ends, never back.
+
+A new report closes an older open issue only when it reaches at least as
+far in every source that issue lists. To see a report and what would happen
+to the issues without writing anything, run the workflow by hand with
+`dry_run`, or locally:
+
+```bash
+node tools/bin/mine-trunk.ts run --dry-run --repo OWNER/NAME
+```
 
 ## Review comments
 

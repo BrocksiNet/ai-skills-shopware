@@ -1,0 +1,22 @@
+{
+ "repos/shopwareLabs/ai-coding-tools/commits?sha=main&until=2026-10-19T23%3A59%3A59Z&per_page=1": [
+  {
+   "sha": "d6c2d130604fa23810fce2ba23e22a8d4a19203e",
+   "commit": {
+    "message": "fix(plugin-setup): drop gh-tooling from the plugin metadata (#193)",
+    "committer": {
+     "date": "2026-10-11T22:21:40Z"
+    }
+   },
+   "parents": [
+    {
+     "sha": "ef3e07bd864c46dc897907aa512377481312443a"
+    }
+   ]
+  }
+ ],
+ "repos/shopwareLabs/ai-coding-tools/commits?sha=main&path=plugins%2Ftest-writing&since=2026-10-13T00%3A00%3A00Z&until=2026-10-19T23%3A59%3A59Z&per_page=100&page=1": [],
+ "repos/shopwareLabs/ai-coding-tools/commits?sha=main&path=plugins%2Fcontributor-writing&since=2026-10-13T00%3A00%3A00Z&until=2026-10-19T23%3A59%3A59Z&per_page=100&page=1": [],
+ "repos/shopwareLabs/ai-coding-tools/commits?sha=main&path=plugins%2Fcode-migration&since=2026-10-13T00%3A00%3A00Z&until=2026-10-19T23%3A59%3A59Z&per_page=100&page=1": [],
+ "repos/shopwareLabs/ai-coding-tools/commits?sha=main&path=plugins%2Fdev-tooling&since=2026-10-13T00%3A00%3A00Z&until=2026-10-19T23%3A59%3A59Z&per_page=100&page=1": []
+}
