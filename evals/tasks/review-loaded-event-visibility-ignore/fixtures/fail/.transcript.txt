@@ -1,0 +1,14 @@
+```json
+{
+  "findings": [
+    {
+      "rule_id": null,
+      "severity": "minor",
+      "file": "src/Check/CategoryProbe.php",
+      "line": 42,
+      "summary": "The getActive() check is redundant next to the active filter; use searchIds() to avoid hydrating the categories.",
+      "fix": "Call searchIds() and compare the IDs."
+    }
+  ]
+}
+```

@@ -88,6 +88,8 @@ the surface skills can all be installed together without contradicting (see
 | Blast radius after a feature works (shared cache, who pays, easier vs more complex, remote asset loading, one compiled container) | `sw-change-impact` |
 | Cache key inputs and tag count of cached data | `sw-change-impact` |
 | Bug-fix scope and boyscouting (root cause vs drive-by refactors) | `sw-review-learnings` |
+| Comments and docblocks that narrate the change's history | `sw-review-learnings` |
+| Visibility checks that bypass restrictions on loaded entities (Dynamic Access) | `sw-review-learnings` |
 | When to research vs proceed; docs map; Context7 | `sw-research-and-escalation` |
 | What to do when stuck (escalation ladder) | `sw-research-and-escalation` |
 | shopware/shopware PR body format (GitHub template, copy-paste output, no AI attribution trailers) | `sw-pr-description` |
