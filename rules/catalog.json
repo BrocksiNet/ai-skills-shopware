@@ -3469,11 +3469,10 @@
       "id": "ADM-017",
       "skill": "sw-admin-js",
       "file": "skills/sw-admin-js/references/architecture.md",
-      "title": "Keep business logic out of templates",
+      "title": "Keep derived template values in named computeds or methods that subclasses can override",
       "status": "active",
       "since": "2026-10-20",
-      "eval": null,
-      "eval_reason": "Documented only; no eval yet.",
+      "eval": "review-admin-template-logic-catch",
       "core_guide_ids": [
         "BCADM-009"
       ],

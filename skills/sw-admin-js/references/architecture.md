@@ -51,7 +51,12 @@ Load when adding modules, components, services, or ACL-backed UI.
   not add one for a 6.7 target; a bundle that also supports 6.6 keeps it for
   6.6 only.
 - **ADM-017** Business logic stays out of templates. Prefer composables over new
-  mixins.
+  mixins. When a template needs a derived value or a formatted message, compute
+  it in a named computed or method and reference that from the template, passing
+  only the inputs it depends on. Keep it on the component rather than inline:
+  inheriting modules extend Administration components and can override a
+  method, but not logic buried in the template. Expose a setter for state that
+  a template or subclass must change, not a bare data field.
 - Use BEM class names and Meteor design tokens. Avoid inline styles.
 
 ## Data

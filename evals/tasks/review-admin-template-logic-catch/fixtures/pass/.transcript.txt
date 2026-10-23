@@ -1,0 +1,16 @@
+The character hint is built in the template, and the extension cannot change it without copying the whole block.
+
+```json
+{
+  "findings": [
+    {
+      "rule_id": "ADM-017",
+      "severity": "minor",
+      "file": "src/Resources/app/administration/src/module/swag-loyalty/component/swag-loyalty-settings/swag-loyalty-settings.html.twig",
+      "line": 36,
+      "summary": "The hint string and the too-long check are built inline in the template, so an inheriting module cannot override them.",
+      "fix": "Move the hint into a named method that takes the count and the maximum, and reference it from the template."
+    }
+  ]
+}
+```

@@ -1,0 +1,7 @@
+The note field follows the existing settings pattern, and the hint and the touched flag both go through named methods.
+
+```json
+{
+  "findings": []
+}
+```

@@ -1,0 +1,16 @@
+The new text field needs a label that exists in the snippet files.
+
+```json
+{
+  "findings": [
+    {
+      "rule_id": "ADM-039",
+      "severity": "major",
+      "file": "src/Resources/app/administration/src/module/swag-loyalty/component/swag-loyalty-settings/swag-loyalty-settings.html.twig",
+      "line": 36,
+      "summary": "The note label uses a translation key that the snippet files do not define.",
+      "fix": "Add the swag-loyalty.settings.note key to the snippet files."
+    }
+  ]
+}
+```

@@ -1,0 +1,16 @@
+The hint is shown in the template, which an inheriting module cannot override.
+
+```json
+{
+  "findings": [
+    {
+      "rule_id": "ADM-017",
+      "severity": "major",
+      "file": "src/Resources/app/administration/src/module/swag-loyalty/component/swag-loyalty-settings/swag-loyalty-settings.html.twig",
+      "line": 36,
+      "summary": "The character hint is rendered from the template, so an inheriting module cannot override it.",
+      "fix": "Move the hint into a computed property and reference it from the template."
+    }
+  ]
+}
+```

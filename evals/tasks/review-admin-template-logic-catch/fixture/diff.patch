@@ -1,0 +1,65 @@
+diff --git a/src/Resources/app/administration/src/module/swag-loyalty/component/swag-loyalty-settings/index.js b/src/Resources/app/administration/src/module/swag-loyalty/component/swag-loyalty-settings/index.js
+index e816952..6b2c9d1 100644
+--- a/src/Resources/app/administration/src/module/swag-loyalty/component/swag-loyalty-settings/index.js
++++ b/src/Resources/app/administration/src/module/swag-loyalty/component/swag-loyalty-settings/index.js
+@@ -18,6 +18,9 @@ Component.register('swag-loyalty-settings', {
+                 enabled: true,
+                 pointsPerEuro: 1,
+                 expiryMode: 'never',
++                note: '',
+             },
++            noteMaxLength: 160,
++            noteTouched: false,
+         };
+     },
+@@ -29,6 +32,10 @@ Component.register('swag-loyalty-settings', {
+                 { value: 'yearly', label: this.$tc('swag-loyalty.settings.expiryYearly') },
+             ];
+         },
++
++        noteIsTooLong() {
++            return this.settings.note.length > this.noteMaxLength;
++        },
+     },
+
+     created() {
+@@ -44,6 +51,7 @@ Component.register('swag-loyalty-settings', {
+                 enabled: values['SwagLoyalty.config.enabled'] ?? this.settings.enabled,
+                 pointsPerEuro: values['SwagLoyalty.config.pointsPerEuro'] ?? this.settings.pointsPerEuro,
+                 expiryMode: values['SwagLoyalty.config.expiryMode'] ?? this.settings.expiryMode,
++                note: values['SwagLoyalty.config.note'] ?? this.settings.note,
+             };
+             this.isLoading = false;
+         },
+@@ -54,6 +58,7 @@ Component.register('swag-loyalty-settings', {
+                 'SwagLoyalty.config.enabled': this.settings.enabled,
+                 'SwagLoyalty.config.pointsPerEuro': this.settings.pointsPerEuro,
+                 'SwagLoyalty.config.expiryMode': this.settings.expiryMode,
++                'SwagLoyalty.config.note': this.settings.note,
+             });
+             this.isLoading = false;
+             this.createNotificationSuccess({
+diff --git a/src/Resources/app/administration/src/module/swag-loyalty/component/swag-loyalty-settings/swag-loyalty-settings.html.twig b/src/Resources/app/administration/src/module/swag-loyalty/component/swag-loyalty-settings/swag-loyalty-settings.html.twig
+index 5455195..9d41c07 100644
+--- a/src/Resources/app/administration/src/module/swag-loyalty/component/swag-loyalty-settings/swag-loyalty-settings.html.twig
++++ b/src/Resources/app/administration/src/module/swag-loyalty/component/swag-loyalty-settings/swag-loyalty-settings.html.twig
+@@ -25,6 +25,22 @@
+     </sw-card>
+     {% endblock %}
+
++    {% block swag_loyalty_settings_note %}
++    <sw-text-field
++        v-model:value="settings.note"
++        :label="$tc('swag-loyalty.settings.note')"
++        :class="{ 'is-too-long': noteIsTooLong }"
++        @input="noteTouched = true"
++    />
++
++    <p class="swag-loyalty-settings__hint">
++        {{ settings.note.length }} / {{ noteMaxLength }} {{ $tc('swag-loyalty.settings.characters') }}
++    </p>
++    {% endblock %}
++
+     {% block swag_loyalty_settings_actions %}
+     <sw-button
+         variant="primary"
