@@ -1,0 +1,14 @@
+```json
+{
+  "findings": [
+    {
+      "rule_id": "CORE-012",
+      "severity": "minor",
+      "file": "src/Core/Content/Product/DataAbstractionLayer/LegacyProductStockSubscriber.php",
+      "line": 20,
+      "summary": "Returning [] when the flag is active hides the removal; getSubscribedEvents() should throw instead.",
+      "fix": "Replace the early return with a throwIfActive call."
+    }
+  ]
+}
+```

@@ -1,0 +1,36 @@
+diff --git a/src/Core/Content/Product/DataAbstractionLayer/LegacyProductStockSubscriber.php b/src/Core/Content/Product/DataAbstractionLayer/LegacyProductStockSubscriber.php
+index 4b1c0de..9e27a31 100644
+--- a/src/Core/Content/Product/DataAbstractionLayer/LegacyProductStockSubscriber.php
++++ b/src/Core/Content/Product/DataAbstractionLayer/LegacyProductStockSubscriber.php
+@@ -4,7 +4,11 @@
+
+ use Shopware\Core\Content\Product\ProductEvents;
+ use Shopware\Core\Framework\DataAbstractionLayer\Event\EntityWrittenContainerEvent;
++use Shopware\Core\Framework\Feature;
+ use Shopware\Core\Framework\Log\Package;
+ use Symfony\Component\EventDispatcher\EventSubscriberInterface;
+
++/**
++ * @deprecated tag:v6.8.0 - Will be removed. The stock is refreshed by ProductStockIndexer.
++ */
+ #[Package('inventory')]
+@@ -16,9 +20,16 @@ class LegacyProductStockSubscriber implements EventSubscriberInterface
+
+     public static function getSubscribedEvents(): array
+     {
+-        return [
+-            ProductEvents::PRODUCT_WRITTEN_EVENT => 'onProductWritten',
+-        ];
++        Feature::throwIfActive('v6.8.0.0', 'LegacyProductStockSubscriber is removed, use ProductStockIndexer.');
++
++        return self::events();
+     }
+
++    private static function events(): array
++    {
++        return [
++            ProductEvents::PRODUCT_WRITTEN_EVENT => 'onProductWritten',
++        ];
++    }
++
+     public function onProductWritten(EntityWrittenContainerEvent $event): void
