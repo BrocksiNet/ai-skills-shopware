@@ -8,7 +8,30 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- **Breaking:** every skill name starts with `sw-`. `php-foundation` is
+  now `sw-php-foundation`, and `shopware-<topic>` is now `sw-<topic>`.
+  Rule IDs, routes and eval tasks keep their names. Remove the old folders
+  and install the new names (see `docs/installation.md`). Our
+  `sw-admin-js` no longer shares a folder name with core's
+  `shopware-admin-js`.
+- The README is short and says why to use the library. Installation,
+  architecture with diagrams, results and maintenance moved to their own
+  pages under `docs/`.
+
 ### Added
+
+- `sw-skill-router`: `/sw-skill-router` runs a dependency-free script that
+  reads the git diff, a saved diff or planned paths. It detects core,
+  plugin, app or project per file, filters by task (build, review, ship,
+  answer, run) and lists the skills and references to load, with the file
+  or line that triggered each. It also prints the install command for
+  missing skills. Its `index.json` is generated from a new `metadata` block
+  in every `SKILL.md` and from the routes.
+- `sw-help`: what every skill is for, grouped by task, with example prompts.
+- `validate-skills` checks the skill metadata, that the router index is up
+  to date, and that `sw-help` names every skill.
 
 - WP11 phase 3: the API index covers routes (with scope and OpenAPI
   coverage), entity fields and their API flags, feature flags and bundle

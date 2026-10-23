@@ -8,7 +8,7 @@ import { tmpdir } from 'node:os';
 import { join, matchesGlob, resolve } from 'node:path';
 import { describe, test } from 'node:test';
 import { pathToFileURL } from 'node:url';
-import { buildIndex, metadataBlock, skillMetadata, summary } from '../src/router-index.ts';
+import { buildIndex, metadataBlock, routerErrors, skillMetadata, summary } from '../src/router-index.ts';
 
 const ROOT = resolve(import.meta.dirname, '../..');
 const SCRIPT = join(ROOT, 'skills/sw-skill-router/scripts/route.mjs');
@@ -59,6 +59,40 @@ describe('router index', () => {
   test('a summary is the first sentence of the description', () => {
     assert.equal(summary('Build apps: manifests. Use when x.'), 'Build apps: manifests.');
     assert.equal(summary('No stop'), 'No stop');
+  });
+
+  test('the repository index, metadata and help are in line', () => {
+    assert.deepEqual(routerErrors(ROOT), []);
+  });
+
+  test('names a skill without metadata, a stale index and a skill the help leaves out', () => {
+    const root = mkdtempSync(join(tmpdir(), 'sw-router-index-'));
+    const skill = (name: string, meta: string, body = ''): void => {
+      mkdirSync(join(root, 'skills', name), { recursive: true });
+      writeFileSync(join(root, 'skills', name, 'SKILL.md'), `---\nname: ${name}\ndescription: X.\n${meta}---\n${body}`);
+    };
+    const meta = 'metadata:\n  contexts: core\n  tasks: build\n';
+    skill('sw-skill-router', meta);
+    skill('sw-help', meta, 'Use `sw-skill-router`.\n');
+    skill('sw-alpha', meta);
+    skill('sw-beta', '');
+    assert.deepEqual(routerErrors(root), [
+      'sw-beta: metadata.contexts is missing (core plugin app project)',
+      'sw-beta: metadata.tasks is missing (build review ship answer run)',
+    ]);
+    skill('sw-beta', meta);
+    assert.deepEqual(routerErrors(root), [
+      'skills/sw-skill-router/index.json is out of date; run node tools/bin/render-router-index.ts',
+      'sw-help/SKILL.md does not mention `sw-alpha`',
+      'sw-help/SKILL.md does not mention `sw-beta`',
+    ]);
+  });
+
+  test('a library without the router skips the check', () => {
+    const root = mkdtempSync(join(tmpdir(), 'sw-no-router-'));
+    mkdirSync(join(root, 'skills', 'sw-alpha'), { recursive: true });
+    writeFileSync(join(root, 'skills', 'sw-alpha', 'SKILL.md'), '---\nname: sw-alpha\n---\n');
+    assert.deepEqual(routerErrors(root), []);
   });
 
   test('the index leaves out the meta skills and resolves borrowed references', () => {

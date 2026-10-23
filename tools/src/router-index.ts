@@ -153,8 +153,11 @@ export function buildIndex(root: string): RouterIndex {
 export const renderIndex = (index: RouterIndex): string => `${JSON.stringify(index, null, 2)}\n`;
 
 /** Metadata errors of every skill, a stale index, and skills sw-help does
- *  not mention. Empty when the router and the help are in line. */
+ *  not mention. Empty when the router and the help are in line, or when the
+ *  library has no router. */
 export function routerErrors(root: string): string[] {
+  // A library without the router has no index or help to keep in line.
+  if (!existsSync(join(root, 'skills', ROUTER, 'SKILL.md'))) return [];
   const skills = skillNames(root);
   const errors = skills.flatMap((s) =>
     skillMetadata(readFileSync(join(root, 'skills', s, 'SKILL.md'), 'utf8')).errors.map((e) => `${s}: ${e}`),
