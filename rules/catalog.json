@@ -1498,12 +1498,11 @@
     {
       "id": "REV-016",
       "skill": "sw-review-learnings",
-      "file": "skills/sw-review-learnings/SKILL.md",
+      "file": "skills/sw-review-learnings/references/feature-flags.md",
       "title": "Read feature flags through the Feature API",
       "status": "active",
       "since": "2026-10-20",
-      "eval": null,
-      "eval_reason": "Documented only; no eval yet.",
+      "eval": "review-feature-flag-env-catch",
       "core_guide_ids": [],
       "audience": [
         "core",

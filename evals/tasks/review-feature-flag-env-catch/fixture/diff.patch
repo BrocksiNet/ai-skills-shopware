@@ -1,0 +1,15 @@
+diff --git a/src/Subscriber/ProductListingSubscriber.php b/src/Subscriber/ProductListingSubscriber.php
+index 3c1d9e2..8f04a7b 100644
+--- a/src/Subscriber/ProductListingSubscriber.php
++++ b/src/Subscriber/ProductListingSubscriber.php
+@@ -17,6 +17,10 @@ class ProductListingSubscriber implements EventSubscriberInterface
+     public function onCriteria(ProductListingCriteriaEvent $event): void
+     {
+         $criteria = $event->getCriteria();
+         $criteria->setLimit(24);
++
++        if (getenv('FEATURE_NEXT_21530') === '1') {
++            $criteria->addAssociation('cover');
++        }
+     }
+ }
