@@ -1,4 +1,4 @@
-// Grader: review-unneeded-guard-ignore (shopware-review-learnings, REV-015)
+// Grader: review-unneeded-guard-ignore (sw-review-learnings, REV-015)
 // SwagMediaCdn registers a RemoteMediaImporter behind
 // class_exists(MediaUploadService::class). MediaUploadService arrived in
 // 6.7.1.0, so 6.6.0.0 to 6.7.0.x skip the importer and the guard is needed. A

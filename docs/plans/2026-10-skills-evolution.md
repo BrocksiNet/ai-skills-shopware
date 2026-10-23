@@ -21,12 +21,13 @@ criteria. Packages are ordered so that each one only depends on earlier ones.
 | WP3 | "Do not flag" sections | WP2 | S | none |
 | WP4 | Path-based reference routing | WP2 | M | none |
 | WP5 | Review-shaped evals | WP2 | M | yes |
-| WP6 | `shopware-extension-review` skill | WP2, WP3, WP4, WP5 | L | yes |
+| WP6 | `sw-extension-review` skill | WP2, WP3, WP4, WP5 | L | yes |
 | WP7 | Rule backlog from the core guides | WP2, WP5 | L | yes |
 | WP8 | Automated trunk mining | WP2 | M | none |
 | WP9 | Upstream watchlist | none | S | none |
 | WP10 | Eval runner in TypeScript | none | M | none |
 | WP11 | Public API index and version facts | WP6 | L | weekly build |
+| WP12 | Skill update automation | WP8, WP9 | L | local only |
 
 Shipped: everything through WP10 landed in **v0.9.0** (2026-10-21), ahead
 of the milestones below. Still open: WP0 item 7 (waits for #21730) and
@@ -39,7 +40,10 @@ off), SF-009 (3/3, 0/3) and ADM-009 (2/3, 0/3) win too, and no `-ignore`
 task has more false positives with the skill on (Haiku, 3 repeats). v0.11.0
 (2026-10-22) ships it, with the PR description template from
 shopware/shopware#21627 (PRD-001..009). v0.12.0 (2026-10-22) ships WP11
-phases 0 to 2: the API index and `api-facts`.
+phases 0 to 2: the API index and `api-facts`. v0.13.0 (2026-10-22) ships
+phase 3: routes, entities, feature flags and configuration in the index,
+and `api-diff`. v0.14.0 (2026-10-23) renames every skill to `sw-`
+and adds `sw-skill-router` and `sw-help`.
 
 Suggested milestones, as planned:
 
@@ -65,13 +69,13 @@ review guides before adding anything new.
 
 | # | Change | File | Source | Eval |
 | - | ------ | ---- | ------ | ---- |
-| 1 | Replace "migration on `acl_role.privileges`" with a privilege migration that calls `addAdditionalPrivileges()`; never write `acl_role` directly | `skills/shopware-admin-js/references/architecture.md` | core guide MIG-007 | new `acl-privilege-migration-helper`, or extend `admin-acl-role-migration` |
-| 2 | Drop "Admin flag names are uppercase". Say both spellings resolve and follow the surrounding code | `skills/shopware-admin-js/references/flags-and-modern-web.md` | core retired ADMF-001 | none (removal) |
-| 3 | Replace "heavy work belongs in `update()` or a command" with: batch about 1,000 rows with a deterministic `ORDER BY` and a cursor, or register an indexer or post-update indexer for derived data | `skills/shopware-plugin-development/references/migrations.md` | MIG-004, MIG-005 | `migration-batched-backfill` (WP7) |
-| 4 | Change "Danger fails new test files" to "every added or modified test file" | `skills/shopware-testing/references/core-platform-patterns.md` | trunk 75b0a495 (#21572) | existing `one-covers-class-per-file` |
-| 5 | Add "observing events in tests": no listeners on the shared `event_dispatcher`; unit tests use a dispatcher the test owns (`CollectingEventDispatcher`); integration tests use `EventHookDispatcher::fromContainer()->on()`; capture in the hook, assert afterwards, assert that the hook fired | `skills/shopware-testing/references/test-shape-and-flags.md` + one checklist line in `SKILL.md` | trunk f2bf3794 (#21438), 190d734b (#21343) | new `event-hook-capture-then-assert` |
-| 6 | Reconcile `final` vs `@internal` advice into one rule | `skills/shopware-core-development/references/platform-architecture.md` and `service-architecture.md` | BCPHP-010 | none |
-| 7 | Add `wrapComponentConfig()` for new Administration components | `skills/shopware-admin-js/SKILL.md` | open #21730, #21722 | after #21730 merges |
+| 1 | Replace "migration on `acl_role.privileges`" with a privilege migration that calls `addAdditionalPrivileges()`; never write `acl_role` directly | `skills/sw-admin-js/references/architecture.md` | core guide MIG-007 | new `acl-privilege-migration-helper`, or extend `admin-acl-role-migration` |
+| 2 | Drop "Admin flag names are uppercase". Say both spellings resolve and follow the surrounding code | `skills/sw-admin-js/references/flags-and-modern-web.md` | core retired ADMF-001 | none (removal) |
+| 3 | Replace "heavy work belongs in `update()` or a command" with: batch about 1,000 rows with a deterministic `ORDER BY` and a cursor, or register an indexer or post-update indexer for derived data | `skills/sw-plugin-development/references/migrations.md` | MIG-004, MIG-005 | `migration-batched-backfill` (WP7) |
+| 4 | Change "Danger fails new test files" to "every added or modified test file" | `skills/sw-testing/references/core-platform-patterns.md` | trunk 75b0a495 (#21572) | existing `one-covers-class-per-file` |
+| 5 | Add "observing events in tests": no listeners on the shared `event_dispatcher`; unit tests use a dispatcher the test owns (`CollectingEventDispatcher`); integration tests use `EventHookDispatcher::fromContainer()->on()`; capture in the hook, assert afterwards, assert that the hook fired | `skills/sw-testing/references/test-shape-and-flags.md` + one checklist line in `SKILL.md` | trunk f2bf3794 (#21438), 190d734b (#21343) | new `event-hook-capture-then-assert` |
+| 6 | Reconcile `final` vs `@internal` advice into one rule | `skills/sw-core-development/references/platform-architecture.md` and `service-architecture.md` | BCPHP-010 | none |
+| 7 | Add `wrapComponentConfig()` for new Administration components | `skills/sw-admin-js/SKILL.md` | open #21730, #21722 | after #21730 merges |
 
 ### Eval spec: `event-hook-capture-then-assert`
 
@@ -105,7 +109,7 @@ to fail.
 
 Status: **done 2026-10-20**. Acceptance was met with `scripts/eval-local.sh`
 and Claude Haiku: the clean run passed the gate, and a deliberately wrong rule
-in `shopware-plugin-development` turned `prepare-plugin-for-6-8` from 3/3 to
+in `sw-plugin-development` turned `prepare-plugin-for-6-8` from 3/3 to
 0/3 and the gate red. Free CI models proved weak for this: most ignore
 skills, and the best one (LongCat) hits rate limits, so CI runs retry and the
 gate now also fails when skills are not loaded or leak into "off" runs.
@@ -187,7 +191,7 @@ run as parallel shards picked by `scripts/eval-plan.sh`.
 
 - A manual dispatch with `tasks=dal-search-without-limit,no-empty-explicit repeats=3`
   produces `ab.jsonl` and a summary table.
-- A deliberately broken skill, such as an emptied `shopware-architecture/SKILL.md`
+- A deliberately broken skill, such as an emptied `sw-architecture/SKILL.md`
   on a test branch, turns the run red.
 - ShellCheck passes on all new scripts.
 
@@ -199,8 +203,8 @@ Goal: every rule has a stable ID that links it to its skill, its eval, its
 trunk source and the matching core guide ID. Mining then becomes a diff of
 ID sets.
 
-Status: **done 2026-10-20**. `shopware-testing` (34 rules),
-`shopware-plugin-development` (26) and `shopware-review-learnings` (32) are
+Status: **done 2026-10-20**. `sw-testing` (34 rules),
+`sw-plugin-development` (26) and `sw-review-learnings` (32) are
 tagged; 29 of the 92 rules have an eval, the rest record an `eval_reason`.
 The validator runs inside `validate-skills.sh`, so CI checks it on every
 push. It first shipped as `scripts/validate-rules.sh` (bash and `jq`) and was
@@ -221,21 +225,21 @@ in the catalog with `status: retired`.
 
 | Prefix | Owning skill |
 | ------ | ------------ |
-| `PHP` | `php-foundation` |
-| `CORE` | `shopware-core-development` |
-| `PLG` | `shopware-plugin-development` |
-| `APP` | `shopware-app-development` |
-| `ARCH` | `shopware-architecture` |
-| `SEC` | `shopware-security` |
-| `TEST` | `shopware-testing` |
-| `REV` | `shopware-review-learnings` |
-| `IMP` | `shopware-change-impact` |
-| `SF` | `shopware-storefront` |
-| `ADM` | `shopware-admin-js` |
-| `PRD` | `shopware-pr-description` |
-| `PRR` | `shopware-pr-review` |
-| `DEV` | `shopware-podman-dev` |
-| `XR` | `shopware-extension-review` (WP6) |
+| `PHP` | `sw-php-foundation` |
+| `CORE` | `sw-core-development` |
+| `PLG` | `sw-plugin-development` |
+| `APP` | `sw-app-development` |
+| `ARCH` | `sw-architecture` |
+| `SEC` | `sw-security` |
+| `TEST` | `sw-testing` |
+| `REV` | `sw-review-learnings` |
+| `IMP` | `sw-change-impact` |
+| `SF` | `sw-storefront` |
+| `ADM` | `sw-admin-js` |
+| `PRD` | `sw-pr-description` |
+| `PRR` | `sw-pr-review` |
+| `DEV` | `sw-podman-dev` |
+| `XR` | `sw-extension-review` (WP6) |
 
 We use our own prefixes rather than core's (`MIG`, `BCPHP` and so on). Core
 IDs are recorded in a separate field because core may renumber or retire them.
@@ -260,8 +264,8 @@ It sits outside `skills/`, so `npx skills add` installs do not ship it.
   "rules": [
     {
       "id": "TEST-014",
-      "skill": "shopware-testing",
-      "file": "skills/shopware-testing/references/test-shape-and-flags.md",
+      "skill": "sw-testing",
+      "file": "skills/sw-testing/references/test-shape-and-flags.md",
       "title": "Observe events through a hook or an owned dispatcher",
       "status": "active",
       "since": "2026-10-20",
@@ -306,15 +310,15 @@ documented only.
 - `tools/bin/rules-bootstrap.ts` is a one-off. It walks the alignment doc
   tables and the `Definition of done` lists, proposes IDs, and writes a draft
   catalog for human review.
-- Roll it out one skill at a time, starting with `shopware-testing`, which
+- Roll it out one skill at a time, starting with `sw-testing`, which
   has the most mapped rules.
 - The alignment doc tables gain an `ID` column. Later they can be generated
   from the catalog with `tools/bin/render-alignment.ts`.
 
 ### WP2 acceptance
 
-- At least `shopware-testing`, `shopware-plugin-development` and
-  `shopware-review-learnings` are fully tagged.
+- At least `sw-testing`, `sw-plugin-development` and
+  `sw-review-learnings` are fully tagged.
 - The rule validator runs in `validate.yml`, with unit tests for every error.
 - The README and `AGENTS.md` "Adding or changing a rule" steps mention the ID and the catalog.
 
@@ -326,10 +330,10 @@ Goal: stop agents from spending context on what CI already enforces, and
 stop review output from repeating CI.
 
 Status: **done 2026-10-20**. `tools/bin/render-enforced.ts` writes the
-section into the four skills of the acceptance plus `shopware-review-learnings`,
+section into the four skills of the acceptance plus `sw-review-learnings`,
 from 25 checks read in trunk source at 1283747 (PHPStan, Danger, ESLint,
-PHP-CS-Fixer, PHPUnit runtime and devops tests). `shopware-core-development`
-and `shopware-admin-js` were tagged for this (62 and 38 rules). Changes from
+PHP-CS-Fixer, PHPUnit runtime and devops tests). `sw-core-development`
+and `sw-admin-js` were tagged for this (62 and 38 rules). Changes from
 the spec:
 
 - `enforced_by` entries are objects (`tool`, `kind`, `catches`, `misses`,
@@ -339,7 +343,7 @@ the spec:
   because their default namespaces are `Shopware\Tests\...`.
 - Above ten checks the list moves to a generated
   `references/enforced-by-ci.md` and `SKILL.md` keeps a pointer
-  (`shopware-testing` has 14).
+  (`sw-testing` has 14).
 - The validator reports drift instead of a separate check script.
 
 No CI check exists for named `yield` providers, `#[CoversNothing]` tests in
@@ -364,8 +368,8 @@ Those rules keep needing a reviewer.
 
 ### WP3 acceptance
 
-- The section exists in `shopware-testing`, `shopware-core-development`,
-  `shopware-plugin-development` and `shopware-admin-js`.
+- The section exists in `sw-testing`, `sw-core-development`,
+  `sw-plugin-development` and `sw-admin-js`.
 - The `SKILL.md` line budget still holds, so move long lists to references.
 
 ---
@@ -394,7 +398,7 @@ Total tokens rose 1.3 %, inside the noise: the skill-off runs, which load
 no skills in either case, averaged 230,640 and 100,405 input tokens. So
 the larger tables cost no measurable tokens, and the task does not show a
 saving either. Pass rate and skill loading are unchanged. The task mostly
-touches `shopware-plugin-development`, so it says little about the
+touches `sw-plugin-development`, so it says little about the
 references that moved to `on_demand`.
 
 All 14 skills with references have a `routes.json`, not only the
@@ -404,13 +408,13 @@ five largest. Changes from the spec below:
   columns "Read | When | Or the change touches" and replaces the prose list
   of references, so `SKILL.md` does not grow.
 - Anchors match changed lines in every file, test files included, because
-  `shopware-testing` routes on test code.
+  `sw-testing` routes on test code.
 - Globs use Node's `path.matchesGlob`, not minimatch, so the tools keep zero
   runtime dependencies.
 - `validate-routes.ts` also fails when a reference has no route. The
   generated `enforced-by-ci.md` is exempt.
 - Three references are `always: true`: the single procedure reference of
-  `shopware-change-impact`, `shopware-pr-description` and `shopware-pr-review`.
+  `sw-change-impact`, `sw-pr-description` and `sw-pr-review`.
 
 Follow-up on 2026-10-20, after review of PR #20:
 
@@ -479,7 +483,7 @@ when it is out of sync or when a route points to a missing reference.
 ```text
 evals/routing/plugin-migration-and-cache/
   diff.patch       # a real or trimmed diff
-  expected.json    # {"shopware-plugin-development": ["references/migrations.md", "references/cache-tags.md"]}
+  expected.json    # {"sw-plugin-development": ["references/migrations.md", "references/cache-tags.md"]}
 ```
 
 - `tools/bin/route.ts <diff>` prints the selected references per skill.
@@ -571,12 +575,12 @@ checks.
 
 | Task | Planted problem | Owner |
 | ---- | --------------- | ----- |
-| `review-migration-customized-data-catch` / `-ignore` | mail template update without `updated_at IS NULL` | `shopware-plugin-development` |
-| `review-store-api-contract-catch` / `-ignore` | field type or nullability change on an existing route | `shopware-plugin-development` |
-| `review-reset-interface-catch` / `-ignore` | memoized property without `ResetInterface` | `shopware-architecture` |
-| `review-queue-inline-fallback-catch` / `-ignore` | handler falls back to synchronous work when the queue is missing | `shopware-review-learnings` |
-| `review-twig-block-removed-catch` / `-ignore` | storefront Twig block renamed without deprecation | `shopware-storefront` |
-| `review-event-hook-assert-catch` / `-ignore` | assertion inside an event hook closure | `shopware-testing` |
+| `review-migration-customized-data-catch` / `-ignore` | mail template update without `updated_at IS NULL` | `sw-plugin-development` |
+| `review-store-api-contract-catch` / `-ignore` | field type or nullability change on an existing route | `sw-plugin-development` |
+| `review-reset-interface-catch` / `-ignore` | memoized property without `ResetInterface` | `sw-architecture` |
+| `review-queue-inline-fallback-catch` / `-ignore` | handler falls back to synchronous work when the queue is missing | `sw-review-learnings` |
+| `review-twig-block-removed-catch` / `-ignore` | storefront Twig block renamed without deprecation | `sw-storefront` |
+| `review-event-hook-assert-catch` / `-ignore` | assertion inside an event hook closure | `sw-testing` |
 
 Core's 31 fixtures in `.agents/skills/sw-review/tests/eval.yaml` are MIT
 diffs. Reuse only their scenario ideas and write our own diffs, per the
@@ -591,7 +595,7 @@ diffs. Reuse only their scenario ideas and write our own diffs, per the
 
 ---
 
-## WP6: `shopware-extension-review` skill
+## WP6: `sw-extension-review` skill
 
 Status: **built 2026-10-21; acceptance needs the model runs.** The skill
 defines no rule, so the `XR` prefix stays unused. Its `routes.json` borrows
@@ -615,7 +619,7 @@ that cites the decoy rule. Next: catch tasks subtle enough that the
 model misses them without the skill.
 
 Goal: a review skill for plugin and app diffs. Core's `sw-review` only
-reviews `shopware/shopware` PRs, and our `shopware-pr-review` only answers
+reviews `shopware/shopware` PRs, and our `sw-pr-review` only answers
 review threads.
 
 ### Scope
@@ -624,7 +628,7 @@ review threads.
   `custom/plugins` or `custom/apps`, "is this plugin safe to release",
   "check this before the Store submission".
 - **Stays quiet for**: core PRs, where `sw-review` owns review on trunk;
-  replying to review threads, which `shopware-pr-review` owns; writing code.
+  replying to review threads, which `sw-pr-review` owns; writing code.
 - **REGISTRY topic**: "Reviewing plugin and app diffs as a whole: route
   rules by changed paths, rule-tagged findings". It owns the workflow only.
   Each rule stays owned by its topic skill.
@@ -632,7 +636,7 @@ review threads.
 ### Skill layout
 
 ```text
-skills/shopware-extension-review/
+skills/sw-extension-review/
   SKILL.md                 # workflow, output contract, severity scale, < 150 lines
   routes.json              # WP4 format, pointing to OTHER skills' references
   references/lenses.md     # BC for extenders, cache, migrations, queue, security, tests
@@ -654,7 +658,7 @@ skills/shopware-extension-review/
    concrete failure on a real shop.
 6. Add a "Do not flag" pass: drop findings that ECS, PHPStan or
    `shopware-cli extension validate` would already report.
-7. Hand off: feature blast radius goes to `shopware-change-impact`, and Store
+7. Hand off: feature blast radius goes to `sw-change-impact`, and Store
    compliance goes to the `shopware-cli-extension-store` skill when it is installed.
 
 ### Severity scale
@@ -690,8 +694,8 @@ Status: **phase A done 2026-10-21**, together with WP5. Each phase A rule
 got a review pair instead of the behavioral or AST task named in the table:
 a pair tests detection and false positives in one go, and the graders are
 shared. Behavioral tasks can follow where A/B shows the review pair is not
-enough. The same PR tagged `shopware-architecture` (ARCH-001..004) and
-`shopware-storefront` (SF-001..010); their existing storefront tasks now
+enough. The same PR tagged `sw-architecture` (ARCH-001..004) and
+`sw-storefront` (SF-001..010); their existing storefront tasks now
 back SF-002..010.
 
 Phases B and C done 2026-10-21. Phase B: PLG-031, SEC-007, SF-011..013,
@@ -702,9 +706,20 @@ IMP-008, ADM-039, ADM-040, ARCH-005 and CORE-063, each with a review pair
 existing rule already states were mapped onto it in `core_guide_ids`
 instead of becoming a second rule (DOCS-*, REMOVAL-001/003, SCOPE-001/003/006,
 BCPHP-001, MIG-001/003/005, ADMF-*, BCADM-006/009). `defer_on_trunk` is true
-only where the rule's source is on trunk; the SCOPE rules cite the guides of the
-open core PR #21455 and stay false. The IDs were checked against #21455 at
-`1e641ecf`. `shopware-security` (SEC-001..007) and `shopware-change-impact`
+only where the rule's source is on trunk; the SCOPE rules cited the guides of the
+then open core PR #21455 and stayed false until it merged. The IDs were checked against #21455 at
+`1e641ecf`, and again on 2026-10-23 at the final head `d97c7fbb`: the same
+111 IDs, all 77 we map still exist. Two mapped rules were reworded after
+`1e641ecf`. MIG-002 (`PLG-030`) only adds a core CI hint, the nightly
+blue-green lane, so nothing changes for plugins. TEST-002 (`TEST-035`) now
+also flags an existing test expectation changed in the same PR as the code
+under test, unless the PR announces the behavior change. `TEST-035` does not
+cover that half yet; it is a candidate for a new `sw-testing` rule with a
+review pair. Core's guides reuse our `TEST` prefix (TEST-001..010 mean
+different rules there), so a core ID appears only in `core_guide_ids` and
+never bare in skill text. #21455 merged on 2026-10-23 as `f31fb198` with the
+same guides, so the SCOPE rules (`CORE-030`, `CORE-072..074`, `IMP-003`) and
+`REV-033` now defer on trunk, with the guide as `trunk.source`. `sw-security` (SEC-001..007) and `sw-change-impact`
 (IMP-001..008) are now tagged as well.
 
 Goal: adopt the core review-guide rules that matter for plugin and app
@@ -717,29 +732,29 @@ ID, behavioral or review eval, and a golden fail fixture.
 
 | New ID | Rule | Owner | Core ref | Eval |
 | ------ | ---- | ----- | -------- | ---- |
-| PLG-xxx | Data migrations on mail templates, flows, CMS or config skip rows the merchant edited (`updated_at IS NULL` or a comparable guard) | `shopware-plugin-development` | MIG-006 | `review-migration-customized-data-*` and behavioral `migration-respects-customized-data` |
+| PLG-xxx | Data migrations on mail templates, flows, CMS or config skip rows the merchant edited (`updated_at IS NULL` or a comparable guard) | `sw-plugin-development` | MIG-006 | `review-migration-customized-data-*` and behavioral `migration-respects-customized-data` |
 | PLG-xxx | Batch large data migrations about 1,000 rows at a time with a deterministic `ORDER BY` and a cursor; use an indexer for derived data | same | MIG-004, MIG-005 | `migration-batched-backfill` |
 | PLG-xxx | No `Feature::isActive()` in migrations | same | MIG-008 | `migration-no-feature-flag` (AST) |
 | PLG-xxx | `update()` must not narrow types, add `NOT NULL` without a default, or drop defaults; those go to `updateDestructive()` | same | MIG-002 | extend existing migration tasks |
-| ARCH-xxx | Services that memoize in a property implement `ResetInterface` or carry the `kernel.reset` tag | `shopware-architecture` | DIX-005 | `memoized-service-resets` (AST) |
-| REV-xxx | Message handlers have no inline synchronous fallback; subscribers do no heavy work and dispatch a message instead. This replaces the TODO in `dal-and-performance.md` | `shopware-review-learnings` | QUEUE-001, QUEUE-003 | `review-queue-inline-fallback-*` |
-| TEST-xxx | Tests that cannot fail: a captured value that is never asserted non-null, or a mocked transaction that never runs its closure | `shopware-testing` | TEST-002 | `test-asserts-hook-fired` |
+| ARCH-xxx | Services that memoize in a property implement `ResetInterface` or carry the `kernel.reset` tag | `sw-architecture` | DIX-005 | `memoized-service-resets` (AST) |
+| REV-xxx | Message handlers have no inline synchronous fallback; subscribers do no heavy work and dispatch a message instead. This replaces the TODO in `dal-and-performance.md` | `sw-review-learnings` | QUEUE-001, QUEUE-003 | `review-queue-inline-fallback-*` |
+| TEST-xxx | Tests that cannot fail: a captured value that is never asserted non-null, or a mocked transaction that never runs its closure | `sw-testing` | TEST-002 | `test-asserts-hook-fired` |
 
 ### Phase B: links to the #21541 guidelines (merged 2026-10-19)
 
 | New ID | Rule | Owner | Core ref |
 | ------ | ---- | ----- | -------- |
-| PLG-xxx | Store API contract: no field type, nullability or shape change, no new required parameter, no status code change, no stricter validation on an existing route | `shopware-plugin-development` → `api-contracts.md` | BCAPI-001, -002, -008 |
-| SEC-xxx | Do not change `_routeScope`, `_loginRequired`, `_httpCache` or `_acl` on an existing route without a deprecation | `shopware-security` | BCAPI-006 |
-| SF-xxx | Twig blocks, template variables and template files are public API for themes: deprecate before you rename, move or remove them | `shopware-storefront` | BCSF-001..004 |
-| SF-xxx | JS plugin names, public methods, events and options are public API; phase helpers out instead of deleting them | `shopware-storefront` | BCSF-005..007 |
-| SF-xxx | SCSS variables, `is--*` state classes, `theme.json` fields and snippet keys are public API | `shopware-storefront` | BCSF-008 |
-| SF-xxx | Change caching through cache policies; never disable caching for logged-in customers; keep personal data off cacheable responses | `shopware-storefront` | CACHE-005 |
-| IMP-xxx | A cache key holds every input (Criteria, app state), with few tags | `shopware-change-impact` | CACHE-006 |
-| ADM-xxx | Component props, required props, Twig blocks, methods, computed and data, and `swDefinePublic` keys are public API | `shopware-admin-js` | BCADM-001..005 |
-| ADM-xxx | `blocks-list.json` and position identifiers are a contract | `shopware-admin-js` | ADMF-008 |
-| ARCH-xxx | Extension event properties are the contract; do not pass the whole `Request` in payloads | `shopware-architecture` | BCEXT-005, -006 |
-| CORE-xxx | Replacements for a deprecated API must be usable today, not `@internal`, experimental or flag-only | `shopware-core-development` | BCPHP-004 |
+| PLG-xxx | Store API contract: no field type, nullability or shape change, no new required parameter, no status code change, no stricter validation on an existing route | `sw-plugin-development` → `api-contracts.md` | BCAPI-001, -002, -008 |
+| SEC-xxx | Do not change `_routeScope`, `_loginRequired`, `_httpCache` or `_acl` on an existing route without a deprecation | `sw-security` | BCAPI-006 |
+| SF-xxx | Twig blocks, template variables and template files are public API for themes: deprecate before you rename, move or remove them | `sw-storefront` | BCSF-001..004 |
+| SF-xxx | JS plugin names, public methods, events and options are public API; phase helpers out instead of deleting them | `sw-storefront` | BCSF-005..007 |
+| SF-xxx | SCSS variables, `is--*` state classes, `theme.json` fields and snippet keys are public API | `sw-storefront` | BCSF-008 |
+| SF-xxx | Change caching through cache policies; never disable caching for logged-in customers; keep personal data off cacheable responses | `sw-storefront` | CACHE-005 |
+| IMP-xxx | A cache key holds every input (Criteria, app state), with few tags | `sw-change-impact` | CACHE-006 |
+| ADM-xxx | Component props, required props, Twig blocks, methods, computed and data, and `swDefinePublic` keys are public API | `sw-admin-js` | BCADM-001..005 |
+| ADM-xxx | `blocks-list.json` and position identifiers are a contract | `sw-admin-js` | ADMF-008 |
+| ARCH-xxx | Extension event properties are the contract; do not pass the whole `Request` in payloads | `sw-architecture` | BCEXT-005, -006 |
+| CORE-xxx | Replacements for a deprecated API must be usable today, not `@internal`, experimental or flag-only | `sw-core-development` | BCPHP-004 |
 
 ### Phase C: core-only, defer on trunk
 
@@ -797,8 +812,8 @@ deltas.
   - added or removed bullets in `.agents/skills/**/SKILL.md`
   - new headings in `coding-guidelines/**`
   - new PHPStan or Danger rule classes
-  - rule IDs added to or retired from `sw-review/guides/*.md` frontmatter,
-    once #21455 merges
+  - rule IDs added to or retired from `sw-review/guides/*.md` frontmatter
+    (on trunk since #21455 merged on 2026-10-23)
 - **Cross-check against `rules/catalog.json`**:
   - A core guide ID with no `core_guide_ids` match is **unmapped**.
   - A PHPStan or Danger class with no `enforced_by` match is **unmapped**.
@@ -840,11 +855,11 @@ WP8 using `gh pr view --json state,mergedAt`:
 
 | PR | Topic | Our impact | Prepared branch |
 | -- | ----- | ---------- | --------------- |
-| #21455 | `sw-review` topic guides with rule IDs | WP2 `core_guide_ids`, WP7 | none yet |
+| #21455 | `sw-review` topic guides with rule IDs | WP2 `core_guide_ids`, WP7 | merged 2026-10-23; [#59](https://github.com/BrocksiNet/ai-skills-shopware/pull/59) |
 | #21541 | BC and HTTP-cache guidelines | WP7 phase B links | none yet |
-| #21627 | PR template: What and why / How / Testing / Additional notes / Checklist | rewrite `shopware-pr-description/references/pr-body-template.md` and the `pr-no-ai-trailers` fixtures | prepare now |
+| #21627 | PR template: What and why / How / Testing / Additional notes / Checklist | rewrite `sw-pr-description/references/pr-body-template.md` and the `pr-no-ai-trailers` fixtures | prepare now |
 | #21730 | Admin lint: no `.js` in `src`, no new mixins, `wrapComponentConfig()` required | WP0 #7, `admin-js-implementation-to-ts` grader | prepare now |
-| #21722 | Admin reference implementations named in AGENTS.md | point `shopware-admin-js` to the named component, composable and store | after merge |
+| #21722 | Admin reference implementations named in AGENTS.md | point `sw-admin-js` to the named component, composable and store | after merge |
 | #21502 | `composer skills:enable` / `skills:disable` | `docs/skill-resolution.md`: the official way to hide core skills when using the full install | after merge |
 
 ### WP9 acceptance
@@ -1006,6 +1021,19 @@ it would answer has no recorded ground truth.
 
 ---
 
+## WP12: Skill update automation
+
+Status: **accepted 2026-10-23; phases 0 to 2 done, phase 3 next.** Plan:
+[`2026-10-skill-update-automation.md`](2026-10-skill-update-automation.md).
+
+Goal: turn drift into rule changes with less manual reading. Trunk mining
+reads a list of sources and maps each change to the rule it touches. A
+daily job collects maintainer review comments from merged core PRs. A local
+command with your agent login proposes new, updated and retired rules and
+drafts the pull request. The A/B gate and a human merge stay in place.
+
+---
+
 ## Risks and mitigations
 
 | Risk | Mitigation |
@@ -1027,6 +1055,6 @@ All three were accepted as recommended on 2026-10-19.
 2. **`routes.json` ships inside installed skills.** The rendered table in
    `SKILL.md` is the main mechanism; the JSON is small and lets tools route
    without parsing Markdown (WP4).
-3. **`shopware-extension-review` covers theme-only projects** through the
+3. **`sw-extension-review` covers theme-only projects** through the
    storefront lens. The first WP1 A/B run with theme diffs confirms or
    narrows this (WP6).

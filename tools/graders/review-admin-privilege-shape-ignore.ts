@@ -1,4 +1,4 @@
-// Grader: review-admin-privilege-shape-ignore (shopware-admin-js, ADM-004)
+// Grader: review-admin-privilege-shape-ignore (sw-admin-js, ADM-004)
 // The same tiers module registers roles with privileges and dependencies per
 // role (editor depends on the viewer), which is the shape the role screens
 // read. A minor+ finding that names ADM-004 or calls the mapping malformed

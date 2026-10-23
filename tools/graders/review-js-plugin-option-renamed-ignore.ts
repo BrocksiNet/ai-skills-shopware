@@ -1,4 +1,4 @@
-// Grader: review-js-plugin-option-renamed-ignore (shopware-storefront, SF-011)
+// Grader: review-js-plugin-option-renamed-ignore (sw-storefront, SF-011)
 // The plugin adds an animate option with a default and keeps every existing
 // option and event. A minor+ finding that names SF-011 or calls it a
 // breaking change for themes is a false positive.

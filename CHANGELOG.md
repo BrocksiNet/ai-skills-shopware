@@ -10,6 +10,67 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- Drift mining reads every repository in `rules/sources.json`: core trunk
+  plus `shopwareLabs/ai-coding-tools`, `netresearch/php-modernization-skill`,
+  the `shopware/shopware-cli` skills and `FriendsOfShopware/agent-skills`.
+  `docs/.mining-state.json` has one entry per source; the old single-source
+  shape still reads.
+- The weekly drift issue groups each change by the skill and rule it
+  touches. A change ties to a rule through the catalog (`core_guide_ids`,
+  `enforced_by`, `trunk.source`, the new `upstream` field), then through
+  the skills' `routes.json`, then through the source's skill list. What no
+  rule covers is listed as unmapped. `--signals` writes the mapped changes as
+  JSON Lines for later tooling.
+- `PRD-001` and `PRD-008` record their trunk source, the PR template.
+
+## [0.14.0] - 2026-10-23
+
+### Changed
+
+- **Breaking:** every skill name starts with `sw-`. `php-foundation` is
+  now `sw-php-foundation`, and `shopware-<topic>` is now `sw-<topic>`.
+  Rule IDs, routes and eval tasks keep their names. Remove the old folders
+  and install the new names (see `docs/installation.md`). Our
+  `sw-admin-js` no longer shares a folder name with core's
+  `shopware-admin-js`.
+- The README is short and says why to use the library. Installation,
+  architecture with diagrams, results and maintenance moved to their own
+  pages under `docs/`.
+
+### Added
+
+- `sw-skill-router`: `/sw-skill-router` runs a dependency-free script that
+  reads the git diff, a saved diff or planned paths. It detects core,
+  plugin, app or project per file, filters by task (build, review, ship,
+  answer, run) and lists the skills and references to load, with the file
+  or line that triggered each. It also prints the install command for
+  missing skills. Its `index.json` is generated from a new `metadata` block
+  in every `SKILL.md` and from the routes.
+- Routes take `exclude_paths`, with a per-file default: production-code
+  references no longer fire on tests, ADRs or release notes, and a
+  Storefront file importing Storefront no longer selects the component
+  independence rules. A renamed file routes under its old and new path.
+  `tests/devops/` selects the core test patterns. New routing case
+  `test-suite-move`.
+- The router ranks skills and references by how many files matched, names
+  the base branch, merge base and commit count, warns on large diffs, and
+  says which core trunk skill leads a topic (`defers_to` metadata).
+- `REV-034` in `sw-review-learnings`: comments and docblocks describe the
+  code, not the history of the change. From shopware/shopware review
+  findings on #19917 and #20855. Routed by history words in comment lines,
+  with a review catch and ignore pair and the routing case `history-comment`.
+- `REV-035`: a visibility check by ID with `searchIds()` misses
+  restrictions set on `sales_channel.<entity>.loaded`, such as Dynamic
+  Access hiding categories. `->searchIds(` now selects the DAL review
+  reference. Review catch and ignore pair included.
+- `sw-help`: what every skill is for, grouped by task, with example prompts.
+- `validate-skills` checks the skill metadata, that the router index is up
+  to date, and that `sw-help` names every skill.
+
+## [0.13.0] - 2026-10-22
+
+### Added
+
 - WP11 phase 3: the API index covers routes (with scope and OpenAPI
   coverage), entity fields and their API flags, feature flags and bundle
   configuration keys (generator `api-index/0.3.0`). Deprecations count
@@ -683,7 +744,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   (`actions/checkout@v5`, `markdownlint-cli2-action@v23`).
 - `docs/local-validation.md` and GitHub issue templates for feedback.
 
-[Unreleased]: https://github.com/BrocksiNet/ai-skills-shopware/compare/v0.12.0...main
+[Unreleased]: https://github.com/BrocksiNet/ai-skills-shopware/compare/v0.14.0...main
+[0.14.0]: https://github.com/BrocksiNet/ai-skills-shopware/compare/v0.13.0...v0.14.0
+[0.13.0]: https://github.com/BrocksiNet/ai-skills-shopware/compare/v0.12.0...v0.13.0
 [0.12.0]: https://github.com/BrocksiNet/ai-skills-shopware/compare/v0.11.0...v0.12.0
 [0.11.0]: https://github.com/BrocksiNet/ai-skills-shopware/compare/v0.10.0...v0.11.0
 [0.10.0]: https://github.com/BrocksiNet/ai-skills-shopware/compare/v0.9.0...v0.10.0

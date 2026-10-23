@@ -34,18 +34,20 @@ Use when in-repo core skills are **absent**.
 
 ```bash
 npx skills add BrocksiNet/ai-skills-shopware \
-  --skill php-foundation \
-  --skill shopware-architecture \
-  --skill shopware-security \
-  --skill shopware-plugin-development \
-  --skill shopware-testing \
-  --skill shopware-research-and-escalation \
-  --skill shopware-review-learnings \
-  --skill shopware-change-impact \
+  --skill sw-skill-router \
+  --skill sw-help \
+  --skill sw-php-foundation \
+  --skill sw-architecture \
+  --skill sw-security \
+  --skill sw-plugin-development \
+  --skill sw-testing \
+  --skill sw-research-and-escalation \
+  --skill sw-review-learnings \
+  --skill sw-change-impact \
   -a claude-code -a codex -a cursor
 ```
 
-Add `shopware-app-development`, `shopware-core-development`, workflow skills per
+Add `sw-app-development`, `sw-core-development`, workflow skills per
 [`use-cases/`](../use-cases/).
 
 ### `core-overlay` — shopware/shopware trunk
@@ -55,34 +57,39 @@ In-repo skills cover `shopware-php-code`, `shopware-phpunit-tests`,
 
 ```bash
 npx skills add BrocksiNet/ai-skills-shopware \
-  --skill shopware-architecture \
-  --skill shopware-security \
-  --skill shopware-research-and-escalation \
-  --skill shopware-review-learnings \
-  --skill shopware-change-impact \
-  --skill shopware-pr-review \
-  --skill shopware-podman-dev \
-  --skill shopware-storefront \
+  --skill sw-skill-router \
+  --skill sw-help \
+  --skill sw-architecture \
+  --skill sw-security \
+  --skill sw-research-and-escalation \
+  --skill sw-review-learnings \
+  --skill sw-change-impact \
+  --skill sw-pr-review \
+  --skill sw-podman-dev \
+  --skill sw-storefront \
   -a claude-code -a codex -a cursor
 ```
 
-Do **not** `npx skills add --skill shopware-admin-js` into a trunk `.agents/skills/`
-tree. Core already owns that name. Cursor/Codex overlay is fine.
+Core trunk ships its own `shopware-admin-js`. Ours is `sw-admin-js`, so both
+can sit in `.agents/skills/` without one replacing the other; core's leads for
+the short mandatory list.
 
-Add `shopware-plugin-development` when editing `custom/plugins` in the monorepo.
+Add `sw-plugin-development` when editing `custom/plugins` in the monorepo.
 
 ### `plugin` — extension work only
 
 ```bash
 npx skills add BrocksiNet/ai-skills-shopware \
-  --skill php-foundation \
-  --skill shopware-architecture \
-  --skill shopware-security \
-  --skill shopware-plugin-development \
-  --skill shopware-testing \
-  --skill shopware-research-and-escalation \
-  --skill shopware-review-learnings \
-  --skill shopware-change-impact \
+  --skill sw-skill-router \
+  --skill sw-help \
+  --skill sw-php-foundation \
+  --skill sw-architecture \
+  --skill sw-security \
+  --skill sw-plugin-development \
+  --skill sw-testing \
+  --skill sw-research-and-escalation \
+  --skill sw-review-learnings \
+  --skill sw-change-impact \
   -a claude-code -a codex -a cursor
 ```
 
@@ -90,21 +97,22 @@ npx skills add BrocksiNet/ai-skills-shopware \
 
 | Core (`.agents/skills/`) | Defer static rules to core | Our additive owner |
 | ------------------------ | -------------------------- | ------------------- |
-| `shopware-php-code` | hexagonal, migrations, deprecations | `shopware-architecture` (decisions), evals |
-| `shopware-phpunit-tests` | test shape, flags, providers | `shopware-testing` (plugin patterns), evals |
-| `shopware-pr-hygiene` | PR template, follow-up commits | `shopware-pr-description` (copy-paste template) |
-| `shopware-change-scope` | boyscouting, root cause | `shopware-review-learnings` (delta findings) |
-| `shopware-release-docs` | RELEASE_INFO / UPGRADE | `shopware-core-development` (baseline guardrails) |
-| `shopware-admin-js` | Admin JS (trunk only) | `shopware-admin-js` (plugin/project + Meteor / MWG gate) |
+| `shopware-php-code` | hexagonal, migrations, deprecations | `sw-architecture` (decisions), evals |
+| `shopware-phpunit-tests` | test shape, flags, providers | `sw-testing` (plugin patterns), evals |
+| `shopware-pr-hygiene` | PR template, follow-up commits | `sw-pr-description` (copy-paste template) |
+| `shopware-change-scope` | boyscouting, root cause | `sw-review-learnings` (delta findings) |
+| `shopware-release-docs` | RELEASE_INFO / UPGRADE | `sw-core-development` (baseline guardrails) |
+| `shopware-admin-js` | Admin JS (trunk only) | `sw-admin-js` (plugin/project + Meteor / MWG gate) |
+| `sw-review` (+ `guides/`) | Core PR review: BC per surface, platform scope, cache, queue, migrations, tests, release docs | `sw-review-learnings` (delta findings), `sw-extension-review` (plugin/app diffs) |
 
-**Always ours (no core equivalent):** `shopware-security`, `shopware-architecture`
-(decision layer), `shopware-plugin-development`, `shopware-app-development`,
-`shopware-storefront`, `shopware-review-learnings`, `shopware-change-impact`,
+**Always ours (no core equivalent):** `sw-security`, `sw-architecture`
+(decision layer), `sw-plugin-development`, `sw-app-development`,
+`sw-storefront`, `sw-review-learnings`, `sw-change-impact`,
 eval tasks.
 
-`shopware-admin-js` on trunk: keep core's tracked
-`.agents/skills/shopware-admin-js/` (including `agents/openai.yaml`). Overlay
-our richer skill into `.cursor/skills/` and `.codex/skills/` only. Core's
+Admin JS on trunk: keep core's tracked `.agents/skills/shopware-admin-js/`
+(including `agents/openai.yaml`). Our `sw-admin-js` has its own name since
+the `sw-` rename, so it no longer replaces core's folder. Core's
 `.claude/skills` is a git symlink to `.agents/skills` — do not replace it.
 
 ## sw-dev link
@@ -117,7 +125,7 @@ symlink shows up as a deletion in `git status` (`SKILL.md`, `openai.yaml`) and
 must not be committed.
 
 For trunk instances, configure `instances.json` to the `core-overlay` preset.
-`shopware-storefront` has no core equivalent, so it is safe on every provider.
+`sw-storefront` has no core equivalent, so it is safe on every provider.
 
 ## Sync ritual
 

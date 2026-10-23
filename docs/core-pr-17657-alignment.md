@@ -39,10 +39,10 @@ row to the next mining pass.
 
 | PR | Topic | State | Our impact | Prepared branch |
 | -- | ----- | ----- | ---------- | --------------- |
-| [#21455](https://github.com/shopware/shopware/pull/21455) | `sw-review` topic guides with rule IDs | open | WP2 `core_guide_ids`, WP7 | none yet |
+| [#21455](https://github.com/shopware/shopware/pull/21455) | `sw-review` topic guides with rule IDs | merged 2026-10-23 as `f31fb198` | WP2 `core_guide_ids`, WP7; SCOPE rules and `REV-033` defer on trunk | [#59](https://github.com/BrocksiNet/ai-skills-shopware/pull/59) |
 | [#21541](https://github.com/shopware/shopware/pull/21541) | Backward-compatibility and HTTP cache guidelines | merged 2026-10-19 | WP7 phase B rules link to the guidelines; unblocked | not needed |
-| [#21627](https://github.com/shopware/shopware/pull/21627) | PR template: What and why / How / Testing / Additional notes / Checklist | open | rewrite `shopware-pr-description/references/pr-body-template.md` and the `pr-no-ai-trailers` fixtures | draft [#23](https://github.com/BrocksiNet/ai-skills-shopware/pull/23) |
-| [#21730](https://github.com/shopware/shopware/pull/21730) | Admin lint: no new `.js` in `src`, no new mixins; agent docs point at reference implementations, examples use `wrapComponentConfig()` | open | WP0 item 7, `admin-js-implementation-to-ts` grader; point `shopware-admin-js` at the named component, composable and store | draft [#24](https://github.com/BrocksiNet/ai-skills-shopware/pull/24) |
+| [#21627](https://github.com/shopware/shopware/pull/21627) | PR template: What and why / How / Testing / Additional notes / Checklist | open | rewrite `sw-pr-description/references/pr-body-template.md` and the `pr-no-ai-trailers` fixtures | draft [#23](https://github.com/BrocksiNet/ai-skills-shopware/pull/23) |
+| [#21730](https://github.com/shopware/shopware/pull/21730) | Admin lint: no new `.js` in `src`, no new mixins; agent docs point at reference implementations, examples use `wrapComponentConfig()` | open | WP0 item 7, `admin-js-implementation-to-ts` grader; point `sw-admin-js` at the named component, composable and store | draft [#24](https://github.com/BrocksiNet/ai-skills-shopware/pull/24) |
 | [#21725](https://github.com/shopware/shopware/pull/21725) | Admin lint baselines that may only shrink (foundation of #21730) | open | none directly; merges before #21730 | not needed |
 | [#21502](https://github.com/shopware/shopware/pull/21502) | `composer skills:enable` / `skills:disable` | open | `docs/skill-resolution.md`: the official way to hide core skills in a full install | after merge |
 
@@ -54,12 +54,12 @@ PR #21725 and then to #21730.
 
 | Core skill | Our owner | On trunk |
 | ---------- | --------- | -------- |
-| `shopware-php-code` | `shopware-core-development` + `shopware-architecture` | **defer** static rules to core |
-| `shopware-phpunit-tests` | `shopware-testing` | **defer** |
-| `shopware-pr-hygiene` | `shopware-pr-description` | **defer** |
-| `shopware-change-scope` | `shopware-review-learnings` → change-scope | **defer** |
-| `shopware-release-docs` | `shopware-core-development` → release-notes | **defer** |
-| `shopware-admin-js` | `shopware-admin-js` | **done** (mined; defer short list on trunk) |
+| `shopware-php-code` | `sw-core-development` + `sw-architecture` | **defer** static rules to core |
+| `shopware-phpunit-tests` | `sw-testing` | **defer** |
+| `shopware-pr-hygiene` | `sw-pr-description` | **defer** |
+| `shopware-change-scope` | `sw-review-learnings` → change-scope | **defer** |
+| `shopware-release-docs` | `sw-core-development` → release-notes | **defer** |
+| `shopware-admin-js` | `sw-admin-js` | **done** (mined; defer short list on trunk) |
 | `shopware-knowledge-capture` | `AGENTS.md` / REGISTRY | skip |
 | `nightly-triage` | — | skip (gh-aw CI sweeps) |
 | `sw-triage`, `sw-review`, `sw-bugfixer` | — | skip (gh-aw; explicit invocation only) |
@@ -68,7 +68,7 @@ The ID column links a row to its entry in
 [`rules/catalog.json`](../rules/catalog.json). `—` means the owning skill is
 not tagged yet.
 
-## Testing (`shopware-testing`)
+## Testing (`sw-testing`)
 
 | ID | Rule (from PR) | Target | Eval |
 | -- | -------------- | ------ | ---- |
@@ -81,7 +81,7 @@ not tagged yet.
 | TEST-009 | Test `#[Package]` must match owning class (`TestPackageMatchRule`) | same | **done** (documented; existence eval already) |
 | TEST-010 | Every test class `@internal` | same | **done** → `test-class-marked-internal` |
 | TEST-014 | `StaticEntityRepository` generic inference / `::of()` | `test-shape-and-flags.md` | defer-on-trunk (documented) |
-| TEST-027 | Named arguments on helper/builder literals | same + `php-foundation` | **done** (documented) |
+| TEST-027 | Named arguments on helper/builder literals | same + `sw-php-foundation` | **done** (documented) |
 | TEST-032 | `@codeCoverageIgnore` pass-through only (`CodeCoverageIgnoreEvaluationRule`) | `core-platform-patterns.md` | defer-on-trunk (documented) |
 | TEST-001 | `expectExceptionObject` via domain factory (already covered) | `exception-assertions.md` | done |
 | TEST-019 | No DBAL `Connection` behavior-mock in unit tests | `test-shape-and-flags.md` | defer-on-trunk |
@@ -100,25 +100,25 @@ not tagged yet.
 | TEST-030 | Keep distinct edge cases in providers; don’t over-deduplicate | same | defer-on-trunk |
 | TEST-031 | Legacy flag tests easy to delete when flag removed | same | defer-on-trunk |
 
-## Core platform (`shopware-core-development` + `shopware-architecture`)
+## Core platform (`sw-core-development` + `sw-architecture`)
 
 | ID | Rule (from PR) | Target | Eval |
 | -- | -------------- | ------ | ---- |
-| CORE-053 | Hexagonal services: infra at edge; services unit-testable without I/O | `shopware-architecture` + `service-architecture.md` | defer-on-trunk / **done** → `business-logic-in-controller` |
+| CORE-053 | Hexagonal services: infra at edge; services unit-testable without I/O | `sw-architecture` + `service-architecture.md` | defer-on-trunk / **done** → `business-logic-in-controller` |
 | CORE-033 | `@internal` adapters; `@final` on supported non-extension classes | same + `deprecations.md` | defer-on-trunk |
 | CORE-057, CORE-058 | Conservative DTOs; public readonly value objects for simple structs | `service-architecture.md` | defer-on-trunk |
 | CORE-059 | Public BC surface vs internal controllers/subscribers/loaders | same | defer-on-trunk |
-| — | Bounded DAL reads (setLimit) | `shopware-architecture` → `dal-contracts.md` | **done** → `dal-search-without-limit` |
+| — | Bounded DAL reads (setLimit) | `sw-architecture` → `dal-contracts.md` | **done** → `dal-search-without-limit` |
 | — | Repository not Connection for entity reads | `dal-contracts.md` | **done** → `no-dal-connection-for-entity-read` |
 | CORE-008 | New Admin/Store API routes → OpenAPI JSON under `Schema/.../paths` | `api-schema.md` (core) | skip (fixture-heavy) |
-| — | New core Store API routes use extension events, not a new abstract route class | `shopware-architecture` → `extension-mechanisms.md` | **done** → `store-api-route-extension-event` |
-| PLG-011 | Plugin/extension OpenAPI for custom routes | `shopware-plugin-development` → `api-contracts.md` | **done** → `store-api-openapi-required` |
+| — | New core Store API routes use extension events, not a new abstract route class | `sw-architecture` → `extension-mechanisms.md` | **done** → `store-api-route-extension-event` |
+| PLG-011 | Plugin/extension OpenAPI for custom routes | `sw-plugin-development` → `api-contracts.md` | **done** → `store-api-openapi-required` |
 | CORE-009 | Run `ApiRoutesHaveASchemaTest` for new/changed core API routes | `api-schema.md` | skip |
 | CORE-020 | `Feature::silent()` when core must call deprecated API for BC | `deprecations.md` | **done** → `deprecation-silent-wrapper` |
 | CORE-013 | Plan major breaks with `BCChange` attributes, not `@deprecated reason:*` | `deprecations.md` | **done** → `bc-change-not-deprecated-reason` |
 | CORE-025 | Do not `<deprecated>` a DI service id core still references | `deprecations.md` | **done** (documented) |
 | CORE-054 | Symfony `Filesystem` instead of raw PHP file functions | `service-architecture.md` | **done** → `symfony-filesystem-over-raw-php` |
-| CORE-007 | Progressive enhancement / dual path behind flag | `shopware-architecture` → `progressive-enhancement.md` | **done** → `core-http-client-behind-flag` |
+| CORE-007 | Progressive enhancement / dual path behind flag | `sw-architecture` → `progressive-enhancement.md` | **done** → `core-http-client-behind-flag` |
 | CORE-021 | No new code paths calling deprecated APIs; move callers to replacement | `deprecations.md` | defer-on-trunk |
 | CORE-023 | Inline `// @deprecated tag:` for private cleanup (not method `@deprecated`) | `deprecations.md` | defer-on-trunk |
 | CORE-024 | Legacy tests for deprecated APIs; removable with flag/deprecation | `deprecations.md` | defer-on-trunk |
@@ -127,7 +127,7 @@ not tagged yet.
 | CORE-010 | Release docs: external perspective; separate API vs Core sections | `release-notes-and-adr.md` | **done** (documented) |
 | CORE-041, CORE-042, CORE-048 | `UPGRADE` = must third-party code change?; past tense; no repeated headings | `release-notes-and-adr.md` | **done** → `upgrade-entry-past-tense`, `release-info-no-duplicate-heading` |
 
-## Security (`shopware-security`) — ours only
+## Security (`sw-security`) — ours only
 
 | ID | Rule | Target | Eval |
 | -- | ---- | ------ | ---- |
@@ -139,12 +139,12 @@ not tagged yet.
 
 | ID | Rule (from PR) | Target | Eval |
 | -- | -------------- | ------ | ---- |
-| — | Follow `.github/PULL_REQUEST_TEMPLATE.md`; no extra PR sections | `shopware-pr-description` | defer-on-trunk |
+| — | Follow `.github/PULL_REQUEST_TEMPLATE.md`; no extra PR sections | `sw-pr-description` | defer-on-trunk |
 | — | Conventional PR title when requested | `pr-body-template.md` | defer-on-trunk |
-| — | Review/CI fixes → new commit; no amend/force-push unless asked | `shopware-pr-description` + `shopware-pr-review` | defer-on-trunk |
-| — | No AI-agent attribution trailers (`Co-authored-by`, …) | `shopware-pr-description` | **done** → `pr-no-ai-trailers` |
+| — | Review/CI fixes → new commit; no amend/force-push unless asked | `sw-pr-description` + `sw-pr-review` | defer-on-trunk |
+| — | No AI-agent attribution trailers (`Co-authored-by`, …) | `sw-pr-description` | **done** → `pr-no-ai-trailers` |
 
-## Review scope (`shopware-review-learnings`)
+## Review scope (`sw-review-learnings`)
 
 | ID | Rule (from PR) | Target | Eval |
 | -- | -------------- | ------ | ---- |
@@ -156,7 +156,7 @@ not tagged yet.
 
 | PR skill / rule | Reason |
 | --------------- | ------ |
-| `shopware-admin-js` | mined into our `shopware-admin-js`; defer short list on trunk |
+| `shopware-admin-js` | mined into our `sw-admin-js`; defer short list on trunk |
 | `shopware-knowledge-capture` | Overlaps our `AGENTS.md` / REGISTRY curation |
 | `sw-triage`, `sw-bugfixer`, `sw-review`, `nightly-triage` | Core gh-aw CI workflows; explicit invocation only since [#18365](https://github.com/shopware/shopware/pull/18365) |
 
@@ -168,9 +168,9 @@ Trunk commits after the 2026-10-13 pass that changed `.agents/`,
 
 | Core PR | Rule | Our target | Status |
 | ------- | ---- | ---------- | ------ |
-| [#21438](https://github.com/shopware/shopware/pull/21438) (f2bf3794), [#21343](https://github.com/shopware/shopware/pull/21343) (190d734b) | Observe events through an owned dispatcher (unit) or `EventHookDispatcher::on()` (integration); capture in the hook, assert afterwards; no runtime listeners on the shared `event_dispatcher` (`NoAssertionInEventHookRule`, `NoRuntimeListenerOnSharedEventDispatcherRule`) | `shopware-testing` → `test-shape-and-flags.md` | **done** → `event-hook-capture-then-assert` |
-| [#21572](https://github.com/shopware/shopware/pull/21572) (75b0a495) | Danger one-covers-class rule now checks every added or modified test file | `shopware-testing` → `core-platform-patterns.md` | **done** (wording; existing `one-covers-class-per-file`) |
-| [#21400](https://github.com/shopware/shopware/pull/21400) (8dc74f24), [#21139](https://github.com/shopware/shopware/pull/21139) (7ad011f1) | `Feature::throwIfActive()` for deprecated exception classes and framework callbacks; discovery methods return neutral values when the removal flag is active | `shopware-core-development` → `deprecations.md` | defer-on-trunk (documented; PHPStan-enforced) |
+| [#21438](https://github.com/shopware/shopware/pull/21438) (f2bf3794), [#21343](https://github.com/shopware/shopware/pull/21343) (190d734b) | Observe events through an owned dispatcher (unit) or `EventHookDispatcher::on()` (integration); capture in the hook, assert afterwards; no runtime listeners on the shared `event_dispatcher` (`NoAssertionInEventHookRule`, `NoRuntimeListenerOnSharedEventDispatcherRule`) | `sw-testing` → `test-shape-and-flags.md` | **done** → `event-hook-capture-then-assert` |
+| [#21572](https://github.com/shopware/shopware/pull/21572) (75b0a495) | Danger one-covers-class rule now checks every added or modified test file | `sw-testing` → `core-platform-patterns.md` | **done** (wording; existing `one-covers-class-per-file`) |
+| [#21400](https://github.com/shopware/shopware/pull/21400) (8dc74f24), [#21139](https://github.com/shopware/shopware/pull/21139) (7ad011f1) | `Feature::throwIfActive()` for deprecated exception classes and framework callbacks; discovery methods return neutral values when the removal flag is active | `sw-core-development` → `deprecations.md` | defer-on-trunk (documented; PHPStan-enforced) |
 | [#21599](https://github.com/shopware/shopware/pull/21599) (d10e3c4f) | Store API extension events may use arrow functions | `store-api-route-extension-event` | no change (skill text and grader do not constrain the callable) |
 | [#21177](https://github.com/shopware/shopware/pull/21177), [#21660](https://github.com/shopware/shopware/pull/21660), [#21444](https://github.com/shopware/shopware/pull/21444) | Regex `D` modifier fixes, DAL accessor notice guard, telemetry | — | skip (no guidance change) |
 | [#21541](https://github.com/shopware/shopware/pull/21541) | `backward-compatibility.md` and `http-cache-and-assets.md` guidelines (merged 2026-10-19) | WP7 phase B | unblocked; rules land with evals |
@@ -190,9 +190,9 @@ Contradictions with the `sw-review` guides in
 | Core PR | Why it matters here |
 | ------- | ------------------- |
 | [#21455](https://github.com/shopware/shopware/pull/21455) | `sw-review` guides with rule IDs; source of WP2 `core_guide_ids` and WP7. |
-| [#21627](https://github.com/shopware/shopware/pull/21627) | New PR template sections (What and why, How, Testing, Additional notes, Checklist); rewrite `shopware-pr-description/references/pr-body-template.md` on merge. |
+| [#21627](https://github.com/shopware/shopware/pull/21627) | New PR template sections (What and why, How, Testing, Additional notes, Checklist); rewrite `sw-pr-description/references/pr-body-template.md` on merge. |
 | [#21730](https://github.com/shopware/shopware/pull/21730) | Admin lint: no `.js` in `src`, no new mixins, `wrapComponentConfig()` required. WP0 item 7 waits for it. |
-| [#21722](https://github.com/shopware/shopware/pull/21722) | Admin reference implementations named in `AGENTS.md`; point `shopware-admin-js` at them on merge. |
+| [#21722](https://github.com/shopware/shopware/pull/21722) | Admin reference implementations named in `AGENTS.md`; point `sw-admin-js` at them on merge. |
 | [#21502](https://github.com/shopware/shopware/pull/21502) | `composer skills:enable` / `skills:disable`; document in `skill-resolution.md` on merge. |
 | [#20437](https://github.com/shopware/shopware/pull/20437) | Storefront component skill (still WIP). |
 
@@ -205,22 +205,22 @@ no rule without a demonstrated miss and an eval).
 
 | Core PR | Rule | Our target | Status |
 | ------- | ---- | ---------- | ------ |
-| [#20840](https://github.com/shopware/shopware/pull/20840) | No helper traits composed into unit test classes; use a static fixture class or a stub under `Stub/` (lifecycle behaviours allowed) | `shopware-testing` → `core-platform-patterns.md` | defer-on-trunk |
-| [#20863](https://github.com/shopware/shopware/pull/20863) | Sub-features link to their parent major; explicit env values and persisted toggles win over `FEATURE_ALL` and the parent major; set `V6_8_0_0=1` directly | `shopware-plugin-development` → `version-compatibility.md` | **done** (already consistent: we say `V6_8_0_0=1`, not `FEATURE_ALL`) |
-| [#21157](https://github.com/shopware/shopware/pull/21157) | Every new compiler pass gets its own class-level `@internal` | `shopware-core-development` | defer-on-trunk |
-| [#21026](https://github.com/shopware/shopware/pull/21026) | Twig-only template changes get no PHP integration test that renders Twig; a render without a Storefront request can cache empty request-dependent Twig globals | `shopware-storefront` (plugin storefront tests) | eval:TBD (root `AGENTS.md` covers trunk) |
+| [#20840](https://github.com/shopware/shopware/pull/20840) | No helper traits composed into unit test classes; use a static fixture class or a stub under `Stub/` (lifecycle behaviours allowed) | `sw-testing` → `core-platform-patterns.md` | defer-on-trunk |
+| [#20863](https://github.com/shopware/shopware/pull/20863) | Sub-features link to their parent major; explicit env values and persisted toggles win over `FEATURE_ALL` and the parent major; set `V6_8_0_0=1` directly | `sw-plugin-development` → `version-compatibility.md` | **done** (already consistent: we say `V6_8_0_0=1`, not `FEATURE_ALL`) |
+| [#21157](https://github.com/shopware/shopware/pull/21157) | Every new compiler pass gets its own class-level `@internal` | `sw-core-development` | defer-on-trunk |
+| [#21026](https://github.com/shopware/shopware/pull/21026) | Twig-only template changes get no PHP integration test that renders Twig; a render without a Storefront request can cache empty request-dependent Twig globals | `sw-storefront` (plugin storefront tests) | eval:TBD (root `AGENTS.md` covers trunk) |
 | [#21166](https://github.com/shopware/shopware/pull/21166) | German snippets: "Du" in the Administration, "Sie" in the Storefront; core snippet files named by language (`storefront.de.json`), not locale | — | skip (core translation files; plugin naming not verified) |
-| [#20482](https://github.com/shopware/shopware/pull/20482) | Admin deprecations: `Shopware.Feature.triggerDeprecationOrThrow` or the `deprecated: { version, comment }` option | `shopware-admin-js` | defer-on-trunk (core components only) |
-| [#18740](https://github.com/shopware/shopware/pull/18740), [#18684](https://github.com/shopware/shopware/pull/18684) | `CompletionGuard` / `setAutoExit(false)`; `StaticEntityRepository::of(...)` | `shopware-testing` | defer-on-trunk (already listed above) |
+| [#20482](https://github.com/shopware/shopware/pull/20482) | Admin deprecations: `Shopware.Feature.triggerDeprecationOrThrow` or the `deprecated: { version, comment }` option | `sw-admin-js` | defer-on-trunk (core components only) |
+| [#18740](https://github.com/shopware/shopware/pull/18740), [#18684](https://github.com/shopware/shopware/pull/18684) | `CompletionGuard` / `setAutoExit(false)`; `StaticEntityRepository::of(...)` | `sw-testing` | defer-on-trunk (already listed above) |
 | [#21445](https://github.com/shopware/shopware/pull/21445) | gh aw bump, CI engines on Sonnet 5.5 / Opus 5.5 | — | skip (CI) |
 
 ### Watch (open on 2026-10-13)
 
 | Core PR | Why it matters here |
 | ------- | ------------------- |
-| [#21541](https://github.com/shopware/shopware/pull/21541) | Adds `coding-guidelines/core/backward-compatibility.md` and `http-cache-and-assets.md`. Overlaps `shopware-change-impact` (shared cache key, assets) and `shopware-core-development` (deprecation + UPGRADE in the same PR). Re-mine and add defer pointers once merged. |
+| [#21541](https://github.com/shopware/shopware/pull/21541) | Adds `coding-guidelines/core/backward-compatibility.md` and `http-cache-and-assets.md`. Overlaps `sw-change-impact` (shared cache key, assets) and `sw-core-development` (deprecation + UPGRADE in the same PR). Re-mine and add defer pointers once merged. |
 | [#20437](https://github.com/shopware/shopware/pull/20437) | `shopware-storefront-component` skill. Would end "core has no storefront skill" and change the `core-overlay` profile in `skill-resolution.md`. |
-| [#21455](https://github.com/shopware/shopware/pull/21455) | `sw-review` topic guides with catch/ignore evals; a model for evals on `shopware-pr-review` and `shopware-review-learnings`. |
+| [#21455](https://github.com/shopware/shopware/pull/21455) | `sw-review` topic guides with catch/ignore evals; a model for evals on `sw-pr-review` and `sw-review-learnings`. |
 | [#21502](https://github.com/shopware/shopware/pull/21502) | `composer skills:enable` / `skills:disable` in the core checkout only. Plugin projects still use `npx skills remove` / `add`. |
 
 ### Layout conventions seen on trunk

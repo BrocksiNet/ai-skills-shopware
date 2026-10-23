@@ -1,4 +1,4 @@
-// Grader: review-route-defaults-changed-catch (shopware-security, SEC-007)
+// Grader: review-route-defaults-changed-catch (sw-security, SEC-007)
 // The released /store-api/swag-loyalty/rewards route switches from a public,
 // HTTP-cached route to `_loginRequired` and drops `_httpCache`. Guest clients
 // get 403 and every call misses the cache. Needs a major+ finding in src/

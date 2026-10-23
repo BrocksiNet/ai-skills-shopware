@@ -1,0 +1,4 @@
+interface:
+  display_name: "Shopware Architecture"
+  short_description: "Check new structures and silent breaks in Shopware architecture."
+  default_prompt: "Use $sw-architecture to check this Shopware change for architecture risks."

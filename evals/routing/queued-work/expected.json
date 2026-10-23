@@ -1,12 +1,12 @@
 {
-  "shopware-architecture": [
+  "sw-architecture": [
     "references/symfony-in-shopware.md"
   ],
-  "shopware-extension-review": [
-    "../shopware-architecture/references/symfony-in-shopware.md",
-    "../shopware-review-learnings/references/dal-and-performance.md"
+  "sw-extension-review": [
+    "../sw-architecture/references/symfony-in-shopware.md",
+    "../sw-review-learnings/references/dal-and-performance.md"
   ],
-  "shopware-review-learnings": [
+  "sw-review-learnings": [
     "references/dal-and-performance.md"
   ]
 }

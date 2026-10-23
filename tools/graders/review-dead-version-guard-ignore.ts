@@ -1,4 +1,4 @@
-// Grader: review-dead-version-guard-ignore (shopware-review-learnings, REV-015)
+// Grader: review-dead-version-guard-ignore (sw-review-learnings, REV-015)
 // SwagProductFeed supports ~6.6.0 || ~6.7.0 and hashes the feed payload with
 // Hasher behind class_exists(Hasher::class). Hasher arrived in 6.6.7.0, so
 // 6.6.0.0 to 6.6.6.1 take the fallback and the guard is needed. A minor+

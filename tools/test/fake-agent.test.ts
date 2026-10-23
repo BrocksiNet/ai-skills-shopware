@@ -32,8 +32,8 @@ async function session(env: NodeJS.ProcessEnv, skills: boolean): Promise<Session
   mkdirSync(cwd, { recursive: true });
   writeFileSync(join(cwd, 'start.txt'), 'start\n');
   if (skills) {
-    mkdirSync(join(cwd, '.claude/skills/shopware-testing'), { recursive: true });
-    mkdirSync(join(cwd, '.claude/skills/php-foundation'), { recursive: true });
+    mkdirSync(join(cwd, '.claude/skills/sw-testing'), { recursive: true });
+    mkdirSync(join(cwd, '.claude/skills/sw-php-foundation'), { recursive: true });
   }
   let out = '';
   let err = '';
@@ -74,10 +74,10 @@ describe('fake agent', () => {
   });
   test('skill and token logs', async () => {
     const present = await session({}, true);
-    assert.equal(read(join(present.dir, 'skills.log')), 'php-foundation\nshopware-testing\n');
+    assert.equal(read(join(present.dir, 'skills.log')), 'sw-php-foundation\nsw-testing\n');
     assert.equal(read(join(present.dir, 'usage.log')), '1200 200\n');
     const leak = await session({ FAKE_AGENT_LOAD: 'leak', FAKE_AGENT_USAGE: '5 6' }, false);
-    assert.equal(read(join(leak.dir, 'skills.log')), 'php-foundation\n');
+    assert.equal(read(join(leak.dir, 'skills.log')), 'sw-php-foundation\n');
     assert.equal(read(join(leak.dir, 'usage.log')), '5 6\n');
     const quiet = await session({ FAKE_AGENT_LOAD: 'none', FAKE_AGENT_USAGE: 'none' }, true);
     assert.deepEqual([read(join(quiet.dir, 'skills.log')), read(join(quiet.dir, 'usage.log'))], ['', 'missing']);

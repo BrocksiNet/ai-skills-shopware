@@ -1,0 +1,22 @@
+```json
+{
+  "findings": [
+    {
+      "rule_id": "REV-034",
+      "severity": "nit",
+      "file": "src/Listing/ListingCriteriaSubscriber.php",
+      "line": 31,
+      "summary": "The docblock is a bit long.",
+      "fix": "Shorten it."
+    },
+    {
+      "rule_id": "REV-013",
+      "severity": "minor",
+      "file": "src/Listing/ListingCriteriaSubscriber.php",
+      "line": 35,
+      "summary": "The docblock tells the history of the PR instead of describing the code.",
+      "fix": "Use @see for the test."
+    }
+  ]
+}
+```

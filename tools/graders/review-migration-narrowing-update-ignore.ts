@@ -1,4 +1,4 @@
-// Grader: review-migration-narrowing-update-ignore (shopware-plugin-development, PLG-030)
+// Grader: review-migration-narrowing-update-ignore (sw-plugin-development, PLG-030)
 // update() widens external_ref and adds a nullable column, both safe in a
 // non-destructive migration. A minor+ finding that names PLG-030 or calls it
 // narrowing, destructive or data loss is a false positive.

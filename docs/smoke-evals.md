@@ -50,16 +50,16 @@ For each task, the runner creates a temp workdir, copies the fixture, then:
   inside the workdir.
 - **OFF** — removes those directories so the agent sees no project skills.
 
-Default skills: `php-foundation`, `shopware-testing`, `shopware-review-learnings`.
+Default skills: `sw-php-foundation`, `sw-testing`, `sw-review-learnings`.
 
 Some tasks load extra skills via `evals/tasks/<task>/skills`:
 
 | Task | Extra skills beyond default |
 | ---- | --------------------------- |
-| `cache-tag-no-deprecated-event` | `shopware-plugin-development` |
-| `interface-di-repository` | `shopware-core-development` |
-| `phpstan-baseline-guardrail` | `shopware-core-development` |
-| `core-http-client-behind-flag` | `shopware-core-development` |
+| `cache-tag-no-deprecated-event` | `sw-plugin-development` |
+| `interface-di-repository` | `sw-core-development` |
+| `phpstan-baseline-guardrail` | `sw-core-development` |
+| `core-http-client-behind-flag` | `sw-core-development` |
 
 Tasks without a `skills` file use the default `SMOKE_SKILLS` only.
 
@@ -67,12 +67,12 @@ Tasks without a `skills` file use the default `SMOKE_SKILLS` only.
 
 | Task | Skill under test |
 | ---- | ---------------- |
-| `no-empty-explicit` | `php-foundation` — no `empty()` |
-| `backed-enum-over-constants` | `php-foundation` — backed enum |
-| `unit-test-passes` | `shopware-testing` — unit test shape |
-| `clock-interface-injection` | `php-foundation` — PSR-20 clock, no `time()` |
-| `unit-test-exception-object` | `shopware-testing` — `expectExceptionObject`, no message matcher |
-| `interface-di-repository` | `php-foundation` + core — repository interface, not concrete DAL |
+| `no-empty-explicit` | `sw-php-foundation` — no `empty()` |
+| `backed-enum-over-constants` | `sw-php-foundation` — backed enum |
+| `unit-test-passes` | `sw-testing` — unit test shape |
+| `clock-interface-injection` | `sw-php-foundation` — PSR-20 clock, no `time()` |
+| `unit-test-exception-object` | `sw-testing` — `expectExceptionObject`, no message matcher |
+| `interface-di-repository` | `sw-php-foundation` + core — repository interface, not concrete DAL |
 | `cache-tag-no-deprecated-event` | plugin dev — `CacheTagCollector`, not `*CacheTagsEvent` |
 | `phpstan-baseline-guardrail` | core dev — level + baseline regenerated together |
 | `core-http-client-behind-flag` | core dev — Symfony HttpClient behind `Feature::isActive`, legacy path kept |

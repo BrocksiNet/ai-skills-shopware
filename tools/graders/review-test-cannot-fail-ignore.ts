@@ -1,4 +1,4 @@
-// Grader: review-test-cannot-fail-ignore (shopware-testing, TEST-035)
+// Grader: review-test-cannot-fail-ignore (sw-testing, TEST-035)
 // The test asserts the captured event with assertInstanceOf before reading
 // its fields. A minor+ finding that names TEST-035 or says the test passes
 // without the event is a false positive.

@@ -6,8 +6,8 @@ import { after, describe, test } from 'node:test';
 import { validateRules } from '../src/validate-rules.ts';
 
 const REPO = resolve(import.meta.dirname, '../..');
-const SKILL = 'skills/shopware-testing/SKILL.md';
-const REF = 'skills/shopware-testing/references/shape.md';
+const SKILL = 'skills/sw-testing/SKILL.md';
+const REF = 'skills/sw-testing/references/shape.md';
 
 const tmp: string[] = [];
 after(() => {
@@ -24,7 +24,7 @@ interface CatalogJson {
 function rule(id: string, overrides: Entry = {}): Entry {
   return {
     id,
-    skill: 'shopware-testing',
+    skill: 'sw-testing',
     file: SKILL,
     title: `Rule ${id}`,
     status: 'active',
@@ -45,7 +45,7 @@ function fixture(edit: (files: Record<string, string>, catalog: CatalogJson) => 
     'evals/tasks/some-task/grade.sh': '',
   };
   const catalog: CatalogJson = {
-    prefixes: { TEST: 'shopware-testing', PLG: 'shopware-plugin-development' },
+    prefixes: { TEST: 'sw-testing', PLG: 'sw-plugin-development' },
     rules: [rule('TEST-001'), rule('TEST-002', { eval: null, eval_reason: 'Documented only.' })],
   };
   edit(files, catalog);
@@ -82,7 +82,7 @@ describe('validateRules', () => {
     assert.deepEqual(report.errors, []);
     assert.equal(report.active, 2);
     assert.equal(report.withEval, 1);
-    assert.deepEqual(report.bySkill, [{ skill: 'shopware-testing', active: 2, withEval: 1 }]);
+    assert.deepEqual(report.bySkill, [{ skill: 'sw-testing', active: 2, withEval: 1 }]);
   });
 
   const cases: [string, Parameters<typeof fixture>[0], string][] = [
@@ -103,9 +103,9 @@ describe('validateRules', () => {
     [
       'prefix of another skill',
       (_, c) => {
-        ruleAt(c, 0).skill = 'shopware-plugin-development';
+        ruleAt(c, 0).skill = 'sw-plugin-development';
       },
-      'TEST-001: prefix belongs to shopware-testing, not shopware-plugin-development',
+      'TEST-001: prefix belongs to sw-testing, not sw-plugin-development',
     ],
     [
       'unknown prefix',
@@ -168,9 +168,9 @@ describe('validateRules', () => {
     [
       'missing file',
       (_, c) => {
-        ruleAt(c, 0).file = 'skills/shopware-testing/nope.md';
+        ruleAt(c, 0).file = 'skills/sw-testing/nope.md';
       },
-      'TEST-001: file skills/shopware-testing/nope.md not found',
+      'TEST-001: file skills/sw-testing/nope.md not found',
     ],
     [
       'unknown audience',

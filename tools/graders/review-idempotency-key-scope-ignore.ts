@@ -1,4 +1,4 @@
-// Grader: review-idempotency-key-scope-ignore (shopware-security, SEC-008)
+// Grader: review-idempotency-key-scope-ignore (sw-security, SEC-008)
 // The same idempotent points import, but the store is keyed by the calling
 // integration or user plus the key and keeps a sha256 of the request body,
 // answering 422 on a mismatch. A minor+ finding that names SEC-008 or calls

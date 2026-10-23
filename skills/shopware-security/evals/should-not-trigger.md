@@ -1,8 +1,0 @@
-# shopware-security — should not trigger
-
-- Add OpenAPI schema paths for this Store-API route. (-> api-contracts or shopware-plugin-development)
-- Write a PHPUnit integration test (shopware-testing).
-- Decouple this core service with a feature flag (shopware-architecture).
-- Refactor empty() to explicit checks (php-foundation).
-- Fill the GitHub PR template for shopware/shopware (shopware-pr-description).
-- The cart total is wrong for a percentage discount. Fix it in CartProcessor. (-> shopware-php-code)

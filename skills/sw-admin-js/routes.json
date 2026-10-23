@@ -1,0 +1,56 @@
+{
+  "$comment": "Which reference to read for a change (plan WP4). paths_any: globs on changed files; anchors_any: regexes on added or removed lines; always: every change; on_demand: the task decides, the diff cannot. Render the SKILL.md table with node tools/bin/render-routes.ts.",
+  "exclude_paths": [
+    "**/*.md"
+  ],
+  "routes": [
+    {
+      "reference": "references/architecture.md",
+      "when": "You add a module, component override or ACL privilege.",
+      "paths_any": [
+        "**/Resources/app/administration/src/module/**",
+        "**/Resources/app/administration/src/**/acl/index.{js,ts}"
+      ],
+      "anchors_any": [
+        "Shopware\\.Module\\.register\\(",
+        "Shopware\\.Component\\.(override|extend|register)\\(",
+        "addPrivilegeMappingEntry\\(",
+        "system_config:(read|update)",
+        "enrichPrivileges\\("
+      ]
+    },
+    {
+      "reference": "references/extension-api.md",
+      "when": "You change a shipped component, template block or position identifier.",
+      "paths_any": [
+        "**/blocks-list.json"
+      ],
+      "anchors_any": [
+        "positionIdentifier",
+        "swDefinePublic\\(",
+        "Component\\.override\\("
+      ]
+    },
+    {
+      "reference": "references/testing.md",
+      "when": "You write or fix a Jest spec.",
+      "paths_any": [
+        "**/Resources/app/administration/**/*.spec.{js,ts}"
+      ],
+      "anchors_any": [
+        "shallowMount\\(",
+        "flushPromises\\("
+      ]
+    },
+    {
+      "reference": "references/flags-and-modern-web.md",
+      "when": "A change needs a feature flag, a deprecation or a modern web API.",
+      "anchors_any": [
+        "Shopware\\.Feature\\.isActive\\(",
+        "Shopware\\.Utils\\.debug\\.warn\\(",
+        "<dialog[ >]",
+        "\\bpopover="
+      ]
+    }
+  ]
+}

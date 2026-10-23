@@ -1,4 +1,4 @@
-// Grader: review-admin-position-identifier-ignore (shopware-admin-js, ADM-040)
+// Grader: review-admin-position-identifier-ignore (sw-admin-js, ADM-040)
 // The change adds a new swag-loyalty-detail-history position identifier and
 // its blocks-list.json entry, and keeps swag-loyalty-detail-sidebar. A minor+
 // finding that names ADM-040 or calls it a breaking change is a false positive.

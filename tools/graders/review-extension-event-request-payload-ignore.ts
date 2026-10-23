@@ -1,4 +1,4 @@
-// Grader: review-extension-event-request-payload-ignore (shopware-architecture, ARCH-005)
+// Grader: review-extension-event-request-payload-ignore (sw-architecture, ARCH-005)
 // The event gains an optional campaignCode property next to the existing
 // ones. A minor+ finding that names ARCH-005 or calls the event change
 // breaking is a false positive.

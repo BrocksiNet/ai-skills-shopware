@@ -11,7 +11,7 @@ right skill loads (and the wrong ones stay quiet). Cheap; runs on every PR via C
 in `--dry` mode (file presence + prompt parsing) and for real when an agent
 command is configured.
 
-Quotes around a prompt and a trailing note such as `(-> shopware-testing)` are
+Quotes around a prompt and a trailing note such as `(-> sw-testing)` are
 stripped before the prompt is sent, so the agent never sees the expected skill.
 
 Two ready adapters run each prompt in a fresh, empty workspace that only sees
@@ -262,7 +262,7 @@ Results land in `evals/.results/local-<timestamp>.jsonl`.
 
 Measured on 2026-10-20 with Claude Haiku (3 repeats): `prepare-plugin-for-6-8`
 went from 0/3 without the skill to 3/3 with it, and to 0/3 with a deliberately
-wrong rule in `shopware-plugin-development`, which turned the gate red.
+wrong rule in `sw-plugin-development`, which turned the gate red.
 
 ### Gate, diff and plan
 

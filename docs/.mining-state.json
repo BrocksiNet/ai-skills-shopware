@@ -1,4 +1,22 @@
 {
-  "last_sha": "1d686bd302dd66c0e10687f65cc5efdea20b06e7",
-  "last_date": "2026-10-21T08:58:23Z"
+  "shopware": {
+    "last_sha": "1d686bd302dd66c0e10687f65cc5efdea20b06e7",
+    "last_date": "2026-10-21T08:58:23Z"
+  },
+  "ai-coding-tools": {
+    "last_sha": "d6c2d130604fa23810fce2ba23e22a8d4a19203e",
+    "last_date": "2026-10-11T22:21:40Z"
+  },
+  "php-modernization": {
+    "last_sha": "26254d33113fc308065ad5c41c2ceac90f07c77e",
+    "last_date": "2026-10-22T21:19:33Z"
+  },
+  "shopware-cli": {
+    "last_sha": "88bbf65efa601a940e8128109516122236ce19be",
+    "last_date": "2026-10-23T07:10:00Z"
+  },
+  "fos-agent-skills": {
+    "last_sha": "5595b4cdf3b879ad477ced88c245ad296efeb4d5",
+    "last_date": "2026-03-05T14:24:07Z"
+  }
 }

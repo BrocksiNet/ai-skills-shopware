@@ -1,4 +1,4 @@
-// Grader: review-supported-range-ignore (shopware-plugin-development, PLG-001)
+// Grader: review-supported-range-ignore (sw-plugin-development, PLG-001)
 // The same switch to paidPartially(), but release 3.0.0 narrows
 // shopware/core to ~6.7.0 and says so in the changelog. Every allowed release
 // has the method. A minor+ finding that names PLG-001 or calls the method

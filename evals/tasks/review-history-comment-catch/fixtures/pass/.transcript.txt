@@ -1,0 +1,16 @@
+The filter itself matches core. The docblock is the problem.
+
+```json
+{
+  "findings": [
+    {
+      "rule_id": null,
+      "severity": "minor",
+      "file": "src/Listing/ListingCriteriaSubscriber.php",
+      "line": 33,
+      "summary": "The docblock narrates earlier revisions of the change and code removed again in review instead of describing the method.",
+      "fix": "Keep the first sentence and move the history into the PR body or commit message."
+    }
+  ]
+}
+```

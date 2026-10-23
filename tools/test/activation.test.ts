@@ -51,10 +51,10 @@ describe('prompt extraction', () => {
       '# Should trigger',
       '',
       '- Plain prompt',
-      '- "Quoted prompt" (-> shopware-testing)',
-      '- Prompt with a note (should load shopware-testing).',
+      '- "Quoted prompt" (-> sw-testing)',
+      '- Prompt with a note (should load sw-testing).',
       '- Keep (this part) of the prompt',
-      '- Ends on a skill (php-foundation)',
+      '- Ends on a skill (sw-php-foundation)',
       '  - nested items are not prompts',
       '* other bullets are not prompts',
     ].join('\n');
@@ -67,10 +67,10 @@ describe('prompt extraction', () => {
     ]);
   });
   test('a skill counts only as a whole entry', () => {
-    assert.equal(activated('shopware-testing\nphp-foundation\n', 'php-foundation'), true);
-    assert.equal(activated('shopware-testing, php-foundation', 'shopware-testing'), true);
-    assert.equal(activated('shopware-testing-extra', 'shopware-testing'), false);
-    assert.equal(activated('', 'shopware-testing'), false);
+    assert.equal(activated('sw-testing\nsw-php-foundation\n', 'sw-php-foundation'), true);
+    assert.equal(activated('sw-testing, sw-php-foundation', 'sw-testing'), true);
+    assert.equal(activated('shopware-testing-extra', 'sw-testing'), false);
+    assert.equal(activated('', 'sw-testing'), false);
   });
 });
 
@@ -79,7 +79,7 @@ describe('activation evals', () => {
     const r = await activation(ROOT);
     assert.equal(r.rc, 0, r.out);
     assert.match(r.out, /running in --dry mode/u);
-    assert.match(r.out, /^ {2}\[dry\] \(trigger\) shopware-testing <- /mu);
+    assert.match(r.out, /^ {2}\[dry\] \(trigger\) sw-testing <- /mu);
     assert.match(r.out, /pass=0 fail=0 missing-files=0 errors=0\n$/u);
   });
   test('scores trigger and no-trigger prompts, reports a missing file', async () => {

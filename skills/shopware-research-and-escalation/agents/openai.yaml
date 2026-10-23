@@ -1,4 +1,0 @@
-interface:
-  display_name: "Shopware Research"
-  short_description: "Research Shopware behavior and resolve uncertainty."
-  default_prompt: "Use $shopware-research-and-escalation to verify how Shopware handles this before we change it."

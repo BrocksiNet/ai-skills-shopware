@@ -1,7 +1,7 @@
 # Use-case: extension review
 
 For reviewing a plugin or app diff as a whole before it merges, ships or goes
-to the Store: `shopware-extension-review` picks the rules by changed path and
+to the Store: `sw-extension-review` picks the rules by changed path and
 reports findings with rule IDs and severities. It owns the workflow only; the
 rules stay in their topic skills and the review reads their references. A
 reference whose skill is not installed is skipped, so install the set.
@@ -13,31 +13,35 @@ reviews those on trunk.
 
 | Skill | Why |
 | ----- | --- |
-| `shopware-extension-review` | Workflow, severity scale, findings output. |
-| `shopware-plugin-development` | DAL, API contracts, cache tags, migrations, version compatibility. |
-| `shopware-app-development` | Manifest, permissions, app scripts. |
-| `shopware-security` | Secrets, route ACL and input, webhooks. |
-| `shopware-storefront` | Twig, theme and JS plugin public API, HTTP cache. |
-| `shopware-admin-js` | Admin architecture and extension API. |
-| `shopware-architecture` | Workers and services, extension mechanisms, DAL contracts. |
-| `shopware-review-learnings` | API-aware and DAL performance findings. |
-| `shopware-testing` | Test shape, integration tests, exception assertions. |
-| `shopware-change-impact` | The blast radius hand-off after the review. |
+| `sw-extension-review` | Workflow, severity scale, findings output. |
+| `sw-plugin-development` | DAL, API contracts, cache tags, migrations, version compatibility. |
+| `sw-app-development` | Manifest, permissions, app scripts. |
+| `sw-security` | Secrets, route ACL and input, webhooks. |
+| `sw-storefront` | Twig, theme and JS plugin public API, HTTP cache. |
+| `sw-admin-js` | Admin architecture and extension API. |
+| `sw-architecture` | Workers and services, extension mechanisms, DAL contracts. |
+| `sw-review-learnings` | API-aware and DAL performance findings. |
+| `sw-testing` | Test shape, integration tests, exception assertions. |
+| `sw-change-impact` | The blast radius hand-off after the review. |
+| `sw-skill-router` | Lists the skills and references a diff or plan needs (`/sw-skill-router`). |
+| `sw-help` | What every skill is for, with example prompts (`/sw-help`). |
 
 ## Install (one-liner)
 
 ```bash
 npx skills add BrocksiNet/ai-skills-shopware \
-  --skill shopware-extension-review \
-  --skill shopware-plugin-development \
-  --skill shopware-app-development \
-  --skill shopware-security \
-  --skill shopware-storefront \
-  --skill shopware-admin-js \
-  --skill shopware-architecture \
-  --skill shopware-review-learnings \
-  --skill shopware-testing \
-  --skill shopware-change-impact \
+  --skill sw-skill-router \
+  --skill sw-help \
+  --skill sw-extension-review \
+  --skill sw-plugin-development \
+  --skill sw-app-development \
+  --skill sw-security \
+  --skill sw-storefront \
+  --skill sw-admin-js \
+  --skill sw-architecture \
+  --skill sw-review-learnings \
+  --skill sw-testing \
+  --skill sw-change-impact \
   -a claude-code -a codex -a cursor
 ```
 

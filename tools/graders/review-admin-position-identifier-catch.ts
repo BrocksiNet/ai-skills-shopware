@@ -1,4 +1,4 @@
-// Grader: review-admin-position-identifier-catch (shopware-admin-js, ADM-040)
+// Grader: review-admin-position-identifier-catch (sw-admin-js, ADM-040)
 // The released detail page renames the swag-loyalty-detail-sidebar position
 // identifier and its blocks-list.json entry. Apps and plugins that render
 // into the old identifier silently disappear. Needs a major+ finding in the

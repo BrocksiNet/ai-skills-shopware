@@ -13,9 +13,9 @@ const task = (name: string, skills?: string): void => {
   writeFileSync(join(root, name, 'grade.sh'), '');
   if (skills !== undefined) writeFileSync(join(root, name, 'skills'), skills);
 };
-task('task-a', '# comment\nshopware-plugin-development\n\n');
+task('task-a', '# comment\nsw-plugin-development\n\n');
 task('task-b');
-task('task-c', 'shopware-admin-js\n');
+task('task-c', 'sw-admin-js\n');
 mkdirSync(join(root, 'not-a-task'));
 
 const opts = { maxTasks: 0, shards: 4 };
@@ -51,7 +51,7 @@ describe('eval plan', () => {
   test('a changed skill selects its tasks and tasks without a skills file', () => {
     const tasks = selectTasks(root, {
       ...opts,
-      changedFiles: ['skills/shopware-plugin-development/SKILL.md', 'README.md'],
+      changedFiles: ['skills/sw-plugin-development/SKILL.md', 'README.md'],
     });
     assert.deepEqual(tasks, ['task-a', 'task-b']);
   });

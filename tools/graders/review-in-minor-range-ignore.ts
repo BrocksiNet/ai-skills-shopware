@@ -1,4 +1,4 @@
-// Grader: review-in-minor-range-ignore (shopware-plugin-development, PLG-001)
+// Grader: review-in-minor-range-ignore (sw-plugin-development, PLG-001)
 // The same change, but composer.json already requires shopware/core
 // >=6.7.1 <6.8, and every allowed release has getPrimaryOrderTransaction().
 // A minor+ finding that names PLG-001 or calls the method missing is a false

@@ -1,4 +1,4 @@
-// Grader: review-admin-field-event-ignore (shopware-admin-js, ADM-044)
+// Grader: review-admin-field-event-ignore (sw-admin-js, ADM-044)
 // The change adds the same two fields bound with v-model:value, which works
 // on 6.5 (falls back to the change event) and 6.6 (update:value). A minor+
 // finding that names ADM-044 or calls the binding broken is a false

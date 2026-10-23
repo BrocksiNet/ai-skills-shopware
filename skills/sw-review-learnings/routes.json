@@ -1,0 +1,56 @@
+{
+  "$comment": "Which reference to read for a change (plan WP4). paths_any: globs on changed files; anchors_any: regexes on added or removed lines; always: every change; on_demand: the task decides, the diff cannot. Render the SKILL.md table with node tools/bin/render-routes.ts.",
+  "exclude_paths": [
+    "**/tests/**",
+    "**/Test/**",
+    "**/*.md"
+  ],
+  "routes": [
+    {
+      "reference": "references/api-aware.md",
+      "when": "The code serves Store-API or headless clients.",
+      "paths_any": [
+        "**/StoreApi/**/*.php",
+        "**/SalesChannel/**/*Route.php"
+      ],
+      "anchors_any": [
+        "store-api",
+        "StoreApiResponse",
+        "extends Abstract[A-Za-z]+Route\\b"
+      ]
+    },
+    {
+      "reference": "references/dal-and-performance.md",
+      "when": "The code queries the DAL, checks what a customer can see, runs on a hot path, or dispatches queued work.",
+      "anchors_any": [
+        "new Criteria\\(",
+        "MessageBusInterface",
+        "->dispatch\\(new [A-Za-z]+Message\\(",
+        "->addAssociation\\(",
+        "EqualsFilter\\(",
+        "->fetch(All|One|Associative|FirstColumn)[A-Za-z]*\\(",
+        "->searchIds\\("
+      ]
+    },
+    {
+      "reference": "references/version-guards.md",
+      "when": "The change adds or keeps a class_exists or method_exists check for Shopware API.",
+      "anchors_any": [
+        "(class|method|interface)_exists\\((\\\\?Shopware\\b|[A-Z][A-Za-z]+::class)"
+      ]
+    },
+    {
+      "reference": "references/code-comments.md",
+      "when": "The change adds or edits comments or docblocks that talk about earlier versions, removed code or the issue.",
+      "anchors_any": [
+        "^\\s*(//|#|\\*|/\\*).*\\b([Pp]reviously|[Oo]riginally|used to|no longer|[Ee]arlier (version|revision|approach)|[Bb]efore this (change|PR|fix)|this (PR|pull request)|was (changed|replaced|removed) (to|in|with)|instead of the old)\\b",
+        "^\\s*(//|#|\\*|/\\*).*\\(see #\\d+\\)"
+      ]
+    },
+    {
+      "reference": "references/change-scope.md",
+      "when": "A fix grows beyond the bug.",
+      "on_demand": true
+    }
+  ]
+}

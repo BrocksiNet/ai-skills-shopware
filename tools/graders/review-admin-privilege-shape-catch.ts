@@ -1,4 +1,4 @@
-// Grader: review-admin-privilege-shape-catch (shopware-admin-js, ADM-004)
+// Grader: review-admin-privilege-shape-catch (sw-admin-js, ADM-004)
 // SwagLoyalty supports 6.6 and 6.7. The change adds a tiers module whose
 // addPrivilegeMappingEntry passes a flat privileges object instead of roles
 // with privileges and dependencies per role. isPrivilegeMapping checks only

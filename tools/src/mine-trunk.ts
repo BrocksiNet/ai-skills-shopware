@@ -1,26 +1,24 @@
-// Trunk mining (plan WP8): the shopware/shopware trunk commits of a window
-// that touch the watched paths, with their deltas.
+// Drift mining (plan WP8, WP12 step 1): the commits of a window that touch
+// a source's watched paths, with their deltas. Sources: rules/sources.json.
 import { allPages, type GitHubApi } from './github.ts';
+import type { Source } from './sources.ts';
 import { commitDeltas, type CommitDeltas, type TrunkCommit, type TrunkFile } from './trunk-deltas.ts';
 import { compareText } from './text.ts';
 import { inSeries } from './series.ts';
 
 export const STATE_PATH = 'docs/.mining-state.json';
-export const TRUNK = 'shopware/shopware';
-const BRANCH = 'trunk';
-export const WATCHED = [
-  '.agents',
-  'coding-guidelines',
-  'src/Core/DevOps/StaticAnalyze',
-  '.github/PULL_REQUEST_TEMPLATE.md',
-];
+/** The source the state file described before it had one entry per source. */
+export const TRUNK_SOURCE = 'shopware';
 
-/** The trunk commit the last mining pass read up to, and its date. A
+/** The commit the last mining pass of a source read up to, and its date. A
  *  date without a time means "everything up to the end of that day". */
 export interface MiningState {
   last_sha: string;
   last_date: string;
 }
+
+/** Source ID -> its state. */
+export type MiningStates = Record<string, MiningState>;
 
 export interface Window {
   /** ISO 8601, inclusive. */
@@ -42,10 +40,14 @@ export interface MinedCommit {
 }
 
 export interface Mined {
+  source: Source;
   window: Window;
-  /** Trunk head at the end of the window: the next state. */
+  /** Branch head at the end of the window: the next state. */
   head: CommitRef;
   commits: MinedCommit[];
+  /** True when the source had no state: the pass only records where the
+   *  next one starts. */
+  first?: boolean;
 }
 
 type Json = Record<string, unknown>;
@@ -61,6 +63,14 @@ export function parseState(value: unknown): MiningState {
     throw new Error(`${STATE_PATH} needs last_sha and last_date strings`);
   }
   return { last_sha: value.last_sha, last_date: value.last_date };
+}
+
+/** The state file: one entry per source. The single-source shape it had
+ *  before WP12 reads as the `shopware` entry. */
+export function parseStates(value: unknown): MiningStates {
+  if (isRecord(value) && 'last_sha' in value) return { [TRUNK_SOURCE]: parseState(value) };
+  if (!isRecord(value)) throw new Error(`${STATE_PATH} must be an object`);
+  return Object.fromEntries(Object.entries(value).map(([id, state]) => [id, parseState(state)]));
 }
 
 /** The window after a mining state, up to `to`. */
@@ -98,8 +108,8 @@ function trunkFile(item: unknown): TrunkFile {
   return file;
 }
 
-async function commitDetail(api: GitHubApi, sha: string): Promise<TrunkCommit> {
-  const body = await api(`repos/${TRUNK}/commits/${sha}`);
+async function commitDetail(api: GitHubApi, source: Source, sha: string): Promise<TrunkCommit> {
+  const body = await api(`repos/${source.repo}/commits/${sha}`);
   const ref = commitRef(body);
   if (!isRecord(body) || !isRecord(body.commit) || !Array.isArray(body.files)) {
     throw new Error(`GitHub API: commit ${sha} has no files`);
@@ -109,33 +119,42 @@ async function commitDetail(api: GitHubApi, sha: string): Promise<TrunkCommit> {
   return { ...ref, title, files: files.map((f) => trunkFile(f)) };
 }
 
-const query = (w: Window, path?: string): string =>
-  `repos/${TRUNK}/commits?sha=${BRANCH}${path === undefined ? '' : `&path=${encodeURIComponent(path)}`}` +
+const query = (source: Source, w: Window, path: string): string =>
+  `repos/${source.repo}/commits?sha=${source.branch}&path=${encodeURIComponent(path)}` +
   `&since=${encodeURIComponent(w.from)}&until=${encodeURIComponent(w.to)}`;
 
-/** The newest trunk commit up to the end of the window. */
-export async function trunkHead(api: GitHubApi, w: Window): Promise<CommitRef> {
-  const body = await api(`repos/${TRUNK}/commits?sha=${BRANCH}&until=${encodeURIComponent(w.to)}&per_page=1`);
-  if (!Array.isArray(body) || body.length === 0) throw new Error('GitHub API: no trunk commit in the window');
+/** The newest commit on the source's branch up to the end of the window. */
+export async function branchHead(api: GitHubApi, source: Source, to: string): Promise<CommitRef> {
+  const body = await api(
+    `repos/${source.repo}/commits?sha=${source.branch}&until=${encodeURIComponent(to)}&per_page=1`,
+  );
+  if (!Array.isArray(body) || body.length === 0) throw new Error(`GitHub API: no ${source.id} commit in the window`);
   const items: unknown[] = body;
   return commitRef(items[0]);
 }
 
 /** The commits of the window that touch a watched path, oldest first. */
-export async function windowCommits(api: GitHubApi, w: Window): Promise<CommitRef[]> {
-  const lists = await inSeries(WATCHED, (path) => allPages(api, query(w, path)));
+export async function windowCommits(api: GitHubApi, source: Source, w: Window): Promise<CommitRef[]> {
+  const lists = await inSeries(source.paths, (path) => allPages(api, query(source, w, path)));
   const refs = new Map(lists.flat().map((item) => [commitRef(item).sha, commitRef(item)]));
   return [...refs.values()]
     .filter((r) => r.sha !== w.skip)
     .toSorted((a, b) => compareText(a.date, b.date) || compareText(a.sha, b.sha));
 }
 
-export async function mineTrunk(api: GitHubApi, w: Window): Promise<Mined> {
-  const head = await trunkHead(api, w);
-  const refs = await windowCommits(api, w);
+/** One source over a window. */
+export async function mineSource(api: GitHubApi, source: Source, w: Window): Promise<Mined> {
+  const head = await branchHead(api, source, w.to);
+  const refs = await windowCommits(api, source, w);
   const commits = await inSeries(refs, async (r) => {
-    const commit = await commitDetail(api, r.sha);
-    return { commit, deltas: commitDeltas(commit) };
+    const commit = await commitDetail(api, source, r.sha);
+    return { commit, deltas: commitDeltas(commit, source.extractor) };
   });
-  return { window: w, head, commits };
+  return { source, window: w, head, commits };
+}
+
+/** A source without a state starts at its branch head: nothing to read yet. */
+export async function firstPass(api: GitHubApi, source: Source, to: string): Promise<Mined> {
+  const head = await branchHead(api, source, to);
+  return { source, window: { from: head.date, to, skip: head.sha }, head, commits: [], first: true };
 }

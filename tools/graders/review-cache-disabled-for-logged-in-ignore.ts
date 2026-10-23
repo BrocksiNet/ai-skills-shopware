@@ -1,4 +1,4 @@
-// Grader: review-cache-disabled-for-logged-in-ignore (shopware-storefront, SF-013)
+// Grader: review-cache-disabled-for-logged-in-ignore (sw-storefront, SF-013)
 // The balance moves out of the cached page into a JS plugin that loads it
 // from the Store API after paint; the page stays cacheable. A minor+
 // finding that names SF-013 or says caching is switched off is a false

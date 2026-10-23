@@ -1,0 +1,83 @@
+{
+  "$comment": "Which reference to read for a change (plan WP4). paths_any: globs on changed files; anchors_any: regexes on added or removed lines; always: every change; on_demand: the task decides, the diff cannot. Render the SKILL.md table with node tools/bin/render-routes.ts.",
+  "exclude_paths": [
+    "**/tests/**",
+    "**/Test/**",
+    "**/*.md"
+  ],
+  "routes": [
+    {
+      "reference": "references/dal-usage.md",
+      "when": "You read or write data through the DAL.",
+      "paths_any": [
+        "**/*Definition.php",
+        "**/*Entity.php",
+        "**/*Collection.php"
+      ],
+      "anchors_any": [
+        "new Criteria\\(",
+        "EntityRepository",
+        "->search\\(",
+        "->upsert\\("
+      ]
+    },
+    {
+      "reference": "references/api-contracts.md",
+      "when": "You add or change a Store-API or Admin route, its response struct, or its OpenAPI schema.",
+      "paths_any": [
+        "**/StoreApi/**/*.php",
+        "**/Resources/Schema/**",
+        "**/Api/**/*Route.php"
+      ],
+      "anchors_any": [
+        "#\\[Route\\(",
+        "_routeScope"
+      ]
+    },
+    {
+      "reference": "references/cache-tags.md",
+      "when": "A change affects cached pages or needs cache tags (6.7+).",
+      "anchors_any": [
+        "CacheTagCollector",
+        "CacheTagsEvent",
+        "CacheInvalidator"
+      ]
+    },
+    {
+      "reference": "references/migrations.md",
+      "when": "You add or change a database migration.",
+      "paths_any": [
+        "**/Migration/Migration*.php"
+      ],
+      "anchors_any": [
+        "extends MigrationStep",
+        "updateDestructive\\("
+      ]
+    },
+    {
+      "reference": "references/version-compatibility.md",
+      "when": "The plugin must support more than one Shopware minor, or runs without a package it only suggests.",
+      "paths_any": [
+        "**/composer.json",
+        "**/Resources/config/services.xml",
+        "**/Resources/config/routes.xml"
+      ],
+      "anchors_any": [
+        "\"shopware/core\"",
+        "Feature::isActive\\(",
+        "InstalledVersions::isInstalled\\(",
+        "StorefrontRouteScope",
+        "extends StorefrontController"
+      ]
+    },
+    {
+      "reference": "references/symfony-first.md",
+      "when": "You are about to write code a Symfony component already provides.",
+      "anchors_any": [
+        "file_put_contents\\(",
+        "curl_init\\(",
+        "mkdir\\("
+      ]
+    }
+  ]
+}

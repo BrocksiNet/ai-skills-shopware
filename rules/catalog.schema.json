@@ -64,6 +64,19 @@
             }
           }
         },
+        "upstream": {
+          "type": "array",
+          "description": "Upstream skill sets the rule was learned from. The drift mapper ties a change at this place to the rule.",
+          "items": {
+            "type": "object",
+            "required": ["source", "path"],
+            "additionalProperties": false,
+            "properties": {
+              "source": { "type": "string", "description": "Source ID from rules/sources.json." },
+              "path": { "type": "string", "description": "Path#anchor in that repository; the anchor is a heading slug." }
+            }
+          }
+        },
         "core_guide_ids": {
           "type": "array",
           "items": { "type": "string" },

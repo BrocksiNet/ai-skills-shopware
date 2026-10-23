@@ -1,4 +1,4 @@
-// Grader: review-snippet-key-renamed-ignore (shopware-storefront, SF-012)
+// Grader: review-snippet-key-renamed-ignore (sw-storefront, SF-012)
 // The plugin adds a new snippet key and keeps every existing one. A minor+
 // finding that names SF-012 or calls it a breaking change is a false
 // positive.

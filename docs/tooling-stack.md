@@ -13,27 +13,27 @@ Install from this repo (profiles in [`skill-resolution.md`](skill-resolution.md)
 
 ```bash
 npx skills add BrocksiNet/ai-skills-shopware \
-  --skill php-foundation \
-  --skill shopware-architecture \
-  --skill shopware-security \
-  --skill shopware-core-development \
-  --skill shopware-testing \
-  --skill shopware-research-and-escalation \
-  --skill shopware-review-learnings \
-  --skill shopware-change-impact \
-  --skill shopware-pr-description \
-  --skill shopware-assistant-style \
-  --skill shopware-pr-review \
-  --skill shopware-podman-dev \
+  --skill sw-php-foundation \
+  --skill sw-architecture \
+  --skill sw-security \
+  --skill sw-core-development \
+  --skill sw-testing \
+  --skill sw-research-and-escalation \
+  --skill sw-review-learnings \
+  --skill sw-change-impact \
+  --skill sw-pr-description \
+  --skill sw-assistant-style \
+  --skill sw-pr-review \
+  --skill sw-podman-dev \
   -a cursor
 ```
 
-`shopware-podman-dev` picks the runner: **Podman** on a linked `~/shopware-dev`
+`sw-podman-dev` picks the runner: **Podman** on a linked `~/shopware-dev`
 tree, **shopware-cli** when `.shopware-project.yml` exists.
 
 If you use the `~/shopware-dev` hub, you do **not** need `npx skills add` per
 project — `sw-dev link` symlinks skills from **this repo's** `skills/` into
-`.cursor/`, `.claude/`, `.codex/`, and `.agents/`. Omit `shopware-podman-dev`
+`.cursor/`, `.claude/`, `.codex/`, and `.agents/`. Omit `sw-podman-dev`
 from `instances.json` if you do not use Podman.
 
 Install the CLI's own skills next to ours (do not copy them into this repo):

@@ -1,0 +1,14 @@
+```json
+{
+  "findings": [
+    {
+      "rule_id": null,
+      "severity": "nit",
+      "file": "src/Check/CategoryProbe.php",
+      "line": 23,
+      "summary": "The constructor could use promoted property docs instead of a separate docblock.",
+      "fix": "Optional."
+    }
+  ]
+}
+```

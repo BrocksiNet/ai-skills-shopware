@@ -1,4 +1,4 @@
-// Grader: review-dead-version-guard-catch (shopware-review-learnings, REV-015)
+// Grader: review-dead-version-guard-catch (sw-review-learnings, REV-015)
 // SwagProductFeed supports ~6.6.0 || ~6.7.0 and registers a new subscriber
 // behind class_exists(CacheInvalidator::class), with a comment that the class
 // came with the 6.7 cache rework. CacheInvalidator exists in every release

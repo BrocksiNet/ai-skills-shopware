@@ -1,4 +1,4 @@
-// Grader: linked-project-runs-in-container (shopware-podman-dev)
+// Grader: linked-project-runs-in-container (sw-podman-dev)
 // In a linked shopware-dev project, PHPUnit and PHPStan must run through
 // `podman compose exec web`, never on the host, never via docker, and without
 // a hand-picked -f compose file (COMPOSE_FILE in .env wins).

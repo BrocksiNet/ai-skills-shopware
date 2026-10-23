@@ -12,6 +12,8 @@ import {
   renderTable,
   routeErrors,
   selectReferences,
+  withDefaultExcludes,
+  type ChangedFile,
   type RouteFile,
 } from '../src/routes.ts';
 
@@ -163,5 +165,71 @@ describe('routeErrors', () => {
     const dir = skill(ok);
     writeFileSync(join(dir, 'routes.json'), '{');
     assert.match(routeErrors(dir, 's').join(), /s\/routes\.json:/u);
+  });
+});
+
+const RENAME = `diff --git a/tests/integration/FooTest.php b/tests/devops/FooTest.php
+similarity index 100%
+rename from tests/integration/FooTest.php
+rename to tests/devops/FooTest.php
+diff --git a/tests/integration/BarTest.php b/tests/devops/BarTest.php
+similarity index 90%
+rename from tests/integration/BarTest.php
+rename to tests/devops/BarTest.php
+--- a/tests/integration/BarTest.php
++++ b/tests/devops/BarTest.php
+@@ -1,2 +1,2 @@
+-namespace Old;
++namespace New;
+diff --git a/src/schema.sql b/src/schema.sql
+--- a/src/schema.sql
++++ b/src/schema.sql
+@@ -1,2 +1,1 @@
+--- a comment
++++ counter
+`;
+
+describe('parseDiff with renames', () => {
+  test('a renamed file is listed under both paths, the old one without lines', () => {
+    assert.deepEqual(parseDiff(RENAME), [
+      { path: 'tests/integration/FooTest.php', lines: [] },
+      { path: 'tests/devops/FooTest.php', lines: [] },
+      { path: 'tests/integration/BarTest.php', lines: [] },
+      { path: 'tests/devops/BarTest.php', lines: ['namespace Old;', 'namespace New;'] },
+      { path: 'src/schema.sql', lines: ['-- a comment', '++ counter'] },
+    ]);
+  });
+});
+
+const changed = (path: string): ChangedFile[] => [{ path, lines: ['use Connection;'] }];
+
+describe('exclude_paths', () => {
+  const routes: RouteFile = {
+    exclude_paths: ['**/tests/**', '**/*.md'],
+    routes: [
+      { reference: 'references/a.md', when: 'A.', anchors_any: ['Connection'] },
+      { reference: 'references/b.md', when: 'B.', paths_any: ['**/*.md'], exclude_paths: [] },
+    ],
+  };
+
+  test('the file default keeps a route quiet on tests and docs', () => {
+    const loaded = withDefaultExcludes(routes);
+    assert.deepEqual(selectReferences(loaded, changed('tests/unit/FooTest.php')), []);
+    assert.deepEqual(selectReferences(loaded, changed('src/Foo.php')), ['references/a.md']);
+  });
+
+  test('a route list of its own replaces the default, and [] opts out', () => {
+    assert.deepEqual(selectReferences(withDefaultExcludes(routes), changed('UPGRADE-6.8.md')), ['references/b.md']);
+  });
+
+  test('a bad exclude_paths is a shape error', () => {
+    const dir = mkdtempSync(join(tmpdir(), 'routes-exclude-'));
+    mkdirSync(join(dir, 'references'));
+    writeFileSync(join(dir, 'references', 'a.md'), '# a\n');
+    const route = { reference: 'references/a.md', when: 'A.', anchors_any: ['x'], exclude_paths: 'tests' };
+    writeFileSync(join(dir, 'routes.json'), JSON.stringify({ exclude_paths: [1], routes: [route] }));
+    const errors = routeErrors(dir, 's').join('\n');
+    assert.match(errors, /s\/routes\.json: exclude_paths must be a list of globs/u);
+    assert.match(errors, /routes\[0\]\.exclude_paths must be a list of globs/u);
   });
 });

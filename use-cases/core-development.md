@@ -13,25 +13,29 @@ etc. Install **delta overlay** from this repo:
 
 | Skill | Why |
 | ----- | --- |
-| `shopware-architecture` | Refactor decisions, progressive enhancement, DAL anti-patterns |
-| `shopware-security` | Secrets, ACL — not in core skills |
-| `shopware-research-and-escalation` | Verify against installed source |
-| `shopware-review-learnings` | Recurring review deltas |
-| `shopware-change-impact` | After a feature works: blast radius before ship |
-| `shopware-pr-review` | GitHub review thread triage |
-| `shopware-podman-dev` | Podman/MCP execution |
+| `sw-architecture` | Refactor decisions, progressive enhancement, DAL anti-patterns |
+| `sw-security` | Secrets, ACL — not in core skills |
+| `sw-research-and-escalation` | Verify against installed source |
+| `sw-review-learnings` | Recurring review deltas |
+| `sw-change-impact` | After a feature works: blast radius before ship |
+| `sw-pr-review` | GitHub review thread triage |
+| `sw-podman-dev` | Podman/MCP execution |
+| `sw-skill-router` | Lists the skills and references a diff or plan needs (`/sw-skill-router`). |
+| `sw-help` | What every skill is for, with example prompts (`/sw-help`). |
 
-Add `shopware-plugin-development` when editing `custom/plugins` in the monorepo.
+Add `sw-plugin-development` when editing `custom/plugins` in the monorepo.
 
 ```bash
 npx skills add BrocksiNet/ai-skills-shopware \
-  --skill shopware-architecture \
-  --skill shopware-security \
-  --skill shopware-research-and-escalation \
-  --skill shopware-review-learnings \
-  --skill shopware-change-impact \
-  --skill shopware-pr-review \
-  --skill shopware-podman-dev \
+  --skill sw-skill-router \
+  --skill sw-help \
+  --skill sw-architecture \
+  --skill sw-security \
+  --skill sw-research-and-escalation \
+  --skill sw-review-learnings \
+  --skill sw-change-impact \
+  --skill sw-pr-review \
+  --skill sw-podman-dev \
   -a claude-code -a codex -a cursor
 ```
 
@@ -41,33 +45,35 @@ Full platform skill set — core in-repo skills are **not** present:
 
 | Skill | Why |
 | ----- | --- |
-| `php-foundation` | Shared strict PHP 8.x base. |
-| `shopware-architecture` | Patterns, progressive enhancement, DAL boundaries. |
-| `shopware-security` | Secrets and ACL. |
-| `shopware-core-development` | Deprecations, release notes, PHPStan baseline. |
-| `shopware-testing` | PHPUnit standards. |
-| `shopware-research-and-escalation` | Research ladder. |
-| `shopware-review-learnings` | Recurring findings. |
-| `shopware-change-impact` | After a feature works: blast radius before ship. |
-| `shopware-pr-description` | GitHub PR body for shopware/shopware. |
-| `shopware-assistant-style` | Communication style. |
-| `shopware-pr-review` | Review comment triage. |
-| `shopware-podman-dev` | Podman/MCP execution. |
+| `sw-php-foundation` | Shared strict PHP 8.x base. |
+| `sw-architecture` | Patterns, progressive enhancement, DAL boundaries. |
+| `sw-security` | Secrets and ACL. |
+| `sw-core-development` | Deprecations, release notes, PHPStan baseline. |
+| `sw-testing` | PHPUnit standards. |
+| `sw-research-and-escalation` | Research ladder. |
+| `sw-review-learnings` | Recurring findings. |
+| `sw-change-impact` | After a feature works: blast radius before ship. |
+| `sw-pr-description` | GitHub PR body for shopware/shopware. |
+| `sw-assistant-style` | Communication style. |
+| `sw-pr-review` | Review comment triage. |
+| `sw-podman-dev` | Podman/MCP execution. |
 
 ```bash
 npx skills add BrocksiNet/ai-skills-shopware \
-  --skill php-foundation \
-  --skill shopware-architecture \
-  --skill shopware-security \
-  --skill shopware-core-development \
-  --skill shopware-testing \
-  --skill shopware-research-and-escalation \
-  --skill shopware-review-learnings \
-  --skill shopware-change-impact \
-  --skill shopware-pr-description \
-  --skill shopware-assistant-style \
-  --skill shopware-pr-review \
-  --skill shopware-podman-dev \
+  --skill sw-skill-router \
+  --skill sw-help \
+  --skill sw-php-foundation \
+  --skill sw-architecture \
+  --skill sw-security \
+  --skill sw-core-development \
+  --skill sw-testing \
+  --skill sw-research-and-escalation \
+  --skill sw-review-learnings \
+  --skill sw-change-impact \
+  --skill sw-pr-description \
+  --skill sw-assistant-style \
+  --skill sw-pr-review \
+  --skill sw-podman-dev \
   -a claude-code -a codex -a cursor
 ```
 
