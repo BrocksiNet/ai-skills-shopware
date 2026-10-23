@@ -101,7 +101,7 @@ index of every `shopware/shopware` release since 6.5.0.0:
 | ---- | ------- |
 | `api-facts` | Which Shopware API does this extension use that is missing, internal, deprecated or changed somewhere in its `composer.json` range? |
 | `api-diff` | Does this change break public API: PHP, routes, entity fields, feature flags or configuration? |
-| `check-breaks` | How well does `api-diff` find the breaks the UPGRADE files name? |
+| `check-breaks` | How well does `api-diff` find the breaks the UPGRADE files name? The confirmed breaks they miss are listed in [`undocumented-breaks.md`](undocumented-breaks.md). |
 
 A weekly workflow rebuilds the index and publishes it as the `api-index`
 release asset.
