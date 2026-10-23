@@ -1,0 +1,7 @@
+The page resets the store once on load and reads campaign through the store computed, so there is no local copy to go stale.
+
+```json
+{
+  "findings": []
+}
+```
