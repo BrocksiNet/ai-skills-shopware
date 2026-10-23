@@ -1,0 +1,16 @@
+The composable copies the mixin pattern: its state is shared across components, so it is a mixin in disguise.
+
+```json
+{
+  "findings": [
+    {
+      "rule_id": null,
+      "severity": "minor",
+      "file": "src/Resources/app/administration/src/app/composable/loyalty-points.ts",
+      "line": 3,
+      "summary": "This composable is a mixin in disguise, so it adds shared state the way a mixin does.",
+      "fix": "Keep the state inside each component."
+    }
+  ]
+}
+```

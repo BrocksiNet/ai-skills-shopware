@@ -1,0 +1,7 @@
+The composable keeps the loyalty state local to each badge. The loader resets the loading flag in finally, and the template reads the returned refs. I see no problem to report.
+
+```json
+{
+  "findings": []
+}
+```

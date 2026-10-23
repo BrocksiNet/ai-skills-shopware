@@ -1,0 +1,64 @@
+diff --git a/src/Resources/app/administration/src/app/mixin/loyalty-points.mixin.ts b/src/Resources/app/administration/src/app/mixin/loyalty-points.mixin.ts
+new file mode 100644
+--- /dev/null
++++ b/src/Resources/app/administration/src/app/mixin/loyalty-points.mixin.ts
+@@ -0,0 +1,22 @@
++const { Mixin } = Shopware;
++
++Mixin.register('loyalty-points', {
++    data() {
++        return {
++            loyaltyPoints: null,
++            loyaltyLoading: false,
++        };
++    },
++
++    methods: {
++        async loadLoyaltyPoints(customerId) {
++            this.loyaltyLoading = true;
++
++            try {
++                this.loyaltyPoints = await Shopware.Service('loyaltyPointsService').getBalance(customerId);
++            } finally {
++                this.loyaltyLoading = false;
++            }
++        },
++    },
++});
+diff --git a/src/Resources/app/administration/src/module/swag-loyalty/component/swag-loyalty-points-badge/index.ts b/src/Resources/app/administration/src/module/swag-loyalty/component/swag-loyalty-points-badge/index.ts
+new file mode 100644
+--- /dev/null
++++ b/src/Resources/app/administration/src/module/swag-loyalty/component/swag-loyalty-points-badge/index.ts
+@@ -0,0 +1,22 @@
++import template from './swag-loyalty-points-badge.html.twig';
++
++const { Component } = Shopware;
++
++Component.register('swag-loyalty-points-badge', {
++    template,
++
++    mixins: [
++        Shopware.Mixin.getByName('loyalty-points'),
++    ],
++
++    props: {
++        customerId: {
++            type: String,
++            required: true,
++        },
++    },
++
++    created() {
++        this.loadLoyaltyPoints(this.customerId);
++    },
++});
+diff --git a/src/Resources/app/administration/src/module/swag-loyalty/component/swag-loyalty-points-badge/swag-loyalty-points-badge.html.twig b/src/Resources/app/administration/src/module/swag-loyalty/component/swag-loyalty-points-badge/swag-loyalty-points-badge.html.twig
+new file mode 100644
+--- /dev/null
++++ b/src/Resources/app/administration/src/module/swag-loyalty/component/swag-loyalty-points-badge/swag-loyalty-points-badge.html.twig
+@@ -0,0 +1,5 @@
++{% block swag_loyalty_points_badge %}
++<span class="swag-loyalty-points-badge">
++    {{ loyaltyPoints ?? 0 }}
++</span>
++{% endblock %}
