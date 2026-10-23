@@ -1,0 +1,19 @@
+diff --git a/src/Core/Checkout/Cart/CartNormalizer.php b/src/Core/Checkout/Cart/CartNormalizer.php
+index 3f1a9c2..b7e04d8 100644
+--- a/src/Core/Checkout/Cart/CartNormalizer.php
++++ b/src/Core/Checkout/Cart/CartNormalizer.php
+@@ -1,9 +1,14 @@
+ <?php declare(strict_types=1);
+
+ namespace Shopware\Core\Checkout\Cart;
+
++use Shopware\Tests\Integration\Core\Checkout\Cart\CartNormalizerIntegrationTest;
++
+ /**
+  * Turns a cart into the array the storefront and the Store API return.
++ *
++ * @codeCoverageIgnore
++ * @see CartNormalizerIntegrationTest
+  */
+ final class CartNormalizer
+ {

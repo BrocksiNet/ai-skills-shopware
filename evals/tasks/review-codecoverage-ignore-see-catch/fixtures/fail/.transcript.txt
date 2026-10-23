@@ -1,0 +1,16 @@
+The @see import is a small style point in CartNormalizer.php.
+
+```json
+{
+  "findings": [
+    {
+      "rule_id": "TEST-033",
+      "severity": "nit",
+      "file": "src/Core/Checkout/Cart/CartNormalizer.php",
+      "line": 5,
+      "summary": "The use import of the integration test is only needed for the @see.",
+      "fix": "Write the @see with the leading-backslash FQCN and drop the use line."
+    }
+  ]
+}
+```

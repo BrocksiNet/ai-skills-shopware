@@ -674,8 +674,7 @@
       "title": "@codeCoverageIgnore points @see at the integration test by FQCN",
       "status": "active",
       "since": "2026-10-20",
-      "eval": null,
-      "eval_reason": "Style rule; core shopware-phpunit-tests owns it on trunk.",
+      "eval": "review-codecoverage-ignore-see-catch",
       "core_guide_ids": [],
       "audience": [
         "core"
