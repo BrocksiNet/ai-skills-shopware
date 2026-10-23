@@ -1,0 +1,16 @@
+The hand reset in created() and the copy in data() both bypass the store's own reset.
+
+```json
+{
+  "findings": [
+    {
+      "rule_id": "ADM-045",
+      "severity": "major",
+      "file": "src/Resources/app/administration/src/module/swag-loyalty/page/swag-loyalty-campaign-detail/index.js",
+      "line": 22,
+      "summary": "created() clears four store fields one by one instead of calling the store's $reset(), and data() keeps a copy of the campaign that goes stale when the store changes.",
+      "fix": "Call Shopware.Store.get('swagLoyaltyCampaign').$reset() once in created() and read campaign from the store through the existing computed."
+    }
+  ]
+}
+```

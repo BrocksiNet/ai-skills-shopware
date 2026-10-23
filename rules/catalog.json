@@ -3931,6 +3931,21 @@
       "defer_on_trunk": false
     },
     {
+      "id": "ADM-045",
+      "skill": "sw-admin-js",
+      "file": "skills/sw-admin-js/references/architecture.md",
+      "title": "Shared Administration state is reset and changed through its store",
+      "status": "active",
+      "since": "2026-10-23",
+      "eval": "review-admin-store-reset-catch",
+      "core_guide_ids": [],
+      "audience": [
+        "admin",
+        "plugin"
+      ],
+      "defer_on_trunk": false
+    },
+    {
       "id": "ARCH-001",
       "skill": "sw-architecture",
       "file": "skills/sw-architecture/references/symfony-in-shopware.md",
