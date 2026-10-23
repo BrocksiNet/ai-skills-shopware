@@ -1,0 +1,14 @@
+```json
+{
+  "findings": [
+    {
+      "rule_id": "IMP-005",
+      "severity": "minor",
+      "file": "src/Subscriber/CheckoutFinishSubscriber.php",
+      "line": 33,
+      "summary": "Summing the points on every finish page is an extra step for every shop, when a simpler setup would do.",
+      "fix": "Gate the points behind a setting."
+    }
+  ]
+}
+```

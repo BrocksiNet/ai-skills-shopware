@@ -1,0 +1,16 @@
+The points only show after a merchant turns on a setting that defaults to off and runs a backfill command by hand. Computing them from the order lines the finish page already has needs neither.
+
+```json
+{
+  "findings": [
+    {
+      "rule_id": "IMP-005",
+      "severity": "major",
+      "file": "src/Subscriber/CheckoutFinishSubscriber.php",
+      "line": 33,
+      "summary": "The points stay hidden until a new config setting is enabled, and old orders show none until the backfill command is run by hand.",
+      "fix": "Compute the points from the order's line items on the finish page, with no setting and no backfill command."
+    }
+  ]
+}
+```

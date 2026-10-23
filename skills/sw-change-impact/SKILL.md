@@ -45,7 +45,7 @@ change is acceptable for everyone else.
 4. **IMP-004** **One feature does not outweigh a slower shared path.** If the only design
    that "completes" the ticket slows checkout or listings for every shop, stop
    and narrow it. Say that out loud.
-5. **IMP-005** **Easier beats more complete.** A new setting, header, or ritual that only
+5. **Easier beats more complete.** A new setting, header, or ritual that only
    makes the feature work has made the shop harder. Prefer the change that
    removes a step.
 6. **IMP-006** **A local asset test does not prove production asset loading.** Theme
