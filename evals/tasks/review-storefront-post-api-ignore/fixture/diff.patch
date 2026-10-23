@@ -1,0 +1,112 @@
+diff --git a/src/Storefront/Controller/GiftWrapController.php b/src/Storefront/Controller/GiftWrapController.php
+new file mode 100644
+--- /dev/null
++++ b/src/Storefront/Controller/GiftWrapController.php
+@@ -0,0 +1,26 @@
++<?php declare(strict_types=1);
++
++namespace Swag\GiftWrap\Storefront\Controller;
++
++use Shopware\Core\System\SalesChannel\SalesChannelContext;
++use Shopware\Storefront\Controller\StorefrontController;
++use Swag\GiftWrap\Checkout\GiftWrapService;
++use Symfony\Component\HttpFoundation\Request;
++use Symfony\Component\HttpFoundation\Response;
++use Symfony\Component\Routing\Attribute\Route;
++
++#[Route(defaults: ['_routeScope' => ['storefront']])]
++class GiftWrapController extends StorefrontController
++{
++    public function __construct(private readonly GiftWrapService $giftWrap)
++    {
++    }
++
++    #[Route(path: '/checkout/gift-wrap', name: 'frontend.checkout.gift-wrap.add', methods: ['POST'])]
++    public function add(Request $request, SalesChannelContext $context): Response
++    {
++        $this->giftWrap->add((string) $request->request->get('lineItemId'), $context);
++
++        return $this->redirectToRoute('frontend.checkout.cart.page');
++    }
++}
+diff --git a/src/Core/Checkout/SalesChannel/GiftWrapOptionsRoute.php b/src/Core/Checkout/SalesChannel/GiftWrapOptionsRoute.php
+new file mode 100644
+--- /dev/null
++++ b/src/Core/Checkout/SalesChannel/GiftWrapOptionsRoute.php
+@@ -0,0 +1,21 @@
++<?php declare(strict_types=1);
++
++namespace Swag\GiftWrap\Core\Checkout\SalesChannel;
++
++use Shopware\Core\System\SalesChannel\SalesChannelContext;
++use Swag\GiftWrap\Checkout\GiftWrapService;
++use Symfony\Component\Routing\Attribute\Route;
++
++#[Route(defaults: ['_routeScope' => ['store-api']])]
++class GiftWrapOptionsRoute
++{
++    public function __construct(private readonly GiftWrapService $giftWrap)
++    {
++    }
++
++    #[Route(path: '/store-api/gift-wrap', name: 'store-api.gift-wrap.options', methods: ['GET'])]
++    public function load(SalesChannelContext $context): GiftWrapOptionsRouteResponse
++    {
++        return new GiftWrapOptionsRouteResponse($this->giftWrap->options($context));
++    }
++}
+diff --git a/src/Core/Checkout/SalesChannel/GiftWrapAddRoute.php b/src/Core/Checkout/SalesChannel/GiftWrapAddRoute.php
+new file mode 100644
+--- /dev/null
++++ b/src/Core/Checkout/SalesChannel/GiftWrapAddRoute.php
+@@ -0,0 +1,26 @@
++<?php declare(strict_types=1);
++
++namespace Swag\GiftWrap\Core\Checkout\SalesChannel;
++
++use Shopware\Core\System\SalesChannel\SalesChannelContext;
++use Swag\GiftWrap\Checkout\GiftWrapService;
++use Symfony\Component\HttpFoundation\JsonResponse;
++use Symfony\Component\HttpFoundation\Request;
++use Symfony\Component\HttpFoundation\Response;
++use Symfony\Component\Routing\Attribute\Route;
++
++#[Route(defaults: ['_routeScope' => ['store-api']])]
++class GiftWrapAddRoute
++{
++    public function __construct(private readonly GiftWrapService $giftWrap)
++    {
++    }
++
++    #[Route(path: '/store-api/checkout/gift-wrap', name: 'store-api.checkout.gift-wrap.add', methods: ['POST'])]
++    public function add(Request $request, SalesChannelContext $context): Response
++    {
++        $this->giftWrap->add((string) $request->request->get('lineItemId'), $context);
++
++        return new JsonResponse(null, Response::HTTP_NO_CONTENT);
++    }
++}
+diff --git a/src/Resources/config/services.xml b/src/Resources/config/services.xml
+index 4b2c9d1..8e7f0a3 100644
+--- a/src/Resources/config/services.xml
++++ b/src/Resources/config/services.xml
+@@ -5,6 +5,19 @@
+     <services>
+         <service id="Swag\GiftWrap\Checkout\GiftWrapService">
+             <argument type="service" id="Shopware\Core\Checkout\Cart\SalesChannel\CartService"/>
+         </service>
++
++        <service id="Swag\GiftWrap\Storefront\Controller\GiftWrapController">
++            <argument type="service" id="Swag\GiftWrap\Checkout\GiftWrapService"/>
++            <tag name="controller.service_arguments"/>
++        </service>
++
++        <service id="Swag\GiftWrap\Core\Checkout\SalesChannel\GiftWrapOptionsRoute">
++            <argument type="service" id="Swag\GiftWrap\Checkout\GiftWrapService"/>
++        </service>
++
++        <service id="Swag\GiftWrap\Core\Checkout\SalesChannel\GiftWrapAddRoute">
++            <argument type="service" id="Swag\GiftWrap\Checkout\GiftWrapService"/>
++        </service>
+     </services>
+ </container>

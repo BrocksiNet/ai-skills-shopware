@@ -1,0 +1,14 @@
+```json
+{
+  "findings": [
+    {
+      "rule_id": null,
+      "severity": "nit",
+      "file": "src/Storefront/Controller/GiftWrapController.php",
+      "line": 19,
+      "summary": "The options list could be a class constant instead of a method.",
+      "fix": "Optional."
+    }
+  ]
+}
+```

@@ -1548,8 +1548,7 @@
       "title": "Storefront actions have a Store-API equivalent",
       "status": "active",
       "since": "2026-10-20",
-      "eval": null,
-      "eval_reason": "Documented only; no eval yet.",
+      "eval": "review-storefront-post-api-catch",
       "core_guide_ids": [],
       "audience": [
         "plugin",
