@@ -933,6 +933,20 @@
           ]
         },
         {
+          "reference": "sw-review-learnings/references/feature-flags.md",
+          "when": "The change reads a Shopware feature flag, or an environment variable that may be one.",
+          "anchors_any": [
+            "getenv\\(",
+            "\\$_(SERVER|ENV)\\[",
+            "Feature::has\\("
+          ],
+          "exclude_paths": [
+            "**/tests/**",
+            "**/Test/**",
+            "**/*.md"
+          ]
+        },
+        {
           "reference": "sw-review-learnings/references/code-comments.md",
           "when": "The change adds or edits comments or docblocks that talk about earlier versions, removed code or the issue.",
           "anchors_any": [
@@ -1312,6 +1326,20 @@
           "when": "The change adds or keeps a class_exists or method_exists check for Shopware API.",
           "anchors_any": [
             "(class|method|interface)_exists\\((\\\\?Shopware\\b|[A-Z][A-Za-z]+::class)"
+          ],
+          "exclude_paths": [
+            "**/tests/**",
+            "**/Test/**",
+            "**/*.md"
+          ]
+        },
+        {
+          "reference": "sw-review-learnings/references/feature-flags.md",
+          "when": "The change reads a Shopware feature flag, or an environment variable that may be one.",
+          "anchors_any": [
+            "getenv\\(",
+            "\\$_(SERVER|ENV)\\[",
+            "Feature::has\\("
           ],
           "exclude_paths": [
             "**/tests/**",

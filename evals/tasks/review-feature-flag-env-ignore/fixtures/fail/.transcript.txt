@@ -1,0 +1,14 @@
+```json
+{
+  "findings": [
+    {
+      "rule_id": null,
+      "severity": "minor",
+      "file": "src/Subscriber/ProductListingSubscriber.php",
+      "line": 20,
+      "summary": "The flag check reads the flag from the environment, which bypasses the feature registry.",
+      "fix": "Read the flag through the Feature API."
+    }
+  ]
+}
+```
