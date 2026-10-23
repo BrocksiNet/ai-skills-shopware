@@ -1,0 +1,6 @@
+Shopware API this change adds, checked against 6.6.0.0 … 6.7.15.1 (92 releases of ~6.6.0 || ~6.7.0; api-index built 2026-10-22, newest 6.7.15.1):
+- storefront:@Storefront/storefront/layout/navigation/flyout.html.twig: @deprecated v6.7.0 in 6.6.4.0 … 6.6.10.29  [src/Resources/views/storefront/layout/navigation/flyout.html.twig:1]
+- storefront:@Storefront/storefront/layout/navigation/flyout.html.twig#layout_navigation_flyout_bar_category: @deprecated v6.7.0 in 6.6.4.0 … 6.6.10.29 (via storefront:@Storefront/storefront/layout/navigation/flyout.html.twig)  [src/Resources/views/storefront/layout/navigation/flyout.html.twig:3]
+- storefront:@Storefront/storefront/layout/navigation/flyout.html.twig: missing in 6.7.0.0 … 6.7.15.1  [src/Resources/views/storefront/layout/navigation/flyout.html.twig:1]
+- storefront:@Storefront/storefront/layout/navigation/flyout.html.twig#layout_navigation_flyout_bar_category: missing in 6.7.0.0 … 6.7.15.1  [src/Resources/views/storefront/layout/navigation/flyout.html.twig:3]
+These are facts from the source of each release, not findings. Check each one against the code before you report it.

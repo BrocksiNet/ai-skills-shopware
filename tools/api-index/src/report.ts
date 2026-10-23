@@ -6,17 +6,20 @@ import { join, relative } from 'node:path';
 import type { DiffLines } from './diff.ts';
 import { type Fact, factsFor, formatRuns, type Lookup, presentThroughout, releasesIn } from './facts.ts';
 import { isNode } from './node.ts';
+import { frontendUses, isFrontendFile } from './frontend-uses.ts';
+import { memberOwner } from './surfaces.ts';
 import { phpUses, type Use } from './uses.ts';
 
 const SKIP_DIRS = new Set(['vendor', 'node_modules', '.git', 'tests', 'Tests', 'test', 'Test']);
 
-function phpFiles(dir: string): string[] {
+/** PHP files, and the admin, storefront and template files the frontend reader wants. */
+function sourceFiles(dir: string, root: string): string[] {
   const out: string[] = [];
   for (const name of readdirSync(dir)) {
     const path = join(dir, name);
     if (statSync(path).isDirectory()) {
-      if (!SKIP_DIRS.has(name)) out.push(...phpFiles(path));
-    } else if (name.endsWith('.php')) out.push(path);
+      if (!SKIP_DIRS.has(name)) out.push(...sourceFiles(path, root));
+    } else if (name.endsWith('.php') || isFrontendFile(relative(root, path))) out.push(path);
   }
   return out;
 }
@@ -65,8 +68,13 @@ interface Read {
 function readExtension(dir: string): Read {
   // The extension's own code; tool and cache folders next to it are not.
   const root = existsSync(join(dir, 'src')) ? join(dir, 'src') : dir;
-  const out: Read = { files: phpFiles(root), failed: [], uses: [], unresolved: 0 };
+  const out: Read = { files: sourceFiles(root, dir), failed: [], uses: [], unresolved: 0 };
+  const frontend = new Map<string, string>();
   for (const file of out.files) {
+    if (!file.endsWith('.php')) {
+      frontend.set(relative(dir, file), readFileSync(file, 'utf8'));
+      continue;
+    }
     try {
       const result = phpUses(readFileSync(file, 'utf8'), relative(dir, file));
       out.uses.push(...result.uses);
@@ -75,6 +83,9 @@ function readExtension(dir: string): Read {
       out.failed.push(relative(dir, file));
     }
   }
+  const result = frontendUses(frontend);
+  out.uses.push(...result.uses);
+  out.failed.push(...result.failed);
   return out;
 }
 
@@ -136,11 +147,19 @@ function narrowTo(diff: DiffLines | undefined): ((use: Use) => boolean) | undefi
   return (use) => diff.added.get(use.file)?.has(use.line) === true;
 }
 
+/** PHP targets always; a frontend target when the index has it or its owner. */
+function fromShopware(lookup: Lookup, target: string): boolean {
+  if (target.startsWith('php:')) return true;
+  const owner = memberOwner(target);
+  return lookup.get(target) !== undefined || (owner !== undefined && lookup.get(owner) !== undefined);
+}
+
 export function factsOfDir(lookup: Lookup, dir: string, range: string, diff?: DiffLines): Report {
   const releases = releasesIn(lookup.timeline, range);
   const read = readExtension(dir);
   const byTarget = new Map<string, Use[]>();
-  for (const use of read.uses) byTarget.set(use.target, [...(byTarget.get(use.target) ?? []), use]);
+  for (const use of read.uses.filter((candidate) => fromShopware(lookup, candidate.target)))
+    byTarget.set(use.target, [...(byTarget.get(use.target) ?? []), use]);
   const inDiff = narrowTo(diff);
   const all = [...byTarget].flatMap(([target, list]) => symbolFacts(lookup, target, list, releases));
   attachGuards(all, read.uses, releases);

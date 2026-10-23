@@ -22,6 +22,25 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `check-breaks` measures `api-diff` against the breaks the 6.6, 6.7 and
   6.8 UPGRADE files name: 97.2 % recall, 97.1 % precision. The weekly
   index workflow runs it.
+- WP11 phase 4: the API index covers the admin and the storefront
+  (generator `api-index/0.4.0`). Admin: components with their props,
+  methods, emits, slots and template blocks, position identifiers and the
+  `Shopware` global, `@private` and `@deprecated` included. Storefront:
+  templates and blocks, and the JS plugins `main.js` registers with their
+  options and public methods. Also the Twig functions, filters and tags core
+  adds, and whether the admin and storefront build with webpack or Vite.
+- `api-diff` reports these surfaces (`admin`, `storefront`, `twig`,
+  `build`). `api-facts` reads an extension's admin overrides, storefront
+  templates, plugin overrides, Twig calls and admin `webpack.config.js`,
+  and finds an overridden block through the template's `sw_extends` chain
+  or the component it extends.
+- Three blind review pairs for `PLG-001` on frontend API core removed in
+  6.7: a storefront template, a storefront JS plugin and an admin block.
+
+### Fixed
+
+- The index timeline merges one release at a time; with phase 4 the full
+  build ran out of memory.
 
 ## [0.12.0] - 2026-10-22
 

@@ -1,0 +1,14 @@
+```json
+{
+  "findings": [
+    {
+      "rule_id": null,
+      "severity": "major",
+      "file": "src/Resources/views/storefront/layout/navigation/flyout.html.twig",
+      "line": 3,
+      "summary": "Core removed layout/navigation/flyout.html.twig in 6.7.0.0, so on every 6.7 release this override never renders, although composer.json allows ~6.7.0.",
+      "fix": "Extend the 6.7 navbar template for 6.7, or limit shopware/core to ~6.6.0."
+    }
+  ]
+}
+```

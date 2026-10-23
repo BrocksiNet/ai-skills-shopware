@@ -1,0 +1,30 @@
+```json
+{
+  "findings": [
+    {
+      "rule_id": "PLG-001",
+      "severity": "minor",
+      "file": "src/Resources/app/storefront/src/main.js",
+      "line": 7,
+      "summary": "Core removed the FlyoutMenu plugin and flyout-menu.plugin.js in 6.7.0.0, so on 6.7 the import fails and the storefront build breaks, although composer.json allows ~6.7.0.",
+      "fix": "Hook into the 6.7 navigation instead, or limit shopware/core to ~6.6.0."
+    },
+    {
+      "rule_id": "PLG-002",
+      "severity": "major",
+      "file": "src/Resources/app/storefront/src/main.js",
+      "line": 7,
+      "summary": "Core removed the FlyoutMenu plugin and flyout-menu.plugin.js in 6.7.0.0, so on 6.7 the import fails and the storefront build breaks, although composer.json allows ~6.7.0.",
+      "fix": "Hook into the 6.7 navigation instead, or limit shopware/core to ~6.6.0."
+    },
+    {
+      "rule_id": null,
+      "severity": "blocking",
+      "file": "composer.json",
+      "line": 8,
+      "summary": "Core removed the FlyoutMenu plugin and flyout-menu.plugin.js in 6.7.0.0, so on 6.7 the import fails and the storefront build breaks, although composer.json allows ~6.7.0.",
+      "fix": "Hook into the 6.7 navigation instead, or limit shopware/core to ~6.6.0."
+    }
+  ]
+}
+```

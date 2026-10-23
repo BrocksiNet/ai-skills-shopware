@@ -10,9 +10,8 @@
 import { parseArgs } from 'node:util';
 import { gzipSync } from 'node:zlib';
 import { listTags } from '../src/git.ts';
-import type { Snapshot } from '../src/model.ts';
 import { defaultCacheDir, snapshotFor, writeJson } from '../src/store.ts';
-import { mergeSnapshots, releaseTags } from '../src/timeline.ts';
+import { releaseTags, TimelineBuilder } from '../src/timeline.ts';
 
 function main(): number {
   const { values } = parseArgs({
@@ -37,19 +36,20 @@ function main(): number {
   const refs = tags.map((tag) => ({ ref: tag, label: tag }));
   if (values.trunk !== undefined) refs.push({ ref: values.trunk, label: 'trunk' });
   const started = performance.now();
-  const snapshots: Snapshot[] = [];
+  // Tags come sorted and trunk last, so the builder takes them in release order.
+  const builder = new TimelineBuilder();
   let built = 0;
   let failed = 0;
   for (const { ref, label } of refs) {
     const result = snapshotFor(repo, ref, cacheDir, label);
-    snapshots.push(result.snapshot);
+    builder.add(result.snapshot);
     if (result.built) {
       built += 1;
       process.stderr.write(`built ${label}: ${result.snapshot.items.length} items\n`);
     }
     failed += result.snapshot.failed.length;
   }
-  const timeline = mergeSnapshots(snapshots);
+  const timeline = builder.build();
   const json = JSON.stringify(timeline);
   const seconds = ((performance.now() - started) / 1000).toFixed(1);
   process.stdout.write(

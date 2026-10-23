@@ -1,0 +1,22 @@
+{
+    "name": "swag/hover-intent",
+    "description": "Hover intent for storefront menus",
+    "type": "shopware-platform-plugin",
+    "version": "2.0.0",
+    "license": "MIT",
+    "require": {
+        "shopware/core": "~6.6.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "Swag\\HoverIntent\\": "src/"
+        }
+    },
+    "extra": {
+        "shopware-plugin-class": "Swag\\HoverIntent\\SwagHoverIntent",
+        "label": {
+            "de-DE": "Hover-Intent",
+            "en-GB": "Hover intent"
+        }
+    }
+}

@@ -32,9 +32,12 @@ points at a replacement the extenders can use today: `CORE-063`.
   when only the method is new: `PLG-024`?
 - When `api-facts` output comes with the task, or the ai-skills-shopware
   tools are at hand (`node tools/api-index/bin/api-facts.ts --apply
-  diff.patch <extension>`), use its facts for the two questions above. They
-  are facts about Shopware's source per release, not findings: check each
-  against the diff before you report it.
+  diff.patch <extension>`), use its facts for the two questions above. It
+  also covers the admin components and blocks, storefront templates and
+  blocks, JS plugins and Twig functions the change overrides or calls; one
+  missing from a release of the range is `PLG-001` too. They are facts about
+  Shopware's source per release, not findings: check each against the diff
+  before you report it.
 - Does code that loads on every request use a package that `composer.json`
   only suggests, outside its guard: `PLG-032`?
 - Does an admin override replace a core method without `$super`:

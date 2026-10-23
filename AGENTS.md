@@ -78,7 +78,8 @@ tools/                        # repo tooling in TypeScript (Node 24, no build st
   test/*.test.ts              # node --test
   api-index/                  # public API index of shopware/shopware per release (own package: php-parser):
                               # bin/build.ts one ref, bin/timeline.ts all tags, bin/api-facts.ts an extension's facts,
-                              # bin/api-diff.ts public API changes between two refs, bin/check-breaks.ts api-diff vs known-breaks.json
+                              # bin/api-diff.ts public API changes between two refs, bin/check-breaks.ts api-diff vs known-breaks.json;
+                              # PHP, routes, entities, flags, config, admin, storefront, Twig and build surfaces
 
 scripts/
   validate-skills.sh          # structure, budgets, REGISTRY conflicts, rule IDs (wrapper for tools/bin/validate-skills.ts)

@@ -24,7 +24,10 @@ Check when an API arrived in the source of the oldest supported tag
 arrive in different releases. With the ai-skills-shopware tools,
 `node tools/api-index/bin/api-facts.ts <plugin>` lists, for every release
 in the range, the Shopware API the plugin uses that is missing, deprecated
-or internal there.
+or internal there: PHP classes and members, and the admin components and
+blocks, storefront templates, blocks and JS plugins, and Twig functions its
+overrides and templates rely on. A template block or plugin core removed is
+not an error: the override just stops working.
 
 ## Guarding version-specific code
 

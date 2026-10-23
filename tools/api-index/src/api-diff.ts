@@ -4,17 +4,10 @@
 // item (CORE-063). Items `@internal` or `@experimental` in the base are
 // skipped and counted. PHP signatures are left to core's `bc-check`; the PHP
 // surface reports removals only, labelled as also checked there.
-import type { Item, ItemKind, Snapshot } from './model.ts';
+import type { Item, Snapshot } from './model.ts';
+import { frontendChange, ownerOf, type Surface, SURFACES, surfaceOf } from './surfaces.ts';
 
-export type Surface = 'route' | 'entity' | 'feature' | 'config' | 'php';
-
-export const SURFACES: Surface[] = ['route', 'entity', 'feature', 'config', 'php'];
-
-export function surfaceOf(kind: ItemKind): Surface {
-  if (kind === 'route' || kind === 'feature' || kind === 'config') return kind;
-  if (kind === 'entity' || kind === 'field') return 'entity';
-  return 'php';
-}
+export { type Surface, SURFACES, surfaceOf };
 
 export type ChangeKind = 'removed' | 'changed' | 'deprecated';
 
@@ -86,15 +79,7 @@ function changeOf(base: Item, head: Item): string | undefined {
   if (base.kind === 'route') return routeChange(base, head);
   if (base.kind === 'field') return fieldChange(base.signature ?? '', head.signature ?? '');
   if (base.kind === 'config') return configChange(base, head);
-  return undefined;
-}
-
-/** The entity a field belongs to: `field:product.name` → `entity:product`. */
-function ownerOf(item: Item): string | undefined {
-  if (item.kind === 'field') return `entity:${item.id.slice('field:'.length).split('.')[0] ?? ''}`;
-  if (item.kind === 'config') return `config:${item.id.slice('config:'.length).split('.').slice(0, -1).join('.')}`;
-  if (item.id.startsWith('php:') && item.id.includes('::')) return item.id.split('::')[0];
-  return undefined;
+  return frontendChange(base, head);
 }
 
 /** Deprecated in the snapshot, by its own flag or its owner's. */
@@ -168,7 +153,7 @@ export function diffSnapshots(base: Snapshot, head: Snapshot, surfaces: Surface[
   const changes: Change[] = [];
   let skipped = 0;
   for (const item of base.items) {
-    const surface = surfaceOf(item.kind);
+    const surface = surfaceOf(item);
     if (!wanted.has(surface)) continue;
     if (item.flags.internal === true || item.flags.experimental !== undefined) {
       skipped += 1;
