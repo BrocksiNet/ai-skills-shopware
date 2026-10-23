@@ -56,6 +56,8 @@ export interface Signal {
   pr?: { number: number; title: string; merged_at: string };
   author?: { login: string; association: string };
   thread?: { replies: number; outdated: boolean };
+  /** State of the review a comment or body belongs to, e.g. CHANGES_REQUESTED. */
+  review?: { state: string };
   /** Filled by the mapper. */
   map: SignalMap[];
 }

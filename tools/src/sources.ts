@@ -1,5 +1,6 @@
-// The repositories the weekly drift job reads (plan WP12 step 1). Field
-// reference: rules/sources.schema.json.
+// The repositories the weekly drift job reads (plan WP12 step 1) and the
+// ones whose reviews the daily collector reads (step 3). Field reference:
+// rules/sources.schema.json.
 import { existsSync, readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { checkCatalog, readCatalog } from './catalog.ts';
@@ -76,6 +77,8 @@ function checkSource(v: unknown, i: number, known: Set<string> | undefined): { v
  *  are the skill folder names a `skills` entry may name. */
 export function checkSources(value: unknown, skills?: string[]): { sources: Source[]; errors: string[] } {
   if (!isRecord(value) || !Array.isArray(value.sources)) return { sources: [], errors: ['sources must be a list'] };
+  const unknown = Object.keys(value).filter((k) => !['$schema', 'sources', 'reviews'].includes(k));
+  if (unknown.length > 0) return { sources: [], errors: [`unknown top-level key(s): ${unknown.join(', ')}`] };
   const known = skills === undefined ? undefined : new Set(skills);
   const sources: Source[] = [];
   const errors: string[] = [];
@@ -88,6 +91,67 @@ export function checkSources(value: unknown, skills?: string[]): { sources: Sour
     else sources.push(checked.value);
   }
   return { sources, errors };
+}
+
+/** A repository whose merged-PR reviews the daily collector reads (plan
+ *  WP12 step 3). Private ones are collected locally only: their text never
+ *  goes into the public `review-signals` release. */
+export interface ReviewSource {
+  /** Signal `source` and the prefix of its monthly files. Never renamed. */
+  id: string;
+  repo: string;
+  /** Only PRs merged into this branch count. */
+  base: string;
+  private: boolean;
+}
+
+function checkReview(v: unknown, i: number): { value?: ReviewSource; errors: string[] } {
+  if (!isRecord(v)) return { errors: [`reviews[${i}] must be an object`] };
+  const label = isText(v.id) ? v.id : `reviews[${i}]`;
+  const errors: string[] = [];
+  if (!isText(v.id) || !ID.test(v.id)) errors.push(`${label}: id must match ${ID.source}`);
+  if (!isText(v.repo) || !REPO.test(v.repo)) errors.push(`${label}: repo must be owner/name`);
+  if (!isText(v.base)) errors.push(`${label}: base must be a non-empty string`);
+  if (typeof v.private !== 'boolean') errors.push(`${label}: private must be true or false`);
+  if (errors.length > 0 || !isText(v.id) || !isText(v.repo) || !isText(v.base)) return { errors };
+  return { value: { id: v.id, repo: v.repo, base: v.base, private: v.private === true }, errors };
+}
+
+/** The review sources of rules/sources.json; none when the list is absent.
+ *  `ids` are the drift source IDs a review source must not reuse. */
+export function checkReviewSources(value: unknown, ids: string[] = []): { reviews: ReviewSource[]; errors: string[] } {
+  if (!isRecord(value) || value.reviews === undefined) return { reviews: [], errors: [] };
+  if (!Array.isArray(value.reviews)) return { reviews: [], errors: ['reviews must be a list'] };
+  const taken = new Set(ids);
+  const reviews: ReviewSource[] = [];
+  const errors: string[] = [];
+  const list: unknown[] = value.reviews;
+  for (const [i, v] of list.entries()) {
+    const checked = checkReview(v, i);
+    errors.push(...checked.errors);
+    const review = checked.value;
+    if (review === undefined) continue;
+    if (taken.has(review.id)) errors.push(`${review.id}: duplicate source id`);
+    else {
+      taken.add(review.id);
+      reviews.push(review);
+    }
+  }
+  return { reviews, errors };
+}
+
+/** The review sources; throws when an entry is invalid. */
+export function loadReviewSources(root: string): ReviewSource[] {
+  const path = join(root, SOURCES_PATH);
+  if (!existsSync(path)) throw new Error(`${SOURCES_PATH} not found`);
+  const value: unknown = JSON.parse(readFileSync(path, 'utf8'));
+  const { sources } = checkSources(value);
+  const { reviews, errors } = checkReviewSources(
+    value,
+    sources.map((s) => s.id),
+  );
+  if (errors.length > 0) throw new Error(errors.join('; '));
+  return reviews;
 }
 
 /** rules/sources.json; throws when an entry is invalid. Skill names are not
@@ -112,7 +176,13 @@ export function sourceErrors(root: string, skills: string[]): string[] {
   const path = join(root, SOURCES_PATH);
   if (!existsSync(path)) return [];
   try {
-    const { sources, errors } = checkSources(JSON.parse(readFileSync(path, 'utf8')), skills);
+    const value: unknown = JSON.parse(readFileSync(path, 'utf8'));
+    const { sources, errors } = checkSources(value, skills);
+    const reviews = checkReviewSources(
+      value,
+      sources.map((s) => s.id),
+    );
+    errors.push(...reviews.errors);
     const ids = new Set(sources.map((s) => s.id));
     const upstream = checkCatalog(readCatalog(root)).catalog.rules.flatMap((r) =>
       (r.upstream ?? [])

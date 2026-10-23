@@ -1,6 +1,6 @@
 # Skill update automation plan (2026-10)
 
-Status: **accepted** (2026-10-23); phases 0 to 2 done 2026-10-23, phase 3 next · Author: BrocksiNet · Created: 2026-10-23
+Status: **accepted** (2026-10-23); phases 0 to 3 done 2026-10-23, phase 4 next · Author: BrocksiNet · Created: 2026-10-23
 
 Rules go stale because Shopware changes every week. Half of the upkeep is
 automated already: the weekly trunk mining issue and the weekly API index.
@@ -27,7 +27,7 @@ collects them.
 flowchart LR
   subgraph collect["Collect (CI, no model)"]
     GIT["Git sources<br/>trunk, upstream skill repos"]
-    REV["Merged-PR reviews<br/>shopware/shopware"]
+    REV["Merged-PR reviews<br/>shopware/shopware<br/>(SwagCommercial locally)"]
     IDX["API index<br/>(exists)"]
   end
   subgraph map["Map (CI, no model)"]
@@ -292,6 +292,52 @@ like everything else in the library, and links the PR as its source.
   phase 0 filter keeps: about 15 signals a day.
 - The GitHub API is stubbed in `tools/test/collect-reviews.test.ts`.
 
+### Step 3: what was built (2026-10-23)
+
+Built with the decisions below. Differences from the spec above:
+
+- **Every reviewer counts, trust is earned.** The collector keeps comments
+  from anyone but bots and the PR's author. `reviewers.json` gives each
+  reviewer a trust score: the share of their threads that went outdated,
+  pulled toward 0.5 for org members and 0.25 for others with a weight of
+  four comments. In the backfill, 904 of 913 kept core signals came from
+  members, so the wider gate costs nothing; the score is what tells
+  reviewers apart. Step 4 weights by it.
+- **Two review sources.** `rules/sources.json` has a `reviews` list:
+  `core-reviews` (`shopware/shopware`) and `commercial-reviews`
+  (`shopware/SwagCommercial`, private). This repository and its releases
+  are public, so a private source is collected only locally into the
+  git-ignored `.cache/review-signals/`. The collector refuses it in
+  Actions, and the drift issue leaves it out.
+- **One file per source and month**, `core-reviews-2026-10.jsonl`, not
+  `reviews-2026-10.jsonl`. The daily job downloads every asset before it
+  merges, so a backfill cannot overwrite a month, and stops when a
+  download fails. A core month is about 1 MB.
+- **Searches go a week at a time**, so a backfill never hits the 1000-result
+  cap of the search API. A week of core PRs takes about six queries.
+- **The review state is stored** (`review.state`, e.g. `CHANGES_REQUESTED`)
+  for step 4's "unless the review requested changes".
+- **`lines` are the added and removed lines** at the end of the hunk, at
+  most 30, without their `+`/`-` prefix.
+- **The drift issue has a "Review comments" section**: the week's signals
+  counted per skill and reference, with outdated counts and PR links,
+  mapped again with today's rules.
+
+Acceptance, on a live backfill over 2026-09-01..2026-10-20:
+
+| Measure | `core-reviews` | `commercial-reviews` |
+| ------- | -------------- | -------------------- |
+| Merged PRs | 684 | 192 |
+| GraphQL queries | 30 | 11 |
+| Signals kept | 913 | 197 |
+| Mapped to a skill | 496 | 92 |
+
+- The blocking Dynamic Access comment on #19917 maps to the reference that
+  holds `REV-035`. The history comments behind `REV-034` on #19917 and
+  #20855 are in the data; as in step 2, no route reaches them.
+- The GitHub API is stubbed in `tools/test/collect-reviews.test.ts` with
+  the two PRs as recorded on 2026-10-23.
+
 ## Step 4: suggest rules with a local command
 
 `node tools/bin/suggest-rules.ts` reads signals and proposes changes. It runs
@@ -407,7 +453,7 @@ enough good PRs to trust it.
 | 0 | **Done.** Measure: count maintainer review comments on trunk for September and October 2026, and how many pass the noise filter | none | S | none |
 | 1 | **Done.** Source list and per-source state | none | M | none |
 | 2 | **Done.** Signal format and mapper; drift issue grouped by rule | 1 | M | none |
-| 3 | Daily review collector and the `review-signals` release | 2 | M | none |
+| 3 | **Done.** Daily review collector and the `review-signals` release | 2 | M | none |
 | 4 | `suggest-rules` command | 3 | M | local |
 | 5 | `suggest-rules draft` | 4 | L | local |
 
@@ -434,15 +480,13 @@ in one place: sources, signals, mapping, suggestions, drafts, gate and
 merge. This plan then gets status **done** and links to that page instead
 of repeating it.
 
-## Open questions
+## Decisions (2026-10-23)
 
-1. **Storage.** A `review-signals` release asset (proposed) or an orphan
-   data branch with one commit per day. The release matches `api-index`;
-   the branch keeps history in git.
-2. **Who counts as a maintainer.** `MEMBER` and `OWNER` is simple but
-   includes everyone in the org. A list of reviewers per area is more
-   precise and has to be kept up to date.
-3. **More review sources.** Start with `shopware/shopware` only, or also
-   `shopware/shopware-cli` and `shopware/frontends`.
-4. **One issue or one per source.** One issue keeps one `/mined` comment.
-   Separate issues let different people own different sources.
+1. **Storage.** A `review-signals` release, like `api-index`.
+2. **Who counts as a maintainer.** Not membership alone: comment quality
+   matters, and a new employee or a long-time contributor can both be
+   right. Every reviewer is collected, and trust is earned over time from
+   their record (`reviewers.json`).
+3. **Review sources.** `shopware/shopware` and the private
+   `shopware/SwagCommercial`. The private one is collected locally only.
+4. **Issues.** One drift issue for all sources, reviews included.

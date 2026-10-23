@@ -22,6 +22,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   rule covers is listed as unmapped. `--signals` writes the mapped changes as
   JSON Lines for later tooling.
 - `PRD-001` and `PRD-008` record their trunk source, the PR template.
+- A daily review collector, `tools/bin/collect-reviews.ts`, turns review
+  comments and review bodies on merged PRs into signals mapped to skills
+  and rules. `.github/workflows/collect-reviews.yml` publishes the public
+  ones for `shopware/shopware` as the `review-signals` release, one file per
+  month. Private repositories such as `shopware/SwagCommercial` are only
+  collected locally into the git-ignored `.cache/review-signals/`.
+- Each reviewer gets a trust score from their own record: the share of
+  their comments the code changed after, starting from a prior that is
+  higher for org members. It lands in `reviewers.json` next to the signals.
+- The weekly drift issue has a "Review comments" section: the week's
+  review comments counted per skill and reference, with the PRs.
 
 ## [0.14.0] - 2026-10-23
 

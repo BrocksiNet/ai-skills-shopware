@@ -9,11 +9,15 @@ flowchart LR
   subgraph sources["Sources"]
     TRUNK["shopware/shopware trunk<br/>agent skills, guidelines,<br/>PHPStan rules, PR template"]
     UP["Upstream skill sets<br/>rules/sources.json"]
+    REV["Review comments<br/>on merged core PRs"]
     TAGS["Shopware releases"]
   end
   TRUNK -- weekly --> MAP["Map each change<br/>to skill and rule"]
   UP -- weekly --> MAP
+  REV -- daily --> MAP
   MAP --> DRIFT["Drift issue<br/>grouped by rule"]
+  MAP --> SIGNALS["review-signals release<br/>monthly JSON Lines"]
+  SIGNALS -- weekly --> DRIFT
   TAGS -- weekly --> INDEX["api-index release<br/>+ check-breaks"]
   DRIFT --> PR["Rule change + eval task"]
   INDEX --> FACTS["api-facts and api-diff<br/>use the new release"]
@@ -27,6 +31,7 @@ flowchart LR
 | Job | When | What it does |
 | --- | ---- | ------------ |
 | Drift mining ([`mine-trunk.yml`](../.github/workflows/mine-trunk.yml)) | weekly | Reads every source in [`rules/sources.json`](../rules/sources.json) since its last pass, maps each change to the skill and rule it touches, and opens a `trunk-drift` issue grouped by skill and rule. A `/mined` comment from a member moves [`.mining-state.json`](.mining-state.json) forward for every source. |
+| Review collector ([`collect-reviews.yml`](../.github/workflows/collect-reviews.yml)) | daily | Reads the review comments on PRs merged into `shopware/shopware` trunk since the last run, maps each to the skill and rule it touches, and publishes them as the `review-signals` release. See [Review comments](#review-comments). |
 | API index ([`api-index.yml`](../.github/workflows/api-index.yml)) | weekly | Rebuilds the public API index for every release since 6.5.0.0 plus trunk, publishes it as the `api-index` release asset, and runs `check-breaks` against the UPGRADE files. |
 | Model evals ([`evals.yml`](../.github/workflows/evals.yml)) | monthly, on dispatch, or with the `run-evals` label | Runs the A/B for the eval tasks and fails the gate when a skill makes results worse. |
 | Core PR watchlist | with each mining pass | Open core PRs that will change a rule, with a prepared branch where it pays off. See [`core-pr-17657-alignment.md`](core-pr-17657-alignment.md#watchlist). |
@@ -94,18 +99,91 @@ new PHPStan rule class, or a guideline heading no rule cites. They are the
 backlog for new rules. A modified rule class only appears when a rule cites
 it, so small fixes to other checks stay out.
 
+**Review comments** counts the review comments on core PRs merged in the
+week up to the report, per skill and reference, with how many went
+outdated and links to the PRs. It reads the `review-signals` release and
+maps the comments again with today's rules. Read the comments behind a busy
+row in the release; a row that keeps coming back is a candidate for a rule.
+
 The **Commits** section lists, per source, the commits with a change, diffs
 too large for the API, and the commits without one. Comment `/mined` once
 every change is handled.
 
-## Planned: review comments and drafted rules
+## Review comments
 
-Maintainer review comments on merged core PRs are the earliest place a
-recurring pattern shows up; both rules in #55 came from there. A daily job
-will collect them in the same format as the drift changes, and a local
-command will suggest new, updated and retired rules and draft the pull
-request. The plan, with measured volumes, is
-[`plans/2026-10-skill-update-automation.md`](plans/2026-10-skill-update-automation.md).
+Maintainer review comments on merged PRs are the earliest place a recurring
+pattern shows up; both rules in #55 came from there. The daily
+[`collect-reviews.yml`](../.github/workflows/collect-reviews.yml) job runs
+[`tools/bin/collect-reviews.ts`](../tools/bin/collect-reviews.ts) over the
+review sources in [`rules/sources.json`](../rules/sources.json):
+
+| Review source | Repository | Where it is collected |
+| ------------- | ---------- | --------------------- |
+| `core-reviews` | [`shopware/shopware`](https://github.com/shopware/shopware), PRs merged into `trunk` | Daily in CI, published as the `review-signals` release |
+| `commercial-reviews` | `shopware/SwagCommercial` (private), PRs merged into `trunk` | Only on a maintainer's machine, into `.cache/review-signals/` |
+
+**What it keeps.** The first comment of each review thread and each review
+body, from anyone but bots and the PR's author, once it has at least 40
+characters without `suggestion` blocks and HTML comments. Shorter ones are
+mostly typo fixes or "nit". Replies are counted, not stored. Each signal
+records whether its thread went outdated (the code under it changed later)
+and the state of its review, such as `CHANGES_REQUESTED`. Resolved is not
+stored: almost every thread on a merged PR is resolved.
+
+**Who counts.** Every reviewer, not only org members. Trust comes from a
+reviewer's record instead. `reviewers.json` lists, per reviewer, their
+comments, how many went outdated, their reviews and PRs, and a trust score
+from 0 to 1:
+
+```text
+trust = (outdated + 4 × prior) / (comments + 4)      prior: 0.5 for org members, 0.25 for everyone else
+```
+
+A new reviewer sits near the prior. After about ten comments their own
+share of comments the code followed decides. A long-time contributor
+outside the org can rank above a member, and a new employee starts no
+higher than any other member. The suggest step will weight comments by it.
+
+**Where the data lives.** The release `review-signals` holds one asset per
+source and month of merge, `core-reviews-2026-10.jsonl`, and
+`reviewers.json`. The newest merge time in the assets is where the next run
+starts, so there is no state file and no daily commit. Assets older than
+twelve months are deleted. Each line is a signal in the format of
+[`tools/src/signals.ts`](../tools/src/signals.ts), mapped like a drift
+change. The comment text is there for analysis only: a rule drafted from it
+is written in our own words and links the PR.
+
+Download a month, or collect yourself:
+
+```bash
+gh release download review-signals --pattern 'core-reviews-2026-10.jsonl' --dir .cache/review-signals
+node tools/bin/collect-reviews.ts                                  # every review source since the cache's newest merge
+node tools/bin/collect-reviews.ts --source core-reviews --since 2026-09-01 --until 2026-10-20
+node tools/bin/collect-reviews.ts --public --dir /tmp/review-signals   # what CI runs
+```
+
+Locally the collector uses `GH_TOKEN`, `GITHUB_TOKEN` or your `gh auth
+login`. A private source needs a login that can read it.
+
+**Private repositories stay private.** This repository is public, and so
+are its releases and issues. A private review source is never collected in
+GitHub Actions: the collector refuses it there, and the workflow passes
+`--public`. The drift issue leaves private sources out even when a local
+cache holds them. A rule that learns from a private review cites no
+private PR in public text.
+
+To add a review source, add an entry under `reviews` in
+`rules/sources.json`: `id` (never renamed, and not the ID of a drift
+source), `repo`, `base` and `private`. A public one is in the next daily
+run. For a backfill, start the workflow by hand with `since` and `until`.
+
+## Planned: suggested and drafted rules
+
+A local command will read the review signals and the drift issue, suggest
+new, updated and retired rules with evidence links, and draft the pull
+request with its eval task. The plan is
+[`plans/2026-10-skill-update-automation.md`](plans/2026-10-skill-update-automation.md),
+steps 4 and 5.
 
 ## How a change lands
 

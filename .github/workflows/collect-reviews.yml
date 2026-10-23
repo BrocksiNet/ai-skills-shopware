@@ -1,0 +1,98 @@
+name: collect-reviews
+
+# Daily review collector (plan WP12 step 3). Reads the PRs merged into the
+# base branch of every public review source in rules/sources.json since the
+# last run, keeps their review comments and review bodies as signals mapped
+# to skills and rules, and publishes them as assets of the `review-signals`
+# release: one JSON Lines file per source and month of merge, plus
+# reviewers.json with a trust score per reviewer.
+#
+#   - schedule (daily 03:00 UTC) and manual dispatch, with an optional
+#     backfill window.
+#   - Public review sources only (`--public`). Private ones, such as
+#     shopware/SwagCommercial, are collected on a maintainer's machine into
+#     the git-ignored .cache/review-signals/. Their text never goes into this
+#     public release, and the collector refuses them in Actions.
+#   - The newest merge time in the assets is where the next run starts, so
+#     there is no state file in the repo and no daily commit.
+#   - Monthly assets older than twelve months are deleted.
+#   - The release is a prerelease and never marked latest, so the skills'
+#     version check (tools/bin/check-update.ts) keeps reading the real
+#     release tags.
+#
+# No model calls and no secrets beyond GITHUB_TOKEN.
+
+on:
+  schedule:
+    - cron: "0 3 * * *" # daily 03:00 UTC
+  workflow_dispatch:
+    inputs:
+      since:
+        description: "Backfill from this day (YYYY-MM-DD). Empty: since the last run."
+        required: false
+      until:
+        description: "Backfill up to this day (YYYY-MM-DD). Empty: up to now."
+        required: false
+
+permissions:
+  contents: read
+
+concurrency: collect-reviews
+
+jobs:
+  collect:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v5
+
+      - uses: actions/setup-node@v5
+        with:
+          node-version: '24'
+
+      - name: Download the current assets
+        # A failed download must stop the run: uploading a store that is
+        # missing a month would overwrite that month's asset.
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          STORE="$RUNNER_TEMP/review-signals"
+          mkdir -p "$STORE"
+          if ! gh release view review-signals > /dev/null 2>&1; then
+            gh release create review-signals --prerelease --latest=false \
+              --title "Review signals" \
+              --notes "Review comments from merged PRs, collected daily by .github/workflows/collect-reviews.yml (plan WP12). Read by the drift issue and the local suggest command. Not a release of the skills."
+          fi
+          names="$(gh release view review-signals --json assets --jq '.assets[].name')"
+          if [ -n "$names" ]; then
+            gh release download review-signals --dir "$STORE" --clobber
+            for name in $names; do
+              [ -e "$STORE/$name" ] || { echo "::error::asset $name did not download"; exit 1; }
+            done
+          fi
+
+      - name: Collect
+        env:
+          GH_TOKEN: ${{ github.token }}
+          SINCE: ${{ inputs.since }}
+          UNTIL: ${{ inputs.until }}
+        run: |
+          set -o pipefail
+          args=(--public --dir "$RUNNER_TEMP/review-signals")
+          if [ -n "$SINCE" ]; then args+=(--since "$SINCE"); fi
+          if [ -n "$UNTIL" ]; then args+=(--until "$UNTIL"); fi
+          node tools/bin/collect-reviews.ts "${args[@]}" | tee "$RUNNER_TEMP/summary.txt"
+          { echo '```text'; cat "$RUNNER_TEMP/summary.txt"; echo '```'; } >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Publish the assets
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          STORE="$RUNNER_TEMP/review-signals"
+          shopt -s nullglob
+          gh release upload review-signals "$STORE"/*.jsonl "$STORE/reviewers.json" --clobber
+          # Months the collector expired are gone from the store.
+          for name in $(gh release view review-signals --json assets --jq '.assets[].name'); do
+            if [ ! -e "$STORE/$name" ]; then gh release delete-asset review-signals "$name" --yes; fi
+          done

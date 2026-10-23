@@ -44,10 +44,21 @@ jobs:
         with:
           node-version: '24'
 
+      - name: Download the review signals
+        # Written daily by collect-reviews.yml. Without the release yet, the
+        # report has no review section.
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          mkdir -p "$RUNNER_TEMP/review-signals"
+          if gh release view review-signals > /dev/null 2>&1; then
+            gh release download review-signals --dir "$RUNNER_TEMP/review-signals" --pattern '*.jsonl' || true
+          fi
+
       - name: Mine every source since its last state
         env:
           GH_TOKEN: ${{ github.token }}
-        run: node tools/bin/mine-trunk.ts report > "$RUNNER_TEMP/report.md"
+        run: node tools/bin/mine-trunk.ts report --reviews "$RUNNER_TEMP/review-signals" > "$RUNNER_TEMP/report.md"
 
       - uses: actions/upload-artifact@v4
         with:
