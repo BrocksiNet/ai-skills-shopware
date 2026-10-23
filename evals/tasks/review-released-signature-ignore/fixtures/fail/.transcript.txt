@@ -1,0 +1,14 @@
+```json
+{
+  "findings": [
+    {
+      "rule_id": "REV-036",
+      "severity": "minor",
+      "file": "src/Core/Content/Review/SalesChannel/ReviewSummaryRoute.php",
+      "line": 14,
+      "summary": "The new summary route's load() signature is a public API change and should go through a deprecation marker.",
+      "fix": "Add a NewRequiredParameter marker with a target version to the new route."
+    }
+  ]
+}
+```

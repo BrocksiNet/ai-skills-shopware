@@ -22,6 +22,14 @@ grow it as new findings recur.
   but the OpenAPI spec is not updated (or the route is not registered in the
   schema at all). Reviewers treat this as a blocker for public API changes —
   add the path, request/response shapes, and tags before merge.
+- **REV-036** **Released route and extension-point signatures are public API.** A parameter
+  added to a shipped route or extension point, or a method made less visible, breaks
+  every caller and subclass that already exists, so the change must not land silently.
+  Add a required parameter through the `NewRequiredParameter` marker with the target
+  version, and narrow visibility through the visibility-change marker, making the method
+  private only in the next major. A new, unreleased extension point takes its values
+  explicitly, with no default that a caller could omit by accident. Owning topic:
+  `sw-core-development` -> `references/deprecations.md`.
 
 ## TODO
 

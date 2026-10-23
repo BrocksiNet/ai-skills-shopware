@@ -1,0 +1,50 @@
+diff --git a/src/Core/Content/Review/SalesChannel/ReviewListRoute.php b/src/Core/Content/Review/SalesChannel/ReviewListRoute.php
+index 4b1c2d0..2d8e5b7 100644
+--- a/src/Core/Content/Review/SalesChannel/ReviewListRoute.php
++++ b/src/Core/Content/Review/SalesChannel/ReviewListRoute.php
+@@ -2,6 +2,7 @@
+
+ namespace Shopware\Core\Content\Review\SalesChannel;
+
++use Shopware\Core\Framework\Deprecation\BCChange\NewRequiredParameter;
+ use Shopware\Core\Framework\Routing\Annotation\Route;
+ use Shopware\Core\System\SalesChannel\SalesChannelContext;
+ use Symfony\Component\HttpFoundation\Request;
+@@ -10,11 +11,12 @@ use Symfony\Component\HttpFoundation\Request;
+ class ReviewListRoute
+ {
+     /**
+      * Lists the approved reviews of one product.
+      */
+-    public function load(string $productId, Request $request, SalesChannelContext $context): ReviewListResponse
++    #[NewRequiredParameter(version: 'v6.8.0', parameterName: 'locale')]
++    public function load(string $productId, string $locale, Request $request, SalesChannelContext $context): ReviewListResponse
+     {
+         $criteria = new Criteria();
+         $criteria->addFilter(new EqualsFilter('productId', $productId));
+
+         return $this->repository->search($criteria, $context);
+diff --git a/src/Core/Content/Review/SalesChannel/ReviewSummaryRoute.php b/src/Core/Content/Review/SalesChannel/ReviewSummaryRoute.php
+new file mode 100644
+index 0000000..5c1e9a4
+--- /dev/null
++++ b/src/Core/Content/Review/SalesChannel/ReviewSummaryRoute.php
+@@ -0,0 +1,18 @@
++<?php declare(strict_types=1);
++
++namespace Shopware\Core\Content\Review\SalesChannel;
++
++use Shopware\Core\Framework\Routing\Annotation\Route;
++use Shopware\Core\System\SalesChannel\SalesChannelContext;
++
++/**
++ * Summary of the approved reviews of one product. New in this change, not released yet.
++ */
++#[Route(path: '/store-api/product/{productId}/review-summary', name: 'store-api.product-review.summary', methods: ['POST'])]
++class ReviewSummaryRoute
++{
++    public function load(string $productId, string $locale, SalesChannelContext $context): ReviewSummaryResponse
++    {
++        return $this->summary->forProduct($productId, $locale, $context);
++    }
++}

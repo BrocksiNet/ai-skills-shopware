@@ -1,0 +1,17 @@
+diff --git a/src/Core/Content/Review/SalesChannel/ReviewListRoute.php b/src/Core/Content/Review/SalesChannel/ReviewListRoute.php
+index 4b1c2d0..9e7a3f1 100644
+--- a/src/Core/Content/Review/SalesChannel/ReviewListRoute.php
++++ b/src/Core/Content/Review/SalesChannel/ReviewListRoute.php
+@@ -10,11 +10,11 @@ use Symfony\Component\HttpFoundation\Request;
+ class ReviewListRoute
+ {
+     /**
+      * Lists the approved reviews of one product.
+      */
+-    public function load(string $productId, Request $request, SalesChannelContext $context): ReviewListResponse
++    public function load(string $productId, string $locale, Request $request, SalesChannelContext $context): ReviewListResponse
+     {
+         $criteria = new Criteria();
+         $criteria->addFilter(new EqualsFilter('productId', $productId));
+
+         return $this->repository->search($criteria, $context);

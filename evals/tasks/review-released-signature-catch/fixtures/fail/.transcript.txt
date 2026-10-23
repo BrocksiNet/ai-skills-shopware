@@ -1,0 +1,14 @@
+```json
+{
+  "findings": [
+    {
+      "rule_id": "REV-003",
+      "severity": "major",
+      "file": "src/Core/Content/Review/SalesChannel/ReviewListRoute.php",
+      "line": 15,
+      "summary": "The load() signature changed, so grep the callers of load() in src/ and tests/ before merging the new required locale parameter.",
+      "fix": "Run grep -rn 'load(' src/ tests/ and update each call site."
+    }
+  ]
+}
+```

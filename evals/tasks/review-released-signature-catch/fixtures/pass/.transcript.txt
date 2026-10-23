@@ -1,0 +1,14 @@
+```json
+{
+  "findings": [
+    {
+      "rule_id": "REV-036",
+      "severity": "major",
+      "file": "src/Core/Content/Review/SalesChannel/ReviewListRoute.php",
+      "line": 15,
+      "summary": "A required $locale parameter is added to the released load() of a Store-API route with no NewRequiredParameter marker, so existing callers and subclasses break without warning.",
+      "fix": "Mark the change with #[NewRequiredParameter(version: 'v6.8.0', parameterName: 'locale')] and keep the old call working until the major, or add a new route instead."
+    }
+  ]
+}
+```

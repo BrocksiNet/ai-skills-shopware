@@ -8,3 +8,4 @@
 - My subscriber falls back to running the export synchronously when the message dispatch fails. Any review findings?
 - My docblock explains what the earlier version of this PR did. Would a Shopware reviewer flag that?
 - Review my readiness check: it picks the first category a customer can see with searchIds. Anything a Shopware reviewer would flag?
+- I added a required parameter to the load() method of our released Store-API route. Will reviewers accept that?

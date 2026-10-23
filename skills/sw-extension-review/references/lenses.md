@@ -119,3 +119,5 @@ itself. Do not report them on a plugin or app diff:
 - `TEST-024` and `TEST-031`: tests for major feature flag behavior.
 - `CORE-064` and `CORE-065`: shims for core removals and gating code that
   ends at the major.
+- `REV-036`: signature changes to released core routes and extension points,
+  which go through core's BC markers. A plugin or app diff does not carry them.
