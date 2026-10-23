@@ -36,6 +36,7 @@ Pick the input:
 | --------- | ------- |
 | Work on a branch, committed or not | `route.mjs --task build` (diff against `origin/trunk` or `origin/main`, plus untracked files) |
 | Another base branch | `route.mjs --base origin/6.6.x --task review` |
+| A stacked pull request | `route.mjs --base <parent-branch> --task review` (the branch the PR targets, not trunk) |
 | A saved pull request diff | `gh pr diff 123 \| node route.mjs --diff - --task review` |
 | Nothing written yet | write the plan first, then `route.mjs --paths <every file the plan touches> --task build` |
 | A question with no files | `route.mjs --task answer` lists the skills that fit |
@@ -70,8 +71,9 @@ Pick `--task` from what the user asked for:
    work.
 
 The header names the base branch, the merge base and how many commits the
-branch has. A note about many changed files usually means a stale base:
-run `git fetch`, or pass `--base` or `--diff`.
+branch has. A note about many changed files or commits usually means a
+stale base or a stacked pull request: run `git fetch`, or pass the parent
+branch with `--base`, or pass `--diff`.
 
 Run it again when the plan changes or new files join the change. An empty
 **Load** section on a fresh branch is normal: plan the files, then route

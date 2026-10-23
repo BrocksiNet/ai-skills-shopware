@@ -49,7 +49,9 @@
             "enrichPrivileges\\("
           ],
           "exclude_paths": [
-            "**/*.md"
+            "**/*.md",
+            "**/Resources/app/storefront/**",
+            "src/Storefront/**"
           ]
         },
         {
@@ -64,7 +66,9 @@
             "Component\\.override\\("
           ],
           "exclude_paths": [
-            "**/*.md"
+            "**/*.md",
+            "**/Resources/app/storefront/**",
+            "src/Storefront/**"
           ]
         },
         {
@@ -78,7 +82,9 @@
             "flushPromises\\("
           ],
           "exclude_paths": [
-            "**/*.md"
+            "**/*.md",
+            "**/Resources/app/storefront/**",
+            "src/Storefront/**"
           ]
         },
         {
@@ -91,7 +97,9 @@
             "\\bpopover="
           ],
           "exclude_paths": [
-            "**/*.md"
+            "**/*.md",
+            "**/Resources/app/storefront/**",
+            "src/Storefront/**"
           ]
         }
       ]
@@ -160,7 +168,9 @@
           "exclude_paths": [
             "**/tests/**",
             "**/Test/**",
-            "**/*.md"
+            "**/*.md",
+            "**/Resources/app/**",
+            "**/*.{js,ts,scss}"
           ]
         },
         {
@@ -774,7 +784,9 @@
             "enrichPrivileges\\("
           ],
           "exclude_paths": [
-            "**/*.md"
+            "**/*.md",
+            "**/Resources/app/storefront/**",
+            "src/Storefront/**"
           ]
         },
         {
@@ -789,7 +801,9 @@
             "Component\\.override\\("
           ],
           "exclude_paths": [
-            "**/*.md"
+            "**/*.md",
+            "**/Resources/app/storefront/**",
+            "src/Storefront/**"
           ]
         },
         {
@@ -922,7 +936,7 @@
           "reference": "sw-review-learnings/references/code-comments.md",
           "when": "The change adds or edits comments or docblocks that talk about earlier versions, removed code or the issue.",
           "anchors_any": [
-            "^\\s*(//|#|\\*|/\\*).*\\b([Pp]reviously|[Oo]riginally|used to|no longer|[Ee]arlier (version|revision|approach)|[Bb]efore this (change|PR|fix)|this (PR|pull request)|was (changed|replaced|removed) (to|in|with)|instead of the old)\\b",
+            "^\\s*(//|#|\\*|/\\*).*\\b([Pp]reviously|[Oo]riginally|used to|no longer (used|needed|necessary|required|called|supported|exists?|works?|applies)|[Ee]arlier (version|revision|approach)|[Bb]efore this (change|PR|fix)|this (PR|pull request)|was (changed|replaced|removed) (to|in|with)|instead of the old)\\b",
             "^\\s*(//|#|\\*|/\\*).*(^|[\\s(])#\\d{5}\\b",
             "^\\s*(//|#|\\*|/\\*).*\\binstead would\\b"
           ],
@@ -1309,7 +1323,7 @@
           "reference": "sw-review-learnings/references/code-comments.md",
           "when": "The change adds or edits comments or docblocks that talk about earlier versions, removed code or the issue.",
           "anchors_any": [
-            "^\\s*(//|#|\\*|/\\*).*\\b([Pp]reviously|[Oo]riginally|used to|no longer|[Ee]arlier (version|revision|approach)|[Bb]efore this (change|PR|fix)|this (PR|pull request)|was (changed|replaced|removed) (to|in|with)|instead of the old)\\b",
+            "^\\s*(//|#|\\*|/\\*).*\\b([Pp]reviously|[Oo]riginally|used to|no longer (used|needed|necessary|required|called|supported|exists?|works?|applies)|[Ee]arlier (version|revision|approach)|[Bb]efore this (change|PR|fix)|this (PR|pull request)|was (changed|replaced|removed) (to|in|with)|instead of the old)\\b",
             "^\\s*(//|#|\\*|/\\*).*(^|[\\s(])#\\d{5}\\b",
             "^\\s*(//|#|\\*|/\\*).*\\binstead would\\b"
           ],
