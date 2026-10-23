@@ -1,0 +1,16 @@
+The version identifiers are four-part and the changelog sentence is prose.
+
+```json
+{
+  "findings": [
+    {
+      "rule_id": null,
+      "severity": "nit",
+      "file": "changelog/_unreleased/2026-10-23-deprecate-product-price-calculator.md",
+      "line": 6,
+      "summary": "The changelog entry could name the file of the replacement class.",
+      "fix": "Optionally add the path of ProductPriceCalculatorV2."
+    }
+  ]
+}
+```

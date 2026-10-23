@@ -1,0 +1,26 @@
+diff --git a/src/Service/ProductPriceCalculator.php b/src/Service/ProductPriceCalculator.php
+index 3b1f0c2..8d4e9a7 100644
+--- a/src/Service/ProductPriceCalculator.php
++++ b/src/Service/ProductPriceCalculator.php
+@@ -3,3 +3,4 @@
+ namespace Acme\ProductPricing\Service;
+
++use Shopware\Core\Framework\Feature;
+ use Shopware\Core\System\SalesChannel\SalesChannelContext;
+@@ -9,9 +10,16 @@ class ProductPriceCalculator
+     /**
++     * @deprecated tag:v6.8.0 - Will be removed. Use ProductPriceCalculatorV2::calculate() instead.
++     *
+      * @param iterable<SalesChannelProductEntity> $products
+      */
+     public function calculate(iterable $products, SalesChannelContext $context): void
+     {
++        Feature::triggerDeprecationOrThrow(
++            'v6.8.0',
++            Feature::deprecatedMethodMessage(self::class, __METHOD__, 'v6.8.0', 'ProductPriceCalculatorV2::calculate()'),
++        );
++
+         foreach ($products as $product) {
+             $this->calculatePrice($product, $context);
+         }
+     }

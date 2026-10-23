@@ -1,0 +1,24 @@
+The deprecation looks fine apart from the tag wording.
+
+```json
+{
+  "findings": [
+    {
+      "rule_id": "CORE-017",
+      "severity": "major",
+      "file": "src/Service/ProductPriceCalculator.php",
+      "line": 11,
+      "summary": "The @deprecated tag names v6.8.0 but does not name the replacement's flag.",
+      "fix": "Name ProductPriceCalculatorV2::calculate() in the tag."
+    },
+    {
+      "rule_id": null,
+      "severity": "minor",
+      "file": "src/Service/ProductPriceCalculator.php",
+      "line": 17,
+      "summary": "v6.8.0 may map to the wrong release.",
+      "fix": "Check the release number."
+    }
+  ]
+}
+```

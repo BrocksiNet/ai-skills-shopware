@@ -1,0 +1,16 @@
+The deprecation tag and the flag argument both use the three-part version `v6.8.0`. Shopware maps the version to the flag `v6.8.0.0`, so the three-part string does not match and the deprecation never fires.
+
+```json
+{
+  "findings": [
+    {
+      "rule_id": "CORE-078",
+      "severity": "major",
+      "file": "src/Service/ProductPriceCalculator.php",
+      "line": 11,
+      "summary": "The deprecation uses the three-part version v6.8.0 for its tag and its flag argument, which maps to no flag, so the warning never fires.",
+      "fix": "Write v6.8.0.0 in the @deprecated tag and in the triggerDeprecationOrThrow() call."
+    }
+  ]
+}
+```

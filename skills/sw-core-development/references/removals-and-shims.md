@@ -24,7 +24,15 @@ deprecation actionable and a removal cheap.
   `Feature::isActive()` branch; a DAL field that UPGRADE calls removed gets
   the `Deprecated` flag and a next-major migration. Unmarked code survives the
   major cleanup.
+- **CORE-078** **Write version-shaped identifiers in the four-part form.** Feature
+  flags in `Feature::` calls and `silentUntil`, `@deprecated tag:` markers and
+  deprecation tags take `vX.Y.Z.0`, such as `v6.8.0.0`. A three-part, minor-only
+  or unprefixed string maps to a different flag or to none, so the deprecation
+  never fires or fires for the wrong release. Static analysis should reject a
+  flag argument that does not match the four-part pattern, and its message names
+  the corrected form.
 
 ## Eval
 
 `review-deprecation-internal-replacement-catch` / `-ignore` (CORE-063).
+`review-version-identifier-catch` / `-ignore` (CORE-078).

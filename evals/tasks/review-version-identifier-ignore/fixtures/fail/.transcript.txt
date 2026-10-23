@@ -1,0 +1,16 @@
+The tag uses the four-part form, which will not match the release.
+
+```json
+{
+  "findings": [
+    {
+      "rule_id": null,
+      "severity": "minor",
+      "file": "src/Service/ProductPriceCalculator.php",
+      "line": 11,
+      "summary": "The tag uses the four-part v6.8.0.0; the three-part v6.8.0 is the form that matches the release.",
+      "fix": "Change the tag to v6.8.0."
+    }
+  ]
+}
+```
