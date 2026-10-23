@@ -1,0 +1,72 @@
+diff --git a/src/Core/Content/Product/SalesChannel/Review/ProductReviewSaveRoute.php b/src/Core/Content/Product/SalesChannel/Review/ProductReviewSaveRoute.php
+new file mode 100644
+index 0000000..8d2b7f4
+--- /dev/null
++++ b/src/Core/Content/Product/SalesChannel/Review/ProductReviewSaveRoute.php
+@@ -0,0 +1,30 @@
++<?php declare(strict_types=1);
++
++namespace Shopware\Core\Content\Product\SalesChannel\Review;
++
++use Shopware\Core\Framework\Log\Package;
++use Shopware\Core\System\SalesChannel\SalesChannelContext;
++use Shopware\Core\System\SalesChannel\SuccessResponse;
++use Symfony\Component\HttpFoundation\Request;
++use Symfony\Component\Routing\Attribute\Route;
++
++#[Package('inventory')]
++class ProductReviewSaveRoute
++{
++    public function __construct(private readonly ProductReviewSaver $saver)
++    {
++    }
++
++    #[Route(
++        path: '/store-api/product/{productId}/review',
++        name: 'store-api.product.review.save',
++        defaults: ['_routeScope' => ['store-api']],
++        methods: ['POST'],
++    )]
++    public function save(string $productId, Request $request, SalesChannelContext $context): SuccessResponse
++    {
++        $this->saver->save($productId, $request->request->all(), $context);
++
++        return new SuccessResponse();
++    }
++}
+diff --git a/src/Core/Framework/Api/ApiDefinition/Generator/Schema/StoreApi/paths/product-review.json b/src/Core/Framework/Api/ApiDefinition/Generator/Schema/StoreApi/paths/product-review.json
+new file mode 100644
+index 0000000..5a1c2e9
+--- /dev/null
++++ b/src/Core/Framework/Api/ApiDefinition/Generator/Schema/StoreApi/paths/product-review.json
+@@ -0,0 +1,28 @@
++{
++  "/store-api/product/{productId}/review": {
++    "post": {
++      "tags": ["Store API"],
++      "summary": "Save a review for a product",
++      "operationId": "saveProductReview",
++      "parameters": [
++        {
++          "name": "productId",
++          "in": "path",
++          "required": true,
++          "schema": { "type": "string" }
++        }
++      ],
++      "requestBody": {
++        "required": true,
++        "content": {
++          "application/json": {
++            "schema": { "type": "object" }
++          }
++        }
++      },
++      "responses": {
++        "200": {
++          "description": "Review saved"
++        }
++      }
++    }
++  }
++}

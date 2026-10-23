@@ -1,0 +1,14 @@
+```json
+{
+  "findings": [
+    {
+      "rule_id": "CORE-009",
+      "severity": "minor",
+      "file": "src/Core/Content/Product/SalesChannel/Review/ProductReviewSaveRoute.php",
+      "line": 21,
+      "summary": "The new route is not checked until ApiRoutesHaveASchemaTest runs in CI, so the schema test should be run before merge.",
+      "fix": "Run ApiRoutesHaveASchemaTest locally."
+    }
+  ]
+}
+```
