@@ -1,0 +1,79 @@
+diff --git a/UPGRADE-6.7.md b/UPGRADE-6.7.md
+--- a/UPGRADE-6.7.md
++++ b/UPGRADE-6.7.md
+@@ @@
+-## Removal of "sw-tabs":
+-The old "sw-tabs" component will be removed in the next major version. Please use the new "mt-tabs" component instead.
+-
+-We will provide you with a codemod (ESLint rule) to automatically convert your codebase to use the new "mt-tabs" component. In this specific component it cannot convert anything correctly, because the new "mt-tabs" component has a different API. You have to manually check and solve every "TODO" comment created by the codemod.
+-
+-If you don't want to use the codemod, you can manually replace all occurrences of "sw-tabs" with "mt-tabs".
+-
+-Following changes are necessary:
+-
+-### "sw-tabs" is removed
+-Replace all component names from "sw-tabs" with "mt-tabs"
+-
+diff --git a/UPGRADE-6.8.md b/UPGRADE-6.8.md
+--- a/UPGRADE-6.8.md
++++ b/UPGRADE-6.8.md
+@@ @@
++## `sw-tabs` automatic wrapper switch deferred
++
++The previously announced automatic switch from the deprecated Administration `sw-tabs` wrapper to `mt-tabs` when the `v6.8.0.0` feature flag is active will not happen. `sw-tabs` keeps rendering its legacy implementation regardless of the feature flag and remains deprecated for removal in 6.9.
++
++When an extension has already prepared for the Meteor API, it can opt in to the wrapper's temporary compatibility path with `use-meteor-component`. This renders the underlying `mt-tabs` implementation regardless of the `v6.8.0.0` feature flag:
++
++```html
++<sw-tabs use-meteor-component />
++```
++
++Prefer migrating directly to `mt-tabs`. The opt-in only helps validate a prepared migration while retaining the wrapper; it does not replace the migration required before 6.9.
++
+diff --git a/src/Administration/Resources/app/administration/src/app/component/base/sw-tabs/index.ts b/src/Administration/Resources/app/administration/src/app/component/base/sw-tabs/index.ts
+--- a/src/Administration/Resources/app/administration/src/app/component/base/sw-tabs/index.ts
++++ b/src/Administration/Resources/app/administration/src/app/component/base/sw-tabs/index.ts
+@@ @@
+- * @description Wrapper component for sw-tabs and mt-tabs. Autoswitches between the two components.
++ * @deprecated tag:v6.9.0 - Will be removed. Use `mt-tabs` instead.
++        /**
++         * Enables the temporary Meteor compatibility path.
++         */
++        useMeteorComponent: {
++            type: Boolean,
++            required: false,
++            default: false,
++        },
++
+-        useMeteorComponent() {
+-            // Use new meteor component in major
+-            if (Shopware.Feature.isActive('V6_8_0_0')) {
+-            Shopware.Utils.debug.warn(
++            if (Shopware.Feature.isActive('V6_8_0_0')) {
++                Shopware.Utils.debug.warn(
+diff --git a/src/Administration/Resources/app/administration/src/app/component/base/sw-tabs/sw-tabs.html.twig b/src/Administration/Resources/app/administration/src/app/component/base/sw-tabs/sw-tabs.html.twig
+--- a/src/Administration/Resources/app/administration/src/app/component/base/sw-tabs/sw-tabs.html.twig
++++ b/src/Administration/Resources/app/administration/src/app/component/base/sw-tabs/sw-tabs.html.twig
+@@ @@
+-{# needed becaues vue/compat removes them from $attrs #}
++{# @deprecated tag:v6.9.0 - Will be removed. Use mt-tabs instead. #}
++{# needed because vue/compat removes them from $attrs #}
+-<template v-if="useMeteorComponent">
++<template v-if="shouldUseMeteorComponent">
+diff --git a/src/Administration/Resources/app/administration/src/app/component/base/sw-tabs/sw-tabs.spec.js b/src/Administration/Resources/app/administration/src/app/component/base/sw-tabs/sw-tabs.spec.js
+--- a/src/Administration/Resources/app/administration/src/app/component/base/sw-tabs/sw-tabs.spec.js
++++ b/src/Administration/Resources/app/administration/src/app/component/base/sw-tabs/sw-tabs.spec.js
+@@ @@
+-    // @deprecated tag:v6.8.0 - The test will be removed with the legacy tabs implementation.
+-    it.deprecated('v6.8.0.0')('should render the deprecated tabs', async () => {
++    it('should render the deprecated tabs by default', async () => {
+-    it.activeFeatureFlags(['v6.8.0.0'])('should render the mt-tabs', async () => {
++    it('should render the mt-tabs with an opt-in before the v6.8.0.0 feature flag is active', async () => {
++        const wrapper = await createWrapper({
++            props: {
++                useMeteorComponent: true,
++            },
++        });
++
++        expect(wrapper.html()).toContain('mt-tabs');
++        expect(wrapper.html()).not.toContain('sw-tabs-deprecated');

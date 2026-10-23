@@ -1,0 +1,7 @@
+{
+  "repo": "shopware/shopware",
+  "pr": 19196,
+  "title": "test(checkout): stabilize CheckoutWithDigitalProduct on major",
+  "url": "https://github.com/shopware/shopware/pull/19196",
+  "expected": {}
+}

@@ -1,0 +1,20 @@
+{
+  "repo": "shopware/shopware",
+  "pr": 20275,
+  "title": "feat(core): Extend country advanced postal code pattern length to 1024",
+  "url": "https://github.com/shopware/shopware/pull/20275",
+  "expected": {
+    "sw-architecture/references/anti-patterns.md": [
+      "https://github.com/shopware/shopware/pull/20275#discussion_r3978650623"
+    ],
+    "sw-core-development/references/platform-architecture.md": [
+      "https://github.com/shopware/shopware/pull/20275#discussion_r3978650623"
+    ],
+    "sw-core-development/references/service-architecture.md": [
+      "https://github.com/shopware/shopware/pull/20275#discussion_r3978650623"
+    ],
+    "sw-plugin-development/references/migrations.md": [
+      "https://github.com/shopware/shopware/pull/20275#discussion_r3978650623"
+    ]
+  }
+}

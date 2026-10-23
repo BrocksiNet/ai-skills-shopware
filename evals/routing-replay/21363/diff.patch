@@ -1,0 +1,83 @@
+diff --git a/RELEASE_INFO-6.7.md b/RELEASE_INFO-6.7.md
+--- a/RELEASE_INFO-6.7.md
++++ b/RELEASE_INFO-6.7.md
+@@ @@
++### `ProductCartDataContextHashEvent` for state that product cart data depends on
++
++The data context hash of the cart products only covers the sales channel context and the tax rules.
++The cart reloads product data only when this hash changes, so extensions whose product data or prices depend on other state get stale cart data.
++Listeners can add parts to this event to include additional state in the hash for every state outside the sales channel context to force a reload of product data when that state changes.
+diff --git a/src/Core/Checkout/DependencyInjection/cart.php b/src/Core/Checkout/DependencyInjection/cart.php
+--- a/src/Core/Checkout/DependencyInjection/cart.php
++++ b/src/Core/Checkout/DependencyInjection/cart.php
+@@ @@
+-use Shopware\Core\Content\Product\ProductTypeRegistry;
+-            service(ProductTypeRegistry::class),
++            service('event_dispatcher'),
+diff --git a/src/Core/Content/Product/Cart/ProductCartProcessor.php b/src/Core/Content/Product/Cart/ProductCartProcessor.php
+--- a/src/Core/Content/Product/Cart/ProductCartProcessor.php
++++ b/src/Core/Content/Product/Cart/ProductCartProcessor.php
+@@ @@
++use Shopware\Core\Content\Product\Events\ProductCartDataContextHashEvent;
++use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+-        private readonly Connection $connection
++        private readonly Connection $connection,
++        private readonly EventDispatcherInterface $eventDispatcher,
+-            $hash = $this->getDataContextHash($context);
++            $hash = $this->getDataContextHash($data, $original, $context, $behavior);
+-    private function getDataContextHash(SalesChannelContext $context): string
++    private function getDataContextHash(CartDataCollection $data, Cart $original, SalesChannelContext $context, CartBehavior $behavior): string
+-        return Hasher::hash([$contextHash, $activeTaxRules]);
++        $event = new ProductCartDataContextHashEvent($data, $original, $context, $behavior);
++        $this->eventDispatcher->dispatch($event);
+diff --git a/src/Core/Content/Product/Events/ProductCartDataContextHashEvent.php b/src/Core/Content/Product/Events/ProductCartDataContextHashEvent.php
+--- /dev/null
++++ b/src/Core/Content/Product/Events/ProductCartDataContextHashEvent.php
+@@ @@
++<?php declare(strict_types=1);
++
++namespace Shopware\Core\Content\Product\Events;
++
++use Shopware\Core\Checkout\Cart\Cart;
++use Shopware\Core\Checkout\Cart\CartBehavior;
++use Shopware\Core\Checkout\Cart\LineItem\CartDataCollection;
++use Shopware\Core\Framework\Context;
++use Shopware\Core\Framework\Event\ShopwareSalesChannelEvent;
++use Shopware\Core\Framework\Log\Package;
++use Shopware\Core\System\SalesChannel\SalesChannelContext;
++use Symfony\Contracts\EventDispatcher\Event;
++class ProductCartDataContextHashEvent extends Event implements ShopwareSalesChannelEvent
+diff --git a/tests/unit/Core/Checkout/Cart/ProductCartProcessorTest.php b/tests/unit/Core/Checkout/Cart/ProductCartProcessorTest.php
+--- a/tests/unit/Core/Checkout/Cart/ProductCartProcessorTest.php
++++ b/tests/unit/Core/Checkout/Cart/ProductCartProcessorTest.php
+@@ @@
++use Shopware\Core\Content\Product\Events\ProductCartDataContextHashEvent;
++use Symfony\Component\EventDispatcher\EventDispatcher;
+-            static::createStub(Connection::class)
++            static::createStub(Connection::class),
++            new EventDispatcher()
+-            static::createStub(Connection::class)
++            static::createStub(Connection::class),
++            new EventDispatcher()
+-            static::createStub(Connection::class)
++            static::createStub(Connection::class),
++            new EventDispatcher()
+-            static::createStub(Connection::class)
+diff --git a/tests/unit/Core/Content/Product/Events/ProductCartDataContextHashEventTest.php b/tests/unit/Core/Content/Product/Events/ProductCartDataContextHashEventTest.php
+--- /dev/null
++++ b/tests/unit/Core/Content/Product/Events/ProductCartDataContextHashEventTest.php
+@@ @@
++<?php declare(strict_types=1);
++
++namespace Shopware\Tests\Unit\Core\Content\Product\Events;
++
++use PHPUnit\Framework\Attributes\CoversClass;
++use PHPUnit\Framework\TestCase;
++use Shopware\Core\Checkout\Cart\Cart;
++use Shopware\Core\Checkout\Cart\CartBehavior;
++use Shopware\Core\Checkout\Cart\LineItem\CartDataCollection;
++use Shopware\Core\Content\Product\Events\ProductCartDataContextHashEvent;
++use Shopware\Core\Framework\Log\Package;
++use Shopware\Core\Test\Generator;
++ * @internal
++#[CoversClass(ProductCartDataContextHashEvent::class)]

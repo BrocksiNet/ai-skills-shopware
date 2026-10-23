@@ -1,0 +1,12 @@
+{
+  "repo": "shopware/shopware",
+  "pr": 20892,
+  "title": "fix(storefront): use brand primary for icon-primary and name hover",
+  "url": "https://github.com/shopware/shopware/pull/20892",
+  "expected": {
+    "sw-storefront/references/twig-and-theme.md": [
+      "https://github.com/shopware/shopware/pull/20892#discussion_r4119839192",
+      "https://github.com/shopware/shopware/pull/20892#discussion_r4119839744"
+    ]
+  }
+}

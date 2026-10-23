@@ -1,0 +1,34 @@
+{
+  "repo": "shopware/shopware",
+  "pr": 20856,
+  "title": "fix(framework): add TTL cleanup for mcp_tool_result_cache",
+  "url": "https://github.com/shopware/shopware/pull/20856",
+  "expected": {
+    "sw-architecture/references/dal-contracts.md": [
+      "https://github.com/shopware/shopware/pull/20856#discussion_r4219745361"
+    ],
+    "sw-architecture/references/symfony-in-shopware.md": [
+      "https://github.com/shopware/shopware/pull/20856#discussion_r4219745361"
+    ],
+    "sw-core-development/references/modernization-and-flags.md": [
+      "https://github.com/shopware/shopware/pull/20856#discussion_r4219745361"
+    ],
+    "sw-core-development/references/service-architecture.md": [
+      "https://github.com/shopware/shopware/pull/20856#discussion_r4219738959",
+      "https://github.com/shopware/shopware/pull/20856#discussion_r4219745361"
+    ],
+    "sw-plugin-development/references/dal-usage.md": [
+      "https://github.com/shopware/shopware/pull/20856#discussion_r4219745361"
+    ],
+    "sw-review-learnings/references/api-aware.md": [
+      "https://github.com/shopware/shopware/pull/20856#discussion_r4219745361"
+    ],
+    "sw-testing/references/core-platform-patterns.md": [
+      "https://github.com/shopware/shopware/pull/20856#discussion_r4219731816",
+      "https://github.com/shopware/shopware/pull/20856#discussion_r4219752783"
+    ],
+    "sw-testing/references/test-shape-and-flags.md": [
+      "https://github.com/shopware/shopware/pull/20856#discussion_r4219752783"
+    ]
+  }
+}

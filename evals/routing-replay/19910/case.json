@@ -1,0 +1,11 @@
+{
+  "repo": "shopware/shopware",
+  "pr": 19910,
+  "title": "fix(storefront): block the buy button while the product is added",
+  "url": "https://github.com/shopware/shopware/pull/19910",
+  "expected": {
+    "sw-storefront/references/js-plugins.md": [
+      "https://github.com/shopware/shopware/pull/19910#discussion_r3894055304"
+    ]
+  }
+}

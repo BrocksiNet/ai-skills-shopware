@@ -1,0 +1,25 @@
+{
+  "repo": "shopware/shopware",
+  "pr": 21629,
+  "title": "feat(core): add sales-channel:file:enable command",
+  "url": "https://github.com/shopware/shopware/pull/21629",
+  "expected": {
+    "sw-architecture/references/dal-contracts.md": [
+      "https://github.com/shopware/shopware/pull/21629#discussion_r4281085170",
+      "https://github.com/shopware/shopware/pull/21629#discussion_r4281085188"
+    ],
+    "sw-core-development/references/bc-data-and-config.md": [
+      "https://github.com/shopware/shopware/pull/21629#discussion_r4281085170",
+      "https://github.com/shopware/shopware/pull/21629#discussion_r4281085188",
+      "https://github.com/shopware/shopware/pull/21629#discussion_r4282314125"
+    ],
+    "sw-plugin-development/references/dal-usage.md": [
+      "https://github.com/shopware/shopware/pull/21629#discussion_r4281085170",
+      "https://github.com/shopware/shopware/pull/21629#discussion_r4281085188",
+      "https://github.com/shopware/shopware/pull/21629#discussion_r4282314125"
+    ],
+    "sw-review-learnings/references/dal-and-performance.md": [
+      "https://github.com/shopware/shopware/pull/21629#discussion_r4282314125"
+    ]
+  }
+}

@@ -1,0 +1,15 @@
+{
+  "repo": "shopware/shopware",
+  "pr": 20734,
+  "title": "fix(core): apply reviewsPerPage in Store API review list",
+  "url": "https://github.com/shopware/shopware/pull/20734",
+  "expected": {
+    "sw-core-development/references/release-notes-and-adr.md": [
+      "https://github.com/shopware/shopware/pull/20734#discussion_r4121827109"
+    ],
+    "sw-review-learnings/references/api-aware.md": [
+      "https://github.com/shopware/shopware/pull/20734#discussion_r4146596259",
+      "https://github.com/shopware/shopware/pull/20734#discussion_r4146666557"
+    ]
+  }
+}

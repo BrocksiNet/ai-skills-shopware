@@ -1,0 +1,263 @@
+diff --git a/src/Storefront/DependencyInjection/services.php b/src/Storefront/DependencyInjection/services.php
+--- a/src/Storefront/DependencyInjection/services.php
++++ b/src/Storefront/DependencyInjection/services.php
+@@ @@
++use Shopware\Core\Checkout\Cart\CartFactory;
++use Shopware\Core\Checkout\Cart\CartRuleLoader;
++use Shopware\Storefront\Framework\SystemCheck\Util\SalesChannelDomainContextFactory;
+-            service(Connection::class),
++            service('sales_channel.product.repository'),
++            service(SalesChannelDomainContextFactory::class),
++            service(ProductCloseoutFilterFactory::class),
++            service(SystemConfigService::class),
++            service('sales_channel.category.repository'),
++            service(SalesChannelDomainContextFactory::class),
++    $services->set(SalesChannelDomainContextFactory::class)
++        ->args([
++            service(SalesChannelContextFactory::class),
++            service(CartRuleLoader::class),
+diff --git a/src/Storefront/Framework/SystemCheck/ProductDetailReadinessCheck.php b/src/Storefront/Framework/SystemCheck/ProductDetailReadinessCheck.php
+--- a/src/Storefront/Framework/SystemCheck/ProductDetailReadinessCheck.php
++++ b/src/Storefront/Framework/SystemCheck/ProductDetailReadinessCheck.php
+@@ @@
+-use Doctrine\DBAL\Connection;
+-use Shopware\Core\Defaults;
++use Shopware\Core\Content\Product\SalesChannel\AbstractProductCloseoutFilterFactory;
++use Shopware\Core\Content\Product\SalesChannel\SalesChannelProductCollection;
++use Shopware\Core\Framework\DataAbstractionLayer\Search\Criteria;
++use Shopware\Core\Framework\DataAbstractionLayer\Search\Sorting\FieldSorting;
+-use Shopware\Core\Framework\Uuid\Uuid;
++use Shopware\Core\System\SalesChannel\Entity\SalesChannelRepository;
++use Shopware\Core\System\SystemConfig\SystemConfigService;
++use Shopware\Storefront\Framework\SystemCheck\Util\SalesChannelDomain;
++use Shopware\Storefront\Framework\SystemCheck\Util\SalesChannelDomainContextFactory;
++    /**
++     * @param SalesChannelRepository<SalesChannelProductCollection> $productRepository
++     */
+-        private readonly Connection $connection,
++        private readonly SalesChannelRepository $productRepository,
++        private readonly SystemConfigService $systemConfigService,
+-        return $this->connection->fetchOne(
++        $criteria = new Criteria();
++        // unrenderable, and only while the setting hides them. Filtering on `available` instead would
++        return $this->productRepository->searchIds($criteria, $context)->firstId();
+diff --git a/src/Storefront/Framework/SystemCheck/ProductListingReadinessCheck.php b/src/Storefront/Framework/SystemCheck/ProductListingReadinessCheck.php
+--- a/src/Storefront/Framework/SystemCheck/ProductListingReadinessCheck.php
++++ b/src/Storefront/Framework/SystemCheck/ProductListingReadinessCheck.php
+@@ @@
+-use Shopware\Core\Framework\DataAbstractionLayer\Doctrine\FetchModeHelper;
++use Shopware\Core\Content\Category\CategoryCollection;
++use Shopware\Core\Framework\DataAbstractionLayer\Search\Criteria;
++use Shopware\Core\Framework\DataAbstractionLayer\Search\Filter\EqualsFilter;
++use Shopware\Core\System\SalesChannel\Entity\SalesChannelRepository;
++use Shopware\Storefront\Framework\SystemCheck\Util\SalesChannelDomain;
++use Shopware\Storefront\Framework\SystemCheck\Util\SalesChannelDomainContextFactory;
++    /**
++     * @param SalesChannelRepository<CategoryCollection> $categoryRepository
++     */
++        private readonly SalesChannelRepository $categoryRepository,
++        private readonly SalesChannelDomainContextFactory $contextFactory,
+-        $navigationIds = $salesChannelIds ? $this->fetchNavigationIds($salesChannelIds) : null;
++        $navigationIds = $salesChannelIds ? $this->fetchNavigationIds($salesChannelIds) : [];
++        $criteria = new Criteria($candidateIds);
++        $criteria->addFilter(new EqualsFilter('active', true));
++        $visibleIds = $this->categoryRepository->searchIds($criteria, $context)->getIds();
+diff --git a/src/Storefront/Framework/SystemCheck/Util/SalesChannelDomain.php b/src/Storefront/Framework/SystemCheck/Util/SalesChannelDomain.php
+--- a/src/Storefront/Framework/SystemCheck/Util/SalesChannelDomain.php
++++ b/src/Storefront/Framework/SystemCheck/Util/SalesChannelDomain.php
+@@ @@
++        public readonly string $id,
++        public readonly string $languageId,
++        public readonly string $currencyId,
+-    public static function create(string $salesChannelId, string $url): self
+-    {
+-        return new self($salesChannelId, $url);
++    public static function create(
++        string $salesChannelId,
++        string $url,
++        string $id,
++        string $languageId,
++        string $currencyId,
+diff --git a/src/Storefront/Framework/SystemCheck/Util/SalesChannelDomainContextFactory.php b/src/Storefront/Framework/SystemCheck/Util/SalesChannelDomainContextFactory.php
+--- /dev/null
++++ b/src/Storefront/Framework/SystemCheck/Util/SalesChannelDomainContextFactory.php
+@@ @@
++<?php declare(strict_types=1);
++
++namespace Shopware\Storefront\Framework\SystemCheck\Util;
++
++use Shopware\Core\Checkout\Cart\CartBehavior;
++use Shopware\Core\Checkout\Cart\CartFactory;
++use Shopware\Core\Checkout\Cart\CartRuleLoader;
++use Shopware\Core\Checkout\CheckoutPermissions;
++use Shopware\Core\Framework\Log\Package;
++use Shopware\Core\Framework\Uuid\Uuid;
++use Shopware\Core\System\SalesChannel\Context\AbstractSalesChannelContextFactory;
++use Shopware\Core\System\SalesChannel\Context\SalesChannelContextService;
++ * @internal
+diff --git a/src/Storefront/Framework/SystemCheck/Util/SalesChannelDomainProvider.php b/src/Storefront/Framework/SystemCheck/Util/SalesChannelDomainProvider.php
+--- a/src/Storefront/Framework/SystemCheck/Util/SalesChannelDomainProvider.php
++++ b/src/Storefront/Framework/SystemCheck/Util/SalesChannelDomainProvider.php
+@@ @@
++        // One domain per sales channel, and always the same one: the language and currency below have
++        // to describe the domain whose URL is probed, and a check that silently rotates between
++        // domains would report a different page from run to run. `MIN(id)` picks it deterministically,
++        // which `GROUP BY sales_channel.id` alone does not.
+-            SELECT LOWER(HEX(`sales_channel`.`id`)) AS `sales_channel_id`,
+-                   `sales_channel_domain`.`url` AS `url`
++            SELECT LOWER(HEX(`sales_channel_domain`.`id`)) AS `id`,
++                   LOWER(HEX(`sales_channel_domain`.`sales_channel_id`)) AS `sales_channel_id`,
++                   `sales_channel_domain`.`url` AS `url`,
++                   LOWER(HEX(`sales_channel_domain`.`language_id`)) AS `language_id`,
++                   LOWER(HEX(`sales_channel_domain`.`currency_id`)) AS `currency_id`
++            INNER JOIN (
+diff --git a/tests/integration/Storefront/Framework/HealthCheck/ProductDetailReadinessCheckTest.php b/tests/integration/Storefront/Framework/HealthCheck/ProductDetailReadinessCheckTest.php
+--- a/tests/integration/Storefront/Framework/HealthCheck/ProductDetailReadinessCheckTest.php
++++ b/tests/integration/Storefront/Framework/HealthCheck/ProductDetailReadinessCheckTest.php
+@@ @@
++use Shopware\Core\Checkout\Cart\CartRuleLoader;
++use Shopware\Core\Framework\DataAbstractionLayer\Search\Filter\EqualsAnyFilter;
++use Shopware\Core\Framework\DataAbstractionLayer\Search\Filter\NotFilter;
++use Shopware\Core\Framework\Test\TestCaseBase\EventDispatcherBehaviour;
++use Shopware\Core\System\SalesChannel\Event\SalesChannelProcessCriteriaEvent;
++use Shopware\Core\System\SystemConfig\SystemConfigService;
++    use EventDispatcherBehaviour;
++    public function testCheckIsHealthyWhenAllProductsAreRestrictedByAnExtension(): void
++    {
++        $productIds = $this->getProductIds($this->createProducts());
++
++        // simulates an extension that restricts product visibility by rules, e.g. Dynamic Access:
++        // for an anonymous visitor the rule does not match, so the products are filtered out
++        static::getContainer()->get(SystemConfigService::class)
++        static::getContainer()->get(SystemConfigService::class)
+diff --git a/tests/integration/Storefront/Framework/HealthCheck/ProductListingReadinessCheckTest.php b/tests/integration/Storefront/Framework/HealthCheck/ProductListingReadinessCheckTest.php
+--- a/tests/integration/Storefront/Framework/HealthCheck/ProductListingReadinessCheckTest.php
++++ b/tests/integration/Storefront/Framework/HealthCheck/ProductListingReadinessCheckTest.php
+@@ @@
++use Shopware\Core\Checkout\Cart\CartRuleLoader;
++use Shopware\Core\Framework\DataAbstractionLayer\Search\Filter\EqualsAnyFilter;
++use Shopware\Core\Framework\DataAbstractionLayer\Search\Filter\NotFilter;
++use Shopware\Core\Framework\Test\TestCaseBase\EventDispatcherBehaviour;
++use Shopware\Core\System\SalesChannel\Event\SalesChannelProcessCriteriaEvent;
++    use EventDispatcherBehaviour;
++    public function testCheckIsHealthyWhenAllListingCategoriesAreRestrictedByAnExtension(): void
++    {
++        $categoryIds = [
++            $this->createMainNavigationWithSalesChannelAssignment($this->ids->get('sales-channel-1'), true),
++            $this->createMainNavigationWithSalesChannelAssignment($this->ids->get('sales-channel-2'), false),
++        ];
+diff --git a/tests/integration/Storefront/Framework/HealthCheck/Util/SalesChannelDomainContextFactoryTest.php b/tests/integration/Storefront/Framework/HealthCheck/Util/SalesChannelDomainContextFactoryTest.php
+--- /dev/null
++++ b/tests/integration/Storefront/Framework/HealthCheck/Util/SalesChannelDomainContextFactoryTest.php
+@@ @@
++<?php declare(strict_types=1);
++
++namespace Shopware\Tests\Integration\Storefront\Framework\HealthCheck\Util;
++
++use Doctrine\DBAL\Connection;
++use PHPUnit\Framework\TestCase;
++use Shopware\Core\Checkout\Cart\CartRuleLoader;
++use Shopware\Core\Checkout\Cart\Event\CartCreatedEvent;
++use Shopware\Core\Checkout\Cart\Extension\CheckoutCartRuleLoaderExtension;
++use Shopware\Core\Checkout\Cart\LineItem\LineItem;
++use Shopware\Core\Checkout\Cart\Price\Struct\QuantityPriceDefinition;
++use Shopware\Core\Checkout\Cart\Rule\LineItemsInCartCountRule;
++use Shopware\Core\Checkout\Cart\RuleLoaderResult;
++use Shopware\Core\Framework\Extensions\ExtensionDispatcher;
++use Shopware\Storefront\Framework\SystemCheck\Util\SalesChannelDomain;
++use Shopware\Storefront\Framework\SystemCheck\Util\SalesChannelDomainContextFactory;
++ * @internal
++            ExtensionDispatcher::post(CheckoutCartRuleLoaderExtension::NAME),
++            ->fetchOne('SELECT COUNT(*) FROM `cart` WHERE `token` = :token', ['token' => $context->getToken()]);
+diff --git a/tests/unit/Storefront/Framework/Health/ProductDetailReadinessCheckTest.php b/tests/unit/Storefront/Framework/Health/ProductDetailReadinessCheckTest.php
+--- a/tests/unit/Storefront/Framework/Health/ProductDetailReadinessCheckTest.php
++++ b/tests/unit/Storefront/Framework/Health/ProductDetailReadinessCheckTest.php
+@@ @@
+-use Doctrine\DBAL\Connection;
++use PHPUnit\Framework\Attributes\DataProvider;
++use PHPUnit\Framework\Attributes\TestDox;
++use Shopware\Core\Content\Product\SalesChannel\ProductAvailableFilter;
++use Shopware\Core\Content\Product\SalesChannel\ProductCloseoutFilter;
++use Shopware\Core\Content\Product\SalesChannel\ProductCloseoutFilterFactory;
++use Shopware\Core\Content\Product\SalesChannel\SalesChannelProductCollection;
++use Shopware\Core\Framework\DataAbstractionLayer\Search\Criteria;
++use Shopware\Core\Framework\DataAbstractionLayer\Search\Sorting\FieldSorting;
+-use Shopware\Core\Framework\Uuid\Uuid;
++use Shopware\Core\System\SalesChannel\SalesChannelContext;
++use Shopware\Core\System\SystemConfig\SystemConfigService;
++use Shopware\Core\Test\Generator;
++use Shopware\Core\Test\Stub\DataAbstractionLayer\StaticSalesChannelRepository;
++use Shopware\Storefront\Framework\SystemCheck\Util\SalesChannelDomainContextFactory;
++        // otherwise the check no longer shares the visibility handling of the storefront
++    #[DataProvider('closeoutConfigProvider')]
++        $systemConfigService = static::createStub(SystemConfigService::class);
+diff --git a/tests/unit/Storefront/Framework/Health/ProductListingReadinessCheckTest.php b/tests/unit/Storefront/Framework/Health/ProductListingReadinessCheckTest.php
+--- a/tests/unit/Storefront/Framework/Health/ProductListingReadinessCheckTest.php
++++ b/tests/unit/Storefront/Framework/Health/ProductListingReadinessCheckTest.php
+@@ @@
++use PHPUnit\Framework\Attributes\TestDox;
++use Shopware\Core\Content\Category\CategoryCollection;
++use Shopware\Core\Framework\DataAbstractionLayer\Search\Criteria;
+-use Shopware\Core\Framework\Uuid\Uuid;
++use Shopware\Core\System\SalesChannel\SalesChannelContext;
++use Shopware\Core\Test\Generator;
++use Shopware\Core\Test\Stub\DataAbstractionLayer\StaticSalesChannelRepository;
++use Shopware\Storefront\Framework\SystemCheck\Util\SalesChannelDomainContextFactory;
++    private SalesChannelDomainContextFactory&Stub $contextFactory;
++
++    /**
++     * @var list<string>
++     */
+diff --git a/tests/unit/Storefront/Framework/Health/Util/SalesChannelDomainCollectionTest.php b/tests/unit/Storefront/Framework/Health/Util/SalesChannelDomainCollectionTest.php
+--- a/tests/unit/Storefront/Framework/Health/Util/SalesChannelDomainCollectionTest.php
++++ b/tests/unit/Storefront/Framework/Health/Util/SalesChannelDomainCollectionTest.php
+@@ @@
+-        $domain1 = SalesChannelDomain::create('test-sales-channel-id-1', 'http://localhost:8000');
+-        $domain2 = SalesChannelDomain::create('test-sales-channel-id-2', 'http://localhost:8001');
++        $domain1 = SalesChannelDomain::create('test-sales-channel-id-1', 'http://localhost:8000', 'domain-1', 'language-1', 'currency-1');
++        $domain2 = SalesChannelDomain::create('test-sales-channel-id-2', 'http://localhost:8001', 'domain-2', 'language-2', 'currency-2');
+diff --git a/tests/unit/Storefront/Framework/Health/Util/SalesChannelDomainContextFactoryTest.php b/tests/unit/Storefront/Framework/Health/Util/SalesChannelDomainContextFactoryTest.php
+--- /dev/null
++++ b/tests/unit/Storefront/Framework/Health/Util/SalesChannelDomainContextFactoryTest.php
+@@ @@
++<?php declare(strict_types=1);
++
++namespace Shopware\Tests\Unit\Storefront\Framework\Health\Util;
++
++use PHPUnit\Framework\Attributes\CoversClass;
++use PHPUnit\Framework\TestCase;
++use Shopware\Core\Checkout\Cart\Cart;
++use Shopware\Core\Checkout\Cart\CartBehavior;
++use Shopware\Core\Checkout\Cart\CartFactory;
++use Shopware\Core\Checkout\Cart\CartRuleLoader;
++use Shopware\Core\Checkout\Cart\Event\CartCreatedEvent;
++use Shopware\Core\Checkout\Cart\RuleLoaderResult;
++use Shopware\Storefront\Framework\SystemCheck\Util\SalesChannelDomain;
++use Shopware\Storefront\Framework\SystemCheck\Util\SalesChannelDomainContextFactory;
++ * @internal
++#[CoversClass(SalesChannelDomainContextFactory::class)]
+diff --git a/tests/unit/Storefront/Framework/Health/Util/SalesChannelDomainProviderTest.php b/tests/unit/Storefront/Framework/Health/Util/SalesChannelDomainProviderTest.php
+--- a/tests/unit/Storefront/Framework/Health/Util/SalesChannelDomainProviderTest.php
++++ b/tests/unit/Storefront/Framework/Health/Util/SalesChannelDomainProviderTest.php
+@@ @@
+-            ['sales_channel_id' => 'test-sales-channel-id-1', 'url' => 'http://localhost:8000'],
+-            ['sales_channel_id' => 'test-sales-channel-id-2', 'url' => 'http://localhost:8001'],
++            ['id' => 'domain-1', 'sales_channel_id' => 'test-sales-channel-id-1', 'url' => 'http://localhost:8000', 'language_id' => 'language-1', 'currency_id' => 'currency-1'],
++            ['id' => 'domain-2', 'sales_channel_id' => 'test-sales-channel-id-2', 'url' => 'http://localhost:8001', 'language_id' => 'language-2', 'currency_id' => 'currency-2'],
++
++        // the readiness checks build their lookup context from these, so the query has to select them
++        $domain = $collection->get('test-sales-channel-id-1');
++        static::assertInstanceOf(SalesChannelDomain::class, $domain);
++        static::assertSame('domain-1', $domain->id);
++        static::assertSame('language-1', $domain->languageId);
++        static::assertSame('currency-1', $domain->currencyId);
+diff --git a/tests/unit/Storefront/Framework/Health/Util/SalesChannelDomainTest.php b/tests/unit/Storefront/Framework/Health/Util/SalesChannelDomainTest.php
+--- a/tests/unit/Storefront/Framework/Health/Util/SalesChannelDomainTest.php
++++ b/tests/unit/Storefront/Framework/Health/Util/SalesChannelDomainTest.php
+@@ @@
+-        $domain = SalesChannelDomain::create($salesChannelId, $url);
++        $domain = SalesChannelDomain::create($salesChannelId, $url, 'domain-id', 'language-id', 'currency-id');
++        // the readiness checks build their lookup context from these, so they travel with the URL
++        static::assertSame('domain-id', $domain->id);
++        static::assertSame('language-id', $domain->languageId);
++        static::assertSame('currency-id', $domain->currencyId);

@@ -1,0 +1,37 @@
+{
+  "repo": "shopware/shopware",
+  "pr": 18857,
+  "title": "fix: Switch replica connection back to the replica between requests",
+  "url": "https://github.com/shopware/shopware/pull/18857",
+  "expected": {
+    "sw-architecture/references/anti-patterns.md": [
+      "https://github.com/shopware/shopware/pull/18857#discussion_r3690371595"
+    ],
+    "sw-architecture/references/extension-mechanisms.md": [
+      "https://github.com/shopware/shopware/pull/18857#discussion_r3689976125",
+      "https://github.com/shopware/shopware/pull/18857#discussion_r3710268262",
+      "https://github.com/shopware/shopware/pull/18857#discussion_r3710404806"
+    ],
+    "sw-architecture/references/symfony-in-shopware.md": [
+      "https://github.com/shopware/shopware/pull/18857#discussion_r3710268262"
+    ],
+    "sw-core-development/references/platform-architecture.md": [
+      "https://github.com/shopware/shopware/pull/18857#discussion_r3689976125",
+      "https://github.com/shopware/shopware/pull/18857#discussion_r3710268262",
+      "https://github.com/shopware/shopware/pull/18857#discussion_r3710404806"
+    ],
+    "sw-core-development/references/release-notes-and-adr.md": [
+      "https://github.com/shopware/shopware/pull/18857#discussion_r3703419808"
+    ],
+    "sw-core-development/references/service-architecture.md": [
+      "https://github.com/shopware/shopware/pull/18857#discussion_r3689367227",
+      "https://github.com/shopware/shopware/pull/18857#discussion_r3710268262"
+    ],
+    "sw-testing/references/core-platform-patterns.md": [
+      "https://github.com/shopware/shopware/pull/18857#discussion_r3690371595"
+    ],
+    "sw-testing/references/test-shape-and-flags.md": [
+      "https://github.com/shopware/shopware/pull/18857#discussion_r3690371595"
+    ]
+  }
+}

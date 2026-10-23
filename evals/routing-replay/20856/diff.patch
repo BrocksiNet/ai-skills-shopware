@@ -1,0 +1,223 @@
+diff --git a/RELEASE_INFO-6.7.md b/RELEASE_INFO-6.7.md
+--- a/RELEASE_INFO-6.7.md
++++ b/RELEASE_INFO-6.7.md
+@@ @@
++### Stored MCP tool results are removed after 24 hours
++
++MCP tool results larger than 100 KB are stored in `mcp_tool_result_cache` and read back by the client with `resources/read`. Until now they were only removed when the client ended its session with `DELETE /api/_mcp` or `DELETE /store-api/_mcp`, so results of clients that never sent it stayed in the database. The new hourly scheduled task `mcp_tool_result_cache.cleanup` removes results older than 24 hours.
++
++Stored results can contain customer and order data. To keep them shorter, set `shopware.mcp.tool_result_cache_ttl` (in seconds, at least 60). The cleanup only runs where scheduled tasks are consumed, see [Scheduled tasks](https://developer.shopware.com/docs/guides/hosting/infrastructure/scheduled-task.html).
++
+diff --git a/config-schema.json b/config-schema.json
+--- a/config-schema.json
++++ b/config-schema.json
+@@ @@
++                },
++                "tool_result_cache_ttl": {
++                    "type": "integer",
++                    "minimum": 60,
++                    "title": "Seconds a stored oversized MCP tool result is kept before the cleanup task removes it. The task runs hourly, so a result can stay up to an hour longer."
+diff --git a/src/Core/Framework/DependencyInjection/Configuration.php b/src/Core/Framework/DependencyInjection/Configuration.php
+--- a/src/Core/Framework/DependencyInjection/Configuration.php
++++ b/src/Core/Framework/DependencyInjection/Configuration.php
+@@ @@
++use Shopware\Core\Framework\Mcp\ToolResultCacheStorage;
++                ->integerNode('tool_result_cache_ttl')
++                    ->info('Seconds a stored oversized MCP tool result is kept before the cleanup task removes it. The task runs hourly, so a result can stay up to an hour longer.')
++                    ->defaultValue(ToolResultCacheStorage::DEFAULT_TTL_SECONDS)
++                    ->min(60)
++                ->end()
+diff --git a/src/Core/Framework/DependencyInjection/mcp.php b/src/Core/Framework/DependencyInjection/mcp.php
+--- a/src/Core/Framework/DependencyInjection/mcp.php
++++ b/src/Core/Framework/DependencyInjection/mcp.php
+@@ @@
++use Shopware\Core\Framework\Mcp\ScheduledTask\McpToolResultCacheCleanupTask;
++use Shopware\Core\Framework\Mcp\ScheduledTask\McpToolResultCacheCleanupTaskHandler;
++    $services->set(McpToolResultCacheCleanupTask::class)
++        ->tag('shopware.scheduled.task');
++
++    // The monolog.logger tag puts both logger arguments on the mcp channel: the parent's exception
++    // logger and the one the handler reports the cleanup outcome on.
++    $services->set(McpToolResultCacheCleanupTaskHandler::class)
++        ->args([
++            service('scheduled_task.repository'),
++            service('logger'),
++            service(ToolResultCacheStorage::class),
++            service(ClockInterface::class),
+diff --git a/src/Core/Framework/Mcp/AGENTS.md b/src/Core/Framework/Mcp/AGENTS.md
+--- a/src/Core/Framework/Mcp/AGENTS.md
++++ b/src/Core/Framework/Mcp/AGENTS.md
+@@ @@
+-- `Session/` -- Session helpers: `McpSessionIdValidator` (rejects malformed `mcp-session-id`), `McpSessionCleanupSubscriber` (wipes tool-result cache on session DELETE)
++- `Session/` -- Session helpers: `McpSessionIdValidator` (rejects malformed `mcp-session-id`), `McpSessionCleanupSubscriber` (wipes tool-result cache and toolset rows on session DELETE)
++- `ScheduledTask/` -- Periodic GC: `McpToolsetSessionCleanupTask` (session-store liveness for `mcp_toolset_session`), `McpToolResultCacheCleanupTask` (age TTL for `mcp_tool_result_cache`; does not require a session store)
+diff --git a/src/Core/Framework/Mcp/ScheduledTask/McpToolResultCacheCleanupTask.php b/src/Core/Framework/Mcp/ScheduledTask/McpToolResultCacheCleanupTask.php
+--- /dev/null
++++ b/src/Core/Framework/Mcp/ScheduledTask/McpToolResultCacheCleanupTask.php
+@@ @@
++<?php declare(strict_types=1);
++
++namespace Shopware\Core\Framework\Mcp\ScheduledTask;
++
++use Shopware\Core\Framework\Log\Package;
++use Shopware\Core\Framework\MessageQueue\ScheduledTask\ScheduledTask;
++
++/**
++ * @experimental stableVersion:v6.8.0
++ */
++#[Package('framework')]
++class McpToolResultCacheCleanupTask extends ScheduledTask
++{
+diff --git a/src/Core/Framework/Mcp/ScheduledTask/McpToolResultCacheCleanupTaskHandler.php b/src/Core/Framework/Mcp/ScheduledTask/McpToolResultCacheCleanupTaskHandler.php
+--- /dev/null
++++ b/src/Core/Framework/Mcp/ScheduledTask/McpToolResultCacheCleanupTaskHandler.php
+@@ @@
++<?php declare(strict_types=1);
++
++namespace Shopware\Core\Framework\Mcp\ScheduledTask;
++
++use Psr\Clock\ClockInterface;
++use Psr\Log\LoggerInterface;
++use Psr\Log\LogLevel;
++use Shopware\Core\Framework\DataAbstractionLayer\EntityRepository;
++use Shopware\Core\Framework\Log\Package;
++use Shopware\Core\Framework\Mcp\ToolResultCacheStorage;
++use Shopware\Core\Framework\MessageQueue\ScheduledTask\ScheduledTaskHandler;
++use Symfony\Component\Messenger\Attribute\AsMessageHandler;
++
++/**
++ * @experimental stableVersion:v6.8.0
++ * @internal
++     * @internal
++        EntityRepository $scheduledTaskRepository,
++        private readonly ClockInterface $clock,
+diff --git a/src/Core/Framework/Mcp/ToolResultCacheStorage.php b/src/Core/Framework/Mcp/ToolResultCacheStorage.php
+--- a/src/Core/Framework/Mcp/ToolResultCacheStorage.php
++++ b/src/Core/Framework/Mcp/ToolResultCacheStorage.php
+@@ @@
++use Doctrine\DBAL\ParameterType;
+- * Persists large tool results in the DB for the duration of an MCP session.
+- * Each stored result is scoped to a session ID so it cannot be read by other sessions.
+- * Rows are removed when the MCP session ends (DELETE /api/_mcp).
++ * Persists large tool results in the DB. Each stored result is scoped to a session ID so it cannot
++ * be read by other sessions. Rows are removed on DELETE of the session and by age, see
++ * {@see \Shopware\Core\Framework\Mcp\ScheduledTask\McpToolResultCacheCleanupTaskHandler}.
++    /**
++     * Default of `shopware.mcp.tool_result_cache_ttl`: seconds a stored result is kept after `created_at`.
++     */
++    public const DEFAULT_TTL_SECONDS = 86400;
++
+diff --git a/src/Core/Migration/V6_7/Migration1790256569AddMcpToolResultCacheCreatedAtIndex.php b/src/Core/Migration/V6_7/Migration1790256569AddMcpToolResultCacheCreatedAtIndex.php
+--- /dev/null
++++ b/src/Core/Migration/V6_7/Migration1790256569AddMcpToolResultCacheCreatedAtIndex.php
+@@ @@
++<?php declare(strict_types=1);
++
++namespace Shopware\Core\Migration\V6_7;
++
++use Doctrine\DBAL\Connection;
++use Shopware\Core\Framework\Log\Package;
++use Shopware\Core\Framework\Migration\MigrationStep;
++use Shopware\Core\Framework\Util\Database\TableHelper;
++
++/**
++ * @internal
++ */
++#[Package('framework')]
++class Migration1790256569AddMcpToolResultCacheCreatedAtIndex extends MigrationStep
++{
+diff --git a/tests/integration/Core/Framework/Mcp/ToolResultCacheStorageTest.php b/tests/integration/Core/Framework/Mcp/ToolResultCacheStorageTest.php
+--- /dev/null
++++ b/tests/integration/Core/Framework/Mcp/ToolResultCacheStorageTest.php
+@@ @@
++<?php declare(strict_types=1);
++
++namespace Shopware\Tests\Integration\Core\Framework\Mcp;
++
++use Doctrine\DBAL\ArrayParameterType;
++use Doctrine\DBAL\Connection;
++use PHPUnit\Framework\TestCase;
++use Shopware\Core\Defaults;
++use Shopware\Core\Framework\Log\Package;
++use Shopware\Core\Framework\Mcp\ToolResultCacheStorage;
++use Shopware\Core\Framework\Test\TestCaseBase\IntegrationTestBehaviour;
++use Shopware\Core\Framework\Uuid\Uuid;
++
++/**
++ * @internal
++    use IntegrationTestBehaviour;
++        $rows = $connection->fetchFirstColumn(
+diff --git a/tests/migration/Core/V6_7/Migration1790256569AddMcpToolResultCacheCreatedAtIndexTest.php b/tests/migration/Core/V6_7/Migration1790256569AddMcpToolResultCacheCreatedAtIndexTest.php
+--- /dev/null
++++ b/tests/migration/Core/V6_7/Migration1790256569AddMcpToolResultCacheCreatedAtIndexTest.php
+@@ @@
++<?php declare(strict_types=1);
++
++namespace Shopware\Tests\Migration\Core\V6_7;
++
++use Doctrine\DBAL\Connection;
++use PHPUnit\Framework\Attributes\CoversClass;
++use PHPUnit\Framework\TestCase;
++use Shopware\Core\Framework\Log\Package;
++use Shopware\Core\Framework\Test\TestCaseBase\KernelLifecycleManager;
++use Shopware\Core\Framework\Util\Database\TableHelper;
++use Shopware\Core\Migration\V6_7\Migration1777535833McpToolResultCache;
++use Shopware\Core\Migration\V6_7\Migration1790256569AddMcpToolResultCacheCreatedAtIndex;
++
++ * @internal
++#[CoversClass(Migration1790256569AddMcpToolResultCacheCreatedAtIndex::class)]
+diff --git a/tests/unit/Core/Framework/Mcp/ScheduledTask/McpToolResultCacheCleanupTaskHandlerTest.php b/tests/unit/Core/Framework/Mcp/ScheduledTask/McpToolResultCacheCleanupTaskHandlerTest.php
+--- /dev/null
++++ b/tests/unit/Core/Framework/Mcp/ScheduledTask/McpToolResultCacheCleanupTaskHandlerTest.php
+@@ @@
++<?php declare(strict_types=1);
++
++namespace Shopware\Tests\Unit\Core\Framework\Mcp\ScheduledTask;
++
++use PHPUnit\Framework\Attributes\CoversClass;
++use PHPUnit\Framework\TestCase;
++use Psr\Log\LoggerInterface;
++use Psr\Log\LogLevel;
++use Psr\Log\NullLogger;
++use Shopware\Core\Framework\DataAbstractionLayer\EntityRepository;
++use Shopware\Core\Framework\Log\Package;
++use Shopware\Core\Framework\Mcp\ScheduledTask\McpToolResultCacheCleanupTaskHandler;
++use Shopware\Core\Framework\Mcp\ToolResultCacheStorage;
++ * @internal
++#[CoversClass(McpToolResultCacheCleanupTaskHandler::class)]
++            static::createStub(EntityRepository::class),
++            static::createStub(EntityRepository::class),
+diff --git a/tests/unit/Core/Framework/Mcp/ScheduledTask/McpToolResultCacheCleanupTaskTest.php b/tests/unit/Core/Framework/Mcp/ScheduledTask/McpToolResultCacheCleanupTaskTest.php
+--- /dev/null
++++ b/tests/unit/Core/Framework/Mcp/ScheduledTask/McpToolResultCacheCleanupTaskTest.php
+@@ @@
++<?php declare(strict_types=1);
++
++namespace Shopware\Tests\Unit\Core\Framework\Mcp\ScheduledTask;
++
++use PHPUnit\Framework\Attributes\CoversClass;
++use PHPUnit\Framework\TestCase;
++use Shopware\Core\Framework\Log\Package;
++use Shopware\Core\Framework\Mcp\ScheduledTask\McpToolResultCacheCleanupTask;
++
++/**
++ * @internal
++ */
++#[Package('framework')]
++#[CoversClass(McpToolResultCacheCleanupTask::class)]
+diff --git a/tests/unit/Core/Framework/Mcp/ToolResultCacheStorageTest.php b/tests/unit/Core/Framework/Mcp/ToolResultCacheStorageTest.php
+--- a/tests/unit/Core/Framework/Mcp/ToolResultCacheStorageTest.php
++++ b/tests/unit/Core/Framework/Mcp/ToolResultCacheStorageTest.php
+@@ @@
++use Doctrine\DBAL\ParameterType;
++
++    public function testDeleteOlderThanRemovesRowsAtOrBeforeThresholdInBoundedBatches(): void
++    {
++        $threshold = new \DateTimeImmutable('2026-09-23 12:00:00.000');
++
++        $connection = $this->createMock(Connection::class);
++        $connection->expects($this->once())
++            ->method('executeStatement')
++            ->with(
++                static::logicalAnd(
++                    static::stringContains('created_at'),

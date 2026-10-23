@@ -1,0 +1,7 @@
+{
+  "repo": "shopware/shopware",
+  "pr": 21272,
+  "title": "fix(seo): prevent TypeError when SEO URL template renders array field",
+  "url": "https://github.com/shopware/shopware/pull/21272",
+  "expected": {}
+}

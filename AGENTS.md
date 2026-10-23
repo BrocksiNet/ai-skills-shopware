@@ -51,6 +51,7 @@ evals/harbor/                 # containerized Harbor wiring (optional)
 evals/test-graders.sh         # golden tests for all grade.sh scripts (wrapper for tools/bin/test-graders.ts)
 evals/tools/ast/              # Node AST graders (php-parser + @babel/parser)
 evals/routing/<case>/         # diff.patch + expected.json for reference routing
+evals/routing-replay/<pr>/    # real core PRs: trimmed diff.patch + case.json (comment-mapped references, hand labels)
 
 rules/
   catalog.json                # rule IDs: owning skill, file, eval, trunk and upstream source
@@ -65,6 +66,7 @@ tools/                        # repo tooling in TypeScript (Node 24, no build st
   bin/render-routes.ts        # SKILL.md routing tables from routes.json
   bin/validate-routes.ts      # routes.json shape, targets and table drift
   bin/route.ts                # references each skill selects for a diff
+  bin/replay-routes.ts        # the router replayed on real PRs: recall and noise against review comments
   bin/render-router-index.ts  # skills/sw-skill-router/index.json from skill metadata + routes
   bin/eval-{plan,gate,diff}.ts  # eval task plan, A/B gate, baseline diff
   bin/{ab,run-task}.ts        # A/B runner behind evals/runner/{ab,run-task}.sh
@@ -289,7 +291,11 @@ node tools/bin/render-router-index.ts  # the router index ships the routes too
 ```
 
 When a change alters what a case in `evals/routing/` should select, update
-its `expected.json`; add a case for a new kind of change. `expected.json`
+its `expected.json`; add a case for a new kind of change. To see what a
+route change does on real PRs, replay it on the review signals with
+`node tools/bin/replay-routes.ts` (see [`docs/maintenance.md`](docs/maintenance.md#replaying-the-router));
+`tools/test/route-replay.test.ts` holds the recorded corpus in
+`evals/routing-replay/` to a recall floor and a noise ceiling. `expected.json`
 lists only diff-selected references, never `always` or `on_demand` ones.
 
 A route can borrow another skill's reference: `"reference":

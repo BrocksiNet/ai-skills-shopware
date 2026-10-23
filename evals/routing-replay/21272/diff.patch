@@ -1,0 +1,20 @@
+diff --git a/src/Core/Content/Seo/SeoUrlTwigFactory.php b/src/Core/Content/Seo/SeoUrlTwigFactory.php
+--- a/src/Core/Content/Seo/SeoUrlTwigFactory.php
++++ b/src/Core/Content/Seo/SeoUrlTwigFactory.php
+@@ @@
+-            static fn (string $string) => rawurlencode($slugify->slugify($string))
++            static function (mixed $string) use ($slugify): string {
++                if (!\is_string($string) && !$string instanceof \Stringable && !\is_scalar($string)) {
++                    return '';
++                }
++
++                return rawurlencode($slugify->slugify((string) $string));
++            }
+diff --git a/tests/unit/Core/Content/Seo/SeoUrlTwigFactoryTest.php b/tests/unit/Core/Content/Seo/SeoUrlTwigFactoryTest.php
+--- a/tests/unit/Core/Content/Seo/SeoUrlTwigFactoryTest.php
++++ b/tests/unit/Core/Content/Seo/SeoUrlTwigFactoryTest.php
+@@ @@
++        $template = '{% autoescape \'' . SeoUrlGenerator::ESCAPE_SLUGIFY . '\' %}{{ product.options }}{% endautoescape %}';
++        $template = $twig->createTemplate($template);
++        static::assertSame('', $template->render(['product' => ['options' => ['red', 'green']]]));
++

@@ -1,0 +1,50 @@
+diff --git a/src/Core/Framework/Mcp/AGENTS.md b/src/Core/Framework/Mcp/AGENTS.md
+--- a/src/Core/Framework/Mcp/AGENTS.md
++++ b/src/Core/Framework/Mcp/AGENTS.md
+@@ @@
++
+-- **`time_backoff` vs token bucket** — Shopware uses the `time_backoff` policy (escalating penalty on repeated hits), not a token bucket, so it does not give the "burst then sustained" shape the MCP guides recommend for bursty agent traffic. Acceptable as a coarse circuit breaker; revisit if agents hit the limit on legitimate fan-out.
++- **`time_backoff` vs token bucket** — Shopware uses the `time_backoff` policy (escalating penalty on repeated hits), not a token bucket, so it does not give the "burst then sustained" shape the MCP guides recommend for bursty agent traffic. Only `notifications/initialized` has its own key (above); revisit the policy if agents still hit the limit on legitimate tool fan-out.
+diff --git a/src/Core/Framework/Mcp/RateLimit/McpRateLimiter.php b/src/Core/Framework/Mcp/RateLimit/McpRateLimiter.php
+--- a/src/Core/Framework/Mcp/RateLimit/McpRateLimiter.php
++++ b/src/Core/Framework/Mcp/RateLimit/McpRateLimiter.php
+@@ @@
++ *
++ * The handshake-era follow-up {@see self::INITIALIZED_NOTIFICATION_METHOD} draws
++ * from its own key on the same route. The MCP Streamable HTTP handshake requires
++ * `initialize` then `notifications/initialized` back-to-back; Shopware's
++ * `time_backoff` policy accepts only one request after a wait, so once
++ * `initialize` has consumed that slot the mandatory follow-up would otherwise get
++ * HTTP 429 (see #18906). Route + key form independent buckets, so the follow-up
++ * keeps the endpoint's limits without sharing the `initialize` counter and without
++ * a separate configuration. `initialize`, tool calls and every other method stay
++ * on the endpoint key. The 2026-07-28 modern era has no such pair.
++    /**
++     * Handshake-era JSON-RPC notification that completes session setup after
++     * `initialize`. Kept as a single-method allowlist so `initialize` and every
+diff --git a/src/Core/Framework/Mcp/docs/store-api-mcp.md b/src/Core/Framework/Mcp/docs/store-api-mcp.md
+--- a/src/Core/Framework/Mcp/docs/store-api-mcp.md
++++ b/src/Core/Framework/Mcp/docs/store-api-mcp.md
+@@ @@
+-Every request is rate-limited via `McpRateLimiter` before the protocol runs. The Store
++Every request is rate-limited via `McpRateLimiter` before the protocol runs (the handshake-era follow-up `notifications/initialized` uses its own per-IP key on the same `mcp_store_api` route, so Streamable HTTP session setup can complete after `initialize` has consumed the post-`time_backoff` slot; `initialize` itself stays on the endpoint key). The Store
+diff --git a/tests/unit/Core/Framework/Mcp/RateLimit/McpRateLimiterTest.php b/tests/unit/Core/Framework/Mcp/RateLimit/McpRateLimiterTest.php
+--- a/tests/unit/Core/Framework/Mcp/RateLimit/McpRateLimiterTest.php
++++ b/tests/unit/Core/Framework/Mcp/RateLimit/McpRateLimiterTest.php
+@@ @@
++
++    public function testEnforceForAdminApiUsesSeparateKeyForInitializedNotification(): void
++    {
++        $this->rateLimiter->expects($this->once())
++            ->method('ensureAccepted')
++            ->with(RateLimiter::MCP_ADMIN_API, 'initialized-127.0.0.1');
++
++        $this->mcpRateLimiter->enforceForAdminApi($this->jsonRpcRequest('notifications/initialized', id: null));
++    }
++
++    public function testEnforceForStoreApiUsesSeparatePerIpKeyForInitializedNotification(): void
++    {
++        $this->expectExceptionObject(McpException::throttled($rateLimitException->getWaitTime(), $rateLimitException));
++    #[DataProvider('limitedPostBodyProvider')]
++    #[DataProvider('escapedInitializedBodyProvider')]
++     * Reproduces #18906: after time_backoff accepts one post-wait request,

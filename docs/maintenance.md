@@ -177,6 +177,41 @@ To add a review source, add an entry under `reviews` in
 source), `repo`, `base` and `private`. A public one is in the next daily
 run. For a backfill, start the workflow by hand with `since` and `until`.
 
+### Replaying the router
+
+The review comments double as a test of the reference router.
+[`tools/bin/replay-routes.ts`](../tools/bin/replay-routes.ts) takes every
+PR with a review comment in `.cache/review-signals/`, fetches its diff once
+into `.cache/pr-diffs/`, runs the router on it and compares the result with
+the references the comments map to:
+
+- **Recall**: the share of comment-mapped references the router selects
+  for the whole PR. A comment maps through the same routes on its own hunk,
+  so a miss means the code under the comment left the merged diff (the
+  thread went outdated, or the file was dropped) or a route excludes the
+  path.
+- **Noise**: references selected per PR with no comment mapped to them,
+  overall and per reference.
+
+```bash
+node tools/bin/replay-routes.ts --out /tmp/replay.md
+node tools/bin/replay-routes.ts --root ../branch-checkout --focus sw-testing/references/test-shape-and-flags.md
+node tools/bin/replay-routes.ts --corpus evals/routing-replay
+node tools/bin/replay-routes.ts --record evals/routing-replay --pr 20734 --pr 19917@1f0c407f74d8
+```
+
+`--root` replays another checkout's routes on the same signals and diffs,
+so a route change can be measured before it merges. `evals/routing-replay/`
+is a small recorded corpus of public core PRs: trimmed diffs (file headers,
+every line an anchor matches, a few other changed lines) and the
+comment-mapped references at recording time. `N@SHA` records the diff at
+the commit a comment was written on, for a comment whose code was removed
+before the merge. Hand `labels` in `case.json` name the reference a
+comment needed, as ground truth independent of the routes.
+`tools/test/route-replay.test.ts` checks the corpus offline against a
+recall floor, a noise ceiling and every hand label. Never record a private
+review source; the bin refuses it.
+
 ## Planned: suggested and drafted rules
 
 A local command will read the review signals and the drift issue, suggest

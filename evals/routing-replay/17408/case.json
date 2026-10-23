@@ -1,0 +1,7 @@
+{
+  "repo": "shopware/shopware",
+  "pr": 17408,
+  "title": "test: add checkout test with promotion discount rule",
+  "url": "https://github.com/shopware/shopware/pull/17408",
+  "expected": {}
+}

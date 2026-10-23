@@ -1,0 +1,24 @@
+diff --git a/src/Administration/Resources/app/administration/src/app/adapter/view/vue.adapter.spec.js b/src/Administration/Resources/app/administration/src/app/adapter/view/vue.adapter.spec.js
+--- a/src/Administration/Resources/app/administration/src/app/adapter/view/vue.adapter.spec.js
++++ b/src/Administration/Resources/app/administration/src/app/adapter/view/vue.adapter.spec.js
+@@ @@
++    it('initLocales should use the last known locale while the session locale is not resolved yet', async () => {
++        application = createApplication().addFactory('locale', () => {
++            return LocaleFactory;
++        });
++
++        vueAdapter = new VueAdapter(application);
++        vueAdapter.setLocaleFromUser = jest.fn();
++
++        Shopware.Store.get('session').currentLocale = null;
++        const getLastKnownLocaleSpy = jest.spyOn(LocaleFactory, 'getLastKnownLocale').mockReturnValue('de-DE');
++
++        try {
++            await flushPromises();
+diff --git a/src/Administration/Resources/app/administration/src/app/adapter/view/vue.adapter.ts b/src/Administration/Resources/app/administration/src/app/adapter/view/vue.adapter.ts
+--- a/src/Administration/Resources/app/administration/src/app/adapter/view/vue.adapter.ts
++++ b/src/Administration/Resources/app/administration/src/app/adapter/view/vue.adapter.ts
+@@ @@
+-                i18n.global.locale.value = currentLocale ?? '';
++                // Keep the last known locale until the session locale is resolved, otherwise the fallback locale is shown
++                i18n.global.locale.value = currentLocale ?? lastKnownLocale;

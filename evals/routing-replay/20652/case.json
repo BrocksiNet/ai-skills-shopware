@@ -1,0 +1,17 @@
+{
+  "repo": "shopware/shopware",
+  "pr": 20652,
+  "title": "fix(storefront): deprecate country state post route",
+  "url": "https://github.com/shopware/shopware/pull/20652",
+  "expected": {
+    "sw-core-development/references/deprecations.md": [
+      "https://github.com/shopware/shopware/pull/20652#discussion_r4062715811"
+    ],
+    "sw-core-development/references/removals-and-shims.md": [
+      "https://github.com/shopware/shopware/pull/20652#discussion_r4062715811"
+    ],
+    "sw-testing/references/core-platform-patterns.md": [
+      "https://github.com/shopware/shopware/pull/20652#discussion_r4062677733"
+    ]
+  }
+}

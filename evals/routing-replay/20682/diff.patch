@@ -1,0 +1,144 @@
+diff --git a/RELEASE_INFO-6.7.md b/RELEASE_INFO-6.7.md
+--- a/RELEASE_INFO-6.7.md
++++ b/RELEASE_INFO-6.7.md
+@@ @@
++### The image gallery renders every spatial media type
++
++`cms-element-image-gallery.html.twig` now shows every media for which `isSpatial()` is true in the spatial viewer, and derives the slider options for spatial slides from its own items instead of `page.product.media`, so static galleries get them as well. The AR button and the QR code modal are only rendered for spatial objects.
++
++
++The zoom modal no longer waits for images without a source before it opens.
++
++These additions are experimental and become stable with 6.8.0.
+diff --git a/src/Core/Content/Media/MediaEntity.php b/src/Core/Content/Media/MediaEntity.php
+--- a/src/Core/Content/Media/MediaEntity.php
++++ b/src/Core/Content/Media/MediaEntity.php
+@@ @@
++use Shopware\Core\Content\Media\MediaType\SpatialMediaTypeInterface;
++    /**
++     * @experimental stableVersion:v6.8.0 feature:SPATIAL_BASES
++     */
++    public function isSpatial(): bool
++    {
++        return $this->mediaType instanceof SpatialMediaTypeInterface;
++    }
++
+diff --git a/src/Core/Content/Media/MediaType/SpatialMediaTypeInterface.php b/src/Core/Content/Media/MediaType/SpatialMediaTypeInterface.php
+--- /dev/null
++++ b/src/Core/Content/Media/MediaType/SpatialMediaTypeInterface.php
+@@ @@
++<?php declare(strict_types=1);
++
++namespace Shopware\Core\Content\Media\MediaType;
++
++use Shopware\Core\Framework\Log\Package;
++
++/**
++ * Marks a media type that is shown by the spatial viewer rather than as a picture.
++ *
++ * @experimental stableVersion:v6.8.0 feature:SPATIAL_BASES
++ */
++#[Package('discovery')]
++interface SpatialMediaTypeInterface
+diff --git a/src/Core/Content/Media/MediaType/SpatialObjectType.php b/src/Core/Content/Media/MediaType/SpatialObjectType.php
+--- a/src/Core/Content/Media/MediaType/SpatialObjectType.php
++++ b/src/Core/Content/Media/MediaType/SpatialObjectType.php
+@@ @@
+-class SpatialObjectType extends MediaType
++class SpatialObjectType extends MediaType implements SpatialMediaTypeInterface
+diff --git a/src/Storefront/Resources/app/storefront/src/plugin/spatial/spatial-base-viewer.plugin.ts b/src/Storefront/Resources/app/storefront/src/plugin/spatial/spatial-base-viewer.plugin.ts
+--- a/src/Storefront/Resources/app/storefront/src/plugin/spatial/spatial-base-viewer.plugin.ts
++++ b/src/Storefront/Resources/app/storefront/src/plugin/spatial/spatial-base-viewer.plugin.ts
+@@ @@
++import type { QuickView } from '@shopware-ag/dive/quickview';
+-    private disposed = false;
+-    // eslint-disable-next-line @typescript-eslint/consistent-type-imports
+-    protected dive: import('@shopware-ag/dive/quickview').QuickView | undefined;
++    protected dive: QuickView | undefined;
+-            this.dive = await window.DIVEQuickViewPlugin.QuickView(this.options.modelUrl, { autoStart: false, canvas: this.canvas });
++            const dive = await this.createQuickView(this.options.modelUrl);
++
++            if (dive === null) return;
++
++            this.dive = dive;
++
+diff --git a/src/Storefront/Resources/app/storefront/src/plugin/zoom-modal/zoom-modal.plugin.js b/src/Storefront/Resources/app/storefront/src/plugin/zoom-modal/zoom-modal.plugin.js
+--- a/src/Storefront/Resources/app/storefront/src/plugin/zoom-modal/zoom-modal.plugin.js
++++ b/src/Storefront/Resources/app/storefront/src/plugin/zoom-modal/zoom-modal.plugin.js
+@@ @@
+-        const imagesToLoad = modal.querySelectorAll('img[' + this.options.imgDataSrcAttr + ']' + this.options.imgToLoadSelector);
++        const imagesToLoad = Array.from(
++            modal.querySelectorAll('img[' + this.options.imgDataSrcAttr + ']' + this.options.imgToLoadSelector),
++        ).filter(img => img.getAttribute(this.options.imgDataSrcAttr));
+-            if (src) {
+-                img.onload = () => {
+-                    loadedCount++;
++            img.onload = () => {
++                loadedCount++;
+-                    // show modal if all images are loaded or error occured
+-                    if (loadedCount + errorCount === imageCount){
+-                        this._showModal(modal);
+diff --git a/src/Storefront/Resources/app/storefront/test/plugin/spatial/spatial-base-viewer.plugin.test.js b/src/Storefront/Resources/app/storefront/test/plugin/spatial/spatial-base-viewer.plugin.test.js
+--- a/src/Storefront/Resources/app/storefront/test/plugin/spatial/spatial-base-viewer.plugin.test.js
++++ b/src/Storefront/Resources/app/storefront/test/plugin/spatial/spatial-base-viewer.plugin.test.js
+@@ @@
+-        QuickView: jest.fn().mockResolvedValue(mockDive)
++        QuickView: jest.fn().mockResolvedValue(mockDive),
++        spatialBaseViewerPlugin.rendering = true;
++
++        expect(mockDive.stop).toHaveBeenCalledTimes(1);
+-    test('stopRendering tears the viewer down only once', () => {
+-        spatialBaseViewerPlugin.stopRendering();
+-
+-        parentDivClassListRemoveSpy.mockClear();
+-        emitterPublishSpy.mockClear();
+-        mockDive.stop.mockClear();
++    test('stopRendering makes no actions if not rendering', () => {
+diff --git a/src/Storefront/Resources/app/storefront/test/plugin/zoom-modal/zoom-modal.plugin.test.js b/src/Storefront/Resources/app/storefront/test/plugin/zoom-modal/zoom-modal.plugin.test.js
+--- a/src/Storefront/Resources/app/storefront/test/plugin/zoom-modal/zoom-modal.plugin.test.js
++++ b/src/Storefront/Resources/app/storefront/test/plugin/zoom-modal/zoom-modal.plugin.test.js
+@@ @@
++
++    describe('_loadImages', () => {
++        let modal;
++
++        beforeEach(() => {
++            modal = document.querySelector('.js-zoom-modal');
++            zoomModalPlugin._showModal = jest.fn();
++        });
++
++        test('opens straight away when there is nothing to load', () => {
++            zoomModalPlugin._loadImages(modal);
++
+diff --git a/src/Storefront/Resources/views/storefront/element/cms-element-image-gallery.html.twig b/src/Storefront/Resources/views/storefront/element/cms-element-image-gallery.html.twig
+--- a/src/Storefront/Resources/views/storefront/element/cms-element-image-gallery.html.twig
++++ b/src/Storefront/Resources/views/storefront/element/cms-element-image-gallery.html.twig
+@@ @@
++        {% set hasSpatialMedia = false %}
++            {% set hasSpatialMedia = hasSpatialMedia or item.media.isSpatial() %}
+-            {% if page.product.media.hasSpatialObjects() %}
++            {% if hasSpatialMedia %}
+-                                                                        {% if (displayMode == "standard" and image.isSpatialObject()) %} style="min-height: 240px"{% endif %}>
++                                                                        {% if (displayMode == "standard" and image.isSpatial()) %} style="min-height: 240px"{% endif %}>
+-                                                                        {% if image.isSpatialObject() %}
++                                                                        {% if image.isSpatial() %}
+-                                                                                        {% set spatialGalleryViewerOptions = {
+-                                                                                            modelUrl: image.url,
+-                                                                                            sliderPosition: loop.index0,
+-                                                                                        } %}
+diff --git a/tests/unit/Core/Content/Media/MediaEntityTest.php b/tests/unit/Core/Content/Media/MediaEntityTest.php
+--- a/tests/unit/Core/Content/Media/MediaEntityTest.php
++++ b/tests/unit/Core/Content/Media/MediaEntityTest.php
+@@ @@
++use Shopware\Core\Content\Media\MediaType\ImageType;
++use Shopware\Core\Content\Media\MediaType\MediaType;
++use Shopware\Core\Content\Media\MediaType\SpatialMediaTypeInterface;
++use Shopware\Core\Content\Media\MediaType\SpatialObjectType;
++    public function testIsSpatialCoversEveryTypeTheViewerRenders(): void
++    {
++        $media = new MediaEntity();
++
++        static::assertFalse($media->isSpatial());
++
++        $media->setMediaType(new ImageType());
++        static::assertFalse($media->isSpatial());

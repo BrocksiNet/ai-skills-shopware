@@ -1,0 +1,14 @@
+{
+  "repo": "shopware/shopware",
+  "pr": 19833,
+  "title": "fix(framework): handle missing required key in debug:mcp tool detail",
+  "url": "https://github.com/shopware/shopware/pull/19833",
+  "expected": {
+    "sw-core-development/references/bc-data-and-config.md": [
+      "https://github.com/shopware/shopware/pull/19833#discussion_r3881603951"
+    ],
+    "sw-testing/references/core-platform-patterns.md": [
+      "https://github.com/shopware/shopware/pull/19833#discussion_r3881421153"
+    ]
+  }
+}
