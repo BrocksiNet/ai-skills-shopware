@@ -1035,8 +1035,7 @@
       "title": "Derived data comes from an indexer, not migration SQL",
       "status": "active",
       "since": "2026-10-20",
-      "eval": null,
-      "eval_reason": "Documented only; no eval yet.",
+      "eval": "review-migration-derived-data-catch",
       "core_guide_ids": [
         "MIG-005"
       ],

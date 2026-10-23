@@ -1,0 +1,7 @@
+The backfill copies product_number into the listing table in batches of 1,000 with a cursor. Nothing to report.
+
+```json
+{
+  "findings": []
+}
+```

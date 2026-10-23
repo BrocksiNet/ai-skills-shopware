@@ -1,0 +1,57 @@
+diff --git a/src/Migration/Migration1729900100BackfillListingNumber.php b/src/Migration/Migration1729900100BackfillListingNumber.php
+new file mode 100644
+index 0000000..7c2d9a4
+--- /dev/null
++++ b/src/Migration/Migration1729900100BackfillListingNumber.php
+@@ -0,0 +1,52 @@
++<?php declare(strict_types=1);
++
++namespace Swag\Listing\Migration;
++
++use Doctrine\DBAL\ArrayParameterType;
++use Doctrine\DBAL\Connection;
++use Shopware\Core\Framework\Migration\MigrationStep;
++
++class Migration1729900100BackfillListingNumber extends MigrationStep
++{
++    private const BATCH_SIZE = 1000;
++
++    public function getCreationTimestamp(): int
++    {
++        return 1729900100;
++    }
++
++    public function update(Connection $connection): void
++    {
++        if (!$this->columnExists($connection, 'swag_product_listing', 'product_number')) {
++            $connection->executeStatement(
++                'ALTER TABLE `swag_product_listing` ADD COLUMN `product_number` VARCHAR(64) NULL'
++            );
++        }
++
++        $lastId = '';
++        do {
++            $ids = $connection->fetchFirstColumn(
++                'SELECT `id` FROM `product`
++                WHERE `id` > :lastId AND `parent_id` IS NULL
++                ORDER BY `id`
++                LIMIT ' . self::BATCH_SIZE,
++                ['lastId' => $lastId],
++            );
++            if ($ids === []) {
++                break;
++            }
++
++            $connection->executeStatement(
++                'UPDATE `swag_product_listing` `listing`
++                INNER JOIN `product` `p` ON `p`.`id` = `listing`.`product_id`
++                SET `listing`.`product_number` = `p`.`product_number`
++                WHERE `p`.`id` IN (:ids)',
++                ['ids' => $ids],
++                ['ids' => ArrayParameterType::BINARY],
++            );
++
++            $lastId = (string) end($ids);
++        } while (\count($ids) === self::BATCH_SIZE);
++    }
++}
