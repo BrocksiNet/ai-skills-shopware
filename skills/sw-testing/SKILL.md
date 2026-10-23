@@ -61,9 +61,9 @@ assert columns, data transforms, idempotency.
 
 ## Unit-first placement
 
-**TEST-034** If the test **does not need** the kernel, container, DAL, or HTTP: it belongs in
+If the test **does not need** the kernel, container, DAL, or HTTP: it belongs in
 `tests/unit/`, not `tests/integration/`. Reviewers routinely request moving pure
-logic tests out of the integration suite.
+logic tests out of the integration suite. See `test-shape-and-flags.md`.
 
 Exception: shopware/shopware sometimes places DB-touching tests under `tests/unit/`
 for **Codecov patch coverage** — document why in the class docblock (see

@@ -1,0 +1,16 @@
+The writer test checks a point award, so it could move to the unit suite.
+
+```json
+{
+  "findings": [
+    {
+      "rule_id": "TEST-034",
+      "severity": "minor",
+      "file": "tests/integration/Service/LoyaltyPointWriterTest.php",
+      "line": 14,
+      "summary": "The test only checks LoyaltyCalculator arithmetic and belongs in tests/unit/.",
+      "fix": "Move the test to tests/unit/Service/."
+    }
+  ]
+}
+```
