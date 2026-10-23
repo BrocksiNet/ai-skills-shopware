@@ -40,7 +40,7 @@ Detailed, growing lists live in references. Read only the one that matches the c
 | [`api-aware.md`](references/api-aware.md) | The code serves Store-API or headless clients. | `StoreApi/**/*.php`, `SalesChannel/**/*Route.php`, `store-api`, … |
 | [`dal-and-performance.md`](references/dal-and-performance.md) | The code queries the DAL, checks what a customer can see, runs on a hot path, or dispatches queued work. | `new Criteria(`, … |
 | [`version-guards.md`](references/version-guards.md) | The change adds or keeps a class_exists or method_exists check for Shopware API. | `(class\|method\|interface)_exists((\?Shopware\b\|[A-Z][A-Za-z]+::class)` |
-| [`code-comments.md`](references/code-comments.md) | The change adds or edits comments or docblocks that talk about earlier versions, removed code or the issue. | `^\s*(//\|#\|*\|/*).*\b([Pp]reviously\|[Oo]riginally\|used to\|no longer\|[Ee]arlier (version\|revision\|approach)\|[Bb]efore this (change\|PR\|fix)\|this (PR\|pull request)\|was (changed\|replaced\|removed) (to\|in\|with)\|instead of the old)\b`, … |
+| [`code-comments.md`](references/code-comments.md) | The change adds or edits comments or docblocks that talk about earlier versions, removed code or the issue. | `^\s*(//\|#\|*\|/*).*\b([Pp]reviously\|[Oo]riginally\|used to\|no longer (used\|needed\|necessary\|required\|called\|supported\|exists?\|works?\|applies)\|[Ee]arlier (version\|revision\|approach)\|[Bb]efore this (change\|PR\|fix)\|this (PR\|pull request)\|was (changed\|replaced\|removed) (to\|in\|with)\|instead of the old)\b`, … |
 | [`change-scope.md`](references/change-scope.md) | A fix grows beyond the bug. | on demand |
 <!-- routes:end -->
 
