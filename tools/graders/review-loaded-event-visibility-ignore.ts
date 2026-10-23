@@ -6,5 +6,6 @@ import { reviewIgnore } from '../src/grade/review.ts';
 
 export const grade = reviewIgnore({
   rule: 'REV-035',
-  summary: /(\.loaded|loaded(-| )event|dynamic access|restrict|getActive|setActive|searchIds|active (flag|state) (set|changed) (by|on) (load|subscriber))/iu,
+  summary:
+    /(\.loaded|loaded(-| )event|dynamic access|restrict|getActive|setActive|searchIds|active (flag|state) (set|changed) (by|on) (load|subscriber))/iu,
 });

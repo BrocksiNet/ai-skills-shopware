@@ -6,5 +6,6 @@ import { reviewIgnore } from '../src/grade/review.ts';
 
 export const grade = reviewIgnore({
   rule: 'REV-034',
-  summary: /(histor|earlier (version|revision|approach)|previous (version|revision|approach|code)|removed (code|again)|narrat|story|belongs? in the (PR|pull request|commit)|PR (history|story)|stale)/iu,
+  summary:
+    /(histor|earlier (version|revision|approach)|previous (version|revision|approach|code)|removed (code|again)|narrat|story|belongs? in the (PR|pull request|commit)|PR (history|story)|stale)/iu,
 });

@@ -10,5 +10,6 @@ export const grade = reviewCatch({
   rule: 'REV-035',
   file: 'src/**',
   minSeverity: 'major',
-  summary: /(\.loaded|loaded(-| )event|dynamic access|restrict|getActive|setActive|searchIds|active (flag|state) (set|changed) (by|on) (load|subscriber))/iu,
+  summary:
+    /(\.loaded|loaded(-| )event|dynamic access|restrict|getActive|setActive|searchIds|active (flag|state) (set|changed) (by|on) (load|subscriber))/iu,
 });
