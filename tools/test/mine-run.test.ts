@@ -26,7 +26,7 @@ describe('the report and advance commands', () => {
       until: '2026-10-19',
       source: 'shopware',
     });
-    assert.match(t, /^\| `shopware` \| 2026-10-13 \| 12 \| 8 \|/mu);
+    assert.match(t, /^\| `shopware` \| 2026-10-13 \| 12 \| 9 \|/mu);
     await assert.rejects(runReport({ root: ROOT, api: recorded(), source: 'nope' }), /unknown source nope/u);
     await assert.rejects(runReport({ root: ROOT, api: recorded(), since: '2026-10-13' }), /go together/u);
   });

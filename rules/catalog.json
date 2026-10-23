@@ -151,6 +151,13 @@
             "catches": "fails the run when an integration test method or its class carries `#[DisabledFeatures]`",
             "misses": "the attribute on a parent class or trait, and plugin test namespaces",
             "trunk_only": true
+          },
+          {
+            "tool": "NoFeatureSkipInUnitTestsRule",
+            "kind": "phpstan",
+            "catches": "reports `Feature::skipTestIfActive()` and `skipTestIfInActive()`, and a `markTestSkipped()` in any branch of an `if` chain whose conditions call `Feature::isActive()`, in a test class under `Shopware\\Tests\\Unit\\`",
+            "misses": "integration and other suites, a flag check through a helper or a variable, and plugin test namespaces",
+            "trunk_only": true
           }
         ]
       }
@@ -297,6 +304,13 @@
             "kind": "phpstan",
             "catches": "reports `ReflectionMethod` access to a non-public Shopware method, and any `setAccessible()`",
             "misses": "`ReflectionProperty`, `Closure::bind`, method names that are not constant strings, and a `ReflectionClass` built from a variable",
+            "trunk_only": true
+          },
+          {
+            "tool": "NoReflectionInUnitTestsRule",
+            "kind": "phpstan",
+            "catches": "reports any `new \\Reflection*` instance and `Closure::bind()`, `bindTo()` and `call()` under `Shopware\\Tests\\Unit\\`, whatever the visibility of the member reached",
+            "misses": "integration tests, reflection through a helper class outside the unit namespace, and plugin test namespaces",
             "trunk_only": true
           }
         ]
@@ -3981,7 +3995,18 @@
       "audience": [
         "core"
       ],
-      "defer_on_trunk": false
+      "defer_on_trunk": false,
+      "trunk": {
+        "enforced_by": [
+          {
+            "tool": "StoreApiRouteExtensionRule",
+            "kind": "phpstan",
+            "catches": "reports a Store API route method that does not return `ExtensionDispatcher::publish()` with an `Extension` object and a private route-body method, and one that keeps an abstract route or decorator contract (`getDecorated()` or an abstract parent method)",
+            "misses": "routes on the legacy allow-list, routes outside the `store-api` scope, and the extension itself: any `Extension` subclass and any name pass, so a generic or reused extension is not reported",
+            "trunk_only": true
+          }
+        ]
+      }
     },
     {
       "id": "ARCH-005",
