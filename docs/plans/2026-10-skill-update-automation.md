@@ -384,7 +384,7 @@ Every miss came from code no longer in the merged diff: the file was gone
 (33) or the hunk changed, mostly outdated threads (30). The noisiest
 references are `core-platform-patterns.md`, `test-shape-and-flags.md` and
 `release-notes-and-adr.md`. `REV-034` now has a route that reaches the
-#19917 history comment. A corpus of 34 PRs in `evals/routing-replay/` keeps
+history comment on #19917. A corpus of 34 PRs in `evals/routing-replay/` keeps
 a recall floor of 0.76 and at most five references per PR in CI.
 
 Left open: catalog entries for three new trunk checks that land in
