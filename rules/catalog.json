@@ -4312,8 +4312,7 @@
       "title": "Validate and type route input",
       "status": "active",
       "since": "2026-10-21",
-      "eval": null,
-      "eval_reason": "Documented only; no eval yet.",
+      "eval": "review-route-input-catch",
       "core_guide_ids": [],
       "audience": [
         "core",
