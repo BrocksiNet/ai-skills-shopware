@@ -1,0 +1,16 @@
+The flag-off path looks changed, so existing shops may see different points.
+
+```json
+{
+  "findings": [
+    {
+      "rule_id": null,
+      "severity": "major",
+      "file": "src/Resources/app/administration/src/module/swag-loyalty/component/swag-loyalty-points-preview/index.js",
+      "line": 37,
+      "summary": "The flag-off branch now runs through the new rounding, so existing shops get different points.",
+      "fix": "Keep the flag-off branch unchanged."
+    }
+  ]
+}
+```
