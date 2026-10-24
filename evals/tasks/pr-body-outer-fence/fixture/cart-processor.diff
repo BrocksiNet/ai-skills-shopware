@@ -1,0 +1,51 @@
+diff --git a/src/Core/Checkout/Cart/AbstractCartProcessor.php b/src/Core/Checkout/Cart/AbstractCartProcessor.php
+new file mode 100644
+index 0000000..5b1e2c4
+--- /dev/null
++++ b/src/Core/Checkout/Cart/AbstractCartProcessor.php
+@@ -0,0 +1,14 @@
++<?php declare(strict_types=1);
++
++namespace Shopware\Core\Checkout\Cart;
++
++use Shopware\Core\Framework\Log\Package;
++
++#[Package('checkout')]
++abstract class AbstractCartProcessor implements CartProcessorInterface
++{
++    /**
++     * The processor that runs before this one in the chain, if any.
++     */
++    abstract public function getDecorated(): CartProcessorInterface;
++}
+diff --git a/src/Core/Checkout/Cart/CartProcessor.php b/src/Core/Checkout/Cart/CartProcessor.php
+index 3f2a1b0..8c9d4e7 100644
+--- a/src/Core/Checkout/Cart/CartProcessor.php
++++ b/src/Core/Checkout/Cart/CartProcessor.php
+@@ -14,7 +14,7 @@ use Shopware\Core\System\SalesChannel\SalesChannelContext;
+
+ #[Package('checkout')]
+-class CartProcessor implements CartProcessorInterface
++class CartProcessor extends AbstractCartProcessor
+ {
+     public function __construct(
+         private readonly CartCalculator $calculator,
+@@ -28,6 +28,11 @@ class CartProcessor implements CartProcessorInterface
+     ): void {
+         $this->calculator->calculate($toCalculate, $context, $behavior);
+     }
++
++    public function getDecorated(): CartProcessorInterface
++    {
++        return $this;
++    }
+ }
+diff --git a/src/Core/Checkout/Cart/services.xml b/src/Core/Checkout/Cart/services.xml
+index 7a0c3d1..e2f4b89 100644
+--- a/src/Core/Checkout/Cart/services.xml
++++ b/src/Core/Checkout/Cart/services.xml
+@@ -20,7 +20,7 @@
+-        <service id="Shopware\Core\Checkout\Cart\CartProcessor">
++        <service id="Shopware\Core\Checkout\Cart\CartProcessor" public="true">
+             <argument type="service" id="Shopware\Core\Checkout\Cart\CartCalculator"/>
+         </service>

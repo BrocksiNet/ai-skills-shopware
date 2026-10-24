@@ -4543,8 +4543,7 @@
       "title": "One outer code block for copy-paste; four backticks when the body shows code",
       "status": "active",
       "since": "2026-10-20",
-      "eval": null,
-      "eval_reason": "Documented only; no eval yet.",
+      "eval": "pr-body-outer-fence",
       "core_guide_ids": [],
       "audience": [
         "core"
