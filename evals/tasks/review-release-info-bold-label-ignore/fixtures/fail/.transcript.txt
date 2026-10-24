@@ -1,0 +1,14 @@
+```json
+{
+  "findings": [
+    {
+      "rule_id": "CORE-049",
+      "severity": "major",
+      "file": "RELEASE_INFO-6.8.md",
+      "line": 9,
+      "summary": "The new entry uses a bold label, which RELEASE_INFO entries must not use.",
+      "fix": "Remove the bold label."
+    }
+  ]
+}
+```

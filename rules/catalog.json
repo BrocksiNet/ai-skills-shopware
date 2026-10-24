@@ -2653,8 +2653,7 @@
       "title": "No bold labels in RELEASE_INFO entries",
       "status": "active",
       "since": "2026-10-20",
-      "eval": null,
-      "eval_reason": "Documented only; no eval yet.",
+      "eval": "review-release-info-bold-label-catch",
       "core_guide_ids": [],
       "audience": [
         "core"
