@@ -3,17 +3,11 @@
 ## Feature flags
 
 - **ADM-022** Flags are temporary rollout/deprecation branches, not permanent config.
-- **ADM-023** Flag name spelling is not a rule. `Shopware.Feature.isActive()` resolves
-  both `V6_8_0_0` and `v6.8.0.0`, so follow the surrounding code and do not
-  flag or rewrite the other spelling.
-- **ADM-024** One behavior per flag. No nested flags.
 - **ADM-025** Keep the old behavior in the branch that will be deleted with the flag.
 - **ADM-026** Test both relevant flag states while both branches exist.
 
 ## Deprecations
 
-- **ADM-027** `@deprecated tag:vX.Y.Z - …` plus a named replacement.
-- **ADM-028** Runtime warnings for developer-facing Admin APIs that callers must leave.
 - **ADM-029** Do not add new internal callers of deprecated APIs.
 - **ADM-030** Removing a flag also removes the legacy branch, flag config, obsolete
   tests, and stale docs in the same change.

@@ -61,9 +61,7 @@ Read only the reference that matches the task or the files it changes:
    unless a documented admin/export exception.
 2. **Never use Doctrine `Connection` for entity CRUD** when `EntityRepository` +
    `Criteria` express the query (`PLG-003`).
-3. **Never import Storefront/Administration from Core** (`CORE-030`), and never
-   edit core or vendor files from a plugin (`PLG-004`).
-4. **ARCH-003** **Never silent behaviour change** on paths extensions observe — flag, release
+3. **ARCH-003** **Never silent behaviour change** on paths extensions observe — flag, release
    note, or explicit BC branch.
 
 ## Definition of done

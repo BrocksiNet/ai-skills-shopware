@@ -57,12 +57,6 @@ public function load(string|int $id): void
 `$`, `::class` for class references, the real default for `NewOptionalParameter`.
 PHPStan rejects attributes that do not describe a structurally possible change.
 
-**CORE-016** When legacy use is detectable at runtime (`BecomesAbstract`,
-`NewRequiredParameter`, `ParameterRemoval`, `ParameterTypeNarrowing`), keep the
-old behavior and call `Feature::triggerDeprecationOrThrow()` **only for that
-incompatible use**, unless the method is framework-invoked (the framework would
-warn on legitimate calls).
-
 ## Deprecating code that already has a replacement
 
 ```php

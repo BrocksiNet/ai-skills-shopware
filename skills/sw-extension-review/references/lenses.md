@@ -61,8 +61,6 @@ points at a replacement the extenders can use today: `CORE-063`.
 - Is a migration behind a feature flag: `PLG-029`?
 - Does the plugin write its entities with raw SQL, so DAL events, indexers
   and cache invalidation never run: `PLG-003`, `REV-024`, `PLG-007`?
-- Does `uninstall()` drop the plugin's tables and config when
-  `keepUserData()` is false: `PLG-008`?
 - Does a hot path load associations per row: `REV-021`?
 
 ## Workers and long-running processes
@@ -105,15 +103,12 @@ problem with `null`, or with the rule that does cover it:
 | An idempotency key or stored response not scoped to the caller | `SEC-005` (input validation) | `SEC-008` |
 | An admin override of a core component that skips `$super` | `ADM-039` (the API a shipped component offers) | `ADM-042` |
 | An override of a core admin block, storefront template or block, or JS plugin that a release in the `shopware/core` range lacks | `ADM-039`, `SF-001`, `SF-011` (the API the extension itself offers) | `PLG-001` |
-| Plugin ACL roles that grant `system_config` read or write | `ADM-016` (UI checks of privileges) | `ADM-043` |
 
 ## Core-only rules
 
 These rules sit in borrowed references but are for `shopware/shopware`
 itself. Do not report them on a plugin or app diff:
 
-- `ADM-013` and `ADM-015`: the Administration boot order and the global
-  `Shopware` object's extension points.
 - `ARCH-004`: new core Store API routes publish a typed extension event.
 - `TEST-031`: tests for major feature flag behavior.
 - `CORE-064` and `CORE-065`: shims for core removals and gating code that

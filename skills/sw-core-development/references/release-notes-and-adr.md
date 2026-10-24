@@ -97,7 +97,6 @@ changelog.
 
 ## Formatting rules
 
-- **CORE-044** Wrap filenames, config keys, class names, and code elements in backticks.
 - **CORE-045** Keep only changes visible or relevant to the section audience. Omit
   implementation details that do not affect API or behavior.
 - **CORE-046** Put a blank line before and after every heading, and between paragraphs.
@@ -120,7 +119,6 @@ changelog.
 ### Avoid duplication
 
 - Deprecations go only in UPGRADE, not RELEASE_INFO.
-- **CORE-051** Each file stands alone — no cross-references needed.
 
 ## Deprecations across the lifecycle
 

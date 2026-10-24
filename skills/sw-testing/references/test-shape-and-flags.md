@@ -58,8 +58,6 @@ A test must never let production or framework code call `exit()`, `die()`, or
 
 ## Filesystem in unit tests
 
-- **TEST-028** Simple single-file reads/writes: Symfony `Filesystem` injected into the class,
-  mocked in the test.
 - Several consecutive filesystem calls, realistic paths, or directory structure:
   prefer committed `_fixtures` over building temp files at runtime or over-mocking
   the filesystem.
@@ -196,8 +194,6 @@ Eval: `event-hook-capture-then-assert`.
   `yield 'human readable case' => [...]` per scenario.
 - **TEST-029** Case names should explain the **rule being proven** (priority, normalization,
   boundary), not mechanically restate raw input values.
-- **TEST-030** When removing “duplicate” provider rows, delete only **exact semantic**
-  duplicates; keep similar-looking cases that cover distinct edge behavior.
 
 ## Package attribute and `@internal`
 

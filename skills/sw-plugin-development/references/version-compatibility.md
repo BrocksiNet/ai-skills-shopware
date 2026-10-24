@@ -82,9 +82,6 @@ use Shopware\Core\Framework\Feature;
 return !Feature::has('MY_FLAG') || Feature::isActive('MY_FLAG');
 ```
 
-- **PLG-025** **Never read `$_SERVER['MY_FLAG']` or `getenv('MY_FLAG')` directly** — that
-  bypasses Shopware's feature registry, breaks in prod mode, and reviewers will
-  flag it.
 - `Feature::has()` returns false when the flag is not registered (e.g. it was
   removed after graduating). The pattern above treats graduation as "always active",
   which is correct — the feature is stable.

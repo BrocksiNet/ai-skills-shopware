@@ -4,17 +4,12 @@ Load when adding modules, components, services, or ACL-backed UI.
 
 ## Layers
 
-- **ADM-013** Keep boot order `init-pre/ → init/ → init-post/` when touching startup.
 - **ADM-014** Prefer extension-aware globals (`Shopware.Component`, `Shopware.Service()`,
   `Shopware.Store`) when they exist in that context. Boot code may need
   direct access before globals are ready.
-- **ADM-015** Preserve extension points on the global `Shopware` object when changing
-  repositories, services, components, and stores.
 
 ## Modules and UI
 
-- **ADM-016** Protect routes, navigation, and templates with the required ACL
-  privileges.
 - **ADM-004** **New Admin UI that reads or persists a DAL entity updates the
   privilege mapping in the same change.** Limited roles need `read` / `create` /
   `update` / `delete` through viewer/editor/creator/deleter — do not rely
@@ -47,8 +42,6 @@ Load when adding modules, components, services, or ACL-backed UI.
   plugins do nothing and an import that relies on them fails the build. Do
   not add one for a 6.7 target; a bundle that also supports 6.6 keeps it for
   6.6 only.
-- **ADM-017** Business logic stays out of templates. Prefer composables over new
-  mixins.
 - Use BEM class names and Meteor design tokens. Avoid inline styles.
 
 ## Data

@@ -37,10 +37,6 @@ Read the reference that matches the task or the files it changes:
 
 ## Rules
 
-- **PRD-001** Fill the five sections of `.github/PULL_REQUEST_TEMPLATE.md`
-  and nothing else: no extra top-level section such as "Validation". The
-  only addition is the template's own `#### Impact` sub-section under
-  section 2, and only when one of its cases applies.
 - **PRD-002** Return the filled body in one outer code block for copy-paste.
   When the body shows code, fence the outer block with four backticks.
 - **PRD-003** Write what the diff cannot show: the problem, the approach in a
@@ -49,11 +45,6 @@ Read the reference that matches the task or the files it changes:
   agent block, its rules win.
 - **PRD-004** Link issues in section 1 with `closes #N` (closes on merge) or
   `relates #N`.
-- **PRD-005** Use a conventional PR title when asked, for example
-  `fix(Checkout): allow TestBootstrapper to activate Composer plugins`.
-- **PRD-006** After review feedback or a CI failure, push a follow-up commit
-  for the fix. Do not amend or force-push unless the user asks.
-- **PRD-008** Tick only the checklist items that are true for this PR.
 - **PRD-009** For a diff over about 400 lines, say in section 4 why it is not
   split, or name the follow-up PRs.
 

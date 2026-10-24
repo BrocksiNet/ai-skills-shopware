@@ -39,16 +39,13 @@ change is acceptable for everyone else.
 2. **IMP-002** **A shared cache key is not a private feature.** A new request header,
    cookie, query parameter, or `Vary` entry on a route that other clients
    already cache changes the cache for those clients too.
-3. **IMP-003** **The people who do not use the feature must not pay for it.** Extra data
-   loaded on checkout, cart, or a listing runs for every customer unless the
-   work is skipped when the feature is off.
-4. **IMP-004** **One feature does not outweigh a slower shared path.** If the only design
+3. **IMP-004** **One feature does not outweigh a slower shared path.** If the only design
    that "completes" the ticket slows checkout or listings for every shop, stop
    and narrow it. Say that out loud.
-5. **IMP-005** **Easier beats more complete.** A new setting, header, or ritual that only
+4. **IMP-005** **Easier beats more complete.** A new setting, header, or ritual that only
    makes the feature work has made the shop harder. Prefer the change that
    removes a step.
-6. **IMP-007** **There is one compiled container.** An `if` in the Symfony container
+5. **IMP-007** **There is one compiled container.** An `if` in the Symfony container
    (service definition, compiler pass, `when@`, or a feature-flag condition)
    that builds a different container per flag or per condition cannot ship.
    SaaS runs one container for every shop. Feature differences are runtime

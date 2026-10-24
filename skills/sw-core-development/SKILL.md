@@ -51,17 +51,13 @@ Read only the reference that matches the task or the files it changes:
 
 ## Hard guardrails (refuse rather than violate)
 
-1. **CORE-002** **Never remove or change a public (non-`@internal`) symbol without a
-   deprecation cycle.** Public API is removed only after it was deprecated in a
-   prior minor and announced. If unsure whether something is public, treat it as
-   public and check.
-2. **CORE-003** **Never ship a developer-facing change without a release note.** New
+1. **CORE-003** **Never ship a developer-facing change without a release note.** New
    features, extension points, new guidelines, and deprecations need a
    `RELEASE_INFO-6.x.md` entry; breaking changes need an `UPGRADE-6.x.md` entry.
    (You do NOT hand-write per-change changelog files anymore — the raw changelog
    is generated from PR titles. Internal refactors and small bug fixes need no
    entry.)
-3. **CORE-004** **Never edit generated files** (e.g. `schema/`, generated entity definitions,
+2. **CORE-004** **Never edit generated files** (e.g. `schema/`, generated entity definitions,
    `vendor/`). Regenerate via the documented command instead.
 
 ## Core deltas on top of sw-php-foundation
@@ -127,6 +123,5 @@ default; there the rule still needs a reviewer.
 - `CORE-017` `AnnotationTagTest` (test, trunk only) fails when an `@deprecated` in `src/` or `tests/` lacks a valid `tag:` or `manifest:` version, or names a future version. It misses a missing reason or replacement, and whitelisted paths such as `DevOps/StaticAnalyze`; flag those.
 - `CORE-022` `DeprecatedMethodsThrowDeprecationRule` (PHPStan, trunk only) reports public and protected methods of `@deprecated` classes, and `@deprecated` methods, whose body lacks `Feature::triggerDeprecationOrThrow(`. It misses private methods, a wrong flag argument, a call that is commented out, and entity or collection classes; flag those.
 - `CORE-054` `NoFileExistsRule` (PHPStan, trunk only) reports direct `file_exists()` calls. It misses every other raw filesystem function, such as `file_put_contents()`, `unlink()` and `mkdir()`; it does not ask for Symfony `Filesystem`; flag those.
-- `CORE-060` `PhpstanBaselineGrowth` (Danger, trunk only) fails a PR that adds net lines to `phpstan-baseline.php`. It misses a swap of one entry for another, inline `@phpstan-ignore`, and PRs labeled `skip-danger-phpstan-baseline`; flag those.
 - `CORE-061` `IgnoredPhpstanErrorsInTouchedFiles` (Danger, trunk only) fails a PR that touches a file listed in the PHPStan baseline. It misses inline `@phpstan-ignore` in touched files, and PRs labeled `skip-danger-phpstan-baseline`; flag those.
 <!-- enforced:end -->
