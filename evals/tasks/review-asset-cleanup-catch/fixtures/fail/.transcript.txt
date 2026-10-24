@@ -1,0 +1,14 @@
+```json
+{
+  "findings": [
+    {
+      "rule_id": "CORE-077",
+      "severity": "minor",
+      "file": "src/Storefront/Theme/ThemeCompiler.php",
+      "line": 26,
+      "summary": "Deleting the old theme directory here is a cleanup step that could live somewhere else.",
+      "fix": "Move the cleanup out of compile()."
+    }
+  ]
+}
+```

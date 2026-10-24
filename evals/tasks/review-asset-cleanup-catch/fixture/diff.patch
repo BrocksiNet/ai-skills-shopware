@@ -1,0 +1,19 @@
+diff --git a/src/Storefront/Theme/ThemeCompiler.php b/src/Storefront/Theme/ThemeCompiler.php
+index 3c1a9e2..7d40b15 100644
+--- a/src/Storefront/Theme/ThemeCompiler.php
++++ b/src/Storefront/Theme/ThemeCompiler.php
+@@ -17,9 +17,14 @@ class ThemeCompiler
+     public function compile(string $themeId, string $salesChannelId, string $css): string
+     {
+         $newHash = hash('xxh3', $css);
++        $previousHash = $this->hashStore->current($themeId, $salesChannelId);
+
+         $this->themeFilesystem->write(sprintf('theme/%s/css/all.css', $newHash), $css);
+         $this->hashStore->store($themeId, $salesChannelId, $newHash);
++
++        if ($previousHash !== null && $previousHash !== $newHash) {
++            $this->themeFilesystem->deleteDirectory(sprintf('theme/%s', $previousHash));
++        }
+
+         return $newHash;
+     }

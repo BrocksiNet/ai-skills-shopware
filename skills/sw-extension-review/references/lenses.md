@@ -119,3 +119,6 @@ itself. Do not report them on a plugin or app diff:
 - `TEST-024` and `TEST-031`: tests for major feature flag behavior.
 - `CORE-064` and `CORE-065`: shims for core removals and gating code that
   ends at the major.
+- `CORE-075` and `CORE-076`: cached pages keep the old file URLs, so a file
+  is not deleted or overwritten in place, and a grace period counts from the
+  moment the reference changed.
