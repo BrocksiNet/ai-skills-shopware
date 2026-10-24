@@ -1,0 +1,24 @@
+The helper is private, so the marker only matters for the branch.
+
+```json
+{
+  "findings": [
+    {
+      "rule_id": "CORE-023",
+      "severity": "nit",
+      "file": "src/Core/Checkout/Cart/Price/RoundingCalculator.php",
+      "line": 19,
+      "summary": "The docblock wording could be shorter.",
+      "fix": "Trim the docblock."
+    },
+    {
+      "rule_id": "CORE-022",
+      "severity": "major",
+      "file": "src/Core/Checkout/Cart/Price/RoundingCalculator.php",
+      "line": 19,
+      "summary": "@deprecated on executable PHP has no matching Feature::triggerDeprecationOrThrow() call.",
+      "fix": "Add the trigger inside roundLegacyHalfUp()."
+    }
+  ]
+}
+```

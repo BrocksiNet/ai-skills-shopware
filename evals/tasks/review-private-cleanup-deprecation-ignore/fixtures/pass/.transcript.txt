@@ -1,0 +1,16 @@
+The inline marker sits at the branch it removes. Only a wording nit.
+
+```json
+{
+  "findings": [
+    {
+      "rule_id": null,
+      "severity": "nit",
+      "file": "src/Core/Checkout/Cart/Price/RoundingCalculator.php",
+      "line": 12,
+      "summary": "The comment wording could be shorter.",
+      "fix": "Trim the comment."
+    }
+  ]
+}
+```

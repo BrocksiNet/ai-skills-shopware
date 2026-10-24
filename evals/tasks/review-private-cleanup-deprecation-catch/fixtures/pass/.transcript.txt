@@ -1,0 +1,16 @@
+The private helper carries a method-level removal marker. For private cleanup the marker belongs inline at the branch that goes away.
+
+```json
+{
+  "findings": [
+    {
+      "rule_id": "CORE-023",
+      "severity": "minor",
+      "file": "src/Core/Checkout/Cart/Price/RoundingCalculator.php",
+      "line": 19,
+      "summary": "The removal marker is a method-level @deprecated docblock on the private helper; private cleanup takes an inline comment near the branch.",
+      "fix": "Remove the docblock and put `// @deprecated tag:v6.8.0 - …` above the `if ($legacyHalfUp)` branch in round()."
+    }
+  ]
+}
+```

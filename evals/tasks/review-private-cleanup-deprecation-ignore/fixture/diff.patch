@@ -1,0 +1,12 @@
+diff --git a/src/Core/Checkout/Cart/Price/RoundingCalculator.php b/src/Core/Checkout/Cart/Price/RoundingCalculator.php
+index 3c1e2a4..5b8f0d2 100644
+--- a/src/Core/Checkout/Cart/Price/RoundingCalculator.php
++++ b/src/Core/Checkout/Cart/Price/RoundingCalculator.php
+@@ -9,6 +9,7 @@ class RoundingCalculator
+ {
+     public function round(float $value, int $precision, bool $legacyHalfUp = false): float
+     {
++        // @deprecated tag:v6.8.0 - Remove this branch with the legacy rounding flag.
+         if ($legacyHalfUp) {
+             return $this->roundLegacyHalfUp($value, $precision);
+         }
