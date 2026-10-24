@@ -80,9 +80,6 @@ Detailed, growing lists live in references. Read only the one that matches the c
 - **REV-010** **Business logic in controllers.** DAL calls, rules, orchestration, or branching
   live in a controller instead of an injected service. Thin controllers: validate
   input, delegate, return response. (Owning topic: `sw-plugin-development`.)
-- **REV-011** **Admin route ACL uses constant-form privilege keys** — match existing
-  `Administration::…` / route `_acl` conventions; PHPStan rules flag wrong shapes.
-  (Core: `sw-core-development` -> `platform-architecture.md`.)
 - **REV-012** **`updateDestructive()` misused.** Long-running backfills or heavy work do not
   belong in destructive migrations; never edit shipped migrations — add a new class.
   (Owning topic: `sw-plugin-development` -> `references/migrations.md`; core:

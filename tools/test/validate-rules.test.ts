@@ -134,8 +134,16 @@ describe('validateRules', () => {
       'retired but inline',
       (_, c) => {
         ruleAt(c, 0).status = 'retired';
+        ruleAt(c, 0).retired_reason = 'no measured effect';
       },
       `${SKILL}:3: TEST-001 is retired but still inline`,
+    ],
+    [
+      'retired without a reason',
+      (_, c) => {
+        c.rules.push(rule('TEST-002', { status: 'retired' }));
+      },
+      'TEST-002: a retired rule needs retired_reason',
     ],
     [
       'bad status',
@@ -148,6 +156,7 @@ describe('validateRules', () => {
       'superseded by an unknown rule',
       (_, c) => {
         ruleAt(c, 0).status = 'superseded:TEST-404';
+        ruleAt(c, 0).retired_reason = 'replaced';
       },
       'TEST-001: superseded by unknown TEST-404',
     ],

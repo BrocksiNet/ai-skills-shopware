@@ -51,20 +51,13 @@ Read only the reference that matches the task or the files it changes:
 
 ## Hard guardrails (refuse rather than violate)
 
-1. **CORE-001** **Never raise the PHPStan level without regenerating AND committing the
-   baseline in the same change.** Baselines shrink, never grow by deletion. If
-   asked to bump the level, do both or stop and explain.
-2. **CORE-002** **Never remove or change a public (non-`@internal`) symbol without a
-   deprecation cycle.** Public API is removed only after it was deprecated in a
-   prior minor and announced. If unsure whether something is public, treat it as
-   public and check.
-3. **CORE-003** **Never ship a developer-facing change without a release note.** New
+1. **CORE-003** **Never ship a developer-facing change without a release note.** New
    features, extension points, new guidelines, and deprecations need a
    `RELEASE_INFO-6.x.md` entry; breaking changes need an `UPGRADE-6.x.md` entry.
    (You do NOT hand-write per-change changelog files anymore — the raw changelog
    is generated from PR titles. Internal refactors and small bug fixes need no
    entry.)
-4. **CORE-004** **Never edit generated files** (e.g. `schema/`, generated entity definitions,
+2. **CORE-004** **Never edit generated files** (e.g. `schema/`, generated entity definitions,
    `vendor/`). Regenerate via the documented command instead.
 
 ## Core deltas on top of sw-php-foundation
@@ -94,9 +87,6 @@ Read only the reference that matches the task or the files it changes:
   and [`references/platform-architecture.md`](references/platform-architecture.md).
 - **Core API routes.** New Admin/Store API actions need OpenAPI JSON schemas and
   `ApiRoutesHaveASchemaTest` coverage — see [`references/api-schema.md`](references/api-schema.md).
-- **CORE-007** **Modernize, don't fossilize.** When Symfony or a newer platform service fits
-  on the pinned stack, adopt it behind `Feature::isActive()` and keep the legacy
-  path until the major — see [`references/modernization-and-flags.md`](references/modernization-and-flags.md).
 
 ## Definition of done
 
@@ -129,12 +119,9 @@ default; there the rule still needs a reviewer.
 
 - `CORE-008` `ApiRoutesHaveASchemaTest` (test, trunk only) fails when a core Store API route has no path in the generated OpenAPI schema, or a schema path has no route. It misses routes of Storefront or plugin controllers, routes marked `openapi: false`, request and response shapes that do not match the code, and Admin API gaps already in its snapshot; flag those.
 - `CORE-012` `DeprecatedMethodsThrowDeprecationRule` (PHPStan, trunk only) reports discovery methods such as `getSubscribedEvents()` of a deprecated class that do not return a literal `[]` or `null` when the removal flag is active. It misses discovery methods it does not know, and values computed in other methods; flag those.
-- `CORE-013` `NoBCPlanningDeprecationRule` (PHPStan, trunk only) reports `@deprecated` docblocks on classes, methods, properties and constants that contain a `reason:*` planning token. It misses free-text planning notes without those tokens, and docblocks on functions or enum cases; flag those.
 - `CORE-015` `BCChangeAttributeUsageRule` (PHPStan, trunk only) reports `BCChange` attributes with a bad version, or that describe a change that is already true or not structurally possible. It misses an attribute that is valid but does not describe the change that is actually planned; flag those.
 - `CORE-017` `AnnotationTagTest` (test, trunk only) fails when an `@deprecated` in `src/` or `tests/` lacks a valid `tag:` or `manifest:` version, or names a future version. It misses a missing reason or replacement, and whitelisted paths such as `DevOps/StaticAnalyze`; flag those.
 - `CORE-022` `DeprecatedMethodsThrowDeprecationRule` (PHPStan, trunk only) reports public and protected methods of `@deprecated` classes, and `@deprecated` methods, whose body lacks `Feature::triggerDeprecationOrThrow(`. It misses private methods, a wrong flag argument, a call that is commented out, and entity or collection classes; flag those.
-- `CORE-037` `MigrationNameAndTimestampTest` (test, trunk only) fails when a core migration class is not named `Migration<digits>…` or `getCreationTimestamp()` differs from those digits. It misses an implausible or out-of-order timestamp, the file name, and the namespace and folder; flag those.
 - `CORE-054` `NoFileExistsRule` (PHPStan, trunk only) reports direct `file_exists()` calls. It misses every other raw filesystem function, such as `file_put_contents()`, `unlink()` and `mkdir()`; it does not ask for Symfony `Filesystem`; flag those.
-- `CORE-060` `PhpstanBaselineGrowth` (Danger, trunk only) fails a PR that adds net lines to `phpstan-baseline.php`. It misses a swap of one entry for another, inline `@phpstan-ignore`, and PRs labeled `skip-danger-phpstan-baseline`; flag those.
 - `CORE-061` `IgnoredPhpstanErrorsInTouchedFiles` (Danger, trunk only) fails a PR that touches a file listed in the PHPStan baseline. It misses inline `@phpstan-ignore` in touched files, and PRs labeled `skip-danger-phpstan-baseline`; flag those.
 <!-- enforced:end -->

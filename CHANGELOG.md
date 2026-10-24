@@ -86,6 +86,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - The `code-comments.md` route for `REV-034` also fires on "instead would"
   and on any bare issue number in a comment.
 
+### Removed
+
+- 66 rules without a measured effect left the skills. Each stays in
+  `rules/catalog.json` as `retired`, with the evidence in the new
+  `retired_reason` field, which every retired or superseded rule now needs.
+  - 21 rules with an eval task: with the skill off, the task passed every
+    repeat on claude/haiku and on the free OpenCode model. Their tasks stay
+    as canaries.
+  - 45 rules without an eval: `suggest-rules draft-eval` wrote one, and with
+    the skill off claude/haiku passed every repeat. The drafted tasks were
+    not kept.
+
 ### Fixed
 
 - Drift mining skipped commits merged after the state but dated before it.

@@ -62,15 +62,6 @@ class.
 Simple struct-style classes with only public properties may use
 `@codeCoverageIgnore` without unit tests.
 
-**TEST-032** `@codeCoverageIgnore` is for **pass-through** code only. On trunk, PHPStan
-(`CodeCoverageIgnoreEvaluationRule`) fails annotated methods that branch, throw,
-mutate a value (`unset`, `+=`, `.=`, `++`, a second write to a local), call
-`$this->…()` / `self::…()` for effect, call a method on a parameter for effect
-(`$criteria->addFilter(...)`; entity extensions adding fields are exempt), or
-configure the parent constructor with a literal the parent does not share.
-Write a unit test instead, or point `@see` at a dedicated integration or devops
-test.
-
 > **Trunk:** defer this style to `.agents/skills/shopware-phpunit-tests/`. Our
 > full-install profile keeps the rule for contributors on older branches.
 

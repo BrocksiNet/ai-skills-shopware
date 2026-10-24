@@ -51,12 +51,6 @@ class Migration1700000000AddExampleColumn extends MigrationStep
   keywords or listing values across a whole table in a migration. Register the
   responsible indexer with `registerIndexer()`, or write a `PostUpdateIndexer`
   for a one-time backfill.
-- **PLG-021** **Idempotent / guarded.** Guard with existence checks (or `IF NOT EXISTS`) so a
-  re-run does not fail.
-- **PLG-022** **Never edit a shipped migration.** Once a migration has been released and run
-  on installations, write a new one to change course. Editing it will not re-run
-  and breaks new installs vs. existing ones.
-- **PLG-023** **Bind parameters** for any data values; never interpolate.
 - **PLG-028** **Leave merchant edits alone.** A migration that changes shipped content
   (mail templates, flows, CMS pages, snippets, system config defaults) only
   touches rows the merchant has not edited: guard with `updated_at IS NULL`,

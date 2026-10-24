@@ -61,6 +61,8 @@ export interface Rule {
   /** Task name under evals/tasks/, or null with eval_reason. */
   eval: string | null;
   eval_reason?: string;
+  /** Why a retired or superseded rule left the skills, with the evidence. */
+  retired_reason?: string;
   trunk?: TrunkSource;
   /** Upstream skill sets the rule was learned from (plan WP12). */
   upstream?: Upstream[];
@@ -137,6 +139,10 @@ export function ruleErrors(r: unknown): string[] {
   if (isString(r.status) && !STATUS.test(r.status)) errors.push(`${label}: bad status ${r.status}`);
   if (r.eval !== null && !isString(r.eval)) errors.push(`${label}: eval must be a string or null`);
   if (r.eval_reason !== undefined && !isString(r.eval_reason)) errors.push(`${label}: eval_reason must be a string`);
+  if (r.retired_reason !== undefined && !isString(r.retired_reason))
+    errors.push(`${label}: retired_reason must be a string`);
+  if (isString(r.status) && r.status !== 'active' && !isString(r.retired_reason))
+    errors.push(`${label}: a ${r.status} rule needs retired_reason`);
   if (!isStringArray(r.core_guide_ids)) errors.push(`${label}: core_guide_ids must be a list of strings`);
   if (isStringArray(r.audience)) {
     for (const a of r.audience) if (!oneOf(AUDIENCES, a)) errors.push(`${label}: unknown audience ${a}`);

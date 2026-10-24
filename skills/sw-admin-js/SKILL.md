@@ -41,17 +41,14 @@ Read only the reference that matches the task or the files it changes:
 
 ## Hard guardrails
 
-1. **ADM-001** **TypeScript for new code.** Do not add new `.js` Admin sources except the
-   required `Resources/app/administration/src/main.js` entry Shopware
-   discovers and scaffolds. Implementation modules stay `.ts`.
-2. **ADM-002** **Do not break public Admin extension APIs** without prior discussion.
-3. **ADM-003** **Use Meteor / existing Admin components** (`mt-modal`, `mt-banner`,
+1. **ADM-002** **Do not break public Admin extension APIs** without prior discussion.
+2. **ADM-003** **Use Meteor / existing Admin components** (`mt-modal`, `mt-banner`,
    `mt-*`, or the local `sw-*` already in the file). Do not replace them
    with raw `<dialog>`, Popover API, or a custom select.
-4. **ACL in the same change** as UI that reads or writes a DAL entity.
+3. **ACL in the same change** as UI that reads or writes a DAL entity.
    Existing roles need a privileges migration; mapping-only fixes future
    roles.
-5. **ADM-005** **Do not rewrite a working Twig / Options API override into a Vue SFC
+4. **ADM-005** **Do not rewrite a working Twig / Options API override into a Vue SFC
    because of 6.8.** `swDefinePublic`, `swDefineOverride`, and
    `useSwPreviousState()` are an experimental Composition API
    ([shopware/shopware#21162](https://github.com/shopware/shopware/discussions/21162)).
