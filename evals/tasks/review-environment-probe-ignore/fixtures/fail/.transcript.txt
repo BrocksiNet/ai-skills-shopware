@@ -1,0 +1,14 @@
+```json
+{
+  "findings": [
+    {
+      "rule_id": null,
+      "severity": "minor",
+      "file": "src/Core/Framework/Adapter/Cache/CacheBackendFactory.php",
+      "line": 22,
+      "summary": "Two shops on the same version can behave differently when shopware.cache.apcu changes.",
+      "fix": "Document the key."
+    }
+  ]
+}
+```

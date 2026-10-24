@@ -1,0 +1,14 @@
+```json
+{
+  "findings": [
+    {
+      "rule_id": "CORE-073",
+      "severity": "nit",
+      "file": "src/Core/Framework/Resources/config/packages/cache.yaml",
+      "line": 4,
+      "summary": "The comment could say which cache pool the key changes.",
+      "fix": "Reword the comment."
+    }
+  ]
+}
+```

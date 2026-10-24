@@ -1,0 +1,49 @@
+diff --git a/src/Core/Framework/Adapter/Cache/CacheBackendFactory.php b/src/Core/Framework/Adapter/Cache/CacheBackendFactory.php
+index 3f1c2a0..c48d1e6 100644
+--- a/src/Core/Framework/Adapter/Cache/CacheBackendFactory.php
++++ b/src/Core/Framework/Adapter/Cache/CacheBackendFactory.php
+@@ -4,20 +4,32 @@
+
+ use Shopware\Core\Framework\Log\Package;
+ use Symfony\Component\Cache\Adapter\AdapterInterface;
++use Symfony\Component\Cache\Adapter\ApcuAdapter;
+ use Symfony\Component\Cache\Adapter\FilesystemAdapter;
++use Symfony\Component\DependencyInjection\Attribute\Autowire;
+
+ /**
+  * @internal
+  */
+ #[Package('core')]
+ class CacheBackendFactory
+ {
+-    public function __construct(private readonly string $cacheDir)
+-    {
++    public function __construct(
++        private readonly string $cacheDir,
++        #[Autowire('%shopware.cache.apcu%')]
++        private readonly bool $apcuEnabled,
++    ) {
++        if ($this->apcuEnabled && !function_exists('apcu_fetch')) {
++            throw new \RuntimeException('shopware.cache.apcu is enabled, but ext-apcu is not loaded. Install ext-apcu or set shopware.cache.apcu to false.');
++        }
+     }
+
+     public function create(string $namespace, int $lifetime): AdapterInterface
+     {
++        if ($this->apcuEnabled) {
++            return new ApcuAdapter($namespace, $lifetime);
++        }
++
+         return new FilesystemAdapter($namespace, $lifetime, $this->cacheDir);
+     }
+ }
+diff --git a/src/Core/Framework/Resources/config/packages/cache.yaml b/src/Core/Framework/Resources/config/packages/cache.yaml
+new file mode 100644
+index 0000000..5c2e8d7
+--- /dev/null
++++ b/src/Core/Framework/Resources/config/packages/cache.yaml
+@@ -0,0 +1,4 @@
++shopware:
++    cache:
++        # Uses APCu for the cache pool. Needs ext-apcu on every web and worker node.
++        apcu: false

@@ -1,0 +1,14 @@
+```json
+{
+  "findings": [
+    {
+      "rule_id": "CORE-073",
+      "severity": "nit",
+      "file": "src/Core/Framework/Adapter/Cache/CacheBackendFactory.php",
+      "line": 22,
+      "summary": "The function_exists and ini_get calls could sit in a named private method.",
+      "fix": "Extract a method."
+    }
+  ]
+}
+```

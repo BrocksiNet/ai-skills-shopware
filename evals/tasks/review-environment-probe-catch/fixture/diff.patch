@@ -1,0 +1,23 @@
+diff --git a/src/Core/Framework/Adapter/Cache/CacheBackendFactory.php b/src/Core/Framework/Adapter/Cache/CacheBackendFactory.php
+index 3f1c2a0..9b7e4d1 100644
+--- a/src/Core/Framework/Adapter/Cache/CacheBackendFactory.php
++++ b/src/Core/Framework/Adapter/Cache/CacheBackendFactory.php
+@@ -4,6 +4,7 @@
+
+ use Shopware\Core\Framework\Log\Package;
+ use Symfony\Component\Cache\Adapter\AdapterInterface;
++use Symfony\Component\Cache\Adapter\ApcuAdapter;
+ use Symfony\Component\Cache\Adapter\FilesystemAdapter;
+
+ /**
+@@ -18,6 +19,10 @@ class CacheBackendFactory
+
+     public function create(string $namespace, int $lifetime): AdapterInterface
+     {
++        if (function_exists('apcu_fetch') && ini_get('apc.enabled') === '1') {
++            return new ApcuAdapter($namespace, $lifetime);
++        }
++
+         return new FilesystemAdapter($namespace, $lifetime, $this->cacheDir);
+     }
+ }
