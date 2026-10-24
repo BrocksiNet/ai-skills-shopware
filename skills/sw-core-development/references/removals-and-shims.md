@@ -9,6 +9,8 @@ deprecation actionable and a removal cheap.
 
 ## Rules
 
+- **CORE-017** Use `@deprecated tag:v6.x.0 - <reason and replacement>`. Always name the
+  replacement.
 - **CORE-063** **The replacement must be usable today.** A deprecation that warns
   points at a replacement extensions can call now: not `@internal`, not
   `@experimental`, not active only behind the major flag. Until it is, the
@@ -28,3 +30,5 @@ deprecation actionable and a removal cheap.
 ## Eval
 
 `review-deprecation-internal-replacement-catch` / `-ignore` (CORE-063).
+
+`review-deprecation-tag-replacement-catch` / `-ignore` (CORE-017).
