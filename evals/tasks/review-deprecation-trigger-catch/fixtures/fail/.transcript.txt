@@ -1,0 +1,14 @@
+```json
+{
+  "findings": [
+    {
+      "rule_id": "CORE-017",
+      "severity": "major",
+      "file": "src/Core/Content/Product/ProductCollection.php",
+      "line": 22,
+      "summary": "The deprecated method needs a Feature::triggerDeprecationOrThrow() call so the warning reaches callers.",
+      "fix": "Add the triggerDeprecationOrThrow() call to getActiveProducts()."
+    }
+  ]
+}
+```

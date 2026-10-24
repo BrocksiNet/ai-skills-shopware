@@ -2202,11 +2202,11 @@
       "title": "@deprecated on executable PHP pairs with triggerDeprecationOrThrow()",
       "status": "active",
       "since": "2026-10-20",
-      "eval": null,
-      "eval_reason": "Documented only; no eval yet.",
+      "eval": "review-deprecation-trigger-catch",
       "core_guide_ids": [],
       "audience": [
-        "core"
+        "core",
+        "plugin"
       ],
       "defer_on_trunk": false,
       "trunk": {

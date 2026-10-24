@@ -1,0 +1,14 @@
+```json
+{
+  "findings": [
+    {
+      "rule_id": null,
+      "severity": "major",
+      "file": "src/Core/Content/Product/ProductCollection.php",
+      "line": 22,
+      "summary": "getActiveProducts() is deprecated but has no runtime trigger, so callers get no warning before removal.",
+      "fix": "Call Feature::triggerDeprecationOrThrow() at the start of getActiveProducts(), naming ProductCollection::filterActive()."
+    }
+  ]
+}
+```

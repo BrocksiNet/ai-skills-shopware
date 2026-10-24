@@ -1,0 +1,14 @@
+```json
+{
+  "findings": [
+    {
+      "rule_id": "CORE-022",
+      "severity": "major",
+      "file": "src/Core/Content/Product/ProductCollection.php",
+      "line": 24,
+      "summary": "The trigger names the wrong version: the deprecation tag is v6.8.0, so the trigger must pass v6.8.0 and not v6.8.0.0.",
+      "fix": "Change the version argument of triggerDeprecationOrThrow() to 'v6.8.0'."
+    }
+  ]
+}
+```
