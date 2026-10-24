@@ -3098,8 +3098,7 @@
       "title": "No silent environment probes",
       "status": "active",
       "since": "2026-10-21",
-      "eval": null,
-      "eval_reason": "Core-only (WP7 phase C); core's review guide (open #21455) covers it once merged.",
+      "eval": "review-environment-probe-catch",
       "core_guide_ids": [
         "SCOPE-004"
       ],
