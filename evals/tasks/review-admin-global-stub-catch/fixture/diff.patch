@@ -1,0 +1,26 @@
+diff --git a/src/Resources/app/administration/test/_setup/prepare_environment.js b/src/Resources/app/administration/test/_setup/prepare_environment.js
+index 3c1d6a2..9e04b7f 100644
+--- a/src/Resources/app/administration/test/_setup/prepare_environment.js
++++ b/src/Resources/app/administration/test/_setup/prepare_environment.js
+@@ -1,19 +1,21 @@
+ import { config } from '@vue/test-utils';
+ import SwCard from 'src/app/component/base/sw-card';
++import SwBlock from 'src/app/component/base/sw-block';
+
+ config.global.mocks = {
+     $tc: (key) => key,
+     $te: () => true,
+     $device: { onResize: () => {} },
+ };
+
+ config.global.components = {
+     'sw-card': SwCard,
++    'sw-block': SwBlock,
+ };
+
+ config.global.stubs = {
+     'sw-icon': true,
+     'sw-block': true,
+     'sw-button': true,
+     'sw-field': true,
+ };

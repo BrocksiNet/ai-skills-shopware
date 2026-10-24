@@ -73,9 +73,10 @@
         },
         {
           "reference": "sw-admin-js/references/testing.md",
-          "when": "You write or fix a Jest spec.",
+          "when": "You write or fix a Jest spec or the shared Jest setup.",
           "paths_any": [
-            "**/Resources/app/administration/**/*.spec.{js,ts}"
+            "**/Resources/app/administration/**/*.spec.{js,ts}",
+            "**/Resources/app/administration/test/_setup/**"
           ],
           "anchors_any": [
             "shallowMount\\(",

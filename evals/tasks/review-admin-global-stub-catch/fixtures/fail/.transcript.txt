@@ -1,0 +1,24 @@
+The sw-block entry in the components map looks like it may conflict with the stubs map.
+
+```json
+{
+  "findings": [
+    {
+      "rule_id": "ADM-036",
+      "severity": "nit",
+      "file": "src/Resources/app/administration/test/_setup/prepare_environment.js",
+      "line": 13,
+      "summary": "sw-block is also listed in config.global.stubs, so the components entry may be skipped.",
+      "fix": "Register sw-block through config.global.stubs with the real implementation."
+    },
+    {
+      "rule_id": "ADM-035",
+      "severity": "major",
+      "file": "src/Resources/app/administration/test/_setup/prepare_environment.js",
+      "line": 13,
+      "summary": "The setup file grows with every spec and should be split per module.",
+      "fix": "Move the registrations next to the specs that need them."
+    }
+  ]
+}
+```
