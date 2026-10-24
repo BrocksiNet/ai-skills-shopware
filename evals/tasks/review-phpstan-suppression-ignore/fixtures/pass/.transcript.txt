@@ -1,0 +1,14 @@
+```json
+{
+  "findings": [
+    {
+      "rule_id": null,
+      "severity": "nit",
+      "file": "src/Core/Content/Product/Stock/ProductStockCleaner.php",
+      "line": 21,
+      "summary": "The stock threshold of 0 could be a named constant.",
+      "fix": "Extract the threshold into a constant."
+    }
+  ]
+}
+```
