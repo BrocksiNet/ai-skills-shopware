@@ -824,6 +824,21 @@
           ]
         },
         {
+          "reference": "sw-core-development/references/deprecations.md",
+          "when": "You deprecate or break a public API.",
+          "anchors_any": [
+            "@deprecated tag:v",
+            "@major-deprecated",
+            "Feature::triggerDeprecationOrThrow\\(",
+            "(CompatibilityChange|TypeNarrowing)\\("
+          ],
+          "exclude_paths": [
+            "**/tests/**",
+            "**/Test/**",
+            "**/*.md"
+          ]
+        },
+        {
           "reference": "sw-core-development/references/removals-and-shims.md",
           "when": "You deprecate or remove an API, or add code that only lives until the next major.",
           "anchors_any": [
