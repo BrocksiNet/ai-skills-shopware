@@ -1,0 +1,14 @@
+```json
+{
+  "findings": [
+    {
+      "rule_id": "CORE-040",
+      "severity": "minor",
+      "file": "src/Core/Migration/Test/Migration1792800123AddCustomerLastOrderAtTest.php",
+      "line": 34,
+      "summary": "testUpdateDestructiveRunsWithoutError calls an empty updateDestructive(), so the test covers no behaviour.",
+      "fix": "Delete the test; testUpdateAddsLastOrderColumn already covers the migration."
+    }
+  ]
+}
+```
