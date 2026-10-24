@@ -8,7 +8,6 @@
 
 ## Deprecations
 
-- **ADM-029** Do not add new internal callers of deprecated APIs.
 - **ADM-030** Removing a flag also removes the legacy branch, flag config, obsolete
   tests, and stale docs in the same change.
 
