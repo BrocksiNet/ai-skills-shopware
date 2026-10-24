@@ -83,8 +83,6 @@ public function oldHandle(Context $context): void
 }
 ```
 
-- **CORE-017** Use `@deprecated tag:v6.x.0 - <reason and replacement>`. Always name the
-  replacement.
 - **CORE-018** Wrap removed-in-major behavior changes in `if (Feature::isActive('v6.x.0')) { … }`
   so both paths exist until the major.
 - **CORE-019** Deprecate the whole surface: class, method, parameter, constant, public

@@ -1,0 +1,16 @@
+The deprecation on calculate() gives no replacement in its tag.
+
+```json
+{
+  "findings": [
+    {
+      "rule_id": "CORE-063",
+      "severity": "major",
+      "file": "src/Core/Content/Product/SalesChannel/Price/ProductPriceCalculator.php",
+      "line": 17,
+      "summary": "The @deprecated tag gives no replacement the warning can point to.",
+      "fix": "Name the replacement in the tag."
+    }
+  ]
+}
+```
