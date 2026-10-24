@@ -1,0 +1,42 @@
+````markdown
+### 1. What and why?
+
+- CartProcessor cannot be decorated by plugins today; plugins can only replace it.
+
+### 2. How?
+
+- Add `AbstractCartProcessor` and make `CartProcessor` extend it, so plugins decorate the abstract type.
+
+#### Impact
+
+- New abstract class `AbstractCartProcessor`. Plugins decorate it instead of the concrete class:
+
+```php
+class MyCartProcessor extends AbstractCartProcessor
+{
+    public function __construct(private readonly AbstractCartProcessor $inner) {}
+
+    public function getDecorated(): CartProcessorInterface
+    {
+        return $this->inner->getDecorated();
+    }
+}
+```
+
+### 3. Testing
+
+1. Register a decorator for `AbstractCartProcessor` in a test plugin.
+2. Run a cart calculation and check that the decorator runs.
+
+### 4. Additional notes
+
+- Follow-up: move the existing decorators in core to the abstract class.
+
+### 5. Checklist
+
+- [x] I have read and followed the [contribution guidelines](https://github.com/shopware/shopware/blob/trunk/CONTRIBUTING.md#pull-request-checklist)
+- [x] **Only** non-obvious code is commented
+- [x] Tests added, and they fail without this change
+- [ ] Release notes updated, if relevant for external developers
+- [ ] Documentation and agent skills updated
+````
