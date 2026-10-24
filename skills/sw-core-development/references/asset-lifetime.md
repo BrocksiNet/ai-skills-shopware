@@ -16,3 +16,7 @@ URLs must outlive the cache entries.
   or message handler, never in a command, request, compile step or deploy
   path. Those run right after the switch, when cached pages still use the old
   files.
+
+## Eval
+
+`review-asset-cleanup-catch` / `-ignore` (CORE-077).

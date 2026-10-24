@@ -122,3 +122,5 @@ itself. Do not report them on a plugin or app diff:
   call sites and attributes.
 - `CORE-061`: the core PHPStan baseline only shrinks. Its borrowed
   reference also holds `CORE-062`, which a plugin does report.
+- `CORE-076`: cached pages keep the old file URLs, so a grace period counts
+  from the moment the reference changed.
