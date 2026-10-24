@@ -1,0 +1,14 @@
+```json
+{
+  "findings": [
+    {
+      "rule_id": "CORE-053",
+      "severity": "major",
+      "file": "src/Core/Content/Product/Review/ProductReviewCsvExporter.php",
+      "line": 25,
+      "summary": "The exporter takes a Symfony Request and reads the query string itself, so HTTP handling sits inside the domain service.",
+      "fix": "Parse productIds and withHeader in the controller and pass plain values to export()."
+    }
+  ]
+}
+```

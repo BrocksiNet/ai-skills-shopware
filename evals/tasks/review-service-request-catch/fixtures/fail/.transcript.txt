@@ -1,0 +1,22 @@
+```json
+{
+  "findings": [
+    {
+      "rule_id": "CORE-053",
+      "severity": "nit",
+      "file": "src/Core/Content/Product/Review/ProductReviewCsvExporter.php",
+      "line": 25,
+      "summary": "The export() signature could be split over several lines.",
+      "fix": "Wrap the parameter list."
+    },
+    {
+      "rule_id": "CORE-054",
+      "severity": "major",
+      "file": "src/Core/Content/Product/Review/ProductReviewCsvExporter.php",
+      "line": 25,
+      "summary": "The CSV is built in memory; write it through Symfony Filesystem instead.",
+      "fix": "Inject Filesystem and stream the export to a file."
+    }
+  ]
+}
+```

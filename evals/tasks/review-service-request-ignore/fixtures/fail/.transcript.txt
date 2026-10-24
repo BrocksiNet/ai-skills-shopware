@@ -1,0 +1,14 @@
+```json
+{
+  "findings": [
+    {
+      "rule_id": "CORE-053",
+      "severity": "minor",
+      "file": "src/Core/Content/Product/Review/ProductReviewCsvController.php",
+      "line": 22,
+      "summary": "The controller parses the query string; that belongs in the exporter.",
+      "fix": "Move the productIds parsing into ProductReviewCsvExporter."
+    }
+  ]
+}
+```
