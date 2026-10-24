@@ -1,0 +1,14 @@
+```json
+{
+  "findings": [
+    {
+      "rule_id": "CORE-062",
+      "severity": "major",
+      "file": "src/Core/Content/Product/Stock/ProductStockCleaner.php",
+      "line": 21,
+      "summary": "The phpstan-shopware rule still applies to this method, so it should be suppressed.",
+      "fix": "Add a phpstan-ignore comment above the search call."
+    }
+  ]
+}
+```

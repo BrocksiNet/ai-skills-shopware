@@ -119,3 +119,5 @@ itself. Do not report them on a plugin or app diff:
 - `TEST-024` and `TEST-031`: tests for major feature flag behavior.
 - `CORE-064` and `CORE-065`: shims for core removals and gating code that
   ends at the major.
+- `CORE-060` and `CORE-061`: the core PHPStan baseline only shrinks. Its
+  borrowed reference also holds `CORE-062`, which a plugin does report.

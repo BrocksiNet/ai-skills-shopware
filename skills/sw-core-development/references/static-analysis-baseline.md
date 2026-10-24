@@ -37,3 +37,7 @@ truth. Key reminders for core:
 - [ ] No new baseline entries introduced by your change.
 - [ ] Baseline entries in files you touched were reduced where feasible.
 - [ ] If the level changed, the baseline was regenerated and committed together.
+
+## Eval
+
+`review-phpstan-suppression-catch` / `-ignore` (CORE-062).

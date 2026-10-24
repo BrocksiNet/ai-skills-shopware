@@ -410,11 +410,14 @@
         },
         {
           "reference": "sw-core-development/references/static-analysis-baseline.md",
-          "when": "You touch the PHPStan baseline.",
+          "when": "You touch the PHPStan baseline or suppress a PHPStan error.",
           "paths_any": [
             "**/phpstan-baseline.neon",
             "**/phpstan*.neon",
             "**/phpstan*.neon.dist"
+          ],
+          "anchors_any": [
+            "@phpstan-ignore"
           ],
           "exclude_paths": [
             "**/tests/**",
@@ -831,6 +834,23 @@
             "triggerDeprecationOrThrow\\(",
             "silentUntil",
             "#\\[BCChange"
+          ],
+          "exclude_paths": [
+            "**/tests/**",
+            "**/Test/**",
+            "**/*.md"
+          ]
+        },
+        {
+          "reference": "sw-core-development/references/static-analysis-baseline.md",
+          "when": "You touch the PHPStan baseline or suppress a PHPStan error.",
+          "paths_any": [
+            "**/phpstan-baseline.neon",
+            "**/phpstan*.neon",
+            "**/phpstan*.neon.dist"
+          ],
+          "anchors_any": [
+            "@phpstan-ignore"
           ],
           "exclude_paths": [
             "**/tests/**",
