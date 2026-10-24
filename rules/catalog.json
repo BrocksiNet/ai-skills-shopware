@@ -2508,8 +2508,7 @@
       "title": "No tests for an empty updateDestructive()",
       "status": "active",
       "since": "2026-10-20",
-      "eval": null,
-      "eval_reason": "Style rule; core shopware-phpunit-tests owns it on trunk.",
+      "eval": "review-migration-empty-destructive-catch",
       "core_guide_ids": [],
       "audience": [
         "core"

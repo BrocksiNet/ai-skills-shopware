@@ -1,0 +1,14 @@
+```json
+{
+  "findings": [
+    {
+      "rule_id": "CORE-038",
+      "severity": "minor",
+      "file": "src/Core/Migration/Test/Migration1792800123AddCustomerLastOrderAtTest.php",
+      "line": 34,
+      "summary": "testUpdateDestructiveRunsWithoutError exercises updateDestructive() but asserts only that it does not throw.",
+      "fix": "Keep long-running work out of updateDestructive() and assert the column state instead."
+    }
+  ]
+}
+```
