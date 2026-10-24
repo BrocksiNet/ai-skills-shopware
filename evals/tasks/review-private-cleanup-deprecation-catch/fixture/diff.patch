@@ -1,0 +1,14 @@
+diff --git a/src/Core/Checkout/Cart/Price/RoundingCalculator.php b/src/Core/Checkout/Cart/Price/RoundingCalculator.php
+index 3c1e2a4..9d07b1f 100644
+--- a/src/Core/Checkout/Cart/Price/RoundingCalculator.php
++++ b/src/Core/Checkout/Cart/Price/RoundingCalculator.php
+@@ -16,6 +16,9 @@ class RoundingCalculator
+         return round($value, $precision, \PHP_ROUND_HALF_EVEN);
+     }
+
++    /**
++     * @deprecated tag:v6.8.0 - Will be removed together with the legacy rounding flag.
++     */
+     private function roundLegacyHalfUp(float $value, int $precision): float
+     {
+         $factor = 10 ** $precision;

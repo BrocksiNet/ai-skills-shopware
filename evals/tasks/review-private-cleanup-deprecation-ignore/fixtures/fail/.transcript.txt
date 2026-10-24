@@ -1,0 +1,16 @@
+The inline marker looks like the deprecation pattern, so I flag it.
+
+```json
+{
+  "findings": [
+    {
+      "rule_id": "CORE-023",
+      "severity": "minor",
+      "file": "src/Core/Checkout/Cart/Price/RoundingCalculator.php",
+      "line": 12,
+      "summary": "The inline @deprecated comment should be a method-level docblock annotation.",
+      "fix": "Move the marker into a docblock on round()."
+    }
+  ]
+}
+```
