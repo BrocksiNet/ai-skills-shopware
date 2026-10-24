@@ -116,4 +116,7 @@ itself. Do not report them on a plugin or app diff:
 - `TEST-031`: tests for major feature flag behavior.
 - `CORE-064` and `CORE-065`: shims for core removals and gating code that
   ends at the major.
-- `CORE-017`: a `@deprecated` tag in platform code names its replacement.
+- `CORE-011`, `CORE-012`, `CORE-014`, `CORE-015`, `CORE-017`, `CORE-018`,
+  `CORE-019`, `CORE-021`, `CORE-023`, `CORE-024` and `CORE-026`: the core
+  deprecation and BC-change rules in `deprecations.md`, for the core's own
+  call sites and attributes.
