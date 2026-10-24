@@ -2713,8 +2713,7 @@
       "title": "Keep services hexagonal; infrastructure stays at the edge",
       "status": "active",
       "since": "2026-10-20",
-      "eval": null,
-      "eval_reason": "Style rule; core shopware-php-code owns it on trunk.",
+      "eval": "review-service-request-catch",
       "core_guide_ids": [],
       "audience": [
         "core"
