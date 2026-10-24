@@ -120,3 +120,5 @@ itself. Do not report them on a plugin or app diff:
   `CORE-019`, `CORE-021`, `CORE-023`, `CORE-024` and `CORE-026`: the core
   deprecation and BC-change rules in `deprecations.md`, for the core's own
   call sites and attributes.
+- `CORE-061`: the core PHPStan baseline only shrinks. Its borrowed
+  reference also holds `CORE-062`, which a plugin does report.

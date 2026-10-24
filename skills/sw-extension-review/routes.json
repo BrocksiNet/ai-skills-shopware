@@ -73,6 +73,9 @@
       "reference": "../sw-core-development/references/removals-and-shims.md"
     },
     {
+      "reference": "../sw-core-development/references/static-analysis-baseline.md"
+    },
+    {
       "reference": "../sw-change-impact/references/impact-review.md",
       "when": "The extension caches a computed value under its own key.",
       "anchors_any": [
