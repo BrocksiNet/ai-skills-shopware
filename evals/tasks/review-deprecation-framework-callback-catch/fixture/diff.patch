@@ -1,0 +1,55 @@
+diff --git a/src/Core/Content/Product/Subscriber/ProductIndexingSubscriber.php b/src/Core/Content/Product/Subscriber/ProductIndexingSubscriber.php
+index 3c1e0a2..9b7d4f1 100644
+--- a/src/Core/Content/Product/Subscriber/ProductIndexingSubscriber.php
++++ b/src/Core/Content/Product/Subscriber/ProductIndexingSubscriber.php
+@@ -5,6 +5,7 @@ namespace Shopware\Core\Content\Product\Subscriber;
+ use Shopware\Core\Content\Product\Events\ProductIndexerEvent;
++use Shopware\Core\Framework\Feature;
+ use Shopware\Core\Framework\Log\Package;
+ use Symfony\Component\EventDispatcher\EventSubscriberInterface;
+
+ #[Package('inventory')]
+ class ProductIndexingSubscriber implements EventSubscriberInterface
+@@ -24,7 +25,15 @@ class ProductIndexingSubscriber implements EventSubscriberInterface
+     }
+
++    /**
++     * @deprecated tag:v6.8.0 - Will be removed, use ProductCacheRefresher::refresh() instead.
++     */
+     public function onProductIndexed(ProductIndexerEvent $event): void
+     {
++        Feature::triggerDeprecationOrThrow(
++            'v6.8.0.0',
++            Feature::deprecatedMethodMessage(self::class, __METHOD__, 'v6.8.0.0', 'ProductCacheRefresher::refresh()'),
++        );
++
+         $this->invalidator->invalidate($event->getIds());
+     }
+ }
+diff --git a/src/Core/Content/Product/Subscriber/ProductCacheRefresher.php b/src/Core/Content/Product/Subscriber/ProductCacheRefresher.php
+new file mode 100644
+index 0000000..5d2a8e7
+--- /dev/null
++++ b/src/Core/Content/Product/Subscriber/ProductCacheRefresher.php
+@@ -0,0 +1,21 @@
++<?php declare(strict_types=1);
++
++namespace Shopware\Core\Content\Product\Subscriber;
++
++use Shopware\Core\Framework\Log\Package;
++
++#[Package('inventory')]
++class ProductCacheRefresher
++{
++    public function __construct(private readonly ProductCacheInvalidator $invalidator)
++    {
++    }
++
++    /**
++     * @param list<string> $ids
++     */
++    public function refresh(array $ids): void
++    {
++        $this->invalidator->invalidate($ids);
++    }
++}

@@ -1,0 +1,16 @@
+The subscriber is a framework callback: ProductIndexingSubscriber is registered for ProductIndexerEvent, so the dispatcher calls onProductIndexed on every indexing run. A triggerDeprecationOrThrow there warns on every legitimate call, not only on calls an extension makes.
+
+```json
+{
+  "findings": [
+    {
+      "rule_id": "CORE-011",
+      "severity": "major",
+      "file": "src/Core/Content/Product/Subscriber/ProductIndexingSubscriber.php",
+      "line": 29,
+      "summary": "onProductIndexed is a deprecated subscriber method the framework still calls on every event, but it uses Feature::triggerDeprecationOrThrow(), so every indexing run emits a deprecation.",
+      "fix": "Use Feature::throwIfActive('v6.8.0.0', ...) as the first statement, which stays silent until the removal flag is active."
+    }
+  ]
+}
+```

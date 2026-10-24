@@ -1,0 +1,16 @@
+The subscriber mixes two deprecation tools.
+
+```json
+{
+  "findings": [
+    {
+      "rule_id": null,
+      "severity": "major",
+      "file": "src/Core/Content/Product/Subscriber/ProductIndexingSubscriber.php",
+      "line": 29,
+      "summary": "The deprecated subscriber should call triggerDeprecationOrThrow instead of throwIfActive, so the notice is visible.",
+      "fix": "Replace throwIfActive with triggerDeprecationOrThrow."
+    }
+  ]
+}
+```
