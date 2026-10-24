@@ -1991,8 +1991,7 @@
       "title": "Pick one deprecation tool per situation; do not mix them",
       "status": "active",
       "since": "2026-10-20",
-      "eval": null,
-      "eval_reason": "Documented only; no eval yet.",
+      "eval": "review-deprecation-framework-callback-catch",
       "core_guide_ids": [],
       "audience": [
         "core"
