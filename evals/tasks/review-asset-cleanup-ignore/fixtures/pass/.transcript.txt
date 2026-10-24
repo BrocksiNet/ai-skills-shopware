@@ -1,0 +1,7 @@
+The old hash is retired in the compile step and its directory is deleted later by the message handler, after a seven-day grace period.
+
+```json
+{
+  "findings": []
+}
+```
