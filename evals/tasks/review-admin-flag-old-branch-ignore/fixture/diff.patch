@@ -1,0 +1,42 @@
+diff --git a/src/Resources/app/administration/src/module/swag-loyalty/component/swag-loyalty-points-preview/index.js b/src/Resources/app/administration/src/module/swag-loyalty/component/swag-loyalty-points-preview/index.js
+index 3c1d7a2..6b8f0d3 100644
+--- a/src/Resources/app/administration/src/module/swag-loyalty/component/swag-loyalty-points-preview/index.js
++++ b/src/Resources/app/administration/src/module/swag-loyalty/component/swag-loyalty-points-preview/index.js
+@@ -1,3 +1,4 @@
+ import template from './swag-loyalty-points-preview.html.twig';
++import { roundPoints } from '../../service/points-rounding';
+
+ const { Component } = Shopware;
+
+@@ -16,6 +17,7 @@ Component.register('swag-loyalty-points-preview', {
+         return {
+             settings: {
+                 pointsPerEuro: 1,
++                rounding: 'down',
+             },
+         };
+     },
+@@ -28,7 +30,13 @@ Component.register('swag-loyalty-points-preview', {
+
+     methods: {
+         pointsFor(amount) {
+-            return Math.floor(amount * this.settings.pointsPerEuro);
++            const raw = amount * this.settings.pointsPerEuro;
++
++            if (Shopware.Feature.isActive('V6_8_0_0')) {
++                return roundPoints(raw, this.settings.rounding);
++            }
++
++            return Math.floor(raw);
+         },
+     },
+ });
+diff --git a/src/Resources/app/administration/src/module/swag-loyalty/service/points-rounding.js b/src/Resources/app/administration/src/module/swag-loyalty/service/points-rounding.js
+new file mode 100644
+index 0000000..5c2e1a9
+--- /dev/null
++++ b/src/Resources/app/administration/src/module/swag-loyalty/service/points-rounding.js
+@@ -0,0 +1,3 @@
++export function roundPoints(raw, mode) {
++    return mode === 'nearest' ? Math.round(raw) : Math.trunc(raw);
++}

@@ -1,0 +1,16 @@
+Feature flags should be rollout branches, and this one is used as config.
+
+```json
+{
+  "findings": [
+    {
+      "rule_id": "ADM-022",
+      "severity": "major",
+      "file": "src/Resources/app/administration/src/module/swag-loyalty/component/swag-loyalty-points-preview/index.js",
+      "line": 35,
+      "summary": "The V6_8_0_0 flag is a temporary rollout branch and should not be treated as permanent config.",
+      "fix": "Remove the flag once the new rounding ships."
+    }
+  ]
+}
+```

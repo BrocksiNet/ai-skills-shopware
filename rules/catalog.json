@@ -3642,8 +3642,7 @@
       "title": "Keep the old behavior in the branch deleted with the flag",
       "status": "active",
       "since": "2026-10-20",
-      "eval": null,
-      "eval_reason": "Style rule; core shopware-admin-js owns it on trunk.",
+      "eval": "review-admin-flag-old-branch-catch",
       "core_guide_ids": [
         "ADMF-004"
       ],
