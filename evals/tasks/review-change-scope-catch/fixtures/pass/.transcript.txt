@@ -1,0 +1,14 @@
+```json
+{
+  "findings": [
+    {
+      "rule_id": "REV-032",
+      "severity": "minor",
+      "file": "src/Export/OrderCsvExporter.php",
+      "line": 13,
+      "summary": "The money-formatting sweep into the export and reporting modules is unrelated to the null-delivery fix and should be a separate change.",
+      "fix": "Revert the MoneyFormatter sweep here and in RevenueReport, and propose it as a follow-up PR."
+    }
+  ]
+}
+```
