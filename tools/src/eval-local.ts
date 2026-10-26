@@ -9,7 +9,7 @@ import { errorMessage } from './errors.ts';
 import { gate, gateOptionsFromEnv } from './eval-gate.ts';
 import { plan, planOptionsFromEnv } from './eval-plan.ts';
 import { parseResults } from './eval-results.ts';
-import { onPath } from './proc.ts';
+import { ghToken, onPath } from './proc.ts';
 import { inSeries } from './series.ts';
 
 export interface EvalLocalOptions {
@@ -35,7 +35,8 @@ export const stamp = (d: Date): string =>
 /** The agent environment for EVAL_LOCAL_AGENT, or an error message. */
 function agentEnv(root: string, env: NodeJS.ProcessEnv): NodeJS.ProcessEnv | string {
   const agent = envOr(env, 'EVAL_LOCAL_AGENT', 'claude');
-  if (agent !== 'claude' && agent !== 'opencode') return 'EVAL_LOCAL_AGENT must be claude or opencode';
+  if (agent !== 'claude' && agent !== 'opencode' && agent !== 'copilot')
+    return 'EVAL_LOCAL_AGENT must be claude, opencode or copilot';
   if (!onPath(agent, env)) return `${agent} CLI not found`;
   const out: NodeJS.ProcessEnv = {
     ...env,
@@ -45,6 +46,13 @@ function agentEnv(root: string, env: NodeJS.ProcessEnv): NodeJS.ProcessEnv | str
   };
   if (agent === 'claude') {
     out.TASK_MODEL = envOr(env, 'TASK_MODEL', 'haiku');
+  } else if (agent === 'copilot') {
+    // Your Copilot seat through the GitHub CLI login, unless a token is set.
+    if (envOr(env, 'COPILOT_GITHUB_TOKEN', '') === '' && envOr(env, 'GH_TOKEN', '') === '') {
+      const token = ghToken(env);
+      if (token === '') return 'copilot needs COPILOT_GITHUB_TOKEN, or a `gh auth login`';
+      out.COPILOT_GITHUB_TOKEN = token;
+    }
   } else {
     // Keep the throwaway HOME, but bring the user's OpenCode login.
     const data = envOr(env, 'XDG_DATA_HOME', join(envOr(env, 'HOME', ''), '.local/share'));

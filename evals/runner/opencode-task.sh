@@ -27,8 +27,11 @@
 #   OPENCODE_ISOLATE      1 = throwaway HOME/XDG (default); 0 = your own config
 #                         (0 lets your global skills leak into the "off" run)
 #   OPENCODE_AUTH_FILE    an OpenCode auth.json to copy into the throwaway HOME,
-#                         so providers you are logged in to (GitHub Copilot,
-#                         OpenAI, ...) work while skills stay isolated
+#                         so providers you are logged in to with an API key
+#                         (OpenRouter, ...) work while skills stay isolated.
+#                         OpenCode 2.0.27 keeps the GitHub Copilot login in
+#                         its database, not in auth.json, so github-copilot/*
+#                         models are "unavailable" here: use copilot-task.sh.
 #   EVAL_SKILLS_LOG       when set, this file is created and gets one line per
 #                         skill the agent loaded (set by ab.sh)
 #   EVAL_USAGE_LOG        when set, gets one line "<input> <output>" with the
