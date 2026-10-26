@@ -8,7 +8,7 @@
 //   node tools/bin/suggest-rules.ts --signals ./reviews-2026-10.jsonl --agent opencode
 //
 // Options: --since YYYY-MM-DD|Nd (default 30d), --until YYYY-MM-DD (default
-// today), --skill NAME, --signals FILE, --agent claude|opencode|COMMAND
+// today), --skill NAME, --signals FILE, --agent claude|copilot|opencode|COMMAND
 // (default claude; a COMMAND reads the prompt on stdin and prints the
 // answer), --source ID (repeatable; review sources from the cache),
 // --offline (no download, no drift issue), --out DIR, --api-index FILE,
@@ -30,7 +30,8 @@
 // a draft PR with the `run-evals` label opens unless --no-pr. --base (main)
 // is the start and PR target, --worktree the folder (.cache/drafts/<branch>).
 // DRAFT_MODEL (haiku), DRAFT_REPEATS (3), DRAFT_MAX_TURNS (60) and
-// DRAFT_MAX_BUDGET_USD (2) set the agent. Exit 0 = drafted, 1 = not.
+// DRAFT_MAX_BUDGET_USD (2) set the agent; DRAFT_TIMEOUT_SECONDS (1200) bounds
+// a Copilot session. Exit 0 = drafted, 1 = not.
 import { resolve } from 'node:path';
 import { parseArgs } from 'node:util';
 import { stderr, stdout } from '../src/cli.ts';
@@ -41,9 +42,9 @@ import { suggestCommand } from '../src/suggest-cli.ts';
 const ROOT = resolve(import.meta.dirname, '../..');
 const USAGE =
   'usage: suggest-rules.ts [--since YYYY-MM-DD|Nd] [--until YYYY-MM-DD] [--skill NAME] [--signals FILE]\n' +
-  '                        [--agent claude|opencode|COMMAND] [--source ID]... [--offline] [--out DIR]\n' +
+  '                        [--agent claude|copilot|opencode|COMMAND] [--source ID]... [--offline] [--out DIR]\n' +
   '                        [--api-index FILE] [--baseline FILE] [--continue FILE]\n' +
-  '       suggest-rules.ts draft ID [--agent claude|opencode|COMMAND] [--no-pr] [--base BRANCH]\n' +
+  '       suggest-rules.ts draft ID [--agent claude|copilot|opencode|COMMAND] [--no-pr] [--base BRANCH]\n' +
   '                        [--out DIR] [--worktree DIR]\n';
 
 async function main(): Promise<number> {

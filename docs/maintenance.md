@@ -33,6 +33,7 @@ flowchart LR
 | Drift mining ([`mine-trunk.yml`](../.github/workflows/mine-trunk.yml)) | weekly | Reads every source in [`rules/sources.json`](../rules/sources.json) since its last pass, maps each change to the skill and rule it touches, and opens a `trunk-drift` issue grouped by skill and rule. A `/mined` comment from a member moves [`.mining-state.json`](.mining-state.json) forward for every source. |
 | Review collector ([`collect-reviews.yml`](../.github/workflows/collect-reviews.yml)) | daily | Reads the review comments on PRs merged into `shopware/shopware` trunk since the last run, maps each to the skill and rule it touches, and publishes them as the `review-signals` release. See [Review comments](#review-comments). |
 | API index ([`api-index.yml`](../.github/workflows/api-index.yml)) | weekly | Rebuilds the public API index for every release since 6.5.0.0 plus trunk, publishes it as the `api-index` release asset, and runs `check-breaks` against the UPGRADE files. |
+| Rule suggestions ([`suggest-rules.yml`](../.github/workflows/suggest-rules.yml)) | weekly, after drift mining | Runs `suggest-rules` over the public review signals and the drift issue and posts the ranked proposals on that issue. A `/draft <ID>` comment from a member drafts one as a pull request. See [Suggesting rules in CI](#suggesting-rules-in-ci). |
 | Model evals ([`evals.yml`](../.github/workflows/evals.yml)) | monthly, on dispatch, or with the `run-evals` label | Runs the A/B for the eval tasks and fails the gate when a skill makes results worse. |
 | Core PR watchlist | with each mining pass | Open core PRs that will change a rule, with a prepared branch where it pays off. See [`core-pr-17657-alignment.md`](core-pr-17657-alignment.md#watchlist). |
 | `scripts/check-update.sh` | when you run it | Tells an installed project that a newer release exists. |
@@ -246,7 +247,7 @@ node tools/bin/suggest-rules.ts --signals ./reviews.jsonl --agent opencode --off
 | `--skill` | every skill | Ask only the clusters of one skill |
 | `--signals FILE` | | Read these signals (JSON Lines) instead of the cache and the drift issue |
 | `--source ID` | every source | Review sources from `.cache/review-signals/`; repeat for more |
-| `--agent` | `claude` | `claude`, `opencode`, or a command that reads the prompt on stdin |
+| `--agent` | `claude` | `claude`, `copilot`, `opencode`, or a command that reads the prompt on stdin |
 | `--offline` | off | Neither download release assets nor read the drift issue |
 | `--out DIR` | `suggestions/` | Where the files go |
 | `--api-index FILE` | `$API_INDEX`, then the user cache | The API timeline for the retirement check |
@@ -254,8 +255,8 @@ node tools/bin/suggest-rules.ts --signals ./reviews.jsonl --agent opencode --off
 | `--continue FILE` | | An earlier `suggestions/<date>.json`: ask only the clusters it did not, in its window |
 
 `SUGGEST_MAX_CLUSTERS` (20) caps the agent calls, `SUGGEST_MAX_SIGNALS` (25)
-the signals quoted per cluster, `SUGGEST_MODEL` (`haiku` for claude) picks
-the model. The run prints the token use.
+the signals quoted per cluster, `SUGGEST_MODEL` (`haiku` for claude,
+`claude-haiku-4.5` for copilot) picks the model. The run prints the token use.
 
 **A second pass.** The clusters over the cap are not lost. Continue the
 run, and it asks the next ones and writes one result with both:
@@ -375,6 +376,43 @@ is not `none`:
 
 `DRAFT_MODEL` (`haiku`), `DRAFT_MAX_TURNS` (60) and `DRAFT_MAX_BUDGET_USD`
 (2) bound the agent. Remove a kept worktree with `git worktree remove`.
+
+With `--agent copilot`, Copilot gets the file tools and the same commands
+pre-approved, and everything else is denied. The Copilot CLI has no turn or
+cost cap, so `DRAFT_TIMEOUT_SECONDS` (1200) bounds the session instead.
+Locally, the token comes from `COPILOT_GITHUB_TOKEN` or your `gh` login.
+
+## Suggesting rules in CI
+
+[`suggest-rules.yml`](../.github/workflows/suggest-rules.yml) runs both
+steps without a laptop. It reads only public sources: the `review-signals`
+release and the drift issue. Private review sources stay local.
+
+1. **Monday 06:00 UTC**, an hour after drift mining, it runs
+   `suggest-rules --since 7d` with Copilot. It uploads `suggestions/` as the
+   `suggestions` artifact, kept for 90 days, and comments the ranked table
+   on the open drift issue. A manual dispatch can pick `opencode`, another
+   window, or no comment.
+2. **Comment `/draft <ID>`** on that issue to draft a proposal from the
+   table. Members and collaborators only. Add `opencode` after the ID to use
+   the free model, for example while the Copilot quota is used up.
+3. The job downloads the artifact of the run whose comment lists the ID. It
+   accepts only a scheduled or dispatched run of this workflow on `main`,
+   because a pull request can upload artifacts too. Then it runs
+   `suggest-rules draft <ID>` with `DRAFT_REPEATS=2`, as in
+   [Drafting a proposal](#drafting-a-proposal), and opens the draft PR.
+4. It comments the outcome on the issue: the PR link, or the failed checks
+   and the run link.
+
+The agent never sees a GitHub token. The checkout keeps no credentials, and
+git pushes through `gh auth git-credential`, which reads the token only
+when the draft command pushes. A PR opened by the workflow token starts no
+other workflow, so close and reopen it to run `validate.yml`.
+
+Each run costs Copilot premium requests: one per cluster asked (at most
+`SUGGEST_MAX_CLUSTERS`, 20) for the proposals, and one draft session plus
+the A/B sessions per `/draft`. When the monthly quota is gone, every
+session fails with a quota error until it resets.
 
 ## How a change lands
 

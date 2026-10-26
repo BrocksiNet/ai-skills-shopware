@@ -178,7 +178,7 @@ for (const name of ['opencode', 'claude', 'copilot']) {
   writeFileSync(
     file,
     `#!/usr/bin/env bash
-[ -n "\${FAKE_REC:-}" ] && { cat > "$FAKE_REC.stdin"; printf '%s\\n' "$@" > "$FAKE_REC.args"; printf 'HOME=%s\\nCFG=%s\\nCOPILOT_HOME=%s\\n' "$HOME" "\${OPENCODE_CONFIG_CONTENT:-}" "\${COPILOT_HOME:-}" > "$FAKE_REC.env"; ls "$PWD/.agents/skills" "$PWD/.claude/skills" 2>/dev/null | head -n 3 >> "$FAKE_REC.env"; }
+[ -n "\${FAKE_REC:-}" ] && { cat > "$FAKE_REC.stdin"; printf '%s\\n' "$@" > "$FAKE_REC.args"; printf 'HOME=%s\\nCFG=%s\\nCOPILOT_HOME=%s\\n' "$HOME" "\${OPENCODE_CONFIG_CONTENT:-}" "\${COPILOT_HOME:-}" > "$FAKE_REC.env"; printf 'TOKEN=%s GH=%s CWD=%s\\n' "\${COPILOT_GITHUB_TOKEN:-}" "\${GH_TOKEN:-}" "$PWD" >> "$FAKE_REC.env"; ls "$PWD/.agents/skills" "$PWD/.claude/skills" 2>/dev/null | head -n 3 >> "$FAKE_REC.env"; }
 [ -n "\${FAKE_ERR:-}" ] && printf '%b' "$FAKE_ERR" >&2
 [ -n "\${FAKE_SLEEP:-}" ] && sleep "$FAKE_SLEEP"
 [ -n "\${FAKE_OUT:-}" ] && cat "$FAKE_OUT"
@@ -446,7 +446,10 @@ describe('copilot-task adapter', () => {
   test('a hung session times out; a missing CLI is an agent error', async () => {
     const r = await call(copilotTask, { ...token, FAKE_SLEEP: '20', TASK_TIMEOUT_SECONDS: '1' });
     assert.deepEqual([r.rc, r.err], [4, 'copilot-task: timed out after 1s\n']);
-    assert.deepEqual((await call(copilotTask, { ...token, PATH: '/usr/bin:/bin' })).err, 'copilot CLI not found\n');
+    assert.deepEqual(
+      (await call(copilotTask, { ...token, PATH: '/usr/bin:/bin' })).err,
+      'copilot-task: copilot CLI not found\n',
+    );
   });
 });
 

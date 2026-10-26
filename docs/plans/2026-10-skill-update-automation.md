@@ -514,9 +514,9 @@ proposal into a draft PR:
 You review and merge. Nothing merges on its own, and a draft whose A/B the
 skill does not win stays a draft.
 
-**Later**: the same command in a workflow, started by a `/draft <id>`
-comment on the drift issue. It waits until the local command has drafted
-enough good PRs to trust it.
+**Later** (built 2026-10-26): the same command in a workflow, started by a
+`/draft <id>` comment on the drift issue. See
+[Suggesting rules in CI](../maintenance.md#suggesting-rules-in-ci).
 
 **Acceptance**:
 

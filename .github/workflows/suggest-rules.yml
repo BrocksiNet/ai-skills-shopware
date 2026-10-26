@@ -1,0 +1,216 @@
+name: suggest-rules
+
+# Rule proposals from review comments and the drift issue, and drafts of them
+# (plan WP12 steps 4 and 5 in CI). docs/maintenance.md#suggesting-rules-in-ci
+# explains how to use it.
+#
+#   - schedule (Monday 06:00 UTC, after mine-trunk.yml filed the drift issue)
+#     and manual dispatch run `suggest-rules` over the public review signals
+#     and the open drift issue, upload `suggestions/` as an artifact, and post
+#     the ranked table on the drift issue.
+#   - a `/draft <ID> [copilot|opencode]` comment by a member or collaborator
+#     on a `trunk-drift` issue downloads that artifact and runs
+#     `suggest-rules draft <ID>`: the agent writes the change in a worktree,
+#     the free checks and the A/B run, and a draft PR opens. The result goes
+#     back to the issue as a comment.
+#
+# The agent never sees a GitHub token: checkout keeps no credentials, the
+# adapters strip GH_TOKEN, and git pushes through `gh auth git-credential`,
+# which reads GH_TOKEN from the environment of the push only. The Copilot
+# token is hidden from the agent's shell. A PR opened with GITHUB_TOKEN does
+# not start other workflows; close and reopen it to run validate.yml.
+
+on:
+  schedule:
+    - cron: "0 6 * * 1" # Monday 06:00 UTC
+  workflow_dispatch:
+    inputs:
+      agent:
+        description: Agent that writes the proposals
+        type: choice
+        options: [copilot, opencode]
+        default: copilot
+      since:
+        description: Window start, YYYY-MM-DD or Nd
+        default: 7d
+      comment:
+        description: Post the table on the open drift issue
+        type: boolean
+        default: true
+  issue_comment:
+    types: [created]
+
+permissions:
+  contents: read
+
+env:
+  OPENCODE_VERSION: "2.0.27"
+  COPILOT_VERSION: "1.0.103"
+
+jobs:
+  suggest:
+    if: github.event_name != 'issue_comment'
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    concurrency: suggest-rules
+    permissions:
+      contents: read
+      issues: write
+    env:
+      AGENT: ${{ inputs.agent || 'copilot' }}
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          persist-credentials: false
+
+      - uses: actions/setup-node@v5
+        with:
+          node-version: '24'
+
+      - name: Install agent CLI
+        run: bash evals/runner/install-agent.sh "$AGENT"
+
+      - name: Suggest rule changes
+        env:
+          GH_TOKEN: ${{ github.token }}
+          COPILOT_GITHUB_TOKEN: ${{ secrets.COPILOT_GITHUB_TOKEN }}
+          SINCE: ${{ inputs.since || '7d' }}
+        run: |
+          if [ "$AGENT" = copilot ] && [ -z "$COPILOT_GITHUB_TOKEN" ]; then
+            echo "::error::COPILOT_GITHUB_TOKEN is not set; dispatch with agent=opencode instead."
+            exit 1
+          fi
+          node tools/bin/suggest-rules.ts --since "$SINCE" --agent "$AGENT" --out "$RUNNER_TEMP/suggestions" \
+            | tee "$RUNNER_TEMP/summary.txt"
+          {
+            echo '```text'
+            cat "$RUNNER_TEMP/summary.txt"
+            echo '```'
+          } >> "$GITHUB_STEP_SUMMARY"
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: suggestions
+          path: ${{ runner.temp }}/suggestions
+          retention-days: 90
+
+      - name: Post the table on the drift issue
+        if: github.event_name == 'schedule' || inputs.comment
+        env:
+          GH_TOKEN: ${{ github.token }}
+          RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+        run: |
+          issue="$(gh issue list --label trunk-drift --state open --limit 1 --json number --jq '.[0].number // empty')"
+          if [ -z "$issue" ]; then
+            echo "::notice::No open trunk-drift issue; the proposals are only in the artifact."
+            exit 0
+          fi
+          md="$(find "$RUNNER_TEMP/suggestions" -maxdepth 1 -name '20*.md' | sort | tail -n 1)"
+          node tools/bin/draft-comment.ts comment "$md" "$GITHUB_RUN_ID" "$RUN_URL" > "$RUNNER_TEMP/comment.md"
+          gh issue comment "$issue" --body-file "$RUNNER_TEMP/comment.md"
+
+  draft:
+    if: >-
+      github.event_name == 'issue_comment' && !github.event.issue.pull_request &&
+      contains(github.event.issue.labels.*.name, 'trunk-drift') &&
+      startsWith(github.event.comment.body, '/draft') &&
+      contains(fromJSON('["OWNER", "MEMBER", "COLLABORATOR"]'), github.event.comment.author_association)
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+    concurrency: suggest-rules-draft
+    permissions:
+      contents: write
+      issues: write
+      pull-requests: write
+    env:
+      ISSUE: ${{ github.event.issue.number }}
+      RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+
+      - uses: actions/setup-node@v5
+        with:
+          node-version: '24'
+          cache: npm
+          cache-dependency-path: |
+            tools/package-lock.json
+            tools/api-index/package-lock.json
+            evals/tools/ast/package-lock.json
+
+      - name: Read the command
+        id: cmd
+        env:
+          COMMENT: ${{ github.event.comment.body }}
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          if ! parsed="$(node tools/bin/draft-comment.ts parse 2> "$RUNNER_TEMP/usage.txt")"; then
+            gh issue comment "$ISSUE" --body "$(cat "$RUNNER_TEMP/usage.txt")"
+            exit 1
+          fi
+          read -r id agent <<<"$parsed"
+          echo "id=$id" >> "$GITHUB_OUTPUT"
+          echo "agent=$agent" >> "$GITHUB_OUTPUT"
+          gh issue comment "$ISSUE" --body "Drafting \`$id\` with $agent: $RUN_URL"
+
+      - name: Download the proposals
+        env:
+          GH_TOKEN: ${{ github.token }}
+          ID: ${{ steps.cmd.outputs.id }}
+        run: |
+          # Only a run of this workflow, started by the schedule or by hand,
+          # may supply the proposal: a pull request can upload artifacts too.
+          run="$(gh api "repos/$GITHUB_REPOSITORY/issues/$ISSUE/comments" --paginate \
+            --jq '.[] | {body, login: .user.login}' | node tools/bin/draft-comment.ts run "$ID")"
+          meta="$(gh api "repos/$GITHUB_REPOSITORY/actions/runs/$run" --jq '"\(.path) \(.event) \(.head_branch)"')"
+          case "$meta" in
+            ".github/workflows/suggest-rules.yml schedule main" | ".github/workflows/suggest-rules.yml workflow_dispatch main") ;;
+            *) echo "::error::run $run is not a suggest-rules run on main ($meta)"; exit 1 ;;
+          esac
+          gh run download "$run" --name suggestions --dir suggestions
+
+      - name: Install dependencies and the agent CLI
+        env:
+          AGENT: ${{ steps.cmd.outputs.agent }}
+        run: |
+          npm ci --prefix tools
+          npm ci --prefix tools/api-index
+          npm ci --prefix evals/tools/ast
+          bash evals/runner/install-agent.sh "$AGENT"
+
+      - name: Draft the proposal
+        id: draft
+        env:
+          ID: ${{ steps.cmd.outputs.id }}
+          AGENT: ${{ steps.cmd.outputs.agent }}
+          GH_TOKEN: ${{ github.token }}
+          COPILOT_GITHUB_TOKEN: ${{ secrets.COPILOT_GITHUB_TOKEN }}
+          DRAFT_REPEATS: "2"
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          gh auth setup-git --hostname github.com
+          set +e
+          node tools/bin/suggest-rules.ts draft "$ID" --agent "$AGENT" --out suggestions > "$RUNNER_TEMP/draft.txt"
+          echo "status=$?" >> "$GITHUB_OUTPUT"
+          cat "$RUNNER_TEMP/draft.txt"
+
+      - name: Report on the issue
+        if: always() && steps.cmd.outputs.id != ''
+        env:
+          GH_TOKEN: ${{ github.token }}
+          ID: ${{ steps.cmd.outputs.id }}
+          STATUS: ${{ steps.draft.outputs.status }}
+        run: |
+          {
+            if [ "$STATUS" = 0 ]; then echo "Drafted \`$ID\`."; else echo "Could not draft \`$ID\`: $RUN_URL"; fi
+            if [ -s "$RUNNER_TEMP/draft.txt" ]; then
+              echo
+              echo '```text'
+              cat "$RUNNER_TEMP/draft.txt"
+              echo '```'
+            fi
+          } > "$RUNNER_TEMP/report.md"
+          gh issue comment "$ISSUE" --body-file "$RUNNER_TEMP/report.md"

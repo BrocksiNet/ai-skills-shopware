@@ -82,6 +82,7 @@ tools/                        # repo tooling in TypeScript (Node 24, no build st
   bin/collect-reviews.ts      # review comments of merged PRs as mapped signals (daily in CI; private repos locally)
   bin/suggest-rules.ts        # rule proposals from review signals + drift issue via your agent (git-ignored suggestions/)
   src/agent-ask.ts            # one prompt to an agent with no tools (suggest-rules)
+  bin/draft-comment.ts        # suggest-rules.yml: proposals comment on the drift issue, /draft <ID> parsing
                               # `suggest-rules.ts draft <id>`: worktree, agent edit, free checks, A/B, draft PR (src/draft-*.ts)
   bin/grade.ts                # runs one task's grader (what every grade.sh calls)
   graders/<task>.ts           # one grader per eval task: workdir + transcript -> verdict
@@ -110,6 +111,7 @@ docs/                         # local validation, smoke evals, tooling stack
   mine-trunk.yml              # weekly drift issue for every source; /mined moves docs/.mining-state.json
   api-index.yml               # weekly public API index build, published as the `api-index` release
   collect-reviews.yml         # daily review comments of merged core PRs, published as the `review-signals` release
+  suggest-rules.yml           # weekly rule proposals on the drift issue; /draft <ID> opens a draft PR
 ```
 
 Skills install into provider-specific folders (`.cursor/skills/`, `.claude/skills/`,
