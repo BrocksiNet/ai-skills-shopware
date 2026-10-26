@@ -1,6 +1,7 @@
 // The `draft` command of tools/bin/suggest-rules.ts (plan WP12 step 5):
 // options and environment to DraftOptions, and the summary it prints.
 import { resolve } from 'node:path';
+import { COPILOT_DEFAULT_MODEL } from './agents-copilot.ts';
 import { OPENCODE_FREE_MODEL } from './agents.ts';
 import { editor } from './draft-agent.ts';
 import { exec, FREE_CHECKS, PREPARE } from './draft-checks.ts';
@@ -36,7 +37,8 @@ export function draftCommand(
   env: NodeJS.ProcessEnv,
   log: (t: string) => void,
 ): Promise<DraftResult> {
-  const model = envOr(env, 'DRAFT_MODEL', flags.agent === 'opencode' ? OPENCODE_FREE_MODEL : 'haiku');
+  const fallback = { opencode: OPENCODE_FREE_MODEL, copilot: COPILOT_DEFAULT_MODEL }[flags.agent] ?? 'haiku';
+  const model = envOr(env, 'DRAFT_MODEL', fallback);
   return draft({
     root,
     id,

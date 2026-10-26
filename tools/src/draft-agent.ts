@@ -14,7 +14,8 @@ import {
   opencodeTaskEnv,
   scratchDir,
 } from './agents.ts';
-import { envOr } from './env.ts';
+import { COPILOT_DEFAULT_MODEL, copilotSession, withCopilotToken } from './agents-copilot.ts';
+import { envOr, envInt } from './env.ts';
 import { onPath, run } from './proc.ts';
 
 /** One editing session in `cwd`: the agent's final text and exit code. */
@@ -94,11 +95,52 @@ async function opencodeEdit(
   }
 }
 
-/** Edits through `claude`, `opencode`, or a command that reads the prompt on
+/** Copilot: file tools and the commands in BASH_ALLOWED pre-approved; with
+ *  no one to answer a prompt, anything else is denied. No web fetch, no
+ *  GitHub MCP server, and the token hidden from the shell. */
+export const COPILOT_EDIT_TOOLS = [
+  '--excluded-tools',
+  'web_fetch',
+  'fetch_copilot_cli_documentation',
+  '--allow-tool',
+  'view',
+  'glob',
+  'grep',
+  'write',
+  'shell(node:*)',
+  'shell(npm test:*)',
+  'shell(npm run:*)',
+  'shell(ls:*)',
+  'shell(mkdir:*)',
+  'shell(bash scripts/validate-skills.sh)',
+  'shell(bash evals/test-graders.sh)',
+];
+
+async function copilotEdit(
+  prompt: string,
+  cwd: string,
+  env: NodeJS.ProcessEnv,
+  err: (t: string) => void,
+): Promise<Edited> {
+  const s = await copilotSession({
+    label: 'copilot-draft',
+    prompt,
+    model: envOr(env, 'DRAFT_MODEL', COPILOT_DEFAULT_MODEL),
+    tools: COPILOT_EDIT_TOOLS,
+    env: withoutTokens(withCopilotToken(env)),
+    cwd,
+    timeoutSeconds: envInt(env, 'DRAFT_TIMEOUT_SECONDS', 1200, 1),
+    err,
+  });
+  return { status: s.status, text: s.text };
+}
+
+/** Edits through `claude`, `copilot`, `opencode`, or a command that reads the prompt on
  *  stdin and works in its current directory (the fake agent in tests). */
 export function editor(agent: string, env: NodeJS.ProcessEnv, err: (t: string) => void): Edit {
   if (agent === 'claude') return (prompt, cwd) => claudeEdit(prompt, cwd, env, err);
   if (agent === 'opencode') return (prompt, cwd) => opencodeEdit(prompt, cwd, env, err);
+  if (agent === 'copilot') return (prompt, cwd) => copilotEdit(prompt, cwd, env, err);
   return async (prompt, cwd) => {
     const proc = await run(agent, [], { cwd, env: withoutTokens(env), input: prompt, onStderr: err });
     return { status: proc.status, text: proc.stdout };

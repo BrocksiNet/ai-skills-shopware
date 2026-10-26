@@ -83,14 +83,14 @@ async function abRun(o: DraftOptions, wt: string, tasks: string[]): Promise<AbSe
   if (tasks.length === 0) return section;
   const file = resolve(o.dir, `${o.id}-ab.jsonl`);
   writeFileSync(file, '');
-  const agent = o.agent === 'opencode' ? 'opencode' : 'claude';
+  const agent = o.agent === 'opencode' || o.agent === 'copilot' ? o.agent : 'claude';
   const env = {
     ...o.env,
     EVAL_LOCAL_AGENT: agent,
     EVAL_TASKS: tasks.join(','),
     EVAL_RESULTS: file,
     REPEATS: String(o.repeats),
-    ...(agent === 'claude' ? { TASK_MODEL: o.model } : {}),
+    ...(agent === 'opencode' ? {} : { TASK_MODEL: o.model }),
   };
   o.log(`A/B: ${tasks.join(', ')}\n`);
   await o.evalLocal({ root: wt, env, out: o.log, err: o.log });

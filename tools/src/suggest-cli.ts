@@ -4,7 +4,7 @@
 import { existsSync, mkdtempSync, readFileSync, rmSync } from 'node:fs';
 import { homedir, tmpdir } from 'node:os';
 import { join, resolve } from 'node:path';
-import { asker } from './agent-ask.ts';
+import { askModel, asker } from './agent-ask.ts';
 import { envInt, envOr } from './env.ts';
 import { githubApi } from './github.ts';
 import { parseSince } from './suggest-load.ts';
@@ -92,7 +92,7 @@ export async function suggestCommand(
       repo: envOr(env, 'GITHUB_REPOSITORY', 'BrocksiNet/ai-skills-shopware'),
       ask: asker(root, f.agent, env, log),
       agent: f.agent,
-      model: envOr(env, 'SUGGEST_MODEL', f.agent === 'claude' ? 'haiku' : 'default'),
+      model: askModel(f.agent, env),
       maxClusters: envInt(env, 'SUGGEST_MAX_CLUSTERS', DEFAULT_MAX_CLUSTERS, 1),
       maxSignals: envInt(env, 'SUGGEST_MAX_SIGNALS', DEFAULT_MAX_SIGNALS, 1),
       supportedFrom: envOr(env, 'SUGGEST_SUPPORTED_FROM', '6.6.0.0'),

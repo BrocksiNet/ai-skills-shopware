@@ -15,6 +15,7 @@ import {
   opencodeTaskEnv,
   scratchDir,
 } from './agents.ts';
+import { COPILOT_DEFAULT_MODEL, copilotSession, withCopilotToken } from './agents-copilot.ts';
 import { envOr } from './env.ts';
 import { onPath, run } from './proc.ts';
 
@@ -88,12 +89,49 @@ export const opencodeAsk: Adapter = async (prompt, env, { out, err }) => {
   }
 };
 
+/** No tool but `view`, nothing pre-approved, in an empty folder: reading
+ *  outside it needs an approval no one can give, and every other tool is
+ *  absent. Copilot has no switch for zero tools. */
+export const COPILOT_ASK_TOOLS = ['--available-tools', 'view'];
+
+export const copilotAsk: Adapter = async (prompt, env, { out, err }) => {
+  const scratch = scratchDir(env, 'suggest-ask.');
+  try {
+    const ws = join(scratch, 'ws');
+    mkdirSync(ws);
+    const s = await copilotSession({
+      label: 'copilot-ask',
+      prompt,
+      model: envOr(env, 'SUGGEST_MODEL', COPILOT_DEFAULT_MODEL),
+      tools: COPILOT_ASK_TOOLS,
+      env: withoutTokens(withCopilotToken(env)),
+      cwd: ws,
+      err,
+    });
+    if (s.status === 0) out(`${s.text}\n`);
+    return s.status;
+  } finally {
+    rmSync(scratch, { recursive: true, force: true });
+  }
+};
+
+/** The model label of a suggest-rules run: SUGGEST_MODEL or the adapter's
+ *  default ("default" for a command). */
+export function askModel(agent: string, env: NodeJS.ProcessEnv): string {
+  const defaults: Record<string, string> = {
+    claude: 'haiku',
+    copilot: COPILOT_DEFAULT_MODEL,
+    opencode: OPENCODE_FREE_MODEL,
+  };
+  return envOr(env, 'SUGGEST_MODEL', defaults[agent] ?? 'default');
+}
+
 /** One agent session: the answer text and the adapter's exit code. */
 export type Ask = (prompt: string) => Promise<{ status: number; text: string }>;
 
-const ASK_ADAPTERS: Record<string, Adapter> = { claude: claudeAsk, opencode: opencodeAsk };
+const ASK_ADAPTERS: Record<string, Adapter> = { claude: claudeAsk, copilot: copilotAsk, opencode: opencodeAsk };
 
-/** Questions through an ask adapter (`claude`, `opencode`), or through a
+/** Questions through an ask adapter (`claude`, `copilot`, `opencode`), or through a
  *  command that reads the prompt on stdin and prints the answer (the fake
  *  agent in tests). */
 export function asker(root: string, agent: string, env: NodeJS.ProcessEnv, err: (t: string) => void): Ask {

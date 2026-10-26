@@ -16,7 +16,7 @@ import {
   scratchDir,
 } from './agents.ts';
 import { envOr } from './env.ts';
-import { onPath, run, tail } from './proc.ts';
+import { ghToken, onPath, run, tail } from './proc.ts';
 
 /** The cheapest Copilot model that loads skills: a third of a premium
  *  request per session (measured 2026-10-26 with Copilot CLI 1.0.103). */
@@ -81,41 +81,96 @@ const COPILOT_TASK_TOOLS = ['--allow-all-tools', '--excluded-tools', 'web_fetch'
 const COPILOT_READ_TOOLS = ['skill', 'view', 'glob', 'grep'];
 const COPILOT_ACTIVATION_TOOLS = ['--available-tools', ...COPILOT_READ_TOOLS, '--allow-tool', ...COPILOT_READ_TOOLS];
 
-export const copilotTask: Adapter = async (prompt, env, { out, err }) => {
-  const model = envOr(env, 'TASK_MODEL', COPILOT_DEFAULT_MODEL);
-  const timeout = envOr(env, 'TASK_TIMEOUT_SECONDS', '600');
-  if (!onPath('copilot', env)) return (err('copilot CLI not found\n'), AGENT_ERROR);
-  if (!positive(timeout)) return (err('TASK_TIMEOUT_SECONDS must be >= 1\n'), AGENT_ERROR);
+/** A token for Copilot: COPILOT_GITHUB_TOKEN, GH_TOKEN, or your `gh` login.
+ *  Set before `withoutTokens` strips GH_TOKEN from an agent's environment. */
+export function withCopilotToken(env: NodeJS.ProcessEnv): NodeJS.ProcessEnv {
+  if (envOr(env, 'COPILOT_GITHUB_TOKEN', '') !== '') return env;
+  const token = envOr(env, 'GH_TOKEN', '') || ghToken(env);
+  return token === '' ? env : { ...env, COPILOT_GITHUB_TOKEN: token };
+}
 
-  const scratch = scratchDir(env, 'copilot-task.');
+export interface CopilotSessionOptions {
+  /** Prefix of error lines and the scratch folder. */
+  label: string;
+  prompt: string;
+  model: string;
+  tools: readonly string[];
+  env: NodeJS.ProcessEnv;
+  /** Where the session works; the current directory when unset. */
+  cwd?: string;
+  timeoutSeconds?: number;
+  err: (text: string) => void;
+}
+
+export interface CopilotSession {
+  /** 0 when the session finished, else AGENT_ERROR. */
+  status: number;
+  text: string;
+  skills: string[];
+}
+
+/** Why a finished process is not a finished session, or null. */
+function sessionFailure(
+  s: ReturnType<typeof parseCopilot>,
+  proc: Awaited<ReturnType<typeof run>>,
+  timeout?: number,
+): string | null {
+  if (proc.timedOut) return `timed out after ${String(timeout)}s\n`;
+  if (s.errors.length > 0) return `${s.errors[0]}\n`;
+  if (s.exitCode === null) return `session ended without a result\n${tail(proc.stderr, 5)}`;
+  if (proc.status !== 0) return `copilot exited ${proc.status}\n${tail(proc.stderr, 5)}`;
+  if (s.exitCode !== 0) return `session exit code ${s.exitCode}\n`;
+  if (s.texts.length === 0 && s.tools === 0) return 'session produced no text and no tool call\n';
+  return null;
+}
+
+/** One headless Copilot session with an isolated HOME. Logs tokens to
+ *  EVAL_USAGE_LOG; linked skill folders in `cwd` get a read grant. */
+export async function copilotSession(o: CopilotSessionOptions): Promise<CopilotSession> {
+  const failed = (why: string): CopilotSession => (
+    o.err(`${o.label}: ${why}`),
+    { status: AGENT_ERROR, text: '', skills: [] }
+  );
+  if (!onPath('copilot', o.env)) return failed('copilot CLI not found\n');
+  const scratch = scratchDir(o.env, `${o.label}.`);
   try {
-    const childEnv = copilotEnv(env, scratch);
-    if (childEnv === null) return (err(`copilot-task: ${COPILOT_NO_TOKEN}`), AGENT_ERROR);
-    // Review tasks only read a diff; read-only runs are safe on a laptop.
-    const tools = envOr(env, 'COPILOT_TASK_READ_ONLY', '0') === '1' ? COPILOT_ACTIVATION_TOOLS : COPILOT_TASK_TOOLS;
-    const grants = skillDirGrants(process.cwd());
-    const proc = await run('copilot', copilotArgs(model, prompt, [...tools, ...grants]), {
+    const childEnv = copilotEnv(o.env, scratch);
+    if (childEnv === null) return failed(COPILOT_NO_TOKEN);
+    const cwd = o.cwd ?? process.cwd();
+    const proc = await run('copilot', copilotArgs(o.model, o.prompt, [...o.tools, ...skillDirGrants(cwd)]), {
+      cwd,
       env: childEnv,
-      timeoutSeconds: Number(timeout),
+      ...(o.timeoutSeconds === undefined ? {} : { timeoutSeconds: o.timeoutSeconds }),
     });
-
     const s = parseCopilot(proc.stdout);
-    out(`${s.texts.join('\n\n')}\n`);
-    logSkills(env, s.skills);
-    logUsage(env, s.usage);
-    if (proc.timedOut) return (err(`copilot-task: timed out after ${timeout}s\n`), AGENT_ERROR);
-    if (s.errors.length > 0) return (err(`copilot-task: ${s.errors[0]}\n`), AGENT_ERROR);
-    if (s.exitCode === null || proc.status !== 0) {
-      const why = s.exitCode === null ? 'session ended without a result' : `copilot exited ${proc.status}`;
-      return (err(`copilot-task: ${why}\n${tail(proc.stderr, 5)}`), AGENT_ERROR);
-    }
-    if (s.exitCode !== 0) return (err(`copilot-task: session exit code ${s.exitCode}\n`), AGENT_ERROR);
-    if (s.texts.length === 0 && s.tools === 0)
-      return (err('copilot-task: session produced no text and no tool call\n'), AGENT_ERROR);
-    return 0;
+    logUsage(o.env, s.usage);
+    const session = { status: 0, text: s.texts.join('\n\n'), skills: s.skills };
+    const why = sessionFailure(s, proc, o.timeoutSeconds);
+    if (why === null) return session;
+    o.err(`${o.label}: ${why}`);
+    return { ...session, status: AGENT_ERROR };
   } finally {
     rmSync(scratch, { recursive: true, force: true });
   }
+}
+
+export const copilotTask: Adapter = async (prompt, env, { out, err }) => {
+  const timeout = envOr(env, 'TASK_TIMEOUT_SECONDS', '600');
+  if (!positive(timeout)) return (err('TASK_TIMEOUT_SECONDS must be >= 1\n'), AGENT_ERROR);
+  // Review tasks only read a diff; read-only runs are safe on a laptop.
+  const tools = envOr(env, 'COPILOT_TASK_READ_ONLY', '0') === '1' ? COPILOT_ACTIVATION_TOOLS : COPILOT_TASK_TOOLS;
+  const s = await copilotSession({
+    label: 'copilot-task',
+    prompt,
+    model: envOr(env, 'TASK_MODEL', COPILOT_DEFAULT_MODEL),
+    tools,
+    env,
+    timeoutSeconds: Number(timeout),
+    err,
+  });
+  out(`${s.text}\n`);
+  logSkills(env, s.skills);
+  return s.status;
 };
 
 export const copilotActivation: Adapter = async (prompt, env, { out, err }, root) => {
