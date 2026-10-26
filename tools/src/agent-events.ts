@@ -4,6 +4,7 @@
 //
 //   OpenCode:    `opencode run --format json`, one event per line
 //   Claude Code: `claude -p --output-format stream-json --verbose`
+//   Copilot CLI: `copilot -p <prompt> --output-format json`, one event per line
 //
 // Recorded sessions for the tests live in tools/test/fixtures/agents/.
 // Lines that are not JSON objects are skipped: CLIs print progress and
@@ -163,6 +164,79 @@ export function parseClaude(text: string): ClaudeSession {
       if (b.type === 'text' && str(b.text).trim() !== '') s.texts.push(str(b.text));
       if (b.type === 'tool_use' && b.name === 'Skill')
         calls.push({ id: str(b.id), name: skillName(b.input, ['skill', 'command']) });
+    }
+  }
+  for (const call of calls) if (call.id === '' || !failed.has(call.id)) addOnce(s.skills, call.name);
+  return s;
+}
+
+export interface CopilotSession {
+  texts: string[];
+  /** Tool calls of any kind. */
+  tools: number;
+  /** Skills loaded, in first-load order. */
+  skills: string[];
+  /** From the last usage checkpoint; null when there was none. */
+  usage: Usage | null;
+  errors: string[];
+  /** The `result` event's exit code; null when the session ended without one. */
+  exitCode: number | null;
+  /** Premium requests the session cost, from the `result` event. */
+  premiumRequests: number | null;
+  /** JSON object lines seen. */
+  events: number;
+}
+
+/** Usage summed over the models of one checkpoint. `inputTokens` already
+ *  includes cache reads and writes, and `outputTokens` the reasoning. */
+function copilotUsage(data: Json): Usage | null {
+  const metrics = Array.isArray(data.providerModelMetrics) ? data.providerModelMetrics : [];
+  if (metrics.length === 0) return null;
+  const usage: Usage = { input: 0, output: 0 };
+  for (const m of metrics) {
+    const u = obj(obj(obj(m).metrics).usage);
+    usage.input += count(u.inputTokens);
+    usage.output += count(u.outputTokens);
+  }
+  return usage;
+}
+
+export function parseCopilot(text: string): CopilotSession {
+  const s: CopilotSession = {
+    texts: [],
+    tools: 0,
+    skills: [],
+    usage: null,
+    errors: [],
+    exitCode: null,
+    premiumRequests: null,
+    events: 0,
+  };
+  // Skill calls by tool call id, and the ids whose call failed (for example
+  // "Skill not found"): those loaded nothing.
+  const calls: { id: string; name: string }[] = [];
+  const failed = new Set<string>();
+  for (const ev of jsonLines(text)) {
+    s.events++;
+    const data = obj(ev.data);
+    const type = str(ev.type);
+    if (type === 'assistant.message') {
+      const t = str(data.content);
+      if (t.trim() !== '') s.texts.push(t);
+    } else if (type === 'tool.execution_start') {
+      s.tools++;
+      if (data.toolName === 'skill')
+        calls.push({ id: str(data.toolCallId), name: skillName(data.arguments, ['skill', 'name']) });
+    } else if (type === 'tool.execution_complete') {
+      if (data.success === false) failed.add(str(data.toolCallId));
+    } else if (type === 'session.usage_checkpoint') {
+      s.usage = copilotUsage(data) ?? s.usage;
+    } else if (type === 'result') {
+      s.exitCode = typeof ev.exitCode === 'number' ? ev.exitCode : null;
+      const premium = obj(ev.usage).premiumRequests;
+      s.premiumRequests = typeof premium === 'number' ? premium : null;
+    } else if (type === 'error' || type.endsWith('.error')) {
+      s.errors.push(str(data.message) || str(obj(ev.error).message) || type);
     }
   }
   for (const call of calls) if (call.id === '' || !failed.has(call.id)) addOnce(s.skills, call.name);

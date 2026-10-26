@@ -2,7 +2,7 @@
 // One place for what the bash scripts did with `&`, `wait`, a watchdog
 // subshell and `tee`: a timeout that reaches every process the child
 // started, and no hang when a leftover background process keeps a pipe open.
-import { type ChildProcessWithoutNullStreams, spawn } from 'node:child_process';
+import { type ChildProcessWithoutNullStreams, spawn, spawnSync } from 'node:child_process';
 import { accessSync, constants as fsConstants } from 'node:fs';
 import { constants } from 'node:os';
 import { delimiter, join } from 'node:path';
@@ -137,4 +137,11 @@ export function tail(text: string, n: number): string {
 /** All of stdin as text, with trailing newlines removed like `$(cat)`. */
 export async function readStdin(): Promise<string> {
   return (await readAll(process.stdin)).replace(/\n+$/u, '');
+}
+
+/** The token of the GitHub CLI login, or '' without one. */
+export function ghToken(env: NodeJS.ProcessEnv): string {
+  if (!onPath('gh', env)) return '';
+  const r = spawnSync('gh', ['auth', 'token'], { env, encoding: 'utf8' });
+  return r.status === 0 ? r.stdout.trim() : '';
 }

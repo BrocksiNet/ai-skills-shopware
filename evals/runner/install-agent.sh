@@ -4,6 +4,7 @@
 #
 #   evals/runner/install-agent.sh opencode   # OPENCODE_VERSION (default 2.0.27)
 #   evals/runner/install-agent.sh claude     # CLAUDE_CODE_VERSION (default 2.1.301)
+#   evals/runner/install-agent.sh copilot    # COPILOT_VERSION (default 1.0.103)
 #
 # Adds the install folder to GITHUB_PATH when it runs inside GitHub Actions.
 set -euo pipefail
@@ -24,8 +25,12 @@ case "$agent" in
     npm install -g "@anthropic-ai/claude-code@${CLAUDE_CODE_VERSION:-2.1.301}"
     claude --version
     ;;
+  copilot)
+    npm install -g "@github/copilot@${COPILOT_VERSION:-1.0.103}"
+    copilot --version
+    ;;
   *)
-    echo "usage: $0 opencode|claude" >&2
+    echo "usage: $0 opencode|claude|copilot" >&2
     exit 2
     ;;
 esac

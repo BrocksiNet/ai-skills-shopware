@@ -37,10 +37,11 @@ export type Adapter = (prompt: string, env: NodeJS.ProcessEnv, io: AdapterIo, ro
 /** Task adapter exit code for an agent error; run-task never grades it. */
 export const AGENT_ERROR = 4;
 export const OPENCODE_FREE_MODEL = 'opencode/mimo-v2.6-flash-free';
+export const CLAUDE_DEFAULT_MODEL = 'sonnet';
 
-const positive = (v: string): boolean => /^[1-9][0-9]*$/u.test(v);
+export const positive = (v: string): boolean => /^[1-9][0-9]*$/u.test(v);
 
-function logSkills(env: NodeJS.ProcessEnv, skills: string[]): void {
+export function logSkills(env: NodeJS.ProcessEnv, skills: string[]): void {
   const log = envOr(env, 'EVAL_SKILLS_LOG', '');
   if (log !== '') appendFileSync(log, skills.map((s) => `${s}\n`).join(''));
 }
@@ -55,7 +56,7 @@ export const scratchDir = (env: NodeJS.ProcessEnv, prefix: string): string =>
 
 /** HOME and XDG folders in `scratch`, so no user config, login or global
  *  skills reach OpenCode. */
-function isolatedHome(env: NodeJS.ProcessEnv, scratch: string): { env: NodeJS.ProcessEnv; dataHome: string } {
+export function isolatedHome(env: NodeJS.ProcessEnv, scratch: string): { env: NodeJS.ProcessEnv; dataHome: string } {
   const home = join(scratch, 'home');
   const xdg = {
     XDG_CONFIG_HOME: join(home, '.config'),
@@ -157,7 +158,7 @@ export const opencodeTask: Adapter = async (prompt, env, { out, err }) => {
 };
 
 export const claudeTask: Adapter = async (prompt, env, { out, err }) => {
-  const model = envOr(env, 'TASK_MODEL', 'sonnet');
+  const model = envOr(env, 'TASK_MODEL', CLAUDE_DEFAULT_MODEL);
   const maxTurns = envOr(env, 'TASK_MAX_TURNS', '12');
   const maxBudget = envOr(env, 'TASK_MAX_BUDGET_USD', '0.75');
   if (!onPath('claude', env)) return (err('claude CLI not found\n'), AGENT_ERROR);
@@ -198,7 +199,7 @@ export const claudeTask: Adapter = async (prompt, env, { out, err }) => {
 
 /** A temp workspace whose only project skills are `skillsDir`, linked as
  *  `<dot>/skills`. */
-function activationWorkspace(
+export function activationWorkspace(
   env: NodeJS.ProcessEnv,
   skillsDir: string,
   dot: '.agents' | '.claude',
@@ -238,7 +239,7 @@ export const opencodeActivation: Adapter = async (prompt, env, { out, err }, roo
 
 export const claudeActivation: Adapter = async (prompt, env, { out, err }, root) => {
   const skillsDir = envOr(env, 'ACTIVATION_SKILLS_DIR', join(root, 'skills'));
-  const model = envOr(env, 'ACTIVATION_MODEL', 'sonnet');
+  const model = envOr(env, 'ACTIVATION_MODEL', CLAUDE_DEFAULT_MODEL);
   const maxTurns = envOr(env, 'ACTIVATION_MAX_TURNS', '3');
   if (!onPath('claude', env)) return (err('claude CLI not found\n'), 2);
 
@@ -274,11 +275,4 @@ export const claudeActivation: Adapter = async (prompt, env, { out, err }, root)
   } finally {
     rmSync(scratch, { recursive: true, force: true });
   }
-};
-
-export const ADAPTERS: Record<string, Adapter> = {
-  'opencode-task': opencodeTask,
-  'claude-task': claudeTask,
-  'opencode-activation': opencodeActivation,
-  'claude-activation': claudeActivation,
 };

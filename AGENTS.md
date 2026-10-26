@@ -70,7 +70,8 @@ tools/                        # repo tooling in TypeScript (Node 24, no build st
   bin/render-router-index.ts  # skills/sw-skill-router/index.json from skill metadata + routes
   bin/eval-{plan,gate,diff}.ts  # eval task plan, A/B gate, baseline diff
   bin/{ab,run-task}.ts        # A/B runner behind evals/runner/{ab,run-task}.sh
-  bin/adapter.ts              # agent adapters behind evals/runner/*-{task,activation}.sh
+  bin/adapter.ts              # agent adapters behind evals/runner/*-{task,activation}.sh (OpenCode, Claude Code, Copilot CLI)
+  bin/eval-profiles.ts        # which agent and model each evals.yml profile runs (one gate per model)
   bin/agent-preflight.ts      # one tiny session before evals.yml starts the shards (model still there?)
   bin/skills-profile.ts       # skills on/off per eval workdir
   bin/activation.ts           # Layer 1 activation evals
