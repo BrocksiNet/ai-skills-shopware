@@ -1,0 +1,36 @@
+diff --git a/src/Core/Content/Product/SalesChannel/Review/ProductReviewSaveRoute.php b/src/Core/Content/Product/SalesChannel/Review/ProductReviewSaveRoute.php
+new file mode 100644
+index 0000000..3c1e9a2
+--- /dev/null
++++ b/src/Core/Content/Product/SalesChannel/Review/ProductReviewSaveRoute.php
+@@ -0,0 +1,30 @@
++<?php declare(strict_types=1);
++
++namespace Shopware\Core\Content\Product\SalesChannel\Review;
++
++use Shopware\Core\Framework\Log\Package;
++use Shopware\Core\System\SalesChannel\SalesChannelContext;
++use Shopware\Core\System\SalesChannel\SuccessResponse;
++use Symfony\Component\HttpFoundation\Request;
++use Symfony\Component\Routing\Attribute\Route;
++
++#[Package('inventory')]
++class ProductReviewSaveRoute
++{
++    public function __construct(private readonly ProductReviewSaver $saver)
++    {
++    }
++
++    #[Route(
++        path: '/store-api/product/{productId}/review',
++        name: 'store-api.product.review.save',
++        defaults: ['_routeScope' => ['store-api'], 'openapi' => false],
++        methods: ['POST'],
++    )]
++    public function save(string $productId, Request $request, SalesChannelContext $context): SuccessResponse
++    {
++        $this->saver->save($productId, $request->request->all(), $context);
++
++        return new SuccessResponse();
++    }
++}
