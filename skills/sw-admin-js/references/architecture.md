@@ -46,6 +46,8 @@ Load when adding modules, components, services, or ACL-backed UI.
   plugins do nothing and an import that relies on them fails the build. Do
   not add one for a 6.7 target; a bundle that also supports 6.6 keeps it for
   6.6 only.
+- **ADM-007** Prefer composables for new shared Vue logic. Do not add new mixins unless
+  extending legacy code.
 - Use BEM class names and Meteor design tokens. Avoid inline styles.
 
 ## Data

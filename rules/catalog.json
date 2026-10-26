@@ -3339,12 +3339,11 @@
     {
       "id": "ADM-007",
       "skill": "sw-admin-js",
-      "file": "skills/sw-admin-js/SKILL.md",
+      "file": "skills/sw-admin-js/references/architecture.md",
       "title": "Composables for new shared Vue logic; no new mixins",
       "status": "active",
       "since": "2026-10-20",
-      "eval": null,
-      "eval_reason": "Documented only; no eval yet.",
+      "eval": "review-admin-mixin-catch",
       "core_guide_ids": [],
       "audience": [
         "core",
