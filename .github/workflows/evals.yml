@@ -166,6 +166,9 @@ jobs:
           COPILOT_GITHUB_TOKEN: ${{ secrets.COPILOT_GITHUB_TOKEN }}
           EVAL_AGENT_RETRY_WAIT: "30"
         run: |
+          # install-agent.sh puts OpenCode on GITHUB_PATH, which only later
+          # steps see; this step installs and calls it, so add it here too.
+          export PATH="$HOME/.opencode/bin:$PATH"
           mapfile -t profiles < <(jq -r '.[] | "\(.agent) \(.model)"' <<<"$PROFILES")
           for profile in "${profiles[@]}"; do
             read -r agent model <<<"$profile"
