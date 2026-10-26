@@ -1,0 +1,7 @@
+The new card is a Vue SFC like the tier hint already in this module, and it is registered through `components` the same way. Nothing here breaks.
+
+```json
+{
+  "findings": []
+}
+```

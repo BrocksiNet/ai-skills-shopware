@@ -57,7 +57,7 @@ Read only the reference that matches the task or the files it changes:
 
 ## Admin deltas
 
-- **ADM-006** Follow the patterns in the area you touch: component factory / Twig.JS
+- Follow the patterns in the area you touch: component factory / Twig.JS
   blocks on core, Vue SFC where the extension system already uses it.
 - Prefer `Shopware.Component`, `Shopware.Service()`, `Shopware.Store` over
   importing factory internals.
