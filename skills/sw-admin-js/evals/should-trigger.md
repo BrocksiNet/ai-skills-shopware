@@ -10,3 +10,4 @@
 - This orders module imports a component from the products module — stop the cross-module import.
 - Rewrite this Administration Twig override as a Vue single file component for 6.8.
 - I renamed a prop of my plugin's Administration component. Do other plugins care?
+- This Admin page clears each shared store field by hand in created() — should it call the store's reset?

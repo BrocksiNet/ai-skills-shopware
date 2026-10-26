@@ -61,3 +61,9 @@ Load when adding modules, components, services, or ACL-backed UI.
   them. Load only associations the screen uses.
 - **ADM-020** Batch related writes into one save when possible.
 - **ADM-021** Reload the entity after save so origin state and change tracking match.
+- **ADM-045** **Reset and change shared Administration state through its store.** Call
+  the store's `$reset()` instead of clearing its fields one by one in a component,
+  and write changes to the store's own state so every consumer sees them. Do not
+  keep a copy of store state in component data that can go stale, and do not add
+  a reset of your own next to the store's `$reset()`, such as clearing the same
+  fields in `created()`.
