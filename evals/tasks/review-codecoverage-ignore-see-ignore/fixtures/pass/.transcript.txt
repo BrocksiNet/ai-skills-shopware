@@ -1,0 +1,7 @@
+The class is marked @codeCoverageIgnore, and its @see names the dedicated integration test by its leading-backslash FQCN with no import. Nothing to report.
+
+```json
+{
+  "findings": []
+}
+```
