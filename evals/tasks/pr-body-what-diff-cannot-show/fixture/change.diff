@@ -1,0 +1,68 @@
+diff --git a/src/Core/Checkout/Cart/AbstractCartProcessor.php b/src/Core/Checkout/Cart/AbstractCartProcessor.php
+new file mode 100644
+index 0000000..3f2a9c1
+--- /dev/null
++++ b/src/Core/Checkout/Cart/AbstractCartProcessor.php
+@@ -0,0 +1,20 @@
++<?php declare(strict_types=1);
++
++namespace Shopware\Core\Checkout\Cart;
++
++use Shopware\Core\System\SalesChannel\SalesChannelContext;
++
++abstract class AbstractCartProcessor
++{
++    abstract public function process(
++        CartDataCollection $data,
++        Cart $original,
++        Cart $toCalculate,
++        SalesChannelContext $context,
++        CartBehavior $behavior
++    ): void;
++}
+diff --git a/src/Core/Checkout/Cart/CartProcessor.php b/src/Core/Checkout/Cart/CartProcessor.php
+index 7d1e0a4..b8c2f65 100644
+--- a/src/Core/Checkout/Cart/CartProcessor.php
++++ b/src/Core/Checkout/Cart/CartProcessor.php
+@@ -10,7 +10,7 @@ use Shopware\Core\System\SalesChannel\SalesChannelContext;
+
+-class CartProcessor implements CartProcessorInterface
++class CartProcessor extends AbstractCartProcessor implements CartProcessorInterface
+ {
+     public function __construct(
+         private readonly EventDispatcherInterface $eventDispatcher,
+@@ -20,6 +20,7 @@ class CartProcessor implements CartProcessorInterface
+     }
+
++    #[\Override]
+     public function process(
+         CartDataCollection $data,
+         Cart $original,
+diff --git a/src/Core/Checkout/Cart/CartProcessorTest.php b/src/Core/Checkout/Cart/CartProcessorTest.php
+index 4c09d12..e91a0f7 100644
+--- a/src/Core/Checkout/Cart/CartProcessorTest.php
++++ b/src/Core/Checkout/Cart/CartProcessorTest.php
+@@ -41,6 +41,22 @@ class CartProcessorTest extends TestCase
++    public function testSubclassCanDecorateCartCalculation(): void
++    {
++        $decorator = new class(new CartProcessor($this->eventDispatcher)) extends AbstractCartProcessor {
++            public function __construct(private readonly AbstractCartProcessor $inner)
++            {
++            }
++
++            public function process(
++                CartDataCollection $data,
++                Cart $original,
++                Cart $toCalculate,
++                SalesChannelContext $context,
++                CartBehavior $behavior
++            ): void {
++                $this->inner->process($data, $original, $toCalculate, $context, $behavior);
++            }
++        };
++
++        static::assertInstanceOf(AbstractCartProcessor::class, $decorator);
++    }
++
+     public function testProcessCallsEventDispatcher(): void
+     {

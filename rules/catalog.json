@@ -4610,8 +4610,7 @@
       "title": "Write what the diff cannot show; the trunk template agent block wins",
       "status": "active",
       "since": "2026-10-20",
-      "eval": null,
-      "eval_reason": "Documented only; no eval yet.",
+      "eval": "pr-body-what-diff-cannot-show",
       "core_guide_ids": [],
       "audience": [
         "core"
