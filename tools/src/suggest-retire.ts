@@ -30,12 +30,16 @@ export interface RetireCandidate {
   evidence: string;
 }
 
+/** Active rules a retirement pass may propose: not those with a
+ *  `keep_reason`, which stay for weaker models although no A/B shows an effect. */
+export const retirable = (r: Rule): boolean => isActive(r) && r.keep_reason === undefined;
+
 /** Rules whose `enforced_by` has a check that extensions provably run.
  *  "Not trunk-only" is not enough: an opt-in PHPStan package or a guard
  *  that needs Shopware's test bootstrap exists outside core, yet most
  *  plugins never run it. */
 export function enforcedCandidates(catalog: Catalog): RetireCandidate[] {
-  return catalog.rules.filter(isActive).flatMap((r) => {
+  return catalog.rules.filter(retirable).flatMap((r) => {
     const checks = (r.trunk?.enforced_by ?? []).filter((e) => !e.trunk_only && e.extensions_run !== undefined);
     return checks.length === 0
       ? []
@@ -69,7 +73,7 @@ const offPassesAll = (r: AbResult): boolean =>
 /** Rules whose task the skill-off arm passes in every repeat. */
 export function abCandidates(catalog: Catalog, results: AbResult[], file: string): RetireCandidate[] {
   const byTask = new Map(latestPerTask(results).map((r) => [r.task, r]));
-  return catalog.rules.filter(isActive).flatMap((rule) => {
+  return catalog.rules.filter(retirable).flatMap((rule) => {
     const r = rule.eval === null ? undefined : byTask.get(rule.eval);
     return r === undefined || !offPassesAll(r)
       ? []
@@ -153,7 +157,7 @@ export function apiCandidates(
 ): RetireCandidate[] {
   const first = index.releases.findIndex((r) => versionAtLeast(r, supportedFrom));
   if (first < 0) return [];
-  return catalog.rules.filter(isActive).flatMap((rule) => {
+  return catalog.rules.filter(retirable).flatMap((rule) => {
     const known = symbolsIn(textOf(rule)).filter((s) => index.lastSeen.has(s));
     const gone = known.filter((s) => (index.lastSeen.get(s) ?? []).every((last) => last < first));
     return known.length === 0 || gone.length < known.length

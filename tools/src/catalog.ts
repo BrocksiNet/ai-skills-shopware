@@ -63,6 +63,8 @@ export interface Rule {
   eval_reason?: string;
   /** Why a retired or superseded rule left the skills, with the evidence. */
   retired_reason?: string;
+  /** Why an active rule stays although no A/B shows an effect: retirement passes skip it. */
+  keep_reason?: string;
   trunk?: TrunkSource;
   /** Upstream skill sets the rule was learned from (plan WP12). */
   upstream?: Upstream[];
@@ -143,6 +145,7 @@ export function ruleErrors(r: unknown): string[] {
     errors.push(`${label}: retired_reason must be a string`);
   if (isString(r.status) && r.status !== 'active' && !isString(r.retired_reason))
     errors.push(`${label}: a ${r.status} rule needs retired_reason`);
+  if (r.keep_reason !== undefined && !isString(r.keep_reason)) errors.push(`${label}: keep_reason must be a string`);
   if (!isStringArray(r.core_guide_ids)) errors.push(`${label}: core_guide_ids must be a list of strings`);
   if (isStringArray(r.audience)) {
     for (const a of r.audience) if (!oneOf(AUDIENCES, a)) errors.push(`${label}: unknown audience ${a}`);

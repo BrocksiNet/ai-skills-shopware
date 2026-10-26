@@ -30,9 +30,11 @@ Read only the reference that matches the task or the files it changes:
 
 ## Hard guardrails
 
-1. **SEC-002** **Never log** secrets or full authorization headers.
-2. **SEC-003** **Store-API and Admin routes** must declare appropriate ACL / login requirements.
-3. **SEC-004** **App manifests** use least privilege — no wildcard permissions without justification.
+1. **SEC-001** **Never commit** sales channel access keys, app secrets, webhook signing keys,
+   or Admin API passwords in source, fixtures committed to git, or skill examples.
+2. **SEC-002** **Never log** secrets or full authorization headers.
+3. **SEC-003** **Store-API and Admin routes** must declare appropriate ACL / login requirements.
+4. **SEC-004** **App manifests** use least privilege — no wildcard permissions without justification.
 
 ## Definition of done
 

@@ -109,6 +109,13 @@ describe('retirement evidence', () => {
       ['TEST-903'],
     );
   });
+  test('a rule with a keep_reason is never a candidate', () => {
+    const kept: typeof catalog = {
+      ...catalog,
+      rules: catalog.rules.map((r) => (r.id === 'TEST-903' ? { ...r, keep_reason: 'severe on weaker models' } : r)),
+    };
+    assert.deepEqual(abCandidates(kept, [abResult('task-a', 3, '2026-10-01')], 'b.jsonl'), []);
+  });
   test('every class the rule names is gone from the supported releases', () => {
     const path = join(tmp, 'index.json.gz');
     const releases = ['6.5.0.0', '6.6.0.0', 'trunk'].map((release) => ({ release }));

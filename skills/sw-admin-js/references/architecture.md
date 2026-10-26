@@ -10,6 +10,8 @@ Load when adding modules, components, services, or ACL-backed UI.
 
 ## Modules and UI
 
+- **ADM-016** Protect routes, navigation, and templates with the required ACL
+  privileges.
 - **ADM-004** **New Admin UI that reads or persists a DAL entity updates the
   privilege mapping in the same change.** Limited roles need `read` / `create` /
   `update` / `delete` through viewer/editor/creator/deleter — do not rely

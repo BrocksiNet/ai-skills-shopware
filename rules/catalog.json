@@ -1082,8 +1082,8 @@
       "skill": "sw-plugin-development",
       "file": "skills/sw-plugin-development/references/migrations.md",
       "title": "Never edit a released migration",
-      "status": "retired",
-      "retired_reason": "No measured effect (2026-10-24): `suggest-rules draft-eval` wrote an eval for the rule, and with the skill off claude/haiku passed every repeat (`review-migration-released-edit-catch` off 3/3, on 3/3; `review-migration-released-edit-ignore` off 3/3, on 3/3). Models already do this without the rule. The drafted tasks were not kept.",
+      "status": "active",
+      "keep_reason": "Kept for weaker models (2026-10-26): claude/haiku did this without the rule, but a miss is severe (security or a shop-breaking change) and the rule costs a few lines. Retirement passes skip it; re-check with a small open model before dropping.",
       "since": "2026-10-20",
       "eval": null,
       "eval_reason": "Documented only; no eval yet.",
@@ -1100,8 +1100,8 @@
       "skill": "sw-plugin-development",
       "file": "skills/sw-plugin-development/references/migrations.md",
       "title": "Bind parameters in migration SQL",
-      "status": "retired",
-      "retired_reason": "No measured effect (2026-10-24): `suggest-rules draft-eval` wrote an eval for the rule, and with the skill off claude/haiku passed every repeat (`review-migration-bind-params-catch` off 3/3, on 3/3; `review-migration-bind-params-ignore` off 3/3, on 3/3). Models already do this without the rule. The drafted tasks were not kept.",
+      "status": "active",
+      "keep_reason": "Kept for weaker models (2026-10-26): claude/haiku did this without the rule, but a miss is severe (security or a shop-breaking change) and the rule costs a few lines. Retirement passes skip it; re-check with a small open model before dropping.",
       "since": "2026-10-20",
       "eval": null,
       "eval_reason": "Documented only; no eval yet.",
@@ -1460,7 +1460,8 @@
       ],
       "defer_on_trunk": false,
       "see": [
-        "PLG-018"
+        "PLG-018",
+        "PLG-022"
       ]
     },
     {
@@ -1854,8 +1855,8 @@
       "skill": "sw-core-development",
       "file": "skills/sw-core-development/SKILL.md",
       "title": "No public-API removal or change without a deprecation cycle",
-      "status": "retired",
-      "retired_reason": "No measured effect (2026-10-24): `suggest-rules draft-eval` wrote an eval for the rule, and with the skill off claude/haiku passed every repeat (`review-public-api-change-catch` off 3/3, on 3/3; `review-public-api-change-ignore` off 3/3, on 3/3). Models already do this without the rule. The drafted tasks were not kept.",
+      "status": "active",
+      "keep_reason": "Kept for weaker models (2026-10-26): claude/haiku did this without the rule, but a miss is severe (security or a shop-breaking change) and the rule costs a few lines. Retirement passes skip it; re-check with a small open model before dropping.",
       "since": "2026-10-20",
       "eval": null,
       "eval_reason": "Documented only; no eval yet.",
@@ -2526,7 +2527,10 @@
       "audience": [
         "core"
       ],
-      "defer_on_trunk": false
+      "defer_on_trunk": false,
+      "see": [
+        "PLG-022"
+      ]
     },
     {
       "id": "CORE-040",
@@ -2987,8 +2991,8 @@
       "skill": "sw-core-development",
       "file": "skills/sw-core-development/references/bc-data-and-config.md",
       "title": "Keep the API shape of a definition",
-      "status": "retired",
-      "retired_reason": "No measured effect (2026-10-24): `suggest-rules draft-eval` wrote an eval for the rule, and with the skill off claude/haiku passed every repeat (`review-api-flag-removed-catch` off 3/3, on 3/3; `review-api-flag-removed-ignore` off 3/3, on 3/3). Models already do this without the rule. The drafted tasks were not kept.",
+      "status": "active",
+      "keep_reason": "Kept for weaker models (2026-10-26): claude/haiku did this without the rule, but a miss is severe (security or a shop-breaking change) and the rule costs a few lines. Retirement passes skip it; re-check with a small open model before dropping.",
       "since": "2026-10-21",
       "eval": null,
       "eval_reason": "Core-only (WP7 phase C); core's review guide covers it on trunk.",
@@ -3008,8 +3012,8 @@
       "skill": "sw-core-development",
       "file": "skills/sw-core-development/references/bc-data-and-config.md",
       "title": "Do not drop an association or switch off autoload in a minor",
-      "status": "retired",
-      "retired_reason": "No measured effect (2026-10-24): `suggest-rules draft-eval` wrote an eval for the rule, and with the skill off claude/haiku passed every repeat (`review-dal-association-autoload-catch` off 3/3, on 2/3; `review-dal-association-autoload-ignore` off 3/3, on 3/3). Models already do this without the rule. The drafted tasks were not kept.",
+      "status": "active",
+      "keep_reason": "Kept for weaker models (2026-10-26): claude/haiku did this without the rule, but a miss is severe (security or a shop-breaking change) and the rule costs a few lines. Retirement passes skip it; re-check with a small open model before dropping.",
       "since": "2026-10-21",
       "eval": null,
       "eval_reason": "Core-only (WP7 phase C); core's review guide covers it on trunk.",
@@ -3049,8 +3053,8 @@
       "skill": "sw-core-development",
       "file": "skills/sw-core-development/references/bc-data-and-config.md",
       "title": "Configuration defaults, keys and environment variables stay",
-      "status": "retired",
-      "retired_reason": "No measured effect (2026-10-24): `suggest-rules draft-eval` wrote an eval for the rule, and with the skill off claude/haiku passed every repeat (`review-config-default-flip-catch` off 3/3, on 3/3; `review-config-default-flip-ignore` off 3/3, on 3/3). Models already do this without the rule. The drafted tasks were not kept.",
+      "status": "active",
+      "keep_reason": "Kept for weaker models (2026-10-26): claude/haiku did this without the rule, but a miss is severe (security or a shop-breaking change) and the rule costs a few lines. Retirement passes skip it; re-check with a small open model before dropping.",
       "since": "2026-10-21",
       "eval": null,
       "eval_reason": "Core-only (WP7 phase C); core's review guide covers it on trunk.",
@@ -3493,8 +3497,8 @@
       "skill": "sw-admin-js",
       "file": "skills/sw-admin-js/references/architecture.md",
       "title": "Protect routes, navigation and templates with ACL privileges",
-      "status": "retired",
-      "retired_reason": "No measured effect (2026-10-24): `suggest-rules draft-eval` wrote an eval for the rule, and with the skill off claude/haiku passed every repeat (`review-admin-route-acl-catch` off 3/3, on 0/3; `review-admin-route-acl-ignore` off 3/3, on 3/3). Models already do this without the rule. The drafted tasks were not kept.",
+      "status": "active",
+      "keep_reason": "Kept for weaker models (2026-10-26): claude/haiku did this without the rule, but a miss is severe (security or a shop-breaking change) and the rule costs a few lines. Retirement passes skip it; re-check with a small open model before dropping.",
       "since": "2026-10-20",
       "eval": null,
       "eval_reason": "Documented only; no eval yet.",
@@ -4299,8 +4303,8 @@
       "skill": "sw-security",
       "file": "skills/sw-security/SKILL.md",
       "title": "Never commit access keys, app secrets or passwords",
-      "status": "retired",
-      "retired_reason": "No measured effect (2026-10-23): with the skill off, `no-access-key-in-source` passed every repeat on claude/haiku (3/3, local) and on opencode/mimo-v2.6-flash-free (3/3, evals.yml run 39960913122). Models already do this without the rule. The task stays as a canary: a model that fails it with the skill off brings the rule back.",
+      "status": "active",
+      "keep_reason": "Kept for weaker models (2026-10-26): claude/haiku did this without the rule, but a miss is severe (security or a shop-breaking change) and the rule costs a few lines. Retirement passes skip it; re-check with a small open model before dropping.",
       "since": "2026-10-21",
       "eval": "no-access-key-in-source",
       "core_guide_ids": [],

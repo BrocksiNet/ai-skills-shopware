@@ -51,13 +51,17 @@ Read only the reference that matches the task or the files it changes:
 
 ## Hard guardrails (refuse rather than violate)
 
-1. **CORE-003** **Never ship a developer-facing change without a release note.** New
+1. **CORE-002** **Never remove or change a public (non-`@internal`) symbol without a
+   deprecation cycle.** Public API is removed only after it was deprecated in a
+   prior minor and announced. If unsure whether something is public, treat it as
+   public and check.
+2. **CORE-003** **Never ship a developer-facing change without a release note.** New
    features, extension points, new guidelines, and deprecations need a
    `RELEASE_INFO-6.x.md` entry; breaking changes need an `UPGRADE-6.x.md` entry.
    (You do NOT hand-write per-change changelog files anymore — the raw changelog
    is generated from PR titles. Internal refactors and small bug fixes need no
    entry.)
-2. **CORE-004** **Never edit generated files** (e.g. `schema/`, generated entity definitions,
+3. **CORE-004** **Never edit generated files** (e.g. `schema/`, generated entity definitions,
    `vendor/`). Regenerate via the documented command instead.
 
 ## Core deltas on top of sw-php-foundation

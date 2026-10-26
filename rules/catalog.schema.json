@@ -40,6 +40,11 @@
           "description": "Task name under evals/tasks/, or null with eval_reason."
         },
         "eval_reason": { "type": "string", "minLength": 1 },
+        "keep_reason": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Why an active rule stays although no A/B shows an effect, for example a severe miss on weaker models. Retirement passes skip it."
+        },
         "retired_reason": {
           "type": "string",
           "minLength": 1,

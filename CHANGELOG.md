@@ -88,15 +88,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Removed
 
-- 66 rules without a measured effect left the skills. Each stays in
+- 58 rules without a measured effect left the skills. Each stays in
   `rules/catalog.json` as `retired`, with the evidence in the new
   `retired_reason` field, which every retired or superseded rule now needs.
-  - 21 rules with an eval task: with the skill off, the task passed every
+  - 20 rules with an eval task: with the skill off, the task passed every
     repeat on claude/haiku and on the free OpenCode model. Their tasks stay
     as canaries.
-  - 45 rules without an eval: `suggest-rules draft-eval` wrote one, and with
+  - 38 rules without an eval: `suggest-rules draft-eval` wrote one, and with
     the skill off claude/haiku passed every repeat. The drafted tasks were
     not kept.
+- `keep_reason` in the catalog marks an active rule that stays although no
+  A/B shows an effect, and retirement passes skip it. Eight rules carry one,
+  because a miss is severe on weaker models: `SEC-001`, `PLG-023`,
+  `ADM-016`, `CORE-002`, `PLG-022`, `CORE-066`, `CORE-067` and `CORE-069`.
 
 ### Fixed
 
