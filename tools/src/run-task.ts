@@ -23,7 +23,13 @@ import { errorMessage } from './errors.ts';
 import { run } from './proc.ts';
 
 /** run-task exit codes. */
-export const RUN = { pass: 0, fail: 1, usage: 2, noAgent: 3, agentError: 4 } as const;
+export const RUN = { pass: 0, fail: 1, usage: 2, noAgent: 3, agentError: 4, quota: 6 } as const;
+
+/** What agents print when the plan's quota is used up (OpenCode free tier,
+ *  Copilot premium requests, Claude and Codex plans, API credit). A retry
+ *  cannot help until the quota resets, so the run stops at the first one. */
+export const QUOTA_PATTERN =
+  /usage limit reached|hit your (?:usage )?limit|exceeded your (?:monthly )?quota|insufficient_quota|credit balance is too low/iu;
 
 export type Mode = 'on' | 'off';
 
@@ -116,7 +122,8 @@ async function profile(job: Job, which: Mode): Promise<boolean> {
 }
 
 /** Runs the agent, retrying agent errors with a fresh workdir. Returns
- *  RUN.pass when the agent finished, else RUN.agentError or RUN.usage. */
+ *  RUN.pass when the agent finished, RUN.quota when its quota is used up,
+ *  else RUN.agentError or RUN.usage. */
 async function runAgent(job: Job, agent: string, prompt: string, attempt: number): Promise<number> {
   const { task, mode, env, out, err, retry } = job;
   // The transcript is the agent's stdout, like `tee` in the bash runner.
@@ -137,6 +144,10 @@ async function runAgent(job: Job, agent: string, prompt: string, attempt: number
   if (agentRun.status === 0) return RUN.pass;
   const reason =
     (agentRun.timedOut ? `timed out after ${retry.timeout}s` : errorReason(agentRun.stderr)) || 'no detail';
+  if (!agentRun.timedOut && QUOTA_PATTERN.test(agentRun.stderr)) {
+    err(`----- agent error (${task}, mode=${mode}, attempt ${attempt}): ${reason}; quota used up, not retried -----\n`);
+    return RUN.quota;
+  }
   if (attempt > retry.retries) {
     err(
       `----- agent error (${task}, mode=${mode}, exit ${agentRun.status}, attempt ${attempt}): ${reason}; not graded -----\n`,

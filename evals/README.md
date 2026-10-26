@@ -143,6 +143,12 @@ fails both graders without `.skip-fixture-grade`.
   `EVAL_AGENT_RETRIES` times (default 2), `EVAL_AGENT_RETRY_WAIT` seconds apart
   (default 60), on a fresh copy of the fixture. The reason is logged.
   `EVAL_AGENT_TIMEOUT_SECONDS` stops a hung agent and counts an agent error.
+  A used-up quota (OpenCode's "Free usage limit reached", Copilot's "exceeded
+  your monthly quota", a Claude or Codex plan limit) is not retried: exit `6`.
+  `ab.sh` then writes `$EVAL_RESULTS.quota` and records every later run with
+  that results file as an agent error without starting the agent, so a CI
+  shard ends in minutes instead of retrying for hours. Delete the file to
+  retry after the quota resets.
 - Unit tests in `tools/test/ab.test.ts` drive both with
   `runner/fake-agent.sh`.
 - `runner/ab.sh <task> [repeats]` — run both modes `repeats` times, print the

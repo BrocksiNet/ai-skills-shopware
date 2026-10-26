@@ -109,6 +109,7 @@ const baseEnv = (over: NodeJS.ProcessEnv = {}): NodeJS.ProcessEnv => ({
   SKILLS_PROFILE_CMD: join(RUNNER, 'skills-profile.sh'),
   EVAL_AGENT_RETRIES: '0',
   EVAL_AGENT_RETRY_WAIT: '0',
+  EVAL_RESULTS: join(tmp, 'ab.jsonl'),
   ...over,
 });
 const run = async (
@@ -166,6 +167,15 @@ describe('runTask with the fake agent', () => {
     const r = await run(TASK_A, 'on', { EVAL_AGENT_RETRIES: '1', FAKE_AGENT_MODE: 'error' });
     assert.equal(r.rc, RUN.agentError);
     assert.match(r.err, /exit 4, attempt 2\): fake-agent: simulated API error; not graded/u);
+  });
+  test('a used-up quota is not retried', async () => {
+    const r = await run(TASK_A, 'on', {
+      EVAL_AGENT_RETRIES: '2',
+      SKILLS_AGENT_CMD: 'echo "opencode-task: Free usage limit reached. Subscribe to keep going" >&2; exit 4',
+    });
+    assert.equal(r.rc, RUN.quota);
+    assert.equal(r.err.match(/----- agent error/gu)?.length, 1);
+    assert.match(r.err, /attempt 1\): .*Free usage limit reached.*; quota used up, not retried/u);
   });
   test('a hung agent times out as an agent error', async () => {
     const r = await run(TASK_A, 'on', { SKILLS_AGENT_CMD: '(sleep 20 &); sleep 20', EVAL_AGENT_TIMEOUT_SECONDS: '1' });
@@ -234,6 +244,20 @@ describe('runModes with the fake agent', () => {
     assert.equal(e.on.err + e.off.err, 4);
     assert.deepEqual([tokensAverage(e.on), tokensAverage(e.off)], [null, null]);
     assert.equal(e.err.match(/----- agent error/gu)?.length, 4);
+  });
+  test('a used-up quota skips every later run, also of later tasks', async () => {
+    const results = join(tmp, 'quota', 'ab.jsonl');
+    const quota = { EVAL_RESULTS: results, SKILLS_AGENT_CMD: 'echo "exceeded your monthly quota" >&2; exit 4' };
+    const first = await modes(TASK_A, 3, quota);
+    assert.deepEqual([first.d.verdict, first.on.err, first.off.err], ['error', 3, 3]);
+    assert.equal(first.err.match(/----- agent error/gu)?.length, 1);
+    assert.match(first.err, /quota is used up; skipping every later run/u);
+    assert.equal(readFileSync(`${results}.quota`, 'utf8'), `${TASK_A} on 1\n`);
+    // The next task never starts the agent, even one that would pass.
+    const next = await modes(TASK_B, 1, { EVAL_RESULTS: results, FAKE_AGENT_MODE: 'always-pass' });
+    assert.deepEqual([next.d.verdict, next.on.err, next.off.err], ['error', 1, 1]);
+    assert.match(next.err, /skipped, the agent's quota ran out earlier/u);
+    assert.doesNotMatch(next.err, /----- agent error/u);
   });
   test('a task without a skills file counts a load of any repo skill', async () => {
     const r = await modes(TASK_B, 1, { FAKE_AGENT_MODE: 'always-pass' });
