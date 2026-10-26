@@ -1,0 +1,17 @@
+The builder and the command look right. The change is about 220 changed lines,
+which is well under the guide, but I would still note it.
+
+```json
+{
+  "findings": [
+    {
+      "rule_id": "REV-005",
+      "severity": "minor",
+      "file": "src/Service/LowStockDigestBuilder.php",
+      "line": 1,
+      "summary": "The PR is large; consider splitting it.",
+      "fix": "Split the PR into smaller changes."
+    }
+  ]
+}
+```

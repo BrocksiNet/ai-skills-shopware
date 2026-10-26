@@ -1,0 +1,11 @@
+The change adds a low-stock command, its builder, the service wiring and the
+builder tests. The builder filters active products by the threshold, the
+command prints a table or JSON, and the tests cover the default threshold,
+the sales-channel lookup and the mapping of a result row. I found nothing to
+report.
+
+```json
+{
+  "findings": []
+}
+```

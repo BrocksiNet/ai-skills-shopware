@@ -58,6 +58,11 @@
       ]
     },
     {
+      "reference": "references/pr-size.md",
+      "when": "Any review of a change: the changed-line count and whether it bundles separate concerns.",
+      "always": true
+    },
+    {
       "reference": "references/change-scope.md",
       "when": "A fix grows beyond the bug.",
       "on_demand": true

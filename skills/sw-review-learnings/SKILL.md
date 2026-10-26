@@ -42,6 +42,7 @@ Detailed, growing lists live in references. Read only the one that matches the c
 | [`version-guards.md`](references/version-guards.md) | The change adds or keeps a class_exists or method_exists check for Shopware API. | `(class\|method\|interface)_exists((\?Shopware\b\|[A-Z][A-Za-z]+::class)` |
 | [`feature-flags.md`](references/feature-flags.md) | The change reads a Shopware feature flag, or an environment variable that may be one. | `getenv(`, … |
 | [`code-comments.md`](references/code-comments.md) | The change adds or edits comments or docblocks that talk about earlier versions, removed code or the issue. | `^\s*(//\|#\|*\|/*).*\b([Pp]reviously\|[Oo]riginally\|used to\|no longer (used\|needed\|necessary\|required\|called\|supported\|exists?\|works?\|applies)\|[Ee]arlier (version\|revision\|approach)\|[Bb]efore this (change\|PR\|fix)\|this (PR\|pull request)\|was (changed\|replaced\|removed) (to\|in\|with)\|instead of the old)\b`, … |
+| [`pr-size.md`](references/pr-size.md) | Any review of a change: the changed-line count and whether it bundles separate concerns. | any change |
 | [`change-scope.md`](references/change-scope.md) | A fix grows beyond the bug. | on demand |
 <!-- routes:end -->
 
@@ -58,8 +59,8 @@ Detailed, growing lists live in references. Read only the one that matches the c
   PHPStan will catch stragglers too, but only if you run it first.
 - **REV-004** **CI green** — confirm checks pass (`gh-tooling` `pr_checks` or php-tooling MCP) before
   you ask for review or mark the PR ready.
-- **REV-005** **PR size** — aim for &lt;400 lines changed; if larger, split the PR or explain in the
-  description why it must stay together (pair with `sw-pr-description`).
+- **PR size** — keep the change near 400 changed lines or explain why it stays together;
+  see `REV-005` in `references/pr-size.md`.
 - **Self-review** — scan seeded findings and red flags below against your diff.
 - **Impact of a finished feature** — shared cache, who pays, and whether the
   shop got easier are owned by `sw-change-impact`. Do not restate that
