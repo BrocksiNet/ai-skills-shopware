@@ -1,0 +1,59 @@
+diff --git a/src/Service/LoyaltyCalculator.php b/src/Service/LoyaltyCalculator.php
+new file mode 100644
+index 0000000..3c1d7a2
+--- /dev/null
++++ b/src/Service/LoyaltyCalculator.php
+@@ -0,0 +1,17 @@
++<?php declare(strict_types=1);
++
++namespace Swag\Loyalty\Service;
++
++class LoyaltyCalculator
++{
++    private const UNITS_PER_POINT = 10;
++
++    public function pointsFor(float $orderTotal): int
++    {
++        if ($orderTotal <= 0) {
++            return 0;
++        }
++
++        return (int) floor($orderTotal / self::UNITS_PER_POINT);
++    }
++}
+diff --git a/tests/integration/Service/LoyaltyCalculatorTest.php b/tests/integration/Service/LoyaltyCalculatorTest.php
+new file mode 100644
+index 0000000..9e2b4f1
+--- /dev/null
++++ b/tests/integration/Service/LoyaltyCalculatorTest.php
+@@ -0,0 +1,30 @@
++<?php declare(strict_types=1);
++
++namespace Swag\Loyalty\Test\Integration\Service;
++
++use PHPUnit\Framework\TestCase;
++use Swag\Loyalty\Service\LoyaltyCalculator;
++
++class LoyaltyCalculatorTest extends TestCase
++{
++    public function testZeroTotalEarnsNoPoints(): void
++    {
++        $calculator = new LoyaltyCalculator();
++
++        static::assertSame(0, $calculator->pointsFor(0.0));
++    }
++
++    public function testOneFullUnitEarnsOnePoint(): void
++    {
++        $calculator = new LoyaltyCalculator();
++
++        static::assertSame(1, $calculator->pointsFor(10.0));
++    }
++
++    public function testPartialUnitRoundsDownToWholePoints(): void
++    {
++        $calculator = new LoyaltyCalculator();
++
++        static::assertSame(1, $calculator->pointsFor(19.99));
++    }
++}
