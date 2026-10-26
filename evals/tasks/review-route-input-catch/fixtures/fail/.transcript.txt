@@ -1,0 +1,16 @@
+The leaderboard route takes limit from the query and does not bound it.
+
+```json
+{
+  "findings": [
+    {
+      "rule_id": "SEC-005",
+      "severity": "minor",
+      "file": "src/Controller/StoreApi/LoyaltyController.php",
+      "line": 42,
+      "summary": "The leaderboard limit has no upper bound.",
+      "fix": "Clamp limit to a small maximum before the DAL call."
+    }
+  ]
+}
+```

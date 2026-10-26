@@ -1,0 +1,16 @@
+The leaderboard passes the query input straight to the DAL.
+
+```json
+{
+  "findings": [
+    {
+      "rule_id": "SEC-005",
+      "severity": "major",
+      "file": "src/Controller/StoreApi/LoyaltyController.php",
+      "line": 42,
+      "summary": "The limit and offset query parameters reach the DAL with no validation.",
+      "fix": "Validate the query parameters before the call."
+    }
+  ]
+}
+```

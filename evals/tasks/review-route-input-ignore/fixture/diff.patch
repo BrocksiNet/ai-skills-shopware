@@ -1,0 +1,45 @@
+diff --git a/src/Controller/StoreApi/LoyaltyController.php b/src/Controller/StoreApi/LoyaltyController.php
+index 3b1c0de..8e2a417 100644
+--- a/src/Controller/StoreApi/LoyaltyController.php
++++ b/src/Controller/StoreApi/LoyaltyController.php
+@@ -3,10 +3,12 @@ namespace Swag\Loyalty\Controller\StoreApi;
+ namespace Swag\Loyalty\Controller\StoreApi;
+
+ use Shopware\Core\Framework\Log\Package;
+ use Shopware\Core\System\SalesChannel\SalesChannelContext;
++use Swag\Loyalty\Points\Leaderboard;
+ use Swag\Loyalty\Points\PointsBalance;
+ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+ use Symfony\Component\HttpFoundation\JsonResponse;
++use Symfony\Component\HttpFoundation\Request;
+ use Symfony\Component\Routing\Attribute\Route;
+
+ #[Route(defaults: ['_routeScope' => ['store-api']])]
+@@ -16,3 +18,5 @@ class LoyaltyController extends AbstractController
+-    public function __construct(private readonly PointsBalance $balance)
+-    {
++    public function __construct(
++        private readonly PointsBalance $balance,
++        private readonly Leaderboard $leaderboard,
++    ) {
+     }
+@@ -29,4 +33,19 @@ class LoyaltyController extends AbstractController
+             'points' => $this->balance->forCustomer($context),
+         ]);
+     }
++
++    #[Route(
++        path: '/store-api/swag-loyalty/leaderboard',
++        name: 'store-api.swag-loyalty.leaderboard',
++        methods: ['GET'],
++    )]
++    public function leaderboard(Request $request, SalesChannelContext $context): JsonResponse
++    {
++        $limit = min(max($request->query->getInt('limit', 10), 1), 50);
++        $offset = max(0, $request->query->getInt('offset', 0));
++
++        return new JsonResponse([
++            'ranking' => $this->leaderboard->top($limit, $offset, $context),
++        ]);
++    }
+ }
