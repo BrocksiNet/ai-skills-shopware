@@ -26,6 +26,11 @@ behavior.
   **exactly one** test file belongs in that file, below the test class. Move it
   into a shared `_fixtures` namespace once a second test needs it.
 
+## Scalar assertions
+
+- **TEST-018** **`assertSame` over `assertEquals`** for scalars; **`expectExceptionObject`**
+  over split exception assertions (see reference).
+
 ## A test must be able to fail
 
 - **TEST-035** **A test must be able to fail.** Assert that a captured value

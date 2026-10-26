@@ -101,8 +101,8 @@ These match PHPStan rules and reviewer expectations on core PRs:
 
 - **TEST-017** **No real I/O in unit tests** unless the class docblock documents a deliberate
   platform/Codecov exception.
-- **TEST-018** **`assertSame` over `assertEquals`** for scalars; **`expectExceptionObject`**
-  over split exception assertions (see reference).
+- **`assertSame` over `assertEquals`** for scalars; **`expectExceptionObject`**
+  over split exception assertions (`TEST-018`, see reference).
 - **TEST-019** **No behavior-mocking Doctrine DBAL `Connection`** in unit tests — stub
   collaborators; cover SQL adapters in integration tests.
 - **TEST-020** **Create your own test data** — `Uuid::randomHex()`, `Context::createDefaultContext()`;

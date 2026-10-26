@@ -430,12 +430,11 @@
     {
       "id": "TEST-018",
       "skill": "sw-testing",
-      "file": "skills/sw-testing/SKILL.md",
+      "file": "skills/sw-testing/references/test-shape-and-flags.md",
       "title": "assertSame over assertEquals for scalars",
       "status": "active",
       "since": "2026-10-20",
-      "eval": null,
-      "eval_reason": "Documented only; no eval yet.",
+      "eval": "review-assert-same-scalar-catch",
       "core_guide_ids": [],
       "audience": [
         "core",
