@@ -258,6 +258,17 @@ describe('core guide IDs', () => {
     assert.match(group(t, skill, 'CORE-900'), /Matched by `core_guide_ids`\.\n\n- Added core guide ID BCPHP-001/u);
     assert.match(group(t, skill, 'CORE-900'), /- Removed core guide ID BCPHP-002/u);
   });
+  test('a retired rule says so in its heading', () => {
+    const base = loadCatalog(ROOT).rules[0];
+    if (base === undefined) throw new Error('empty catalog');
+    const catalog: Catalog = {
+      prefixes: {},
+      rules: [{ ...base, id: 'CORE-900', status: 'retired', core_guide_ids: ['BCPHP-001'] }],
+    };
+    const t = report([guideMined('')], catalog);
+    const heading = `### CORE-900 (retired): ${base.title}\n\nMatched by \`core_guide_ids\`. The rule left the skills`;
+    assert.ok(t.includes(heading));
+  });
 });
 
 describe('windows and state', () => {

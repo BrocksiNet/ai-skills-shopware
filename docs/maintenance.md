@@ -90,6 +90,7 @@ touches, most specific first:
 | Group | Matched by | What to do |
 | ----- | ---------- | ---------- |
 | A rule, `### TEST-016: …` | `core_guide_ids`, `enforced_by`, `trunk.source` or `upstream` in [`rules/catalog.json`](../rules/catalog.json) | Check the rule against the change: update it, retire it, or move it to "Already enforced by CI". |
+| A retired rule, `### ADM-024 (retired): …` | The same catalog fields; retired rules stay mapped | Usually nothing. Bring the rule back only when the change gives a new reason for it, such as a model that now gets it wrong. |
 | A reference, `` ### `references/…` `` | The skill's `routes.json`: an anchor on the changed line | Check the rules listed there; the change may concern one of them. |
 | No rule yet | The source's skill list in `rules/sources.json` | A possible new rule for this skill, if it passes the inclusion criteria in the README. |
 

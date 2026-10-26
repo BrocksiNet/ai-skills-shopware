@@ -1,7 +1,7 @@
 // The weekly drift report (plan WP8, WP12 steps 1 and 2): the mined commits
 // of every source as signals, mapped to the skills and rules they touch, as
 // Markdown for a GitHub issue.
-import type { Catalog } from './catalog.ts';
+import { type Catalog, isActive } from './catalog.ts';
 import { type MapIndex, mapSignals } from './map-signal.ts';
 import { type Mined, type MiningStates, parseStates } from './mine-trunk.ts';
 import { renderReviewSection, type ReviewWeek } from './review-report.ts';
@@ -94,8 +94,16 @@ function groupHeading(g: Group, catalog: Catalog): string[] {
   const vias = [...new Set(g.maps.map((m) => `\`${m.via}\``))].join(', ');
   if (g.key.startsWith('1 ')) {
     const id = g.key.slice(2);
-    const title = catalog.rules.find((r) => r.id === id)?.title;
-    return [`### ${id}${title === undefined ? '' : `: ${title}`}`, '', `Matched by ${vias}.`];
+    const rule = catalog.rules.find((r) => r.id === id);
+    const title = rule?.title === undefined ? '' : `: ${rule.title}`;
+    if (rule !== undefined && !isActive(rule))
+      // Still mapped, so a change upstream can bring the rule back.
+      return [
+        `### ${id} (${rule.status})${title}`,
+        '',
+        `Matched by ${vias}. The rule left the skills; act only if this change is a reason to bring it back.`,
+      ];
+    return [`### ${id}${title}`, '', `Matched by ${vias}.`];
   }
   if (g.key.startsWith('2 ')) {
     const rules = [...new Set(g.maps.flatMap((m) => m.rules))];
