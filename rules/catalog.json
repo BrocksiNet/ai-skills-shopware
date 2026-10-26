@@ -2023,8 +2023,7 @@
       "title": "Discovery methods return a neutral value once the removal flag is active",
       "status": "active",
       "since": "2026-10-20",
-      "eval": null,
-      "eval_reason": "Style rule; core shopware-php-code owns it on trunk.",
+      "eval": "review-deprecation-discovery-neutral-catch",
       "core_guide_ids": [],
       "audience": [
         "core"
