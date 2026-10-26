@@ -1,0 +1,16 @@
+The deprecation message is long; the subscriber otherwise looks fine.
+
+```json
+{
+  "findings": [
+    {
+      "rule_id": "CORE-011",
+      "severity": "nit",
+      "file": "src/Core/Content/Product/Subscriber/ProductIndexingSubscriber.php",
+      "line": 29,
+      "summary": "The deprecation message could be shorter.",
+      "fix": "Shorten the message."
+    }
+  ]
+}
+```
