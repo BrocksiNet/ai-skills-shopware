@@ -2075,8 +2075,7 @@
       "title": "Pick the most specific BCChange attribute",
       "status": "active",
       "since": "2026-10-20",
-      "eval": null,
-      "eval_reason": "Documented only; no eval yet.",
+      "eval": "review-bc-change-most-specific-catch",
       "core_guide_ids": [],
       "audience": [
         "core"
