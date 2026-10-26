@@ -2905,11 +2905,11 @@
       "title": "Satisfy phpstan-shopware rules instead of suppressing them",
       "status": "active",
       "since": "2026-10-20",
-      "eval": null,
-      "eval_reason": "Documented only; no eval yet.",
+      "eval": "review-phpstan-suppression-catch",
       "core_guide_ids": [],
       "audience": [
-        "core"
+        "core",
+        "plugin"
       ],
       "defer_on_trunk": false
     },

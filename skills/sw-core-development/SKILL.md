@@ -41,7 +41,7 @@ Read only the reference that matches the task or the files it changes:
 | [`api-schema.md`](references/api-schema.md) | You add or change an Admin or Store API route. | `src/Core/Framework/Api/ApiDefinition/Generator/Schema/**`, `#[Route(` |
 | [`modernization-and-flags.md`](references/modernization-and-flags.md) | You modernize code behind a feature flag. | `src/Core/Framework/Resources/config/packages/feature.yaml`, `Feature::isActive(`, … |
 | [`release-notes-and-adr.md`](references/release-notes-and-adr.md) | The change needs RELEASE_INFO, UPGRADE or an ADR. | `RELEASE_INFO-*.md`, `UPGRADE-*.md`, … |
-| [`static-analysis-baseline.md`](references/static-analysis-baseline.md) | You touch the PHPStan baseline. | `phpstan-baseline.neon`, `phpstan*.neon`, … |
+| [`static-analysis-baseline.md`](references/static-analysis-baseline.md) | You touch the PHPStan baseline or suppress a PHPStan error. | `phpstan-baseline.neon`, `phpstan*.neon`, `@phpstan-ignore`, … |
 | [`platform-architecture.md`](references/platform-architecture.md) | You cross a bundle boundary or add a listener or migration. | `src/Core/Migration/**/Migration*.php`, `use Shopware\(Storefront\|Administration)\`, … |
 | [`removals-and-shims.md`](references/removals-and-shims.md) | You deprecate or remove an API, or add code that only lives until the next major. | `@deprecated tag:v`, … |
 | [`bc-data-and-config.md`](references/bc-data-and-config.md) | You change API flags or associations of a definition, a feature flag, a config default or a console command. | `Resources/config/packages/*.yaml`, `feature.yaml`, `new ApiAware(`, … |
