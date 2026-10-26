@@ -1,0 +1,16 @@
+The replacement is a public class shipped in the same change; one docblock nit.
+
+```json
+{
+  "findings": [
+    {
+      "rule_id": null,
+      "severity": "nit",
+      "file": "src/Core/Content/Product/SalesChannel/Price/ProductPriceBatchCalculator.php",
+      "line": 16,
+      "summary": "The batch docblock could say which price rules are matched.",
+      "fix": "Add a short sentence about the matched rules."
+    }
+  ]
+}
+```

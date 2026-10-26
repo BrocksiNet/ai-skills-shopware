@@ -1,0 +1,16 @@
+The @deprecated tag reads as if it names the replacement, but the wording is loose.
+
+```json
+{
+  "findings": [
+    {
+      "rule_id": null,
+      "severity": "minor",
+      "file": "src/Core/Content/Product/SalesChannel/Price/ProductPriceCalculator.php",
+      "line": 17,
+      "summary": "The @deprecated tag should name the replacement more clearly.",
+      "fix": "Reword the tag."
+    }
+  ]
+}
+```

@@ -2126,12 +2126,11 @@
     {
       "id": "CORE-017",
       "skill": "sw-core-development",
-      "file": "skills/sw-core-development/references/deprecations.md",
+      "file": "skills/sw-core-development/references/removals-and-shims.md",
       "title": "@deprecated tag:vX.Y.Z always names the replacement",
       "status": "active",
       "since": "2026-10-20",
-      "eval": null,
-      "eval_reason": "Documented only; no eval yet.",
+      "eval": "review-deprecation-tag-replacement-catch",
       "core_guide_ids": [
         "BCPHP-004"
       ],
