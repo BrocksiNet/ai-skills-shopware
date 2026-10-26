@@ -3833,8 +3833,7 @@
       "title": "Register global framework components through config.global.stubs",
       "status": "active",
       "since": "2026-10-20",
-      "eval": null,
-      "eval_reason": "Style rule; core shopware-admin-js owns it on trunk.",
+      "eval": "review-admin-global-stub-catch",
       "core_guide_ids": [],
       "audience": [
         "core",

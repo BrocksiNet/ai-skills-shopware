@@ -1,0 +1,16 @@
+The sw-block stub now points at the real component, which the setup never registers for specs.
+
+```json
+{
+  "findings": [
+    {
+      "rule_id": "ADM-036",
+      "severity": "minor",
+      "file": "src/Resources/app/administration/test/_setup/prepare_environment.js",
+      "line": 17,
+      "summary": "sw-block is in config.global.stubs, so the real component is never registered and specs render the stub.",
+      "fix": "Move sw-block from config.global.stubs to config.global.components."
+    }
+  ]
+}
+```

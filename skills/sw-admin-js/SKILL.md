@@ -35,7 +35,7 @@ Read only the reference that matches the task or the files it changes:
 | ---- | ---- | --------------------- |
 | [`architecture.md`](references/architecture.md) | You add a module, component override or ACL privilege. | `Resources/app/administration/src/module/**`, `Resources/app/administration/src/**/acl/index.{js,ts}`, `Shopware.Module.register(`, … |
 | [`extension-api.md`](references/extension-api.md) | You change a shipped component, template block or position identifier. | `blocks-list.json`, `positionIdentifier`, … |
-| [`testing.md`](references/testing.md) | You write or fix a Jest spec. | `Resources/app/administration/**/*.spec.{js,ts}`, `shallowMount(`, … |
+| [`testing.md`](references/testing.md) | You write or fix a Jest spec or the shared Jest setup. | `Resources/app/administration/**/*.spec.{js,ts}`, `Resources/app/administration/test/_setup/**`, `shallowMount(`, … |
 | [`flags-and-modern-web.md`](references/flags-and-modern-web.md) | A change needs a feature flag, a deprecation or a modern web API. | `Shopware.Feature.isActive(`, … |
 <!-- routes:end -->
 
