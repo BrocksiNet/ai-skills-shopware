@@ -17,9 +17,6 @@ breaks.
   existing component: every plugin that already uses it now misses the prop.
   Add it as optional with a default. A block override of a removed block
   silently renders nothing.
-- **ADM-040** **Entries in `blocks-list.json` and position identifiers are a
-  contract** with the apps and plugins that render into them. Never rename or
-  remove one without a deprecation; add the new identifier next to the old one.
 
 ## Overriding a core component
 

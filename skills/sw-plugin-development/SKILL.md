@@ -57,19 +57,12 @@ Read only the reference that matches the task or the files it changes:
 3. **Never write raw SQL through the DAL layer for entity data** when a `Criteria`
    read or `EntityRepository` write works. Raw connection SQL is a last resort
    with a stated reason (bulk/performance) and parameter binding.
-4. **PLG-004** **Never modify core files or vendor code.** Extend via decoration, events,
-   and the extension system.
 
 ## Plugin deltas on top of sw-php-foundation
 
 Inherits all **`sw-php-foundation` trunk habits** (`empty()`, interface injection,
 `ClockInterface`, typing). Also:
 
-- **PLG-005** **Extend, do not modify.** Use service **decoration** (`decorates:`), event
-  **subscribers/listeners**, and the entity-extension / custom-field system.
-  Register new services in PHP (`services.php` with `ContainerConfigurator`)
-  when the plugin targets 6.8+. XML `services.xml` / `routes.xml` still load
-  on 6.6/6.7; migrate them before 6.8. Keep plugin `config.xml` as XML.
 - **PLG-006** **Thin controllers** — delegate to services; see `sw-architecture` and
   `sw-review-learnings`. New Store-API routes need OpenAPI (see
   `api-contracts.md`) and ACL (`sw-security`).
@@ -83,8 +76,6 @@ Inherits all **`sw-php-foundation` trunk habits** (`empty()`, interface injectio
 - **Migrations** extend `MigrationStep`; separate destructive from
   non-destructive; make them idempotent; never edit a shipped migration after
   release.
-- **PLG-008** **Plugin lifecycle:** handle install/update/activate/deactivate/uninstall;
-  respect `keepUserData` on uninstall; clean up only what you own.
 - **PLG-009** **Version awareness:** check the supported Shopware range in `composer.json`,
   keep code working across it, and align Symfony usage to the version that range
   pins. Prefer Symfony components over custom HTTP/time/validation when the pinned

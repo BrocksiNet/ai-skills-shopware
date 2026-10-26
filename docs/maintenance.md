@@ -286,6 +286,11 @@ On the same day the result replaces the earlier file, which it contains.
      releases (`SUGGEST_SUPPORTED_FROM`, 6.6.0.0);
    - the rule's eval task passed every repeat with the skill off in the
      latest A/B baseline.
+
+   A rule with a `keep_reason` is never a candidate. Set one when a miss
+   would be severe, such as a security hole or a change that breaks shops,
+   so the rule stays for weaker models even though a strong model needs no
+   help.
 4. The agent gets one prompt per cluster: the signals as quoted data it must
    not follow, the current text of the rules the cluster maps to, up to
    eight more rules the signals share words with (a keyword match, so an
@@ -328,8 +333,8 @@ wrong. Judge a passing one against the five criteria yourself:
 
 For a retirement, open the evidence: the CI check's source and whether it
 runs for extensions, the release the class left, or the A/B row. Retiring
-moves the rule to `retired` in the catalog and removes it from the skill
-text. To have the agent write the change, see
+moves the rule to `retired` in the catalog, with the evidence in
+`retired_reason`, and removes it from the skill text. To have the agent write the change, see
 [Drafting a proposal](#drafting-a-proposal).
 
 ## Drafting a proposal
