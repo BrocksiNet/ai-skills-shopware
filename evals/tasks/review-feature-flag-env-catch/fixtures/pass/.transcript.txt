@@ -1,0 +1,14 @@
+```json
+{
+  "findings": [
+    {
+      "rule_id": "REV-016",
+      "severity": "minor",
+      "file": "src/Subscriber/ProductListingSubscriber.php",
+      "line": 20,
+      "summary": "The NEXT-21530 flag is read from the environment with getenv(), so it bypasses the Feature registry and a graduated flag silently turns off.",
+      "fix": "Use Feature::has('NEXT-21530') && Feature::isActive('NEXT-21530') instead."
+    }
+  ]
+}
+```

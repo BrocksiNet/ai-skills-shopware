@@ -40,6 +40,7 @@ Detailed, growing lists live in references. Read only the one that matches the c
 | [`api-aware.md`](references/api-aware.md) | The code serves Store-API or headless clients. | `StoreApi/**/*.php`, `SalesChannel/**/*Route.php`, `store-api`, … |
 | [`dal-and-performance.md`](references/dal-and-performance.md) | The code queries the DAL, checks what a customer can see, runs on a hot path, or dispatches queued work. | `new Criteria(`, … |
 | [`version-guards.md`](references/version-guards.md) | The change adds or keeps a class_exists or method_exists check for Shopware API. | `(class\|method\|interface)_exists((\?Shopware\b\|[A-Z][A-Za-z]+::class)` |
+| [`feature-flags.md`](references/feature-flags.md) | The change reads a Shopware feature flag, or an environment variable that may be one. | `getenv(`, … |
 | [`code-comments.md`](references/code-comments.md) | The change adds or edits comments or docblocks that talk about earlier versions, removed code or the issue. | `^\s*(//\|#\|*\|/*).*\b([Pp]reviously\|[Oo]riginally\|used to\|no longer (used\|needed\|necessary\|required\|called\|supported\|exists?\|works?\|applies)\|[Ee]arlier (version\|revision\|approach)\|[Bb]efore this (change\|PR\|fix)\|this (PR\|pull request)\|was (changed\|replaced\|removed) (to\|in\|with)\|instead of the old)\b`, … |
 | [`change-scope.md`](references/change-scope.md) | A fix grows beyond the bug. | on demand |
 <!-- routes:end -->
@@ -95,12 +96,9 @@ Detailed, growing lists live in references. Read only the one that matches the c
   oldest release in the `shopware/core` range already ships the class. Only guard API
   added *within* the range. (See `references/version-guards.md`; owning topic:
   `sw-plugin-development` -> `references/version-compatibility.md`.)
-- **REV-016** **Direct `$_SERVER`/`getenv` access for Shopware feature flags** — use
-  `Feature::has('FLAG') && Feature::isActive('FLAG')` (or `!Feature::has() || Feature::isActive()`
-  for "assume active when flag is gone"). `Feature::has()` guards against
-  `E_USER_WARNING` on unregistered flags; going below the platform API produces
-  fragile code reviewers will flag. (Owning topic: `sw-plugin-development`
-  -> `references/version-compatibility.md`.)
+- **Direct `$_SERVER`/`getenv` access for Shopware feature flags** (`REV-016`): read the
+  flag through the Feature API, not the environment. (See `references/feature-flags.md`;
+  owning topic: `sw-plugin-development` -> `references/version-compatibility.md`.)
 - **REV-017** **FQCN inline instead of `use` import** — `\Shopware\Core\Framework\Feature::isActive()`
   in a method body is a PER-CS/ECS violation. Always add the `use` statement.
   (`sw-php-foundation` baseline rule; ECS catches it automatically.)
