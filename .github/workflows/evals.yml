@@ -177,6 +177,7 @@ jobs:
           done
 
   activation:
+    name: "activation (${{ matrix.profile.agent }} · ${{ matrix.profile.model }})"
     needs: plan
     if: >-
       needs.plan.outputs.run == 'true' &&
@@ -208,6 +209,7 @@ jobs:
         run: bash scripts/run-activation-evals.sh
 
   ab:
+    name: "ab (${{ matrix.profile.agent }} · ${{ matrix.profile.model }}, shard ${{ matrix.shard.id }})"
     needs: plan
     if: needs.plan.outputs.run == 'true' && needs.plan.outputs.count != '0'
     runs-on: ubuntu-latest
@@ -265,6 +267,7 @@ jobs:
           if-no-files-found: warn
 
   gate:
+    name: "gate (${{ matrix.profile.agent }} · ${{ matrix.profile.model }})"
     needs: [plan, ab]
     if: always() && needs.plan.result == 'success' && needs.plan.outputs.run == 'true' && needs.plan.outputs.count != '0'
     runs-on: ubuntu-latest
@@ -315,6 +318,7 @@ jobs:
           path: evals/.results/ab.jsonl
 
   baseline:
+    name: "baseline (${{ matrix.profile.agent }} · ${{ matrix.profile.model }})"
     needs: [plan, gate]
     if: >-
       always() && needs.plan.result == 'success' && needs.plan.outputs.run == 'true' && needs.plan.outputs.count != '0' &&
