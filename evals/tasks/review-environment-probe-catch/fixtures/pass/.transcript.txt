@@ -1,0 +1,14 @@
+```json
+{
+  "findings": [
+    {
+      "rule_id": "CORE-073",
+      "severity": "major",
+      "file": "src/Core/Framework/Adapter/Cache/CacheBackendFactory.php",
+      "line": 22,
+      "summary": "The cache backend now depends on the SAPI and on ext-apcu, so two shops on the same version get different cache backends for their web and CLI processes.",
+      "fix": "Read the choice from a documented config key such as shopware.cache.apcu, and fail at boot when APCu is requested but not loaded."
+    }
+  ]
+}
+```

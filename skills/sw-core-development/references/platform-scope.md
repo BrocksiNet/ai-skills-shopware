@@ -21,3 +21,7 @@ and doubles the test matrix.
   Commercial keys, direct calls into one integration, or a default changed for
   every shop because one extension misbehaves belong behind a generic
   extension point or event that the product uses.
+
+## Eval
+
+`review-environment-probe-catch` / `-ignore` (CORE-073).
