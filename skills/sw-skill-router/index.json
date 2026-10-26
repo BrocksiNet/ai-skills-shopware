@@ -874,6 +874,21 @@
           ]
         },
         {
+          "reference": "sw-core-development/references/asset-lifetime.md",
+          "when": "Code deletes, moves or overwrites theme files, media or thumbnails, or schedules their cleanup.",
+          "anchors_any": [
+            "UnusedThemeDirectoryDeleter",
+            "\\.retired",
+            "->deleteDirectory\\(",
+            "theme/<hash>|themeHash"
+          ],
+          "exclude_paths": [
+            "**/tests/**",
+            "**/Test/**",
+            "**/*.md"
+          ]
+        },
+        {
           "reference": "sw-change-impact/references/impact-review.md",
           "when": "The extension caches a computed value under its own key.",
           "anchors_any": [

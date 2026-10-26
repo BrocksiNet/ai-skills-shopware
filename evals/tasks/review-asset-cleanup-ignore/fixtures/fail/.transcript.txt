@@ -1,0 +1,14 @@
+```json
+{
+  "findings": [
+    {
+      "rule_id": "CORE-077",
+      "severity": "minor",
+      "file": "src/Storefront/Theme/Message/DeleteRetiredThemeDirectoriesHandler.php",
+      "line": 27,
+      "summary": "The handler deletes theme directories, which is cleanup that belongs in a separate job.",
+      "fix": "Split the deletion into its own command."
+    }
+  ]
+}
+```

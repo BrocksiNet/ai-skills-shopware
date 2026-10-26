@@ -3205,13 +3205,13 @@
       "title": "Clean up referenced assets asynchronously",
       "status": "active",
       "since": "2026-10-21",
-      "eval": null,
-      "eval_reason": "Core-only (WP7 phase C); core's review guide covers it on trunk.",
+      "eval": "review-asset-cleanup-catch",
       "core_guide_ids": [
         "CACHE-003"
       ],
       "audience": [
-        "core"
+        "core",
+        "plugin"
       ],
       "defer_on_trunk": true,
       "trunk": {

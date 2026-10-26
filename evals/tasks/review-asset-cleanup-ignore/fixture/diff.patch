@@ -1,0 +1,70 @@
+diff --git a/src/Storefront/Theme/ThemeCompiler.php b/src/Storefront/Theme/ThemeCompiler.php
+index 3c1a9e2..9b0f4d6 100644
+--- a/src/Storefront/Theme/ThemeCompiler.php
++++ b/src/Storefront/Theme/ThemeCompiler.php
+@@ -17,9 +17,14 @@ class ThemeCompiler
+     public function compile(string $themeId, string $salesChannelId, string $css): string
+     {
+         $newHash = hash('xxh3', $css);
++        $previousHash = $this->hashStore->current($themeId, $salesChannelId);
+
+         $this->themeFilesystem->write(sprintf('theme/%s/css/all.css', $newHash), $css);
+         $this->hashStore->store($themeId, $salesChannelId, $newHash);
++
++        if ($previousHash !== null && $previousHash !== $newHash) {
++            $this->hashStore->retire($previousHash);
++        }
+
+         return $newHash;
+     }
+diff --git a/src/Storefront/Theme/Message/DeleteRetiredThemeDirectoriesMessage.php b/src/Storefront/Theme/Message/DeleteRetiredThemeDirectoriesMessage.php
+new file mode 100644
+index 0000000..5e2c7a1
+--- /dev/null
++++ b/src/Storefront/Theme/Message/DeleteRetiredThemeDirectoriesMessage.php
+@@ -0,0 +1,10 @@
++<?php declare(strict_types=1);
++
++namespace Shopware\Storefront\Theme\Message;
++
++use Shopware\Core\Framework\Log\Package;
++
++#[Package('storefront')]
++class DeleteRetiredThemeDirectoriesMessage
++{
++}
+diff --git a/src/Storefront/Theme/Message/DeleteRetiredThemeDirectoriesHandler.php b/src/Storefront/Theme/Message/DeleteRetiredThemeDirectoriesHandler.php
+new file mode 100644
+index 0000000..c4d8e21
+--- /dev/null
++++ b/src/Storefront/Theme/Message/DeleteRetiredThemeDirectoriesHandler.php
+@@ -0,0 +1,31 @@
++<?php declare(strict_types=1);
++
++namespace Shopware\Storefront\Theme\Message;
++
++use League\Flysystem\FilesystemOperator;
++use Shopware\Core\Framework\Log\Package;
++use Shopware\Storefront\Theme\ThemeHashStore;
++use Symfony\Component\Messenger\Attribute\AsMessageHandler;
++
++#[AsMessageHandler]
++#[Package('storefront')]
++class DeleteRetiredThemeDirectoriesHandler
++{
++    private const RETENTION = '-7 days';
++
++    public function __construct(
++        private readonly FilesystemOperator $themeFilesystem,
++        private readonly ThemeHashStore $hashStore,
++    ) {
++    }
++
++    public function __invoke(DeleteRetiredThemeDirectoriesMessage $message): void
++    {
++        foreach ($this->hashStore->retiredBefore(new \DateTimeImmutable(self::RETENTION)) as $hash) {
++            $this->themeFilesystem->deleteDirectory(sprintf('theme/%s', $hash));
++            $this->hashStore->forget($hash);
++        }
++    }
++}
