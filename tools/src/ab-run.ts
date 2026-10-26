@@ -2,7 +2,16 @@
 // runTask, then the record, the results line and the summary. The verdict
 // rules and the record format are in ab.ts.
 import { spawnSync } from 'node:child_process';
-import { appendFileSync, existsSync, mkdirSync, mkdtempSync, readFileSync, rmSync, statSync } from 'node:fs';
+import {
+  appendFileSync,
+  existsSync,
+  mkdirSync,
+  mkdtempSync,
+  readFileSync,
+  rmSync,
+  statSync,
+  writeFileSync,
+} from 'node:fs';
 import { tmpdir } from 'node:os';
 import { dirname, join } from 'node:path';
 import { type ModeCounts, abRecord, abSummary, agentLabel, decide, emptyCounts, loadedOneOf, sumUsage } from './ab.ts';
@@ -16,6 +25,15 @@ export function shortSha(root: string): string {
   const r = spawnSync('git', ['-C', root, 'rev-parse', '--short', 'HEAD'], { encoding: 'utf8' });
   return r.status === 0 ? r.stdout.trim() : 'unknown';
 }
+
+/** Where the A/B appends its record: EVAL_RESULTS, else evals/.results/ab.jsonl. */
+export const resultsPath = (root: string, env: NodeJS.ProcessEnv): string =>
+  envOr(env, 'EVAL_RESULTS', join(root, 'evals/.results/ab.jsonl'));
+
+/** Written next to the results once an agent's quota is used up. Every later
+ *  run that writes to the same results skips the agent, so a CI shard or a
+ *  local run ends in minutes instead of retrying for hours. */
+export const quotaMark = (root: string, env: NodeJS.ProcessEnv): string => `${resultsPath(root, env)}.quota`;
 
 export interface AbOptions {
   root: string;
@@ -91,11 +109,25 @@ export async function runModes(o: AbOptions): Promise<{ on: ModeCounts; off: Mod
   const logs = mkdtempSync(join(envOr(o.env, 'TMPDIR', tmpdir()), 'ab-skills.'));
   try {
     const counts = { on: emptyCounts(), off: emptyCounts() };
+    const mark = quotaMark(o.root, o.env);
+    let quota = existsSync(mark);
+    if (quota) o.err(`ab: ${o.task} skipped, the agent's quota ran out earlier (delete ${mark} to retry)\n`);
     const runs = (['on', 'off'] as const satisfies readonly Mode[]).flatMap((mode) =>
       Array.from({ length: o.repeats }, (_, k) => ({ mode, i: k + 1 })),
     );
     await inSeries(runs, async ({ mode, i }) => {
-      addOutcome(counts[mode], await runOnce(o, mode, logs, i), mode === 'on' ? own : all);
+      // A skipped run is an agent error: the record says "error", not "worse".
+      if (quota) {
+        counts[mode].err++;
+        return;
+      }
+      const outcome = await runOnce(o, mode, logs, i);
+      addOutcome(counts[mode], outcome, mode === 'on' ? own : all);
+      if (outcome.rc !== RUN.quota) return;
+      quota = true;
+      mkdirSync(dirname(mark), { recursive: true });
+      writeFileSync(mark, `${o.task} ${mode} ${i}\n`);
+      o.err(`ab: the agent's quota is used up; skipping every later run (delete ${mark} to retry)\n`);
     });
     return counts;
   } finally {
@@ -152,7 +184,7 @@ export async function runAb(o: RunAbOptions): Promise<number> {
     return 2;
   }
   const repeats = Number(o.repeats);
-  const results = envOr(env, 'EVAL_RESULTS', join(root, 'evals/.results/ab.jsonl'));
+  const results = resultsPath(root, env);
   mkdirSync(dirname(results), { recursive: true });
 
   const modes: AbOptions = { root, task, repeats, env, err: o.err };
