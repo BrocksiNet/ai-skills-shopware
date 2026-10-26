@@ -1,0 +1,14 @@
+```json
+{
+  "findings": [
+    {
+      "rule_id": null,
+      "severity": "nit",
+      "file": "src/Core/Content/Product/Review/ProductReviewCsvExporter.php",
+      "line": 23,
+      "summary": "The header row literal could be a named constant.",
+      "fix": "Extract the header to a constant."
+    }
+  ]
+}
+```

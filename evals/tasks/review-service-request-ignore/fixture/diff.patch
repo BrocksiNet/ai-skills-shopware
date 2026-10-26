@@ -1,0 +1,78 @@
+diff --git a/src/Core/Content/Product/Review/ProductReviewCsvController.php b/src/Core/Content/Product/Review/ProductReviewCsvController.php
+new file mode 100644
+index 0000000..9a41c07
+--- /dev/null
++++ b/src/Core/Content/Product/Review/ProductReviewCsvController.php
+@@ -0,0 +1,27 @@
++<?php declare(strict_types=1);
++
++namespace Shopware\Core\Content\Product\Review;
++
++use Shopware\Core\Framework\Context;
++use Shopware\Core\Framework\Log\Package;
++use Symfony\Component\HttpFoundation\Request;
++use Symfony\Component\HttpFoundation\Response;
++
++/**
++ * @internal
++ */
++#[Package('inventory')]
++class ProductReviewCsvController
++{
++    public function __construct(private readonly ProductReviewCsvExporter $exporter)
++    {
++    }
++
++    public function export(Request $request, Context $context): Response
++    {
++        $productIds = array_filter(explode(',', (string) $request->query->get('productIds', '')));
++        $csv = $this->exporter->export($productIds, $request->query->getBoolean('withHeader'), $context);
++
++        return new Response($csv, Response::HTTP_OK, ['Content-Type' => 'text/csv']);
++    }
++}
+diff --git a/src/Core/Content/Product/Review/ProductReviewCsvExporter.php b/src/Core/Content/Product/Review/ProductReviewCsvExporter.php
+new file mode 100644
+index 0000000..c71e2d8
+--- /dev/null
++++ b/src/Core/Content/Product/Review/ProductReviewCsvExporter.php
+@@ -0,0 +1,39 @@
++<?php declare(strict_types=1);
++
++namespace Shopware\Core\Content\Product\Review;
++
++use Shopware\Core\Framework\Context;
++use Shopware\Core\Framework\DataAbstractionLayer\EntityRepository;
++use Shopware\Core\Framework\DataAbstractionLayer\Search\Criteria;
++use Shopware\Core\Framework\DataAbstractionLayer\Search\Filter\EqualsAnyFilter;
++use Shopware\Core\Framework\Log\Package;
++
++/**
++ * @internal
++ */
++#[Package('inventory')]
++class ProductReviewCsvExporter
++{
++    /**
++     * @param EntityRepository<ProductReviewCollection> $reviewRepository
++     */
++    public function __construct(private readonly EntityRepository $reviewRepository)
++    {
++    }
++
++    /**
++     * @param list<string> $productIds
++     */
++    public function export(array $productIds, bool $withHeader, Context $context): string
++    {
++        $criteria = new Criteria();
++        $criteria->addFilter(new EqualsAnyFilter('productId', $productIds));
++
++        $lines = $withHeader ? ['productId;points;title'] : [];
++        foreach ($this->reviewRepository->search($criteria, $context)->getEntities() as $review) {
++            $lines[] = implode(';', [$review->getProductId(), $review->getPoints(), $review->getTitle()]);
++        }
++
++        return implode("\n", $lines);
++    }
++}

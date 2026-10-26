@@ -62,3 +62,7 @@ from internal implementation:
   `@internal` unless they are intended extension points.
 - The HTTP route contract can be **public** even when the PHP controller class is
   internal — document those separately.
+
+## Eval
+
+`review-service-request-catch` / `-ignore` (CORE-053).
