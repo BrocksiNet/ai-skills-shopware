@@ -1,0 +1,22 @@
+```json
+{
+  "findings": [
+    {
+      "rule_id": "IMP-005",
+      "severity": "nit",
+      "file": "src/Subscriber/CheckoutFinishSubscriber.php",
+      "line": 33,
+      "summary": "The points key could have a clearer name.",
+      "fix": "Rename it."
+    },
+    {
+      "rule_id": "IMP-003",
+      "severity": "major",
+      "file": "src/Subscriber/CheckoutFinishSubscriber.php",
+      "line": 30,
+      "summary": "The new config setting defaults to off, so merchants must enable it before the points show.",
+      "fix": "Keep the setting off by default."
+    }
+  ]
+}
+```

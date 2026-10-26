@@ -4515,12 +4515,11 @@
     {
       "id": "IMP-005",
       "skill": "sw-change-impact",
-      "file": "skills/sw-change-impact/SKILL.md",
+      "file": "skills/sw-change-impact/references/impact-review.md",
       "title": "Easier beats more complete",
       "status": "active",
       "since": "2026-10-21",
-      "eval": null,
-      "eval_reason": "Documented only; no eval yet.",
+      "eval": "review-opt-in-backfill-catch",
       "core_guide_ids": [],
       "audience": [
         "core",

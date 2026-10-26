@@ -42,7 +42,7 @@ change is acceptable for everyone else.
 3. **IMP-004** **One feature does not outweigh a slower shared path.** If the only design
    that "completes" the ticket slows checkout or listings for every shop, stop
    and narrow it. Say that out loud.
-4. **IMP-005** **Easier beats more complete.** A new setting, header, or ritual that only
+4. **Easier beats more complete.** A new setting, header, or ritual that only
    makes the feature work has made the shop harder. Prefer the change that
    removes a step.
 5. **IMP-007** **There is one compiled container.** An `if` in the Symfony container
