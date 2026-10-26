@@ -1,0 +1,14 @@
+```json
+{
+  "findings": [
+    {
+      "rule_id": "CORE-049",
+      "severity": "minor",
+      "file": "RELEASE_INFO-6.8.md",
+      "line": 9,
+      "summary": "The entry opens with a bold label; RELEASE_INFO entries are plain paragraphs without bold labels.",
+      "fix": "Drop the bold label and start the paragraph with the sentence itself."
+    }
+  ]
+}
+```

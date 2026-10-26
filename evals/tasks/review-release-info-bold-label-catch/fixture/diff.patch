@@ -1,0 +1,15 @@
+diff --git a/RELEASE_INFO-6.8.md b/RELEASE_INFO-6.8.md
+index 3c1e9a2..b7d40f1 100644
+--- a/RELEASE_INFO-6.8.md
++++ b/RELEASE_INFO-6.8.md
+@@ -4,4 +4,10 @@
+
+ ### Storefront
+
+ The language selector now displays language names with territory, for example "Deutsch (Deutschland)". This applies when the `v6.8.0.0` feature flag is active.
++
++### Core
++
++**Behaviour change:** `CartService::recalculate()` now skips the price rule matcher when the cart holds no line items.
++
++The new `CartRecalculationSkipped` event is dispatched in that case, so a listener can observe the skipped runs.
