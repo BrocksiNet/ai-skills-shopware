@@ -14,7 +14,7 @@ import {
   opencodeTaskEnv,
   scratchDir,
 } from './agents.ts';
-import { envOr } from './env.ts';
+import { envInt, envOr } from './env.ts';
 import { onPath, run } from './proc.ts';
 
 /** One editing session in `cwd`: the agent's final text and exit code. */
@@ -49,6 +49,10 @@ const claudeArgs = (env: NodeJS.ProcessEnv): string[] => [
 
 type Edited = Awaited<ReturnType<Edit>>;
 
+/** Wall-clock limit of one agent session (DRAFT_TIMEOUT_MINUTES, 20): a
+ *  session that stalls must not block a batch of drafts. */
+const timeoutSeconds = (env: NodeJS.ProcessEnv): number => envInt(env, 'DRAFT_TIMEOUT_MINUTES', 20, 1) * 60;
+
 async function claudeEdit(
   prompt: string,
   cwd: string,
@@ -56,7 +60,14 @@ async function claudeEdit(
   err: (t: string) => void,
 ): Promise<Edited> {
   if (!onPath('claude', env)) return (err('claude CLI not found\n'), { status: AGENT_ERROR, text: '' });
-  const proc = await run('claude', claudeArgs(env), { cwd, env: withoutTokens(env), input: prompt, onStderr: err });
+  const proc = await run('claude', claudeArgs(env), {
+    cwd,
+    env: withoutTokens(env),
+    input: prompt,
+    onStderr: err,
+    timeoutSeconds: timeoutSeconds(env),
+  });
+  if (proc.timedOut) return (err('claude-draft: timed out\n'), { status: AGENT_ERROR, text: '' });
   const s = parseClaude(proc.stdout);
   const text = s.texts.join('\n\n');
   const r = s.result;
@@ -83,7 +94,12 @@ async function opencodeEdit(
     const permission = { edit: 'allow', bash, webfetch: 'deny', websearch: 'deny', task: 'deny', question: 'deny' };
     const childEnv = opencodeEnv(baseEnv, { permission });
     const model = envOr(env, 'DRAFT_MODEL', OPENCODE_FREE_MODEL);
-    const proc = await run('opencode', opencodeArgs(model, prompt), { cwd, env: childEnv, onStderr: err });
+    const proc = await run('opencode', opencodeArgs(model, prompt), {
+      cwd,
+      env: childEnv,
+      onStderr: err,
+      timeoutSeconds: timeoutSeconds(env),
+    });
     const s = parseOpencode(proc.stdout);
     logUsage(env, s.usage);
     const text = s.texts.join('\n\n');
@@ -100,7 +116,13 @@ export function editor(agent: string, env: NodeJS.ProcessEnv, err: (t: string) =
   if (agent === 'claude') return (prompt, cwd) => claudeEdit(prompt, cwd, env, err);
   if (agent === 'opencode') return (prompt, cwd) => opencodeEdit(prompt, cwd, env, err);
   return async (prompt, cwd) => {
-    const proc = await run(agent, [], { cwd, env: withoutTokens(env), input: prompt, onStderr: err });
+    const proc = await run(agent, [], {
+      cwd,
+      env: withoutTokens(env),
+      input: prompt,
+      onStderr: err,
+      timeoutSeconds: timeoutSeconds(env),
+    });
     return { status: proc.status, text: proc.stdout };
   };
 }

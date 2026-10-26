@@ -368,8 +368,27 @@ is not `none`:
    a draft PR with the `run-evals` label, so CI repeats the A/B. A proposal
    with private evidence never gets a PR.
 
-`DRAFT_MODEL` (`haiku`), `DRAFT_MAX_TURNS` (60) and `DRAFT_MAX_BUDGET_USD`
-(2) bound the agent. Remove a kept worktree with `git worktree remove`.
+`DRAFT_MODEL` (`haiku`), `DRAFT_MAX_TURNS` (60), `DRAFT_MAX_BUDGET_USD`
+(2) and `DRAFT_TIMEOUT_MINUTES` (20, per session) bound the agent. Remove a kept worktree with `git worktree remove`.
+
+### Drafting an eval for a rule
+
+A rule stays in a skill only when an eval shows the skill changes what a
+model does. For an active rule with `eval: null`:
+
+```bash
+node tools/bin/suggest-rules.ts draft-eval PLG-005            # PR only if a task improved
+node tools/bin/suggest-rules.ts draft-eval PLG-005 --no-pr    # keep the worktree either way
+```
+
+The steps are those of `draft`, on the branch `evals/<skill>-<rule>`. The
+agent writes a review pair (or a task, when the rule is about code the
+agent writes), sets the rule's `eval` in the catalog and leaves the rule
+text alone. After the A/B, the PR opens only when a task's verdict is
+`improved`. Otherwise the worktree and the branch are removed, and the
+rule is a candidate to leave the skill: a model gets it right without
+the skill, or the eval could not show a difference. Every outcome is
+appended to `suggestions/evals.jsonl`.
 
 ## How a change lands
 

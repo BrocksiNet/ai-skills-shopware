@@ -4,12 +4,14 @@ import { mkdtempSync, rmSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join, resolve } from 'node:path';
 import { after } from 'node:test';
-import type { Rule } from '../src/catalog.ts';
+import { type Catalog, loadCatalog, type Rule } from '../src/catalog.ts';
 import type { AbResult } from '../src/eval-results.ts';
 import type { Signal } from '../src/signals.ts';
 import type { Proposal } from '../src/suggest-schema.ts';
 
 export const ROOT = resolve(import.meta.dirname, '../..');
+/** The repository's real catalog. */
+export const realCatalog = (): Catalog => loadCatalog(ROOT);
 export const FAKE = join(ROOT, 'evals/runner/fake-agent.sh');
 
 /** A scratch folder, removed after the test file. */

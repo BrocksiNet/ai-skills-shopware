@@ -1,11 +1,18 @@
 // `suggest-rules draft` (plan WP12 step 5): the suggestion to draft, read
 // back from suggestions/<date>.json, and the prompt that asks the agent to
-// make the change in a worktree by the steps in AGENTS.md.
+// make the change in a worktree by the steps in AGENTS.md. `draft-eval`
+// drafts an eval for an existing rule that has none, through the same
+// pipeline, as a subject with the action `eval`.
 import { existsSync, readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import type { Catalog, Rule } from './catalog.ts';
 import { tail } from './proc.ts';
 import { isSuggestion, type Suggestion } from './suggest-ask.ts';
+import { currentRuleText } from './suggest-checks.ts';
+import type { Action } from './suggest-schema.ts';
+
+/** What a draft changes: a proposal of suggest-rules, or an eval for a rule. */
+export type DraftSubject = Omit<Suggestion, 'action'> & { action: Action | 'eval' };
 
 const isRecord = (v: unknown): v is Record<string, unknown> => typeof v === 'object' && v !== null;
 
@@ -23,10 +30,34 @@ export function loadSuggestion(dir: string, id: string): Suggestion {
   return found;
 }
 
+/** The subject of `draft-eval RULE`: the rule as it stands, without an eval. */
+export function evalSubject(root: string, catalog: Catalog, id: string): DraftSubject {
+  const rule = catalog.rules.find((r) => r.id === id);
+  if (rule === undefined) throw new Error(`${id} is not in rules/catalog.json`);
+  if (rule.status !== 'active') throw new Error(`${id} is ${rule.status}`);
+  if (rule.eval !== null) throw new Error(`${id} already has the eval ${rule.eval}`);
+  const reason = 'Measure whether the rule changes what a model does.';
+  return {
+    id: `eval-${id}`,
+    action: 'eval',
+    skill: rule.skill,
+    rule: id,
+    title: rule.title,
+    evidence: [],
+    criteria: { delta: reason, frequency: '', single_home: '', testable: '' },
+    draft: currentRuleText(root, catalog, id),
+    cluster: 'eval',
+    checks: [],
+    ok: true,
+    private: false,
+  };
+}
+
 const MAX_SLUG = 48;
 
 /** `rules/<skill>-<slug of the title>`, cut at a word. */
-export function branchName(s: Suggestion): string {
+export function branchName(s: DraftSubject): string {
+  if (s.action === 'eval') return `evals/${s.skill.replace(/^sw-/u, '')}-${s.rule.toLowerCase()}`;
   const words = `${s.rule === '' ? '' : `${s.rule} `}${s.title}`
     .toLowerCase()
     .replaceAll(/[^a-z0-9]+/gu, '-')
@@ -55,7 +86,7 @@ function example(catalog: Catalog, skill: string, kind: string): Rule | undefine
   return pool.at(-1);
 }
 
-function steps(s: Suggestion, catalog: Catalog): string[] {
+function steps(s: DraftSubject, catalog: Catalog): string[] {
   const rule = catalog.rules.find((r) => r.id === s.rule);
   const pattern = example(catalog, s.skill, s.eval?.kind ?? 'task');
   const copy =
@@ -74,6 +105,13 @@ function steps(s: Suggestion, catalog: Catalog): string[] {
       `Change the text of ${s.rule} in ${rule?.file ?? 'its file'} to say what the draft says. Keep the ID and the bold tag.`,
       `Update the title in rules/catalog.json if it no longer fits. Change the eval ${rule?.eval ?? ''} only if the rule now covers a case it does not test; then add a fixture or a pass/fail golden case for it. ${copy}`,
     ];
+  if (s.action === 'eval')
+    return [
+      `Add an eval for ${s.rule} (${rule?.file ?? 'its file'}). Prefer a review pair review-<topic>-catch and review-<topic>-ignore: the catch diff breaks the rule in a realistic Shopware change, the ignore diff looks alike but complies. Use a task instead when the rule is about code the agent writes, not a diff it reviews. ${copy}`,
+      'Make the catch case one a model is likely to get wrong without the rule: the rule is only worth keeping if the skill changes the result. Do not hint at the rule in instruction.md or in code comments of the fixture.',
+      'Give each task grade.sh, its grader in tools/graders/, fixture/, fixtures/pass/ and an almost-pass fixtures/fail/. A review task that expects the rule needs it tagged in a reference the reviewing skill reads (AGENTS.md, "Adding or changing a reference").',
+      `Set "eval" of ${s.rule} in rules/catalog.json to the catch task and remove its "eval_reason". Do not change the rule text.`,
+    ];
   if (s.action === 'retire')
     return [
       `Set the status of ${s.rule} in rules/catalog.json to "retired" and remove its bullet from ${rule?.file ?? 'its file'}.`,
@@ -84,7 +122,7 @@ function steps(s: Suggestion, catalog: Catalog): string[] {
 }
 
 export interface DraftPromptInput {
-  suggestion: Suggestion;
+  suggestion: DraftSubject;
   catalog: Catalog;
 }
 
@@ -104,7 +142,9 @@ export function draftPrompt({ suggestion: s, catalog }: DraftPromptInput): strin
     'You edit this repository, a library of agent skills for Shopware 6, to make one rule change.',
     'Read AGENTS.md first, the sections "Adding or changing a rule" and "Grader contract", and follow them.',
     '',
-    'The change, as proposed by an earlier review of maintainer comments:',
+    s.action === 'eval'
+      ? 'The rule below has no eval yet. Write one, so an A/B can show whether the rule helps:'
+      : 'The change, as proposed by an earlier review of maintainer comments:',
     '```json',
     JSON.stringify(proposal, null, 2),
     '```',
