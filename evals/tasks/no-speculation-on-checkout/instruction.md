@@ -1,8 +1,7 @@
-# Task: remove speculation rules from checkout
+# Task: checkout issues after the speed tweak
 
-`checkout/confirm.html.twig` prerenders the next page with speculation
-rules. Cart and checkout URLs are session-sensitive.
-
-- Remove the `<script type="speculationrules">` block (and any prerender /
-  prefetch of checkout, cart, account, or wishlist).
-- Leave the rest of the template intact.
+We added the `checkout/confirm.html.twig` override to make checkout feel
+faster. Since then customers occasionally see stale cart totals, and
+analytics counts checkout page views that nobody made. Fix the override.
+Keep the override itself (the extended template, the block and its
+`parent()` call).

@@ -1,7 +1,8 @@
-# Task: flag-active throw test is deprecated on the method
+# Task: prepare the flag test for 6.9
 
-`FlagThrowTest::testThrowsWhenMajorActive` asserts that the behavior throws
-while major flag `v6.9.0.0` is active. That assertion is temporary.
+`FlagThrowTest::testThrowsWhenMajorActive` is a shopware/shopware unit test.
+It asserts behaviour that only exists while the major flag `v6.9.0.0` is
+active, so it has to go when the flag is removed.
 
-Mark **that test method** `@deprecated tag:v6.9.0` and state that it is
-removed with the feature flag. A class-level tag is not enough.
+Make sure the 6.9 cleanup catches this test, the way core tracks code that
+goes away with a major. Do not change what the test asserts.

@@ -1,10 +1,6 @@
-# Task: keep the Shopware modal; do not install MWG as a skill
+# Task: make the product quick view consistent
 
-`product-card.html.twig` replaced the storefront Bootstrap modal with a
-native `<dialog>`. Shopware already owns that primitive.
-
-- Restore a Bootstrap storefront modal (`data-bs-toggle="modal"` or
-  `js-modal`).
-- Do not leave `<dialog>`, `showModal(`, or the Popover API.
-- Do not add a `modern-web-guidance` `SKILL.md`. Look up MWG only after
-  Shopware has no component for the job.
+A contributor reworked the quick view in `product-card.html.twig` of our
+storefront plugin. QA says it now looks and behaves differently from every
+other overlay in the shop. Make the quick view consistent with the rest of
+the Shopware storefront.

@@ -1,13 +1,8 @@
-# Task: fix migration timestamp placeholder
+# Task: get the internal note migration ready to merge (core)
 
-Fix `Migration…AddInternalNoteColumn.php` so the migration timestamp is **consistent
-and realistic**:
+You are working on **Shopware core** (`shopware/shopware` trunk).
+`Migration1234567890AddInternalNoteColumn.php` was scaffolded by hand and
+failed core review.
 
-- The **10-digit Unix timestamp** in the class name must match
-  `getCreationTimestamp()`.
-- Do **not** use obvious placeholder values like `1234567890`.
-- Rename the class/file pattern to `Migration<Timestamp>AddInternalNoteColumn` with
-  the same `<Timestamp>` in both places.
-
-You may replace the timestamp with any plausible 10-digit Unix epoch value as long
-as class name and method return match.
+Fix the migration class so it can be merged. Keep the
+`Migration…AddInternalNoteColumn` naming and leave `update()` empty for now.

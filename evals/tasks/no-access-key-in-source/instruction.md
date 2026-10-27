@@ -1,5 +1,6 @@
-# Task: no hardcoded access key
+# Task: prepare StoreApiConfig for open source
 
-Refactor `fixture/StoreApiConfig.php` so the sales channel access key is **not
-hardcoded**. Load it from environment (e.g. `getenv('SW_ACCESS_KEY')`) with a
-clear placeholder comment for local setup.
+We are publishing this plugin in a public GitHub repository. Get
+`fixture/StoreApiConfig.php` ready for that. `getAccessKey()` must keep
+working at runtime; our deployments pass their settings in through the
+server environment, and local developers need to know what to set.

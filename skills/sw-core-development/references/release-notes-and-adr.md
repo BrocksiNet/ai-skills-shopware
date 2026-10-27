@@ -155,10 +155,17 @@ fix(Administration): correct sw-data-grid selection reset
 ### RELEASE_INFO entry shape
 
 ```markdown
-## 6.7.x (Upcoming)
-### Core
-- Added `CartRoute` parameter `guestLogin` so headless clients can ... (PR #12326)
+# 6.7.5.0 (upcoming)
+
+## Core
+
+### Guest login through the cart route
+
+`CartRoute` accepts a `guestLogin` parameter, so headless clients can ...
 ```
+
+Version sections are `#`, categories `##`, entry titles `###`. Add an entry
+under the version's existing category heading.
 
 ### UPGRADE entry shape
 
@@ -177,7 +184,9 @@ Migrate to `Shopware\Core\Checkout\Order\OrderEntity` instead.
 **Good RELEASE_INFO** — factual, mentions extensibility:
 
 ```markdown
-### Storefront
+## Storefront
+
+### Language selector shows the territory
 
 When the `v6.8.0.0` feature flag is active, the language selector now displays
 language names with territory (e.g. "Deutsch (Deutschland)").

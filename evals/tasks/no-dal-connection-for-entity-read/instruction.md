@@ -1,4 +1,5 @@
-# Task: use repository not Connection
+# Task: review follow-up on OrderReader
 
-Refactor `fixture/OrderReader.php` to load orders via `EntityRepository` and
-`Criteria` instead of raw DBAL `Connection` SQL.
+Code review on our plugin flagged `fixture/OrderReader.php` as not following
+Shopware conventions. Rework it so it does. `loadOrderIds()` must still return
+up to 50 order IDs as hex strings.

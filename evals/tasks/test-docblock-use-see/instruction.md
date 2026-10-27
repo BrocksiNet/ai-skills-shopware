@@ -1,5 +1,6 @@
-# Task: fix cross-test docblock reference
+# Task: tidy the test class docblock
 
-Update `fixture/McpStorefrontServiceConfigTest.php` so the class docblock points at
-the related test with **`@see`** and a **`use`** import — not a leading-backslash
-FQCN in prose.
+`McpStorefrontServiceConfigTest.php` is a shopware/shopware unit test. Its class
+docblock points readers to `McpDiscoveryScanDirsConfigTest`, which covers the
+scan dir discovery. Keep that pointer, but bring the docblock in line with
+core's conventions before the PR.
