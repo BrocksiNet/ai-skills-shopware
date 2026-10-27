@@ -256,7 +256,8 @@ contract: [`evals/README.md`](evals/README.md#review-tasks-review-rule-catch---i
 Tagged so far: `sw-testing`, `sw-plugin-development`,
 `sw-review-learnings`, `sw-core-development`, `sw-admin-js`,
 `sw-architecture`, `sw-storefront`, `sw-security`,
-`sw-change-impact`. Tag a skill's remaining rules when you next touch it.
+`sw-change-impact`, `sw-assistant-style`. Tag a skill's remaining rules
+when you next touch it.
 
 For recurring real-world findings, prefer `sw-review-learnings` and point
 at the owning skill rather than re-defining the topic.

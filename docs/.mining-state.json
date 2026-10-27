@@ -18,5 +18,9 @@
   "fos-agent-skills": {
     "last_sha": "5595b4cdf3b879ad477ced88c245ad296efeb4d5",
     "last_date": "2026-03-05T14:24:07Z"
+  },
+  "humanizer": {
+    "last_sha": "8c307f367c91bd974002f10f2be2965d642c13df",
+    "last_date": "2026-10-16T19:12:03Z"
   }
 }

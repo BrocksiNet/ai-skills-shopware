@@ -57,6 +57,14 @@
         { "path": "skills/shopware-phpunit", "skills": ["sw-testing"] },
         { "path": "skills/shopware-admin-crud-module", "skills": ["sw-admin-js"] }
       ]
+    },
+    {
+      "id": "humanizer",
+      "repo": "blader/humanizer",
+      "branch": "main",
+      "extractor": "markdown",
+      "paths": ["SKILL.md"],
+      "skills": [{ "path": "SKILL.md", "skills": ["sw-assistant-style"] }]
     }
   ],
   "reviews": [

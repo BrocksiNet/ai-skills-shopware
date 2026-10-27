@@ -113,9 +113,9 @@ and its rule cannot drift apart. Diagrams and the eval layers are in
 ## Staying current
 
 A weekly job reads Shopware trunk (agent skills, guidelines, PHPStan rules)
-and four upstream skill sets: `shopwareLabs/ai-coding-tools`,
-`netresearch/php-modernization-skill`, `shopware/shopware-cli` and
-`FriendsOfShopware/agent-skills`. It opens one issue that maps each change to
+and five upstream skill sets: `shopwareLabs/ai-coding-tools`,
+`netresearch/php-modernization-skill`, `shopware/shopware-cli`,
+`FriendsOfShopware/agent-skills` and `blader/humanizer`. It opens one issue that maps each change to
 the skill and rule it touches. A daily job collects review comments from
 merged core PRs into the `review-signals` release. The API index rebuilds
 weekly, and model evals run monthly and before releases. See
@@ -164,7 +164,8 @@ Built on, and rewritten from:
 [`biotech-shopware/claude-shopware-skill`](https://github.com/biotech-shopware/claude-shopware-skill),
 [`netresearch/php-modernization-skill`](https://github.com/netresearch/php-modernization-skill),
 the [LambdaTest PHPUnit skill](https://github.com/LambdaTest/agent-skills),
-and Shopware's own [`coding-guidelines`](https://github.com/shopware/shopware/tree/trunk/coding-guidelines).
+[`blader/humanizer`](https://github.com/blader/humanizer) for the prose
+read-through in `sw-assistant-style`, and Shopware's own [`coding-guidelines`](https://github.com/shopware/shopware/tree/trunk/coding-guidelines).
 Authoring follows [Anthropic's skill guide](https://www.anthropic.com/news/skills)
 and the [skills.sh](https://github.com/vercel-labs/skills) ecosystem.
 

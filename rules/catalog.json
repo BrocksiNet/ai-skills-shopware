@@ -15,7 +15,8 @@
     "PRD": "sw-pr-description",
     "PRR": "sw-pr-review",
     "DEV": "sw-podman-dev",
-    "XR": "sw-extension-review"
+    "XR": "sw-extension-review",
+    "STY": "sw-assistant-style"
   },
   "rules": [
     {
@@ -4737,6 +4738,61 @@
       "audience": [
         "core",
         "plugin"
+      ],
+      "defer_on_trunk": false
+    },
+    {
+      "id": "STY-001",
+      "skill": "sw-assistant-style",
+      "file": "skills/sw-assistant-style/SKILL.md",
+      "status": "active",
+      "since": "2026-10-27",
+      "title": "Read prose through once for machine-writing tells and rewrite them without adding or dropping facts",
+      "eval": "plain-prose-dev-answer",
+      "upstream": [
+        {
+          "source": "humanizer",
+          "path": "SKILL.md"
+        }
+      ],
+      "core_guide_ids": [],
+      "audience": [
+        "core",
+        "plugin",
+        "app"
+      ],
+      "defer_on_trunk": false
+    },
+    {
+      "id": "STY-002",
+      "skill": "sw-assistant-style",
+      "file": "skills/sw-assistant-style/SKILL.md",
+      "status": "active",
+      "since": "2026-10-27",
+      "title": "Support reply in one outer code block with no nested fences",
+      "eval": "support-reply-single-block",
+      "core_guide_ids": [],
+      "audience": [
+        "core",
+        "plugin",
+        "app"
+      ],
+      "defer_on_trunk": false
+    },
+    {
+      "id": "STY-003",
+      "skill": "sw-assistant-style",
+      "file": "skills/sw-assistant-style/SKILL.md",
+      "status": "active",
+      "since": "2026-10-27",
+      "title": "Say plainly when unsure, or ask to research before guessing",
+      "eval": null,
+      "eval_reason": "Documented only; no eval yet.",
+      "core_guide_ids": [],
+      "audience": [
+        "core",
+        "plugin",
+        "app"
       ],
       "defer_on_trunk": false
     }

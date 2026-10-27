@@ -10,6 +10,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- `STY-001` in `sw-assistant-style`: before handing back prose, the agent
+  reads it once more and rewrites machine-writing tells (staged contrasts,
+  run-ups, bold-label lists, inflated words, chat phrases) without adding or
+  dropping facts. The checklist is our rewrite of
+  [`blader/humanizer`](https://github.com/blader/humanizer).
+  `sw-pr-description` carries the part that fits a PR body. In a local A/B
+  on Sonnet, a blind judge preferred the checked texts in 14 of 22 decided
+  pairs, and graders stayed green. Installing humanizer next to our skills
+  did nothing, because the agent never loaded it. Eval task
+  `plain-prose-dev-answer`; its grader uses the new
+  `tools/src/grade/prose.ts`. Humanizer is a drift source now, so a change
+  to its `SKILL.md` shows up under `STY-001` in the weekly issue.
+- `STY` prefix for `sw-assistant-style`. The support-reply block rule is
+  `STY-002`, and saying plainly when unsure is `STY-003`.
 - `TEST-036` in `sw-testing`: a PR that changes code keeps the existing
   test expectations. A flipped, loosened or skipped assertion, or an edited
   data-provider case, needs the behavior change announced in the PR and the
