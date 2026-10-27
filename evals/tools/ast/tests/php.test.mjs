@@ -209,3 +209,112 @@ test('event hook: commented-out assertion inside the hook still passes', () => {
 `);
   assert.equal(evaluateEventHook([ast]).score, 1);
 });
+
+const eventHookTestWithSetUp = (setUp, body) => parsePhp(`<?php
+final class ProductRestockNotifierTest extends TestCase
+{
+    private CollectingEventDispatcher $dispatcher;
+
+    private ProductRestockNotifier $notifier;
+
+    protected function setUp(): void
+    {
+${setUp}
+    }
+
+    public function testNotifyDispatchesRestockedEvent(): void
+    {
+${body}
+    }
+}
+`);
+
+test('event hook: subject and owned dispatcher built in setUp() pass', () => {
+  const ast = eventHookTestWithSetUp(
+    `
+        $this->dispatcher = new CollectingEventDispatcher();
+        $this->notifier = new ProductRestockNotifier($this->dispatcher, new NullLogger());
+`,
+    `
+        $this->notifier->notify('p1', 5, Context::createDefaultContext());
+        static::assertCount(1, $this->dispatcher->getEvents());
+`,
+  );
+  assert.equal(evaluateEventHook([ast]).score, 1);
+});
+
+test('event hook: setUp() local dispatcher handed to the subject passes', () => {
+  const ast = eventHookTestWithSetUp(
+    `
+        $dispatcher = new CollectingEventDispatcher();
+        $this->notifier = new ProductRestockNotifier($dispatcher, new NullLogger());
+`,
+    `
+        $this->notifier->notify('p1', 5, Context::createDefaultContext());
+        static::assertTrue(true);
+`,
+  );
+  assert.equal(evaluateEventHook([ast]).score, 1);
+});
+
+test('event hook: setUp() subject with an asserting listener still fails', () => {
+  const ast = eventHookTestWithSetUp(
+    `
+        $this->dispatcher = new EventDispatcher();
+        $this->notifier = new ProductRestockNotifier($this->dispatcher, new NullLogger());
+`,
+    `
+        $this->dispatcher->addListener(ProductRestockedEvent::class, function ($e): void {
+            static::assertSame('p1', $e->productId);
+        });
+        $this->notifier->notify('p1', 5, Context::createDefaultContext());
+        static::assertTrue(true);
+`,
+  );
+  const result = evaluateEventHook([ast]);
+  assert.equal(result.score, 0);
+  assert.match(result.detail, /assert_in_hook=1/);
+});
+
+test('event hook: setUp() container subject without an owned dispatcher fails', () => {
+  const ast = eventHookTestWithSetUp(
+    `
+        $this->notifier = static::getContainer()->get(ProductRestockNotifier::class);
+`,
+    `
+        $this->notifier->notify('p1', 5, Context::createDefaultContext());
+        static::assertTrue(true);
+`,
+  );
+  assert.equal(evaluateEventHook([ast]).score, 0);
+});
+
+test('event hook: subject built inline in the act passes', () => {
+  const ast = eventHookTest(`
+        $dispatcher = new CollectingEventDispatcher();
+        (new ProductRestockNotifier($dispatcher, new NullLogger()))->notify('p1', 5, Context::createDefaultContext());
+        static::assertCount(1, $dispatcher->getEvents());
+`);
+  assert.equal(evaluateEventHook([ast]).score, 1);
+});
+
+test('event hook: fully qualified class names pass', () => {
+  const ast = eventHookTest(`
+        $dispatcher = new \\Shopware\\Core\\Test\\Stub\\EventDispatcher\\CollectingEventDispatcher();
+        $notifier = new \\Swag\\Restock\\ProductRestockNotifier($dispatcher, new NullLogger());
+        $notifier->notify('p1', 5, Context::createDefaultContext());
+        static::assertCount(1, $dispatcher->getEvents());
+`);
+  assert.equal(evaluateEventHook([ast]).score, 1);
+});
+
+test('event hook: fully qualified EventHookDispatcher passes', () => {
+  const ast = eventHookTest(`
+        $restocked = null;
+        \\Shopware\\Core\\Test\\Integration\\EventDispatcher\\EventHookDispatcher::fromContainer(static::getContainer())
+            ->on(ProductRestockedEvent::class, function ($e) use (&$restocked): void { $restocked = $e; });
+        static::getContainer()->get(ProductRestockNotifier::class)->notify('p1', 5, Context::createDefaultContext());
+        static::assertNotNull($restocked);
+`);
+  assert.equal(evaluateEventHook([ast]).score, 1);
+});
