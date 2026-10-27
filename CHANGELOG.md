@@ -8,16 +8,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-### Changed
-
-- `dal-search-without-limit`, `business-logic-in-controller` and
-  `no-dal-connection-for-entity-read` ask for a feature now instead of a fix
-  that names the rule. On the old prompts every profile passed them with
-  skills off. On the new ones, claude/haiku fails the first two in both
-  arms and never loads a skill, so `ARCH-002`, `PLG-006`, `REV-010` and
-  `CORE-035` stay. `PLG-003` and `REV-024` still hold and get a
-  `keep_reason`: review tasks cite them.
-
 ### Added
 
 - `TEST-036` in `sw-testing`: a PR that changes code keeps the existing
@@ -81,6 +71,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   stops before the push. See `docs/maintenance.md#drafting-a-proposal`.
 
 ### Changed
+
+- `dal-search-without-limit`, `business-logic-in-controller` and
+  `no-dal-connection-for-entity-read` ask for a feature now instead of a fix
+  that names the rule. On the old prompts every profile passed them with
+  skills off. On the new ones, claude/haiku fails the first two in both
+  arms and never loads a skill, so `ARCH-002`, `PLG-006`, `REV-010` and
+  `CORE-035` stay. `PLG-003` and `REV-024` still hold and get a
+  `keep_reason`: review tasks cite them.
 
 - Three new core checks are cited in the catalog, so the drift issue files
   their changes under the rule and the "Already enforced by CI" sections
