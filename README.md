@@ -164,7 +164,8 @@ Built on, and rewritten from:
 [`biotech-shopware/claude-shopware-skill`](https://github.com/biotech-shopware/claude-shopware-skill),
 [`netresearch/php-modernization-skill`](https://github.com/netresearch/php-modernization-skill),
 the [LambdaTest PHPUnit skill](https://github.com/LambdaTest/agent-skills),
-and Shopware's own [`coding-guidelines`](https://github.com/shopware/shopware/tree/trunk/coding-guidelines).
+[`blader/humanizer`](https://github.com/blader/humanizer) for the prose
+read-through in `sw-assistant-style`, and Shopware's own [`coding-guidelines`](https://github.com/shopware/shopware/tree/trunk/coding-guidelines).
 Authoring follows [Anthropic's skill guide](https://www.anthropic.com/news/skills)
 and the [skills.sh](https://github.com/vercel-labs/skills) ecosystem.
 

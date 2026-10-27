@@ -48,6 +48,15 @@ Read the reference that matches the task or the files it changes:
 - **PRD-009** For a diff over about 400 lines, say in section 4 why it is not
   split, or name the follow-up PRs.
 
+## Before you hand back the body
+
+Read it once more and rewrite every sentence that contrasts with a claim
+nobody made ("not just X, but Y"), opens with a run-up or ends on a line that
+repeats it, inflates a plain fact (crucial, seamless, plays a key role), or
+gives list items a bold label with a colon. Keep every fact, code span and
+template heading, and add none. The full list is `STY-001` in
+`sw-assistant-style`.
+
 Pair with `sw-core-development` when the change needs RELEASE_INFO or
 UPGRADE entries. Confirm CI is green before marking the PR ready for review
 (`sw-review-learnings` pre-submit).
@@ -57,3 +66,4 @@ UPGRADE entries. Confirm CI is green before marking the PR ready for review
 - [ ] All five template sections addressed; "Impact" only when it applies.
 - [ ] Checklist reflects the real change (tests, release notes, docs, comments).
 - [ ] Output is one copy-paste-ready markdown block.
+- [ ] The body passed the read-through above.
