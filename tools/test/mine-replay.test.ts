@@ -410,6 +410,7 @@ describe('every source over 2026-10-13..2026-10-19', () => {
     'php-modernization-2026-10-13..2026-10-19.json',
     'shopware-cli-2026-10-13..2026-10-19.json',
     'fos-agent-skills-2026-10-13..2026-10-19.json',
+    'humanizer-2026-10-13..2026-10-19.json',
   ];
   const repo = 'acme/skills-library';
   // Last week's issue, read up to 2026-10-12 in two sources: covered.
@@ -447,7 +448,14 @@ describe('every source over 2026-10-13..2026-10-19', () => {
       now: '2026-10-20T05:00:00Z',
       dryRun: true,
     });
-    for (const id of ['shopware', 'ai-coding-tools', 'php-modernization', 'shopware-cli', 'fos-agent-skills']) {
+    for (const id of [
+      'shopware',
+      'ai-coding-tools',
+      'php-modernization',
+      'shopware-cli',
+      'fos-agent-skills',
+      'humanizer',
+    ]) {
       assert.match(out, new RegExp(`^\\| \`${id}\` \\| 2026-10-13 \\|`, 'mu'), id);
     }
     assert.match(out, /^\| `shopware-cli` \| 2026-10-13 \| 1 \| 1 \|/mu);

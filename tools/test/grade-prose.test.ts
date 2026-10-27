@@ -20,7 +20,8 @@ describe('proseTells', () => {
   });
 
   test('ignores code, headings and checklist lines', () => {
-    const text = '### Seamless heading\n\n`serves as` in code\n\n```\nfoo -- bar\n```\n\n- [ ] **Only** non-obvious code\n';
+    const text =
+      '### Seamless heading\n\n`serves as` in code\n\n```\nfoo -- bar\n```\n\n- [ ] **Only** non-obvious code\n';
     assert.deepEqual(proseTells(text), {});
   });
 
