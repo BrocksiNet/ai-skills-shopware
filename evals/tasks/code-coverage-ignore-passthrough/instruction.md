@@ -1,8 +1,7 @@
-# Task: do not ignore coverage on branching code
+# Task: clean up the price calculator
 
-`PriceCalculator::calculate()` is marked `@codeCoverageIgnore` but it
-branches and throws. That annotation is for pass-through code only.
+`PriceCalculator.php` is production code in a shopware/shopware contribution.
+Clean it up before the PR so it passes core review.
 
-- Remove `@codeCoverageIgnore` from `calculate()`.
-- Keep the public method and the negative-price throw.
-- Do not change the test file.
+- Keep the public `calculate()` method and its behaviour, including the
+  exception for a negative price.

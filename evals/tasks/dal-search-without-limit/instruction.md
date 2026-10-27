@@ -1,5 +1,5 @@
-# Task: bound DAL search
+# Task: review follow-up on ProductLoader
 
-Fix `fixture/ProductLoader.php` so product reads use a **bounded** Criteria
-(`setLimit` or equivalent pagination). Keep the repository-based read; do not
-switch to raw SQL.
+A reviewer flagged `fixture/ProductLoader.php` in our plugin as a production
+risk for merchants with big catalogs. Fix it. Keep the read going through the
+product repository (no raw SQL) and keep `loadAll()` returning product IDs.

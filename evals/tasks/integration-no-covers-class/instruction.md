@@ -1,10 +1,8 @@
-# Task: remove CoversClass from integration test
+# Task: clean up the product loader integration test
 
-Fix `ProductLoaderIntegrationTest.php` for Shopware core PHPUnit rules:
+`ProductLoaderIntegrationTest.php` is an integration test for a
+shopware/shopware contribution. Bring it in line with core's PHPUnit
+conventions before the PR.
 
-- Remove **`#[CoversClass]`** (and `CoversFunction` / `CoversNothing` if present) — those
-  attributes belong on **unit/migration** tests only, not integration tests.
-- Keep it an **integration test** (`IntegrationTestBehaviour`, `TestCase`).
-- Keep **`assertSame`** for assertions.
-
-Do not change `ProductLoader.php`.
+- Keep it an integration test (`IntegrationTestBehaviour`, `TestCase`).
+- Do not change `ProductLoader.php`.

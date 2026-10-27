@@ -1,9 +1,8 @@
-# Task: disable the newer major in a 6.8 unit test
+# Task: fix the 6.8 rounding test
 
-`CartRoundingTest` asserts 6.8 rounding. While two majors are in flight the
-unit bootstrap activates both, so this test currently sees 6.9 behaviour.
+`CartRoundingTest` is a shopware/shopware unit test that asserts 6.8 rounding.
+While 6.8 and 6.9 are both in development, the unit bootstrap activates both
+majors, so the test currently sees 6.9 behaviour and fails.
 
-- Disable the newer major with `#[DisabledFeatures(['v6.9.0.0'])]` on the
-  test class or method.
-- Do not use `Feature::fake()` to turn the current major on.
-- Keep the existing assertion. This is still a unit test.
+Make the test run against 6.8 behaviour. Keep the existing assertions, and keep
+it a unit test.

@@ -1,9 +1,9 @@
-# Task: do not deprecate a DI id core still uses
+# Task: review the legacy loader deprecation (core)
 
-`services.xml` marks `swag.example.legacy_loader` as `<deprecated>` while
-`LegacyCaller.php` still injects that id.
+You are working on **Shopware core** (`shopware/shopware` trunk). This change
+in `Resources/config/services.xml` marks `swag.example.legacy_loader` as
+deprecated in favour of `CurrentLoader`.
 
-- Remove the DI `deprecated` attribute while the core caller remains.
-- Keep the service id and the PHP constructor injection.
-- Do not add `@deprecated` on the XML definition until the last core
-  reference is gone.
+`LegacyCaller` is not migrated in this PR; that is a follow-up. Review the
+change and fix what would block it from merging. Keep the service id and
+`LegacyCaller`'s constructor injection as they are.

@@ -1,7 +1,8 @@
-# Task: repository integration test uses narrow traits
+# Task: fix the product repository test setup
 
-`ProductRepositoryTest` only needs the service container and a rolled-back
-transaction. It does not use the sales channel, HTTP cache, or request stack.
+`ProductRepositoryTest` is a shopware/shopware integration test. It needs the
+service container, and it will write products through the repository, so its
+database changes must be rolled back after each test. It does not touch the
+sales channel, the HTTP cache or the request stack.
 
-Replace `IntegrationTestBehaviour` with `KernelTestBehaviour` and
-`DatabaseTransactionBehaviour`. Do not keep the broad bundle.
+Core review flagged the test's setup. Fix it.

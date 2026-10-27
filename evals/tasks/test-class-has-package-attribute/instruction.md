@@ -1,9 +1,8 @@
-# Task: add Package attribute to test class
+# Task: prepare the cart normalizer test for core
 
-Update `CartNormalizerTest.php` for a shopware/shopware contribution:
+`CartNormalizerTest.php` is a new unit test for a shopware/shopware
+contribution. Core CI runs its PHPStan rules on test classes too. Bring the
+test class in line with core's conventions so it passes.
 
-- Add `#[Package('checkout.cart')]` on the test class (import
-  `Shopware\Core\Framework\Log\Package`).
-- Keep `#[CoversClass(CartNormalizer::class)]` — the package matches the covered
-  production class's package.
+- Keep the existing `#[CoversClass]`.
 - Do not change `CartNormalizer.php` unless required.

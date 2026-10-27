@@ -1,15 +1,11 @@
-# Task: modernize HTTP fetch behind a feature flag (core)
+# Task: move RemoteSnippetFetcher to the Symfony HTTP client (core)
 
-You are changing **Shopware platform** code in `RemoteSnippetFetcher.php`.
+You are working on **Shopware core** (`shopware/shopware` trunk) in
+`RemoteSnippetFetcher.php`.
 
-Refactor the fetch logic so that:
+We want this service to fetch through Symfony's HTTP client instead of
+`file_get_contents`. The change lands in a 6.7 minor release; 6.8.0 is the
+next major. Make the change the way core would merge it.
 
-1. When `Feature::isActive('v6.8.0')` is **true**, use
-   `Symfony\Contracts\HttpClient\HttpClientInterface` (inject via constructor).
-2. When the flag is **false**, keep the existing `file_get_contents` behavior
-   (same failure semantics).
-3. Do **not** remove the legacy path — core keeps both until the major.
-4. Inject dependencies via the constructor; no static calls for the new path.
-
-Assume `Shopware\Core\Framework\Feature` and `HttpClientInterface` are available.
-Do not add release-note files unless the task requires it; focus on the service class.
+Assume the Symfony HTTP client and the Shopware framework classes are
+available. Focus on the service class; no release-note files.

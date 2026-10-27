@@ -1,8 +1,7 @@
-# Task: stop reflecting into a private Shopware method
+# Task: fix the price calculator test
 
-`PriceCalculatorTest.php` invokes a private method via `ReflectionMethod`.
-Update the test so it exercises the public `calculate()` API instead.
+`PriceCalculatorTest.php` is a shopware/shopware unit test. Core review
+rejected how it tests the tax calculation. Fix it.
 
-- Do not call `ReflectionMethod`, `invoke`, `invokeArgs`, or `setAccessible`.
-- Keep the same assertion: `calculate(10.0)` returns `11.0`.
+- Keep checking, with `assertSame`, that a net of `10.0` becomes `11.0`.
 - Do not change `PriceCalculator.php`.

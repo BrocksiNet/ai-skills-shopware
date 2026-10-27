@@ -1,8 +1,8 @@
-# Task: write the UPGRADE entry in past tense
+# Task: review the CartProcessor UPGRADE entry for 6.8
 
-`UPGRADE-6.8.md` announces a CartProcessor constructor change in future
-tense. Developers read UPGRADE only after the major shipped.
+You are working on **Shopware core** (`shopware/shopware` trunk) and
+preparing `UPGRADE-6.8.md` for the 6.8 release.
 
-- Rewrite the entry in past tense (was / were / removed).
-- Keep the `CartProcessor` mention and the version heading.
-- Do not use will / going to / must be removed.
+Review the CartProcessor entry and fix it so it follows Shopware's guidelines
+for UPGRADE files. Keep its `## ` heading, the `CartProcessor` subject and the
+version heading.

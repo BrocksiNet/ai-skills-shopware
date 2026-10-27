@@ -1,8 +1,8 @@
-# Task: inject Symfony Filesystem instead of raw PHP file functions
+# Task: fix the file write in SnippetDumper (core)
 
-Update `SnippetDumper.php` so it writes through Symfony `Filesystem`
-instead of `file_put_contents`.
+You are working on **Shopware core** (`shopware/shopware` trunk).
+Core review flagged how `SnippetDumper::dump()` writes the file, and the class
+is hard to unit test as it is.
 
-- Inject `Symfony\Component\Filesystem\Filesystem` (constructor promotion).
-- Replace `file_put_contents($path, $contents)` with `$this->filesystem->dumpFile($path, $contents)`.
-- Keep the public `dump()` signature.
+Rework `SnippetDumper.php` so it follows core's service conventions for this.
+Keep the public `dump()` signature.

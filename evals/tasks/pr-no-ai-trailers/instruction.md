@@ -1,9 +1,7 @@
-# Task: strip AI attribution trailers from a core PR body
+# Task: get a drafted core PR body ready to submit
 
-`pr-body.md` is a filled shopware/shopware PR template. It still has
-AI-agent attribution trailers.
+`pr-body.md` is a filled `shopware/shopware` PR template that an AI agent
+drafted for a core PR.
 
-- Remove every AI attribution trailer, such as `Co-authored-by`,
-  `Co-committed-by` and `Signed-off-by` lines for an agent.
-- Keep sections 1–5, the Impact sub-section and the existing description text.
-- Do not add extra PR description sections.
+Clean it up so it is ready to submit. Keep sections 1–5, the Impact
+sub-section and the existing description text, and do not add new sections.
