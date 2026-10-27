@@ -2,6 +2,7 @@
 
 namespace Smoke\Fixture;
 
+use Shopware\Core\Framework\Context;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Routing\Attribute\Route;
 
@@ -13,8 +14,8 @@ final class ProductController
     }
 
     #[Route(path: '/store-api/example/products', methods: ['GET'])]
-    public function list(): JsonResponse
+    public function list(Context $context): JsonResponse
     {
-        return new JsonResponse(['productIds' => $this->listingService->listProductIds()]);
+        return new JsonResponse(['productIds' => $this->listingService->listProductIds($context)]);
     }
 }

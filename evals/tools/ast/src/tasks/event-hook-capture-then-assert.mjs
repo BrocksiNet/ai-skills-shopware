@@ -39,11 +39,12 @@ export function evaluate(asts) {
     });
 
     for (const cls of findClasses(ast)) {
+      const props = setUpProperties(cls);
       for (const member of cls.body ?? []) {
         if (member.kind !== 'method' || !nodeName(member.name).startsWith('test')) {
           continue;
         }
-        const shape = methodShape(member);
+        const shape = methodShape(member, props);
         if (shape !== 'none') {
           bestShape = shape;
         }
@@ -75,7 +76,76 @@ export function grade({ workdir }) {
 
 // --- shapes -----------------------------------------------------------------
 
-function methodShape(method) {
+// What a node builds or looks up, as facts: the subject under test, a
+// dispatcher the test owns, or the EventHookDispatcher. Class names compare
+// by short name, so `new \Swag\Restock\ProductRestockNotifier()` counts.
+function nodeFacts(node) {
+  const facts = new Set();
+  if (node.kind === 'new' && typeName(node.what) === 'ProductRestockNotifier') {
+    facts.add('subject');
+  }
+  if (node.kind === 'new' && OWNED_DISPATCHERS.has(typeName(node.what))) {
+    facts.add('dispatcher');
+  }
+  if (node.kind === 'call' && ['createMock', 'createStub'].includes(calledMethod(node))) {
+    const first = node.arguments?.[0];
+    if (first?.kind === 'staticlookup' && typeName(first.what) === 'EventDispatcherInterface') {
+      facts.add('dispatcher');
+    }
+  }
+  if (node.kind === 'staticlookup' && typeName(node.what) === 'EventHookDispatcher') {
+    facts.add('hook');
+  }
+  return facts;
+}
+
+// `$this-><prop>` assignments in setUp(): prop name -> the facts of the
+// value assigned, so a test using `$this->notifier` built there counts. A
+// value built from an earlier local or property (`new
+// ProductRestockNotifier($this->dispatcher, ...)`) takes its facts too.
+function setUpProperties(cls) {
+  const assigned = new Map();
+  const setUp = (cls.body ?? []).find((m) => m.kind === 'method' && nodeName(m.name) === 'setUp');
+  if (!setUp) {
+    return assigned;
+  }
+  walkPhp(setUp.body, (node) => {
+    if (node.kind !== 'assign') {
+      return;
+    }
+    const key = refKey(node.left);
+    if (!key) {
+      return;
+    }
+    const facts = assigned.get(key) ?? new Set();
+    walkPhp(node.right, (child) => {
+      for (const fact of [...nodeFacts(child), ...(assigned.get(refKey(child)) ?? [])]) {
+        facts.add(fact);
+      }
+    });
+    assigned.set(key, facts);
+  });
+  return new Map([...assigned].filter(([key]) => key.startsWith('this->')));
+}
+
+// The facts of the statements, including `$this->` properties set in setUp().
+function statementFacts(statements, props) {
+  const facts = new Set();
+  for (const stmt of statements) {
+    walkPhp(stmt, (node) => {
+      for (const fact of nodeFacts(node)) {
+        facts.add(fact);
+      }
+      const key = node.kind === 'propertylookup' ? refKey(node) : '';
+      for (const fact of props.get(key) ?? []) {
+        facts.add(fact);
+      }
+    });
+  }
+  return facts;
+}
+
+function methodShape(method, props = new Map()) {
   const statements = method.body?.children ?? [];
   const actIndex = statements.findIndex((stmt) => containsCall(stmt, SUBJECT_CALL));
   if (actIndex === -1) {
@@ -83,16 +153,16 @@ function methodShape(method) {
   }
   const before = statements.slice(0, actIndex);
   const after = statements.slice(actIndex + 1);
+  // The subject and its dispatcher may be built in setUp(), before the act,
+  // or inline in the act: (new ProductRestockNotifier(...))->notify(...).
+  const arranged = statementFacts([...before, statements[actIndex]], props);
 
   // Integration shape: EventHookDispatcher::fromContainer(...)->on(name, closure)
   // whose by-reference capture is asserted after the act.
   const captured = new Set();
-  let usesHook = false;
+  const usesHook = statementFacts(before, props).has('hook');
   for (const stmt of before) {
     walkPhp(stmt, (node) => {
-      if (node.kind === 'staticlookup' && nodeName(node.what) === 'EventHookDispatcher') {
-        usesHook = true;
-      }
       if (node.kind === 'call' && calledMethod(node) === 'on') {
         for (const arg of node.arguments ?? []) {
           if (arg.kind === 'closure') {
@@ -112,23 +182,11 @@ function methodShape(method) {
 
   // Unit shape: the test builds the notifier around a dispatcher it owns and
   // asserts on it after the act, or sets a mock expectation on dispatch().
-  let ownsDispatcher = false;
-  let buildsSubject = false;
+  const ownsDispatcher = arranged.has('dispatcher');
+  const buildsSubject = arranged.has('subject');
   let mockExpectsDispatch = false;
   for (const stmt of before) {
     walkPhp(stmt, (node) => {
-      if (node.kind === 'new' && OWNED_DISPATCHERS.has(nodeName(node.what))) {
-        ownsDispatcher = true;
-      }
-      if (node.kind === 'new' && nodeName(node.what) === 'ProductRestockNotifier') {
-        buildsSubject = true;
-      }
-      if (node.kind === 'call' && ['createMock', 'createStub'].includes(calledMethod(node))) {
-        const first = node.arguments?.[0];
-        if (first?.kind === 'staticlookup' && nodeName(first.what) === 'EventDispatcherInterface') {
-          ownsDispatcher = true;
-        }
-      }
       if (node.kind === 'call' && calledMethod(node) === 'method') {
         const first = node.arguments?.[0];
         if (first?.kind === 'string' && first.value === 'dispatch' && containsCall(node, 'expects')) {
@@ -144,6 +202,11 @@ function methodShape(method) {
 }
 
 // --- helpers ----------------------------------------------------------------
+
+// The short class name of a name node: `\Swag\Restock\Foo` -> `Foo`.
+function typeName(node) {
+  return nodeName(node).split('\\').pop() ?? '';
+}
 
 function calledMethod(call) {
   const what = call.what;

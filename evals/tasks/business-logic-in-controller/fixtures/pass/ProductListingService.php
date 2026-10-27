@@ -10,18 +10,17 @@ final class ProductListingService
 {
     public function __construct(
         private readonly EntityRepository $productRepository,
-        private readonly Context $context,
     ) {
     }
 
     /**
      * @return list<string>
      */
-    public function listProductIds(): array
+    public function listProductIds(Context $context): array
     {
         $criteria = new Criteria();
         $criteria->setLimit(25);
 
-        return $this->productRepository->search($criteria, $this->context)->getIds();
+        return $this->productRepository->search($criteria, $context)->getIds();
     }
 }

@@ -6,7 +6,9 @@ description: >-
   Resources/app/administration: Vue modules and single file component
   overrides, Meteor mt-* components such as mt-modal, Pinia stores, Admin ACL
   privileges, Admin TypeScript, Jest specs next to the component, or Admin
-  changes for 6.8. Do NOT use for storefront Twig/PluginManager
+  changes for 6.8. Also use when asked whether Shopware 6.8 requires
+  rewriting a Twig/Options API Administration override as a single file
+  component with swDefineOverride. Do NOT use for storefront Twig/PluginManager
   (sw-storefront), PHPUnit (sw-testing), or PHP DAL/services
   (surface PHP skills).
 license: MIT
