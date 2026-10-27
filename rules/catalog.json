@@ -4749,6 +4749,12 @@
       "since": "2026-10-27",
       "title": "Read prose through once for machine-writing tells and rewrite them without adding or dropping facts",
       "eval": "plain-prose-dev-answer",
+      "upstream": [
+        {
+          "source": "humanizer",
+          "path": "SKILL.md"
+        }
+      ],
       "core_guide_ids": [],
       "audience": [
         "core",

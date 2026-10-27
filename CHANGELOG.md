@@ -20,7 +20,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   pairs, and graders stayed green. Installing humanizer next to our skills
   did nothing, because the agent never loaded it. Eval task
   `plain-prose-dev-answer`; its grader uses the new
-  `tools/src/grade/prose.ts`.
+  `tools/src/grade/prose.ts`. Humanizer is a drift source now, so a change
+  to its `SKILL.md` shows up under `STY-001` in the weekly issue.
 - `STY` prefix for `sw-assistant-style`. The support-reply block rule is
   `STY-002`, and saying plainly when unsure is `STY-003`.
 - `TEST-036` in `sw-testing`: a PR that changes code keeps the existing

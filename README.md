@@ -113,9 +113,9 @@ and its rule cannot drift apart. Diagrams and the eval layers are in
 ## Staying current
 
 A weekly job reads Shopware trunk (agent skills, guidelines, PHPStan rules)
-and four upstream skill sets: `shopwareLabs/ai-coding-tools`,
-`netresearch/php-modernization-skill`, `shopware/shopware-cli` and
-`FriendsOfShopware/agent-skills`. It opens one issue that maps each change to
+and five upstream skill sets: `shopwareLabs/ai-coding-tools`,
+`netresearch/php-modernization-skill`, `shopware/shopware-cli`,
+`FriendsOfShopware/agent-skills` and `blader/humanizer`. It opens one issue that maps each change to
 the skill and rule it touches. A daily job collects review comments from
 merged core PRs into the `review-signals` release. The API index rebuilds
 weekly, and model evals run monthly and before releases. See
