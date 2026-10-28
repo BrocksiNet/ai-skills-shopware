@@ -86,6 +86,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- The descriptions of `sw-plugin-development`, `sw-architecture`,
+  `sw-testing`, `sw-php-foundation`, `sw-core-development`, `sw-storefront`
+  and `sw-admin-js` say to load the skill before an edit, even a small and
+  fully specified one, and name the kinds of code that need it. In the
+  baseline, Haiku loaded no skill on build tasks it felt sure about. On 17
+  of those tasks it now loads one in 41 of 51 runs. No should-not-trigger
+  prompt of these skills fires. `sw-architecture` no longer tells the agent
+  to skip it for "one obvious edit". `sw-plugin-development` points at the
+  limit rule `ARCH-002`, because Haiku loads it without `sw-architecture`.
 - `dal-search-without-limit`, `business-logic-in-controller` and
   `no-dal-connection-for-entity-read` ask for a feature now instead of a fix
   that names the rule. On the old prompts every profile passed them with

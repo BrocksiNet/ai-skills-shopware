@@ -1,11 +1,14 @@
 ---
 name: sw-testing
 description: >-
-  Use when writing a Shopware PHPUnit test in a plugin or project, or when a
-  trunk test is in the wrong suite, missing a Package attribute, flaky, or
-  failing Codecov. On shopware/shopware, shopware-phpunit-tests owns a plain
-  add-a-test request. Do NOT use for storefront E2E, Administration Jest, or
-  running the suite (sw-podman-dev).
+  Shopware PHPUnit rules that generic PHPUnit knowledge misses. Load it
+  before writing, fixing or changing any PHPUnit test of Shopware code in a
+  plugin, project or core, even a small edit: a test method, a data
+  provider, a repository stub or mock, an event assertion, a feature flag or
+  major-version guard, test attributes, or the suite a test lives in. Also
+  use when a test is flaky or failing Codecov. On shopware/shopware,
+  shopware-phpunit-tests owns a plain add-a-test request. Do NOT use for
+  storefront E2E, Administration Jest, or running the suite (sw-podman-dev).
 license: MIT
 metadata:
   contexts: core plugin project

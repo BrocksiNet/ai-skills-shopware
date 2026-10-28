@@ -1,11 +1,13 @@
 ---
 name: sw-php-foundation
 description: >-
-  Apply the strict, modern PHP 8.x baseline to Shopware code. Use when writing
-  or refactoring PHP in a Shopware plugin, app, or core and choosing types,
-  enums, DTOs, immutability, or coding style (PER-CS), or when fixing PHPStan
-  type errors. Do NOT use for non-PHP work (Twig-only, Vue/JS/SCSS), for
-  PHPUnit test authoring (use sw-testing), or for Shopware-specific
+  The strict, modern PHP 8.x baseline for Shopware code. Load it before
+  writing or refactoring any PHP class in a Shopware plugin, app, or core,
+  even a small edit: constructor injection and the types it takes, enums
+  versus constants, empty() and other loose checks, time() or date() versus
+  a clock, DTOs, immutability, named arguments, coding style (PER-CS), or a
+  PHPStan type error. Do NOT use for non-PHP work (Twig-only, Vue/JS/SCSS),
+  for PHPUnit test authoring (use sw-testing), or for Shopware-specific
   framework topics like DAL, cache, or migrations (use the surface skills).
 license: MIT
 metadata:

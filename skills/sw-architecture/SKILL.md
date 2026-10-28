@@ -1,15 +1,17 @@
 ---
 name: sw-architecture
 description: >-
-  Use when introducing a new Shopware architecture, or when a change can
-  break an existing one without the diff saying so. That includes a new
-  extension structure, a boundary between Core and Storefront or
-  Administration, a second path that fails silently for callers on the old
-  one, an event versus a decoration versus a core edit, and a repository
-  search with no limit. Do NOT use to write the ADR or RELEASE_INFO
-  (sw-core-development), for route privileges (sw-security),
-  or for a private bugfix with one obvious edit (shopware-php-code or
-  sw-plugin-development).
+  Shopware design decisions a plain edit gets wrong: where logic lives
+  (route or controller versus service), how data is read (repository with a
+  limit, not raw SQL on an entity table), and how code is extended (event,
+  decoration, or a core edit). Load it before adding or changing a route,
+  controller, service, repository or Criteria read, event, or extension
+  point in Shopware PHP, even when the task looks like one obvious edit.
+  Also use when a change can break an existing design without the diff
+  saying so: a new extension structure, a boundary between Core and
+  Storefront or Administration, or a second path that fails silently for
+  callers on the old one. Do NOT use to write the ADR or RELEASE_INFO
+  (sw-core-development) or for route privileges (sw-security).
 license: MIT
 metadata:
   contexts: core plugin app project

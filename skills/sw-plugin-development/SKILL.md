@@ -1,16 +1,20 @@
 ---
 name: sw-plugin-development
 description: >-
-  Extend Shopware 6 with PHP plugins and a shop project's own backend code.
-  Use when the target lives on top of the platform: custom/plugins,
-  custom/static-plugins, vendor/store.shopware.com, a standalone plugin repo
-  (a class extending Shopware\Core\Framework\Plugin\Plugin), or project src/
-  services. Covers services and DI (PHP on 6.8, XML on 6.6/6.7, migrating
-  services.xml to PHP), DAL queries, HTTP cache tags, migrations, decorating
-  core services, Symfony HttpClient, and 6.6 to 6.8 compatibility. Do NOT use
-  for the platform itself (sw-core-development), for declarative apps
-  with a manifest.xml (sw-app-development), generic PHP style
-  (sw-php-foundation), or test authoring (sw-testing).
+  Shopware 6 plugin and shop project backend rules that the code alone does
+  not show. Load it before writing or changing PHP in a Shopware plugin or
+  project, even a small, fully specified edit: a service, a controller, a
+  Store API or storefront route, a repository read or Criteria, an event
+  subscriber, a decorator, a migration, cache tags, an HTTP client, or DI
+  config. Targets custom/plugins, custom/static-plugins,
+  vendor/store.shopware.com, a plugin repo (a class extending
+  Shopware\Core\Framework\Plugin\Plugin), or project src/. Covers services
+  and DI (PHP on 6.8, XML on 6.6/6.7, migrating services.xml to PHP), DAL
+  queries, HTTP cache tags, migrations, decorating core services, Symfony
+  HttpClient, and 6.6 to 6.8 compatibility. Do NOT use for the platform
+  itself (sw-core-development), for declarative apps with a manifest.xml
+  (sw-app-development), generic PHP style (sw-php-foundation), or test
+  authoring (sw-testing).
 license: MIT
 metadata:
   contexts: plugin project
@@ -67,7 +71,8 @@ Inherits all **`sw-php-foundation` trunk habits** (`empty()`, interface injectio
   `sw-review-learnings`. New Store-API routes need OpenAPI (see
   `api-contracts.md`) and ACL (`sw-security`).
 - **DAL first.** Read with `Criteria` (add associations before filtering on them;
-  avoid N+1; request only the fields/associations you need). Write with
+  avoid N+1; request only the fields/associations you need). Every search
+  sets a limit or pages through the result (`ARCH-002`). Write with
   `EntityRepository::create/update/upsert` and the right `Context`.
 - **Cache (6.7+).** Inject `CacheTagCollector` and call `addTag()` (6.7.2+;
   dispatch `AddCacheTagEvent` for 6.7.0 and 6.7.1); invalidate
@@ -94,7 +99,7 @@ Inherits all **`sw-php-foundation` trunk habits** (`empty()`, interface injectio
 
 - [ ] `sw-php-foundation` baseline satisfied (strict types, enums/DTOs, PER-CS).
 - [ ] No core/vendor modification; extension done via decoration/events/extensions.
-- [ ] DAL used for entity data; associations added before filtering; no obvious N+1.
+- [ ] DAL used for entity data; associations added before filtering; no obvious N+1; every search limited.
 - [ ] No deprecated API where a stable one exists; 6.6 compat preserved or the bump flagged.
 - [ ] 6.8 preparation kept the supported range, and named behavior that still compiles.
 - [ ] 6.8-targeted plugins register Symfony DI in PHP, not `services.xml`.
