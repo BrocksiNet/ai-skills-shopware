@@ -67,8 +67,8 @@ Tasks without a `skills` file use the default `SMOKE_SKILLS` only.
 
 | Task | Skill under test |
 | ---- | ---------------- |
-| `no-empty-explicit` | `sw-php-foundation` — no `empty()` |
-| `backed-enum-over-constants` | `sw-php-foundation` — backed enum |
+| `no-empty-explicit` | `PHP-001` — core feature without `empty()` |
+| `backed-enum-over-constants` | `PHP-002` — core states as a backed enum |
 | `unit-test-passes` | `sw-testing` — unit test shape |
 | `clock-interface-injection` | `sw-php-foundation` — PSR-20 clock, no `time()` |
 | `unit-test-exception-object` | `sw-testing` — `expectExceptionObject`, no message matcher |

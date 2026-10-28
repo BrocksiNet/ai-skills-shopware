@@ -59,8 +59,13 @@ Read only the reference that matches the task or the files it changes:
 
 ## Hard guardrails
 
-1. **ARCH-002** **Never unbounded DAL reads** on large entities — always `setLimit` / pagination
-   unless a documented admin/export exception.
+1. **ARCH-002** **Never unbounded DAL reads** on large entities. A read for a page,
+   a widget or an API response sets a limit. A job that needs every row (an
+   export, a CLI command, an indexer) pages through them in a loop:
+   `RepositoryIterator` on the DAL, or for a plain ID scan `IteratorFactory` or
+   a DBAL query with a limit and a last-ID cursor (core does this in indexers;
+   a plugin states why, see `PLG-003`). One `setLimit()` without the loop drops
+   every row after the first page.
 2. **Never use Doctrine `Connection` for entity CRUD** when `EntityRepository` +
    `Criteria` express the query (`PLG-003`).
 3. **ARCH-003** **Never silent behaviour change** on paths extensions observe — flag, release

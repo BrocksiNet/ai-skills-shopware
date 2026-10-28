@@ -70,6 +70,10 @@ Read only the reference that matches the task or the files it changes:
 
 ## Core deltas on top of sw-php-foundation
 
+- **The trunk PHP baseline applies to every line you touch.** No `empty()`
+  (`PHP-001`; PHPStan rejects it on trunk) and a backed `enum` for a fixed set
+  of values in new code (`PHP-002`). The rest of the baseline is in
+  `sw-php-foundation`.
 - **`@internal` discipline.** New classes that are not meant for extension are
   marked `@internal`. Respect existing `@internal` — do not call or extend it
   from outside its bundle.

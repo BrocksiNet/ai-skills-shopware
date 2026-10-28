@@ -1,26 +1,28 @@
 <?php declare(strict_types=1);
 
-namespace Smoke\Fixture;
+namespace Swag\Example\Service;
 
+use Shopware\Core\Framework\Context;
 use Shopware\Core\Framework\DataAbstractionLayer\EntityRepository;
 use Shopware\Core\Framework\DataAbstractionLayer\Search\Criteria;
-use Shopware\Core\Framework\Context;
 
-final class ProductLoader
+class ProductLoader
 {
-    /**
-     * @param EntityRepository $productRepository
-     */
     public function __construct(
         private readonly EntityRepository $productRepository,
     ) {
     }
 
+    /**
+     * @return list<string>
+     */
     public function loadAll(Context $context): array
     {
         $criteria = new Criteria();
-        $criteria->setLimit(50);
 
-        return $this->productRepository->search($criteria, $context)->getIds();
+        /** @var list<string> $ids */
+        $ids = $this->productRepository->searchIds($criteria, $context)->getIds();
+
+        return $ids;
     }
 }

@@ -4797,6 +4797,52 @@
         "app"
       ],
       "defer_on_trunk": false
+    },
+    {
+      "id": "PHP-001",
+      "skill": "sw-php-foundation",
+      "file": "skills/sw-php-foundation/SKILL.md",
+      "title": "No empty(); compare explicitly",
+      "status": "active",
+      "since": "2026-10-28",
+      "eval": "no-empty-explicit",
+      "core_guide_ids": [],
+      "audience": [
+        "core"
+      ],
+      "defer_on_trunk": false,
+      "trunk": {
+        "source": "src/Core/DevOps/StaticAnalyze/PHPStan/common.neon",
+        "commit": "4827f64c",
+        "enforced_by": [
+          {
+            "tool": "strictRules.disallowedEmpty",
+            "kind": "phpstan",
+            "catches": "reports every `empty()` call in core code",
+            "misses": "plugins and apps, whose PHPStan config does not enable the strict rules by default",
+            "trunk_only": true
+          }
+        ]
+      }
+    },
+    {
+      "id": "PHP-002",
+      "skill": "sw-php-foundation",
+      "file": "skills/sw-php-foundation/SKILL.md",
+      "title": "Backed enums over class constants for a fixed set of values",
+      "status": "active",
+      "since": "2026-10-28",
+      "eval": "backed-enum-over-constants",
+      "keep_reason": "Held on claude/haiku (2026-10-28, 3/3 with skills off), even next to constant-style core code: models write an enum for new states on their own. Kept as a core coding guideline that reviewers ask for; the rule also carries the part models miss, that turning existing public constants into an enum is a break.",
+      "core_guide_ids": [],
+      "audience": [
+        "core"
+      ],
+      "defer_on_trunk": false,
+      "trunk": {
+        "source": "coding-guidelines/core/6.5-new-php-language-features.md#enums",
+        "commit": "69b4c74c"
+      }
     }
   ]
 }

@@ -14,7 +14,8 @@ Load when reading/writing entity data or tempted to “reach into” the DAL.
 
 | Mistake | Fix |
 | ------- | --- |
-| `search()` with **no limit** on catalog entities | `setLimit()` + pagination; document export-only exceptions |
+| `search()` with **no limit** on catalog entities | `setLimit()` for a page or widget; a job that needs every row pages in a loop (`RepositoryIterator`, or `IteratorFactory` / a DBAL query with a last-ID cursor for an ID scan) |
+| One `setLimit()` in a job that needs every row | Loop until the iterator or the cursor is exhausted; one page silently drops the rest |
 | Raw `Connection->fetch*` for entity CRUD | Repository + Criteria |
 | Filter on association without `addAssociation()` | Add association first |
 | N+1 loops calling repository per row | Load association in Criteria |

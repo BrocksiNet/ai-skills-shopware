@@ -72,7 +72,8 @@ Inherits all **`sw-php-foundation` trunk habits** (`empty()`, interface injectio
   `api-contracts.md`) and ACL (`sw-security`).
 - **DAL first.** Read with `Criteria` (add associations before filtering on them;
   avoid N+1; request only the fields/associations you need). Every search
-  sets a limit or pages through the result (`ARCH-002`). Write with
+  sets a limit; a job that needs every row pages through them in a loop with
+  `RepositoryIterator` (`ARCH-002`). Write with
   `EntityRepository::create/update/upsert` and the right `Context`.
 - **Cache (6.7+).** Inject `CacheTagCollector` and call `addTag()` (6.7.2+;
   dispatch `AddCacheTagEvent` for 6.7.0 and 6.7.1); invalidate

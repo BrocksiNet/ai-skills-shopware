@@ -39,9 +39,9 @@ this base.
 ## Shopware trunk habits (review-backed)
 
 Patterns `mitelg` and `nfortier-shopware` flag repeatedly on `shopware/shopware`
-PRs — apply in core, plugins, and project PHP alike:
+PRs. They are required on trunk and worth following in plugins and projects:
 
-- **No `empty()`.** Use explicit checks (`=== null`, `=== ''`, `=== []`, typed
+- **PHP-001** **No `empty()`.** Use explicit checks (`=== null`, `=== ''`, `=== []`, typed
   `count()`). In tests, prefer PHPUnit `assertEmpty()` / `assertNotEmpty()` over
   `empty()` in assertions.
 - **Inject interfaces**, not concrete services or repositories, when an interface
@@ -92,8 +92,10 @@ final readonly class PriceResult
 }
 ```
 
-- **Backed enums** over class constants / string literals for any fixed value set.
-  You get exhaustive `match()`, autocompletion, and compile-time checks.
+- **PHP-002** **Backed enums** over class constants / string literals for any fixed value set
+  in new code. You get exhaustive `match()`, autocompletion, and compile-time
+  checks. Turning existing public constants of core into an enum is a break;
+  deprecate them first (`sw-core-development`).
 - **`readonly` for DTOs / Value Objects / events** — data that should not mutate
   after construction. Use constructor property promotion.
 - Do *not* slap `readonly` on Doctrine entities or DAL entity classes — that is a
@@ -135,3 +137,14 @@ intent clearer — not for their own sake.
 
 - Shopware: writing code for static analysis (`shopware/shopware` `coding-guidelines/core/`).
 - PHP-FIG PER Coding Style; PHPStan rule levels.
+
+## Already enforced by CI (do not repeat)
+
+<!-- enforced:start: generated from rules/catalog.json by `node tools/bin/render-enforced.ts`; do not edit -->
+CI already fails the build on these, so do not repeat them in reviews or
+checklists. Flag only what each check misses.
+Checks marked *trunk only* are not active in plugin or app projects by
+default; there the rule still needs a reviewer.
+
+- `PHP-001` `strictRules.disallowedEmpty` (PHPStan, trunk only) reports every `empty()` call in core code. It misses plugins and apps, whose PHPStan config does not enable the strict rules by default; flag those.
+<!-- enforced:end -->

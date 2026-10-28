@@ -95,6 +95,35 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   prompt of these skills fires. `sw-architecture` no longer tells the agent
   to skip it for "one obvious edit". `sw-plugin-development` points at the
   limit rule `ARCH-002`, because Haiku loads it without `sw-architecture`.
+- `ARCH-002` says how to read every row: a job that needs all of them pages
+  in a loop with `RepositoryIterator`, or with `IteratorFactory` or a DBAL
+  query and a last-ID cursor for a plain ID scan. One `setLimit()` without
+  the loop drops the rest. The old text allowed an undefined "export
+  exception".
+- `dal-search-without-limit` asks for a category teaser in a plugin with a
+  composer.json and a plugin class, instead of filtering a method called
+  `loadAll()`. On the old prompt the agent rightly refused to truncate "all".
+  Its grader checks every method that searches, following calls to helpers
+  in the class, so a limit in an unused helper no longer passes. Haiku: 3/3
+  with skills on, 0/3 off.
+- New task `dal-export-pages-through-all`: a nightly CLI export of every
+  product ID in a category. It passes only when a method that reads products
+  pages in a loop. A single `setLimit()` read fails. The new
+  `tools/src/grade/php-calls.ts` follows same-class calls for both DAL
+  graders. Haiku pages here without the skill, so the task holds.
+- `business-logic-in-controller` runs in a plugin skeleton and no longer
+  reads as "write one file". Its grader skipped a class-level `#[Route]`
+  (the Store API scope) and took the constructor for the route action, which
+  failed correct solutions.
+- `PHP-001` (no `empty()`) and `PHP-002` (backed enums for a fixed set of
+  values in new code) are tagged in `sw-php-foundation` with audience
+  `core`. `PHP-001` is enforced on trunk by PHPStan's `disallowedEmpty`;
+  `PHP-002` comes from the core coding guideline on PHP 8.1 features.
+  `sw-core-development` points at both, because Haiku loads it for core work
+  without `sw-php-foundation`. Their tasks are core features now: a domain
+  blocklist in `CustomerEmailValidator`, and review moderation states. With
+  skills off, Haiku kept `empty()` in 3 of 3 runs, and with skills on it
+  removed it in 3 of 3. `PHP-002` holds on Haiku and keeps a `keep_reason`.
 - `dal-search-without-limit`, `business-logic-in-controller` and
   `no-dal-connection-for-entity-read` ask for a feature now instead of a fix
   that names the rule. On the old prompts every profile passed them with

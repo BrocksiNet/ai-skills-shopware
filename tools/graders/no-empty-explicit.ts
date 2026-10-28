@@ -1,12 +1,14 @@
-// Grader: no-empty-explicit — sw-php-foundation trunk habit (review-backed).
-// UserValidator must not call empty() and must compare explicitly.
-import { fail, findFile, type Grader, hasLine, read, verdict } from '../src/grade/kit.ts';
+// Grader: no-empty-explicit (PHP-001)
+// CustomerEmailValidator takes the blocked domains and no longer calls
+// empty() anywhere in its code, neither in the old null-or-empty email check
+// nor in the new blocklist path. Comments do not count.
+import { fail, findFile, type Grader, read, stripComments, verdict } from '../src/grade/kit.ts';
 
 export const grade: Grader = ({ workdir }) => {
-  const file = findFile(workdir, 'UserValidator');
-  if (file === undefined) return fail('UserValidator.php not found');
-  const text = read(file);
-  const usesEmpty = hasLine(text, /\bempty\s*\(/u);
-  const explicit = hasLine(text, /=== ''|=== null|!== ''|!== null/u);
-  return verdict(!usesEmpty && explicit, { uses_empty: usesEmpty, explicit_check: explicit });
+  const file = findFile(workdir, 'CustomerEmailValidator');
+  if (file === undefined) return fail('CustomerEmailValidator.php not found');
+  const code = stripComments(read(file));
+  const usesEmpty = /\bempty\s*\(/u.test(code);
+  const blocklist = /\$\w*(?:block|deny|disallow|forbid)\w*/iu.test(code);
+  return verdict(!usesEmpty && blocklist, { uses_empty: usesEmpty, blocklist });
 };

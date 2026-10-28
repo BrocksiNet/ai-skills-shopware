@@ -511,7 +511,7 @@ describe('skills profile', () => {
       lstatSync(join(ROOT, 'skills', s)).isDirectory(),
     ).length;
     const dir = wd();
-    skillsProfile(ROOT, 'on', dir, 'no-empty-explicit');
+    skillsProfile(ROOT, 'on', dir, 'unit-test-passes');
     assert.equal(readdirSync(join(dir, '.claude/skills')).length, all);
     const bare = wd();
     skillsProfile(ROOT, 'on', bare, '');

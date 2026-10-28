@@ -6,6 +6,7 @@ use Shopware\Core\Framework\Context;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Routing\Attribute\Route;
 
+#[Route(defaults: ['_routeScope' => ['store-api']])]
 final class ProductController
 {
     public function __construct(
