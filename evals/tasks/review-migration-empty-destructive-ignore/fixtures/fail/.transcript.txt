@@ -1,0 +1,14 @@
+```json
+{
+  "findings": [
+    {
+      "rule_id": "CORE-040",
+      "severity": "minor",
+      "file": "src/Core/Migration/Test/Migration1792800456DropLegacyCustomerNoteTest.php",
+      "line": 25,
+      "summary": "The test for updateDestructive() covers an empty method, so it adds nothing.",
+      "fix": "Delete the test."
+    }
+  ]
+}
+```

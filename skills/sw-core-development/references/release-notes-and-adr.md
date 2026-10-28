@@ -97,16 +97,9 @@ changelog.
 
 ## Formatting rules
 
-- **CORE-044** Wrap filenames, config keys, class names, and code elements in backticks.
 - **CORE-045** Keep only changes visible or relevant to the section audience. Omit
   implementation details that do not affect API or behavior.
 - **CORE-046** Put a blank line before and after every heading, and between paragraphs.
-- **CORE-047** Put the entry under the matching category heading of the upcoming version
-  section; add that heading only if the section does not have it yet.
-- **CORE-048** **Never repeat a heading** inside one version section: no second
-  `## Features` under the same `# X.Y.Z.P`, and no entry title the section
-  already documents. The `release-info/section` check rejects a repetition the
-  pull request adds.
 
 ## Style guidelines
 
@@ -126,7 +119,6 @@ changelog.
 ### Avoid duplication
 
 - Deprecations go only in UPGRADE, not RELEASE_INFO.
-- **CORE-051** Each file stands alone — no cross-references needed.
 
 ## Deprecations across the lifecycle
 
@@ -163,10 +155,17 @@ fix(Administration): correct sw-data-grid selection reset
 ### RELEASE_INFO entry shape
 
 ```markdown
-## 6.7.x (Upcoming)
-### Core
-- Added `CartRoute` parameter `guestLogin` so headless clients can ... (PR #12326)
+# 6.7.5.0 (upcoming)
+
+## Core
+
+### Guest login through the cart route
+
+`CartRoute` accepts a `guestLogin` parameter, so headless clients can ...
 ```
+
+Version sections are `#`, categories `##`, entry titles `###`. Add an entry
+under the version's existing category heading.
 
 ### UPGRADE entry shape
 
@@ -185,7 +184,9 @@ Migrate to `Shopware\Core\Checkout\Order\OrderEntity` instead.
 **Good RELEASE_INFO** — factual, mentions extensibility:
 
 ```markdown
-### Storefront
+## Storefront
+
+### Language selector shows the territory
 
 When the `v6.8.0.0` feature flag is active, the language selector now displays
 language names with territory (e.g. "Deutsch (Deutschland)").

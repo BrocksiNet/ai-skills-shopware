@@ -1,0 +1,7 @@
+{
+  "repo": "shopware/shopware",
+  "pr": 19822,
+  "title": "perf(core): avoid O(n²) lookups in StructEncoder",
+  "url": "https://github.com/shopware/shopware/pull/19822",
+  "expected": {}
+}

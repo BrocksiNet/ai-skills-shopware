@@ -9,6 +9,10 @@
 //   always-pass  always solve the task
 //   always-fail  never touch the workdir
 //   error        exit 4 like a failed CLI/API session
+//   suggest      answer a suggest-rules question on stdin instead; FAKE_SUGGEST
+//                picks the answer (tools/src/fake-suggest.ts)
+//   draft        edit the working directory like `suggest-rules draft`;
+//                FAKE_DRAFT picks the edit (tools/src/fake-draft.ts)
 //
 // "Solve" means: replace the workdir with the task's golden fixtures/pass/.
 //
@@ -30,6 +34,8 @@
 import { appendFileSync, cpSync, existsSync, readdirSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { envOr } from './env.ts';
+import { fakeDraft } from './fake-draft.ts';
+import { fakeSuggest } from './fake-suggest.ts';
 import { compareText } from './text.ts';
 
 export interface FakeAgentOptions {
@@ -38,6 +44,8 @@ export interface FakeAgentOptions {
   env: NodeJS.ProcessEnv;
   out: (text: string) => void;
   err: (text: string) => void;
+  /** The prompt read from stdin. */
+  prompt?: string;
 }
 
 /** Kept in the workdir when the agent solves the task. */
@@ -100,6 +108,16 @@ function act(o: FakeAgentOptions, task: string, loaded: boolean): number {
 
 /** One agent session. Returns the exit code. */
 export function fakeAgent(o: FakeAgentOptions): number {
+  if (envOr(o.env, 'FAKE_AGENT_MODE', '') === 'suggest') {
+    const answer = fakeSuggest(o.prompt ?? '', o.env);
+    if (answer === undefined) {
+      o.err('fake-agent: unknown FAKE_SUGGEST\n');
+      return 2;
+    }
+    o.out(`${answer}\n`);
+    return 0;
+  }
+  if (envOr(o.env, 'FAKE_AGENT_MODE', '') === 'draft') return fakeDraft(o.cwd, o.prompt ?? '', o.env, o.out);
   const task = envOr(o.env, 'EVAL_TASK', '');
   if (task === '') {
     o.err('fake-agent: EVAL_TASK not set (run through run-task.sh)\n');

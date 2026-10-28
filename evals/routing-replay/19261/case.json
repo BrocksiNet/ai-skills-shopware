@@ -1,0 +1,37 @@
+{
+  "repo": "shopware/shopware",
+  "pr": 19261,
+  "title": "fix(core): promote customer_id from sales_channel_api_context column on load",
+  "url": "https://github.com/shopware/shopware/pull/19261",
+  "expected": {
+    "sw-architecture/references/anti-patterns.md": [
+      "https://github.com/shopware/shopware/pull/19261#discussion_r3807799177"
+    ],
+    "sw-core-development/references/platform-architecture.md": [
+      "https://github.com/shopware/shopware/pull/19261#discussion_r3783000352",
+      "https://github.com/shopware/shopware/pull/19261#discussion_r3804484357",
+      "https://github.com/shopware/shopware/pull/19261#discussion_r3807799177"
+    ],
+    "sw-core-development/references/release-notes-and-adr.md": [
+      "https://github.com/shopware/shopware/pull/19261#discussion_r3781667712"
+    ],
+    "sw-core-development/references/service-architecture.md": [
+      "https://github.com/shopware/shopware/pull/19261#discussion_r3783000352",
+      "https://github.com/shopware/shopware/pull/19261#discussion_r3807799177"
+    ],
+    "sw-plugin-development/references/migrations.md": [
+      "https://github.com/shopware/shopware/pull/19261#discussion_r3783000352",
+      "https://github.com/shopware/shopware/pull/19261#discussion_r3807799177"
+    ],
+    "sw-testing/references/core-platform-patterns.md": [
+      "https://github.com/shopware/shopware/pull/19261#discussion_r3775026520",
+      "https://github.com/shopware/shopware/pull/19261#discussion_r3781650767"
+    ],
+    "sw-testing/references/integration-repository.md": [
+      "https://github.com/shopware/shopware/pull/19261#discussion_r3775026520"
+    ],
+    "sw-testing/references/test-shape-and-flags.md": [
+      "https://github.com/shopware/shopware/pull/19261#discussion_r3781650767"
+    ]
+  }
+}

@@ -1,0 +1,14 @@
+```json
+{
+  "findings": [
+    {
+      "rule_id": "ADM-044",
+      "severity": "major",
+      "file": "src/Resources/app/administration/src/module/swag-loyalty/page/swag-loyalty-campaign-detail/index.js",
+      "line": 22,
+      "summary": "created() clears store fields by hand and data() keeps a copy of the store's campaign, which can go stale.",
+      "fix": "Call the store's $reset() instead."
+    }
+  ]
+}
+```

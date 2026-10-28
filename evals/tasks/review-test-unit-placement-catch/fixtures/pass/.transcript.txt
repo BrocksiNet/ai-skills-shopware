@@ -1,0 +1,16 @@
+The calculator and its test come in one change. The test calls only the calculator with plain PHP and never touches the container, the DAL or HTTP, so it belongs in the unit suite.
+
+```json
+{
+  "findings": [
+    {
+      "rule_id": "TEST-034",
+      "severity": "minor",
+      "file": "tests/integration/Service/LoyaltyCalculatorTest.php",
+      "line": 6,
+      "summary": "The test needs no kernel, container, DAL or HTTP, so it belongs in tests/unit/, not tests/integration/.",
+      "fix": "Move the file to tests/unit/Service/ and update its namespace to match."
+    }
+  ]
+}
+```

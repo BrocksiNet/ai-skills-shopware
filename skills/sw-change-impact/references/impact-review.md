@@ -26,8 +26,9 @@ Ask what else this change touches, even if those files are not in the diff.
 If you cannot name who else is affected, you have not reviewed the change.
 For the public API, `node tools/api-index/bin/api-diff.ts --repo .
 --base origin/trunk --head HEAD` (ai-skills-shopware tools) names the
-routes, entity fields, feature flags and configuration keys the change
-removes, changes or deprecates.
+routes, entity fields, feature flags, configuration keys, admin components
+and blocks, storefront templates, blocks and JS plugins, and Twig functions
+the change removes, changes or deprecates.
 
 ## Who pays
 
@@ -87,6 +88,9 @@ no container per feature flag, sales channel, or other condition.
 
 ## Easier, not more complex
 
+- **IMP-005** **Easier beats more complete.** A new setting, header, or ritual
+  that only makes the feature work has made the shop harder. Prefer the change
+  that removes a step.
 - Making the feature work by adding a header the caller must now send, a new
   config field, or a second code path is added complexity. Call that out.
 - The better change removes work: reuse an existing extension point, keep the

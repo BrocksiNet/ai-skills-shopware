@@ -17,7 +17,7 @@
   "skills": [
     {
       "name": "sw-admin-js",
-      "summary": "Apply Shopware 6 Administration rules for JS, TypeScript, Vue, and Jest.",
+      "summary": "Shopware 6 Administration rules for JS, TypeScript, Vue, and Jest.",
       "contexts": [
         "core",
         "plugin",
@@ -49,7 +49,9 @@
             "enrichPrivileges\\("
           ],
           "exclude_paths": [
-            "**/*.md"
+            "**/*.md",
+            "**/Resources/app/storefront/**",
+            "src/Storefront/**"
           ]
         },
         {
@@ -64,21 +66,26 @@
             "Component\\.override\\("
           ],
           "exclude_paths": [
-            "**/*.md"
+            "**/*.md",
+            "**/Resources/app/storefront/**",
+            "src/Storefront/**"
           ]
         },
         {
           "reference": "sw-admin-js/references/testing.md",
-          "when": "You write or fix a Jest spec.",
+          "when": "You write or fix a Jest spec or the shared Jest setup.",
           "paths_any": [
-            "**/Resources/app/administration/**/*.spec.{js,ts}"
+            "**/Resources/app/administration/**/*.spec.{js,ts}",
+            "**/Resources/app/administration/test/_setup/**"
           ],
           "anchors_any": [
             "shallowMount\\(",
             "flushPromises\\("
           ],
           "exclude_paths": [
-            "**/*.md"
+            "**/*.md",
+            "**/Resources/app/storefront/**",
+            "src/Storefront/**"
           ]
         },
         {
@@ -91,7 +98,9 @@
             "\\bpopover="
           ],
           "exclude_paths": [
-            "**/*.md"
+            "**/*.md",
+            "**/Resources/app/storefront/**",
+            "src/Storefront/**"
           ]
         }
       ]
@@ -133,7 +142,7 @@
     },
     {
       "name": "sw-architecture",
-      "summary": "Use when introducing a new Shopware architecture, or when a change can break an existing one without the diff saying so.",
+      "summary": "Shopware design decisions a plain edit gets wrong: where logic lives (route or controller versus service), how data is read (repository with a limit, not raw SQL on an entity table), and how code is extended (event, decoration, or a core edit).",
       "contexts": [
         "core",
         "plugin",
@@ -160,7 +169,9 @@
           "exclude_paths": [
             "**/tests/**",
             "**/Test/**",
-            "**/*.md"
+            "**/*.md",
+            "**/Resources/app/**",
+            "**/*.{js,ts,scss}"
           ]
         },
         {
@@ -308,7 +319,7 @@
     },
     {
       "name": "sw-core-development",
-      "summary": "Use when a shopware/shopware diff touches a public API, a deprecation, the PHPStan baseline, or RELEASE_INFO.",
+      "summary": "Rules for changing shopware/shopware itself that only core review knows.",
       "contexts": [
         "core"
       ],
@@ -400,11 +411,14 @@
         },
         {
           "reference": "sw-core-development/references/static-analysis-baseline.md",
-          "when": "You touch the PHPStan baseline.",
+          "when": "You touch the PHPStan baseline or suppress a PHPStan error.",
           "paths_any": [
             "**/phpstan-baseline.neon",
             "**/phpstan*.neon",
             "**/phpstan*.neon.dist"
+          ],
+          "anchors_any": [
+            "@phpstan-ignore"
           ],
           "exclude_paths": [
             "**/tests/**",
@@ -774,7 +788,9 @@
             "enrichPrivileges\\("
           ],
           "exclude_paths": [
-            "**/*.md"
+            "**/*.md",
+            "**/Resources/app/storefront/**",
+            "src/Storefront/**"
           ]
         },
         {
@@ -789,7 +805,9 @@
             "Component\\.override\\("
           ],
           "exclude_paths": [
-            "**/*.md"
+            "**/*.md",
+            "**/Resources/app/storefront/**",
+            "src/Storefront/**"
           ]
         },
         {
@@ -810,6 +828,21 @@
           ]
         },
         {
+          "reference": "sw-core-development/references/deprecations.md",
+          "when": "You deprecate or break a public API.",
+          "anchors_any": [
+            "@deprecated tag:v",
+            "@major-deprecated",
+            "Feature::triggerDeprecationOrThrow\\(",
+            "(CompatibilityChange|TypeNarrowing)\\("
+          ],
+          "exclude_paths": [
+            "**/tests/**",
+            "**/Test/**",
+            "**/*.md"
+          ]
+        },
+        {
           "reference": "sw-core-development/references/removals-and-shims.md",
           "when": "You deprecate or remove an API, or add code that only lives until the next major.",
           "anchors_any": [
@@ -817,6 +850,38 @@
             "triggerDeprecationOrThrow\\(",
             "silentUntil",
             "#\\[BCChange"
+          ],
+          "exclude_paths": [
+            "**/tests/**",
+            "**/Test/**",
+            "**/*.md"
+          ]
+        },
+        {
+          "reference": "sw-core-development/references/static-analysis-baseline.md",
+          "when": "You touch the PHPStan baseline or suppress a PHPStan error.",
+          "paths_any": [
+            "**/phpstan-baseline.neon",
+            "**/phpstan*.neon",
+            "**/phpstan*.neon.dist"
+          ],
+          "anchors_any": [
+            "@phpstan-ignore"
+          ],
+          "exclude_paths": [
+            "**/tests/**",
+            "**/Test/**",
+            "**/*.md"
+          ]
+        },
+        {
+          "reference": "sw-core-development/references/asset-lifetime.md",
+          "when": "Code deletes, moves or overwrites theme files, media or thumbnails, or schedules their cleanup.",
+          "anchors_any": [
+            "UnusedThemeDirectoryDeleter",
+            "\\.retired",
+            "->deleteDirectory\\(",
+            "theme/<hash>|themeHash"
           ],
           "exclude_paths": [
             "**/tests/**",
@@ -890,15 +955,26 @@
         },
         {
           "reference": "sw-review-learnings/references/dal-and-performance.md",
-          "when": "The code queries the DAL, runs on a hot path, or dispatches queued work.",
+          "when": "The code queries the DAL, checks what a customer can see, runs on a hot path, or dispatches queued work.",
           "anchors_any": [
             "new Criteria\\(",
             "MessageBusInterface",
             "->dispatch\\(new [A-Za-z]+Message\\(",
             "->addAssociation\\(",
             "EqualsFilter\\(",
-            "->fetch(All|One|Associative|FirstColumn)[A-Za-z]*\\("
+            "->fetch(All|One|Associative|FirstColumn)[A-Za-z]*\\(",
+            "->searchIds\\("
           ],
+          "exclude_paths": [
+            "**/tests/**",
+            "**/Test/**",
+            "**/*.md"
+          ]
+        },
+        {
+          "reference": "sw-review-learnings/references/pr-size.md",
+          "when": "Any review of a change: the changed-line count and whether it bundles separate concerns.",
+          "always": true,
           "exclude_paths": [
             "**/tests/**",
             "**/Test/**",
@@ -918,10 +994,50 @@
           ]
         },
         {
+          "reference": "sw-review-learnings/references/feature-flags.md",
+          "when": "The change reads a Shopware feature flag, or an environment variable that may be one.",
+          "anchors_any": [
+            "getenv\\(",
+            "\\$_(SERVER|ENV)\\[",
+            "Feature::has\\("
+          ],
+          "exclude_paths": [
+            "**/tests/**",
+            "**/Test/**",
+            "**/*.md"
+          ]
+        },
+        {
+          "reference": "sw-review-learnings/references/code-comments.md",
+          "when": "The change adds or edits comments or docblocks that talk about earlier versions, removed code or the issue.",
+          "anchors_any": [
+            "^\\s*(//|#|\\*|/\\*).*\\b([Pp]reviously|[Oo]riginally|used to|no longer (used|needed|necessary|required|called|supported|exists?|works?|applies)|[Ee]arlier (version|revision|approach)|[Bb]efore this (change|PR|fix)|this (PR|pull request)|was (changed|replaced|removed) (to|in|with)|instead of the old)\\b",
+            "^\\s*(//|#|\\*|/\\*).*(^|[\\s(])#\\d{5}\\b",
+            "^\\s*(//|#|\\*|/\\*).*\\binstead would\\b"
+          ],
+          "exclude_paths": [
+            "**/tests/**",
+            "**/Test/**",
+            "**/*.md"
+          ]
+        },
+        {
+          "reference": "sw-review-learnings/references/change-scope.md",
+          "when": "A fix grows beyond the bug.",
+          "on_demand": true,
+          "exclude_paths": [
+            "**/tests/**",
+            "**/Test/**",
+            "**/*.md"
+          ]
+        },
+        {
           "reference": "sw-testing/references/test-shape-and-flags.md",
-          "when": "You need data providers, feature flags or coverage attributes.",
+          "when": "You need data providers, feature flags or coverage attributes, or a change edits an assertion.",
           "anchors_any": [
             "#\\[DataProvider\\(",
+            "(::|->)(assert[A-Z]\\w*|markTest(Skipped|Incomplete))\\(",
+            "^\\s*yield\\s+(['\"]).*\\1\\s*=>",
             "Feature::(fake|skipTestIf(In)?Active)\\(",
             "#\\[Covers(Class|Function|Nothing)[(\\]]",
             "new \\\\?Reflection(Class|Property|Method)\\(",
@@ -949,7 +1065,7 @@
     },
     {
       "name": "sw-php-foundation",
-      "summary": "Apply the strict, modern PHP 8.x baseline to Shopware code.",
+      "summary": "The strict, modern PHP 8.x baseline for Shopware code.",
       "contexts": [
         "core",
         "plugin",
@@ -968,7 +1084,7 @@
     },
     {
       "name": "sw-plugin-development",
-      "summary": "Extend Shopware 6 with PHP plugins and a shop project's own backend code.",
+      "summary": "Shopware 6 plugin and shop project backend rules that the code alone does not show.",
       "contexts": [
         "plugin",
         "project"
@@ -1260,14 +1376,15 @@
         },
         {
           "reference": "sw-review-learnings/references/dal-and-performance.md",
-          "when": "The code queries the DAL, runs on a hot path, or dispatches queued work.",
+          "when": "The code queries the DAL, checks what a customer can see, runs on a hot path, or dispatches queued work.",
           "anchors_any": [
             "new Criteria\\(",
             "MessageBusInterface",
             "->dispatch\\(new [A-Za-z]+Message\\(",
             "->addAssociation\\(",
             "EqualsFilter\\(",
-            "->fetch(All|One|Associative|FirstColumn)[A-Za-z]*\\("
+            "->fetch(All|One|Associative|FirstColumn)[A-Za-z]*\\(",
+            "->searchIds\\("
           ],
           "exclude_paths": [
             "**/tests/**",
@@ -1281,6 +1398,44 @@
           "anchors_any": [
             "(class|method|interface)_exists\\((\\\\?Shopware\\b|[A-Z][A-Za-z]+::class)"
           ],
+          "exclude_paths": [
+            "**/tests/**",
+            "**/Test/**",
+            "**/*.md"
+          ]
+        },
+        {
+          "reference": "sw-review-learnings/references/feature-flags.md",
+          "when": "The change reads a Shopware feature flag, or an environment variable that may be one.",
+          "anchors_any": [
+            "getenv\\(",
+            "\\$_(SERVER|ENV)\\[",
+            "Feature::has\\("
+          ],
+          "exclude_paths": [
+            "**/tests/**",
+            "**/Test/**",
+            "**/*.md"
+          ]
+        },
+        {
+          "reference": "sw-review-learnings/references/code-comments.md",
+          "when": "The change adds or edits comments or docblocks that talk about earlier versions, removed code or the issue.",
+          "anchors_any": [
+            "^\\s*(//|#|\\*|/\\*).*\\b([Pp]reviously|[Oo]riginally|used to|no longer (used|needed|necessary|required|called|supported|exists?|works?|applies)|[Ee]arlier (version|revision|approach)|[Bb]efore this (change|PR|fix)|this (PR|pull request)|was (changed|replaced|removed) (to|in|with)|instead of the old)\\b",
+            "^\\s*(//|#|\\*|/\\*).*(^|[\\s(])#\\d{5}\\b",
+            "^\\s*(//|#|\\*|/\\*).*\\binstead would\\b"
+          ],
+          "exclude_paths": [
+            "**/tests/**",
+            "**/Test/**",
+            "**/*.md"
+          ]
+        },
+        {
+          "reference": "sw-review-learnings/references/pr-size.md",
+          "when": "Any review of a change: the changed-line count and whether it bundles separate concerns.",
+          "always": true,
           "exclude_paths": [
             "**/tests/**",
             "**/Test/**",
@@ -1372,7 +1527,7 @@
     },
     {
       "name": "sw-storefront",
-      "summary": "Apply Shopware 6 Storefront rules for Twig, themes, Bootstrap/SCSS, and PluginManager JS.",
+      "summary": "Shopware 6 Storefront rules for Twig, themes, Bootstrap/SCSS, and PluginManager JS.",
       "contexts": [
         "core",
         "plugin",
@@ -1451,7 +1606,7 @@
     },
     {
       "name": "sw-testing",
-      "summary": "Use when writing a Shopware PHPUnit test in a plugin or project, or when a trunk test is in the wrong suite, missing a Package attribute, flaky, or failing Codecov.",
+      "summary": "Shopware PHPUnit rules that generic PHPUnit knowledge misses.",
       "contexts": [
         "core",
         "plugin",
@@ -1478,9 +1633,11 @@
         },
         {
           "reference": "sw-testing/references/test-shape-and-flags.md",
-          "when": "You need data providers, feature flags or coverage attributes.",
+          "when": "You need data providers, feature flags or coverage attributes, or a change edits an assertion.",
           "anchors_any": [
             "#\\[DataProvider\\(",
+            "(::|->)(assert[A-Z]\\w*|markTest(Skipped|Incomplete))\\(",
+            "^\\s*yield\\s+(['\"]).*\\1\\s*=>",
             "Feature::(fake|skipTestIf(In)?Active)\\(",
             "#\\[Covers(Class|Function|Nothing)[(\\]]",
             "new \\\\?Reflection(Class|Property|Method)\\(",

@@ -21,14 +21,17 @@
 # an agent error, never as a failed task.
 #
 # Env:
-#   TASK_MODEL            provider/model (default: opencode/longcat-2.5-preview-free)
+#   TASK_MODEL            provider/model (default: opencode/mimo-v2.6-flash-free)
 #   TASK_MAX_TURNS        agent steps per task (default: 12)
 #   TASK_TIMEOUT_SECONDS  wall clock per session (default: 600)
 #   OPENCODE_ISOLATE      1 = throwaway HOME/XDG (default); 0 = your own config
 #                         (0 lets your global skills leak into the "off" run)
 #   OPENCODE_AUTH_FILE    an OpenCode auth.json to copy into the throwaway HOME,
-#                         so providers you are logged in to (GitHub Copilot,
-#                         OpenAI, ...) work while skills stay isolated
+#                         so providers you are logged in to with an API key
+#                         (OpenRouter, ...) work while skills stay isolated.
+#                         OpenCode 2.0.27 keeps the GitHub Copilot login in
+#                         its database, not in auth.json, so github-copilot/*
+#                         models are "unavailable" here: use copilot-task.sh.
 #   EVAL_SKILLS_LOG       when set, this file is created and gets one line per
 #                         skill the agent loaded (set by ab.sh)
 #   EVAL_USAGE_LOG        when set, gets one line "<input> <output>" with the
@@ -41,6 +44,9 @@
 # current ones with: opencode models --standalone | grep -E 'free|pickle'
 # Some free providers log prompts to improve their models. Eval fixtures are
 # public code, so that is acceptable here; do not point this at private code.
+#
+# Web search is off: in --standalone mode it is always cancelled, and a session
+# with a cancelled search exits 1 although it finished.
 #
 # Permissions are auto-approved because the workdir is a throwaway temp copy of
 # a fixture. Do not point this adapter at a real checkout.

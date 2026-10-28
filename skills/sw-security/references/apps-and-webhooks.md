@@ -3,7 +3,9 @@
 ## Manifest permissions
 
 - Request **only** permissions the app needs (read vs write per entity).
-- Avoid `create:all` / broad wildcards unless the app truly requires them.
+  Each privilege element names one entity: `<read>product</read>`, not
+  `<read>product:read</read>`.
+- Avoid `<create>all</create>` / broad wildcards unless the app truly requires them.
 
 ## Webhooks
 

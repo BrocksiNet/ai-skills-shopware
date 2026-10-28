@@ -1,14 +1,17 @@
 ---
 name: sw-admin-js
 description: >-
-  Apply Shopware 6 Administration rules for JS, TypeScript, Vue, and Jest. Use
-  when editing Admin UI under src/Administration or a plugin's
-  Resources/app/administration: Vue modules and single file component
-  overrides, Meteor mt-* components such as mt-modal, Pinia stores, Admin ACL
-  privileges, Admin TypeScript, Jest specs next to the component, or Admin
-  changes for 6.8. Do NOT use for storefront Twig/PluginManager
-  (sw-storefront), PHPUnit (sw-testing), or PHP DAL/services
-  (surface PHP skills).
+  Shopware 6 Administration rules for JS, TypeScript, Vue, and Jest. Load it
+  before editing any Admin code under src/Administration or a plugin's
+  Resources/app/administration, even a small review fix: Vue modules and
+  imports between them, single file component overrides, Meteor mt-*
+  components such as mt-modal, Pinia stores, Admin ACL privileges, Admin
+  TypeScript, Jest specs next to the component, or Admin changes for 6.8.
+  Also use when asked whether Shopware 6.8 requires rewriting a Twig/Options
+  API Administration override as a single file component with
+  swDefineOverride. Do NOT use for storefront Twig/PluginManager
+  (sw-storefront), PHPUnit (sw-testing), or PHP DAL/services (surface PHP
+  skills).
 license: MIT
 metadata:
   contexts: core plugin app project
@@ -35,23 +38,20 @@ Read only the reference that matches the task or the files it changes:
 | ---- | ---- | --------------------- |
 | [`architecture.md`](references/architecture.md) | You add a module, component override or ACL privilege. | `Resources/app/administration/src/module/**`, `Resources/app/administration/src/**/acl/index.{js,ts}`, `Shopware.Module.register(`, … |
 | [`extension-api.md`](references/extension-api.md) | You change a shipped component, template block or position identifier. | `blocks-list.json`, `positionIdentifier`, … |
-| [`testing.md`](references/testing.md) | You write or fix a Jest spec. | `Resources/app/administration/**/*.spec.{js,ts}`, `shallowMount(`, … |
+| [`testing.md`](references/testing.md) | You write or fix a Jest spec or the shared Jest setup. | `Resources/app/administration/**/*.spec.{js,ts}`, `Resources/app/administration/test/_setup/**`, `shallowMount(`, … |
 | [`flags-and-modern-web.md`](references/flags-and-modern-web.md) | A change needs a feature flag, a deprecation or a modern web API. | `Shopware.Feature.isActive(`, … |
 <!-- routes:end -->
 
 ## Hard guardrails
 
-1. **ADM-001** **TypeScript for new code.** Do not add new `.js` Admin sources except the
-   required `Resources/app/administration/src/main.js` entry Shopware
-   discovers and scaffolds. Implementation modules stay `.ts`.
-2. **ADM-002** **Do not break public Admin extension APIs** without prior discussion.
-3. **ADM-003** **Use Meteor / existing Admin components** (`mt-modal`, `mt-banner`,
+1. **ADM-002** **Do not break public Admin extension APIs** without prior discussion.
+2. **ADM-003** **Use Meteor / existing Admin components** (`mt-modal`, `mt-banner`,
    `mt-*`, or the local `sw-*` already in the file). Do not replace them
    with raw `<dialog>`, Popover API, or a custom select.
-4. **ACL in the same change** as UI that reads or writes a DAL entity.
+3. **ACL in the same change** as UI that reads or writes a DAL entity.
    Existing roles need a privileges migration; mapping-only fixes future
    roles.
-5. **ADM-005** **Do not rewrite a working Twig / Options API override into a Vue SFC
+4. **ADM-005** **Do not rewrite a working Twig / Options API override into a Vue SFC
    because of 6.8.** `swDefinePublic`, `swDefineOverride`, and
    `useSwPreviousState()` are an experimental Composition API
    ([shopware/shopware#21162](https://github.com/shopware/shopware/discussions/21162)).
@@ -73,8 +73,7 @@ Read only the reference that matches the task or the files it changes:
 - Modules stay independent — no direct import from another module.
 - Core (`src/core`) stays Vue-free. Shared non-Vue helpers can be imported
   from `core`.
-- **ADM-007** Prefer composables for new shared Vue logic. Do not add new mixins unless
-  extending legacy code.
+- Prefer composables for new shared Vue logic over new mixins (`ADM-007`).
 - **ADM-008** BEM + Meteor design tokens. No inline styles. Snippets for visible text.
 - Reload an entity after a repository save so origin / change-set stay in
   sync.
@@ -106,7 +105,6 @@ checklists. Flag only what each check misses.
 Checks marked *trunk only* are not active in plugin or app projects by
 default; there the rule still needs a reviewer.
 
-- `ADM-001` `filename-rules/not-match` (ESLint, trunk only) reports every `.js` file under Administration `src`, specs excluded, with inline disables blocked. It misses `<script>` blocks without `lang="ts"` in `.vue` files, and plugin or app Administration code; flag those.
 - `ADM-003` `no-deprecated-components` (ESLint, trunk only) reports listed deprecated `sw-*` components in Administration `.html.twig` templates and autofixes them to `mt-*`. It misses `.vue` templates, templates in JS or TS strings, raw `<dialog>` or popover markup, and `sw-*` components not in the configured list, such as `sw-loader` and `sw-popover`; flag those.
 - `ADM-007` `sw-core-rules/no-new-mixins` (ESLint, trunk only) reports `Mixin.register()` and `Shopware.Mixin.register()` in Administration `src` files, specs excluded, with inline disables blocked. It misses inline mixin objects in a `mixins` array, a renamed alias such as `const M = Shopware.Mixin`, `.vue` files, and a new component that pulls in an existing mixin through `Mixin.getByName()`; flag those.
 <!-- enforced:end -->

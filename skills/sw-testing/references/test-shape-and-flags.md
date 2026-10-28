@@ -6,6 +6,9 @@ behavior.
 
 ## Test shape
 
+- **TEST-034** If the test **does not need** the kernel, container, DAL, or HTTP: it belongs in
+  `tests/unit/`, not `tests/integration/`. Reviewers routinely request moving pure logic
+  tests out of the integration suite.
 - **TEST-025** Write each test as an **executable example**: scenario setup, action, and
   assertions should be easy to follow in the test method body.
 - **TEST-026** Move **stable boilerplate** (mock services, class under test, command testers,
@@ -26,6 +29,11 @@ behavior.
   **exactly one** test file belongs in that file, below the test class. Move it
   into a shared `_fixtures` namespace once a second test needs it.
 
+## Scalar assertions
+
+- **TEST-018** **`assertSame` over `assertEquals`** for scalars; **`expectExceptionObject`**
+  over split exception assertions (see reference).
+
 ## A test must be able to fail
 
 - **TEST-035** **A test must be able to fail.** Assert that a captured value
@@ -33,6 +41,17 @@ behavior.
   check its fields; never guard assertions with `if ($captured !== null)`. A
   mocked `transactional()` or callback must run the closure it receives, or
   the code under test never executes and the test passes on nothing.
+- **TEST-036** **Keep an existing expectation unless the PR says the
+  behavior changes.** When a PR changes production code, check the test
+  files that existed before it. A removed or rewritten assertion, expected
+  value, data-provider case, snapshot or fixture, a new `markTestSkipped()`
+  or `markTestIncomplete()`, a looser matcher (`assertSame` to
+  `assertEquals`, an exact value to `assertNotNull`), or a broader expected
+  exception makes the old test agree with the new code. It stays green
+  while the behavior it pinned breaks. Keep the old expectation, or
+  announce the behavior change in the PR description and the changelog or
+  upgrade notes (`CHANGELOG.md`, `RELEASE_INFO`, `UPGRADE`). A new test
+  file, or an expectation that only follows a rename, is not covered.
 
 ## Never terminate the test process
 
@@ -47,8 +66,6 @@ A test must never let production or framework code call `exit()`, `die()`, or
 
 ## Filesystem in unit tests
 
-- **TEST-028** Simple single-file reads/writes: Symfony `Filesystem` injected into the class,
-  mocked in the test.
 - Several consecutive filesystem calls, realistic paths, or directory structure:
   prefer committed `_fixtures` over building temp files at runtime or over-mocking
   the filesystem.
@@ -176,10 +193,6 @@ Eval: `event-hook-capture-then-assert`.
   `Feature::skipTestIfActive('v6.9.0.0', $this)` rather than `#[DisabledFeatures]`.
 - **TEST-031** Keep **legacy flag behavior** in dedicated tests that are easy to delete when
   the flag is removed.
-- **TEST-024** When a test **asserts that behavior throws while a major feature flag is
-  active**, mark that test method `@deprecated tag:vX.Y.0` and say it is
-  removed with the flag. The tag sits on the method, not only on the class,
-  so the temporary assertion is findable when the flag goes.
 
 ## Data providers (unit tests)
 
@@ -189,8 +202,6 @@ Eval: `event-hook-capture-then-assert`.
   `yield 'human readable case' => [...]` per scenario.
 - **TEST-029** Case names should explain the **rule being proven** (priority, normalization,
   boundary), not mechanically restate raw input values.
-- **TEST-030** When removing “duplicate” provider rows, delete only **exact semantic**
-  duplicates; keep similar-looking cases that cover distinct edge behavior.
 
 ## Package attribute and `@internal`
 

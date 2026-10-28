@@ -37,10 +37,6 @@ Read the reference that matches the task or the files it changes:
 
 ## Rules
 
-- **PRD-001** Fill the five sections of `.github/PULL_REQUEST_TEMPLATE.md`
-  and nothing else: no extra top-level section such as "Validation". The
-  only addition is the template's own `#### Impact` sub-section under
-  section 2, and only when one of its cases applies.
 - **PRD-002** Return the filled body in one outer code block for copy-paste.
   When the body shows code, fence the outer block with four backticks.
 - **PRD-003** Write what the diff cannot show: the problem, the approach in a
@@ -49,15 +45,17 @@ Read the reference that matches the task or the files it changes:
   agent block, its rules win.
 - **PRD-004** Link issues in section 1 with `closes #N` (closes on merge) or
   `relates #N`.
-- **PRD-005** Use a conventional PR title when asked, for example
-  `fix(Checkout): allow TestBootstrapper to activate Composer plugins`.
-- **PRD-006** After review feedback or a CI failure, push a follow-up commit
-  for the fix. Do not amend or force-push unless the user asks.
-- **PRD-007** Never add AI attribution trailers such as `Co-authored-by`,
-  `Co-committed-by` or `Signed-off-by` for an agent, in any capitalisation.
-- **PRD-008** Tick only the checklist items that are true for this PR.
 - **PRD-009** For a diff over about 400 lines, say in section 4 why it is not
   split, or name the follow-up PRs.
+
+## Before you hand back the body
+
+Read it once more and rewrite every sentence that contrasts with a claim
+nobody made ("not just X, but Y"), opens with a run-up or ends on a line that
+repeats it, inflates a plain fact (crucial, seamless, plays a key role), or
+gives list items a bold label with a colon. Keep every fact, code span and
+template heading, and add none. The full list is `STY-001` in
+`sw-assistant-style`.
 
 Pair with `sw-core-development` when the change needs RELEASE_INFO or
 UPGRADE entries. Confirm CI is green before marking the PR ready for review
@@ -68,3 +66,4 @@ UPGRADE entries. Confirm CI is green before marking the PR ready for review
 - [ ] All five template sections addressed; "Impact" only when it applies.
 - [ ] Checklist reflects the real change (tests, release notes, docs, comments).
 - [ ] Output is one copy-paste-ready markdown block.
+- [ ] The body passed the read-through above.

@@ -1,0 +1,14 @@
+```json
+{
+  "findings": [
+    {
+      "rule_id": null,
+      "severity": "minor",
+      "file": "tests/unit/Service/LoyaltyCalculatorTest.php",
+      "line": 27,
+      "summary": "The existing data-provider case was rewritten to match the new rounding, so the test no longer guards the old behavior.",
+      "fix": "Keep the old expectation of 1 point."
+    }
+  ]
+}
+```

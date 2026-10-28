@@ -1,0 +1,16 @@
+diff --git a/src/Core/System/SalesChannel/Api/StructEncoder.php b/src/Core/System/SalesChannel/Api/StructEncoder.php
+--- a/src/Core/System/SalesChannel/Api/StructEncoder.php
++++ b/src/Core/System/SalesChannel/Api/StructEncoder.php
+@@ @@
++                $elements = \array_values($struct->getEntities()->getElements());
++
+-                    $entity = $struct->getEntities()->getAt($index);
++                    $entity = $elements[$index] ?? null;
++            $elements = \array_values($struct->getElements());
+-                $structItem = $struct->getAt($index);
++                $structItem = $elements[$index] ?? null;
++        $vars = $struct->getVars();
++
+-            if (\array_key_exists($property, $struct->getVars())) {
+-                $object = $struct->getVars()[$property];
++            if (\array_key_exists($property, $vars)) {

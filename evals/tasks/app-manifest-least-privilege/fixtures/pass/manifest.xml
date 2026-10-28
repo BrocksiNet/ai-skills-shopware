@@ -12,7 +12,7 @@
         <license>MIT</license>
     </meta>
     <permissions>
-        <read>product:read</read>
-        <read>order:read</read>
+        <read>product</read>
+        <read>order</read>
     </permissions>
 </manifest>

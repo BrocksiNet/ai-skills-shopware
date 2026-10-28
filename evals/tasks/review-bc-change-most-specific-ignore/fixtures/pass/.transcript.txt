@@ -1,0 +1,7 @@
+The class becomes final with `BecomesFinal`, and the narrowed parameter carries its version. Nothing to report.
+
+```json
+{
+  "findings": []
+}
+```

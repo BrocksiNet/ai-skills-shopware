@@ -28,6 +28,11 @@ export interface Enforcement {
    *  default (core-only config, or opt-in Shopware PHPStan rules whose
    *  default namespaces are Shopware\Tests\...). */
   trunk_only: boolean;
+  /** Proof that a plugin or app project runs the check with no setup of
+   *  its own: where shopware-cli, the plugin template or Shopware's default
+   *  config wires it in, as a path or link. A check without it never makes
+   *  its rule a retirement candidate. */
+  extensions_run?: string;
 }
 
 export interface TrunkSource {
@@ -35,6 +40,14 @@ export interface TrunkSource {
   commit?: string;
   /** CI checks that already catch the rule. */
   enforced_by?: Enforcement[];
+}
+
+/** Where in an upstream source (rules/sources.json) a rule was learned. */
+export interface Upstream {
+  /** Source ID from rules/sources.json. */
+  source: string;
+  /** `path#anchor` in that repository; the anchor is a heading slug. */
+  path: string;
 }
 
 export interface Rule {
@@ -48,7 +61,13 @@ export interface Rule {
   /** Task name under evals/tasks/, or null with eval_reason. */
   eval: string | null;
   eval_reason?: string;
+  /** Why a retired or superseded rule left the skills, with the evidence. */
+  retired_reason?: string;
+  /** Why an active rule stays although no A/B shows an effect: retirement passes skip it. */
+  keep_reason?: string;
   trunk?: TrunkSource;
+  /** Upstream skill sets the rule was learned from (plan WP12). */
+  upstream?: Upstream[];
   core_guide_ids: string[];
   audience: Audience[];
   defer_on_trunk: boolean;
@@ -83,6 +102,10 @@ function enforcementErrors(label: string, e: unknown): string[] {
   }
   if (!oneOf(ENFORCEMENT_KINDS, e.kind)) errors.push(`${label}.kind must be one of ${ENFORCEMENT_KINDS.join(', ')}`);
   if (typeof e.trunk_only !== 'boolean') errors.push(`${label}.trunk_only must be true or false`);
+  if (e.extensions_run !== undefined) {
+    if (!isText(e.extensions_run)) errors.push(`${label}.extensions_run must be a non-empty string`);
+    else if (e.trunk_only === true) errors.push(`${label}.extensions_run contradicts trunk_only: true`);
+  }
   return errors;
 }
 
@@ -97,6 +120,16 @@ function trunkErrors(label: string, t: unknown): string[] {
   return [...errors, ...t.enforced_by.flatMap((e, i) => enforcementErrors(`${label}: trunk.enforced_by[${i}]`, e))];
 }
 
+function upstreamErrors(label: string, u: unknown): string[] {
+  if (u === undefined) return [];
+  if (!Array.isArray(u)) return [`${label}: upstream must be a list`];
+  return u.flatMap((e, i) =>
+    isRecord(e) && isText(e.source) && isText(e.path) && Object.keys(e).length === 2
+      ? []
+      : [`${label}: upstream[${i}] needs exactly a source and a path`],
+  );
+}
+
 /** Field errors of one catalog entry; empty when it is a valid Rule. */
 export function ruleErrors(r: unknown): string[] {
   if (!isRecord(r)) return [`${JSON.stringify(r)}: rule must be an object`];
@@ -108,6 +141,11 @@ export function ruleErrors(r: unknown): string[] {
   if (isString(r.status) && !STATUS.test(r.status)) errors.push(`${label}: bad status ${r.status}`);
   if (r.eval !== null && !isString(r.eval)) errors.push(`${label}: eval must be a string or null`);
   if (r.eval_reason !== undefined && !isString(r.eval_reason)) errors.push(`${label}: eval_reason must be a string`);
+  if (r.retired_reason !== undefined && !isString(r.retired_reason))
+    errors.push(`${label}: retired_reason must be a string`);
+  if (isString(r.status) && r.status !== 'active' && !isString(r.retired_reason))
+    errors.push(`${label}: a ${r.status} rule needs retired_reason`);
+  if (r.keep_reason !== undefined && !isString(r.keep_reason)) errors.push(`${label}: keep_reason must be a string`);
   if (!isStringArray(r.core_guide_ids)) errors.push(`${label}: core_guide_ids must be a list of strings`);
   if (isStringArray(r.audience)) {
     for (const a of r.audience) if (!oneOf(AUDIENCES, a)) errors.push(`${label}: unknown audience ${a}`);
@@ -116,7 +154,7 @@ export function ruleErrors(r: unknown): string[] {
   }
   if (typeof r.defer_on_trunk !== 'boolean') errors.push(`${label}: defer_on_trunk must be true or false`);
   if (r.see !== undefined && !isStringArray(r.see)) errors.push(`${label}: see must be a list of IDs`);
-  return [...errors, ...trunkErrors(label, r.trunk)];
+  return [...errors, ...trunkErrors(label, r.trunk), ...upstreamErrors(label, r.upstream)];
 }
 
 const isRule = (r: unknown): r is Rule => ruleErrors(r).length === 0;

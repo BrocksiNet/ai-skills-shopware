@@ -1,0 +1,17 @@
+{
+  "repo": "shopware/shopware",
+  "pr": 20327,
+  "title": "fix(core): use a speaking file name for merged document downloads",
+  "url": "https://github.com/shopware/shopware/pull/20327",
+  "expected": {
+    "sw-architecture/references/symfony-in-shopware.md": [
+      "https://github.com/shopware/shopware/pull/20327#discussion_r4012515418"
+    ],
+    "sw-core-development/references/modernization-and-flags.md": [
+      "https://github.com/shopware/shopware/pull/20327#discussion_r4012515418"
+    ],
+    "sw-core-development/references/service-architecture.md": [
+      "https://github.com/shopware/shopware/pull/20327#discussion_r4012515418"
+    ]
+  }
+}

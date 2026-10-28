@@ -1,0 +1,24 @@
+The new SFC uses a single-file component, and the twig template next to it is fine.
+
+```json
+{
+  "findings": [
+    {
+      "rule_id": "ADM-005",
+      "severity": "major",
+      "file": "src/Resources/app/administration/src/module/swag-loyalty/component/swag-loyalty-settings/swag-loyalty-points-preview.vue",
+      "line": 1,
+      "summary": "A Vue SFC is written in place of the Twig template the module uses, which ADM-005 says not to rewrite.",
+      "fix": "Keep the Twig template and register the card with Component.register."
+    },
+    {
+      "rule_id": "ADM-006",
+      "severity": "nit",
+      "file": "src/Resources/app/administration/src/module/swag-loyalty/component/swag-loyalty-settings/index.js",
+      "line": 5,
+      "summary": "The components entry could be placed after the inject option.",
+      "fix": "Move the components block below inject."
+    }
+  ]
+}
+```

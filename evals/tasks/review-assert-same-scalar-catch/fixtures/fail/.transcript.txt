@@ -1,0 +1,16 @@
+The service now returns the ledger's string sum without a cast.
+
+```json
+{
+  "findings": [
+    {
+      "rule_id": "TEST-018",
+      "severity": "major",
+      "file": "src/Service/LoyaltyBalance.php",
+      "line": 18,
+      "summary": "forCustomer() returns the string sum; assertEquals-style checks would not catch that.",
+      "fix": "Cast the sum to int and check it with assertSame in the test."
+    }
+  ]
+}
+```

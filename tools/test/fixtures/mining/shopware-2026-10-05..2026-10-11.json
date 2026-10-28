@@ -1,0 +1,349 @@
+{
+ "repos/shopware/shopware/commits?sha=trunk&until=2026-10-11T23%3A59%3A59Z&per_page=1": [
+  {
+   "sha": "e07cac93a943519a2ce1f56686f7add02a2b6f3f",
+   "commit": {
+    "message": "feat(administration): support entity descriptions in rule configuration (#21259)",
+    "committer": {
+     "date": "2026-10-09T13:21:55Z"
+    }
+   },
+   "parents": [
+    {
+     "sha": "c81123dc43dad7e3dd33523e1377dfa8d8a05924"
+    }
+   ]
+  }
+ ],
+ "repos/shopware/shopware/commits?sha=trunk&path=.agents&since=2026-10-05T00%3A00%3A00Z&until=2026-10-11T23%3A59%3A59Z&per_page=100&page=1": [
+  {
+   "sha": "0b0a7241dfa2780b8dd0d74189d49cee93713cd1",
+   "commit": {
+    "message": "ci(danger): fail new unit test classes that compose helpers through a trait (#20840)",
+    "committer": {
+     "date": "2026-10-08T15:52:49Z"
+    }
+   },
+   "parents": [
+    {
+     "sha": "9895c906a3d23d309ea39f4dedc6a38a1c9cc020"
+    }
+   ]
+  },
+  {
+   "sha": "52d5908baccbdbe4d65fb38de75a445474e04f5b",
+   "commit": {
+    "message": "feat(themes): Improve migration path of theme translations (#21166)",
+    "committer": {
+     "date": "2026-10-08T13:04:35Z"
+    }
+   },
+   "parents": [
+    {
+     "sha": "db7c8e5d7df5a3928625751c17a0db829096b161"
+    }
+   ]
+  },
+  {
+   "sha": "4a5a519c068b08db111d314bbdc5e795e21e09e4",
+   "commit": {
+    "message": "feat(framework): link subfeatures to major flags (#20863)",
+    "committer": {
+     "date": "2026-10-06T14:15:31Z"
+    }
+   },
+   "parents": [
+    {
+     "sha": "b2110f5be3d847d9b6030e4990e4ff070e0d9036"
+    }
+   ]
+  }
+ ],
+ "repos/shopware/shopware/commits?sha=trunk&path=coding-guidelines&since=2026-10-05T00%3A00%3A00Z&until=2026-10-11T23%3A59%3A59Z&per_page=100&page=1": [
+  {
+   "sha": "c81123dc43dad7e3dd33523e1377dfa8d8a05924",
+   "commit": {
+    "message": "feat(administration): add triggerDeprecationOrThrow for JS deprecations (#20482)",
+    "committer": {
+     "date": "2026-10-09T13:16:03Z"
+    }
+   },
+   "parents": [
+    {
+     "sha": "93a43454032b30e960c7bc21feb0e96fea5f7f16"
+    }
+   ]
+  },
+  {
+   "sha": "0b0a7241dfa2780b8dd0d74189d49cee93713cd1",
+   "commit": {
+    "message": "ci(danger): fail new unit test classes that compose helpers through a trait (#20840)",
+    "committer": {
+     "date": "2026-10-08T15:52:49Z"
+    }
+   },
+   "parents": [
+    {
+     "sha": "9895c906a3d23d309ea39f4dedc6a38a1c9cc020"
+    }
+   ]
+  },
+  {
+   "sha": "4a5a519c068b08db111d314bbdc5e795e21e09e4",
+   "commit": {
+    "message": "feat(framework): link subfeatures to major flags (#20863)",
+    "committer": {
+     "date": "2026-10-06T14:15:31Z"
+    }
+   },
+   "parents": [
+    {
+     "sha": "b2110f5be3d847d9b6030e4990e4ff070e0d9036"
+    }
+   ]
+  }
+ ],
+ "repos/shopware/shopware/commits?sha=trunk&path=src%2FCore%2FDevOps%2FStaticAnalyze&since=2026-10-05T00%3A00%3A00Z&until=2026-10-11T23%3A59%3A59Z&per_page=100&page=1": [
+  {
+   "sha": "fcd9b687d608c3f3fc38963851570d3c3e7d44bc",
+   "commit": {
+    "message": "feat(core): SEO URLs for app-defined storefront routes (#20305)",
+    "committer": {
+     "date": "2026-10-09T07:14:35Z"
+    }
+   },
+   "parents": [
+    {
+     "sha": "27a16f04601d99b4318c8a621cbd3b338c9b2d3b"
+    }
+   ]
+  },
+  {
+   "sha": "c64d7402b4f6109446f350e29a3d376a5d94b9a7",
+   "commit": {
+    "message": "test: ban reflection in unit tests (#21227)",
+    "committer": {
+     "date": "2026-10-08T18:06:52Z"
+    }
+   },
+   "parents": [
+    {
+     "sha": "2430b3a0dea701e8bdfa66fff2a07ef7dcde398c"
+    }
+   ]
+  },
+  {
+   "sha": "0b0a7241dfa2780b8dd0d74189d49cee93713cd1",
+   "commit": {
+    "message": "ci(danger): fail new unit test classes that compose helpers through a trait (#20840)",
+    "committer": {
+     "date": "2026-10-08T15:52:49Z"
+    }
+   },
+   "parents": [
+    {
+     "sha": "9895c906a3d23d309ea39f4dedc6a38a1c9cc020"
+    }
+   ]
+  }
+ ],
+ "repos/shopware/shopware/commits?sha=trunk&path=.github%2FPULL_REQUEST_TEMPLATE.md&since=2026-10-05T00%3A00%3A00Z&until=2026-10-11T23%3A59%3A59Z&per_page=100&page=1": [],
+ "repos/shopware/shopware/commits/4a5a519c068b08db111d314bbdc5e795e21e09e4": {
+  "sha": "4a5a519c068b08db111d314bbdc5e795e21e09e4",
+  "commit": {
+   "message": "feat(framework): link subfeatures to major flags (#20863)",
+   "committer": {
+    "date": "2026-10-06T14:15:31Z"
+   }
+  },
+  "parents": [
+   {
+    "sha": "b2110f5be3d847d9b6030e4990e4ff070e0d9036"
+   }
+  ],
+  "files": [
+   {
+    "filename": ".agents/skills/shopware-phpunit-tests/SKILL.md",
+    "status": "modified",
+    "additions": 1,
+    "deletions": 1,
+    "patch": "@@ -50,7 +50,7 @@ Tests should read like executable examples.\n-- In integration tests, feature-flag state comes from the job configuration (the default integration job runs with flags off, integration-major once per in-flight major with `FEATURE_ALL=<major>`, e.g. `v6.8.0.0`), and the suite may run multiple times with flags on and off. `#[DisabledFeatures]` has no effect there and the test runner rejects it — a test carrying the attribute fails the run. Skip tests explicitly with `Feature::skipTestIfActive()` or `Feature::skipTestIfInActive()` when the current feature-flag value is not the one the scenario expects.\n+- In integration tests, feature-flag state comes from the job configuration (the default integration job runs with flags off, integration-major runs with the upcoming version flag enabled), and the suite may run multiple times with flags on and off. `#[DisabledFeatures]` has no effect there and the test runner rejects it — a test carrying the attribute fails the run. Skip tests explicitly with `Feature::skipTestIfActive()` or `Feature::skipTestIfInActive()` when the current feature-flag value is not the one the scenario expects."
+   },
+   {
+    "filename": "coding-guidelines/core/feature-flags.md",
+    "status": "modified",
+    "additions": 15,
+    "deletions": 23,
+    "patch": "@@ -2,7 +2,7 @@\n@@ -11,36 +11,28 @@ V6_5_0_0=1\n ```\n ```yaml\n ```\n-## While two majors are in flight\n+## Major CI\n@@ -224,7 +216,7 @@ PHPStan validates the attribute, runtime alias, optional service alias, and cano\n ```php"
+   }
+  ]
+ },
+ "repos/shopware/shopware/commits/52d5908baccbdbe4d65fb38de75a445474e04f5b": {
+  "sha": "52d5908baccbdbe4d65fb38de75a445474e04f5b",
+  "commit": {
+   "message": "feat(themes): Improve migration path of theme translations (#21166)",
+   "committer": {
+    "date": "2026-10-08T13:04:35Z"
+   }
+  },
+  "parents": [
+   {
+    "sha": "db7c8e5d7df5a3928625751c17a0db829096b161"
+   }
+  ],
+  "files": [
+   {
+    "filename": ".agents/skills/sw-review/personas/ux.md",
+    "status": "modified",
+    "additions": 1,
+    "deletions": 1,
+    "patch": "@@ -12,7 +12,7 @@ Ask: would a merchant know what to do, and can every user operate it?\n-- Admin snippets: no hard-coded user-facing strings; new keys need `en-GB` and `de-DE`.\n+- Admin snippets: no hard-coded user-facing strings; new keys need both `en.json` and `de.json`."
+   },
+   {
+    "filename": ".agents/skills/sw-review/tests/persona/architecture/ignore/diff.patch",
+    "status": "modified",
+    "additions": 3,
+    "deletions": 3
+   },
+   {
+    "filename": ".agents/skills/sw-review/tests/persona/architecture/ignore/input.json",
+    "status": "modified",
+    "additions": 1,
+    "deletions": 1
+   },
+   {
+    "filename": ".agents/skills/sw-review/tests/persona/security/ignore/diff.patch",
+    "status": "modified",
+    "additions": 3,
+    "deletions": 3
+   },
+   {
+    "filename": ".agents/skills/sw-review/tests/persona/security/ignore/input.json",
+    "status": "modified",
+    "additions": 1,
+    "deletions": 1
+   }
+  ]
+ },
+ "repos/shopware/shopware/commits/0b0a7241dfa2780b8dd0d74189d49cee93713cd1": {
+  "sha": "0b0a7241dfa2780b8dd0d74189d49cee93713cd1",
+  "commit": {
+   "message": "ci(danger): fail new unit test classes that compose helpers through a trait (#20840)",
+   "committer": {
+    "date": "2026-10-08T15:52:49Z"
+   }
+  },
+  "parents": [
+   {
+    "sha": "9895c906a3d23d309ea39f4dedc6a38a1c9cc020"
+   }
+  ],
+  "files": [
+   {
+    "filename": ".agents/skills/shopware-phpunit-tests/SKILL.md",
+    "status": "modified",
+    "additions": 1,
+    "deletions": 0,
+    "patch": "@@ -57,6 +57,7 @@ Tests should read like executable examples.\n+- Do not compose helpers into a unit test class through a trait; use a static fixture class or a stub under `Stub/`. Lifecycle behaviours (`EnvTestBehaviour`, `EventDispatcherBehaviour`, `ClockSensitiveTrait`) are the only allowed traits, a Danger rule fails new unit test files with any other."
+   },
+   {
+    "filename": "coding-guidelines/core/unit-tests.md",
+    "status": "modified",
+    "additions": 1,
+    "deletions": 0,
+    "patch": "@@ -9,6 +9,7 @@ When writing unit tests, the following is important:\n+- **No traits in unit test classes** - A new unit test class does not compose helpers through a trait. Fixture builders go into a static fixture class such as `Shopware\\Core\\Test\\Checkout\\CartRuleFixture`, doubles of the class under test into a `Stub/` folder next to the test, and behaviours that boot the kernel stay out of the unit suite. The only traits a unit test class may use are lifecycle behaviours that must restore state after the test, such as `EnvTestBehaviour`, `EventDispatcherBehaviour` or Symfony's `ClockSensitiveTrait`. A Danger rule fails new unit test files composing any other trait; a stub class declared further down in the same file may still use a production trait it exercises."
+   },
+   {
+    "filename": "src/Core/DevOps/StaticAnalyze/Danger/Rules/TraitUsageInNewUnitTests.php",
+    "status": "added",
+    "additions": 94,
+    "deletions": 0
+   }
+  ]
+ },
+ "repos/shopware/shopware/commits/c64d7402b4f6109446f350e29a3d376a5d94b9a7": {
+  "sha": "c64d7402b4f6109446f350e29a3d376a5d94b9a7",
+  "commit": {
+   "message": "test: ban reflection in unit tests (#21227)",
+   "committer": {
+    "date": "2026-10-08T18:06:52Z"
+   }
+  },
+  "parents": [
+   {
+    "sha": "2430b3a0dea701e8bdfa66fff2a07ef7dcde398c"
+   }
+  ],
+  "files": [
+   {
+    "filename": "src/Core/DevOps/StaticAnalyze/PHPStan/Configuration.php",
+    "status": "modified",
+    "additions": 8,
+    "deletions": 0
+   },
+   {
+    "filename": "src/Core/DevOps/StaticAnalyze/PHPStan/Rules/Tests/NoReflectionInUnitTestsRule.php",
+    "status": "added",
+    "additions": 128,
+    "deletions": 0
+   },
+   {
+    "filename": "src/Core/DevOps/StaticAnalyze/PHPStan/common.neon",
+    "status": "modified",
+    "additions": 5,
+    "deletions": 0
+   },
+   {
+    "filename": "src/Core/DevOps/StaticAnalyze/PHPStan/rules.neon",
+    "status": "modified",
+    "additions": 1,
+    "deletions": 0
+   }
+  ]
+ },
+ "repos/shopware/shopware/commits/fcd9b687d608c3f3fc38963851570d3c3e7d44bc": {
+  "sha": "fcd9b687d608c3f3fc38963851570d3c3e7d44bc",
+  "commit": {
+   "message": "feat(core): SEO URLs for app-defined storefront routes (#20305)",
+   "committer": {
+    "date": "2026-10-09T07:14:35Z"
+   }
+  },
+  "parents": [
+   {
+    "sha": "27a16f04601d99b4318c8a621cbd3b338c9b2d3b"
+   }
+  ],
+  "files": [
+   {
+    "filename": "src/Core/DevOps/StaticAnalyze/PHPStan/tagged-service-contracts.php",
+    "status": "modified",
+    "additions": 2,
+    "deletions": 0
+   }
+  ]
+ },
+ "repos/shopware/shopware/commits/c81123dc43dad7e3dd33523e1377dfa8d8a05924": {
+  "sha": "c81123dc43dad7e3dd33523e1377dfa8d8a05924",
+  "commit": {
+   "message": "feat(administration): add triggerDeprecationOrThrow for JS deprecations (#20482)",
+   "committer": {
+    "date": "2026-10-09T13:16:03Z"
+   }
+  },
+  "parents": [
+   {
+    "sha": "93a43454032b30e960c7bc21feb0e96fea5f7f16"
+   }
+  ],
+  "files": [
+   {
+    "filename": "coding-guidelines/administration/feature-flags-and-deprecations.md",
+    "status": "modified",
+    "additions": 29,
+    "deletions": 1,
+    "patch": "@@ -14,7 +14,35 @@ Follow the general feature-flag rules in [core feature flags](../core/feature-fl\n-- Add runtime deprecation warnings for developer-facing APIs when callers need migration feedback.\n+- Guard a deprecated public API at runtime where it is consumed, see [Runtime guards](#runtime-guards).\n+### Runtime guards\n+```ts\n+```\n+```js\n+```"
+   }
+  ]
+ }
+}

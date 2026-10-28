@@ -1,0 +1,36 @@
+diff --git a/src/Core/Service/ServiceLifecycle.php b/src/Core/Service/ServiceLifecycle.php
+--- a/src/Core/Service/ServiceLifecycle.php
++++ b/src/Core/Service/ServiceLifecycle.php
+@@ @@
++use Shopware\Core\Framework\App\Exception\AppAlreadyInstalledException;
++        } catch (AppAlreadyInstalledException $e) {
++            $this->logger->warning(\sprintf('Cannot install service "%s" because of error: "%s"', $entry->name, $e->getMessage()));
++
++            return false;
++            $this->rollBackFailedInstall($entry->name, $context);
++
++    private function rollBackFailedInstall(string $serviceName, Context $context): void
++    {
++        try {
++            $service = $this->serviceStorage->findByName($serviceName, $context);
++
+diff --git a/tests/unit/Core/Service/ServiceLifecycleTest.php b/tests/unit/Core/Service/ServiceLifecycleTest.php
+--- a/tests/unit/Core/Service/ServiceLifecycleTest.php
++++ b/tests/unit/Core/Service/ServiceLifecycleTest.php
+@@ @@
++        $this->appManager->expects($this->never())->method('uninstall');
+-        static::assertFalse($this->createLifecycle($this->buildAppRepository())->install($this->entry, Context::createDefaultContext()));
++        static::assertFalse($this->createLifecycle($this->buildAppRepository([], []))->install($this->entry, Context::createDefaultContext()));
++    }
++
++    public function testInstallRollsBackTheServiceWhenTheInstallFailedAfterActivation(): void
++    {
++        $context = Context::createDefaultContext();
++        $app = AppFixture::createAppEntity(name: 'MyCoolService', active: true);
++
++        $this->fetchReturnsAppInfo();
++        $this->requirementsMet(true);
+-    private function buildAppRepository(array $apps = []): StaticEntityRepository
++    private function buildAppRepository(array ...$searches): StaticEntityRepository
+-        return new StaticEntityRepository([new AppCollection($apps)]);
++        return new StaticEntityRepository(array_map(

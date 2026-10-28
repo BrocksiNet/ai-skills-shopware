@@ -1,5 +1,9 @@
-# Task: bound DAL search
+# Task: category teaser for the storefront widget
 
-Fix `fixture/ProductLoader.php` so product reads use a **bounded** Criteria
-(`setLimit` or equivalent pagination). Keep the repository-based read; do not
-switch to raw SQL.
+Our plugin's storefront widget shows a teaser slider with the products of one
+category. It still calls `loadAll()` in `src/Service/ProductLoader.php`, left
+over from the first prototype.
+
+Replace `loadAll()` with a method that takes the category ID and returns the
+IDs of the products assigned to that category, for the slider. The widget is
+the only caller. Keep the read going through the product repository.

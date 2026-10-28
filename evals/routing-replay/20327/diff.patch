@@ -1,0 +1,148 @@
+diff --git a/RELEASE_INFO-6.7.md b/RELEASE_INFO-6.7.md
+--- a/RELEASE_INFO-6.7.md
++++ b/RELEASE_INFO-6.7.md
+@@ @@
++## Core
++
++### Merged document downloads have a speaking file name
++
++Downloading several order documents at once from the order bulk edit delivered one merged PDF named with a 32 character random string, so merchants could not tell their downloads apart in the download folder.
++
++The merged file is now named after its document type and the date of the download, for example `delivery_note_2026-09-10.pdf`. A download that mixes document types is called `documents_<date>.pdf`, and a single document keeps the name it was rendered with. Unlike the random string, that name is no longer unique per download.
++
+diff --git a/src/Core/Checkout/DependencyInjection/document.php b/src/Core/Checkout/DependencyInjection/document.php
+--- a/src/Core/Checkout/DependencyInjection/document.php
++++ b/src/Core/Checkout/DependencyInjection/document.php
+@@ @@
++use Shopware\Core\Checkout\DocumentV2\Service\DocumentFileNameBuilder;
++            service(DocumentFileNameBuilder::class),
+diff --git a/src/Core/Checkout/DependencyInjection/documentV2.php b/src/Core/Checkout/DependencyInjection/documentV2.php
+--- a/src/Core/Checkout/DependencyInjection/documentV2.php
++++ b/src/Core/Checkout/DependencyInjection/documentV2.php
+@@ @@
++use Psr\Clock\ClockInterface;
++use Shopware\Core\Checkout\DocumentV2\Service\DocumentFileNameBuilder;
++            service(DocumentFileNameBuilder::class),
++        ]);
++
++    $services->set(DocumentFileNameBuilder::class)
++        ->args([
++            service(ClockInterface::class),
+diff --git a/src/Core/Checkout/Document/Service/DocumentMerger.php b/src/Core/Checkout/Document/Service/DocumentMerger.php
+--- a/src/Core/Checkout/Document/Service/DocumentMerger.php
++++ b/src/Core/Checkout/Document/Service/DocumentMerger.php
+@@ @@
++use Shopware\Core\Checkout\DocumentV2\Service\DocumentFileNameBuilder;
+-use Shopware\Core\Framework\Util\Random;
++        private readonly DocumentFileNameBuilder $fileNameBuilder,
+-            $fileName = Random::getAlphanumericString(32) . '.' . PdfRenderer::FILE_EXTENSION;
++            $fileName = $this->fileNameBuilder->build($documents) . '.' . PdfRenderer::FILE_EXTENSION;
+-        $fileName = $mediaFile?->getFileName() ?? Random::getAlphanumericString(32);
++        $fileName = $mediaFile?->getFileName() ?? $this->fileNameBuilder->build(new DocumentCollection([$document]));
+-        $fileName = Random::getAlphanumericString(32) . '.zip';
++        $fileName = $this->fileNameBuilder->build($documents) . '.zip';
+diff --git a/src/Core/Checkout/DocumentV2/Generation/DocumentArchiveGenerator.php b/src/Core/Checkout/DocumentV2/Generation/DocumentArchiveGenerator.php
+--- a/src/Core/Checkout/DocumentV2/Generation/DocumentArchiveGenerator.php
++++ b/src/Core/Checkout/DocumentV2/Generation/DocumentArchiveGenerator.php
+@@ @@
++use Shopware\Core\Checkout\DocumentV2\Service\DocumentFileNameBuilder;
++        private readonly DocumentFileNameBuilder $fileNameBuilder,
+-                name: $this->createArchiveName($documents),
++                name: $this->fileNameBuilder->build($documents) . '.zip',
+-
+-    private function createArchiveName(DocumentCollection $documents): string
+-    {
+-        if ($documents->count() !== 1) {
+-            return 'documents.zip';
+-        }
+-
+-        $document = $documents->first();
+diff --git a/src/Core/Checkout/DocumentV2/Service/DocumentFileNameBuilder.php b/src/Core/Checkout/DocumentV2/Service/DocumentFileNameBuilder.php
+--- /dev/null
++++ b/src/Core/Checkout/DocumentV2/Service/DocumentFileNameBuilder.php
+@@ @@
++<?php declare(strict_types=1);
++
++namespace Shopware\Core\Checkout\DocumentV2\Service;
++
++use Psr\Clock\ClockInterface;
++use Shopware\Core\Checkout\Document\DocumentCollection;
++use Shopware\Core\Checkout\Document\DocumentEntity;
++use Shopware\Core\Framework\Log\Package;
++
++/**
++ * Builds a human readable file name for a download that bundles one or more documents, e.g. a merged PDF or a ZIP
++ * archive.
++ *
++ * @internal
++        private ClockInterface $clock,
+diff --git a/tests/integration/Core/Checkout/Document/Service/DocumentMergerTest.php b/tests/integration/Core/Checkout/Document/Service/DocumentMergerTest.php
+--- a/tests/integration/Core/Checkout/Document/Service/DocumentMergerTest.php
++++ b/tests/integration/Core/Checkout/Document/Service/DocumentMergerTest.php
+@@ @@
++use Shopware\Core\Checkout\DocumentV2\Service\DocumentFileNameBuilder;
++            static::getContainer()->get(DocumentFileNameBuilder::class),
++            static::getContainer()->get(DocumentFileNameBuilder::class),
++            static::getContainer()->get(DocumentFileNameBuilder::class),
++                static::assertSame(
++                    DeliveryNoteRenderer::TYPE . '_' . (new \DateTimeImmutable())->format('Y-m-d') . '.pdf',
++                    $mergeResult->getName()
++                );
++                static::assertSame(
++                    DeliveryNoteRenderer::TYPE . '_' . (new \DateTimeImmutable())->format('Y-m-d') . '.pdf',
++                    $mergeResult->getName()
++                );
+diff --git a/tests/unit/Core/Checkout/Document/Service/DocumentMergerTest.php b/tests/unit/Core/Checkout/Document/Service/DocumentMergerTest.php
+--- a/tests/unit/Core/Checkout/Document/Service/DocumentMergerTest.php
++++ b/tests/unit/Core/Checkout/Document/Service/DocumentMergerTest.php
+@@ @@
++use Shopware\Core\Checkout\Document\Renderer\RenderedDocument;
++use Shopware\Core\Checkout\DocumentV2\Service\DocumentFileNameBuilder;
++use Symfony\Component\Clock\MockClock;
++    private const DOWNLOAD_DATE = '2026-01-15';
++
++            new DocumentFileNameBuilder(new MockClock(self::DOWNLOAD_DATE . ' 10:00:00')),
++            new DocumentFileNameBuilder(new MockClock(self::DOWNLOAD_DATE . ' 10:00:00')),
++            new DocumentFileNameBuilder(new MockClock(self::DOWNLOAD_DATE . ' 10:00:00')),
++        static::assertSame('invoice_' . self::DOWNLOAD_DATE . '.pdf', $result->getName());
++            new DocumentFileNameBuilder(new MockClock(self::DOWNLOAD_DATE . ' 10:00:00')),
++            new DocumentFileNameBuilder(new MockClock(self::DOWNLOAD_DATE . ' 10:00:00')),
++            new DocumentFileNameBuilder(new MockClock(self::DOWNLOAD_DATE . ' 10:00:00')),
++        $documentRepository = static::createStub(EntityRepository::class);
++                new Criteria(),
+diff --git a/tests/unit/Core/Checkout/DocumentV2/Controller/DocumentV2ControllerTest.php b/tests/unit/Core/Checkout/DocumentV2/Controller/DocumentV2ControllerTest.php
+--- a/tests/unit/Core/Checkout/DocumentV2/Controller/DocumentV2ControllerTest.php
++++ b/tests/unit/Core/Checkout/DocumentV2/Controller/DocumentV2ControllerTest.php
+@@ @@
++use Shopware\Core\Checkout\DocumentV2\Service\DocumentFileNameBuilder;
++use Symfony\Component\Clock\MockClock;
++            new DocumentFileNameBuilder(new MockClock()),
+diff --git a/tests/unit/Core/Checkout/DocumentV2/Generation/DocumentArchiveGeneratorTest.php b/tests/unit/Core/Checkout/DocumentV2/Generation/DocumentArchiveGeneratorTest.php
+--- a/tests/unit/Core/Checkout/DocumentV2/Generation/DocumentArchiveGeneratorTest.php
++++ b/tests/unit/Core/Checkout/DocumentV2/Generation/DocumentArchiveGeneratorTest.php
+@@ @@
++use Shopware\Core\Checkout\DocumentV2\Service\DocumentFileNameBuilder;
++use Symfony\Component\Clock\MockClock;
++    private const DOWNLOAD_DATE = '2026-01-15';
++
+-        static::assertSame('documents.zip', $archive->getName());
++        static::assertSame('documents_' . self::DOWNLOAD_DATE . '.zip', $archive->getName());
++            new DocumentFileNameBuilder(new MockClock(self::DOWNLOAD_DATE . ' 10:00:00')),
+diff --git a/tests/unit/Core/Checkout/DocumentV2/Service/DocumentFileNameBuilderTest.php b/tests/unit/Core/Checkout/DocumentV2/Service/DocumentFileNameBuilderTest.php
+--- /dev/null
++++ b/tests/unit/Core/Checkout/DocumentV2/Service/DocumentFileNameBuilderTest.php
+@@ @@
++<?php declare(strict_types=1);
++
++namespace Shopware\Tests\Unit\Core\Checkout\DocumentV2\Service;
++
++use PHPUnit\Framework\Attributes\CoversClass;
++use PHPUnit\Framework\TestCase;
++use Shopware\Core\Checkout\Document\DocumentCollection;
++use Shopware\Core\Checkout\Document\DocumentEntity;
++use Shopware\Core\Checkout\DocumentV2\Service\DocumentFileNameBuilder;
++use Shopware\Core\Framework\Log\Package;
++use Shopware\Core\Framework\Uuid\Uuid;
++use Symfony\Component\Clock\MockClock;
++ * @internal
++#[CoversClass(DocumentFileNameBuilder::class)]

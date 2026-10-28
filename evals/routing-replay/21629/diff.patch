@@ -1,0 +1,117 @@
+diff --git a/RELEASE_INFO-6.7.md b/RELEASE_INFO-6.7.md
+--- a/RELEASE_INFO-6.7.md
++++ b/RELEASE_INFO-6.7.md
+@@ @@
++# 6.7.17.0 (upcoming)
++
++## Core
++
++### `sales-channel:file:enable` switches on `llms.txt` and `AGENTS.md`
++
++The new `bin/console sales-channel:file:enable [ids...] [--all]` command switches on `llms.txt` and `AGENTS.md` for Storefront and Headless sales channels.
++It only creates missing files, so a file switched off in the Administration stays off, and a second run changes nothing.
++The command always exits with `0`, which makes it suitable for install hooks in `.shopware-project.yml`.
++
+diff --git a/src/Core/Maintenance/DependencyInjection/services.php b/src/Core/Maintenance/DependencyInjection/services.php
+--- a/src/Core/Maintenance/DependencyInjection/services.php
++++ b/src/Core/Maintenance/DependencyInjection/services.php
+@@ @@
++use Shopware\Core\Maintenance\SalesChannel\Command\SalesChannelFileEnableCommand;
++    $services->set(SalesChannelFileEnableCommand::class)
++        ->args([
++            service('sales_channel.repository'),
++            service('sales_channel_file.repository'),
++        ])
++        ->tag('console.command');
++
+diff --git a/src/Core/Maintenance/SalesChannel/Command/SalesChannelFileEnableCommand.php b/src/Core/Maintenance/SalesChannel/Command/SalesChannelFileEnableCommand.php
+--- /dev/null
++++ b/src/Core/Maintenance/SalesChannel/Command/SalesChannelFileEnableCommand.php
+@@ @@
++<?php declare(strict_types=1);
++
++namespace Shopware\Core\Maintenance\SalesChannel\Command;
++
++use Shopware\Core\Defaults;
++use Shopware\Core\Framework\Context;
++use Shopware\Core\Framework\DataAbstractionLayer\EntityRepository;
++use Shopware\Core\Framework\DataAbstractionLayer\Search\Criteria;
++use Shopware\Core\Framework\DataAbstractionLayer\Search\Filter\EqualsAnyFilter;
++use Shopware\Core\Framework\DataAbstractionLayer\Search\Filter\EqualsFilter;
++use Shopware\Core\Framework\Log\Package;
++use Shopware\Core\Framework\Uuid\Uuid;
++use Shopware\Core\System\SalesChannel\Aggregate\SalesChannelFile\SalesChannelFileCollection;
++#[AsCommand(
++     * @param EntityRepository<SalesChannelCollection> $salesChannelRepository
++     * @param EntityRepository<SalesChannelFileCollection> $salesChannelFileRepository
++        private readonly EntityRepository $salesChannelRepository,
++        private readonly EntityRepository $salesChannelFileRepository,
++        $criteria = new Criteria($ids);
++            $this->salesChannelRepository->searchIds($criteria, $context)->getIds(),
++        $criteria = new Criteria();
++            new EqualsFilter('fileFamily', SalesChannelFile::DEFAULT_FILE_FAMILY),
++        foreach ($this->salesChannelFileRepository->search($criteria, $context)->getEntities() as $file) {
+diff --git a/tests/integration/Core/Maintenance/SalesChannel/Command/SalesChannelFileEnableCommandTest.php b/tests/integration/Core/Maintenance/SalesChannel/Command/SalesChannelFileEnableCommandTest.php
+--- /dev/null
++++ b/tests/integration/Core/Maintenance/SalesChannel/Command/SalesChannelFileEnableCommandTest.php
+@@ @@
++<?php declare(strict_types=1);
++
++namespace Shopware\Tests\Integration\Core\Maintenance\SalesChannel\Command;
++
++use PHPUnit\Framework\TestCase;
++use Shopware\Core\Defaults;
++use Shopware\Core\Framework\Context;
++use Shopware\Core\Framework\DataAbstractionLayer\EntityRepository;
++use Shopware\Core\Framework\DataAbstractionLayer\Search\Criteria;
++use Shopware\Core\Framework\DataAbstractionLayer\Search\Filter\EqualsFilter;
++use Shopware\Core\Framework\Log\Package;
++use Shopware\Core\Framework\Test\TestCaseBase\DatabaseTransactionBehaviour;
++use Shopware\Core\Framework\Test\TestCaseBase\KernelTestBehaviour;
++ * @internal
++     * @var EntityRepository<SalesChannelFileCollection>
++    private EntityRepository $fileRepository;
++        $criteria = (new Criteria())->addFilter(
++            new EqualsFilter('salesChannelId', $salesChannelId),
++            new EqualsFilter('fileFamily', 'agentic'),
++        foreach ($this->fileRepository->search($criteria, Context::createDefaultContext())->getEntities() as $file) {
++        static::assertInstanceOf(EntityRepository::class, $salesChannelRepository);
++        $criteria = (new Criteria())->addFilter(new EqualsFilter('typeId', $typeId))->setLimit(1);
++        $salesChannelId = $salesChannelRepository->searchIds($criteria, Context::createDefaultContext())->firstId();
+diff --git a/tests/unit/Core/Maintenance/SalesChannel/Command/SalesChannelFileEnableCommandTest.php b/tests/unit/Core/Maintenance/SalesChannel/Command/SalesChannelFileEnableCommandTest.php
+--- /dev/null
++++ b/tests/unit/Core/Maintenance/SalesChannel/Command/SalesChannelFileEnableCommandTest.php
+@@ @@
++<?php declare(strict_types=1);
++
++namespace Shopware\Tests\Unit\Core\Maintenance\SalesChannel\Command;
++
++use PHPUnit\Framework\Attributes\CoversClass;
++use PHPUnit\Framework\TestCase;
++use Shopware\Core\Defaults;
++use Shopware\Core\Framework\DataAbstractionLayer\Search\Criteria;
++use Shopware\Core\Framework\DataAbstractionLayer\Search\Filter\EqualsAnyFilter;
++use Shopware\Core\Framework\Log\Package;
++use Shopware\Core\Framework\Uuid\Uuid;
++use Shopware\Core\Maintenance\SalesChannel\Command\SalesChannelFileEnableCommand;
++use Shopware\Core\Test\Stub\DataAbstractionLayer\StaticEntityRepository;
++ * @internal
++#[CoversClass(SalesChannelFileEnableCommand::class)]
++        $salesChannelRepository = StaticEntityRepository::of(SalesChannelCollection::class);
++        $fileRepository = StaticEntityRepository::of(SalesChannelFileCollection::class);
++        $salesChannelRepository = StaticEntityRepository::of(SalesChannelCollection::class, [[self::STOREFRONT_ID, self::HEADLESS_ID]]);
++        $fileRepository = new StaticEntityRepository([new SalesChannelFileCollection()]);
++        $salesChannelRepository = StaticEntityRepository::of(SalesChannelCollection::class, [[self::STOREFRONT_ID]]);
++        $fileRepository = new StaticEntityRepository([new SalesChannelFileCollection([
++        $salesChannelRepository = StaticEntityRepository::of(SalesChannelCollection::class, [[self::STOREFRONT_ID]]);
++        $fileRepository = new StaticEntityRepository([new SalesChannelFileCollection([
++        $salesChannelRepository = StaticEntityRepository::of(SalesChannelCollection::class, [
++        $fileRepository = StaticEntityRepository::of(SalesChannelFileCollection::class);
++        $salesChannelRepository = StaticEntityRepository::of(SalesChannelCollection::class, [
++        $fileRepository = new StaticEntityRepository([new SalesChannelFileCollection()]);
++        $salesChannelRepository = StaticEntityRepository::of(SalesChannelCollection::class, [
++        $fileRepository = new StaticEntityRepository([new SalesChannelFileCollection()]);
++        $salesChannelRepository = StaticEntityRepository::of(SalesChannelCollection::class, [[self::STOREFRONT_ID]]);
++        $fileRepository = new StaticEntityRepository([new SalesChannelFileCollection()]);
++        $salesChannelRepository = StaticEntityRepository::of(SalesChannelCollection::class);
++        $fileRepository = StaticEntityRepository::of(SalesChannelFileCollection::class);

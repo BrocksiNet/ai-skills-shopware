@@ -35,27 +35,28 @@ export interface AdapterIo {
 export type Adapter = (prompt: string, env: NodeJS.ProcessEnv, io: AdapterIo, root: string) => Promise<number>;
 
 /** Task adapter exit code for an agent error; run-task never grades it. */
-const AGENT_ERROR = 4;
-const OPENCODE_FREE_MODEL = 'opencode/longcat-2.5-preview-free';
+export const AGENT_ERROR = 4;
+export const OPENCODE_FREE_MODEL = 'opencode/mimo-v2.6-flash-free';
+export const CLAUDE_DEFAULT_MODEL = 'sonnet';
 
-const positive = (v: string): boolean => /^[1-9][0-9]*$/u.test(v);
+export const positive = (v: string): boolean => /^[1-9][0-9]*$/u.test(v);
 
-function logSkills(env: NodeJS.ProcessEnv, skills: string[]): void {
+export function logSkills(env: NodeJS.ProcessEnv, skills: string[]): void {
   const log = envOr(env, 'EVAL_SKILLS_LOG', '');
   if (log !== '') appendFileSync(log, skills.map((s) => `${s}\n`).join(''));
 }
 
-function logUsage(env: NodeJS.ProcessEnv, usage: Usage | null): void {
+export function logUsage(env: NodeJS.ProcessEnv, usage: Usage | null): void {
   const log = envOr(env, 'EVAL_USAGE_LOG', '');
   if (log !== '' && usage !== null) appendFileSync(log, `${usage.input} ${usage.output}\n`);
 }
 
-const scratchDir = (env: NodeJS.ProcessEnv, prefix: string): string =>
+export const scratchDir = (env: NodeJS.ProcessEnv, prefix: string): string =>
   mkdtempSync(join(envOr(env, 'TMPDIR', tmpdir()), prefix));
 
 /** HOME and XDG folders in `scratch`, so no user config, login or global
  *  skills reach OpenCode. */
-function isolatedHome(env: NodeJS.ProcessEnv, scratch: string): { env: NodeJS.ProcessEnv; dataHome: string } {
+export function isolatedHome(env: NodeJS.ProcessEnv, scratch: string): { env: NodeJS.ProcessEnv; dataHome: string } {
   const home = join(scratch, 'home');
   const xdg = {
     XDG_CONFIG_HOME: join(home, '.config'),
@@ -70,7 +71,11 @@ function isolatedHome(env: NodeJS.ProcessEnv, scratch: string): { env: NodeJS.Pr
 /** The OpenCode environment for a task run: isolated unless OPENCODE_ISOLATE
  *  is not 1, with OPENCODE_AUTH_FILE copied in as the login. Null when the
  *  auth file is missing. */
-function opencodeTaskEnv(env: NodeJS.ProcessEnv, scratch: string, err: (t: string) => void): NodeJS.ProcessEnv | null {
+export function opencodeTaskEnv(
+  env: NodeJS.ProcessEnv,
+  scratch: string,
+  err: (t: string) => void,
+): NodeJS.ProcessEnv | null {
   if (envOr(env, 'OPENCODE_ISOLATE', '1') !== '1') return env;
   const isolated = isolatedHome(env, scratch);
   const authFile = envOr(env, 'OPENCODE_AUTH_FILE', '');
@@ -86,14 +91,14 @@ function opencodeTaskEnv(env: NodeJS.ProcessEnv, scratch: string, err: (t: strin
   return isolated.env;
 }
 
-const opencodeEnv = (env: NodeJS.ProcessEnv, config: object): NodeJS.ProcessEnv => ({
+export const opencodeEnv = (env: NodeJS.ProcessEnv, config: object): NodeJS.ProcessEnv => ({
   ...env,
   OPENCODE_DISABLE_AUTOUPDATE: '1',
   OPENCODE_DISABLE_LSP_DOWNLOAD: '1',
   OPENCODE_CONFIG_CONTENT: JSON.stringify(config),
 });
 
-const opencodeArgs = (model: string, prompt: string): string[] => [
+export const opencodeArgs = (model: string, prompt: string): string[] => [
   'run',
   '--standalone',
   '--auto',
@@ -117,9 +122,15 @@ export const opencodeTask: Adapter = async (prompt, env, { out, err }) => {
     const baseEnv = opencodeTaskEnv(env, scratch, err);
     if (baseEnv === null) return AGENT_ERROR;
     // Cap the agent loop; a headless run must never stop to ask a question.
+    // No web search: with --standalone every search is "cancelled", and a
+    // session with a cancelled search ends with exit 1 and no error event
+    // although it finished (OpenCode 2.0.27). Tasks that invite research,
+    // such as prepare-plugin-for-6-8, then lost every skill-off run as an
+    // agent error.
     const childEnv = opencodeEnv(baseEnv, {
       agent: { build: { steps: Number(maxTurns) } },
       permission: { question: 'deny' },
+      tools: { websearch: false },
     });
     const proc = await run('opencode', opencodeArgs(model, prompt), { env: childEnv, timeoutSeconds: Number(timeout) });
 
@@ -147,7 +158,7 @@ export const opencodeTask: Adapter = async (prompt, env, { out, err }) => {
 };
 
 export const claudeTask: Adapter = async (prompt, env, { out, err }) => {
-  const model = envOr(env, 'TASK_MODEL', 'sonnet');
+  const model = envOr(env, 'TASK_MODEL', CLAUDE_DEFAULT_MODEL);
   const maxTurns = envOr(env, 'TASK_MAX_TURNS', '12');
   const maxBudget = envOr(env, 'TASK_MAX_BUDGET_USD', '0.75');
   if (!onPath('claude', env)) return (err('claude CLI not found\n'), AGENT_ERROR);
@@ -188,7 +199,7 @@ export const claudeTask: Adapter = async (prompt, env, { out, err }) => {
 
 /** A temp workspace whose only project skills are `skillsDir`, linked as
  *  `<dot>/skills`. */
-function activationWorkspace(
+export function activationWorkspace(
   env: NodeJS.ProcessEnv,
   skillsDir: string,
   dot: '.agents' | '.claude',
@@ -228,7 +239,7 @@ export const opencodeActivation: Adapter = async (prompt, env, { out, err }, roo
 
 export const claudeActivation: Adapter = async (prompt, env, { out, err }, root) => {
   const skillsDir = envOr(env, 'ACTIVATION_SKILLS_DIR', join(root, 'skills'));
-  const model = envOr(env, 'ACTIVATION_MODEL', 'sonnet');
+  const model = envOr(env, 'ACTIVATION_MODEL', CLAUDE_DEFAULT_MODEL);
   const maxTurns = envOr(env, 'ACTIVATION_MAX_TURNS', '3');
   if (!onPath('claude', env)) return (err('claude CLI not found\n'), 2);
 
@@ -264,11 +275,4 @@ export const claudeActivation: Adapter = async (prompt, env, { out, err }, root)
   } finally {
     rmSync(scratch, { recursive: true, force: true });
   }
-};
-
-export const ADAPTERS: Record<string, Adapter> = {
-  'opencode-task': opencodeTask,
-  'claude-task': claudeTask,
-  'opencode-activation': opencodeActivation,
-  'claude-activation': claudeActivation,
 };

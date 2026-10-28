@@ -1,0 +1,14 @@
+{
+  "repo": "shopware/shopware",
+  "pr": 21104,
+  "title": "fix(store-api): describe line item payloads per type and allow extension types",
+  "url": "https://github.com/shopware/shopware/pull/21104",
+  "expected": {
+    "sw-core-development/references/api-schema.md": [
+      "https://github.com/shopware/shopware/pull/21104#discussion_r4165188898",
+      "https://github.com/shopware/shopware/pull/21104#discussion_r4165206793",
+      "https://github.com/shopware/shopware/pull/21104#discussion_r4165217126",
+      "https://github.com/shopware/shopware/pull/21104#discussion_r4165219732"
+    ]
+  }
+}

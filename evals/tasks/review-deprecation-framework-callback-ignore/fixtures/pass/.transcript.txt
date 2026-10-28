@@ -1,0 +1,16 @@
+The replacement is a public class shipped in the same change, and the deprecated subscriber method uses throwIfActive.
+
+```json
+{
+  "findings": [
+    {
+      "rule_id": null,
+      "severity": "nit",
+      "file": "src/Core/Content/Product/Subscriber/ProductCacheRefresher.php",
+      "line": 14,
+      "summary": "The refresher has no class docblock; one line on what it refreshes would help.",
+      "fix": "Add a short class docblock."
+    }
+  ]
+}
+```

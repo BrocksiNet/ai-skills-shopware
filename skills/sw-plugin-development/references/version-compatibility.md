@@ -24,7 +24,10 @@ Check when an API arrived in the source of the oldest supported tag
 arrive in different releases. With the ai-skills-shopware tools,
 `node tools/api-index/bin/api-facts.ts <plugin>` lists, for every release
 in the range, the Shopware API the plugin uses that is missing, deprecated
-or internal there.
+or internal there: PHP classes and members, and the admin components and
+blocks, storefront templates, blocks and JS plugins, and Twig functions its
+overrides and templates rely on. A template block or plugin core removed is
+not an error: the override just stops working.
 
 ## Guarding version-specific code
 
@@ -79,9 +82,6 @@ use Shopware\Core\Framework\Feature;
 return !Feature::has('MY_FLAG') || Feature::isActive('MY_FLAG');
 ```
 
-- **PLG-025** **Never read `$_SERVER['MY_FLAG']` or `getenv('MY_FLAG')` directly** — that
-  bypasses Shopware's feature registry, breaks in prod mode, and reviewers will
-  flag it.
 - `Feature::has()` returns false when the flag is not registered (e.g. it was
   removed after graduating). The pattern above treats graduation as "always active",
   which is correct — the feature is stable.
@@ -108,8 +108,6 @@ for plugins; **6.8 removes it** (Symfony 8 drops the XML loaders).
   (`services.php`, `routes.php`).
 - **Leave as XML:** plugin admin settings `config.xml`, `custom-fields.xml`,
   `flow.xml`, `rule-conditions.xml`, and app `manifest.xml`.
-- **PLG-026** A 6.6/6.7 plugin may still ship XML DI. A **6.8-targeted** plugin must not.
-  Do not add new `services.xml` when the supported range includes 6.8.
 
 ```php
 use SwagExample\ProductLoader;

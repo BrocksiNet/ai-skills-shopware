@@ -1,0 +1,77 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Drift mining and review sources",
+  "description": "Repositories the weekly drift job reads (tools/bin/mine-trunk.ts) and the ones whose merged-PR reviews the daily collector reads (tools/bin/collect-reviews.ts). Checked by validate-skills.",
+  "type": "object",
+  "required": ["sources"],
+  "additionalProperties": false,
+  "properties": {
+    "$schema": { "type": "string" },
+    "sources": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/source" }
+    },
+    "reviews": {
+      "type": "array",
+      "description": "Repositories whose merged-PR review comments the daily collector turns into signals.",
+      "items": { "$ref": "#/$defs/review" }
+    }
+  },
+  "$defs": {
+    "review": {
+      "type": "object",
+      "required": ["id", "repo", "base", "private"],
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^[a-z0-9-]+$",
+          "description": "The signals' `source` and the prefix of the monthly files (`<id>-YYYY-MM.jsonl`). Never renamed; must not reuse a drift source ID."
+        },
+        "repo": { "type": "string", "pattern": "^[A-Za-z0-9_.-]+/[A-Za-z0-9_.-]+$" },
+        "base": { "type": "string", "minLength": 1, "description": "Only PRs merged into this branch count." },
+        "private": {
+          "type": "boolean",
+          "description": "A private repository is collected only on a maintainer's machine, into the git-ignored .cache/review-signals/. Its text never goes into the public review-signals release."
+        }
+      }
+    },
+    "source": {
+      "type": "object",
+      "required": ["id", "repo", "branch", "extractor", "paths", "skills"],
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^[a-z0-9-]+$",
+          "description": "Key in docs/.mining-state.json and in a rule's `upstream` list. Never renamed."
+        },
+        "repo": { "type": "string", "pattern": "^[A-Za-z0-9_.-]+/[A-Za-z0-9_.-]+$" },
+        "branch": { "type": "string", "minLength": 1 },
+        "extractor": {
+          "enum": ["shopware-trunk", "markdown"],
+          "description": "`shopware-trunk`: agent skill bullets, guideline headings, review guide IDs, PR template lines and PHPStan or Danger rule classes. `markdown`: bullets and headings of every Markdown file."
+        },
+        "paths": {
+          "type": "array",
+          "minItems": 1,
+          "items": { "type": "string", "minLength": 1 },
+          "description": "Watched paths; a commit counts when it touches one of them."
+        },
+        "skills": {
+          "type": "array",
+          "description": "Our skills that learn from a path of the source. The mapper's fallback for a change no rule cites.",
+          "items": {
+            "type": "object",
+            "required": ["path", "skills"],
+            "additionalProperties": false,
+            "properties": {
+              "path": { "type": "string", "minLength": 1, "description": "A path prefix in the source repository." },
+              "skills": { "type": "array", "minItems": 1, "items": { "type": "string" } }
+            }
+          }
+        }
+      }
+    }
+  }
+}

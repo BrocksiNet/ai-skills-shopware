@@ -13,9 +13,6 @@ patterns (2025–2026).
 
 ## Core ↔ Storefront / Administration boundaries
 
-- **CORE-030** **Core must not depend on Storefront or Administration.** Decouple with events,
-  interfaces defined in Core, or extension points — not direct class references
-  across bundles.
 - When Storefront needs Core behaviour, subscribe in Storefront or expose an
   event from Core; do not pull Storefront types into Core.
 
@@ -40,21 +37,18 @@ deprecation cycle.
   framework mechanics can still subclass or mock it.
 - **Simple value objects and structs** nobody needs to decorate or mock: a real
   `final class`.
-- **CORE-034** Do not call or extend `@internal` symbols from outside their bundle.
 
 Details: [`service-architecture.md`](service-architecture.md#classes-final-and-internal).
 
 ## HTTP / session
 
-- **CORE-035** **Thin controllers** — validate input, delegate to a service, return a response.
+- **Thin controllers** (`PLG-006`) — validate input, delegate to a service, return a response.
   No DAL orchestration or business rules in controllers when a service suffices.
 - **CORE-036** **Avoid lazy sessions** on read paths. Use safe session checks (`hasSession()`,
   request attributes) instead of touching the session when not required.
 
 ## Migrations (platform)
 
-- **CORE-037** Use the **exact current Unix timestamp** for new migration class names, file
-  names, and `getCreationTimestamp()` — not placeholder or rounded values.
 - **CORE-038** **`updateDestructive()` is not for long-running work** — keep heavy backfills in
   `update()` or dedicated commands; destructive step stays small.
 - **CORE-039** **Never edit a shipped migration** — add a new class with a new timestamp.

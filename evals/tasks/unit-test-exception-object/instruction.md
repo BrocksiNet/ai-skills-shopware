@@ -1,11 +1,8 @@
-# Task: fix exception assertion anti-patterns
+# Task: fix the exception test
 
-Rewrite `InvalidQuantityValidatorTest.php` to follow Shopware unit-test standards:
+`InvalidQuantityValidatorTest.php` is a unit test for a shopware/shopware
+contribution. Core review rejected the way it checks the thrown exception.
+Fix the test.
 
-- Use **`expectExceptionObject()`** with the domain exception factory — not
-  `expectException()` + `expectExceptionMessage()`.
-- Keep it a **pure unit test** (`TestCase` only — no kernel, no database).
-- Use **`assertSame`** if you add return-value assertions.
-- Do **not** use `#[Depends]`, mock `any()`, or `assertEquals` for scalars.
-
-Do not change production code unless the test requires it.
+- Keep it a pure unit test (no kernel, no database).
+- Do not change production code unless the test requires it.

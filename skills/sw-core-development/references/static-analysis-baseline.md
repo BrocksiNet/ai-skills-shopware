@@ -8,8 +8,6 @@ hit baseline entries.
 The PHPStan baseline (`phpstan-baseline.neon`) is a record of *accepted legacy
 debt*. It only ever gets smaller. Concretely:
 
-- **CORE-060** **Never add new entries to the baseline to silence your own new code.** Fix the
-  code instead. New code must pass at the configured level cleanly.
 - **CORE-061** **When you touch a file that has baseline entries**, try to resolve them and
   remove those lines. Leave the file better than you found it.
 - **Raising the level** (`level: X` in `phpstan.neon`) requires regenerating the
@@ -37,3 +35,7 @@ truth. Key reminders for core:
 - [ ] No new baseline entries introduced by your change.
 - [ ] Baseline entries in files you touched were reduced where feasible.
 - [ ] If the level changed, the baseline was regenerated and committed together.
+
+## Eval
+
+`review-phpstan-suppression-catch` / `-ignore` (CORE-062).

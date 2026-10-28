@@ -1,0 +1,34 @@
+diff --git a/RELEASE_INFO-6.7.md b/RELEASE_INFO-6.7.md
+--- a/RELEASE_INFO-6.7.md
++++ b/RELEASE_INFO-6.7.md
+@@ @@
++### REST API indexing behavior header is honored
++
++The `indexing-behavior` header now supports `use-queue-indexing` and `disable-indexing` on REST API writes, matching the existing Sync API behavior. Requests without this header retain the current synchronous indexing behavior.
+diff --git a/src/Core/Framework/Routing/ApiRequestContextResolver.php b/src/Core/Framework/Routing/ApiRequestContextResolver.php
+--- a/src/Core/Framework/Routing/ApiRequestContextResolver.php
++++ b/src/Core/Framework/Routing/ApiRequestContextResolver.php
+@@ @@
++use Shopware\Core\Framework\DataAbstractionLayer\Indexing\EntityIndexerRegistry;
++        $indexingBehavior = $request->headers->get(PlatformRequest::HEADER_INDEXING_BEHAVIOR);
++        if (\in_array($indexingBehavior, [EntityIndexerRegistry::DISABLE_INDEXING, EntityIndexerRegistry::USE_INDEXING_QUEUE], true)) {
++            $context->addState($indexingBehavior);
++        }
++
+diff --git a/tests/integration/Core/Framework/Routing/ApiRequestContextResolverTest.php b/tests/integration/Core/Framework/Routing/ApiRequestContextResolverTest.php
+--- a/tests/integration/Core/Framework/Routing/ApiRequestContextResolverTest.php
++++ b/tests/integration/Core/Framework/Routing/ApiRequestContextResolverTest.php
+@@ @@
++use Shopware\Core\Framework\DataAbstractionLayer\Indexing\EntityIndexerRegistry;
++    #[DataProvider('indexingBehaviorProvider')]
++    public function testContextHonorsIndexingBehaviorHeader(?string $behavior, bool $usesQueueIndexing, bool $disablesIndexing): void
++    {
++        $context = $this->resolveContextWithIndexingBehavior($behavior);
++
++        static::assertSame($usesQueueIndexing, $context->hasState(EntityIndexerRegistry::USE_INDEXING_QUEUE));
++        static::assertSame($disablesIndexing, $context->hasState(EntityIndexerRegistry::DISABLE_INDEXING));
++    }
++
++    /**
++     * @return iterable<string, array{0: ?string, 1: bool, 2: bool}>
++     */

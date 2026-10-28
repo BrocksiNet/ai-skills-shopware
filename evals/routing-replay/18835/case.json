@@ -1,0 +1,26 @@
+{
+  "repo": "shopware/shopware",
+  "pr": 18835,
+  "title": "feat(core): declare No-Vary-Search on cacheable responses",
+  "url": "https://github.com/shopware/shopware/pull/18835",
+  "expected": {
+    "sw-core-development/references/bc-data-and-config.md": [
+      "https://github.com/shopware/shopware/pull/18835#discussion_r3719733929",
+      "https://github.com/shopware/shopware/pull/18835#discussion_r3757102818"
+    ],
+    "sw-core-development/references/release-notes-and-adr.md": [
+      "https://github.com/shopware/shopware/pull/18835#discussion_r3719748234",
+      "https://github.com/shopware/shopware/pull/18835#discussion_r3719759659",
+      "https://github.com/shopware/shopware/pull/18835#discussion_r3757122465",
+      "https://github.com/shopware/shopware/pull/18835#discussion_r3764138285",
+      "https://github.com/shopware/shopware/pull/18835#discussion_r3955488574"
+    ],
+    "sw-storefront/references/cache-and-modern-web.md": [
+      "https://github.com/shopware/shopware/pull/18835#discussion_r3685617598",
+      "https://github.com/shopware/shopware/pull/18835#discussion_r3757247846"
+    ],
+    "sw-testing/references/core-platform-patterns.md": [
+      "https://github.com/shopware/shopware/pull/18835#discussion_r3955779642"
+    ]
+  }
+}

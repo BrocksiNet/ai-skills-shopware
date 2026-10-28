@@ -1,0 +1,7 @@
+The new rounding is only used behind the flag, and the flag-off path keeps Math.floor.
+
+```json
+{
+  "findings": []
+}
+```

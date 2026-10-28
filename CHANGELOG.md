@@ -8,6 +8,201 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- `ADM-041` in `sw-admin-js`, from the Administration lint gate in
+  shopware/shopware#21730: new components are TypeScript, export
+  `wrapComponentConfig({ ... })` and use composables instead of mixins. On
+  trunk they copy the reference implementations named in the Administration
+  `AGENTS.md`, not the neighbouring code. Eval `admin-component-wrap-config`
+  with an AST grader. The new `no-new-mixins` ESLint rule is listed under
+  "Already enforced by CI" for `ADM-007`. `ADM-006` stays, narrowed to
+  plugins: a plugin module built with `Component.register` and Twig blocks
+  gets no `.vue` file, because other extensions cannot override its blocks.
+- `STY-001` in `sw-assistant-style`: before handing back prose, the agent
+  reads it once more and rewrites machine-writing tells (staged contrasts,
+  run-ups, bold-label lists, inflated words, chat phrases) without adding or
+  dropping facts. The checklist is our rewrite of
+  [`blader/humanizer`](https://github.com/blader/humanizer).
+  `sw-pr-description` carries the part that fits a PR body. In a local A/B
+  on Sonnet, a blind judge preferred the checked texts in 14 of 22 decided
+  pairs, and graders stayed green. Installing humanizer next to our skills
+  did nothing, because the agent never loaded it. Eval task
+  `plain-prose-dev-answer`; its grader uses the new
+  `tools/src/grade/prose.ts`. Humanizer is a drift source now, so a change
+  to its `SKILL.md` shows up under `STY-001` in the weekly issue.
+- `STY` prefix for `sw-assistant-style`. The support-reply block rule is
+  `STY-002`, and saying plainly when unsure is `STY-003`.
+- `TEST-036` in `sw-testing`: a PR that changes code keeps the existing
+  test expectations. A flipped, loosened or skipped assertion, or an edited
+  data-provider case, needs the behavior change announced in the PR and the
+  changelog. It is the second half of core review guide TEST-002, which
+  `TEST-035` does not cover. Review pair
+  `review-test-changed-expectation-*`; the `test-shape-and-flags.md` route
+  now also fires on assertion edits and named data-provider cases.
+- Drift mining reads every repository in `rules/sources.json`: core trunk
+  plus `shopwareLabs/ai-coding-tools`, `netresearch/php-modernization-skill`,
+  the `shopware/shopware-cli` skills and `FriendsOfShopware/agent-skills`.
+  `docs/.mining-state.json` has one entry per source; the old single-source
+  shape still reads.
+- The weekly drift issue groups each change by the skill and rule it
+  touches. A change ties to a rule through the catalog (`core_guide_ids`,
+  `enforced_by`, `trunk.source`, the new `upstream` field), then through
+  the skills' `routes.json`, then through the source's skill list. What no
+  rule covers is listed as unmapped. `--signals` writes the mapped changes as
+  JSON Lines for later tooling.
+- `PRD-001` and `PRD-008` record their trunk source, the PR template.
+- A daily review collector, `tools/bin/collect-reviews.ts`, turns review
+  comments and review bodies on merged PRs into signals mapped to skills
+  and rules. `.github/workflows/collect-reviews.yml` publishes the public
+  ones for `shopware/shopware` as the `review-signals` release, one file per
+  month. Private repositories such as `shopware/SwagCommercial` are only
+  collected locally into the git-ignored `.cache/review-signals/`.
+- Each reviewer gets a trust score from their own record: the share of
+  their comments the code changed after, starting from a prior that is
+  higher for org members. It lands in `reviewers.json` next to the signals.
+- The weekly drift issue has a "Review comments" section: the week's
+  review comments counted per skill and reference, with the PRs.
+- Replay tests for drift mining: ten recorded weeks across all sources,
+  checked against a hand reading. `mine-trunk.ts run --dry-run` prints the
+  report and the issue actions without touching issues or the state file;
+  the workflow has a `dry_run` input. `/mined <source>` moves only the
+  named sources.
+- `tools/bin/replay-routes.ts` replays the router over merged core PRs and
+  measures recall against the references their review comments map to,
+  and the references selected with no matching comment. A recorded corpus
+  of 34 public PRs in `evals/routing-replay/` keeps a recall floor in CI.
+- `tools/bin/agent-preflight.ts`: the evals workflow checks that the CI
+  model answers before the shards start.
+- `tools/bin/suggest-rules.ts` proposes new, updated and retired rules from
+  the `review-signals` release and the open drift issue, with the agent you
+  are logged in to. It clusters the signals without a model, weighted by
+  reviewer trust, asks the agent once per cluster (`SUGGEST_MAX_CLUSTERS`,
+  default 20) with the signals as quoted data, validates the JSON answer,
+  and checks that every evidence URL was in the input, the skill owns a
+  topic and a new rule has two PRs or a review that requested changes.
+  Retirement candidates come from `enforced_by` checks that are not
+  trunk-only, classes gone from the API index and A/B baselines where the
+  skill-off arm passes every repeat. Output goes to the git-ignored
+  `suggestions/`. See `docs/maintenance.md#suggesting-rule-changes`.
+- `suggest-rules draft <id>` turns one proposal into a branch
+  `rules/<skill>-<slug>` in its own worktree. The agent makes the change by
+  the steps in `AGENTS.md` with file and test tools only; the free checks
+  run (one retry with their output), `eval-local` runs the A/B for the
+  changed tasks, and a draft PR opens with the evidence, the criteria
+  answers, the checks and the A/B table, labelled `run-evals`. `--no-pr`
+  stops before the push. See `docs/maintenance.md#drafting-a-proposal`.
+- Review pair `review-thin-controller-catch` / `-ignore` for `PLG-006`: a
+  Store API balance route in a loyalty plugin. In the catch diff the
+  controller builds the Criteria, runs the aggregation and picks the tier;
+  in the ignore diff it calls one injected calculator service.
+  Haiku passes both with skills off too (3/3 each), so `PLG-006` gets a
+  `keep_reason`: with the skill on, the review cites `PLG-006`; with it off,
+  it gives no rule ID. The catch grader accepts `minor`, because the
+  review's severity scale calls working but costly code minor.
+
+### Changed
+
+- The descriptions of `sw-plugin-development`, `sw-architecture`,
+  `sw-testing`, `sw-php-foundation`, `sw-core-development`, `sw-storefront`
+  and `sw-admin-js` say to load the skill before an edit, even a small and
+  fully specified one, and name the kinds of code that need it. In the
+  baseline, Haiku loaded no skill on build tasks it felt sure about. On 17
+  of those tasks it now loads one in 41 of 51 runs. No should-not-trigger
+  prompt of these skills fires. `sw-architecture` no longer tells the agent
+  to skip it for "one obvious edit". `sw-plugin-development` points at the
+  limit rule `ARCH-002`, because Haiku loads it without `sw-architecture`.
+- `ARCH-002` says how to read every row: a job that needs all of them pages
+  in a loop with `RepositoryIterator`, or with `IteratorFactory` or a DBAL
+  query and a last-ID cursor for a plain ID scan. One `setLimit()` without
+  the loop drops the rest. The old text allowed an undefined "export
+  exception".
+- `dal-search-without-limit` asks for a category teaser in a plugin with a
+  composer.json and a plugin class, instead of filtering a method called
+  `loadAll()`. On the old prompt the agent rightly refused to truncate "all".
+  Its grader checks every method that searches, following calls to helpers
+  in the class, so a limit in an unused helper no longer passes. Haiku: 3/3
+  with skills on, 0/3 off.
+- New task `dal-export-pages-through-all`: a nightly CLI export of every
+  product ID in a category. It passes only when a method that reads products
+  pages in a loop. A single `setLimit()` read fails. The new
+  `tools/src/grade/php-calls.ts` follows same-class calls for both DAL
+  graders. Haiku pages here without the skill, so the task holds.
+- `business-logic-in-controller` runs in a plugin skeleton and no longer
+  reads as "write one file". Its grader skipped a class-level `#[Route]`
+  (the Store API scope) and took the constructor for the route action, which
+  failed correct solutions.
+- `PHP-001` (no `empty()`) and `PHP-002` (backed enums for a fixed set of
+  values in new code) are tagged in `sw-php-foundation` with audience
+  `core`. `PHP-001` is enforced on trunk by PHPStan's `disallowedEmpty`;
+  `PHP-002` comes from the core coding guideline on PHP 8.1 features.
+  `sw-core-development` points at both, because Haiku loads it for core work
+  without `sw-php-foundation`. Their tasks are core features now: a domain
+  blocklist in `CustomerEmailValidator`, and review moderation states. With
+  skills off, Haiku kept `empty()` in 3 of 3 runs, and with skills on it
+  removed it in 3 of 3. `PHP-002` holds on Haiku and keeps a `keep_reason`.
+- Thin controllers are one rule now, `PLG-006`, stated in
+  `sw-plugin-development/references/api-contracts.md` with audience core and
+  plugin. `REV-010` (sw-review-learnings) and `CORE-035`
+  (sw-core-development) said the same thing; they are superseded by
+  `PLG-006`, and both skills point at it. The rule lives in a reference the
+  extension review reads, so a review can cite it.
+- `dal-search-without-limit`, `business-logic-in-controller` and
+  `no-dal-connection-for-entity-read` ask for a feature now instead of a fix
+  that names the rule. On the old prompts every profile passed them with
+  skills off. On the new ones, claude/haiku fails the first two in both
+  arms and never loads a skill, so `ARCH-002`, `PLG-006`, `REV-010` and
+  `CORE-035` stay. `PLG-003` and `REV-024` still hold and get a
+  `keep_reason`: review tasks cite them.
+
+- Three new core checks are cited in the catalog, so the drift issue files
+  their changes under the rule and the "Already enforced by CI" sections
+  list them: `StoreApiRouteExtensionRule` for `ARCH-004`,
+  `NoFeatureSkipInUnitTestsRule` for `TEST-006` and
+  `NoReflectionInUnitTestsRule` for `TEST-012`.
+- The CI eval model is `opencode/mimo-v2.6-flash-free`; LongCat is no
+  longer offered. OpenCode web search is off in eval sessions, and the
+  workflow runs 16 shards with a 330 minute A/B timeout.
+- The README shows the version facts A/B with all three arms, the
+  `ADM-009` result and the `api-diff` precision and recall, and describes
+  the mining and review collection that run today.
+- The `code-comments.md` route for `REV-034` also fires on "instead would"
+  and on any bare issue number in a comment.
+
+### Removed
+
+- 58 rules without a measured effect left the skills. Each stays in
+  `rules/catalog.json` as `retired`, with the evidence in the new
+  `retired_reason` field, which every retired or superseded rule now needs.
+  - 20 rules with an eval task: with the skill off, the task passed every
+    repeat on claude/haiku and on the free OpenCode model. Their tasks stay
+    as canaries.
+  - 38 rules without an eval: `suggest-rules draft-eval` wrote one, and with
+    the skill off claude/haiku passed every repeat. The drafted tasks were
+    not kept.
+- `keep_reason` in the catalog marks an active rule that stays although no
+  A/B shows an effect, and retirement passes skip it. Eight rules carry one,
+  because a miss is severe on weaker models: `SEC-001`, `PLG-023`,
+  `ADM-016`, `CORE-002`, `PLG-022`, `CORE-066`, `CORE-067` and `CORE-069`.
+
+### Fixed
+
+- Drift mining skipped commits merged after the state but dated before it.
+  It now reads the commit range from the state's commit, and falls back to
+  dates when that commit is gone.
+- Drift mining read merge commits again, read Markdown outside the watched
+  paths and change logs, took code blocks and frontmatter for rules, missed
+  review persona bullets, reported helper classes as rule classes, and cut
+  commits at 300 files.
+- The mining workflow closed every older drift issue. It now closes one
+  only when the new report reaches as far in every source it lists.
+- Eval runs: a failed skill call no longer counts as a loaded skill, a
+  session that tried web search no longer counts as an agent error, and the
+  gate and baseline jobs need a successful plan. The baseline job refuses
+  empty results.
+
+## [0.14.0] - 2026-10-23
+
 ### Changed
 
 - **Breaking:** every skill name starts with `sw-`. `php-foundation` is
@@ -19,14 +214,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - The README is short and says why to use the library. Installation,
   architecture with diagrams, results and maintenance moved to their own
   pages under `docs/`.
-- `sw-admin-js` follows the Administration lint gate from
-  shopware/shopware#21730. New rule ADM-041: new components export
-  `wrapComponentConfig({ ... })`, use composables instead of mixins and, on
-  trunk, copy the reference implementations named in the Administration
-  `AGENTS.md` rather than the neighbouring code. It supersedes ADM-006
-  ("follow the patterns in the area you touch"). New eval
-  `admin-component-wrap-config` with an AST grader. The two new ESLint
-  rules are listed under "Already enforced by CI" for ADM-001 and ADM-007.
 
 ### Added
 
@@ -46,6 +233,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - The router ranks skills and references by how many files matched, names
   the base branch, merge base and commit count, warns on large diffs, and
   says which core trunk skill leads a topic (`defers_to` metadata).
+- `REV-034` in `sw-review-learnings`: comments and docblocks describe the
+  code, not the history of the change. From shopware/shopware review
+  findings on #19917 and #20855. Routed by history words in comment lines,
+  with a review catch and ignore pair and the routing case `history-comment`.
+- `REV-035`: a visibility check by ID with `searchIds()` misses
+  restrictions set on `sales_channel.<entity>.loaded`, such as Dynamic
+  Access hiding categories. `->searchIds(` now selects the DAL review
+  reference. Review catch and ignore pair included.
 - `sw-help`: what every skill is for, grouped by task, with example prompts.
 - `validate-skills` checks the skill metadata, that the router index is up
   to date, and that `sw-help` names every skill.
@@ -66,6 +261,25 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `check-breaks` measures `api-diff` against the breaks the 6.6, 6.7 and
   6.8 UPGRADE files name: 97.2 % recall, 97.1 % precision. The weekly
   index workflow runs it.
+- WP11 phase 4: the API index covers the admin and the storefront
+  (generator `api-index/0.4.0`). Admin: components with their props,
+  methods, emits, slots and template blocks, position identifiers and the
+  `Shopware` global, `@private` and `@deprecated` included. Storefront:
+  templates and blocks, and the JS plugins `main.js` registers with their
+  options and public methods. Also the Twig functions, filters and tags core
+  adds, and whether the admin and storefront build with webpack or Vite.
+- `api-diff` reports these surfaces (`admin`, `storefront`, `twig`,
+  `build`). `api-facts` reads an extension's admin overrides, storefront
+  templates, plugin overrides, Twig calls and admin `webpack.config.js`,
+  and finds an overridden block through the template's `sw_extends` chain
+  or the component it extends.
+- Three blind review pairs for `PLG-001` on frontend API core removed in
+  6.7: a storefront template, a storefront JS plugin and an admin block.
+
+### Fixed
+
+- The index timeline merges one release at a time; with phase 4 the full
+  build ran out of memory.
 
 ## [0.12.0] - 2026-10-22
 
@@ -708,7 +922,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   (`actions/checkout@v5`, `markdownlint-cli2-action@v23`).
 - `docs/local-validation.md` and GitHub issue templates for feedback.
 
-[Unreleased]: https://github.com/BrocksiNet/ai-skills-shopware/compare/v0.13.0...main
+[Unreleased]: https://github.com/BrocksiNet/ai-skills-shopware/compare/v0.14.0...main
+[0.14.0]: https://github.com/BrocksiNet/ai-skills-shopware/compare/v0.13.0...v0.14.0
 [0.13.0]: https://github.com/BrocksiNet/ai-skills-shopware/compare/v0.12.0...v0.13.0
 [0.12.0]: https://github.com/BrocksiNet/ai-skills-shopware/compare/v0.11.0...v0.12.0
 [0.11.0]: https://github.com/BrocksiNet/ai-skills-shopware/compare/v0.10.0...v0.11.0

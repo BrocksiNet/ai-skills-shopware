@@ -1,0 +1,78 @@
+{
+ "repos/shopware/shopware-cli/commits?sha=main&until=2026-10-19T23%3A59%3A59Z&per_page=1": [
+  {
+   "sha": "bcdda2dc44d9944a54e93152b308c6b35e51a21e",
+   "commit": {
+    "message": "Allow a stable Compose project name on project create (#1696)",
+    "committer": {
+     "date": "2026-10-19T14:19:04Z"
+    }
+   },
+   "parents": [
+    {
+     "sha": "1a646db4b3a64d0874d21e67be7ac04ce126fac9"
+    }
+   ]
+  }
+ ],
+ "repos/shopware/shopware-cli/commits?sha=main&path=skills&since=2026-10-13T00%3A00%3A00Z&until=2026-10-19T23%3A59%3A59Z&per_page=100&page=1": [
+  {
+   "sha": "cf6cdcefb50752859835a9ffd7b34a1148fbdda6",
+   "commit": {
+    "message": "feat: merge extension anonymize rules into project dumps (#1635)",
+    "committer": {
+     "date": "2026-10-15T11:55:16Z"
+    }
+   },
+   "parents": [
+    {
+     "sha": "21bb799c388808399cc5ef1de01c48c8b65f939f"
+    }
+   ]
+  }
+ ],
+ "repos/shopware/shopware-cli/commits/cf6cdcefb50752859835a9ffd7b34a1148fbdda6": {
+  "sha": "cf6cdcefb50752859835a9ffd7b34a1148fbdda6",
+  "commit": {
+   "message": "feat: merge extension anonymize rules into project dumps (#1635)",
+   "committer": {
+    "date": "2026-10-15T11:55:16Z"
+   }
+  },
+  "parents": [
+   {
+    "sha": "21bb799c388808399cc5ef1de01c48c8b65f939f"
+   }
+  ],
+  "files": [
+   {
+    "filename": "README.md",
+    "status": "modified",
+    "additions": 21,
+    "deletions": 0,
+    "patch": "@@ -105,6 +105,26 @@ Omit `-e` / `--env` to target `environments.local`. Use `-e staging` (or another\n+### Anonymized dumps and extensions\n+```yaml\n+    - SwagExample.config.clientSecret\n+    - key: SwagExample.config.merchantEmail\n+    - key: SwagExample.config.environment\n+```\n@@ -138,6 +158,7 @@ Available skills:\n+- **`shopware-cli-extension-anonymize`** — Fill an extension's `anonymize` section in `.config/shopware-extension.yml` from its tables and system config secrets so `project dump --anonymize` includes them."
+   },
+   {
+    "filename": "docs/AGENT_SKILLS.md",
+    "status": "modified",
+    "additions": 19,
+    "deletions": 3,
+    "patch": "@@ -17,7 +17,9 @@ shopware-cli/\n ```\n@@ -78,6 +80,19 @@ It teaches agents to:\n+### `shopware-cli-extension-anonymize`\n+- edit only the config file the CLI actually loads;\n+- take `system_config` keys from `config.xml` and SystemConfig calls;\n+- take table and column names from entity storage names and migrations;\n+- choose faker expressions for personal data and `''` or `NULL` for secrets;\n+- omit a `system_config` row, or replace it with a custom value or a faker value;\n+- leave Shopware core anonymization and unrelated extension validation alone.\n@@ -95,7 +110,7 @@ For user-facing Shopware CLI changes:\n-3. Check whether `skills/shopware-cli-docker/SKILL.md` or `skills/shopware-cli-extension-store/SKILL.md` is affected.\n+3. Check whether `skills/shopware-cli-docker/SKILL.md`, `skills/shopware-cli-extension-store/SKILL.md`, or `skills/shopware-cli-extension-anonymize/SKILL.md` is affected.\n@@ -114,6 +129,7 @@ Validate each skill against the Agent Skills format:\n ```\n@@ -216,7 +232,7 @@ npx skills check\n ```bash\n ```"
+   },
+   {
+    "filename": "skills/shopware-cli-extension-anonymize/SKILL.md",
+    "status": "added",
+    "additions": 223,
+    "deletions": 0,
+    "patch": "@@ -0,0 +1,223 @@\n+---\n+---\n+# Bootstrap extension anonymize config\n+## Confirm this is an extension\n+- `composer.json` with `\"type\": \"shopware-platform-plugin\"` or `\"shopware-bundle\"`\n+- `manifest.xml` (Shopware app)\n+- Plugin: the part of `extra.shopware-plugin-class` after the last `\\`.\n+- Bundle: `extra.shopware-bundle-name`.\n+- App: `<meta><name>` in `manifest.xml`.\n+## Config file to edit\n+1. `.config/shopware-extension.yml`\n+2. `.shopware-extension.yml`\n+3. `.shopware-extension.yaml`\n+```bash\n+```\n+```bash\n+```\n+## Find candidates in the extension\n+### system_config\n+- In `config.xml` (plugins usually ship `src/Resources/config/config.xml`, apps `Resources/config/config.xml`): a field `<name>` is stored as `{technicalName}.config.{name}`.\n+- In PHP that reads or writes system config, such as `systemConfigService->get('SwagExample.settings.clientSecret')`: copy that string. Keys are often built from constants, such as `SYSTEM_CONFIG_DOMAIN . 'clientSecret'`; resolve them to the full key. A `.settings.` key is a different key from `.config.`.\n+- `config.xml` field type `password`\n+- a secret, token, password, private key, API key, client secret, client id, webhook secret, or SMTP password\n+- an email address or other personal data saved as configuration\n+```yaml\n+  - SwagExample.config.clientSecret\n+```\n+```yaml\n+  - key: SwagExample.config.clientSecret\n+```\n+```yaml\n+  - key: SwagExample.config.environment\n+  - key: SwagExample.config.merchantEmail\n+```\n+### tables\n+- Entity definitions: `ENTITY_NAME` or `getEntityName()` is the table. The first argument of a field constructor is the column. In `new StringField('access_token', 'accessToken')`, the column is `access_token`.\n+- Migrations: `CREATE TABLE` column lists. When an entity definition and a migration both describe the table, they should agree; use the storage name from the definition.\n+- Translated fields live in `{entity}_translation`. Mapping entities have their own entity name.\n+```yaml\n+```\n+## Choose the expression\n+```yaml\n+```\n+```yaml\n+```\n+## Write the section\n+```yaml\n+    - SwagExample.config.clientSecret\n+    - key: SwagExample.config.merchantEmail\n+    - key: SwagExample.config.environment\n+```\n+## After editing\n+- the new keys are in the one file the CLI loads, or in the file the build copies there\n+- keys outside `anonymize` are unchanged\n+- every new column is a storage name present in the extension\n+- every new system config key is a `<name>` from `config.xml` or a string passed to SystemConfig\n+```bash\n+```\n+## Tell the developer\n+- Added: `table.column` or config key, the expression, and the file it came from.\n+- Left out: fields you saw and did not treat as personal data or secrets, with the reason."
+   },
+   {
+    "filename": "skills/shopware-cli/SKILL.md",
+    "status": "modified",
+    "additions": 4,
+    "deletions": 0,
+    "patch": "@@ -324,6 +324,10 @@ Prefer Shopware CLI's supported authentication and configuration mechanisms inst"
+   }
+  ]
+ }
+}

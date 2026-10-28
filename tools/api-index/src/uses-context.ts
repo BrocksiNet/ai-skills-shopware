@@ -15,7 +15,17 @@ export type UseKind =
   | 'type'
   | 'attribute'
   /** `class_exists(Foo::class)`, `method_exists(Foo::class, 'bar')` and the like. */
-  | 'guard';
+  | 'guard'
+  /** An admin component, method or storefront plugin the extension overrides. */
+  | 'override'
+  /** A core template block the extension's template overrides. */
+  | 'block'
+  /** A core admin component used as a tag in a template. */
+  | 'tag'
+  /** A Twig function, filter or tag core adds. */
+  | 'twig'
+  /** A build config core reads, such as the admin's `webpack.config.js`. */
+  | 'build';
 
 export interface Use {
   /** `php:Fqcn` or `php:Fqcn::member()` / `php:Fqcn::CONSTANT`, as in the index. */

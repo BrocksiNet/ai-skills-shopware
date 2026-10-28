@@ -1,0 +1,14 @@
+```json
+{
+  "findings": [
+    {
+      "rule_id": null,
+      "severity": "nit",
+      "file": "src/Core/Migration/Test/Migration1792800456DropLegacyCustomerNoteTest.php",
+      "line": 25,
+      "summary": "The test name is long; the assertion already says what it checks.",
+      "fix": "Shorten the test name."
+    }
+  ]
+}
+```

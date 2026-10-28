@@ -1,0 +1,74 @@
+{
+  "$schema": "./sources.schema.json",
+  "sources": [
+    {
+      "id": "shopware",
+      "repo": "shopware/shopware",
+      "branch": "trunk",
+      "extractor": "shopware-trunk",
+      "paths": [".agents", "coding-guidelines", "src/Core/DevOps/StaticAnalyze", ".github/PULL_REQUEST_TEMPLATE.md"],
+      "skills": [
+        { "path": ".agents/skills/shopware-admin-js", "skills": ["sw-admin-js"] },
+        { "path": ".agents/skills/shopware-change-scope", "skills": ["sw-review-learnings"] },
+        { "path": ".agents/skills/shopware-php-code", "skills": ["sw-architecture"] },
+        { "path": ".agents/skills/shopware-phpunit-tests", "skills": ["sw-testing"] },
+        { "path": ".agents/skills/shopware-pr-hygiene", "skills": ["sw-pr-description"] },
+        { "path": ".agents/skills/shopware-release-docs", "skills": ["sw-core-development"] },
+        { "path": ".agents/skills/sw-review", "skills": ["sw-pr-review", "sw-extension-review"] },
+        { "path": ".github/PULL_REQUEST_TEMPLATE.md", "skills": ["sw-pr-description"] }
+      ]
+    },
+    {
+      "id": "ai-coding-tools",
+      "repo": "shopwareLabs/ai-coding-tools",
+      "branch": "main",
+      "extractor": "markdown",
+      "paths": ["plugins/test-writing", "plugins/contributor-writing", "plugins/code-migration", "plugins/dev-tooling"],
+      "skills": [
+        { "path": "plugins/test-writing", "skills": ["sw-testing"] },
+        { "path": "plugins/contributor-writing", "skills": ["sw-pr-description"] },
+        { "path": "plugins/code-migration", "skills": ["sw-plugin-development"] },
+        { "path": "plugins/dev-tooling", "skills": ["sw-podman-dev"] }
+      ]
+    },
+    {
+      "id": "php-modernization",
+      "repo": "netresearch/php-modernization-skill",
+      "branch": "main",
+      "extractor": "markdown",
+      "paths": ["skills"],
+      "skills": [{ "path": "skills", "skills": ["sw-php-foundation"] }]
+    },
+    {
+      "id": "shopware-cli",
+      "repo": "shopware/shopware-cli",
+      "branch": "main",
+      "extractor": "markdown",
+      "paths": ["skills"],
+      "skills": [{ "path": "skills", "skills": ["sw-podman-dev"] }]
+    },
+    {
+      "id": "fos-agent-skills",
+      "repo": "FriendsOfShopware/agent-skills",
+      "branch": "main",
+      "extractor": "markdown",
+      "paths": ["skills"],
+      "skills": [
+        { "path": "skills/shopware-phpunit", "skills": ["sw-testing"] },
+        { "path": "skills/shopware-admin-crud-module", "skills": ["sw-admin-js"] }
+      ]
+    },
+    {
+      "id": "humanizer",
+      "repo": "blader/humanizer",
+      "branch": "main",
+      "extractor": "markdown",
+      "paths": ["SKILL.md"],
+      "skills": [{ "path": "SKILL.md", "skills": ["sw-assistant-style"] }]
+    }
+  ],
+  "reviews": [
+    { "id": "core-reviews", "repo": "shopware/shopware", "base": "trunk", "private": false },
+    { "id": "commercial-reviews", "repo": "shopware/SwagCommercial", "base": "trunk", "private": true }
+  ]
+}

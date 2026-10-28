@@ -1,0 +1,17 @@
+The command and the formatter look fine. The PR is about 550 changed lines and
+mixes several concerns, so it should be split.
+
+```json
+{
+  "findings": [
+    {
+      "rule_id": "REV-025",
+      "severity": "major",
+      "file": "src/Command/LowStockDigestCommand.php",
+      "line": 1,
+      "summary": "About 550 changed lines in one PR; split the CSV export and the event logging out.",
+      "fix": "Split the PR into smaller changes."
+    }
+  ]
+}
+```

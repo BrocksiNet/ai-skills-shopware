@@ -1,0 +1,627 @@
+diff --git a/changelog/_unreleased/2026-10-23-low-stock-digest.md b/changelog/_unreleased/2026-10-23-low-stock-digest.md
+new file mode 100644
+--- /dev/null
++++ b/changelog/_unreleased/2026-10-23-low-stock-digest.md
+@@ -0,0 +1,9 @@
++---
++title: Add low stock digest command
++issue: NEXT-00000
++---
++# Plugin
++* Added command `swag:low-stock:digest` listing active products at or below the configured threshold, with `--json` and `--csv` output
++* Added `LowStockDigestPrintedEvent`, logged by `LowStockDigestLogSubscriber`
++* Added `LowStockDigestFormatter` for the table and CSV output
++* Added config `SwagLowStockDigest.config.threshold`, default 5
+diff --git a/src/Command/LowStockDigestCommand.php b/src/Command/LowStockDigestCommand.php
+new file mode 100644
+--- /dev/null
++++ b/src/Command/LowStockDigestCommand.php
+@@ -0,0 +1,76 @@
++<?php declare(strict_types=1);
++
++namespace Swag\LowStockDigest\Command;
++
++use Shopware\Core\Framework\Context;
++use Swag\LowStockDigest\Event\LowStockDigestPrintedEvent;
++use Swag\LowStockDigest\Service\LowStockDigestBuilder;
++use Swag\LowStockDigest\Service\LowStockDigestFormatter;
++use Symfony\Component\Console\Attribute\AsCommand;
++use Symfony\Component\Console\Command\Command;
++use Symfony\Component\Console\Input\InputInterface;
++use Symfony\Component\Console\Input\InputOption;
++use Symfony\Component\Console\Output\OutputInterface;
++use Symfony\Component\Console\Style\SymfonyStyle;
++use Symfony\Component\EventDispatcher\EventDispatcherInterface;
++
++#[AsCommand(
++    name: 'swag:low-stock:digest',
++    description: 'Lists the products at or below the low-stock threshold',
++)]
++class LowStockDigestCommand extends Command
++{
++    public function __construct(
++        private readonly LowStockDigestBuilder $builder,
++        private readonly LowStockDigestFormatter $formatter,
++        private readonly EventDispatcherInterface $dispatcher,
++    ) {
++        parent::__construct();
++    }
++
++    protected function configure(): void
++    {
++        $this->addOption('sales-channel', 's', InputOption::VALUE_REQUIRED, 'Sales channel whose threshold applies');
++        $this->addOption('json', null, InputOption::VALUE_NONE, 'Print JSON instead of a table');
++        $this->addOption('csv', null, InputOption::VALUE_NONE, 'Print semicolon separated rows');
++    }
++
++    protected function execute(InputInterface $input, OutputInterface $output): int
++    {
++        $io = new SymfonyStyle($input, $output);
++        $salesChannelId = $input->getOption('sales-channel');
++        $context = Context::createCLIContext();
++        $rows = $this->builder->build(
++            $context,
++            is_string($salesChannelId) ? $salesChannelId : null,
++        );
++
++        $this->dispatcher->dispatch(new LowStockDigestPrintedEvent(
++            array_column($rows, 'id'),
++            $context,
++        ));
++
++        if ($input->getOption('json')) {
++            $output->writeln(json_encode($rows, JSON_THROW_ON_ERROR | JSON_PRETTY_PRINT));
++
++            return self::SUCCESS;
++        }
++
++        if ($input->getOption('csv')) {
++            $output->write($this->formatter->toCsv($rows));
++
++            return self::SUCCESS;
++        }
++
++        if ($rows === []) {
++            $io->success('No product is at or below the threshold.');
++
++            return self::SUCCESS;
++        }
++
++        $io->table(['Number', 'Name', 'Stock'], $this->formatter->toTableRows($rows));
++        $io->warning(sprintf('%d product(s) need a restock.', count($rows)));
++
++        return self::SUCCESS;
++    }
++}
+diff --git a/src/Event/LowStockDigestPrintedEvent.php b/src/Event/LowStockDigestPrintedEvent.php
+new file mode 100644
+--- /dev/null
++++ b/src/Event/LowStockDigestPrintedEvent.php
+@@ -0,0 +1,31 @@
++<?php declare(strict_types=1);
++
++namespace Swag\LowStockDigest\Event;
++
++use Shopware\Core\Framework\Context;
++use Shopware\Core\Framework\Event\NestedEvent;
++
++class LowStockDigestPrintedEvent extends NestedEvent
++{
++    /**
++     * @param list<string> $productIds
++     */
++    public function __construct(
++        private readonly array $productIds,
++        private readonly Context $context,
++    ) {
++    }
++
++    /**
++     * @return list<string>
++     */
++    public function getProductIds(): array
++    {
++        return $this->productIds;
++    }
++
++    public function getContext(): Context
++    {
++        return $this->context;
++    }
++}
+diff --git a/src/Resources/config/services.xml b/src/Resources/config/services.xml
+--- a/src/Resources/config/services.xml
++++ b/src/Resources/config/services.xml
+@@ -4,5 +4,22 @@
+            xsi:schemaLocation="http://symfony.com/schema/dic/services http://symfony.com/schema/dic/services/services-1.0.xsd">
+     <services>
+         <defaults autowire="true" autoconfigure="true" public="false"/>
++
++        <service id="Swag\LowStockDigest\Service\LowStockDigestBuilder">
++            <argument type="service" id="product.repository"/>
++            <argument type="service" id="Shopware\Core\System\SystemConfig\SystemConfigService"/>
++        </service>
++
++        <service id="Swag\LowStockDigest\Command\LowStockDigestCommand">
++            <argument type="service" id="Swag\LowStockDigest\Service\LowStockDigestBuilder"/>
++            <argument type="service" id="Swag\LowStockDigest\Service\LowStockDigestFormatter"/>
++            <argument type="service" id="event_dispatcher"/>
++            <tag name="console.command"/>
++        </service>
++
++        <service id="Swag\LowStockDigest\Subscriber\LowStockDigestLogSubscriber">
++            <argument type="service" id="logger"/>
++            <tag name="kernel.event_subscriber"/>
++        </service>
+     </services>
+ </container>
+diff --git a/src/Service/LowStockDigestBuilder.php b/src/Service/LowStockDigestBuilder.php
+new file mode 100644
+--- /dev/null
++++ b/src/Service/LowStockDigestBuilder.php
+@@ -0,0 +1,75 @@
++<?php declare(strict_types=1);
++
++namespace Swag\LowStockDigest\Service;
++
++use Shopware\Core\Content\Product\ProductCollection;
++use Shopware\Core\Content\Product\ProductEntity;
++use Shopware\Core\Framework\Context;
++use Shopware\Core\Framework\DataAbstractionLayer\EntityRepository;
++use Shopware\Core\Framework\DataAbstractionLayer\Search\Criteria;
++use Shopware\Core\Framework\DataAbstractionLayer\Search\Filter\EqualsFilter;
++use Shopware\Core\Framework\DataAbstractionLayer\Search\Filter\RangeFilter;
++use Shopware\Core\Framework\DataAbstractionLayer\Search\Sorting\FieldSorting;
++use Shopware\Core\System\SystemConfig\SystemConfigService;
++
++/**
++ * Lists the active products whose stock is at or below the configured threshold.
++ */
++class LowStockDigestBuilder
++{
++    public const CONFIG_THRESHOLD = 'SwagLowStockDigest.config.threshold';
++    public const DEFAULT_THRESHOLD = 5;
++    public const PAGE_SIZE = 100;
++
++    /**
++     * @param EntityRepository<ProductCollection> $productRepository
++     */
++    public function __construct(
++        private readonly EntityRepository $productRepository,
++        private readonly SystemConfigService $systemConfigService,
++    ) {
++    }
++
++    /**
++     * @return list<array{id: string, productNumber: string, name: string|null, stock: int}>
++     */
++    public function build(Context $context, ?string $salesChannelId = null): array
++    {
++        $threshold = $this->threshold($salesChannelId);
++
++        $criteria = new Criteria();
++        $criteria->addFilter(new EqualsFilter('active', true));
++        $criteria->addFilter(new RangeFilter('stock', ['lte' => $threshold]));
++        $criteria->addSorting(new FieldSorting('stock', FieldSorting::ASCENDING));
++        $criteria->setLimit(self::PAGE_SIZE);
++
++        $result = $this->productRepository->search($criteria, $context);
++
++        $rows = [];
++        foreach ($result->getEntities() as $product) {
++            $rows[] = $this->row($product);
++        }
++
++        return $rows;
++    }
++
++    public function threshold(?string $salesChannelId = null): int
++    {
++        $value = $this->systemConfigService->getInt(self::CONFIG_THRESHOLD, $salesChannelId);
++
++        return $value > 0 ? $value : self::DEFAULT_THRESHOLD;
++    }
++
++    /**
++     * @return array{id: string, productNumber: string, name: string|null, stock: int}
++     */
++    private function row(ProductEntity $product): array
++    {
++        return [
++            'id' => $product->getId(),
++            'productNumber' => (string) $product->getProductNumber(),
++            'name' => $product->getTranslated()['name'] ?? null,
++            'stock' => $product->getStock(),
++        ];
++    }
++}
+diff --git a/src/Service/LowStockDigestFormatter.php b/src/Service/LowStockDigestFormatter.php
+new file mode 100644
+--- /dev/null
++++ b/src/Service/LowStockDigestFormatter.php
+@@ -0,0 +1,37 @@
++<?php declare(strict_types=1);
++
++namespace Swag\LowStockDigest\Service;
++
++/**
++ * Renders the digest rows for the console table and the CSV export.
++ */
++class LowStockDigestFormatter
++{
++    /**
++     * @param list<array{id: string, productNumber: string, name: string|null, stock: int}> $rows
++     *
++     * @return list<list<string>>
++     */
++    public function toTableRows(array $rows): array
++    {
++        return array_map(
++            static fn (array $row): array => [$row['productNumber'], $row['name'] ?? '', (string) $row['stock']],
++            $rows,
++        );
++    }
++
++    /**
++     * @param list<array{id: string, productNumber: string, name: string|null, stock: int}> $rows
++     */
++    public function toCsv(array $rows): string
++    {
++        $lines = ['productNumber;name;stock'];
++
++        foreach ($rows as $row) {
++            $name = str_replace(';', ',', $row['name'] ?? '');
++            $lines[] = sprintf('%s;%s;%d', $row['productNumber'], $name, $row['stock']);
++        }
++
++        return implode("\n", $lines) . "\n";
++    }
++}
+diff --git a/src/Subscriber/LowStockDigestLogSubscriber.php b/src/Subscriber/LowStockDigestLogSubscriber.php
+new file mode 100644
+--- /dev/null
++++ b/src/Subscriber/LowStockDigestLogSubscriber.php
+@@ -0,0 +1,38 @@
++<?php declare(strict_types=1);
++
++namespace Swag\LowStockDigest\Subscriber;
++
++use Psr\Log\LoggerInterface;
++use Swag\LowStockDigest\Event\LowStockDigestPrintedEvent;
++use Symfony\Component\EventDispatcher\EventSubscriberInterface;
++
++class LowStockDigestLogSubscriber implements EventSubscriberInterface
++{
++    public function __construct(private readonly LoggerInterface $logger)
++    {
++    }
++
++    /**
++     * @return array<string, string>
++     */
++    public static function getSubscribedEvents(): array
++    {
++        return [
++            LowStockDigestPrintedEvent::class => 'onDigestPrinted',
++        ];
++    }
++
++    public function onDigestPrinted(LowStockDigestPrintedEvent $event): void
++    {
++        $productIds = $event->getProductIds();
++
++        if ($productIds === []) {
++            return;
++        }
++
++        $this->logger->info('Low stock digest printed', [
++            'products' => count($productIds),
++            'productIds' => $productIds,
++        ]);
++    }
++}
+diff --git a/src/SwagLowStockDigest.php b/src/SwagLowStockDigest.php
+--- a/src/SwagLowStockDigest.php
++++ b/src/SwagLowStockDigest.php
+@@ -8,15 +8,17 @@
+
+ class SwagLowStockDigest extends Plugin
+ {
++    public const CONFIG_DOMAIN = 'SwagLowStockDigest';
++
+     public function uninstall(UninstallContext $uninstallContext): void
+     {
+         parent::uninstall($uninstallContext);
+
+         if ($uninstallContext->keepUserData()) {
+             return;
+         }
+
+         $this->container->get(SystemConfigService::class)
+-            ->deleteExtensionConfiguration('SwagLowStockDigest');
++            ->deleteExtensionConfiguration(self::CONFIG_DOMAIN);
+     }
+ }
+diff --git a/tests/unit/Command/LowStockDigestCommandTest.php b/tests/unit/Command/LowStockDigestCommandTest.php
+new file mode 100644
+--- /dev/null
++++ b/tests/unit/Command/LowStockDigestCommandTest.php
+@@ -0,0 +1,72 @@
++<?php declare(strict_types=1);
++
++namespace Swag\LowStockDigest\Tests\Unit\Command;
++
++use PHPUnit\Framework\Attributes\CoversClass;
++use PHPUnit\Framework\TestCase;
++use Swag\LowStockDigest\Command\LowStockDigestCommand;
++use Swag\LowStockDigest\Service\LowStockDigestBuilder;
++use Swag\LowStockDigest\Service\LowStockDigestFormatter;
++use Symfony\Component\Console\Tester\CommandTester;
++use Symfony\Component\EventDispatcher\EventDispatcher;
++
++#[CoversClass(LowStockDigestCommand::class)]
++class LowStockDigestCommandTest extends TestCase
++{
++    public function testSaysSoWhenNothingIsLow(): void
++    {
++        $builder = $this->createMock(LowStockDigestBuilder::class);
++        $builder->method('build')->willReturn([]);
++
++        $tester = $this->tester($builder);
++        $tester->execute([]);
++
++        static::assertSame(0, $tester->getStatusCode());
++        static::assertStringContainsString('No product is at or below the threshold.', $tester->getDisplay());
++    }
++
++    public function testPrintsJsonWhenAsked(): void
++    {
++        $builder = $this->createMock(LowStockDigestBuilder::class);
++        $builder->method('build')->willReturn([
++            ['id' => 'a', 'productNumber' => 'SW-1', 'name' => 'Mug', 'stock' => 1],
++        ]);
++
++        $tester = $this->tester($builder);
++        $tester->execute(['--json' => true]);
++
++        static::assertStringContainsString('"productNumber": "SW-1"', $tester->getDisplay());
++    }
++
++    public function testPrintsCsvWhenAsked(): void
++    {
++        $builder = $this->createMock(LowStockDigestBuilder::class);
++        $builder->method('build')->willReturn([
++            ['id' => 'a', 'productNumber' => 'SW-1', 'name' => 'Mug', 'stock' => 1],
++        ]);
++
++        $tester = $this->tester($builder);
++        $tester->execute(['--csv' => true]);
++
++        static::assertStringContainsString("SW-1;Mug;1\n", $tester->getDisplay());
++    }
++
++    public function testWarnsWithTheCountWhenProductsAreLow(): void
++    {
++        $builder = $this->createMock(LowStockDigestBuilder::class);
++        $builder->method('build')->willReturn([
++            ['id' => 'a', 'productNumber' => 'SW-1', 'name' => 'Mug', 'stock' => 1],
++            ['id' => 'b', 'productNumber' => 'SW-2', 'name' => null, 'stock' => 0],
++        ]);
++
++        $tester = $this->tester($builder);
++        $tester->execute([]);
++
++        static::assertStringContainsString('2 product(s) need a restock.', $tester->getDisplay());
++    }
++
++    private function tester(LowStockDigestBuilder $builder): CommandTester
++    {
++        return new CommandTester(new LowStockDigestCommand($builder, new LowStockDigestFormatter(), new EventDispatcher()));
++    }
++}
+diff --git a/tests/unit/Event/LowStockDigestPrintedEventTest.php b/tests/unit/Event/LowStockDigestPrintedEventTest.php
+new file mode 100644
+--- /dev/null
++++ b/tests/unit/Event/LowStockDigestPrintedEventTest.php
+@@ -0,0 +1,28 @@
++<?php declare(strict_types=1);
++
++namespace Swag\LowStockDigest\Tests\Unit\Event;
++
++use PHPUnit\Framework\Attributes\CoversClass;
++use PHPUnit\Framework\TestCase;
++use Shopware\Core\Framework\Context;
++use Swag\LowStockDigest\Event\LowStockDigestPrintedEvent;
++
++#[CoversClass(LowStockDigestPrintedEvent::class)]
++class LowStockDigestPrintedEventTest extends TestCase
++{
++    public function testKeepsTheProductIdsAndTheContext(): void
++    {
++        $context = Context::createDefaultContext();
++        $event = new LowStockDigestPrintedEvent(['a', 'b'], $context);
++
++        static::assertSame(['a', 'b'], $event->getProductIds());
++        static::assertSame($context, $event->getContext());
++    }
++
++    public function testAnEmptyDigestHasNoProducts(): void
++    {
++        $event = new LowStockDigestPrintedEvent([], Context::createDefaultContext());
++
++        static::assertSame([], $event->getProductIds());
++    }
++}
+diff --git a/tests/unit/Service/LowStockDigestBuilderTest.php b/tests/unit/Service/LowStockDigestBuilderTest.php
+new file mode 100644
+--- /dev/null
++++ b/tests/unit/Service/LowStockDigestBuilderTest.php
+@@ -0,0 +1,74 @@
++<?php declare(strict_types=1);
++
++namespace Swag\LowStockDigest\Tests\Unit\Service;
++
++use PHPUnit\Framework\Attributes\CoversClass;
++use PHPUnit\Framework\TestCase;
++use Shopware\Core\Content\Product\ProductCollection;
++use Shopware\Core\Content\Product\ProductDefinition;
++use Shopware\Core\Content\Product\ProductEntity;
++use Shopware\Core\Framework\Context;
++use Shopware\Core\Framework\DataAbstractionLayer\EntityRepository;
++use Shopware\Core\Framework\DataAbstractionLayer\Search\Criteria;
++use Shopware\Core\Framework\DataAbstractionLayer\Search\EntitySearchResult;
++use Shopware\Core\System\SystemConfig\SystemConfigService;
++use Swag\LowStockDigest\Service\LowStockDigestBuilder;
++
++#[CoversClass(LowStockDigestBuilder::class)]
++class LowStockDigestBuilderTest extends TestCase
++{
++    public function testThresholdFallsBackToTheDefaultWhenUnset(): void
++    {
++        $config = $this->createMock(SystemConfigService::class);
++        $config->method('getInt')->willReturn(0);
++
++        $builder = new LowStockDigestBuilder($this->createMock(EntityRepository::class), $config);
++
++        static::assertSame(LowStockDigestBuilder::DEFAULT_THRESHOLD, $builder->threshold());
++    }
++
++    public function testThresholdReadsTheValueForTheSalesChannel(): void
++    {
++        $config = $this->createMock(SystemConfigService::class);
++        $config->expects(static::once())
++            ->method('getInt')
++            ->with(LowStockDigestBuilder::CONFIG_THRESHOLD, 'sales-channel-1')
++            ->willReturn(12);
++
++        $builder = new LowStockDigestBuilder($this->createMock(EntityRepository::class), $config);
++
++        static::assertSame(12, $builder->threshold('sales-channel-1'));
++    }
++
++    public function testBuildMapsTheLowStockProducts(): void
++    {
++        $product = new ProductEntity();
++        $product->setId('0f1c6a1e2b3d4c5f8a9b0c1d2e3f4a5b');
++        $product->setProductNumber('SW-100');
++        $product->setStock(2);
++
++        $result = new EntitySearchResult(
++            ProductDefinition::ENTITY_NAME,
++            1,
++            new ProductCollection([$product]),
++            null,
++            new Criteria(),
++            Context::createDefaultContext(),
++        );
++
++        $repository = $this->createMock(EntityRepository::class);
++        $repository->method('search')->willReturn($result);
++
++        $config = $this->createMock(SystemConfigService::class);
++        $config->method('getInt')->willReturn(5);
++
++        $rows = (new LowStockDigestBuilder($repository, $config))->build(Context::createDefaultContext());
++
++        static::assertSame([[
++            'id' => '0f1c6a1e2b3d4c5f8a9b0c1d2e3f4a5b',
++            'productNumber' => 'SW-100',
++            'name' => null,
++            'stock' => 2,
++        ]], $rows);
++    }
++}
+diff --git a/tests/unit/Service/LowStockDigestFormatterTest.php b/tests/unit/Service/LowStockDigestFormatterTest.php
+new file mode 100644
+--- /dev/null
++++ b/tests/unit/Service/LowStockDigestFormatterTest.php
+@@ -0,0 +1,39 @@
++<?php declare(strict_types=1);
++
++namespace Swag\LowStockDigest\Tests\Unit\Service;
++
++use PHPUnit\Framework\Attributes\CoversClass;
++use PHPUnit\Framework\TestCase;
++use Swag\LowStockDigest\Service\LowStockDigestFormatter;
++
++#[CoversClass(LowStockDigestFormatter::class)]
++class LowStockDigestFormatterTest extends TestCase
++{
++    public function testCsvHasAHeaderAndOneLinePerProduct(): void
++    {
++        $csv = (new LowStockDigestFormatter())->toCsv([
++            ['id' => 'a', 'productNumber' => 'SW-1', 'name' => 'Mug', 'stock' => 1],
++            ['id' => 'b', 'productNumber' => 'SW-2', 'name' => null, 'stock' => 0],
++        ]);
++
++        static::assertSame("productNumber;name;stock\nSW-1;Mug;1\nSW-2;;0\n", $csv);
++    }
++
++    public function testCsvReplacesSemicolonsInNames(): void
++    {
++        $csv = (new LowStockDigestFormatter())->toCsv([
++            ['id' => 'a', 'productNumber' => 'SW-1', 'name' => 'Mug; large', 'stock' => 3],
++        ]);
++
++        static::assertStringContainsString("SW-1;Mug, large;3\n", $csv);
++    }
++
++    public function testTableRowsKeepTheColumnOrder(): void
++    {
++        $rows = (new LowStockDigestFormatter())->toTableRows([
++            ['id' => 'a', 'productNumber' => 'SW-1', 'name' => 'Mug', 'stock' => 1],
++        ]);
++
++        static::assertSame([['SW-1', 'Mug', '1']], $rows);
++    }
++}
+diff --git a/tests/unit/Subscriber/LowStockDigestLogSubscriberTest.php b/tests/unit/Subscriber/LowStockDigestLogSubscriberTest.php
+new file mode 100644
+--- /dev/null
++++ b/tests/unit/Subscriber/LowStockDigestLogSubscriberTest.php
+@@ -0,0 +1,45 @@
++<?php declare(strict_types=1);
++
++namespace Swag\LowStockDigest\Tests\Unit\Subscriber;
++
++use PHPUnit\Framework\Attributes\CoversClass;
++use PHPUnit\Framework\TestCase;
++use Psr\Log\LoggerInterface;
++use Shopware\Core\Framework\Context;
++use Swag\LowStockDigest\Event\LowStockDigestPrintedEvent;
++use Swag\LowStockDigest\Subscriber\LowStockDigestLogSubscriber;
++
++#[CoversClass(LowStockDigestLogSubscriber::class)]
++class LowStockDigestLogSubscriberTest extends TestCase
++{
++    public function testLogsTheProductCount(): void
++    {
++        $logger = $this->createMock(LoggerInterface::class);
++        $logger->expects(static::once())
++            ->method('info')
++            ->with('Low stock digest printed', [
++                'products' => 2,
++                'productIds' => ['a', 'b'],
++            ]);
++
++        $subscriber = new LowStockDigestLogSubscriber($logger);
++        $subscriber->onDigestPrinted(new LowStockDigestPrintedEvent(['a', 'b'], Context::createDefaultContext()));
++    }
++
++    public function testSkipsAnEmptyDigest(): void
++    {
++        $logger = $this->createMock(LoggerInterface::class);
++        $logger->expects(static::never())->method('info');
++
++        $subscriber = new LowStockDigestLogSubscriber($logger);
++        $subscriber->onDigestPrinted(new LowStockDigestPrintedEvent([], Context::createDefaultContext()));
++    }
++
++    public function testSubscribesToThePrintedEvent(): void
++    {
++        static::assertArrayHasKey(
++            LowStockDigestPrintedEvent::class,
++            LowStockDigestLogSubscriber::getSubscribedEvents(),
++        );
++    }
++}

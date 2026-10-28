@@ -1,0 +1,21 @@
+{
+  "repo": "shopware/shopware",
+  "pr": 20682,
+  "title": "feat: Spatial scene goes storefront",
+  "url": "https://github.com/shopware/shopware/pull/20682",
+  "expected": {
+    "sw-core-development/references/release-notes-and-adr.md": [
+      "https://github.com/shopware/shopware/pull/20682#discussion_r4079978438"
+    ],
+    "sw-core-development/references/service-architecture.md": [
+      "https://github.com/shopware/shopware/pull/20682#discussion_r4079914848"
+    ],
+    "sw-plugin-development/references/dal-usage.md": [
+      "https://github.com/shopware/shopware/pull/20682#discussion_r4079914848"
+    ],
+    "sw-storefront/references/js-plugins.md": [
+      "https://github.com/shopware/shopware/pull/20682#discussion_r4079900264",
+      "https://github.com/shopware/shopware/pull/20682#discussion_r4205729596"
+    ]
+  }
+}

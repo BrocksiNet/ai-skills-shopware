@@ -1,0 +1,7 @@
+The calculator and the writer come in one change. The writer test goes through the container and the account repository and reads the stored row back, so it needs the kernel and stays in the integration suite. Nothing to report.
+
+```json
+{
+  "findings": []
+}
+```

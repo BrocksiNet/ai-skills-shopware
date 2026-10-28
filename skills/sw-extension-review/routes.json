@@ -67,7 +67,16 @@
       "reference": "../sw-architecture/references/symfony-in-shopware.md"
     },
     {
+      "reference": "../sw-core-development/references/deprecations.md"
+    },
+    {
       "reference": "../sw-core-development/references/removals-and-shims.md"
+    },
+    {
+      "reference": "../sw-core-development/references/static-analysis-baseline.md"
+    },
+    {
+      "reference": "../sw-core-development/references/asset-lifetime.md"
     },
     {
       "reference": "../sw-change-impact/references/impact-review.md",
@@ -90,7 +99,19 @@
       "reference": "../sw-review-learnings/references/dal-and-performance.md"
     },
     {
+      "reference": "../sw-review-learnings/references/pr-size.md"
+    },
+    {
       "reference": "../sw-review-learnings/references/version-guards.md"
+    },
+    {
+      "reference": "../sw-review-learnings/references/feature-flags.md"
+    },
+    {
+      "reference": "../sw-review-learnings/references/code-comments.md"
+    },
+    {
+      "reference": "../sw-review-learnings/references/change-scope.md"
     },
     {
       "reference": "../sw-testing/references/test-shape-and-flags.md"

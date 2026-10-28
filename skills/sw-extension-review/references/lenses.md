@@ -15,8 +15,7 @@ build on it. For each removed or renamed name, ask who used it:
 - A Twig block, template variable, SCSS variable, state class or snippet key
   was renamed or removed: `SF-001`, `SF-012`.
 - A JS plugin's name, option, method or event changed: `SF-011`.
-- An admin component prop, block or `positionIdentifier` changed: `ADM-039`,
-  `ADM-040`.
+- An admin component prop or block changed: `ADM-039`.
 - An extension event gained the whole `Request`: `ARCH-005`.
 
 A rename without a deprecation and a fallback is a removal. A deprecation
@@ -32,9 +31,12 @@ points at a replacement the extenders can use today: `CORE-063`.
   when only the method is new: `PLG-024`?
 - When `api-facts` output comes with the task, or the ai-skills-shopware
   tools are at hand (`node tools/api-index/bin/api-facts.ts --apply
-  diff.patch <extension>`), use its facts for the two questions above. They
-  are facts about Shopware's source per release, not findings: check each
-  against the diff before you report it.
+  diff.patch <extension>`), use its facts for the two questions above. It
+  also covers the admin components and blocks, storefront templates and
+  blocks, JS plugins and Twig functions the change overrides or calls; one
+  missing from a release of the range is `PLG-001` too. They are facts about
+  Shopware's source per release, not findings: check each against the diff
+  before you report it.
 - Does code that loads on every request use a package that `composer.json`
   only suggests, outside its guard: `PLG-032`?
 - Does an admin override replace a core method without `$super`:
@@ -59,8 +61,6 @@ points at a replacement the extenders can use today: `CORE-063`.
 - Is a migration behind a feature flag: `PLG-029`?
 - Does the plugin write its entities with raw SQL, so DAL events, indexers
   and cache invalidation never run: `PLG-003`, `REV-024`, `PLG-007`?
-- Does `uninstall()` drop the plugin's tables and config when
-  `keepUserData()` is false: `PLG-008`?
 - Does a hot path load associations per row: `REV-021`?
 
 ## Workers and long-running processes
@@ -86,6 +86,10 @@ points at a replacement the extenders can use today: `CORE-063`.
 
 - Can the new test fail? An assertion inside a hook or listener that never
   runs proves nothing: `TEST-016`, `TEST-035`.
+- Did the diff change an existing test's expectation along with the code,
+  without announcing the behavior change: `TEST-036`?
+- Does a test that needs no kernel, container, DAL or HTTP sit under
+  `tests/integration/` instead of `tests/unit/`: `TEST-034`?
 - Does the test cover the case the diff changes, not only the happy path?
 
 ## Near misses
@@ -100,6 +104,7 @@ problem with `null`, or with the rule that does cover it:
 | An HTTP call made synchronously in the request, with no queue anywhere | `REV-033` (inline fallback when queueing fails) | `null` |
 | An idempotency key or stored response not scoped to the caller | `SEC-005` (input validation) | `SEC-008` |
 | An admin override of a core component that skips `$super` | `ADM-039` (the API a shipped component offers) | `ADM-042` |
+| An override of a core admin block, storefront template or block, or JS plugin that a release in the `shopware/core` range lacks | `ADM-039`, `SF-001`, `SF-011` (the API the extension itself offers) | `PLG-001` |
 | Plugin ACL roles that grant `system_config` read or write | `ADM-016` (UI checks of privileges) | `ADM-043` |
 
 ## Core-only rules
@@ -107,9 +112,16 @@ problem with `null`, or with the rule that does cover it:
 These rules sit in borrowed references but are for `shopware/shopware`
 itself. Do not report them on a plugin or app diff:
 
-- `ADM-013` and `ADM-015`: the Administration boot order and the global
-  `Shopware` object's extension points.
 - `ARCH-004`: new core Store API routes publish a typed extension event.
-- `TEST-024` and `TEST-031`: tests for major feature flag behavior.
+- `TEST-031`: tests for major feature flag behavior.
 - `CORE-064` and `CORE-065`: shims for core removals and gating code that
   ends at the major.
+- `CORE-011`, `CORE-012`, `CORE-013`, `CORE-014`, `CORE-015`, `CORE-017`,
+  `CORE-018`, `CORE-019`, `CORE-021`, `CORE-023`, `CORE-024`, `CORE-025` and
+  `CORE-026`: the core
+  deprecation and BC-change rules in `deprecations.md`, for the core's own
+  call sites and attributes.
+- `CORE-061`: the core PHPStan baseline only shrinks. Its borrowed
+  reference also holds `CORE-062`, which a plugin does report.
+- `CORE-076`: cached pages keep the old file URLs, so a grace period counts
+  from the moment the reference changed.

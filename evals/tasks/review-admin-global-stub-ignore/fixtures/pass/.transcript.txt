@@ -1,0 +1,7 @@
+The change registers the real sw-block through config.global.stubs and adds no conflicting entry. The test setup is consistent.
+
+```json
+{
+  "findings": []
+}
+```

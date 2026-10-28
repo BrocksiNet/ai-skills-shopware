@@ -1,0 +1,52 @@
+diff --git a/RELEASE_INFO-6.7.md b/RELEASE_INFO-6.7.md
+--- a/RELEASE_INFO-6.7.md
++++ b/RELEASE_INFO-6.7.md
+@@ @@
++### Longer advanced postal code patterns for countries
++
++`country.advancedPostalCodePattern` now accepts up to 1024 characters instead of 255, matching `defaultPostalCodePattern`.
++
+diff --git a/src/Core/Migration/V6_7/Migration1788950275ExtendLengthOfCountryAdvancedPostalCodePattern.php b/src/Core/Migration/V6_7/Migration1788950275ExtendLengthOfCountryAdvancedPostalCodePattern.php
+--- /dev/null
++++ b/src/Core/Migration/V6_7/Migration1788950275ExtendLengthOfCountryAdvancedPostalCodePattern.php
+@@ @@
++<?php declare(strict_types=1);
++
++namespace Shopware\Core\Migration\V6_7;
++
++use Doctrine\DBAL\Connection;
++use Doctrine\DBAL\Types\Types;
++use Shopware\Core\Framework\Log\Package;
++use Shopware\Core\Framework\Migration\MigrationStep;
++use Shopware\Core\Framework\Util\Database\TableHelper;
++
++/**
++ * @internal
++ */
++#[Package('framework')]
++class Migration1788950275ExtendLengthOfCountryAdvancedPostalCodePattern extends MigrationStep
+diff --git a/src/Core/System/Country/CountryDefinition.php b/src/Core/System/Country/CountryDefinition.php
+--- a/src/Core/System/Country/CountryDefinition.php
++++ b/src/Core/System/Country/CountryDefinition.php
+@@ @@
+-            (new StringField('advanced_postal_code_pattern', 'advancedPostalCodePattern'))->addFlags(new ApiAware())->setDescription('Wildcard formatted zip codes to allow easy searching in the frontend based on initial constants, for example - 24****, 1856**.'),
++            (new StringField('advanced_postal_code_pattern', 'advancedPostalCodePattern', 1024))->addFlags(new ApiAware())->setDescription('Wildcard formatted zip codes to allow easy searching in the frontend based on initial constants, for example - 24****, 1856**.'),
+diff --git a/tests/migration/Core/V6_7/Migration1788950275ExtendLengthOfCountryAdvancedPostalCodePatternTest.php b/tests/migration/Core/V6_7/Migration1788950275ExtendLengthOfCountryAdvancedPostalCodePatternTest.php
+--- /dev/null
++++ b/tests/migration/Core/V6_7/Migration1788950275ExtendLengthOfCountryAdvancedPostalCodePatternTest.php
+@@ @@
++<?php declare(strict_types=1);
++
++namespace Shopware\Tests\Migration\Core\V6_7;
++
++use Doctrine\DBAL\Connection;
++use Doctrine\DBAL\Types\Types;
++use PHPUnit\Framework\Attributes\CoversClass;
++use PHPUnit\Framework\TestCase;
++use Shopware\Core\Framework\Log\Package;
++use Shopware\Core\Framework\Test\TestCaseBase\KernelLifecycleManager;
++use Shopware\Core\Framework\Util\Database\TableHelper;
++use Shopware\Core\Migration\V6_7\Migration1788950275ExtendLengthOfCountryAdvancedPostalCodePattern;
++
++ * @internal
++#[CoversClass(Migration1788950275ExtendLengthOfCountryAdvancedPostalCodePattern::class)]

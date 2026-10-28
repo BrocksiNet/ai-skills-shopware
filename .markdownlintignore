@@ -3,3 +3,6 @@
 # official PR-template punctuation).
 evals/tasks/**/fixture/**/*.md
 evals/tasks/**/fixtures/**/*.md
+
+# Local rule suggestions (tools/bin/suggest-rules.ts), git-ignored
+suggestions/**

@@ -1,0 +1,14 @@
+{
+  "repo": "shopware/shopware",
+  "pr": 20038,
+  "title": "fix(administration): prefer the resolved media item url in the image slider settings preview",
+  "url": "https://github.com/shopware/shopware/pull/20038",
+  "expected": {
+    "sw-admin-js/references/architecture.md": [
+      "https://github.com/shopware/shopware/pull/20038#discussion_r3921961641"
+    ],
+    "sw-admin-js/references/testing.md": [
+      "https://github.com/shopware/shopware/pull/20038#discussion_r3921961641"
+    ]
+  }
+}

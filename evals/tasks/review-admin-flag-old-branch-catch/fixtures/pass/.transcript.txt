@@ -1,0 +1,16 @@
+The flag-off branch of pointsFor no longer returns the old Math.floor result.
+
+```json
+{
+  "findings": [
+    {
+      "rule_id": "ADM-025",
+      "severity": "major",
+      "file": "src/Resources/app/administration/src/module/swag-loyalty/component/swag-loyalty-points-preview/index.js",
+      "line": 37,
+      "summary": "The legacy branch now calls roundPoints with 'down', which truncates toward zero, so negative amounts (refunds) earn different points with the flag off.",
+      "fix": "Keep the legacy branch as return Math.floor(raw) and put the new rounding only in the flag branch."
+    }
+  ]
+}
+```

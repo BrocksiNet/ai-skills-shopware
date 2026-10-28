@@ -16,7 +16,7 @@
 // data comes from index.json next to this folder, which the skills library
 // generates from every skill's metadata and routes.json.
 import { execFileSync } from 'node:child_process';
-import { existsSync, readFileSync, readdirSync, statSync } from 'node:fs';
+import { existsSync, readFileSync, readdirSync, realpathSync, statSync } from 'node:fs';
 import { homedir } from 'node:os';
 import { dirname, join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -59,6 +59,7 @@ export function parseArgs(argv) {
 }
 
 const LARGE_DIFF = 50;
+const MANY_COMMITS = 30;
 
 // ---- changes -------------------------------------------------------------------
 
@@ -393,6 +394,9 @@ export function main(argv) {
   if (files.length > LARGE_DIFF) {
     notes.push(`${files.length} changed files is a lot for one change. If the base is stale, run git fetch, or pass --base <ref> or --diff.`);
   }
+  if (base !== undefined && base.commits > MANY_COMMITS) {
+    notes.push(`${base.commits} commits since ${base.ref}. For a stacked pull request, pass its parent branch: --base <parent-branch>.`);
+  }
   if (o.task === 'any') notes.push('no --task given. Pass build, review, ship, answer or run to load the skills of that task too.');
   const report = { context, task: o.task, source, base: base ?? null, changes: files.length, core: context.kind === 'core' ? core : [], ...result, notes };
   report.missing = result.load.map((s) => s.name).filter((n) => !installed.has(n));
@@ -400,7 +404,16 @@ export function main(argv) {
   return 0;
 }
 
-if (process.argv[1] !== undefined && resolve(process.argv[1]) === fileURLToPath(import.meta.url)) {
+// Compare real paths: installed skills are often symlinks (.claude/skills ->
+// a release folder), and import.meta.url is always the resolved file.
+const startedAs = (p) => {
+  try {
+    return realpathSync(p);
+  } catch {
+    return resolve(p);
+  }
+};
+if (process.argv[1] !== undefined && startedAs(process.argv[1]) === realpathSync(fileURLToPath(import.meta.url))) {
   try {
     process.exitCode = main(process.argv.slice(2));
   } catch (error) {

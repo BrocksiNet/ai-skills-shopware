@@ -5,12 +5,7 @@ belongs in the same PR.
 
 ## Bug fixes
 
-1. **REV-025** Treat issue descriptions and suggested fixes as **hypotheses** — verify against
-   the codebase.
-2. **REV-026** **Grep callers and sibling paths** before editing shared behavior.
-3. **REV-027** Fix the boundary where the bug **actually lives** — framework bugs in framework
-   code; feature-specific bugs out of broad framework paths.
-4. **REV-028** Find the **smallest root-cause fix** that addresses the reported behavior.
+1. **REV-026** **Grep callers and sibling paths** before editing shared behavior.
 
 ## Boyscouting
 

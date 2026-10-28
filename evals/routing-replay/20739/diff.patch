@@ -1,0 +1,132 @@
+diff --git a/src/Core/Framework/Api/ApiDefinition/Generator/Schema/StoreApi/components/schemas/ContactFormRouteResponse.json b/src/Core/Framework/Api/ApiDefinition/Generator/Schema/StoreApi/components/schemas/ContactFormRouteResponse.json
+--- /dev/null
++++ b/src/Core/Framework/Api/ApiDefinition/Generator/Schema/StoreApi/components/schemas/ContactFormRouteResponse.json
+@@ @@
++{
++    "openapi": "3.2.0",
++    "info": [],
++    "paths": [],
++    "components": {
++        "schemas": {
++            "ContactFormRouteResponse": {
++                "type": "object",
++                "required": [
++                    "individualSuccessMessage",
++                    "apiAlias"
++                ],
+diff --git a/src/Core/Framework/Api/ApiDefinition/Generator/Schema/StoreApi/components/schemas/CustomerAddressBody.json b/src/Core/Framework/Api/ApiDefinition/Generator/Schema/StoreApi/components/schemas/CustomerAddressBody.json
+--- a/src/Core/Framework/Api/ApiDefinition/Generator/Schema/StoreApi/components/schemas/CustomerAddressBody.json
++++ b/src/Core/Framework/Api/ApiDefinition/Generator/Schema/StoreApi/components/schemas/CustomerAddressBody.json
+@@ @@
++                    "zipcode",
+-                    "zipcode": { "type": "string" },
++                    "zipcode": {
++                        "description": "Postal code. Every country on a default installation has `postalCodeRequired` enabled. For a country without it, an empty value is accepted.",
++                        "type": "string",
++                        "maxLength": 50
++                    },
+-                    "company": { "type": "string" },
++                    "accountType": {
++                        "type": "string",
++                        "enum": [
+diff --git a/src/Core/Framework/Api/ApiDefinition/Generator/Schema/StoreApi/components/schemas/RevocationRequestRouteResponse.json b/src/Core/Framework/Api/ApiDefinition/Generator/Schema/StoreApi/components/schemas/RevocationRequestRouteResponse.json
+--- /dev/null
++++ b/src/Core/Framework/Api/ApiDefinition/Generator/Schema/StoreApi/components/schemas/RevocationRequestRouteResponse.json
+@@ @@
++{
++    "openapi": "3.2.0",
++    "info": [],
++    "paths": [],
++    "components": {
++        "schemas": {
++            "RevocationRequestRouteResponse": {
++                "type": "object",
++                "required": [
++                    "individualSuccessMessage",
++                    "apiAlias"
++                ],
+diff --git a/src/Core/Framework/Api/ApiDefinition/Generator/Schema/StoreApi/paths/account.json b/src/Core/Framework/Api/ApiDefinition/Generator/Schema/StoreApi/paths/account.json
+--- a/src/Core/Framework/Api/ApiDefinition/Generator/Schema/StoreApi/paths/account.json
++++ b/src/Core/Framework/Api/ApiDefinition/Generator/Schema/StoreApi/paths/account.json
+@@ @@
++                                    },
++                                    "customFields": {
++                                        "description": "Custom fields of the customer. Only fields defined for the customer entity are stored.",
++                                        "type": "object"
+-                                "anyOf": [
++                                "allOf": [
+-                                        "properties": {
+-                                            "accountType": {
+-                                                "description": "Type of the customer account. Default value is 'private'.",
+-                                                "type": "string",
+-                                                "enum": [
+-                                                    "private"
+diff --git a/src/Core/Framework/Api/ApiDefinition/Generator/Schema/StoreApi/paths/contact-form.json b/src/Core/Framework/Api/ApiDefinition/Generator/Schema/StoreApi/paths/contact-form.json
+--- a/src/Core/Framework/Api/ApiDefinition/Generator/Schema/StoreApi/paths/contact-form.json
++++ b/src/Core/Framework/Api/ApiDefinition/Generator/Schema/StoreApi/paths/contact-form.json
+@@ @@
++                                    "salutationId",
+-                                    "comment"
++                                    "comment",
++                                    "firstName",
++                                    "lastName",
++                                    "phone"
+-                                        "description": "Identifier of the salutation. Use `/api/salutation` endpoint to fetch possible values.",
++                                        "description": "Identifier of the salutation. Use `/api/salutation` endpoint to fetch possible values. This field is always required and cannot be disabled by a system setting.",
+-                                        "description": "Firstname. This field may be required depending on the system settings.",
++                                        "description": "First name. Required on a default installation, can be turned off with the `core.basicInformation.firstNameFieldRequired` setting.",
+-                                        "description": "Lastname. This field may be required depending on the system settings.",
++                                        "description": "Last name. Required on a default installation, can be turned off with the `core.basicInformation.lastNameFieldRequired` setting.",
+diff --git a/src/Core/Framework/Api/ApiDefinition/Generator/Schema/StoreApi/paths/navigation.json b/src/Core/Framework/Api/ApiDefinition/Generator/Schema/StoreApi/paths/navigation.json
+--- a/src/Core/Framework/Api/ApiDefinition/Generator/Schema/StoreApi/paths/navigation.json
++++ b/src/Core/Framework/Api/ApiDefinition/Generator/Schema/StoreApi/paths/navigation.json
+@@ @@
+-                                                "description": "Return the categories as a tree or as a flat list.",
+-                                                "type": "array",
+-                                                "items": {
+-                                                    "type": "object"
+-                                                }
++                                                "description": "Return the categories as a tree or as a flat list. Defaults to true.",
++                                                "type": "boolean",
++                                                "default": true
+-                        "description": "Return the categories as a tree or as a flat list.",
++                        "description": "Return the categories as a tree or as a flat list. Defaults to true.",
+-                            "type": "array",
+-                            "items": {
+diff --git a/src/Core/Framework/Api/ApiDefinition/Generator/Schema/StoreApi/paths/newsletter.json b/src/Core/Framework/Api/ApiDefinition/Generator/Schema/StoreApi/paths/newsletter.json
+--- a/src/Core/Framework/Api/ApiDefinition/Generator/Schema/StoreApi/paths/newsletter.json
++++ b/src/Core/Framework/Api/ApiDefinition/Generator/Schema/StoreApi/paths/newsletter.json
+@@ @@
+-                                        "description": "Url of the storefront of the shop. This will be used for generating the link to the /newsletter/confirm inside the confirm email.",
+diff --git a/src/Core/Framework/Api/ApiDefinition/Generator/Schema/StoreApi/paths/product.json b/src/Core/Framework/Api/ApiDefinition/Generator/Schema/StoreApi/paths/product.json
+--- a/src/Core/Framework/Api/ApiDefinition/Generator/Schema/StoreApi/paths/product.json
++++ b/src/Core/Framework/Api/ApiDefinition/Generator/Schema/StoreApi/paths/product.json
+@@ @@
+-                            "pattern": "^[0-9a-f]{32}$'"
++                            "pattern": "^[0-9a-f]{32}$"
+-                                "$ref": "#/components/schemas/NoneFieldsCriteria"
++                                "allOf": [
++                                    {
++                                        "properties": {
++                                            "slots": {
++                                                "description": "Resolves only the given slot identifiers. The identifiers have to be separated by a `|` character.",
++                                                "type": "string"
++                                            }
++                                        },
++                                        "type": "object"
+diff --git a/src/Core/Framework/Api/ApiDefinition/Generator/Schema/StoreApi/paths/revocation-request-form.json b/src/Core/Framework/Api/ApiDefinition/Generator/Schema/StoreApi/paths/revocation-request-form.json
+--- a/src/Core/Framework/Api/ApiDefinition/Generator/Schema/StoreApi/paths/revocation-request-form.json
++++ b/src/Core/Framework/Api/ApiDefinition/Generator/Schema/StoreApi/paths/revocation-request-form.json
+@@ @@
+-                                    "contractNumber"
++                                    "contractNumber",
++                                    "firstName",
++                                    "lastName"
+-                                        "description": "First name. This field may be required depending on the system settings.",
++                                        "description": "First name. Required on a default installation, can be turned off with the `core.basicInformation.firstNameFieldRequired` setting.",
+-                                        "description": "Last name. This field may be required depending on the system settings.",
++                                        "description": "Last name. Required on a default installation, can be turned off with the `core.basicInformation.lastNameFieldRequired` setting.",
+-                        "description": "Message sent successfully."
++                        "description": "Message sent successfully.",
++                        "content": {
++                            "application/json": {

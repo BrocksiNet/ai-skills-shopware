@@ -143,6 +143,12 @@ fails both graders without `.skip-fixture-grade`.
   `EVAL_AGENT_RETRIES` times (default 2), `EVAL_AGENT_RETRY_WAIT` seconds apart
   (default 60), on a fresh copy of the fixture. The reason is logged.
   `EVAL_AGENT_TIMEOUT_SECONDS` stops a hung agent and counts an agent error.
+  A used-up quota (OpenCode's "Free usage limit reached", Copilot's "exceeded
+  your monthly quota", a Claude or Codex plan limit) is not retried: exit `6`.
+  `ab.sh` then writes `$EVAL_RESULTS.quota` and records every later run with
+  that results file as an agent error without starting the agent, so a CI
+  shard ends in minutes instead of retrying for hours. Delete the file to
+  retry after the quota resets.
 - Unit tests in `tools/test/ab.test.ts` drive both with
   `runner/fake-agent.sh`.
 - `runner/ab.sh <task> [repeats]` — run both modes `repeats` times, print the
@@ -172,7 +178,8 @@ Ready adapters:
 
 | Adapter | Agent | Needs | Default `TASK_MODEL` |
 | ------- | ----- | ----- | -------------------- |
-| `runner/opencode-task.sh` | OpenCode CLI v2 | nothing for free models | `opencode/longcat-2.5-preview-free` |
+| `runner/opencode-task.sh` | OpenCode CLI v2 | nothing for free models | `opencode/mimo-v2.6-flash-free` |
+| `runner/copilot-task.sh` | GitHub Copilot CLI | `COPILOT_GITHUB_TOKEN` (locally `gh auth token`) | `claude-haiku-4.5` |
 | `runner/claude-task.sh` | Claude Code CLI | `ANTHROPIC_API_KEY` or `claude auth login` | `sonnet` |
 
 ```bash
@@ -183,9 +190,10 @@ export SKILLS_PROFILE_CMD="$PWD/evals/runner/skills-profile.sh"  # on|off <workd
 
 `skills-profile.sh` symlinks the task's `skills` file entries (all skills when
 the file is missing) into `.claude/skills` and `.agents/skills` of the workdir.
-Both adapters keep machine-wide skills out of the "off" run:
-`opencode-task.sh` runs with a throwaway `HOME`, and `claude-task.sh` passes
-`--setting-sources project`. Both cap each session at `TASK_MAX_TURNS`
+All adapters keep machine-wide skills out of the "off" run:
+`opencode-task.sh` and `copilot-task.sh` run with a throwaway `HOME` (and
+`COPILOT_HOME`), and `claude-task.sh` passes `--setting-sources project`.
+`copilot-task.sh` has no turn cap; it stops after `TASK_TIMEOUT_SECONDS`. Both cap each session at `TASK_MAX_TURNS`
 (default 12). `opencode-task.sh` also stops after `TASK_TIMEOUT_SECONDS`
 (default 600) and records that as an agent error. `claude-task.sh` also caps
 spend with `TASK_MAX_BUDGET_USD` (default 0.75). Hitting a turn or budget cap
@@ -224,8 +232,8 @@ Free OpenCode models measured on 2026-10-20 (8 tasks, skill on, one run each):
 
 | Model | Loaded a task skill | Passed | Avg. session |
 | ----- | ------------------- | ------ | ------------ |
-| `opencode/longcat-2.5-preview-free` (default) | 5/8 | 5/8 | ~115 s |
-| `opencode/mimo-v2.6-flash-free` | 5/8 | 5/8 | ~115 s |
+| `opencode/longcat-2.5-preview-free` (gone since 2026-10-23) | 5/8 | 5/8 | ~115 s |
+| `opencode/mimo-v2.6-flash-free` (default) | 5/8 | 5/8 | ~115 s |
 | `opencode/big-pickle` | 2/8 | 5/8 | ~115 s |
 | `opencode/nemotron-3-ultra-free` | 1/8 | 6/8 | ~35 s |
 | `opencode/nemotron-3.5-lightning-free` | 0/8 | 4/8 | ~35 s |
@@ -252,12 +260,20 @@ tier.
 # Claude Code with your `claude auth login` session (default model haiku)
 EVAL_TASKS=prepare-plugin-for-6-8 REPEATS=3 scripts/eval-local.sh
 
-# OpenCode with your logins, e.g. GitHub Copilot
-EVAL_LOCAL_AGENT=opencode TASK_MODEL=github-copilot/claude-haiku-4.5 scripts/eval-local.sh
+# Your Copilot seat: the token comes from `gh auth token` (default model claude-haiku-4.5)
+EVAL_LOCAL_AGENT=copilot EVAL_TASKS=review-admin-area-pattern-catch scripts/eval-local.sh
+
+# OpenCode with the free model, or a provider you added with an API key
+EVAL_LOCAL_AGENT=opencode scripts/eval-local.sh
 ```
 
-OpenCode still runs with a throwaway `HOME`, so your global skills stay out of
-the "off" run; only your `auth.json` is copied in (`OPENCODE_AUTH_FILE`).
+OpenCode and Copilot run with a throwaway `HOME`, so your global skills stay
+out of the "off" run. OpenCode copies only your `auth.json` in
+(`OPENCODE_AUTH_FILE`). OpenCode 2.0.27 keeps its GitHub Copilot login in its
+database, not in `auth.json`, so `github-copilot/*` models are "unavailable"
+there; use `EVAL_LOCAL_AGENT=copilot`. On your own machine,
+`COPILOT_TASK_READ_ONLY=1` limits Copilot to the skill tool and read-only
+tools, which is all a `review-*` task needs.
 Results land in `evals/.results/local-<timestamp>.jsonl`.
 
 Measured on 2026-10-20 with Claude Haiku (3 repeats): `prepare-plugin-for-6-8`
@@ -285,22 +301,37 @@ wrong rule in `sw-plugin-development`, which turned the gate red.
 
 ### Model evals in CI (`evals.yml`)
 
-| Trigger | Tasks | Activation | Baseline PR |
-| ------- | ----- | ---------- | ----------- |
-| Monthly schedule (1st, 06:00 UTC) | all, 3 repeats | yes | yes |
-| PR labeled `run-evals` | tasks whose folder changed or that load a changed skill | no | no |
-| Manual dispatch | `agent`, `tasks`, `repeats`, `max_tasks`, `shards`, `model` inputs | `activation` input | `baseline` input |
+| Trigger | Agents | Tasks | Activation | Baseline PR |
+| ------- | ------ | ----- | ---------- | ----------- |
+| Monthly schedule (1st, 06:00 UTC) | `opencode`, `copilot` | all, 3 repeats | yes | yes, one per agent |
+| PR labeled `run-evals` | `opencode` | tasks whose folder changed or that load a changed skill | no | no |
+| Manual dispatch | `agents` input | `tasks`, `repeats`, `max_tasks`, `shards`, `model` inputs | `activation` input | `baseline` input |
 
-The default agent is OpenCode with a free model, so the workflow needs no
-secret. `agent=claude` on dispatch uses Claude Code and needs the repository
-secret `ANTHROPIC_API_KEY`; without it that run fails on purpose.
+Each agent of a run is a profile (`tools/bin/eval-profiles.ts`, default models
+in `tools/src/adapters.ts`). The A/B shards, the gate and the baseline run
+once per profile, so each model gets its own `gate` check and its own
+baseline file. Two models make the keep-or-retire call safer than one:
+retire a rule only when no profile shows an effect.
+
+`opencode` uses a free model and needs no secret. `copilot` needs the
+repository secret `COPILOT_GITHUB_TOKEN`: a fine-grained personal access token
+of a user with a Copilot seat, with the account permission "Copilot Requests".
+Its runs cost that user's premium requests. With `claude-haiku-4.5` a session
+costs a third of one, so a full run (about 900 sessions) costs about 300, and
+one task A/B with 3 repeats about 2. Before the shards start, the plan job runs one tiny session
+(`tools/bin/agent-preflight.ts`); when the model is gone ("Endpoint is
+unavailable", "Model unavailable"), the run fails there in a minute with a
+hint, instead of every shard retrying agent errors for hours. `agents=claude`
+on dispatch uses Claude Code and needs the repository secret
+`ANTHROPIC_API_KEY`. A run whose agent misses its secret fails on purpose.
 
 For baseline PRs, enable *Settings > Actions > General > Allow GitHub Actions to
 create and approve pull requests*. Without it, the baseline job fails and the
-results stay available as the `eval-results` artifact.
+results stay available as the `eval-results-<agent>` artifact.
 
-Baselines land in `evals/baselines/<YYYY-MM-DD>.jsonl` through a bot PR. Each
-run's summary shows the diff against the newest committed baseline.
+Baselines land in `evals/baselines/<YYYY-MM-DD>-<agent>.jsonl` through a bot
+PR per agent. Each gate's summary shows the diff against the newest committed
+baseline of the same agent.
 
 ## Harbor (`harbor/`)
 

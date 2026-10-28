@@ -15,7 +15,8 @@
     "PRD": "sw-pr-description",
     "PRR": "sw-pr-review",
     "DEV": "sw-podman-dev",
-    "XR": "sw-extension-review"
+    "XR": "sw-extension-review",
+    "STY": "sw-assistant-style"
   },
   "rules": [
     {
@@ -76,7 +77,8 @@
       "skill": "sw-testing",
       "file": "skills/sw-testing/SKILL.md",
       "title": "No catch-all matchers in mocks; prefer createStub()",
-      "status": "active",
+      "status": "retired",
+      "retired_reason": "No measured effect (2026-10-24): `suggest-rules draft-eval` wrote an eval for the rule, and with the skill off claude/haiku passed every repeat (`review-mock-matcher-catch` off 3/3, on 3/3; `review-mock-matcher-ignore` off 3/3, on 3/3). Models already do this without the rule. The drafted tasks were not kept.",
       "since": "2026-10-20",
       "eval": null,
       "eval_reason": "Documented only; no eval yet.",
@@ -103,7 +105,8 @@
       "skill": "sw-testing",
       "file": "skills/sw-testing/SKILL.md",
       "title": "Mock ClockInterface instead of fuzzy time() assertions",
-      "status": "active",
+      "status": "retired",
+      "retired_reason": "No measured effect (2026-10-24): `suggest-rules draft-eval` wrote an eval for the rule, and with the skill off claude/haiku passed every repeat (`unit-test-mock-clock-interface` off 3/3, on 3/3). Models already do this without the rule. The drafted tasks were not kept.",
       "since": "2026-10-20",
       "eval": null,
       "eval_reason": "Documented only; no eval yet.",
@@ -150,6 +153,13 @@
             "kind": "phpunit",
             "catches": "fails the run when an integration test method or its class carries `#[DisabledFeatures]`",
             "misses": "the attribute on a parent class or trait, and plugin test namespaces",
+            "trunk_only": true
+          },
+          {
+            "tool": "NoFeatureSkipInUnitTestsRule",
+            "kind": "phpstan",
+            "catches": "reports `Feature::skipTestIfActive()` and `skipTestIfInActive()`, and a `markTestSkipped()` in any branch of an `if` chain whose conditions call `Feature::isActive()`, in a test class under `Shopware\\Tests\\Unit\\`",
+            "misses": "integration and other suites, a flag check through a helper or a variable, and plugin test namespaces",
             "trunk_only": true
           }
         ]
@@ -256,7 +266,8 @@
       "skill": "sw-testing",
       "file": "skills/sw-testing/SKILL.md",
       "title": "Exactly one #[CoversClass] per unit or migration test file",
-      "status": "active",
+      "status": "retired",
+      "retired_reason": "No measured effect (2026-10-23): with the skill off, `one-covers-class-per-file` passed every repeat on claude/haiku (3/3, local) and on opencode/mimo-v2.6-flash-free (3/3, evals.yml run 39960913122). Models already do this without the rule. The task stays as a canary: a model that fails it with the skill off brings the rule back.",
       "since": "2026-10-20",
       "eval": "one-covers-class-per-file",
       "core_guide_ids": [],
@@ -281,7 +292,8 @@
       "skill": "sw-testing",
       "file": "skills/sw-testing/SKILL.md",
       "title": "No reflection into private or protected Shopware methods",
-      "status": "active",
+      "status": "retired",
+      "retired_reason": "No measured effect (2026-10-23): with the skill off, `no-reflection-on-shopware-method` passed every repeat on claude/haiku (3/3, local) and on opencode/mimo-v2.6-flash-free (3/3, evals.yml run 39960913122). Models already do this without the rule. The task stays as a canary: a model that fails it with the skill off brings the rule back.",
       "since": "2026-10-20",
       "eval": "no-reflection-on-shopware-method",
       "core_guide_ids": [],
@@ -297,6 +309,13 @@
             "kind": "phpstan",
             "catches": "reports `ReflectionMethod` access to a non-public Shopware method, and any `setAccessible()`",
             "misses": "`ReflectionProperty`, `Closure::bind`, method names that are not constant strings, and a `ReflectionClass` built from a variable",
+            "trunk_only": true
+          },
+          {
+            "tool": "NoReflectionInUnitTestsRule",
+            "kind": "phpstan",
+            "catches": "reports any `new \\Reflection*` instance and `Closure::bind()`, `bindTo()` and `call()` under `Shopware\\Tests\\Unit\\`, whatever the visibility of the member reached",
+            "misses": "integration tests, reflection through a helper class outside the unit namespace, and plugin test namespaces",
             "trunk_only": true
           }
         ]
@@ -411,12 +430,11 @@
     {
       "id": "TEST-018",
       "skill": "sw-testing",
-      "file": "skills/sw-testing/SKILL.md",
+      "file": "skills/sw-testing/references/test-shape-and-flags.md",
       "title": "assertSame over assertEquals for scalars",
       "status": "active",
       "since": "2026-10-20",
-      "eval": null,
-      "eval_reason": "Documented only; no eval yet.",
+      "eval": "review-assert-same-scalar-catch",
       "core_guide_ids": [],
       "audience": [
         "core",
@@ -477,7 +495,8 @@
       "skill": "sw-testing",
       "file": "skills/sw-testing/SKILL.md",
       "title": "No sleep or unordered shared state",
-      "status": "active",
+      "status": "retired",
+      "retired_reason": "No measured effect (2026-10-24): `suggest-rules draft-eval` wrote an eval for the rule, and with the skill off claude/haiku passed every repeat (`review-test-shared-state-catch` off 3/3, on 0/3; `review-test-shared-state-ignore` off 3/3, on 3/3). Models already do this without the rule. The drafted tasks were not kept.",
       "since": "2026-10-20",
       "eval": null,
       "eval_reason": "Documented only; no eval yet.",
@@ -508,7 +527,8 @@
       "skill": "sw-testing",
       "file": "skills/sw-testing/references/test-shape-and-flags.md",
       "title": "A test asserting a flag-active throw is @deprecated on the method",
-      "status": "active",
+      "status": "retired",
+      "retired_reason": "No measured effect (2026-10-23): with the skill off, `flag-active-throw-is-deprecated` passed every repeat on claude/haiku (3/3, local) and on opencode/mimo-v2.6-flash-free (3/3, evals.yml run 39960913122). Models already do this without the rule. The task stays as a canary: a model that fails it with the skill off brings the rule back.",
       "since": "2026-10-20",
       "eval": "flag-active-throw-is-deprecated",
       "core_guide_ids": [],
@@ -570,7 +590,8 @@
       "skill": "sw-testing",
       "file": "skills/sw-testing/references/test-shape-and-flags.md",
       "title": "Unit filesystem access goes through an injected Symfony Filesystem",
-      "status": "active",
+      "status": "retired",
+      "retired_reason": "No measured effect (2026-10-24): `suggest-rules draft-eval` wrote an eval for the rule, and with the skill off claude/haiku passed every repeat (`review-test-unit-filesystem-catch` off 3/3, on 3/3; `review-test-unit-filesystem-ignore` off 3/3, on 3/3). Models already do this without the rule. The drafted tasks were not kept.",
       "since": "2026-10-20",
       "eval": null,
       "eval_reason": "Documented only; no eval yet.",
@@ -602,7 +623,8 @@
       "skill": "sw-testing",
       "file": "skills/sw-testing/references/test-shape-and-flags.md",
       "title": "Keep distinct edge cases when deduplicating providers",
-      "status": "active",
+      "status": "retired",
+      "retired_reason": "No measured effect (2026-10-24): `suggest-rules draft-eval` wrote an eval for the rule, and with the skill off claude/haiku passed every repeat (`review-test-provider-dedupe-catch` off 3/3, on 0/3; `review-test-provider-dedupe-ignore` off 3/3, on 3/3). Models already do this without the rule. The drafted tasks were not kept.",
       "since": "2026-10-20",
       "eval": null,
       "eval_reason": "Style rule; core shopware-phpunit-tests owns it on trunk.",
@@ -633,7 +655,8 @@
       "skill": "sw-testing",
       "file": "skills/sw-testing/references/core-platform-patterns.md",
       "title": "@codeCoverageIgnore only on pass-through code",
-      "status": "active",
+      "status": "retired",
+      "retired_reason": "No measured effect (2026-10-23): with the skill off, `code-coverage-ignore-passthrough` passed every repeat on claude/haiku (3/3, local) and on opencode/mimo-v2.6-flash-free (3/3, evals.yml run 39960913122). Models already do this without the rule. The task stays as a canary: a model that fails it with the skill off brings the rule back.",
       "since": "2026-10-20",
       "eval": "code-coverage-ignore-passthrough",
       "core_guide_ids": [],
@@ -660,8 +683,7 @@
       "title": "@codeCoverageIgnore points @see at the integration test by FQCN",
       "status": "active",
       "since": "2026-10-20",
-      "eval": null,
-      "eval_reason": "Style rule; core shopware-phpunit-tests owns it on trunk.",
+      "eval": "review-codecoverage-ignore-see-catch",
       "core_guide_ids": [],
       "audience": [
         "core"
@@ -671,12 +693,11 @@
     {
       "id": "TEST-034",
       "skill": "sw-testing",
-      "file": "skills/sw-testing/SKILL.md",
+      "file": "skills/sw-testing/references/test-shape-and-flags.md",
       "title": "Tests that need no kernel live in tests/unit/",
       "status": "active",
       "since": "2026-10-20",
-      "eval": null,
-      "eval_reason": "Documented only; no eval yet.",
+      "eval": "review-test-unit-placement-catch",
       "core_guide_ids": [],
       "audience": [
         "core",
@@ -700,6 +721,27 @@
         "plugin"
       ],
       "defer_on_trunk": false
+    },
+    {
+      "id": "TEST-036",
+      "skill": "sw-testing",
+      "file": "skills/sw-testing/references/test-shape-and-flags.md",
+      "title": "Keep an existing test expectation unless the PR announces the behavior change",
+      "status": "active",
+      "since": "2026-10-23",
+      "eval": "review-test-changed-expectation-catch",
+      "core_guide_ids": [
+        "TEST-002"
+      ],
+      "audience": [
+        "core",
+        "plugin"
+      ],
+      "defer_on_trunk": true,
+      "trunk": {
+        "source": ".agents/skills/sw-review/guides/tests-for-behavior-change.md#check",
+        "commit": "f31fb198"
+      }
     },
     {
       "id": "PLG-001",
@@ -748,6 +790,7 @@
       "status": "active",
       "since": "2026-10-20",
       "eval": "no-dal-connection-for-entity-read",
+      "keep_reason": "Held on every profile, and on the neutral prompt (claude/haiku 5/5 with skills off): models write DAL reads on their own. Kept because review-raw-sql-invalidation-near-miss accepts it and the sw-extension-review lens names it for raw SQL that skips cache invalidation.",
       "core_guide_ids": [],
       "audience": [
         "plugin"
@@ -759,7 +802,8 @@
       "skill": "sw-plugin-development",
       "file": "skills/sw-plugin-development/SKILL.md",
       "title": "Never modify core or vendor code",
-      "status": "active",
+      "status": "retired",
+      "retired_reason": "No measured effect (2026-10-24): `suggest-rules draft-eval` wrote an eval for the rule, and with the skill off claude/haiku passed every repeat (`review-core-vendor-patch-catch` off 3/3, on 3/3; `review-core-vendor-patch-ignore` off 3/3, on 3/3). Models already do this without the rule. The drafted tasks were not kept.",
       "since": "2026-10-20",
       "eval": null,
       "eval_reason": "Documented only; no eval yet.",
@@ -774,7 +818,8 @@
       "skill": "sw-plugin-development",
       "file": "skills/sw-plugin-development/SKILL.md",
       "title": "Extend through decoration, events and entity extensions",
-      "status": "active",
+      "status": "retired",
+      "retired_reason": "No measured effect (2026-10-24): `suggest-rules draft-eval` wrote an eval for the rule, and with the skill off claude/haiku passed every repeat (`review-service-override-catch` off 3/3, on 3/3; `review-service-override-ignore` off 3/3, on 3/3). Models already do this without the rule. The drafted tasks were not kept.",
       "since": "2026-10-20",
       "eval": null,
       "eval_reason": "Documented only; no eval yet.",
@@ -787,13 +832,15 @@
     {
       "id": "PLG-006",
       "skill": "sw-plugin-development",
-      "file": "skills/sw-plugin-development/SKILL.md",
-      "title": "Controllers delegate to services",
+      "file": "skills/sw-plugin-development/references/api-contracts.md",
+      "title": "Keep controllers thin: one injected service does the work",
       "status": "active",
       "since": "2026-10-20",
       "eval": "business-logic-in-controller",
+      "keep_reason": "Held on claude/haiku (2026-10-28): it keeps controllers thin and flags a fat one in review without the rule. Kept as the one ID for the topic after merging REV-010 and CORE-035; with the skill on, the review cites PLG-006, with it off it reports rule_id null. Re-check with a small open model before dropping.",
       "core_guide_ids": [],
       "audience": [
+        "core",
         "plugin"
       ],
       "defer_on_trunk": false
@@ -817,7 +864,8 @@
       "skill": "sw-plugin-development",
       "file": "skills/sw-plugin-development/SKILL.md",
       "title": "Handle the plugin lifecycle and keepUserData",
-      "status": "active",
+      "status": "retired",
+      "retired_reason": "No measured effect (2026-10-24): `suggest-rules draft-eval` wrote an eval for the rule, and with the skill off claude/haiku passed every repeat (`plugin-uninstall-keep-user-data` off 3/3, on 3/3). Models already do this without the rule. The drafted tasks were not kept.",
       "since": "2026-10-20",
       "eval": null,
       "eval_reason": "Documented only; no eval yet.",
@@ -1015,7 +1063,8 @@
       "skill": "sw-plugin-development",
       "file": "skills/sw-plugin-development/references/migrations.md",
       "title": "Migrations are idempotent",
-      "status": "active",
+      "status": "retired",
+      "retired_reason": "No measured effect (2026-10-24): `suggest-rules draft-eval` wrote an eval for the rule, and with the skill off claude/haiku passed every repeat (`review-migration-idempotent-catch` off 3/3, on 2/3; `review-migration-idempotent-ignore` off 3/3, on 3/3). Models already do this without the rule. The drafted tasks were not kept.",
       "since": "2026-10-20",
       "eval": null,
       "eval_reason": "Documented only; no eval yet.",
@@ -1033,6 +1082,7 @@
       "file": "skills/sw-plugin-development/references/migrations.md",
       "title": "Never edit a released migration",
       "status": "active",
+      "keep_reason": "Kept for weaker models (2026-10-26): claude/haiku did this without the rule, but a miss is severe (security or a shop-breaking change) and the rule costs a few lines. Retirement passes skip it; re-check with a small open model before dropping.",
       "since": "2026-10-20",
       "eval": null,
       "eval_reason": "Documented only; no eval yet.",
@@ -1050,6 +1100,7 @@
       "file": "skills/sw-plugin-development/references/migrations.md",
       "title": "Bind parameters in migration SQL",
       "status": "active",
+      "keep_reason": "Kept for weaker models (2026-10-26): claude/haiku did this without the rule, but a miss is severe (security or a shop-breaking change) and the rule costs a few lines. Retirement passes skip it; re-check with a small open model before dropping.",
       "since": "2026-10-20",
       "eval": null,
       "eval_reason": "Documented only; no eval yet.",
@@ -1078,7 +1129,8 @@
       "skill": "sw-plugin-development",
       "file": "skills/sw-plugin-development/references/version-compatibility.md",
       "title": "Read feature flags through Feature::has() and Feature::isActive()",
-      "status": "active",
+      "status": "retired",
+      "retired_reason": "No measured effect (2026-10-24): `suggest-rules draft-eval` wrote an eval for the rule, and with the skill off claude/haiku passed every repeat (`review-feature-flag-read-catch` off 3/3, on 2/3; `review-feature-flag-read-ignore` off 3/3, on 3/3). Models already do this without the rule. The drafted tasks were not kept.",
       "since": "2026-10-20",
       "eval": null,
       "eval_reason": "Documented only; no eval yet.",
@@ -1093,7 +1145,8 @@
       "skill": "sw-plugin-development",
       "file": "skills/sw-plugin-development/references/version-compatibility.md",
       "title": "6.8-targeted plugins register Symfony DI in PHP",
-      "status": "active",
+      "status": "retired",
+      "retired_reason": "No measured effect (2026-10-23): with the skill off, `plugin-xml-config-to-php` passed every repeat on claude/haiku (3/3, local) and on opencode/mimo-v2.6-flash-free (3/3, evals.yml run 39960913122). The review pair `review-services-xml-68-*` held 3/3 with the skill on and off on claude/haiku too. Models already do this without the rule. The task stays as a canary: a model that fails it with the skill off brings the rule back.",
       "since": "2026-10-20",
       "eval": "plugin-xml-config-to-php",
       "core_guide_ids": [],
@@ -1269,12 +1322,11 @@
     {
       "id": "REV-005",
       "skill": "sw-review-learnings",
-      "file": "skills/sw-review-learnings/SKILL.md",
+      "file": "skills/sw-review-learnings/references/pr-size.md",
       "title": "Keep PRs under about 400 changed lines or explain why",
       "status": "active",
       "since": "2026-10-20",
-      "eval": null,
-      "eval_reason": "Process rule; not gradable from a diff.",
+      "eval": "review-pr-size-catch",
       "core_guide_ids": [],
       "audience": [
         "core",
@@ -1361,25 +1413,25 @@
       "skill": "sw-review-learnings",
       "file": "skills/sw-review-learnings/SKILL.md",
       "title": "No business logic in controllers",
-      "status": "active",
+      "status": "superseded:PLG-006",
+      "retired_reason": "Merged into PLG-006 (2026-10-28): three IDs covered one topic. PLG-006 now sits in sw-plugin-development/references/api-contracts.md, which sw-extension-review borrows, so build and review cite the same ID. The skill text keeps a pointer to `PLG-006`.",
       "since": "2026-10-20",
-      "eval": "business-logic-in-controller",
+      "eval": null,
       "core_guide_ids": [],
       "audience": [
         "core",
         "plugin"
       ],
       "defer_on_trunk": false,
-      "see": [
-        "PLG-006"
-      ]
+      "eval_reason": "Superseded by PLG-006."
     },
     {
       "id": "REV-011",
       "skill": "sw-review-learnings",
       "file": "skills/sw-review-learnings/SKILL.md",
       "title": "Admin route ACL follows the existing privilege key form",
-      "status": "active",
+      "status": "retired",
+      "retired_reason": "No measured effect (2026-10-24): `suggest-rules draft-eval` wrote an eval for the rule, and with the skill off claude/haiku passed every repeat (`review-route-acl-privilege-key-catch` off 3/3, on 3/3; `review-route-acl-privilege-key-ignore` off 3/3, on 3/3). Models already do this without the rule. The drafted tasks were not kept.",
       "since": "2026-10-20",
       "eval": null,
       "eval_reason": "Documented only; no eval yet.",
@@ -1463,21 +1515,17 @@
     {
       "id": "REV-016",
       "skill": "sw-review-learnings",
-      "file": "skills/sw-review-learnings/SKILL.md",
+      "file": "skills/sw-review-learnings/references/feature-flags.md",
       "title": "Read feature flags through the Feature API",
       "status": "active",
       "since": "2026-10-20",
-      "eval": null,
-      "eval_reason": "Documented only; no eval yet.",
+      "eval": "review-feature-flag-env-catch",
       "core_guide_ids": [],
       "audience": [
         "core",
         "plugin"
       ],
-      "defer_on_trunk": false,
-      "see": [
-        "PLG-025"
-      ]
+      "defer_on_trunk": false
     },
     {
       "id": "REV-017",
@@ -1527,7 +1575,8 @@
       "skill": "sw-review-learnings",
       "file": "skills/sw-review-learnings/references/api-aware.md",
       "title": "Return data, not storefront URLs or markup",
-      "status": "active",
+      "status": "retired",
+      "retired_reason": "No measured effect (2026-10-24): `suggest-rules draft-eval` wrote an eval for the rule, and with the skill off claude/haiku passed every repeat (`review-storefront-urls-catch` off 3/3, on 3/3; `review-storefront-urls-ignore` off 3/3, on 3/3). Models already do this without the rule. The drafted tasks were not kept.",
       "since": "2026-10-20",
       "eval": null,
       "eval_reason": "Documented only; no eval yet.",
@@ -1616,6 +1665,7 @@
       "status": "active",
       "since": "2026-10-20",
       "eval": "no-dal-connection-for-entity-read",
+      "keep_reason": "Held on every profile, and on the neutral prompt (claude/haiku 5/5 with skills off): models write DAL reads on their own. Kept because review-raw-sql-invalidation-near-miss accepts it and the sw-extension-review lens names it for raw SQL that skips cache invalidation.",
       "core_guide_ids": [],
       "audience": [
         "plugin"
@@ -1630,7 +1680,8 @@
       "skill": "sw-review-learnings",
       "file": "skills/sw-review-learnings/references/change-scope.md",
       "title": "Treat issue suggestions as hypotheses",
-      "status": "active",
+      "status": "retired",
+      "retired_reason": "No measured effect (2026-10-24): `suggest-rules draft-eval` wrote an eval for the rule, and with the skill off claude/haiku passed every repeat (`fix-issue-suggestion-catch` off 3/3, on 3/3). Models already do this without the rule. The drafted tasks were not kept.",
       "since": "2026-10-20",
       "eval": null,
       "eval_reason": "Process rule; core shopware-change-scope owns it on trunk.",
@@ -1662,7 +1713,8 @@
       "skill": "sw-review-learnings",
       "file": "skills/sw-review-learnings/references/change-scope.md",
       "title": "Fix the bug where it lives",
-      "status": "active",
+      "status": "retired",
+      "retired_reason": "No measured effect (2026-10-24): `suggest-rules draft-eval` wrote an eval for the rule, and with the skill off claude/haiku passed every repeat (`review-bug-boundary-catch` off 3/3, on 2/3; `review-bug-boundary-ignore` off 3/3, on 3/3). Models already do this without the rule. The drafted tasks were not kept.",
       "since": "2026-10-20",
       "eval": null,
       "eval_reason": "Process rule; core shopware-change-scope owns it on trunk.",
@@ -1680,7 +1732,8 @@
       "skill": "sw-review-learnings",
       "file": "skills/sw-review-learnings/references/change-scope.md",
       "title": "Smallest root-cause fix",
-      "status": "active",
+      "status": "retired",
+      "retired_reason": "No measured effect (2026-10-24): `suggest-rules draft-eval` wrote an eval for the rule, and with the skill off claude/haiku passed every repeat (`smallest-root-cause-fix` off 3/3, on 3/3). Models already do this without the rule. The drafted tasks were not kept.",
       "since": "2026-10-20",
       "eval": null,
       "eval_reason": "Process rule; core shopware-change-scope owns it on trunk.",
@@ -1746,8 +1799,7 @@
       "title": "Do not turn a focused fix into a refactor",
       "status": "active",
       "since": "2026-10-20",
-      "eval": null,
-      "eval_reason": "Process rule; core shopware-change-scope owns it on trunk.",
+      "eval": "review-change-scope-catch",
       "core_guide_ids": [],
       "audience": [
         "core",
@@ -1773,14 +1825,19 @@
         "plugin",
         "app"
       ],
-      "defer_on_trunk": false
+      "defer_on_trunk": true,
+      "trunk": {
+        "source": ".agents/skills/sw-review/guides/scheduled-tasks-and-queue.md#check",
+        "commit": "f31fb198"
+      }
     },
     {
       "id": "CORE-001",
       "skill": "sw-core-development",
       "file": "skills/sw-core-development/SKILL.md",
       "title": "Never raise the PHPStan level without committing the regenerated baseline",
-      "status": "active",
+      "status": "retired",
+      "retired_reason": "No measured effect (2026-10-23): with the skill off, `phpstan-baseline-guardrail` passed every repeat on claude/haiku (3/3, local) and on opencode/mimo-v2.6-flash-free (3/3, evals.yml run 39960913122). Models already do this without the rule. The task stays as a canary: a model that fails it with the skill off brings the rule back.",
       "since": "2026-10-20",
       "eval": "phpstan-baseline-guardrail",
       "core_guide_ids": [],
@@ -1795,6 +1852,7 @@
       "file": "skills/sw-core-development/SKILL.md",
       "title": "No public-API removal or change without a deprecation cycle",
       "status": "active",
+      "keep_reason": "Kept for weaker models (2026-10-26): claude/haiku did this without the rule, but a miss is severe (security or a shop-breaking change) and the rule costs a few lines. Retirement passes skip it; re-check with a small open model before dropping.",
       "since": "2026-10-20",
       "eval": null,
       "eval_reason": "Documented only; no eval yet.",
@@ -1876,7 +1934,8 @@
       "skill": "sw-core-development",
       "file": "skills/sw-core-development/SKILL.md",
       "title": "Modernize behind Feature::isActive() and keep the legacy path until the major",
-      "status": "active",
+      "status": "retired",
+      "retired_reason": "No measured effect (2026-10-23): with the skill off, `core-http-client-behind-flag` passed every repeat on claude/haiku (3/3, local) and on opencode/mimo-v2.6-flash-free (3/3, evals.yml run 39960913122). Models already do this without the rule. The task stays as a canary: a model that fails it with the skill off brings the rule back.",
       "since": "2026-10-20",
       "eval": "core-http-client-behind-flag",
       "core_guide_ids": [],
@@ -1920,8 +1979,7 @@
       "title": "Cover new or changed core API routes with ApiRoutesHaveASchemaTest",
       "status": "active",
       "since": "2026-10-20",
-      "eval": null,
-      "eval_reason": "Process rule; core shopware-php-code owns it on trunk.",
+      "eval": "review-api-route-schema-test-catch",
       "core_guide_ids": [],
       "audience": [
         "core"
@@ -1952,8 +2010,7 @@
       "title": "Pick one deprecation tool per situation; do not mix them",
       "status": "active",
       "since": "2026-10-20",
-      "eval": null,
-      "eval_reason": "Documented only; no eval yet.",
+      "eval": "review-deprecation-framework-callback-catch",
       "core_guide_ids": [],
       "audience": [
         "core"
@@ -1967,8 +2024,7 @@
       "title": "Discovery methods return a neutral value once the removal flag is active",
       "status": "active",
       "since": "2026-10-20",
-      "eval": null,
-      "eval_reason": "Style rule; core shopware-php-code owns it on trunk.",
+      "eval": "review-deprecation-discovery-neutral-catch",
       "core_guide_ids": [],
       "audience": [
         "core"
@@ -2018,8 +2074,7 @@
       "title": "Pick the most specific BCChange attribute",
       "status": "active",
       "since": "2026-10-20",
-      "eval": null,
-      "eval_reason": "Documented only; no eval yet.",
+      "eval": "review-bc-change-most-specific-catch",
       "core_guide_ids": [],
       "audience": [
         "core"
@@ -2057,7 +2112,8 @@
       "skill": "sw-core-development",
       "file": "skills/sw-core-development/references/deprecations.md",
       "title": "Trigger a deprecation only for the incompatible legacy use",
-      "status": "active",
+      "status": "retired",
+      "retired_reason": "No measured effect (2026-10-24): `suggest-rules draft-eval` wrote an eval for the rule, and with the skill off claude/haiku passed every repeat (`review-deprecation-legacy-use-catch` off 3/3, on 3/3; `review-deprecation-legacy-use-ignore` off 3/3, on 3/3). Models already do this without the rule. The drafted tasks were not kept.",
       "since": "2026-10-20",
       "eval": null,
       "eval_reason": "Documented only; no eval yet.",
@@ -2070,12 +2126,11 @@
     {
       "id": "CORE-017",
       "skill": "sw-core-development",
-      "file": "skills/sw-core-development/references/deprecations.md",
+      "file": "skills/sw-core-development/references/removals-and-shims.md",
       "title": "@deprecated tag:vX.Y.Z always names the replacement",
       "status": "active",
       "since": "2026-10-20",
-      "eval": null,
-      "eval_reason": "Documented only; no eval yet.",
+      "eval": "review-deprecation-tag-replacement-catch",
       "core_guide_ids": [
         "BCPHP-004"
       ],
@@ -2132,7 +2187,8 @@
       "skill": "sw-core-development",
       "file": "skills/sw-core-development/references/deprecations.md",
       "title": "Core calls deprecated code for BC inside Feature::silent()",
-      "status": "active",
+      "status": "retired",
+      "retired_reason": "No measured effect (2026-10-23): with the skill off, `deprecation-silent-wrapper` passed every repeat on claude/haiku (3/3, local) and on opencode/mimo-v2.6-flash-free (3/3, evals.yml run 39960913122). Models already do this without the rule. The task stays as a canary: a model that fails it with the skill off brings the rule back.",
       "since": "2026-10-20",
       "eval": "deprecation-silent-wrapper",
       "core_guide_ids": [],
@@ -2163,11 +2219,11 @@
       "title": "@deprecated on executable PHP pairs with triggerDeprecationOrThrow()",
       "status": "active",
       "since": "2026-10-20",
-      "eval": null,
-      "eval_reason": "Documented only; no eval yet.",
+      "eval": "review-deprecation-trigger-catch",
       "core_guide_ids": [],
       "audience": [
-        "core"
+        "core",
+        "plugin"
       ],
       "defer_on_trunk": false,
       "trunk": {
@@ -2291,7 +2347,8 @@
       "skill": "sw-core-development",
       "file": "skills/sw-core-development/references/platform-architecture.md",
       "title": "Core does not depend on Storefront or Administration",
-      "status": "active",
+      "status": "retired",
+      "retired_reason": "No measured effect (2026-10-24): `suggest-rules draft-eval` wrote an eval for the rule, and with the skill off claude/haiku passed every repeat (`review-core-storefront-listener-catch` off 3/3, on 3/3; `review-core-storefront-listener-ignore` off 3/3, on 3/3). Models already do this without the rule. The drafted tasks were not kept.",
       "since": "2026-10-20",
       "eval": null,
       "eval_reason": "Documented only; no eval yet.",
@@ -2301,7 +2358,11 @@
       "audience": [
         "core"
       ],
-      "defer_on_trunk": false
+      "defer_on_trunk": true,
+      "trunk": {
+        "source": ".agents/skills/sw-review/guides/platform-scope.md#check",
+        "commit": "f31fb198"
+      }
     },
     {
       "id": "CORE-031",
@@ -2353,7 +2414,8 @@
       "skill": "sw-core-development",
       "file": "skills/sw-core-development/references/platform-architecture.md",
       "title": "Do not call or extend @internal symbols from outside their bundle",
-      "status": "active",
+      "status": "retired",
+      "retired_reason": "No measured effect (2026-10-24): `suggest-rules draft-eval` wrote an eval for the rule, and with the skill off claude/haiku passed every repeat (`review-internal-cross-bundle-catch` off 3/3, on 3/3; `review-internal-cross-bundle-ignore` off 3/3, on 3/3). Models already do this without the rule. The drafted tasks were not kept.",
       "since": "2026-10-20",
       "eval": null,
       "eval_reason": "Documented only; no eval yet.",
@@ -2368,17 +2430,16 @@
       "skill": "sw-core-development",
       "file": "skills/sw-core-development/references/platform-architecture.md",
       "title": "Thin controllers delegate to services",
-      "status": "active",
+      "status": "superseded:PLG-006",
+      "retired_reason": "Merged into PLG-006 (2026-10-28): three IDs covered one topic. PLG-006 now sits in sw-plugin-development/references/api-contracts.md, which sw-extension-review borrows, so build and review cite the same ID. The skill text keeps a pointer to `PLG-006`.",
       "since": "2026-10-20",
-      "eval": "business-logic-in-controller",
+      "eval": null,
       "core_guide_ids": [],
       "audience": [
         "core"
       ],
       "defer_on_trunk": false,
-      "see": [
-        "PLG-006"
-      ]
+      "eval_reason": "Superseded by PLG-006."
     },
     {
       "id": "CORE-036",
@@ -2400,7 +2461,8 @@
       "skill": "sw-core-development",
       "file": "skills/sw-core-development/references/platform-architecture.md",
       "title": "Migrations use the exact current Unix timestamp",
-      "status": "active",
+      "status": "retired",
+      "retired_reason": "No measured effect (2026-10-23): with the skill off, `migration-timestamp-format` passed every repeat on claude/haiku (3/3, local) and on opencode/mimo-v2.6-flash-free (3/3, evals.yml run 39960913122). Models already do this without the rule. The task stays as a canary: a model that fails it with the skill off brings the rule back.",
       "since": "2026-10-20",
       "eval": "migration-timestamp-format",
       "core_guide_ids": [],
@@ -2465,8 +2527,7 @@
       "title": "No tests for an empty updateDestructive()",
       "status": "active",
       "since": "2026-10-20",
-      "eval": null,
-      "eval_reason": "Style rule; core shopware-phpunit-tests owns it on trunk.",
+      "eval": "review-migration-empty-destructive-catch",
       "core_guide_ids": [],
       "audience": [
         "core"
@@ -2526,7 +2587,8 @@
       "skill": "sw-core-development",
       "file": "skills/sw-core-development/references/release-notes-and-adr.md",
       "title": "Wrap code elements in release notes in backticks",
-      "status": "active",
+      "status": "retired",
+      "retired_reason": "No measured effect (2026-10-24): `suggest-rules draft-eval` wrote an eval for the rule, and with the skill off claude/haiku passed every repeat (`review-release-notes-backticks-catch` off 3/3, on 2/3; `review-release-notes-backticks-ignore` off 3/3, on 3/3). Models already do this without the rule. The drafted tasks were not kept.",
       "since": "2026-10-20",
       "eval": null,
       "eval_reason": "Documented only; no eval yet.",
@@ -2576,7 +2638,8 @@
       "skill": "sw-core-development",
       "file": "skills/sw-core-development/references/release-notes-and-adr.md",
       "title": "Put the entry under the existing category heading",
-      "status": "active",
+      "status": "retired",
+      "retired_reason": "No measured effect (2026-10-23): with the skill off, `release-info-no-duplicate-heading` passed every repeat on claude/haiku (3/3, local) and on opencode/mimo-v2.6-flash-free (3/3, evals.yml run 39960913122). Models already do this without the rule. The task stays as a canary: a model that fails it with the skill off brings the rule back.",
       "since": "2026-10-20",
       "eval": "release-info-no-duplicate-heading",
       "core_guide_ids": [
@@ -2592,7 +2655,8 @@
       "skill": "sw-core-development",
       "file": "skills/sw-core-development/references/release-notes-and-adr.md",
       "title": "Never repeat a heading inside one version section",
-      "status": "active",
+      "status": "retired",
+      "retired_reason": "No measured effect (2026-10-23): with the skill off, `release-info-no-duplicate-heading` passed every repeat on claude/haiku (3/3, local) and on opencode/mimo-v2.6-flash-free (3/3, evals.yml run 39960913122). Models already do this without the rule. The task stays as a canary: a model that fails it with the skill off brings the rule back.",
       "since": "2026-10-20",
       "eval": "release-info-no-duplicate-heading",
       "core_guide_ids": [
@@ -2610,8 +2674,7 @@
       "title": "No bold labels in RELEASE_INFO entries",
       "status": "active",
       "since": "2026-10-20",
-      "eval": null,
-      "eval_reason": "Documented only; no eval yet.",
+      "eval": "review-release-info-bold-label-catch",
       "core_guide_ids": [],
       "audience": [
         "core"
@@ -2638,7 +2701,8 @@
       "skill": "sw-core-development",
       "file": "skills/sw-core-development/references/release-notes-and-adr.md",
       "title": "RELEASE_INFO and UPGRADE entries stand alone without cross-references",
-      "status": "active",
+      "status": "retired",
+      "retired_reason": "No measured effect (2026-10-24): `suggest-rules draft-eval` wrote an eval for the rule, and with the skill off claude/haiku passed every repeat (`review-release-notes-cross-reference-catch` off 3/3, on 2/3; `review-release-notes-cross-reference-ignore` off 3/3, on 3/3). Models already do this without the rule. The drafted tasks were not kept.",
       "since": "2026-10-20",
       "eval": null,
       "eval_reason": "Documented only; no eval yet.",
@@ -2670,8 +2734,7 @@
       "title": "Keep services hexagonal; infrastructure stays at the edge",
       "status": "active",
       "since": "2026-10-20",
-      "eval": null,
-      "eval_reason": "Style rule; core shopware-php-code owns it on trunk.",
+      "eval": "review-service-request-catch",
       "core_guide_ids": [],
       "audience": [
         "core"
@@ -2785,7 +2848,8 @@
       "skill": "sw-core-development",
       "file": "skills/sw-core-development/references/static-analysis-baseline.md",
       "title": "Never add baseline entries to silence new code",
-      "status": "active",
+      "status": "retired",
+      "retired_reason": "No measured effect (2026-10-24): `suggest-rules draft-eval` wrote an eval for the rule, and with the skill off claude/haiku passed every repeat (`review-baseline-growth-catch` off 3/3, on 3/3; `review-baseline-growth-ignore` off 3/3, on 3/3). Models already do this without the rule. The drafted tasks were not kept.",
       "since": "2026-10-20",
       "eval": null,
       "eval_reason": "Documented only; no eval yet.",
@@ -2839,11 +2903,11 @@
       "title": "Satisfy phpstan-shopware rules instead of suppressing them",
       "status": "active",
       "since": "2026-10-20",
-      "eval": null,
-      "eval_reason": "Documented only; no eval yet.",
+      "eval": "review-phpstan-suppression-catch",
       "core_guide_ids": [],
       "audience": [
-        "core"
+        "core",
+        "plugin"
       ],
       "defer_on_trunk": false
     },
@@ -2913,6 +2977,7 @@
       "file": "skills/sw-core-development/references/bc-data-and-config.md",
       "title": "Keep the API shape of a definition",
       "status": "active",
+      "keep_reason": "Kept for weaker models (2026-10-26): claude/haiku did this without the rule, but a miss is severe (security or a shop-breaking change) and the rule costs a few lines. Retirement passes skip it; re-check with a small open model before dropping.",
       "since": "2026-10-21",
       "eval": null,
       "eval_reason": "Core-only (WP7 phase C); core's review guide covers it on trunk.",
@@ -2933,6 +2998,7 @@
       "file": "skills/sw-core-development/references/bc-data-and-config.md",
       "title": "Do not drop an association or switch off autoload in a minor",
       "status": "active",
+      "keep_reason": "Kept for weaker models (2026-10-26): claude/haiku did this without the rule, but a miss is severe (security or a shop-breaking change) and the rule costs a few lines. Retirement passes skip it; re-check with a small open model before dropping.",
       "since": "2026-10-21",
       "eval": null,
       "eval_reason": "Core-only (WP7 phase C); core's review guide covers it on trunk.",
@@ -2973,6 +3039,7 @@
       "file": "skills/sw-core-development/references/bc-data-and-config.md",
       "title": "Configuration defaults, keys and environment variables stay",
       "status": "active",
+      "keep_reason": "Kept for weaker models (2026-10-26): claude/haiku did this without the rule, but a miss is severe (security or a shop-breaking change) and the rule costs a few lines. Retirement passes skip it; re-check with a small open model before dropping.",
       "since": "2026-10-21",
       "eval": null,
       "eval_reason": "Core-only (WP7 phase C); core's review guide covers it on trunk.",
@@ -3042,7 +3109,11 @@
       "audience": [
         "core"
       ],
-      "defer_on_trunk": false
+      "defer_on_trunk": true,
+      "trunk": {
+        "source": ".agents/skills/sw-review/guides/platform-scope.md#check",
+        "commit": "f31fb198"
+      }
     },
     {
       "id": "CORE-073",
@@ -3051,15 +3122,18 @@
       "title": "No silent environment probes",
       "status": "active",
       "since": "2026-10-21",
-      "eval": null,
-      "eval_reason": "Core-only (WP7 phase C); core's review guide (open #21455) covers it once merged.",
+      "eval": "review-environment-probe-catch",
       "core_guide_ids": [
         "SCOPE-004"
       ],
       "audience": [
         "core"
       ],
-      "defer_on_trunk": false
+      "defer_on_trunk": true,
+      "trunk": {
+        "source": ".agents/skills/sw-review/guides/platform-scope.md#check",
+        "commit": "f31fb198"
+      }
     },
     {
       "id": "CORE-074",
@@ -3076,14 +3150,19 @@
       "audience": [
         "core"
       ],
-      "defer_on_trunk": false
+      "defer_on_trunk": true,
+      "trunk": {
+        "source": ".agents/skills/sw-review/guides/platform-scope.md#check",
+        "commit": "f31fb198"
+      }
     },
     {
       "id": "CORE-075",
       "skill": "sw-core-development",
       "file": "skills/sw-core-development/references/asset-lifetime.md",
       "title": "Do not delete or overwrite assets a cached page can reference",
-      "status": "active",
+      "status": "retired",
+      "retired_reason": "No measured effect (2026-10-24): `suggest-rules draft-eval` wrote an eval for the rule, and with the skill off claude/haiku passed every repeat (`review-theme-asset-overwrite-catch` off 3/3, on 3/3; `review-theme-asset-overwrite-ignore` off 3/3, on 3/3). Models already do this without the rule. The drafted tasks were not kept.",
       "since": "2026-10-21",
       "eval": null,
       "eval_reason": "Core-only (WP7 phase C); core's review guide covers it on trunk.",
@@ -3125,13 +3204,13 @@
       "title": "Clean up referenced assets asynchronously",
       "status": "active",
       "since": "2026-10-21",
-      "eval": null,
-      "eval_reason": "Core-only (WP7 phase C); core's review guide covers it on trunk.",
+      "eval": "review-asset-cleanup-catch",
       "core_guide_ids": [
         "CACHE-003"
       ],
       "audience": [
-        "core"
+        "core",
+        "plugin"
       ],
       "defer_on_trunk": true,
       "trunk": {
@@ -3143,7 +3222,8 @@
       "skill": "sw-admin-js",
       "file": "skills/sw-admin-js/SKILL.md",
       "title": "New Admin code is TypeScript; main.js is the only .js entry",
-      "status": "active",
+      "status": "retired",
+      "retired_reason": "No measured effect (2026-10-23): with the skill off, `admin-js-implementation-to-ts` passed every repeat on claude/haiku (3/3, local) and on opencode/mimo-v2.6-flash-free (3/3, evals.yml run 39960913122). Models already do this without the rule. The task stays as a canary: a model that fails it with the skill off brings the rule back.",
       "since": "2026-10-20",
       "eval": "admin-js-implementation-to-ts",
       "core_guide_ids": [],
@@ -3243,15 +3323,13 @@
     {
       "id": "ADM-006",
       "skill": "sw-admin-js",
-      "file": "skills/sw-admin-js/SKILL.md",
-      "title": "Follow the patterns of the area you touch",
-      "status": "superseded:ADM-041",
+      "file": "skills/sw-admin-js/references/architecture.md",
+      "title": "Plugin admin modules built with Component.register and Twig blocks get no .vue files",
+      "status": "active",
       "since": "2026-10-20",
-      "eval": null,
-      "eval_reason": "Documented only; no eval yet.",
+      "eval": "review-admin-area-pattern-catch",
       "core_guide_ids": [],
       "audience": [
-        "core",
         "plugin",
         "admin"
       ],
@@ -3260,11 +3338,11 @@
     {
       "id": "ADM-007",
       "skill": "sw-admin-js",
-      "file": "skills/sw-admin-js/SKILL.md",
+      "file": "skills/sw-admin-js/references/architecture.md",
       "title": "Composables for new shared Vue logic; no new mixins",
       "status": "active",
       "since": "2026-10-20",
-      "eval": "admin-component-wrap-config",
+      "eval": "review-admin-mixin-catch",
       "core_guide_ids": [],
       "audience": [
         "core",
@@ -3354,7 +3432,8 @@
       "skill": "sw-admin-js",
       "file": "skills/sw-admin-js/references/architecture.md",
       "title": "Modules do not import each other; core stays Vue-free",
-      "status": "active",
+      "status": "retired",
+      "retired_reason": "No measured effect (2026-10-23): with the skill off, `admin-no-cross-module-import` passed every repeat on claude/haiku (3/3, local) and on opencode/mimo-v2.6-flash-free (3/3, evals.yml run 39960913122). On opencode the skill-on arm passed only 1/3, so the rule text did not help either. Models already do this without the rule. The task stays as a canary: a model that fails it with the skill off brings the rule back.",
       "since": "2026-10-20",
       "eval": "admin-no-cross-module-import",
       "core_guide_ids": [],
@@ -3370,7 +3449,8 @@
       "skill": "sw-admin-js",
       "file": "skills/sw-admin-js/references/architecture.md",
       "title": "Keep the init-pre, init, init-post boot order",
-      "status": "active",
+      "status": "retired",
+      "retired_reason": "No measured effect (2026-10-24): `suggest-rules draft-eval` wrote an eval for the rule, and with the skill off claude/haiku passed every repeat (`review-admin-boot-order-catch` off 3/3, on 3/3; `review-admin-boot-order-ignore` off 3/3, on 3/3). Models already do this without the rule. The drafted tasks were not kept.",
       "since": "2026-10-20",
       "eval": null,
       "eval_reason": "Style rule; core shopware-admin-js owns it on trunk.",
@@ -3403,7 +3483,8 @@
       "skill": "sw-admin-js",
       "file": "skills/sw-admin-js/references/architecture.md",
       "title": "Preserve extension points on the global Shopware object",
-      "status": "active",
+      "status": "retired",
+      "retired_reason": "No measured effect (2026-10-24): `suggest-rules draft-eval` wrote an eval for the rule, and with the skill off claude/haiku passed every repeat (`review-admin-extension-point-catch` off 3/3, on 1/3; `review-admin-extension-point-ignore` off 3/3, on 3/3). Models already do this without the rule. The drafted tasks were not kept.",
       "since": "2026-10-20",
       "eval": null,
       "eval_reason": "Style rule; core shopware-admin-js owns it on trunk.",
@@ -3420,6 +3501,7 @@
       "file": "skills/sw-admin-js/references/architecture.md",
       "title": "Protect routes, navigation and templates with ACL privileges",
       "status": "active",
+      "keep_reason": "Kept for weaker models (2026-10-26): claude/haiku did this without the rule, but a miss is severe (security or a shop-breaking change) and the rule costs a few lines. Retirement passes skip it; re-check with a small open model before dropping.",
       "since": "2026-10-20",
       "eval": null,
       "eval_reason": "Documented only; no eval yet.",
@@ -3436,7 +3518,8 @@
       "skill": "sw-admin-js",
       "file": "skills/sw-admin-js/references/architecture.md",
       "title": "Keep business logic out of templates",
-      "status": "active",
+      "status": "retired",
+      "retired_reason": "No measured effect (2026-10-24): `suggest-rules draft-eval` wrote an eval for the rule, and with the skill off claude/haiku passed every repeat (`review-admin-template-logic-catch` off 3/3, on 3/3; `review-admin-template-logic-ignore` off 3/3, on 3/3). Models already do this without the rule. The drafted tasks were not kept.",
       "since": "2026-10-20",
       "eval": null,
       "eval_reason": "Documented only; no eval yet.",
@@ -3539,7 +3622,8 @@
       "skill": "sw-admin-js",
       "file": "skills/sw-admin-js/references/flags-and-modern-web.md",
       "title": "Follow the surrounding flag name spelling; both resolve",
-      "status": "active",
+      "status": "retired",
+      "retired_reason": "No measured effect (2026-10-24): `suggest-rules draft-eval` wrote an eval for the rule, and with the skill off claude/haiku passed every repeat (`admin-flag-spelling-follows-surrounding` off 3/3, on 3/3). Models already do this without the rule. The drafted tasks were not kept.",
       "since": "2026-10-20",
       "eval": null,
       "eval_reason": "Documented only; no eval yet.",
@@ -3556,7 +3640,8 @@
       "skill": "sw-admin-js",
       "file": "skills/sw-admin-js/references/flags-and-modern-web.md",
       "title": "One behavior per flag; no nested flags",
-      "status": "active",
+      "status": "retired",
+      "retired_reason": "No measured effect (2026-10-24): `suggest-rules draft-eval` wrote an eval for the rule, and with the skill off claude/haiku passed every repeat (`admin-flag-no-nested` off 3/3, on 3/3). Models already do this without the rule. The drafted tasks were not kept.",
       "since": "2026-10-20",
       "eval": null,
       "eval_reason": "Style rule; core shopware-admin-js owns it on trunk.",
@@ -3577,8 +3662,7 @@
       "title": "Keep the old behavior in the branch deleted with the flag",
       "status": "active",
       "since": "2026-10-20",
-      "eval": null,
-      "eval_reason": "Style rule; core shopware-admin-js owns it on trunk.",
+      "eval": "review-admin-flag-old-branch-catch",
       "core_guide_ids": [
         "ADMF-004"
       ],
@@ -3611,7 +3695,8 @@
       "skill": "sw-admin-js",
       "file": "skills/sw-admin-js/references/flags-and-modern-web.md",
       "title": "Admin @deprecated tag names the replacement",
-      "status": "active",
+      "status": "retired",
+      "retired_reason": "No measured effect (2026-10-24): `suggest-rules draft-eval` wrote an eval for the rule, and with the skill off claude/haiku passed every repeat (`review-admin-deprecated-tag-catch` off 3/3, on 3/3; `review-admin-deprecated-tag-ignore` off 3/3, on 3/3). Models already do this without the rule. The drafted tasks were not kept.",
       "since": "2026-10-20",
       "eval": null,
       "eval_reason": "Style rule; core shopware-admin-js owns it on trunk.",
@@ -3629,7 +3714,8 @@
       "skill": "sw-admin-js",
       "file": "skills/sw-admin-js/references/flags-and-modern-web.md",
       "title": "Runtime deprecation warnings for developer-facing Admin APIs",
-      "status": "active",
+      "status": "retired",
+      "retired_reason": "No measured effect (2026-10-24): `suggest-rules draft-eval` wrote an eval for the rule, and with the skill off claude/haiku passed every repeat (`admin-deprecated-api-runtime-warning` off 3/3, on 3/3). Models already do this without the rule. The drafted tasks were not kept.",
       "since": "2026-10-20",
       "eval": null,
       "eval_reason": "Style rule; core shopware-admin-js owns it on trunk.",
@@ -3645,7 +3731,8 @@
       "skill": "sw-admin-js",
       "file": "skills/sw-admin-js/references/flags-and-modern-web.md",
       "title": "No new internal callers of deprecated Admin APIs",
-      "status": "active",
+      "status": "retired",
+      "retired_reason": "No measured effect (2026-10-24): `suggest-rules draft-eval` wrote an eval for the rule, and with the skill off claude/haiku passed every repeat (`review-admin-deprecated-caller-catch` off 3/3, on 3/3; `review-admin-deprecated-caller-ignore` off 3/3, on 3/3). Models already do this without the rule. The drafted tasks were not kept.",
       "since": "2026-10-20",
       "eval": null,
       "eval_reason": "Style rule; core shopware-admin-js owns it on trunk.",
@@ -3677,7 +3764,8 @@
       "skill": "sw-admin-js",
       "file": "skills/sw-admin-js/references/testing.md",
       "title": "Jest tests behavior, not Vue internals",
-      "status": "active",
+      "status": "retired",
+      "retired_reason": "No measured effect (2026-10-24): `suggest-rules draft-eval` wrote an eval for the rule, and with the skill off claude/haiku passed every repeat (`admin-jest-behavior-not-internals` off 3/3, on 3/3). Models already do this without the rule. The drafted tasks were not kept.",
       "since": "2026-10-20",
       "eval": null,
       "eval_reason": "Documented only; no eval yet.",
@@ -3745,7 +3833,8 @@
       "skill": "sw-admin-js",
       "file": "skills/sw-admin-js/references/testing.md",
       "title": "Small scenario setup with the existing Admin helpers and mocks",
-      "status": "active",
+      "status": "retired",
+      "retired_reason": "No measured effect (2026-10-24): `suggest-rules draft-eval` wrote an eval for the rule, and with the skill off claude/haiku passed every repeat (`review-admin-test-setup-catch` off 3/3, on 3/3; `review-admin-test-setup-ignore` off 3/3, on 3/3). Models already do this without the rule. The drafted tasks were not kept.",
       "since": "2026-10-20",
       "eval": null,
       "eval_reason": "Documented only; no eval yet.",
@@ -3764,8 +3853,7 @@
       "title": "Register global framework components through config.global.stubs",
       "status": "active",
       "since": "2026-10-20",
-      "eval": null,
-      "eval_reason": "Style rule; core shopware-admin-js owns it on trunk.",
+      "eval": "review-admin-global-stub-catch",
       "core_guide_ids": [],
       "audience": [
         "core",
@@ -3778,7 +3866,8 @@
       "skill": "sw-admin-js",
       "file": "skills/sw-admin-js/references/testing.md",
       "title": "Cover error paths of API services and save/load flows",
-      "status": "active",
+      "status": "retired",
+      "retired_reason": "No measured effect (2026-10-24): `suggest-rules draft-eval` wrote an eval for the rule, and with the skill off claude/haiku passed every repeat (`admin-api-service-error-paths` off 3/3, on 3/3). Models already do this without the rule. The drafted tasks were not kept.",
       "since": "2026-10-20",
       "eval": null,
       "eval_reason": "Documented only; no eval yet.",
@@ -3835,7 +3924,8 @@
       "skill": "sw-admin-js",
       "file": "skills/sw-admin-js/references/extension-api.md",
       "title": "blocks-list.json entries and position identifiers are a contract",
-      "status": "active",
+      "status": "retired",
+      "retired_reason": "No measured effect (2026-10-23): with the skill off, `review-admin-position-identifier-catch` passed every repeat on claude/haiku (3/3, local) and on opencode/mimo-v2.6-flash-free (3/3, evals.yml run 39960913122). The review pair `review-admin-position-identifier-*` held 3/3 with the skill on and off on claude/haiku too. Models already do this without the rule. The task stays as a canary: a model that fails it with the skill off brings the rule back.",
       "since": "2026-10-21",
       "eval": "review-admin-position-identifier-catch",
       "core_guide_ids": [
@@ -3913,6 +4003,21 @@
       "defer_on_trunk": false
     },
     {
+      "id": "ADM-045",
+      "skill": "sw-admin-js",
+      "file": "skills/sw-admin-js/references/architecture.md",
+      "title": "Shared Administration state is reset and changed through its store",
+      "status": "active",
+      "since": "2026-10-23",
+      "eval": "review-admin-store-reset-catch",
+      "core_guide_ids": [],
+      "audience": [
+        "admin",
+        "plugin"
+      ],
+      "defer_on_trunk": false
+    },
+    {
       "id": "ARCH-001",
       "skill": "sw-architecture",
       "file": "skills/sw-architecture/references/symfony-in-shopware.md",
@@ -3977,7 +4082,18 @@
       "audience": [
         "core"
       ],
-      "defer_on_trunk": false
+      "defer_on_trunk": false,
+      "trunk": {
+        "enforced_by": [
+          {
+            "tool": "StoreApiRouteExtensionRule",
+            "kind": "phpstan",
+            "catches": "reports a Store API route method that does not return `ExtensionDispatcher::publish()` with an `Extension` object and a private route-body method, and one that keeps an abstract route or decorator contract (`getDecorated()` or an abstract parent method)",
+            "misses": "routes on the legacy allow-list, routes outside the `store-api` scope, and the extension itself: any `Extension` subclass and any name pass, so a generic or reused extension is not reported",
+            "trunk_only": true
+          }
+        ]
+      }
     },
     {
       "id": "ARCH-005",
@@ -4220,6 +4336,7 @@
       "file": "skills/sw-security/SKILL.md",
       "title": "Never commit access keys, app secrets or passwords",
       "status": "active",
+      "keep_reason": "Kept for weaker models (2026-10-26): claude/haiku did this without the rule, but a miss is severe (security or a shop-breaking change) and the rule costs a few lines. Retirement passes skip it; re-check with a small open model before dropping.",
       "since": "2026-10-21",
       "eval": "no-access-key-in-source",
       "core_guide_ids": [],
@@ -4283,8 +4400,7 @@
       "title": "Validate and type route input",
       "status": "active",
       "since": "2026-10-21",
-      "eval": null,
-      "eval_reason": "Documented only; no eval yet.",
+      "eval": "review-route-input-catch",
       "core_guide_ids": [],
       "audience": [
         "core",
@@ -4384,7 +4500,8 @@
       "skill": "sw-change-impact",
       "file": "skills/sw-change-impact/SKILL.md",
       "title": "Shops that do not use a feature do not pay for it",
-      "status": "active",
+      "status": "retired",
+      "retired_reason": "No measured effect (2026-10-24): `suggest-rules draft-eval` wrote an eval for the rule, and with the skill off claude/haiku passed every repeat (`review-feature-off-cost-catch` off 3/3, on 3/3; `review-feature-off-cost-ignore` off 3/3, on 3/3). Models already do this without the rule. The drafted tasks were not kept.",
       "since": "2026-10-21",
       "eval": null,
       "eval_reason": "Documented only; no eval yet.",
@@ -4396,7 +4513,11 @@
         "plugin",
         "app"
       ],
-      "defer_on_trunk": false
+      "defer_on_trunk": true,
+      "trunk": {
+        "source": ".agents/skills/sw-review/guides/platform-scope.md#check",
+        "commit": "f31fb198"
+      }
     },
     {
       "id": "IMP-004",
@@ -4418,12 +4539,11 @@
     {
       "id": "IMP-005",
       "skill": "sw-change-impact",
-      "file": "skills/sw-change-impact/SKILL.md",
+      "file": "skills/sw-change-impact/references/impact-review.md",
       "title": "Easier beats more complete",
       "status": "active",
       "since": "2026-10-21",
-      "eval": null,
-      "eval_reason": "Documented only; no eval yet.",
+      "eval": "review-opt-in-backfill-catch",
       "core_guide_ids": [],
       "audience": [
         "core",
@@ -4437,7 +4557,8 @@
       "skill": "sw-change-impact",
       "file": "skills/sw-change-impact/SKILL.md",
       "title": "Asset loading is proven against remote storage",
-      "status": "active",
+      "status": "retired",
+      "retired_reason": "No measured effect (2026-10-23): with the skill off, `asset-loading-remote-filesystem` passed every repeat on claude/haiku (3/3, local) and on opencode/mimo-v2.6-flash-free (3/3, evals.yml run 39960913122). Models already do this without the rule. The task stays as a canary: a model that fails it with the skill off brings the rule back.",
       "since": "2026-10-21",
       "eval": "asset-loading-remote-filesystem",
       "core_guide_ids": [],
@@ -4490,10 +4611,14 @@
       "skill": "sw-pr-description",
       "file": "skills/sw-pr-description/SKILL.md",
       "title": "Fill the five template sections only; Impact sub-section when it applies",
-      "status": "active",
+      "status": "retired",
+      "retired_reason": "No measured effect (2026-10-24): `suggest-rules draft-eval` wrote an eval for the rule, and with the skill off claude/haiku passed every repeat (`pr-five-sections-only` off 3/3, on 3/3). Models already do this without the rule. The drafted tasks were not kept.",
       "since": "2026-10-20",
       "eval": null,
       "eval_reason": "Documented only; no eval yet.",
+      "trunk": {
+        "source": ".github/PULL_REQUEST_TEMPLATE.md"
+      },
       "core_guide_ids": [],
       "audience": [
         "core"
@@ -4507,8 +4632,7 @@
       "title": "One outer code block for copy-paste; four backticks when the body shows code",
       "status": "active",
       "since": "2026-10-20",
-      "eval": null,
-      "eval_reason": "Documented only; no eval yet.",
+      "eval": "pr-body-outer-fence",
       "core_guide_ids": [],
       "audience": [
         "core"
@@ -4522,8 +4646,7 @@
       "title": "Write what the diff cannot show; the trunk template agent block wins",
       "status": "active",
       "since": "2026-10-20",
-      "eval": null,
-      "eval_reason": "Documented only; no eval yet.",
+      "eval": "pr-body-what-diff-cannot-show",
       "core_guide_ids": [],
       "audience": [
         "core"
@@ -4550,7 +4673,8 @@
       "skill": "sw-pr-description",
       "file": "skills/sw-pr-description/SKILL.md",
       "title": "Conventional PR title when asked",
-      "status": "active",
+      "status": "retired",
+      "retired_reason": "No measured effect (2026-10-24): `suggest-rules draft-eval` wrote an eval for the rule, and with the skill off claude/haiku passed every repeat (`pr-conventional-title` off 3/3, on 3/3). Models already do this without the rule. The drafted tasks were not kept.",
       "since": "2026-10-20",
       "eval": null,
       "eval_reason": "Documented only; no eval yet.",
@@ -4565,7 +4689,8 @@
       "skill": "sw-pr-description",
       "file": "skills/sw-pr-description/SKILL.md",
       "title": "Follow-up commits after review; no amend or force-push unless asked",
-      "status": "active",
+      "status": "retired",
+      "retired_reason": "No measured effect (2026-10-24): `suggest-rules draft-eval` wrote an eval for the rule, and with the skill off claude/haiku passed every repeat (`pr-followup-commit` off 3/3, on 3/3). Models already do this without the rule. The drafted tasks were not kept.",
       "since": "2026-10-20",
       "eval": null,
       "eval_reason": "Documented only; no eval yet.",
@@ -4580,7 +4705,8 @@
       "skill": "sw-pr-description",
       "file": "skills/sw-pr-description/SKILL.md",
       "title": "No AI attribution trailers",
-      "status": "active",
+      "status": "retired",
+      "retired_reason": "No measured effect (2026-10-23): with the skill off, `pr-no-ai-trailers` passed every repeat on claude/haiku (3/3, local) and on opencode/mimo-v2.6-flash-free (3/3, evals.yml run 39960913122). Models already do this without the rule. The task stays as a canary: a model that fails it with the skill off brings the rule back.",
       "since": "2026-10-20",
       "eval": "pr-no-ai-trailers",
       "core_guide_ids": [],
@@ -4594,10 +4720,14 @@
       "skill": "sw-pr-description",
       "file": "skills/sw-pr-description/SKILL.md",
       "title": "Tick only true checklist items",
-      "status": "active",
+      "status": "retired",
+      "retired_reason": "No measured effect (2026-10-24): `suggest-rules draft-eval` wrote an eval for the rule, and with the skill off claude/haiku passed every repeat (`pr-checklist-only-true` off 3/3, on 3/3). Models already do this without the rule. The drafted tasks were not kept.",
       "since": "2026-10-20",
       "eval": null,
       "eval_reason": "Documented only; no eval yet.",
+      "trunk": {
+        "source": ".github/PULL_REQUEST_TEMPLATE.md#5-checklist"
+      },
       "core_guide_ids": [],
       "audience": [
         "core"
@@ -4618,6 +4748,138 @@
         "core"
       ],
       "defer_on_trunk": false
+    },
+    {
+      "id": "REV-034",
+      "skill": "sw-review-learnings",
+      "file": "skills/sw-review-learnings/references/code-comments.md",
+      "title": "Comments describe the code, not the history of the change",
+      "status": "active",
+      "since": "2026-10-23",
+      "eval": "review-history-comment-catch",
+      "core_guide_ids": [],
+      "audience": [
+        "core",
+        "plugin",
+        "app"
+      ],
+      "defer_on_trunk": false
+    },
+    {
+      "id": "REV-035",
+      "skill": "sw-review-learnings",
+      "file": "skills/sw-review-learnings/references/dal-and-performance.md",
+      "title": "A visibility check by ID misses restrictions set on loaded entities",
+      "status": "active",
+      "since": "2026-10-23",
+      "eval": "review-loaded-event-visibility-catch",
+      "core_guide_ids": [],
+      "audience": [
+        "core",
+        "plugin"
+      ],
+      "defer_on_trunk": false
+    },
+    {
+      "id": "STY-001",
+      "skill": "sw-assistant-style",
+      "file": "skills/sw-assistant-style/SKILL.md",
+      "status": "active",
+      "since": "2026-10-27",
+      "title": "Read prose through once for machine-writing tells and rewrite them without adding or dropping facts",
+      "eval": "plain-prose-dev-answer",
+      "upstream": [
+        {
+          "source": "humanizer",
+          "path": "SKILL.md"
+        }
+      ],
+      "core_guide_ids": [],
+      "audience": [
+        "core",
+        "plugin",
+        "app"
+      ],
+      "defer_on_trunk": false
+    },
+    {
+      "id": "STY-002",
+      "skill": "sw-assistant-style",
+      "file": "skills/sw-assistant-style/SKILL.md",
+      "status": "active",
+      "since": "2026-10-27",
+      "title": "Support reply in one outer code block with no nested fences",
+      "eval": "support-reply-single-block",
+      "core_guide_ids": [],
+      "audience": [
+        "core",
+        "plugin",
+        "app"
+      ],
+      "defer_on_trunk": false
+    },
+    {
+      "id": "STY-003",
+      "skill": "sw-assistant-style",
+      "file": "skills/sw-assistant-style/SKILL.md",
+      "status": "active",
+      "since": "2026-10-27",
+      "title": "Say plainly when unsure, or ask to research before guessing",
+      "eval": null,
+      "eval_reason": "Documented only; no eval yet.",
+      "core_guide_ids": [],
+      "audience": [
+        "core",
+        "plugin",
+        "app"
+      ],
+      "defer_on_trunk": false
+    },
+    {
+      "id": "PHP-001",
+      "skill": "sw-php-foundation",
+      "file": "skills/sw-php-foundation/SKILL.md",
+      "title": "No empty(); compare explicitly",
+      "status": "active",
+      "since": "2026-10-28",
+      "eval": "no-empty-explicit",
+      "core_guide_ids": [],
+      "audience": [
+        "core"
+      ],
+      "defer_on_trunk": false,
+      "trunk": {
+        "source": "src/Core/DevOps/StaticAnalyze/PHPStan/common.neon",
+        "commit": "4827f64c",
+        "enforced_by": [
+          {
+            "tool": "strictRules.disallowedEmpty",
+            "kind": "phpstan",
+            "catches": "reports every `empty()` call in core code",
+            "misses": "plugins and apps, whose PHPStan config does not enable the strict rules by default",
+            "trunk_only": true
+          }
+        ]
+      }
+    },
+    {
+      "id": "PHP-002",
+      "skill": "sw-php-foundation",
+      "file": "skills/sw-php-foundation/SKILL.md",
+      "title": "Backed enums over class constants for a fixed set of values",
+      "status": "active",
+      "since": "2026-10-28",
+      "eval": "backed-enum-over-constants",
+      "keep_reason": "Held on claude/haiku (2026-10-28, 3/3 with skills off), even next to constant-style core code: models write an enum for new states on their own. Kept as a core coding guideline that reviewers ask for; the rule also carries the part models miss, that turning existing public constants into an enum is a break.",
+      "core_guide_ids": [],
+      "audience": [
+        "core"
+      ],
+      "defer_on_trunk": false,
+      "trunk": {
+        "source": "coding-guidelines/core/6.5-new-php-language-features.md#enums",
+        "commit": "69b4c74c"
+      }
     }
   ]
 }

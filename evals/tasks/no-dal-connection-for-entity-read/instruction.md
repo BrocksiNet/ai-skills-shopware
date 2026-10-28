@@ -1,4 +1,4 @@
-# Task: use repository not Connection
+# Task: implement OrderReader
 
-Refactor `fixture/OrderReader.php` to load orders via `EntityRepository` and
-`Criteria` instead of raw DBAL `Connection` SQL.
+Implement `loadOrderIds()` in `fixture/OrderReader.php`. It returns up to 50
+order IDs as hex strings. Inject what the class needs.

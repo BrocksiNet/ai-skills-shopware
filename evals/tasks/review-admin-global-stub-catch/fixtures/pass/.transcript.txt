@@ -1,0 +1,16 @@
+The new sw-block is registered in config.global.components, but the same key is still in config.global.stubs, so the real component is never registered for specs.
+
+```json
+{
+  "findings": [
+    {
+      "rule_id": "ADM-036",
+      "severity": "major",
+      "file": "src/Resources/app/administration/test/_setup/prepare_environment.js",
+      "line": 13,
+      "summary": "sw-block is also listed in config.global.stubs, and Vue Test Utils skips app.component() for keys that appear in stubs, so the real sw-block is never registered and specs render the stub.",
+      "fix": "Remove the sw-block entry from config.global.components and register the real implementation in config.global.stubs: 'sw-block': SwBlock."
+    }
+  ]
+}
+```

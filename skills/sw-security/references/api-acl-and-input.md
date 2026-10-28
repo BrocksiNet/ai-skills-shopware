@@ -40,3 +40,5 @@
 on a released route.
 `review-idempotency-key-scope-catch` / `-ignore` — an idempotency store
 keyed only by the header.
+`review-route-input-catch` / `-ignore` — a Store-API route whose `limit`
+query parameter is typed but has no upper bound.

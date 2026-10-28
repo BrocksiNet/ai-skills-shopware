@@ -1,0 +1,8 @@
+{
+  "sw-extension-review": [
+    "../sw-testing/references/test-shape-and-flags.md"
+  ],
+  "sw-testing": [
+    "references/test-shape-and-flags.md"
+  ]
+}

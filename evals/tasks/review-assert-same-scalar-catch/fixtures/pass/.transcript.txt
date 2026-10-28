@@ -1,0 +1,24 @@
+The service now returns the ledger's string sum, and the new test passes on it because assertEquals compares loosely.
+
+```json
+{
+  "findings": [
+    {
+      "rule_id": null,
+      "severity": "major",
+      "file": "src/Service/LoyaltyBalance.php",
+      "line": 18,
+      "summary": "forCustomer() no longer casts the ledger sum, so the Store API gets a string where it used to get an int.",
+      "fix": "Keep the (int) cast and the int return type."
+    },
+    {
+      "rule_id": "TEST-018",
+      "severity": "minor",
+      "file": "tests/unit/Service/LoyaltyBalanceTest.php",
+      "line": 25,
+      "summary": "assertEquals(120, ...) also passes for the string '120' that forCustomer() now returns, so the type change goes unnoticed.",
+      "fix": "Use assertSame(120, ...) for the scalar."
+    }
+  ]
+}
+```

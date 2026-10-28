@@ -25,7 +25,7 @@ The terms the rest of this guide uses. Details follow in the sections linked.
 | Near-miss task | `review-<topic>-near-miss`: a real problem next to a rule that does not cover it. The finding must report it without citing that decoy rule. Guards against the most common review error, a plausible but wrong rule ID. |
 | Golden fixtures | `fixtures/pass/` and `fixtures/fail/` of a task: known answers the grader must pass and fail on every push, so a grader cannot silently go soft. |
 | Enforced by CI | A generated `SKILL.md` section listing rules an existing check (PHPStan, ECS, ESLint, Danger, a core test) already catches, so the agent does not repeat them. |
-| Trunk mining | The weekly `trunk-drift` issue about changes on `shopware/shopware` trunk; `docs/.mining-state.json` marks how far it has been read. |
+| Drift mining | The weekly `trunk-drift` issue about changes on `shopware/shopware` trunk and the upstream skill sets in `rules/sources.json`, grouped by the skill and rule each change touches; `docs/.mining-state.json` marks how far each source has been read. See [`docs/maintenance.md`](docs/maintenance.md#reading-the-drift-issue). |
 
 ## Repository layout
 
@@ -51,10 +51,13 @@ evals/harbor/                 # containerized Harbor wiring (optional)
 evals/test-graders.sh         # golden tests for all grade.sh scripts (wrapper for tools/bin/test-graders.ts)
 evals/tools/ast/              # Node AST graders (php-parser + @babel/parser)
 evals/routing/<case>/         # diff.patch + expected.json for reference routing
+evals/routing-replay/<pr>/    # real core PRs: trimmed diff.patch + case.json (comment-mapped references, hand labels)
 
 rules/
-  catalog.json                # rule IDs: owning skill, file, eval, trunk source
+  catalog.json                # rule IDs: owning skill, file, eval, trunk and upstream source
   catalog.schema.json         # field reference for catalog.json
+  sources.json                # repositories drift mining reads, our skills per path, and the review sources
+  sources.schema.json         # field reference for sources.json
 
 tools/                        # repo tooling in TypeScript (Node 24, no build step)
   src/                        # typed modules (catalog, rule validator, renderers)
@@ -63,15 +66,24 @@ tools/                        # repo tooling in TypeScript (Node 24, no build st
   bin/render-routes.ts        # SKILL.md routing tables from routes.json
   bin/validate-routes.ts      # routes.json shape, targets and table drift
   bin/route.ts                # references each skill selects for a diff
+  bin/replay-routes.ts        # the router replayed on real PRs: recall and noise against review comments
   bin/render-router-index.ts  # skills/sw-skill-router/index.json from skill metadata + routes
   bin/eval-{plan,gate,diff}.ts  # eval task plan, A/B gate, baseline diff
   bin/{ab,run-task}.ts        # A/B runner behind evals/runner/{ab,run-task}.sh
-  bin/adapter.ts              # agent adapters behind evals/runner/*-{task,activation}.sh
+  bin/adapter.ts              # agent adapters behind evals/runner/*-{task,activation}.sh (OpenCode, Claude Code, Copilot CLI)
+  bin/eval-profiles.ts        # which agent and model each evals.yml profile runs (one gate per model)
+  bin/agent-preflight.ts      # one tiny session before evals.yml starts the shards (model still there?)
   bin/skills-profile.ts       # skills on/off per eval workdir
   bin/activation.ts           # Layer 1 activation evals
   bin/eval-local.ts           # local model evals with your agent login, then the gate
   bin/validate-skills.ts      # skill structure, budgets, conflicts, rule IDs, routes
-  bin/mine-trunk.ts           # weekly trunk drift report, and the /mined state update
+  bin/mine-trunk.ts           # weekly drift report over rules/sources.json, and the /mined state update
+  src/map-signal.ts           # ties a change (signal) to the skills, references and rules it touches
+  bin/collect-reviews.ts      # review comments of merged PRs as mapped signals (daily in CI; private repos locally)
+  bin/suggest-rules.ts        # rule proposals from review signals + drift issue via your agent (git-ignored suggestions/)
+  src/agent-ask.ts            # one prompt to an agent with no tools (suggest-rules)
+  bin/draft-comment.ts        # suggest-rules.yml: proposals comment on the drift issue, /draft <ID> parsing
+                              # `suggest-rules.ts draft <id>`: worktree, agent edit, free checks, A/B, draft PR (src/draft-*.ts)
   bin/grade.ts                # runs one task's grader (what every grade.sh calls)
   graders/<task>.ts           # one grader per eval task: workdir + transcript -> verdict
   src/grade/                  # grader kit (file search, comment stripping, PHP method, review findings)
@@ -81,7 +93,8 @@ tools/                        # repo tooling in TypeScript (Node 24, no build st
   test/*.test.ts              # node --test
   api-index/                  # public API index of shopware/shopware per release (own package: php-parser):
                               # bin/build.ts one ref, bin/timeline.ts all tags, bin/api-facts.ts an extension's facts,
-                              # bin/api-diff.ts public API changes between two refs, bin/check-breaks.ts api-diff vs known-breaks.json
+                              # bin/api-diff.ts public API changes between two refs, bin/check-breaks.ts api-diff vs known-breaks.json;
+                              # PHP, routes, entities, flags, config, admin, storefront, Twig and build surfaces
 
 scripts/
   validate-skills.sh          # structure, budgets, REGISTRY conflicts, rule IDs (wrapper for tools/bin/validate-skills.ts)
@@ -95,8 +108,10 @@ docs/                         # local validation, smoke evals, tooling stack
 .github/workflows/
   validate.yml                # cheap CI on every push (no model calls)
   evals.yml                   # model evals (gated: schedule, label, dispatch)
-  mine-trunk.yml              # weekly trunk-drift issue; /mined moves docs/.mining-state.json
+  mine-trunk.yml              # weekly drift issue for every source; /mined moves docs/.mining-state.json
   api-index.yml               # weekly public API index build, published as the `api-index` release
+  collect-reviews.yml         # daily review comments of merged core PRs, published as the `review-signals` release
+  suggest-rules.yml           # weekly rule proposals on the drift issue; /draft <ID> opens a draft PR
 ```
 
 Skills install into provider-specific folders (`.cursor/skills/`, `.claude/skills/`,
@@ -220,10 +235,13 @@ contract: [`evals/README.md`](evals/README.md#review-tasks-review-rule-catch---i
    point at another rule with a code span, `` `PLG-011` ``.
 5. Add the catalog entry: `file`, `title`, `eval` (task name) or `eval: null`
    with an `eval_reason`, and `trunk` / `defer_on_trunk` when core has the
-   rule. Never reuse an ID; a dropped rule becomes `retired` or
+   rule. When the rule comes from a trunk guideline or an upstream skill
+   set, set `trunk.source` or `upstream` to `path#heading-anchor`, so the
+   weekly drift issue files later changes there under this rule. Never reuse an ID; a dropped rule becomes `retired` or
    `superseded:<ID>` and leaves the skill text.
    When a CI check already catches the rule, add it to `trunk.enforced_by`
    (`tool`, `kind`, `catches`, `misses`, `trunk_only`) from the check's source,
+   and `extensions_run` only with proof that plugins and apps run it by default,
    then run `node tools/bin/render-enforced.ts`. It writes the skill's
    `## Already enforced by CI (do not repeat)` section; never edit that
    block by hand.
@@ -238,10 +256,20 @@ contract: [`evals/README.md`](evals/README.md#review-tasks-review-rule-catch---i
 Tagged so far: `sw-testing`, `sw-plugin-development`,
 `sw-review-learnings`, `sw-core-development`, `sw-admin-js`,
 `sw-architecture`, `sw-storefront`, `sw-security`,
-`sw-change-impact`. Tag a skill's remaining rules when you next touch it.
+`sw-change-impact`, `sw-assistant-style`. Tag a skill's remaining rules
+when you next touch it.
 
 For recurring real-world findings, prefer `sw-review-learnings` and point
 at the owning skill rather than re-defining the topic.
+
+To find candidates, run `node tools/bin/suggest-rules.ts --since 30d`: it
+clusters review comments and drift changes, asks your agent per cluster and
+checks the evidence. A proposal is a starting point for step 1, not a rule;
+see [`docs/maintenance.md`](docs/maintenance.md#suggesting-rule-changes).
+`node tools/bin/suggest-rules.ts draft <id> [--no-pr]` has your agent walk
+these steps for one proposal in a worktree, runs the free checks and the
+A/B, and opens a draft PR; see
+[Drafting a proposal](docs/maintenance.md#drafting-a-proposal).
 
 ## Adding a skill
 
@@ -281,7 +309,11 @@ node tools/bin/render-router-index.ts  # the router index ships the routes too
 ```
 
 When a change alters what a case in `evals/routing/` should select, update
-its `expected.json`; add a case for a new kind of change. `expected.json`
+its `expected.json`; add a case for a new kind of change. To see what a
+route change does on real PRs, replay it on the review signals with
+`node tools/bin/replay-routes.ts` (see [`docs/maintenance.md`](docs/maintenance.md#replaying-the-router));
+`tools/test/route-replay.test.ts` holds the recorded corpus in
+`evals/routing-replay/` to a recall floor and a noise ceiling. `expected.json`
 lists only diff-selected references, never `always` or `on_demand` ones.
 
 A route can borrow another skill's reference: `"reference":

@@ -8,12 +8,16 @@ import {
   readFileSync,
   readdirSync,
   readlinkSync,
+  realpathSync,
+  rmSync,
+  symlinkSync,
   writeFileSync,
 } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join, resolve } from 'node:path';
 import { describe, test } from 'node:test';
-import { parseClaude, parseOpencode, skillName } from '../src/agent-events.ts';
+import { parseClaude, parseCopilot, parseOpencode, skillName } from '../src/agent-events.ts';
+import { copilotActivation, copilotTask, skillDirGrants } from '../src/agents-copilot.ts';
 import { type Adapter, claudeActivation, claudeTask, opencodeActivation, opencodeTask } from '../src/agents.ts';
 import { onPath, run, tail } from '../src/proc.ts';
 import { skillsProfile } from '../src/skills-profile.ts';
@@ -49,6 +53,48 @@ describe('recorded Claude Code session', () => {
   });
 });
 
+describe('recorded Copilot CLI session', () => {
+  const s = parseCopilot(recorded('copilot-task.jsonl'));
+  test('text, tool calls, the loaded skill and the result', () => {
+    assert.equal(s.texts.length, 4);
+    assert.equal(s.tools, 13);
+    // The session also called the skill tool for sw-does-not-exist, which
+    // failed with "Skill not found": that loaded nothing.
+    assert.deepEqual(s.skills, ['sw-extension-review']);
+    assert.deepEqual([s.errors, s.exitCode, s.premiumRequests], [[], 0, 0.33]);
+  });
+  test('tokens from the last usage checkpoint; input already holds the cache', () => {
+    assert.deepEqual(s.usage, { input: 51875, output: 1464 });
+  });
+  test('an error event, a missing result, a later checkpoint wins', () => {
+    const t = parseCopilot(
+      [
+        'not json',
+        '{"type":"session.usage_checkpoint","data":{"providerModelMetrics":[{"metrics":{"usage":{"inputTokens":1,"outputTokens":2}}}]}}',
+        '{"type":"session.usage_checkpoint","data":{"providerModelMetrics":[{"metrics":{"usage":{"inputTokens":5,"outputTokens":6}}},{"metrics":{"usage":{"inputTokens":"10","outputTokens":1}}}]}}',
+        '{"type":"session.usage_checkpoint","data":{"providerModelMetrics":[]}}',
+        '{"type":"session.error","data":{"message":"Rate limit exceeded"}}',
+        '{"type":"assistant.message","data":{"content":"  "}}',
+      ].join('\n'),
+    );
+    assert.deepEqual(
+      [t.events, t.usage, t.errors, t.exitCode, t.texts],
+      [5, { input: 15, output: 7 }, ['Rate limit exceeded'], null, []],
+    );
+  });
+});
+
+const claudeSkillUse = (id: string, skill: string): string =>
+  JSON.stringify({
+    type: 'assistant',
+    message: { content: [{ type: 'tool_use', id, name: 'Skill', input: { skill } }] },
+  });
+const claudeToolResult = (id: string, isError: boolean): string =>
+  JSON.stringify({
+    type: 'user',
+    message: { content: [{ type: 'tool_result', tool_use_id: id, is_error: isError, content: 'x' }] },
+  });
+
 describe('event parsing edge cases', () => {
   test('skips lines that are not JSON objects', () => {
     const s = parseOpencode('progress...\n[1]\n"x"\n{"type":"text","part":{"text":"hi"}}\n');
@@ -70,6 +116,30 @@ describe('event parsing edge cases', () => {
     assert.equal(skillName({ command: '/plug:sw-testing ' }, ['skill', 'command']), 'sw-testing');
     assert.equal(skillName({ skill: '', command: 'x' }, ['skill', 'command']), 'x');
     assert.equal(skillName(null, ['skill']), '');
+  });
+  test('a failed OpenCode skill call loaded nothing', () => {
+    // A skill-off run where the model guessed a skill name: OpenCode reports
+    // the call with status "error". It is not a leak into the baseline.
+    const s = parseOpencode(
+      [
+        '{"type":"tool_use","part":{"tool":"skill","state":{"status":"error","input":{"name":"sw-plugin-development"},"error":"Skill not found"}}}',
+        '{"type":"tool_use","part":{"tool":"skill","state":{"status":"completed","input":{"name":"sw-testing"}}}}',
+      ].join('\n'),
+    );
+    assert.deepEqual([s.skills, s.tools], [['sw-testing'], 2]);
+  });
+  test('a failed Claude Skill call loaded nothing', () => {
+    const s = parseClaude(
+      [
+        claudeSkillUse('t1', 'sw-plugin-development'),
+        claudeToolResult('t1', true),
+        claudeSkillUse('t2', 'sw-testing'),
+        claudeToolResult('t2', false),
+        claudeSkillUse('t3', 'sw-plugin-development'),
+      ].join('\n'),
+    );
+    // t3 has no result (the session was cut off): the call still counts.
+    assert.deepEqual(s.skills, ['sw-testing', 'sw-plugin-development']);
   });
   test('a Claude session without a result', () => {
     const s = parseClaude('{"type":"assistant","message":{"content":[{"type":"text","text":"A"}]}}\n');
@@ -103,12 +173,12 @@ describe('process helpers', () => {
 // record stdin, arguments, HOME, config and the visible skills.
 const bin = join(tmp, 'bin');
 mkdirSync(bin);
-for (const name of ['opencode', 'claude']) {
+for (const name of ['opencode', 'claude', 'copilot']) {
   const file = join(bin, name);
   writeFileSync(
     file,
     `#!/usr/bin/env bash
-[ -n "\${FAKE_REC:-}" ] && { cat > "$FAKE_REC.stdin"; printf '%s\\n' "$@" > "$FAKE_REC.args"; printf 'HOME=%s\\nCFG=%s\\n' "$HOME" "\${OPENCODE_CONFIG_CONTENT:-}" > "$FAKE_REC.env"; ls "$PWD/.agents/skills" "$PWD/.claude/skills" 2>/dev/null | head -n 3 >> "$FAKE_REC.env"; }
+[ -n "\${FAKE_REC:-}" ] && { cat > "$FAKE_REC.stdin"; printf '%s\\n' "$@" > "$FAKE_REC.args"; printf 'HOME=%s\\nCFG=%s\\nCOPILOT_HOME=%s\\n' "$HOME" "\${OPENCODE_CONFIG_CONTENT:-}" "\${COPILOT_HOME:-}" > "$FAKE_REC.env"; printf 'TOKEN=%s GH=%s CWD=%s\\n' "\${COPILOT_GITHUB_TOKEN:-}" "\${GH_TOKEN:-}" "$PWD" >> "$FAKE_REC.env"; ls "$PWD/.agents/skills" "$PWD/.claude/skills" 2>/dev/null | head -n 3 >> "$FAKE_REC.env"; }
 [ -n "\${FAKE_ERR:-}" ] && printf '%b' "$FAKE_ERR" >&2
 [ -n "\${FAKE_SLEEP:-}" ] && sleep "$FAKE_SLEEP"
 [ -n "\${FAKE_OUT:-}" ] && cat "$FAKE_OUT"
@@ -185,14 +255,17 @@ describe('opencode-task adapter', () => {
     const r = await call(opencodeTask, { FAKE_OUT: join(FIXTURES, 'opencode-task.jsonl') });
     assert.deepEqual([r.rc, r.out, r.skills, r.usage], [0, 'DONE\n', 'sw-testing\n', '11620 317\n']);
   });
-  test('runs isolated with the step cap, the prompt as an argument', async () => {
+  test('runs isolated with the step cap and no web search, the prompt as an argument', async () => {
     const r = await call(opencodeTask, {
       FAKE_OUT: join(FIXTURES, 'opencode-task.jsonl'),
       TASK_MAX_TURNS: '3',
       TASK_MODEL: 'p/m',
     });
     assert.match(r.env ?? '', /HOME=.*opencode-task\.[^/]+\/home\n/u);
-    assert.match(r.env ?? '', /CFG=\{"agent":\{"build":\{"steps":3\}\},"permission":\{"question":"deny"\}\}/u);
+    assert.match(
+      r.env ?? '',
+      /CFG=\{"agent":\{"build":\{"steps":3\}\},"permission":\{"question":"deny"\},"tools":\{"websearch":false\}\}/u,
+    );
     assert.equal(r.args, 'run\n--standalone\n--auto\n--format\njson\n-m\np/m\ndo it\n');
   });
   test('an auth file is copied into the throwaway HOME', async () => {
@@ -276,6 +349,110 @@ describe('claude-task adapter', () => {
   });
 });
 
+describe('skillDirGrants', () => {
+  test('grants the real folder of every linked skill, and nothing without links', () => {
+    const base = mkdtempSync(join(tmpdir(), 'grants.'));
+    try {
+      const skill = join(base, 'repo/skills/sw-a');
+      mkdirSync(skill, { recursive: true });
+      const work = join(base, 'work');
+      for (const sub of ['.agents/skills', '.claude/skills']) {
+        mkdirSync(join(work, sub), { recursive: true });
+        symlinkSync(skill, join(work, sub, 'sw-a'));
+      }
+      symlinkSync(join(base, 'gone'), join(work, '.agents/skills/sw-gone'));
+      assert.deepEqual(skillDirGrants(work), ['--add-dir', realpathSync(skill)]);
+      assert.deepEqual(skillDirGrants(join(base, 'repo')), []);
+    } finally {
+      rmSync(base, { recursive: true, force: true });
+    }
+  });
+});
+
+describe('copilot-task adapter', () => {
+  const token = { COPILOT_GITHUB_TOKEN: 't' };
+  test('a finished session prints the text and logs skills and tokens', async () => {
+    const r = await call(copilotTask, { ...token, FAKE_OUT: join(FIXTURES, 'copilot-task.jsonl') });
+    assert.deepEqual([r.rc, r.skills, r.usage], [0, 'sw-extension-review\n', '51875 1464\n']);
+    assert.ok(r.out.startsWith('Now let me check'));
+  });
+  test('runs isolated, headless, without web or GitHub MCP, the prompt as an argument', async () => {
+    const r = await call(copilotTask, { ...token, FAKE_OUT: join(FIXTURES, 'copilot-task.jsonl'), TASK_MODEL: 'm' });
+    assert.match(r.env ?? '', /HOME=.*copilot-task\.[^/]+\/home\n/u);
+    assert.match(r.env ?? '', /COPILOT_HOME=.*copilot-task\.[^/]+\/home\/\.copilot\n/u);
+    assert.equal(
+      r.args,
+      [
+        '-p',
+        'do it',
+        '--model',
+        'm',
+        '--output-format',
+        'json',
+        '--no-ask-user',
+        '--no-auto-update',
+        '--disable-builtin-mcps',
+        '--disable-client-telemetry',
+        '--secret-env-vars',
+        'COPILOT_GITHUB_TOKEN,GH_TOKEN,GITHUB_TOKEN',
+        '--allow-all-tools',
+        '--excluded-tools',
+        'web_fetch',
+        'fetch_copilot_cli_documentation',
+        '',
+      ].join('\n'),
+    );
+  });
+  test('read-only mode offers only the skill tool and read tools', async () => {
+    const r = await call(copilotTask, {
+      GH_TOKEN: 't',
+      FAKE_OUT: join(FIXTURES, 'copilot-task.jsonl'),
+      COPILOT_TASK_READ_ONLY: '1',
+    });
+    assert.match(r.args ?? '', /--available-tools\nskill\nview\nglob\ngrep\n--allow-tool\nskill\nview\nglob\ngrep\n$/u);
+    assert.doesNotMatch(r.args ?? '', /--allow-all-tools/u);
+  });
+  test('no token, an error event, a missing result and a crash are agent errors', async () => {
+    const none = await call(copilotTask, { FAKE_OUT: join(FIXTURES, 'copilot-task.jsonl') });
+    assert.equal(none.rc, 4);
+    assert.match(none.err, /^copilot-task: COPILOT_GITHUB_TOKEN not set/u);
+    assert.equal(none.args, null);
+    const error = await call(copilotTask, {
+      ...token,
+      FAKE_OUT: fixture('cp-error.jsonl', '{"type":"session.error","data":{"message":"Rate limit exceeded"}}\n'),
+    });
+    assert.deepEqual([error.rc, error.err], [4, 'copilot-task: Rate limit exceeded\n']);
+    const gone = await call(copilotTask, {
+      ...token,
+      FAKE_OUT: fixture('cp-gone.jsonl', ''),
+      FAKE_RC: '1',
+      FAKE_ERR: 'Error: Model "x" from --model flag is not available.\\n',
+    });
+    assert.deepEqual(
+      [gone.rc, gone.err],
+      [4, 'copilot-task: session ended without a result\nError: Model "x" from --model flag is not available.\n'],
+    );
+    const failed = await call(copilotTask, {
+      ...token,
+      FAKE_OUT: fixture('cp-exit.jsonl', '{"type":"result","exitCode":2}\n'),
+    });
+    assert.deepEqual([failed.rc, failed.err], [4, 'copilot-task: session exit code 2\n']);
+    const empty = await call(copilotTask, {
+      ...token,
+      FAKE_OUT: fixture('cp-empty.jsonl', '{"type":"result","exitCode":0}\n'),
+    });
+    assert.deepEqual([empty.rc, empty.err], [4, 'copilot-task: session produced no text and no tool call\n']);
+  });
+  test('a hung session times out; a missing CLI is an agent error', async () => {
+    const r = await call(copilotTask, { ...token, FAKE_SLEEP: '20', TASK_TIMEOUT_SECONDS: '1' });
+    assert.deepEqual([r.rc, r.err], [4, 'copilot-task: timed out after 1s\n']);
+    assert.deepEqual(
+      (await call(copilotTask, { ...token, PATH: '/usr/bin:/bin' })).err,
+      'copilot-task: copilot CLI not found\n',
+    );
+  });
+});
+
 describe('activation adapters', () => {
   test('opencode lists the loaded skills from an isolated workspace', async () => {
     const r = await call(opencodeActivation, { FAKE_OUT: join(FIXTURES, 'opencode-task.jsonl') });
@@ -300,6 +477,18 @@ describe('activation adapters', () => {
     });
     assert.deepEqual([failed.rc, failed.err], [1, 'Activation session failed: error_max_turns\n']);
   });
+  test('copilot lists the loaded skills with read-only tools; a missing result fails', async () => {
+    const ok = await call(copilotActivation, {
+      COPILOT_GITHUB_TOKEN: 't',
+      FAKE_OUT: join(FIXTURES, 'copilot-task.jsonl'),
+    });
+    assert.deepEqual([ok.rc, ok.out], [0, 'sw-extension-review\n']);
+    assert.match(ok.args ?? '', /--available-tools\nskill\nview\nglob\ngrep\n/u);
+    assert.match(ok.env ?? '', /\.agents\/skills:\nsw-admin-js\n/u);
+    const none = await call(copilotActivation, { COPILOT_GITHUB_TOKEN: 't', FAKE_OUT: fixture('a-cp.jsonl', '') });
+    assert.deepEqual([none.rc, none.err], [1, 'Activation session ended without a result; no score recorded.\n']);
+    assert.equal((await call(copilotActivation, {})).rc, 2);
+  });
   test('a CLI exit code passes through when the stream was fine', async () => {
     assert.equal((await call(claudeActivation, { FAKE_OUT: join(FIXTURES, 'claude-task.jsonl'), FAKE_RC: '5' })).rc, 5);
   });
@@ -322,7 +511,7 @@ describe('skills profile', () => {
       lstatSync(join(ROOT, 'skills', s)).isDirectory(),
     ).length;
     const dir = wd();
-    skillsProfile(ROOT, 'on', dir, 'no-empty-explicit');
+    skillsProfile(ROOT, 'on', dir, 'unit-test-passes');
     assert.equal(readdirSync(join(dir, '.claude/skills')).length, all);
     const bare = wd();
     skillsProfile(ROOT, 'on', bare, '');

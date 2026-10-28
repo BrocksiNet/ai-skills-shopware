@@ -1,0 +1,125 @@
+diff --git a/RELEASE_INFO-6.7.md b/RELEASE_INFO-6.7.md
+--- a/RELEASE_INFO-6.7.md
++++ b/RELEASE_INFO-6.7.md
+@@ @@
++### Primary/replica connections switch back to the replica between requests
++
++
+diff --git a/src/Core/Framework/Adapter/Database/MySQLFactory.php b/src/Core/Framework/Adapter/Database/MySQLFactory.php
+--- a/src/Core/Framework/Adapter/Database/MySQLFactory.php
++++ b/src/Core/Framework/Adapter/Database/MySQLFactory.php
+@@ @@
++            // Keep the replica connection distinct from the primary one, so
++            // ReplicaConnectionResetter can switch back to the replica between
++            // requests. Without this option DBAL aliases the replica to the
++            // primary once the primary was used, which pins long running
++            // workers to the primary for their whole lifetime.
++            // See https://symfony.com/doc/current/doctrine/dbal.html#using-primary-replica-connections-read-replicas
++            if (!\array_key_exists('keepReplica', $parameters)) {
++                $parameters['keepReplica'] = true;
++            } else {
++                $parameters['keepReplica'] = (bool) self::castValue($parameters['keepReplica']);
++            }
++
+diff --git a/src/Core/Framework/Adapter/Database/ReplicaConnectionResetter.php b/src/Core/Framework/Adapter/Database/ReplicaConnectionResetter.php
+--- /dev/null
++++ b/src/Core/Framework/Adapter/Database/ReplicaConnectionResetter.php
+@@ @@
++<?php declare(strict_types=1);
++
++namespace Shopware\Core\Framework\Adapter\Database;
++
++use Doctrine\DBAL\Connection;
++use Doctrine\DBAL\Connections\PrimaryReadReplicaConnection;
++use Shopware\Core\Framework\Log\Package;
++
++/**
++ * @internal
++ */
++#[Package('framework')]
++class ReplicaConnectionResetter
++{
++    /**
++     * @internal
+diff --git a/src/Core/Framework/DependencyInjection/services.php b/src/Core/Framework/DependencyInjection/services.php
+--- a/src/Core/Framework/DependencyInjection/services.php
++++ b/src/Core/Framework/DependencyInjection/services.php
+@@ @@
++use Shopware\Core\Framework\Adapter\Database\ReplicaConnectionResetter;
++    $services->set(ReplicaConnectionResetter::class)
++        ->public()
++        ->args([service(Connection::class)])
++        ->tag('kernel.reset', ['method' => 'reset']);
++
+diff --git a/src/Core/Framework/Framework.php b/src/Core/Framework/Framework.php
+--- a/src/Core/Framework/Framework.php
++++ b/src/Core/Framework/Framework.php
+@@ @@
++use Shopware\Core\Framework\Adapter\Database\ReplicaConnectionResetter;
++
++        // ServicesResetter only resets initialized services; Symfony 8.1 removes this requirement.
++        // https://github.com/symfony/symfony/pull/63751
++        // The test verifies whether the Symfony fix resolves this and lets us remove this workaround safely.
++        // @see \Shopware\Tests\Integration\Core\Framework\Adapter\Database\ReplicaConnectionResetterTest::testServicesResetterInitializesReplicaConnectionResetter()
++        $this->container->get(ReplicaConnectionResetter::class);
+diff --git a/tests/integration/Core/Framework/Adapter/Database/ReplicaConnectionResetterTest.php b/tests/integration/Core/Framework/Adapter/Database/ReplicaConnectionResetterTest.php
+--- /dev/null
++++ b/tests/integration/Core/Framework/Adapter/Database/ReplicaConnectionResetterTest.php
+@@ @@
++<?php declare(strict_types=1);
++
++namespace Shopware\Tests\Integration\Core\Framework\Adapter\Database;
++
++use PHPUnit\Framework\TestCase;
++use Shopware\Core\Framework\Adapter\Database\ReplicaConnectionResetter;
++use Shopware\Core\Framework\Log\Package;
++use Shopware\Core\Framework\Test\TestCaseBase\KernelTestBehaviour;
++use Symfony\Component\HttpKernel\DependencyInjection\ServicesResetterInterface;
++
++/**
++ * @internal
++ */
++        // Once Symfony initializes all kernel.reset services itself, this remains true without
+diff --git a/tests/unit/Core/Framework/Adapter/Database/MySQLFactoryTest.php b/tests/unit/Core/Framework/Adapter/Database/MySQLFactoryTest.php
+--- a/tests/unit/Core/Framework/Adapter/Database/MySQLFactoryTest.php
++++ b/tests/unit/Core/Framework/Adapter/Database/MySQLFactoryTest.php
+@@ @@
++    public function testReplicaConfigurationKeepsReplicaConnectionByDefault(): void
++    {
++        $this->setEnvVars([
++            'DATABASE_URL' => 'mysql://user:pass@localhost:3306/shopware',
++            'DATABASE_REPLICA_0_URL' => 'mysql://replica_user:replica_pass@replica_host:3307/replica_db',
++        ]);
++
++        $params = MySQLFactory::create()->getParams();
++
++        static::assertArrayHasKey('keepReplica', $params);
++        static::assertTrue($params['keepReplica']);
++    }
+diff --git a/tests/unit/Core/Framework/Adapter/Database/ReplicaConnectionResetterTest.php b/tests/unit/Core/Framework/Adapter/Database/ReplicaConnectionResetterTest.php
+--- /dev/null
++++ b/tests/unit/Core/Framework/Adapter/Database/ReplicaConnectionResetterTest.php
+@@ @@
++<?php declare(strict_types=1);
++
++namespace Shopware\Tests\Unit\Core\Framework\Adapter\Database;
++
++use Doctrine\DBAL\Connection;
++use Doctrine\DBAL\Connections\PrimaryReadReplicaConnection;
++use PHPUnit\Framework\Attributes\CoversClass;
++use PHPUnit\Framework\TestCase;
++use Shopware\Core\Framework\Adapter\Database\ReplicaConnectionResetter;
++use Shopware\Core\Framework\Log\Package;
++
++/**
++ * @internal
++ */
++#[Package('framework')]
++#[CoversClass(ReplicaConnectionResetter::class)]
+diff --git a/tests/unit/Core/Framework/FrameworkTest.php b/tests/unit/Core/Framework/FrameworkTest.php
+--- a/tests/unit/Core/Framework/FrameworkTest.php
++++ b/tests/unit/Core/Framework/FrameworkTest.php
+@@ @@
++use Doctrine\DBAL\Connection;
++use Shopware\Core\Framework\Adapter\Database\ReplicaConnectionResetter;
++        $container->set(ReplicaConnectionResetter::class, new ReplicaConnectionResetter(static::createStub(Connection::class)));

@@ -8,8 +8,9 @@ import { fakeAgent } from '../src/fake-agent.ts';
 import { readStdin } from '../src/proc.ts';
 
 async function main(): Promise<number> {
-  await readStdin();
+  const prompt = await readStdin();
   return fakeAgent({
+    prompt,
     root: resolve(import.meta.dirname, '../..'),
     cwd: process.cwd(),
     env: process.env,

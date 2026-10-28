@@ -1,0 +1,17 @@
+{
+  "repo": "shopware/shopware",
+  "pr": 20596,
+  "title": "fix(currency): translate duplicate ISO code errors",
+  "url": "https://github.com/shopware/shopware/pull/20596",
+  "expected": {
+    "sw-testing/references/core-platform-patterns.md": [
+      "https://github.com/shopware/shopware/pull/20596#discussion_r4045357192"
+    ],
+    "sw-testing/references/exception-assertions.md": [
+      "https://github.com/shopware/shopware/pull/20596#discussion_r4045357192"
+    ],
+    "sw-testing/references/integration-repository.md": [
+      "https://github.com/shopware/shopware/pull/20596#discussion_r4045357192"
+    ]
+  }
+}

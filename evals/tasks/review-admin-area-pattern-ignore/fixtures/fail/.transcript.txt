@@ -1,0 +1,16 @@
+The preview card is registered the same way as the tier hint, and the settings still save.
+
+```json
+{
+  "findings": [
+    {
+      "rule_id": null,
+      "severity": "major",
+      "file": "src/Resources/app/administration/src/module/swag-loyalty/component/swag-loyalty-settings/swag-loyalty-points-preview.vue",
+      "line": 1,
+      "summary": "The preview is a Vue SFC rather than a Twig block, so other extensions cannot extend it the way they extend the rest of the page.",
+      "fix": "Move the card into a Twig template with a named block."
+    }
+  ]
+}
+```

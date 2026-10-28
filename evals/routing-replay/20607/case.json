@@ -1,0 +1,23 @@
+{
+  "repo": "shopware/shopware",
+  "pr": 20607,
+  "title": "fix(core): bridge product stream builder contracts",
+  "url": "https://github.com/shopware/shopware/pull/20607",
+  "expected": {
+    "sw-architecture/references/progressive-enhancement.md": [
+      "https://github.com/shopware/shopware/pull/20607#discussion_r4202416377"
+    ],
+    "sw-core-development/references/deprecations.md": [
+      "https://github.com/shopware/shopware/pull/20607#discussion_r4202416377"
+    ],
+    "sw-core-development/references/removals-and-shims.md": [
+      "https://github.com/shopware/shopware/pull/20607#discussion_r4202416377"
+    ],
+    "sw-testing/references/core-platform-patterns.md": [
+      "https://github.com/shopware/shopware/pull/20607#discussion_r4048594626"
+    ],
+    "sw-testing/references/test-shape-and-flags.md": [
+      "https://github.com/shopware/shopware/pull/20607#discussion_r4048594626"
+    ]
+  }
+}

@@ -1,0 +1,61 @@
+diff --git a/CHANGELOG_en-GB.md b/CHANGELOG_en-GB.md
+index 1ba6236..22c4b9f 100644
+--- a/CHANGELOG_en-GB.md
++++ b/CHANGELOG_en-GB.md
+@@ -1,3 +1,7 @@
++# 3.3.0
++
++- Show the customer's last used payment method next to the default payment method.
++
+ # 3.2.0
+ 
+ - Compatible with Shopware 6.7.
+diff --git a/src/Resources/app/administration/src/extension/sw-customer-base-info/index.js b/src/Resources/app/administration/src/extension/sw-customer-base-info/index.js
+new file mode 100644
+index 0000000..0aca7e2
+--- /dev/null
++++ b/src/Resources/app/administration/src/extension/sw-customer-base-info/index.js
+@@ -0,0 +1,5 @@
++import template from './sw-customer-base-info.html.twig';
++
++Shopware.Component.override('sw-customer-base-info', {
++    template,
++});
+diff --git a/src/Resources/app/administration/src/extension/sw-customer-base-info/sw-customer-base-info.html.twig b/src/Resources/app/administration/src/extension/sw-customer-base-info/sw-customer-base-info.html.twig
+new file mode 100644
+index 0000000..638c655
+--- /dev/null
++++ b/src/Resources/app/administration/src/extension/sw-customer-base-info/sw-customer-base-info.html.twig
+@@ -0,0 +1,11 @@
++{% block sw_customer_base_metadata_default_payment %}
++    {% parent %}
++    <dl class="swag-customer-insights__list">
++        <dt class="sw-customer-base-info__label">
++            {{ $tc('swag-customer-insights.baseInfo.labelLastPayment') }}
++        </dt>
++        <dd class="swag-customer-insights__last-payment">
++            {{ customer.extensions.swagCustomerInsights?.lastPaymentMethod?.translated.distinguishableName ?? '-' }}
++        </dd>
++    </dl>
++{% endblock %}
+diff --git a/src/Resources/app/administration/src/main.js b/src/Resources/app/administration/src/main.js
+index 5ae63c0..db7748d 100644
+--- a/src/Resources/app/administration/src/main.js
++++ b/src/Resources/app/administration/src/main.js
+@@ -1 +1,2 @@
+ import './extension/sw-customer-list';
++import './extension/sw-customer-base-info';
+diff --git a/src/Resources/app/administration/src/snippet/en-GB.json b/src/Resources/app/administration/src/snippet/en-GB.json
+index c195043..4861e23 100644
+--- a/src/Resources/app/administration/src/snippet/en-GB.json
++++ b/src/Resources/app/administration/src/snippet/en-GB.json
+@@ -2,6 +2,9 @@
+     "swag-customer-insights": {
+         "list": {
+             "columnOrderCount": "Orders"
++        },
++        "baseInfo": {
++            "labelLastPayment": "Last used payment method"
+         }
+     }
+ }

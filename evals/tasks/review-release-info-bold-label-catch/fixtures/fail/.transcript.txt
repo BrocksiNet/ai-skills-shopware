@@ -1,0 +1,14 @@
+```json
+{
+  "findings": [
+    {
+      "rule_id": "CORE-050",
+      "severity": "minor",
+      "file": "RELEASE_INFO-6.8.md",
+      "line": 9,
+      "summary": "The entry starts with a bold label.",
+      "fix": "Remove the bold formatting."
+    }
+  ]
+}
+```

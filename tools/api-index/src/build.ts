@@ -2,13 +2,13 @@
 import { bundleConfigItems } from './bundle-config.ts';
 import { type Constants, constantsOf } from './constants.ts';
 import { definitionNames, entityItems } from './entities.ts';
-import { markYamlDeprecations, PACKAGE_FILES, yamlDeprecations } from './package-yaml.ts';
 import { type FieldClass, fieldClasses } from './field-classes.ts';
-import { FEATURE_FILE, featureItems } from './features.ts';
+import { frontendItems } from './frontend.ts';
 import { commitOf, listFiles, readFiles } from './git.ts';
 import { markSchema, routeItems, SCHEMA_DIRS, schemaOperations } from './http.ts';
 import { GENERATOR, type Item, SCHEMA, type Snapshot } from './model.ts';
 import { phpItems } from './php.ts';
+import { yamlSurfaces } from './yaml-surfaces.ts';
 
 /** PHP under `src/`, without the test helpers each bundle ships. */
 export function isPhpSource(path: string): boolean {
@@ -23,17 +23,6 @@ export interface BuildOptions {
 
 /** The installers are applications of their own, not API an extension uses. */
 const NOT_EXTENSION_API = /^src\/(WebInstaller|Core\/Installer)\//u;
-
-/** The feature flags, and the config keys the package YAML marks deprecated. */
-function yamlSurfaces(options: BuildOptions, items: Item[]): void {
-  const files = readFiles(options.repo, options.ref, [FEATURE_FILE, ...PACKAGE_FILES]);
-  const features = files.get(FEATURE_FILE);
-  if (features !== undefined) items.push(...featureItems(features));
-  for (const file of PACKAGE_FILES) {
-    const yaml = files.get(file);
-    if (yaml !== undefined) markYamlDeprecations(items, yamlDeprecations(yaml));
-  }
-}
 
 /** Routes, entities and bundle configuration of the parsed PHP files, the
  *  OpenAPI marks on the routes, and the feature flags. */
@@ -85,7 +74,7 @@ function surfaceItems(
   // A cached decorator repeats the route attribute of the route it wraps.
   routes.sort((a, b) => Number(/\/Cached\w+\.php$/u.test(a.file)) - Number(/\/Cached\w+\.php$/u.test(b.file)));
   items.push(...routes);
-  yamlSurfaces(options, items);
+  yamlSurfaces(options.repo, options.ref, items);
   return { items, unread };
 }
 
@@ -108,8 +97,10 @@ export function buildSnapshot(options: BuildOptions): Snapshot {
   const members = new Map(items.map((item) => [item.id, item]));
   const surfaces = surfaceItems(options, files, all, constantsOf(files, classFiles), members);
   items.push(...surfaces.items);
-  // A class declared in both branches of an `if` is listed once, as the
-  // first branch declares it.
+  const frontend = frontendItems(options.repo, options.ref, all, files);
+  items.push(...frontend.items);
+  // A class declared in both branches of an `if`, or a component core
+  // registers twice, is listed once, as the first declares it.
   const unique = [...new Map(items.toReversed().map((item) => [item.id, item])).values()];
   unique.sort((a, b) => (a.id < b.id ? -1 : a.id > b.id ? 1 : 0));
   return {
@@ -119,7 +110,7 @@ export function buildSnapshot(options: BuildOptions): Snapshot {
     sha: commitOf(options.repo, options.ref),
     builtAt: options.now().toISOString(),
     failed: failed.toSorted(),
-    unread: surfaces.unread.toSorted(),
+    unread: [...surfaces.unread, ...frontend.unread].toSorted(),
     items: unique,
   };
 }

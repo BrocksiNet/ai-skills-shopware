@@ -1,7 +1,9 @@
 {
   "$comment": "Which reference to read for a change (plan WP4). paths_any: globs on changed files; anchors_any: regexes on added or removed lines; always: every change; on_demand: the task decides, the diff cannot. Render the SKILL.md table with node tools/bin/render-routes.ts.",
   "exclude_paths": [
-    "**/*.md"
+    "**/*.md",
+    "**/Resources/app/storefront/**",
+    "src/Storefront/**"
   ],
   "routes": [
     {
@@ -33,9 +35,10 @@
     },
     {
       "reference": "references/testing.md",
-      "when": "You write or fix a Jest spec.",
+      "when": "You write or fix a Jest spec or the shared Jest setup.",
       "paths_any": [
-        "**/Resources/app/administration/**/*.spec.{js,ts}"
+        "**/Resources/app/administration/**/*.spec.{js,ts}",
+        "**/Resources/app/administration/test/_setup/**"
       ],
       "anchors_any": [
         "shallowMount\\(",

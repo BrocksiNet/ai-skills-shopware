@@ -71,11 +71,11 @@ rule that makes the model worse cannot ship unnoticed.
 
 | Measure | Count |
 | ------- | ----- |
-| Active rules with an ID | 263 |
-| Rules with an eval task | 94 |
-| Eval tasks | 140 |
-| Review tasks (catch, ignore and near-miss) | 77 |
-| Routing cases | 11 |
+| Active rules with an ID | 265 |
+| Rules with an eval task | 96 |
+| Eval tasks | 144 |
+| Review tasks (catch, ignore and near-miss) | 81 |
+| Routing cases | 13 |
 
 Rules without an eval record why in the catalog, usually a process or style
 rule that core's own CI already enforces. They are the visible backlog.

@@ -1,0 +1,20 @@
+{
+  "repo": "shopware/shopware",
+  "pr": 21617,
+  "title": "fix(administration): use configured labels in product streams",
+  "url": "https://github.com/shopware/shopware/pull/21617",
+  "expected": {
+    "sw-admin-js/references/architecture.md": [
+      "https://github.com/shopware/shopware/pull/21617#discussion_r4278703465",
+      "https://github.com/shopware/shopware/pull/21617#discussion_r4278716667"
+    ],
+    "sw-plugin-development/references/dal-usage.md": [
+      "https://github.com/shopware/shopware/pull/21617#discussion_r4278703465",
+      "https://github.com/shopware/shopware/pull/21617#discussion_r4278716667"
+    ],
+    "sw-review-learnings/references/dal-and-performance.md": [
+      "https://github.com/shopware/shopware/pull/21617#discussion_r4278703465",
+      "https://github.com/shopware/shopware/pull/21617#discussion_r4278716667"
+    ]
+  }
+}

@@ -27,11 +27,13 @@ criteria. Packages are ordered so that each one only depends on earlier ones.
 | WP9 | Upstream watchlist | none | S | none |
 | WP10 | Eval runner in TypeScript | none | M | none |
 | WP11 | Public API index and version facts | WP6 | L | weekly build |
+| WP12 | Skill update automation | WP8, WP9 | L | local only |
 
 Shipped: everything through WP10 landed in **v0.9.0** (2026-10-21), ahead
-of the milestones below. Still open: WP0 item 7 (waits for #21730) and
-WP11 phase 4; phases 0 to 3 (the PHP index, `api-facts`, and `api-diff`
-for routes, entities, feature flags and configuration) passed their gates. v0.10.0 (2026-10-21) added five rules from a real plugin review
+of the milestones below. WP0 item 7 landed after #21730 merged (2026-10-28). WP12
+is done (2026-10-23). WP11 phases 0 to 4 (the PHP index, `api-facts`,
+`api-diff` for routes, entities, feature flags and configuration, and the
+admin and storefront surfaces) passed their gates. v0.10.0 (2026-10-21) added five rules from a real plugin review
 (ADM-042..044, SEC-008, PLG-032); ADM-044 is the first catch task where the
 skill wins the A/B (3/3 on, 0/3 off). PR #46 met the WP6 A/B acceptance
 with review pairs that turn on version and API facts: PLG-007 (3/3 on, 0/3
@@ -41,7 +43,8 @@ task has more false positives with the skill on (Haiku, 3 repeats). v0.11.0
 shopware/shopware#21627 (PRD-001..009). v0.12.0 (2026-10-22) ships WP11
 phases 0 to 2: the API index and `api-facts`. v0.13.0 (2026-10-22) ships
 phase 3: routes, entities, feature flags and configuration in the index,
-and `api-diff`.
+and `api-diff`. v0.14.0 (2026-10-23) renames every skill to `sw-`
+and adds `sw-skill-router` and `sw-help`.
 
 Suggested milestones, as planned:
 
@@ -57,7 +60,7 @@ gate.
 
 ## WP0: Fix drift and contradictions
 
-Status: **done 2026-10-19**, except item 7, which waits for #21730. The same
+Status: **done 2026-10-19**; item 7 followed on 2026-10-28, after #21730. The same
 pass also documented `Feature::throwIfActive()` from #21400 and #21139.
 
 Goal: bring existing guidance back in line with trunk and with the core
@@ -73,7 +76,7 @@ review guides before adding anything new.
 | 4 | Change "Danger fails new test files" to "every added or modified test file" | `skills/sw-testing/references/core-platform-patterns.md` | trunk 75b0a495 (#21572) | existing `one-covers-class-per-file` |
 | 5 | Add "observing events in tests": no listeners on the shared `event_dispatcher`; unit tests use a dispatcher the test owns (`CollectingEventDispatcher`); integration tests use `EventHookDispatcher::fromContainer()->on()`; capture in the hook, assert afterwards, assert that the hook fired | `skills/sw-testing/references/test-shape-and-flags.md` + one checklist line in `SKILL.md` | trunk f2bf3794 (#21438), 190d734b (#21343) | new `event-hook-capture-then-assert` |
 | 6 | Reconcile `final` vs `@internal` advice into one rule | `skills/sw-core-development/references/platform-architecture.md` and `service-architecture.md` | BCPHP-010 | none |
-| 7 | Add `wrapComponentConfig()` for new Administration components | `skills/sw-admin-js/SKILL.md` | open #21730 (#21722 closed) | prepared as ADM-041 with eval `admin-component-wrap-config`; merge after #21730 |
+| 7 | Add `wrapComponentConfig()` for new Administration components | `skills/sw-admin-js/SKILL.md` | #21730 merged 2026-10-28 (#21722 closed) | ADM-041 with eval `admin-component-wrap-config`; ADM-006 kept for plugins |
 
 ### Eval spec: `event-hook-capture-then-assert`
 
@@ -704,9 +707,20 @@ IMP-008, ADM-039, ADM-040, ARCH-005 and CORE-063, each with a review pair
 existing rule already states were mapped onto it in `core_guide_ids`
 instead of becoming a second rule (DOCS-*, REMOVAL-001/003, SCOPE-001/003/006,
 BCPHP-001, MIG-001/003/005, ADMF-*, BCADM-006/009). `defer_on_trunk` is true
-only where the rule's source is on trunk; the SCOPE rules cite the guides of the
-open core PR #21455 and stay false. The IDs were checked against #21455 at
-`1e641ecf`. `sw-security` (SEC-001..007) and `sw-change-impact`
+only where the rule's source is on trunk; the SCOPE rules cited the guides of the
+then open core PR #21455 and stayed false until it merged. The IDs were checked against #21455 at
+`1e641ecf`, and again on 2026-10-23 at the final head `d97c7fbb`: the same
+111 IDs, all 77 we map still exist. Two mapped rules were reworded after
+`1e641ecf`. MIG-002 (`PLG-030`) only adds a core CI hint, the nightly
+blue-green lane, so nothing changes for plugins. TEST-002 (`TEST-035`) now
+also flags an existing test expectation changed in the same PR as the code
+under test, unless the PR announces the behavior change. `TEST-035` does not
+cover that half; `TEST-036` does, with the review pair
+`review-test-changed-expectation-*`. Core's guides reuse our `TEST` prefix (TEST-001..010 mean
+different rules there), so a core ID appears only in `core_guide_ids` and
+never bare in skill text. #21455 merged on 2026-10-23 as `f31fb198` with the
+same guides, so the SCOPE rules (`CORE-030`, `CORE-072..074`, `IMP-003`) and
+`REV-033` now defer on trunk, with the guide as `trunk.source`. `sw-security` (SEC-001..007) and `sw-change-impact`
 (IMP-001..008) are now tagged as well.
 
 Goal: adopt the core review-guide rules that matter for plugin and app
@@ -799,8 +813,8 @@ deltas.
   - added or removed bullets in `.agents/skills/**/SKILL.md`
   - new headings in `coding-guidelines/**`
   - new PHPStan or Danger rule classes
-  - rule IDs added to or retired from `sw-review/guides/*.md` frontmatter,
-    once #21455 merges
+  - rule IDs added to or retired from `sw-review/guides/*.md` frontmatter
+    (on trunk since #21455 merged on 2026-10-23)
 - **Cross-check against `rules/catalog.json`**:
   - A core guide ID with no `core_guide_ids` match is **unmapped**.
   - A PHPStan or Danger class with no `enforced_by` match is **unmapped**.
@@ -842,7 +856,7 @@ WP8 using `gh pr view --json state,mergedAt`:
 
 | PR | Topic | Our impact | Prepared branch |
 | -- | ----- | ---------- | --------------- |
-| #21455 | `sw-review` topic guides with rule IDs | WP2 `core_guide_ids`, WP7 | none yet |
+| #21455 | `sw-review` topic guides with rule IDs | WP2 `core_guide_ids`, WP7 | merged 2026-10-23; [#59](https://github.com/BrocksiNet/ai-skills-shopware/pull/59) |
 | #21541 | BC and HTTP-cache guidelines | WP7 phase B links | none yet |
 | #21627 | PR template: What and why / How / Testing / Additional notes / Checklist | rewrite `sw-pr-description/references/pr-body-template.md` and the `pr-no-ai-trailers` fixtures | prepare now |
 | #21730 | Admin lint: no `.js` in `src`, no new mixins, `wrapComponentConfig()` required | WP0 #7, `admin-js-implementation-to-ts` grader | prepare now |
@@ -990,7 +1004,7 @@ agents (Codex and Cursor adapters are added in step 3 if still used).
 
 ## WP11: Public API index
 
-Status: **accepted 2026-10-22; phases 0 to 3 done, phase 4 next.** Plan:
+Status: **accepted 2026-10-22; phases 0 to 4 done.** Plan:
 [`2026-10-wp11-public-api-index.md`](2026-10-wp11-public-api-index.md).
 
 Goal: give agents facts about Shopware's public API per release, built
@@ -1005,6 +1019,19 @@ This replaces the Kev classifier experiment first planned here. The same
 model was already measured for triage in shopware/framework-team#120; the
 facts, not the model, were the bottleneck there, and the routing question
 it would answer has no recorded ground truth.
+
+---
+
+## WP12: Skill update automation
+
+Status: **done 2026-10-23, all phases.** Plan:
+[`2026-10-skill-update-automation.md`](2026-10-skill-update-automation.md).
+
+Goal: turn drift into rule changes with less manual reading. Trunk mining
+reads a list of sources and maps each change to the rule it touches. A
+daily job collects maintainer review comments from merged core PRs. A local
+command with your agent login proposes new, updated and retired rules and
+drafts the pull request. The A/B gate and a human merge stay in place.
 
 ---
 

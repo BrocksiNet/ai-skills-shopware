@@ -1,0 +1,8 @@
+diff --git a/src/Administration/Resources/app/administration/src/module/sw-cms/elements/image-slider/config/sw-cms-el-config-image-slider.html.twig b/src/Administration/Resources/app/administration/src/module/sw-cms/elements/image-slider/config/sw-cms-el-config-image-slider.html.twig
+--- a/src/Administration/Resources/app/administration/src/module/sw-cms/elements/image-slider/config/sw-cms-el-config-image-slider.html.twig
++++ b/src/Administration/Resources/app/administration/src/module/sw-cms/elements/image-slider/config/sw-cms-el-config-image-slider.html.twig
+@@ @@
+-                                v-if="sliderItem.mediaUrl"
++                                v-if="getMediaItemById(sliderItem.mediaId)"
+-                                :src="sliderItem.mediaUrl"
++                                :src="getMediaItemById(sliderItem.mediaId).url"

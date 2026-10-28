@@ -1,0 +1,27 @@
+diff --git a/src/Resources/app/administration/src/module/swag-loyalty/page/swag-loyalty-campaign-detail/index.js b/src/Resources/app/administration/src/module/swag-loyalty/page/swag-loyalty-campaign-detail/index.js
+index 3c1a2b7..9e4d0f1 100644
+--- a/src/Resources/app/administration/src/module/swag-loyalty/page/swag-loyalty-campaign-detail/index.js
++++ b/src/Resources/app/administration/src/module/swag-loyalty/page/swag-loyalty-campaign-detail/index.js
+@@ -6,3 +6,9 @@ Component.register('swag-loyalty-campaign-detail', {
+     template,
+
++    data() {
++        return {
++            draft: { ...Shopware.Store.get('swagLoyaltyCampaign').campaign },
++        };
++    },
++
+     computed: {
+@@ -12,3 +18,12 @@ Component.register('swag-loyalty-campaign-detail', {
+     },
+
++    created() {
++        const store = Shopware.Store.get('swagLoyaltyCampaign');
++        store.campaign = null;
++        store.name = '';
++        store.points = 0;
++        store.expiryMode = 'never';
++        store.isDirty = false;
++    },
++
+     methods: {

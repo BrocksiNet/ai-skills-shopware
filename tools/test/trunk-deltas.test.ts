@@ -57,6 +57,7 @@ describe('commit deltas', () => {
           '+  - { id: BCPHP-011, since: 2026-10-25 }\n-  - { id: BCPHP-003, since: x }',
         ),
         file('.agents/skills/sw-review/personas/ux.md', '+- persona bullet'),
+        file('.agents/skills/sw-review/references/COST.md', '+- not a review rule'),
         file('coding-guidelines/core/unit-tests.md', '+## New section\n+- a bullet'),
         file('.github/PULL_REQUEST_TEMPLATE.md', '+- [ ] new box\n+'),
         file('coding-guidelines/core/huge.md'),
@@ -65,7 +66,7 @@ describe('commit deltas', () => {
     });
     assert.deepEqual(
       deltas.bullets.map((l) => l.text),
-      ['Use the clock'],
+      ['Use the clock', 'persona bullet'],
     );
     assert.deepEqual(
       deltas.guideIds.map((l) => `${l.change}${l.text}`),

@@ -1,9 +1,9 @@
 // Agent adapters for the evals. The evals/runner/<name>.sh files are
 // wrappers for this file and document each adapter's environment.
 //
-//   node tools/bin/adapter.ts opencode-task|claude-task|opencode-activation|claude-activation < prompt
+//   node tools/bin/adapter.ts {opencode,claude,copilot}-{task,activation} < prompt
 import { resolve } from 'node:path';
-import { ADAPTERS } from '../src/agents.ts';
+import { ADAPTERS } from '../src/adapters.ts';
 import { stderr, stdout } from '../src/cli.ts';
 import { readStdin } from '../src/proc.ts';
 

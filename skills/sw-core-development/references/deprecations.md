@@ -61,12 +61,6 @@ public function load(string|int $id): void
 `$`, `::class` for class references, the real default for `NewOptionalParameter`.
 PHPStan rejects attributes that do not describe a structurally possible change.
 
-**CORE-016** When legacy use is detectable at runtime (`BecomesAbstract`,
-`NewRequiredParameter`, `ParameterRemoval`, `ParameterTypeNarrowing`), keep the
-old behavior and call `Feature::triggerDeprecationOrThrow()` **only for that
-incompatible use**, unless the method is framework-invoked (the framework would
-warn on legitimate calls).
-
 ## Deprecating code that already has a replacement
 
 ```php
@@ -83,20 +77,14 @@ public function oldHandle(Context $context): void
 }
 ```
 
-- **CORE-017** Use `@deprecated tag:v6.x.0 - <reason and replacement>`. Always name the
-  replacement.
 - **CORE-018** Wrap removed-in-major behavior changes in `if (Feature::isActive('v6.x.0')) { … }`
   so both paths exist until the major.
 - **CORE-019** Deprecate the whole surface: class, method, parameter, constant, public
-  property, service id, event, and route as applicable.
+  property, service id (only once core no longer uses it, `CORE-025`), event,
+  and route as applicable.
 
 ## Calling deprecated code from core (BC)
 
-- **CORE-020** **Core must not trigger self-deprecation notices** when it still calls deprecated
-  behavior for BC. Wrap that call with
-  `Feature::silent($majorFlag, static fn () => …)` so the notice is suppressed,
-  the path is tied to the major flag, and the branch disappears when the flag is
-  removed.
 - **CORE-021** **Do not add new code paths** that call deprecated functionality. Move internal
   callers to the replacement API and keep legacy behavior only in focused BC tests.
 - **CORE-022** When adding `@deprecated` on executable PHP, add matching
@@ -108,8 +96,6 @@ public function oldHandle(Context $context): void
 - **CORE-024** If a deprecated API remains for BC, add or keep **dedicated legacy tests** that
   are easy to remove with the deprecation; guard with the relevant major feature
   flag when needed.
-
-## DI service tags
 
 **CORE-025** Do **not** mark a DI service definition `<deprecated>` while Shopware core still
 references that service id anywhere. Internal references still fire container
@@ -149,3 +135,7 @@ service/event/route; tightening a parameter type; changing default behavior;
 renaming a public property or constant. Internal-only (`@internal`) symbols are
 exempt — but verify the `@internal` was there before your change, not added by
 you to dodge the policy.
+
+## Eval
+
+`review-bc-change-most-specific-catch` / `-ignore` (CORE-014).

@@ -1,0 +1,7 @@
+{
+  "repo": "shopware/shopware",
+  "pr": 20251,
+  "title": "ci: use --update-snapshots=changed for docker visual snapshots",
+  "url": "https://github.com/shopware/shopware/pull/20251",
+  "expected": {}
+}

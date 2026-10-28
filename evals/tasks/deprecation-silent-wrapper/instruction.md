@@ -1,15 +1,10 @@
-# Task: wrap BC deprecation call with Feature::silent
+# Task: fix the deprecation notice from LegacyConfigReader (core)
 
-Core must not trigger self-deprecation when it still calls deprecated behavior for BC.
+You are working on **Shopware core** (`shopware/shopware` trunk).
+`LegacyConfigReader::read()` still calls the deprecated
+`DeprecatedConfigLoader::loadLegacy()` on purpose, for backward compatibility
+until v6.8.0.
 
-Update `LegacyConfigReader.php` so the call to `DeprecatedConfigLoader::loadLegacy()`
-is wrapped with:
-
-```php
-Feature::silent('v6.8.0', static fn () => DeprecatedConfigLoader::loadLegacy());
-```
-
-Add the correct `use Shopware\Core\Framework\Feature;` import.
-
-Keep the public method signature unchanged. Do not remove the legacy call — only
-suppress the deprecation notice correctly.
+That call makes core report its own deprecation, and review flagged it. Fix
+`LegacyConfigReader.php` so it keeps using the legacy loader with the same
+result and the same public method signature.

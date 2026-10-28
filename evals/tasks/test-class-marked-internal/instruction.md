@@ -1,7 +1,8 @@
-# Task: mark the test class @internal
+# Task: prepare the cart normalizer test for core
 
-Update `CartNormalizerTest.php` for a shopware/shopware contribution:
+`CartNormalizerTest.php` is a new unit test for a shopware/shopware
+contribution. Bring the test class in line with core's conventions for test
+classes before the PR.
 
-- Add an `@internal` class docblock on the test class.
-- Keep `#[Package('checkout.cart')]` and `#[CoversClass(CartNormalizer::class)]`.
+- Keep the existing attributes.
 - Do not change `CartNormalizer.php`.

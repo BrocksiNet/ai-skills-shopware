@@ -12,6 +12,13 @@
       "anchors_any": [
         "Feature::isActive\\(",
         "@deprecated tag:v"
+      ],
+      "exclude_paths": [
+        "**/tests/**",
+        "**/Test/**",
+        "**/*.md",
+        "**/Resources/app/**",
+        "**/*.{js,ts,scss}"
       ]
     },
     {

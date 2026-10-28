@@ -3,26 +3,30 @@ import { basename } from 'node:path';
 import { countLines, fail, filesUnder, type Grader, read, verdict } from '../src/grade/kit.ts';
 
 const VERSION = /^# 6\.7\.4\.0\s*$/u;
-const FEATURES = /^## Features\s*$/u;
+// A new extension point is a feature or a core change; trunk files both.
+const CATEGORY = /^## (?:Features|Core)\s*$/u;
 
-/** CartProcessor appears under `## Features` of the 6.7.4.0 section. */
-function newInFeatures(text: string): boolean {
+/** The `##` headings of the 6.7.4.0 section, and the category CartProcessor sits in. */
+function section(text: string): { headings: string[]; category: string } {
+  const headings: string[] = [];
   let inVersion = false;
-  let inFeatures = false;
+  let current = '';
+  let category = '';
   for (const line of text.split('\n')) {
-    if (VERSION.test(line)) {
-      inVersion = true;
+    if (line.startsWith('# ')) {
+      inVersion = VERSION.test(line);
+      current = '';
       continue;
     }
-    if (line.startsWith('# ')) inVersion = false;
-    if (inVersion && FEATURES.test(line)) {
-      inFeatures = true;
+    if (!inVersion) continue;
+    if (line.startsWith('## ')) {
+      current = line.trim();
+      headings.push(current);
       continue;
     }
-    if (inVersion && line.startsWith('## ')) inFeatures = false;
-    if (inVersion && inFeatures && line.includes('CartProcessor')) return true;
+    if (category === '' && line.includes('CartProcessor')) category = current;
   }
-  return false;
+  return { headings, category };
 }
 
 export const grade: Grader = ({ workdir }) => {
@@ -30,13 +34,14 @@ export const grade: Grader = ({ workdir }) => {
   if (file === undefined) return fail('RELEASE_INFO-6.7.md not found');
   const text = read(file);
   const versions = countLines(text, VERSION);
-  const features = countLines(text, FEATURES);
+  const { headings, category } = section(text);
+  const repeated = headings.length !== new Set(headings).size;
   const existing = text.includes('ProductRoute');
-  const inFeatures = newInFeatures(text);
-  return verdict(versions === 1 && features === 1 && existing && inFeatures, {
+  const inCategory = CATEGORY.test(category);
+  return verdict(versions === 1 && !repeated && existing && inCategory, {
     versions,
-    features,
+    repeated,
     existing,
-    in_features: inFeatures,
+    in_category: inCategory,
   });
 };

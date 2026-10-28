@@ -4,18 +4,17 @@ Load when adding modules, components, services, or ACL-backed UI.
 
 ## Layers
 
-- **ADM-012** Keep `core` free of Vue. Modules must not import another module directly;
-  talk through registered services, repositories, routes, stores, or shared
-  app/core code.
-- **ADM-013** Keep boot order `init-pre/ → init/ → init-post/` when touching startup.
 - **ADM-014** Prefer extension-aware globals (`Shopware.Component`, `Shopware.Service()`,
   `Shopware.Store`) when they exist in that context. Boot code may need
   direct access before globals are ready.
-- **ADM-015** Preserve extension points on the global `Shopware` object when changing
-  repositories, services, components, and stores.
 
 ## Modules and UI
 
+- **ADM-006** In a plugin, build a new component the way its module already
+  does. A module built with `Component.register` and Twig blocks gets no
+  `.vue` file: an SFC has no blocks, so other extensions cannot override it.
+  Where the module already renders SFCs, another one is fine. New core
+  components follow `ADM-041` instead.
 - **ADM-016** Protect routes, navigation, and templates with the required ACL
   privileges.
 - **ADM-004** **New Admin UI that reads or persists a DAL entity updates the
@@ -50,8 +49,8 @@ Load when adding modules, components, services, or ACL-backed UI.
   plugins do nothing and an import that relies on them fails the build. Do
   not add one for a 6.7 target; a bundle that also supports 6.6 keeps it for
   6.6 only.
-- **ADM-017** Business logic stays out of templates. Prefer composables over new
-  mixins.
+- **ADM-007** Prefer composables for new shared Vue logic. Do not add new mixins unless
+  extending legacy code.
 - Use BEM class names and Meteor design tokens. Avoid inline styles.
 
 ## Data
@@ -61,3 +60,9 @@ Load when adding modules, components, services, or ACL-backed UI.
   them. Load only associations the screen uses.
 - **ADM-020** Batch related writes into one save when possible.
 - **ADM-021** Reload the entity after save so origin state and change tracking match.
+- **ADM-045** **Reset and change shared Administration state through its store.** Call
+  the store's `$reset()` instead of clearing its fields one by one in a component,
+  and write changes to the store's own state so every consumer sees them. Do not
+  keep a copy of store state in component data that can go stale, and do not add
+  a reset of your own next to the store's `$reset()`, such as clearing the same
+  fields in `created()`.

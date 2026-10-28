@@ -1,0 +1,37 @@
+{
+  "repo": "shopware/shopware",
+  "pr": 20855,
+  "title": "fix(framework): rate-limit the MCP endpoints with a sliding window",
+  "url": "https://github.com/shopware/shopware/pull/20855",
+  "commit": "8359b0020671e97c548cbd1fe0f032e0ca39a501",
+  "expected": {
+    "sw-review-learnings/references/code-comments.md": [
+      "https://github.com/shopware/shopware/pull/20855#discussion_r4154619489"
+    ],
+    "sw-security/references/secrets-and-config.md": [
+      "https://github.com/shopware/shopware/pull/20855#discussion_r4195309136"
+    ],
+    "sw-testing/references/core-platform-patterns.md": [
+      "https://github.com/shopware/shopware/pull/20855#discussion_r4154603948",
+      "https://github.com/shopware/shopware/pull/20855#discussion_r4195309136",
+      "https://github.com/shopware/shopware/pull/20855#discussion_r4195330321",
+      "https://github.com/shopware/shopware/pull/20855#discussion_r4195344567"
+    ],
+    "sw-testing/references/exception-assertions.md": [
+      "https://github.com/shopware/shopware/pull/20855#discussion_r4195309136"
+    ],
+    "sw-testing/references/test-shape-and-flags.md": [
+      "https://github.com/shopware/shopware/pull/20855#discussion_r4154603948",
+      "https://github.com/shopware/shopware/pull/20855#discussion_r4195330321",
+      "https://github.com/shopware/shopware/pull/20855#discussion_r4195344567"
+    ]
+  },
+  "labels": [
+    {
+      "reference": "sw-review-learnings/references/code-comments.md",
+      "rule": "REV-034",
+      "url": "https://github.com/shopware/shopware/pull/20855#discussion_r4154612229",
+      "why": "The class docblock tells the story of the issue the PR fixes instead of the constraint the code keeps."
+    }
+  ]
+}

@@ -1,0 +1,14 @@
+```json
+{
+  "findings": [
+    {
+      "rule_id": "CORE-060",
+      "severity": "minor",
+      "file": "src/Core/Content/Product/Stock/ProductStockCleaner.php",
+      "line": 26,
+      "summary": "The suppression comment hides a phpstan error in the new code.",
+      "fix": "Remove the suppression and fix the code under it."
+    }
+  ]
+}
+```

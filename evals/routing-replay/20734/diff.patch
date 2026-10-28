@@ -1,0 +1,60 @@
+diff --git a/src/Core/Content/DependencyInjection/product.php b/src/Core/Content/DependencyInjection/product.php
+--- a/src/Core/Content/DependencyInjection/product.php
++++ b/src/Core/Content/DependencyInjection/product.php
+@@ @@
++            param('shopware.api.store.max_limit'),
++            service(CompressedCriteriaDecoder::class),
+diff --git a/src/Core/Content/Product/SalesChannel/Review/ProductReviewRoute.php b/src/Core/Content/Product/SalesChannel/Review/ProductReviewRoute.php
+--- a/src/Core/Content/Product/SalesChannel/Review/ProductReviewRoute.php
++++ b/src/Core/Content/Product/SalesChannel/Review/ProductReviewRoute.php
+@@ @@
++use Shopware\Core\Framework\DataAbstractionLayer\Search\CompressedCriteriaDecoder;
++use Shopware\Core\Framework\DataAbstractionLayer\Search\RequestCriteriaBuilder;
++    public const DEFAULT_MAX_LIMIT = 100;
++
+-        private readonly ExtensionDispatcher $extensions
++        private readonly ExtensionDispatcher $extensions,
++        private readonly int $maxLimit = self::DEFAULT_MAX_LIMIT,
++        private readonly CompressedCriteriaDecoder $compressedCriteriaDecoder = new CompressedCriteriaDecoder(),
+-            extension: new ProductReviewRouteExtension($productId, $request, $context, $criteria),
++            extension: new ProductReviewRouteExtension(
++                $productId,
++                $request,
++                $context,
++                $this->applyConfiguredLimit($criteria, $context->getSalesChannelId(), $request),
++            $payload = $request->query->has('_criteria')
++                ? $this->compressedCriteriaDecoder->decode((string) $request->query->get('_criteria'))
++                : $request->query->all();
++            $payload = $request->request->all();
+diff --git a/tests/unit/Core/Content/Product/SalesChannel/Review/ProductReviewRouteTest.php b/tests/unit/Core/Content/Product/SalesChannel/Review/ProductReviewRouteTest.php
+--- a/tests/unit/Core/Content/Product/SalesChannel/Review/ProductReviewRouteTest.php
++++ b/tests/unit/Core/Content/Product/SalesChannel/Review/ProductReviewRouteTest.php
+@@ @@
++use PHPUnit\Framework\Attributes\DataProvider;
++use Shopware\Core\Content\Product\Aggregate\ProductReview\ProductReviewDefinition;
++use Shopware\Core\Framework\DataAbstractionLayer\Search\ApiCriteriaValidator;
++use Shopware\Core\Framework\DataAbstractionLayer\Search\CompressedCriteriaDecoder;
++use Shopware\Core\Framework\DataAbstractionLayer\Search\CriteriaArrayConverter;
++use Shopware\Core\Framework\DataAbstractionLayer\Search\EntitySearchResult;
++use Shopware\Core\Framework\DataAbstractionLayer\Search\Parser\AggregationParser;
++use Shopware\Core\Framework\DataAbstractionLayer\Search\RequestCriteriaBuilder;
++use Shopware\Core\Framework\Util\Base64;
++use Shopware\Core\Test\Stub\DataAbstractionLayer\StaticDefinitionInstanceRegistry;
++use Shopware\Core\Test\Stub\DataAbstractionLayer\StaticEntityRepository;
++use Shopware\Core\Test\Stub\DataAbstractionLayer\StaticEntityWriterGateway;
++use Symfony\Component\Validator\Validation;
++        $criteria = new Criteria();
++        $repository = $this->createMock(EntityRepository::class);
++        $criteria = new Criteria();
++        $repository = $this->createMock(EntityRepository::class);
++    #[DataProvider('requestedCountModeProvider')]
++        $criteria = $builder->handleRequest($request, new Criteria(), $definition, $context->getContext());
++            new StaticEntityRepository([new ProductReviewCollection()]),
++            new ExtensionDispatcher(new EventDispatcher()),
++        $criteria = new Criteria();
++        $repository = $this->createMock(EntityRepository::class);
++        $criteria = new Criteria();
++        $repository = $this->createMock(EntityRepository::class);
++        $criteria = new Criteria();
++            new StaticEntityRepository([new ProductReviewCollection()]),
++            new ExtensionDispatcher($dispatcher),

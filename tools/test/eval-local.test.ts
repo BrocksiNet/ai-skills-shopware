@@ -24,10 +24,16 @@ const fresh = (name: string): string => join(tmp, `${++n}-${name}`);
  *  eval-local tests replace the A/B. */
 const fakeBin = join(tmp, 'bin');
 mkdirSync(fakeBin);
-for (const cli of ['claude', 'opencode']) {
+for (const cli of ['claude', 'opencode', 'copilot']) {
   writeFileSync(join(fakeBin, cli), '#!/usr/bin/env bash\nexit 1\n');
   chmodSync(join(fakeBin, cli), 0o755);
 }
+/** `gh auth token` prints FAKE_GH_TOKEN, or fails without it. */
+writeFileSync(
+  join(fakeBin, 'gh'),
+  '#!/usr/bin/env bash\n[ -n "${FAKE_GH_TOKEN:-}" ] || exit 1\necho "$FAKE_GH_TOKEN"\n',
+);
+chmodSync(join(fakeBin, 'gh'), 0o755);
 
 interface Local {
   rc: number;
@@ -90,11 +96,23 @@ describe('eval-local', () => {
     assert.equal(call.env.EVAL_RESULTS, join(ROOT, 'evals/.results/local-20261021T070331Z.jsonl'));
     rmSync(call.env.EVAL_RESULTS, { force: true });
   });
+  test('copilot takes the gh login as its token, unless one is set', async () => {
+    const r = await local({ EVAL_LOCAL_AGENT: 'copilot', EVAL_TASKS: TASK_B, FAKE_GH_TOKEN: 'gho_x' });
+    const [call] = r.calls;
+    assert.ok(call);
+    assert.equal(call.env.SKILLS_AGENT_CMD, join(RUNNER, 'copilot-task.sh'));
+    assert.deepEqual([call.env.EVAL_AGENT, call.env.COPILOT_GITHUB_TOKEN], ['copilot', 'gho_x']);
+    const own = await local({ EVAL_LOCAL_AGENT: 'copilot', EVAL_TASKS: TASK_B, COPILOT_GITHUB_TOKEN: 'mine' });
+    assert.equal(own.calls[0]?.env.COPILOT_GITHUB_TOKEN, 'mine');
+    const none = await local({ EVAL_LOCAL_AGENT: 'copilot', EVAL_TASKS: TASK_B });
+    assert.equal(none.rc, 2);
+    assert.match(none.err, /copilot needs COPILOT_GITHUB_TOKEN, or a `gh auth login`/u);
+  });
   test('nothing to run is exit 2', async () => {
     const docsOnly = fresh('changed.txt');
     writeFileSync(docsOnly, 'README.md\n');
     const cases: [NodeJS.ProcessEnv, RegExp][] = [
-      [{ EVAL_LOCAL_AGENT: 'cursor' }, /EVAL_LOCAL_AGENT must be claude or opencode/u],
+      [{ EVAL_LOCAL_AGENT: 'cursor' }, /EVAL_LOCAL_AGENT must be claude, opencode or copilot/u],
       [{ PATH: '/usr/bin:/bin' }, /claude CLI not found/u],
       [{ EVAL_TASKS: 'does-not-exist' }, /eval-plan: unknown task 'does-not-exist'/u],
       [{ EVAL_CHANGED_FILES: docsOnly }, /No tasks selected/u],

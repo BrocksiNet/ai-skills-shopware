@@ -1,0 +1,19 @@
+diff --git a/src/Subscriber/ProductListingSubscriber.php b/src/Subscriber/ProductListingSubscriber.php
+index 3c1d9e2..b72e5c0 100644
+--- a/src/Subscriber/ProductListingSubscriber.php
++++ b/src/Subscriber/ProductListingSubscriber.php
+@@ -5,2 +5,3 @@
+ use Shopware\Core\Content\Product\SalesChannel\Listing\ProductListingCriteriaEvent;
++use Shopware\Core\Framework\Feature;
+ use Symfony\Component\EventDispatcher\EventSubscriberInterface;
+@@ -17,6 +18,10 @@ class ProductListingSubscriber implements EventSubscriberInterface
+     public function onCriteria(ProductListingCriteriaEvent $event): void
+     {
+         $criteria = $event->getCriteria();
+         $criteria->setLimit(24);
++
++        if (Feature::has('NEXT-21530') && Feature::isActive('NEXT-21530')) {
++            $criteria->addAssociation('cover');
++        }
+     }
+ }

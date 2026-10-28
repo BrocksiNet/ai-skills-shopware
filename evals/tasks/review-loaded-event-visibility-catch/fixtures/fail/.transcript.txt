@@ -1,0 +1,22 @@
+```json
+{
+  "findings": [
+    {
+      "rule_id": "REV-035",
+      "severity": "minor",
+      "file": "src/Check/CategoryProbe.php",
+      "line": 39,
+      "summary": "searchIds() skips the loaded event.",
+      "fix": "Use search()."
+    },
+    {
+      "rule_id": "REV-023",
+      "severity": "major",
+      "file": "src/Check/CategoryProbe.php",
+      "line": 39,
+      "summary": "Restricted categories are still probed because the lookup misses Dynamic Access.",
+      "fix": "Use the sales channel context."
+    }
+  ]
+}
+```

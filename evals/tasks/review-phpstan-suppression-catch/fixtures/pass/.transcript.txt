@@ -1,0 +1,14 @@
+```json
+{
+  "findings": [
+    {
+      "rule_id": "CORE-062",
+      "severity": "minor",
+      "file": "src/Core/Content/Product/Stock/ProductStockCleaner.php",
+      "line": 26,
+      "summary": "The new method suppresses a phpstan-shopware rule with @phpstan-ignore-next-line instead of satisfying it.",
+      "fix": "Take the Context from the caller and remove the suppression comment."
+    }
+  ]
+}
+```

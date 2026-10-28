@@ -1,0 +1,150 @@
+diff --git a/RELEASE_INFO-6.7.md b/RELEASE_INFO-6.7.md
+--- a/RELEASE_INFO-6.7.md
++++ b/RELEASE_INFO-6.7.md
+@@ @@
++### `No-Vary-Search` header on cacheable responses
++
++With `CACHE_REWORK` active, cacheable storefront and store-api responses send [`No-Vary-Search: key-order`](https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Headers/No-Vary-Search), declaring that the order of query parameters does not change the response. The server already normalizes the query order before it looks up its cache entry, so the header only tells clients what was always true.
++
++The header is a specification draft, support differs per browser and per cache, and it does not replace query sorting in a reverse proxy such as Varnish or Fastly. A client that ignores it keeps treating a reordered query string as a different URL, which is the behaviour you have today.
++
++Set your own value per policy under `headers.no_vary_search`, for example `no_vary_search: 'key-order, params=("gclid")'`. It is passed through verbatim, validated only for being a single line of printable ASCII. If the key is omitted from the policy, no `No-Vary-Search` header is sent, and any value a controller or plugin set earlier in the request is removed. Unlike `Cache-Control`, the header cannot be influenced by a `#[HttpCache]` attribute. The policy is its only source.
++
++Never list parameters that change the rendered content, such as `p`, `order`, `search` or filter names. A client would then match a stored response against the wrong URL and show page 1 at a `?p=2` URL. Tracking parameters are safe, because reuse does not rewrite the document URL.
++
+diff --git a/config-schema.json b/config-schema.json
+--- a/config-schema.json
++++ b/config-schema.json
+@@ @@
++                                    },
++                                    "no_vary_search": {
++                                        "type": "string",
++                                        "title": "Verbatim value of the \"No-Vary-Search\" header, e.g. \"key-order\""
+diff --git a/src/Core/Framework/Adapter/Cache/Http/CachePolicy.php b/src/Core/Framework/Adapter/Cache/Http/CachePolicy.php
+--- a/src/Core/Framework/Adapter/Cache/Http/CachePolicy.php
++++ b/src/Core/Framework/Adapter/Cache/Http/CachePolicy.php
+@@ @@
+- *         cache_control: CacheControlDirectivesConfig
++ *         cache_control: CacheControlDirectivesConfig,
++ *         no_vary_search?: string|null
++    /**
++     * @param string|null $noVarySearch Verbatim value of the `No-Vary-Search` header, e.g. `key-order`
++     */
++        public ?string $noVarySearch = null,
+-        return new self(cacheControl: $cacheControl);
++        return new self(
++            cacheControl: $cacheControl,
++            noVarySearch: $data['headers']['no_vary_search'] ?? null,
++        );
+diff --git a/src/Core/Framework/Adapter/Cache/Http/CacheResponseSubscriber.php b/src/Core/Framework/Adapter/Cache/Http/CacheResponseSubscriber.php
+--- a/src/Core/Framework/Adapter/Cache/Http/CacheResponseSubscriber.php
++++ b/src/Core/Framework/Adapter/Cache/Http/CacheResponseSubscriber.php
+@@ @@
++    /**
++     * Tells clients which query parameter differences may be ignored when matching a request against
++     * an already stored response, both in the HTTP cache and in the Speculation Rules prefetch/prerender cache.
++     */
++    private const HEADER_NO_VARY_SEARCH = 'No-Vary-Search';
++
+-        // reset existing cache-control to avoid mixing policies
++        // reset existing cache headers to avoid mixing policies, the resolved policy is the only source
++        // of truth for both of them
++        $response->headers->remove(self::HEADER_NO_VARY_SEARCH);
++
++        // `No-Vary-Search` only has a meaning for responses a client may actually store, an uncacheable
+diff --git a/src/Core/Framework/DependencyInjection/Configuration.php b/src/Core/Framework/DependencyInjection/Configuration.php
+--- a/src/Core/Framework/DependencyInjection/Configuration.php
++++ b/src/Core/Framework/DependencyInjection/Configuration.php
+@@ @@
++                                    ->scalarNode('no_vary_search')
++                                        ->defaultNull()
++                                        ->validate()
++                                            // `\z` instead of `$`, otherwise a trailing newline would pass and could smuggle a second header
++                                            ->ifTrue(static fn ($value): bool => $value !== null && (!\is_string($value) || preg_match('/^[\x20-\x7E]+\z/', $value) !== 1))
++                                            ->thenInvalid('The "no_vary_search" option must be a single line of printable ASCII, %s given.')
++                                        ->end()
++                                    ->end()
+diff --git a/src/Core/Framework/Resources/config/packages/shopware.yaml b/src/Core/Framework/Resources/config/packages/shopware.yaml
+--- a/src/Core/Framework/Resources/config/packages/shopware.yaml
++++ b/src/Core/Framework/Resources/config/packages/shopware.yaml
+@@ @@
++                    # The order of query parameters never changes the response. Sending this header
++                    # lets a client match a stored response against a differently ordered URL
++                    # instead of refetching it.
++                    # `HttpCacheKeyGenerator::getRequestUri()` and the reverse proxy configurations
++                    # Shopware documents do the same.
++                    # Do not add a `params=(...)` part without checking that the listed parameters really
++                    # have no effect on the response, see `ignored_url_parameters` above.
++                    no_vary_search: 'key-order'
++                    # See `store_api.cacheable` above for why `key-order` is safe for every area.
++                    no_vary_search: 'key-order'
+diff --git a/tests/unit/Core/Framework/Adapter/Cache/Http/CachePolicyProviderTest.php b/tests/unit/Core/Framework/Adapter/Cache/Http/CachePolicyProviderTest.php
+--- a/tests/unit/Core/Framework/Adapter/Cache/Http/CachePolicyProviderTest.php
++++ b/tests/unit/Core/Framework/Adapter/Cache/Http/CachePolicyProviderTest.php
+@@ @@
++        yield 'area cacheable default keeps no_vary_search while max_age is overridden by CacheAttribute' => [
++            'policies' => ['area_cacheable' => new CachePolicy(
++                cacheControl: new CacheControlDirectives(public: true, maxAge: 300),
++                noVarySearch: 'key-order',
++            )],
++            'routePolicies' => [],
++            'defaultPolicies' => [
++                'storefront' => new DefaultPolicies('area_cacheable', 'no_cache'),
++            ],
++            'route' => 'some.route',
++            'area' => 'storefront',
++            'cacheable' => true,
+diff --git a/tests/unit/Core/Framework/Adapter/Cache/Http/CachePolicyTest.php b/tests/unit/Core/Framework/Adapter/Cache/Http/CachePolicyTest.php
+--- a/tests/unit/Core/Framework/Adapter/Cache/Http/CachePolicyTest.php
++++ b/tests/unit/Core/Framework/Adapter/Cache/Http/CachePolicyTest.php
+@@ @@
++    public function testWithKeepsNoVarySearch(): void
++    {
++        $noVarySearch = 'key-order';
++
++        $policy = new CachePolicy(
++            cacheControl: new CacheControlDirectives(public: true),
++            noVarySearch: $noVarySearch,
++        );
++
++        $newPolicy = $policy->with(cacheControl: new CacheControlDirectives(maxAge: 600));
++
++        static::assertSame($noVarySearch, $newPolicy->noVarySearch);
+diff --git a/tests/unit/Core/Framework/Adapter/Cache/Http/CacheResponseSubscriberTest.php b/tests/unit/Core/Framework/Adapter/Cache/Http/CacheResponseSubscriberTest.php
+--- a/tests/unit/Core/Framework/Adapter/Cache/Http/CacheResponseSubscriberTest.php
++++ b/tests/unit/Core/Framework/Adapter/Cache/Http/CacheResponseSubscriberTest.php
+@@ @@
++    /**
++     * @return iterable<string, array{?string, ?string, array{method?: string, httpCacheRoute?: bool, existing?: string}}>
++     */
++    public static function noVarySearchProvider(): iterable
++    {
++        yield 'a cacheable response carries the value the policy declares' => ['key-order', 'key-order', []];
++        yield 'a policy without the key sends no header' => [null, null, []];
++        yield 'the policy overrides a value set earlier in the request' => ['key-order', 'key-order', ['existing' => 'params=("ref")']];
++
++        // the resolved policy is the only source of truth for the header, same as for cache-control
++        yield 'a policy without the key clears a value set earlier' => [null, null, ['existing' => 'params=("ref")']];
++
++    #[DataProvider('noVarySearchProvider')]
++     * has no per-area branch for this header, so a store-api run would exercise the same code.
++        $request->attributes->set(PlatformRequest::ATTRIBUTE_ROUTE_SCOPE, [StorefrontRouteScope::ID]);
+diff --git a/tests/unit/Core/Framework/DependencyInjection/ConfigurationTest.php b/tests/unit/Core/Framework/DependencyInjection/ConfigurationTest.php
+--- a/tests/unit/Core/Framework/DependencyInjection/ConfigurationTest.php
++++ b/tests/unit/Core/Framework/DependencyInjection/ConfigurationTest.php
+@@ @@
++    #[DataProvider('validNoVarySearchProvider')]
++    public function testNoVarySearchConfigTreeNode(string $value): void
++    {
++        $config = $this->processNoVarySearch($value);
++
++        static::assertSame($value, $config['http_cache']['policies']['my_policy']['headers']['no_vary_search']);
++    }
++
++    /**
++     * @return iterable<string, array{0: string}>
++     */
++    public static function validNoVarySearchProvider(): iterable
++    {
++    #[DataProvider('invalidNoVarySearchProvider')]
++        $this->expectExceptionObject(new InvalidConfigurationException(\sprintf(

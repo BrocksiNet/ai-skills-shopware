@@ -3,7 +3,7 @@
 // these tests hold it to node:path matchesGlob and to the routing cases.
 import assert from 'node:assert/strict';
 import { spawnSync } from 'node:child_process';
-import { mkdirSync, mkdtempSync, readFileSync, readdirSync, writeFileSync } from 'node:fs';
+import { mkdirSync, mkdtempSync, readFileSync, readdirSync, symlinkSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join, matchesGlob, resolve } from 'node:path';
 import { describe, test } from 'node:test';
@@ -34,6 +34,12 @@ interface Route {
 }
 const route = (r: Route): unknown => call('route', r);
 const files = (...paths: string[]): unknown => paths.map((path) => ({ path, lines: [] }));
+const refsFor = (path: string, line: string): string[] => {
+  const result = route({ files: [{ path, lines: [line] }], kind: 'core', task: 'review' });
+  return list(field(result, 'load')).flatMap((s) =>
+    list(field(s, 'references')).map((r) => text(field(r, 'reference'))),
+  );
+};
 
 describe('router index', () => {
   test('reads the metadata block of the frontmatter', () => {
@@ -248,6 +254,27 @@ describe('route.mjs routing', () => {
     assert.equal(call('fileContext', 'config/packages/shopware.yaml', 'project'), 'project');
     assert.equal(call('fileContext', 'custom/plugins/Acme/src/Foo.php', 'core'), 'core');
   });
+
+  test('an Administration helper in a Storefront Jest spec does not load sw-admin-js', () => {
+    const spec = 'src/Storefront/Resources/app/storefront/test/plugin/foo.plugin.test.js';
+    assert.ok(!refsFor(spec, '        await flushPromises();').some((r) => r.startsWith('sw-admin-js/')));
+    const admin = 'src/Administration/Resources/app/administration/src/module/sw-foo/index.spec.js';
+    assert.ok(refsFor(admin, '        await flushPromises();').includes('sw-admin-js/references/testing.md'));
+  });
+
+  test('a deprecation in Storefront JS does not load progressive enhancement', () => {
+    const js = 'src/Storefront/Resources/app/storefront/src/plugin/foo.plugin.js';
+    const pe = 'sw-architecture/references/progressive-enhancement.md';
+    assert.ok(!refsFor(js, '     * @deprecated tag:v6.8.0 - Use onBar instead').includes(pe));
+    assert.ok(refsFor('src/Core/Foo.php', '     * @deprecated tag:v6.8.0 - Use Bar instead').includes(pe));
+  });
+
+  test('"no longer" about domain state is not a history comment', () => {
+    const cc = 'sw-review-learnings/references/code-comments.md';
+    const php = 'src/Core/Checkout/Customer/LoginRoute.php';
+    assert.ok(!refsFor(php, '        // the password no longer meets the policy, ask for a new one').includes(cc));
+    assert.ok(refsFor(php, '        // this check is no longer needed since the refactoring').includes(cc));
+  });
 });
 
 const kind = (dir: string): string => text(field(call('detectContext', dir), 'kind'));
@@ -305,6 +332,16 @@ describe('route.mjs context detection', () => {
     const run = spawnSync(process.execPath, [SCRIPT, '--task', 'deploy'], { encoding: 'utf8' });
     assert.equal(run.status, 2);
     assert.match(run.stderr, /--task must be one of build, review, ship, answer, run/u);
+  });
+
+  test('runs when started through a symlinked skills folder', () => {
+    const dir = mkdtempSync(join(tmpdir(), 'router-link-'));
+    symlinkSync(join(ROOT, 'skills'), join(dir, 'skills'));
+    const run = spawnSync(process.execPath, [join(dir, 'skills/sw-skill-router/scripts/route.mjs'), '--list'], {
+      encoding: 'utf8',
+    });
+    assert.equal(run.status, 0, run.stderr);
+    assert.match(run.stdout, /\| sw-storefront \|/u);
   });
 
   test('--list prints every routed skill', () => {

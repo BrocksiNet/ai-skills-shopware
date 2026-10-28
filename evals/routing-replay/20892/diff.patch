@@ -1,0 +1,12 @@
+diff --git a/src/Storefront/Resources/app/storefront/src/scss/component/_icon.scss b/src/Storefront/Resources/app/storefront/src/scss/component/_icon.scss
+--- a/src/Storefront/Resources/app/storefront/src/scss/component/_icon.scss
++++ b/src/Storefront/Resources/app/storefront/src/scss/component/_icon.scss
+@@ @@
+-    color: var(--text-color-brand-primary);
++    color: var(--sw-color-brand-primary, #{$sw-color-brand-primary});
+diff --git a/src/Storefront/Resources/app/storefront/src/scss/component/_product-box.scss b/src/Storefront/Resources/app/storefront/src/scss/component/_product-box.scss
+--- a/src/Storefront/Resources/app/storefront/src/scss/component/_product-box.scss
++++ b/src/Storefront/Resources/app/storefront/src/scss/component/_product-box.scss
+@@ @@
+-        color: var(--text-color-brand-primary);
++        color: var(--sw-color-brand-primary, #{$sw-color-brand-primary});

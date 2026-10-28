@@ -1,0 +1,14 @@
+```json
+{
+  "findings": [
+    {
+      "rule_id": "ADM-045",
+      "severity": "major",
+      "file": "src/Resources/app/administration/src/module/swag-loyalty/page/swag-loyalty-campaign-detail/index.js",
+      "line": 15,
+      "summary": "created() resets the store, which wipes the campaign the page is about to show.",
+      "fix": "Remove the reset from created()."
+    }
+  ]
+}
+```

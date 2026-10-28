@@ -1,0 +1,16 @@
+The deprecation tag on calculate() names no replacement, so an extension reading the docblock cannot tell what to call instead.
+
+```json
+{
+  "findings": [
+    {
+      "rule_id": "CORE-017",
+      "severity": "major",
+      "file": "src/Core/Content/Product/SalesChannel/Price/ProductPriceCalculator.php",
+      "line": 17,
+      "summary": "The @deprecated tag does not name the replacement; only the runtime message does.",
+      "fix": "Put the replacement in the tag: use ProductPriceBatchCalculator::calculate() instead."
+    }
+  ]
+}
+```

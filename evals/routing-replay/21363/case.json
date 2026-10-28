@@ -1,0 +1,15 @@
+{
+  "repo": "shopware/shopware",
+  "pr": 21363,
+  "title": "feat(core): add event to extend the product cart data context hash",
+  "url": "https://github.com/shopware/shopware/pull/21363",
+  "expected": {
+    "sw-architecture/references/extension-mechanisms.md": [
+      "https://github.com/shopware/shopware/pull/21363#discussion_r4244027555",
+      "https://github.com/shopware/shopware/pull/21363#discussion_r4245100945"
+    ],
+    "sw-core-development/references/release-notes-and-adr.md": [
+      "https://github.com/shopware/shopware/pull/21363#discussion_r4245348996"
+    ]
+  }
+}

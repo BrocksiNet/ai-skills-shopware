@@ -1,9 +1,5 @@
-# Task: stop importing another Admin module
+# Task: review follow-up on the orders module
 
-`swag-example-orders/index.ts` imports a component from
-`swag-example-products`. Administration modules stay independent.
-
-- Remove the direct import from `swag-example-products`.
-- Look the other module's component up through `Shopware.Component` (or a
-  shared app/core helper), not a relative module path.
-- Keep both modules. Do not merge them into one folder.
+Code review on our Administration extension flagged
+`swag-example-orders/index.ts`. Fix the problem. Keep both modules, and keep
+the files of each where they are; do not merge or move them.

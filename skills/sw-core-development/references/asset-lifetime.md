@@ -8,10 +8,6 @@ URLs must outlive the cache entries.
 
 ## Rules
 
-- **CORE-075** **Do not delete, move or overwrite a file a cached response can
-  reference** (theme CSS and JS under `theme/<hash>/`, media, thumbnails).
-  Write new files under a new path and retire the old ones later; pages cached
-  before the change keep requesting the old URL.
 - **CORE-076** **A grace period starts when the reference changes**, not at the
   file's modification time (see the `.retired` marker in
   `UnusedThemeDirectoryDeleter`). Measured from the mtime, a file written last
@@ -20,3 +16,7 @@ URLs must outlive the cache entries.
   or message handler, never in a command, request, compile step or deploy
   path. Those run right after the switch, when cached pages still use the old
   files.
+
+## Eval
+
+`review-asset-cleanup-catch` / `-ignore` (CORE-077).

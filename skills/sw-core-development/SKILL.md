@@ -1,12 +1,16 @@
 ---
 name: sw-core-development
 description: >-
-  Use when a shopware/shopware diff touches a public API, a deprecation,
-  the PHPStan baseline, or RELEASE_INFO. The question is whether the change
-  breaks extensions. A private bugfix in src/Core stays with shopware-php-code
-  when that skill is installed. Do NOT use for a plugin
-  (sw-plugin-development), an app (sw-app-development), or generic
-  PHP style (sw-php-foundation).
+  Rules for changing shopware/shopware itself that only core review knows.
+  Load it before any edit on Shopware core trunk (src/Core, src/Storefront,
+  src/Administration, src/Elasticsearch), even a small one: a migration, a
+  new or changed Store API route, a public method or service, a deprecation
+  or call to deprecated code, a feature flag, the PHPStan baseline, or
+  RELEASE_INFO. The question is whether the change breaks extensions or
+  fails core review. A private bugfix in src/Core stays with
+  shopware-php-code when that skill is installed. Do NOT use for a plugin
+  (sw-plugin-development), an app (sw-app-development), or generic PHP style
+  (sw-php-foundation).
 license: MIT
 metadata:
   contexts: core
@@ -41,7 +45,7 @@ Read only the reference that matches the task or the files it changes:
 | [`api-schema.md`](references/api-schema.md) | You add or change an Admin or Store API route. | `src/Core/Framework/Api/ApiDefinition/Generator/Schema/**`, `#[Route(` |
 | [`modernization-and-flags.md`](references/modernization-and-flags.md) | You modernize code behind a feature flag. | `src/Core/Framework/Resources/config/packages/feature.yaml`, `Feature::isActive(`, … |
 | [`release-notes-and-adr.md`](references/release-notes-and-adr.md) | The change needs RELEASE_INFO, UPGRADE or an ADR. | `RELEASE_INFO-*.md`, `UPGRADE-*.md`, … |
-| [`static-analysis-baseline.md`](references/static-analysis-baseline.md) | You touch the PHPStan baseline. | `phpstan-baseline.neon`, `phpstan*.neon`, … |
+| [`static-analysis-baseline.md`](references/static-analysis-baseline.md) | You touch the PHPStan baseline or suppress a PHPStan error. | `phpstan-baseline.neon`, `phpstan*.neon`, `@phpstan-ignore`, … |
 | [`platform-architecture.md`](references/platform-architecture.md) | You cross a bundle boundary or add a listener or migration. | `src/Core/Migration/**/Migration*.php`, `use Shopware\(Storefront\|Administration)\`, … |
 | [`removals-and-shims.md`](references/removals-and-shims.md) | You deprecate or remove an API, or add code that only lives until the next major. | `@deprecated tag:v`, … |
 | [`bc-data-and-config.md`](references/bc-data-and-config.md) | You change API flags or associations of a definition, a feature flag, a config default or a console command. | `Resources/config/packages/*.yaml`, `feature.yaml`, `new ApiAware(`, … |
@@ -51,24 +55,25 @@ Read only the reference that matches the task or the files it changes:
 
 ## Hard guardrails (refuse rather than violate)
 
-1. **CORE-001** **Never raise the PHPStan level without regenerating AND committing the
-   baseline in the same change.** Baselines shrink, never grow by deletion. If
-   asked to bump the level, do both or stop and explain.
-2. **CORE-002** **Never remove or change a public (non-`@internal`) symbol without a
+1. **CORE-002** **Never remove or change a public (non-`@internal`) symbol without a
    deprecation cycle.** Public API is removed only after it was deprecated in a
    prior minor and announced. If unsure whether something is public, treat it as
    public and check.
-3. **CORE-003** **Never ship a developer-facing change without a release note.** New
+2. **CORE-003** **Never ship a developer-facing change without a release note.** New
    features, extension points, new guidelines, and deprecations need a
    `RELEASE_INFO-6.x.md` entry; breaking changes need an `UPGRADE-6.x.md` entry.
    (You do NOT hand-write per-change changelog files anymore — the raw changelog
    is generated from PR titles. Internal refactors and small bug fixes need no
    entry.)
-4. **CORE-004** **Never edit generated files** (e.g. `schema/`, generated entity definitions,
+3. **CORE-004** **Never edit generated files** (e.g. `schema/`, generated entity definitions,
    `vendor/`). Regenerate via the documented command instead.
 
 ## Core deltas on top of sw-php-foundation
 
+- **The trunk PHP baseline applies to every line you touch.** No `empty()`
+  (`PHP-001`; PHPStan rejects it on trunk) and a backed `enum` for a fixed set
+  of values in new code (`PHP-002`). The rest of the baseline is in
+  `sw-php-foundation`.
 - **`@internal` discipline.** New classes that are not meant for extension are
   marked `@internal`. Respect existing `@internal` — do not call or extend it
   from outside its bundle.
@@ -94,9 +99,6 @@ Read only the reference that matches the task or the files it changes:
   and [`references/platform-architecture.md`](references/platform-architecture.md).
 - **Core API routes.** New Admin/Store API actions need OpenAPI JSON schemas and
   `ApiRoutesHaveASchemaTest` coverage — see [`references/api-schema.md`](references/api-schema.md).
-- **CORE-007** **Modernize, don't fossilize.** When Symfony or a newer platform service fits
-  on the pinned stack, adopt it behind `Feature::isActive()` and keep the legacy
-  path until the major — see [`references/modernization-and-flags.md`](references/modernization-and-flags.md).
 
 ## Definition of done
 
@@ -133,8 +135,6 @@ default; there the rule still needs a reviewer.
 - `CORE-015` `BCChangeAttributeUsageRule` (PHPStan, trunk only) reports `BCChange` attributes with a bad version, or that describe a change that is already true or not structurally possible. It misses an attribute that is valid but does not describe the change that is actually planned; flag those.
 - `CORE-017` `AnnotationTagTest` (test, trunk only) fails when an `@deprecated` in `src/` or `tests/` lacks a valid `tag:` or `manifest:` version, or names a future version. It misses a missing reason or replacement, and whitelisted paths such as `DevOps/StaticAnalyze`; flag those.
 - `CORE-022` `DeprecatedMethodsThrowDeprecationRule` (PHPStan, trunk only) reports public and protected methods of `@deprecated` classes, and `@deprecated` methods, whose body lacks `Feature::triggerDeprecationOrThrow(`. It misses private methods, a wrong flag argument, a call that is commented out, and entity or collection classes; flag those.
-- `CORE-037` `MigrationNameAndTimestampTest` (test, trunk only) fails when a core migration class is not named `Migration<digits>…` or `getCreationTimestamp()` differs from those digits. It misses an implausible or out-of-order timestamp, the file name, and the namespace and folder; flag those.
 - `CORE-054` `NoFileExistsRule` (PHPStan, trunk only) reports direct `file_exists()` calls. It misses every other raw filesystem function, such as `file_put_contents()`, `unlink()` and `mkdir()`; it does not ask for Symfony `Filesystem`; flag those.
-- `CORE-060` `PhpstanBaselineGrowth` (Danger, trunk only) fails a PR that adds net lines to `phpstan-baseline.php`. It misses a swap of one entry for another, inline `@phpstan-ignore`, and PRs labeled `skip-danger-phpstan-baseline`; flag those.
 - `CORE-061` `IgnoredPhpstanErrorsInTouchedFiles` (Danger, trunk only) fails a PR that touches a file listed in the PHPStan baseline. It misses inline `@phpstan-ignore` in touched files, and PRs labeled `skip-danger-phpstan-baseline`; flag those.
 <!-- enforced:end -->

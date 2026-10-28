@@ -1,0 +1,35 @@
+{
+  "repo": "shopware/shopware",
+  "pr": 19917,
+  "title": "fix(storefront): probe only storefront-visible pages in readiness checks",
+  "url": "https://github.com/shopware/shopware/pull/19917",
+  "commit": "1f0c407f74d826224de95830bdba9bc617658382",
+  "expected": {
+    "sw-plugin-development/references/dal-usage.md": [
+      "https://github.com/shopware/shopware/pull/19917#discussion_r4102108586",
+      "https://github.com/shopware/shopware/pull/19917#discussion_r4102119373"
+    ],
+    "sw-review-learnings/references/code-comments.md": [
+      "https://github.com/shopware/shopware/pull/19917#discussion_r4102108586"
+    ],
+    "sw-review-learnings/references/dal-and-performance.md": [
+      "https://github.com/shopware/shopware/pull/19917#discussion_r4102108586",
+      "https://github.com/shopware/shopware/pull/19917#discussion_r4102116944",
+      "https://github.com/shopware/shopware/pull/19917#discussion_r4102119373"
+    ]
+  },
+  "labels": [
+    {
+      "reference": "sw-review-learnings/references/dal-and-performance.md",
+      "rule": "REV-035",
+      "url": "https://github.com/shopware/shopware/pull/19917#discussion_r4102108586",
+      "why": "Blocking finding: the category lookup by ID misses Dynamic Access restrictions applied on loaded entities."
+    },
+    {
+      "reference": "sw-review-learnings/references/code-comments.md",
+      "rule": "REV-034",
+      "url": "https://github.com/shopware/shopware/pull/19917#discussion_r4102119373",
+      "why": "A code comment argues against a filter from an earlier revision of the PR."
+    }
+  ]
+}

@@ -21,14 +21,15 @@
     },
     {
       "reference": "references/dal-and-performance.md",
-      "when": "The code queries the DAL, runs on a hot path, or dispatches queued work.",
+      "when": "The code queries the DAL, checks what a customer can see, runs on a hot path, or dispatches queued work.",
       "anchors_any": [
         "new Criteria\\(",
         "MessageBusInterface",
         "->dispatch\\(new [A-Za-z]+Message\\(",
         "->addAssociation\\(",
         "EqualsFilter\\(",
-        "->fetch(All|One|Associative|FirstColumn)[A-Za-z]*\\("
+        "->fetch(All|One|Associative|FirstColumn)[A-Za-z]*\\(",
+        "->searchIds\\("
       ]
     },
     {
@@ -37,6 +38,29 @@
       "anchors_any": [
         "(class|method|interface)_exists\\((\\\\?Shopware\\b|[A-Z][A-Za-z]+::class)"
       ]
+    },
+    {
+      "reference": "references/feature-flags.md",
+      "when": "The change reads a Shopware feature flag, or an environment variable that may be one.",
+      "anchors_any": [
+        "getenv\\(",
+        "\\$_(SERVER|ENV)\\[",
+        "Feature::has\\("
+      ]
+    },
+    {
+      "reference": "references/code-comments.md",
+      "when": "The change adds or edits comments or docblocks that talk about earlier versions, removed code or the issue.",
+      "anchors_any": [
+        "^\\s*(//|#|\\*|/\\*).*\\b([Pp]reviously|[Oo]riginally|used to|no longer (used|needed|necessary|required|called|supported|exists?|works?|applies)|[Ee]arlier (version|revision|approach)|[Bb]efore this (change|PR|fix)|this (PR|pull request)|was (changed|replaced|removed) (to|in|with)|instead of the old)\\b",
+        "^\\s*(//|#|\\*|/\\*).*(^|[\\s(])#\\d{5}\\b",
+        "^\\s*(//|#|\\*|/\\*).*\\binstead would\\b"
+      ]
+    },
+    {
+      "reference": "references/pr-size.md",
+      "when": "Any review of a change: the changed-line count and whether it bundles separate concerns.",
+      "always": true
     },
     {
       "reference": "references/change-scope.md",
