@@ -832,13 +832,15 @@
     {
       "id": "PLG-006",
       "skill": "sw-plugin-development",
-      "file": "skills/sw-plugin-development/SKILL.md",
-      "title": "Controllers delegate to services",
+      "file": "skills/sw-plugin-development/references/api-contracts.md",
+      "title": "Keep controllers thin: one injected service does the work",
       "status": "active",
       "since": "2026-10-20",
       "eval": "business-logic-in-controller",
+      "keep_reason": "Held on claude/haiku (2026-10-28): it keeps controllers thin and flags a fat one in review without the rule. Kept as the one ID for the topic after merging REV-010 and CORE-035; with the skill on, the review cites PLG-006, with it off it reports rule_id null. Re-check with a small open model before dropping.",
       "core_guide_ids": [],
       "audience": [
+        "core",
         "plugin"
       ],
       "defer_on_trunk": false
@@ -1411,18 +1413,17 @@
       "skill": "sw-review-learnings",
       "file": "skills/sw-review-learnings/SKILL.md",
       "title": "No business logic in controllers",
-      "status": "active",
+      "status": "superseded:PLG-006",
+      "retired_reason": "Merged into PLG-006 (2026-10-28): three IDs covered one topic. PLG-006 now sits in sw-plugin-development/references/api-contracts.md, which sw-extension-review borrows, so build and review cite the same ID. The skill text keeps a pointer to `PLG-006`.",
       "since": "2026-10-20",
-      "eval": "business-logic-in-controller",
+      "eval": null,
       "core_guide_ids": [],
       "audience": [
         "core",
         "plugin"
       ],
       "defer_on_trunk": false,
-      "see": [
-        "PLG-006"
-      ]
+      "eval_reason": "Superseded by PLG-006."
     },
     {
       "id": "REV-011",
@@ -2429,17 +2430,16 @@
       "skill": "sw-core-development",
       "file": "skills/sw-core-development/references/platform-architecture.md",
       "title": "Thin controllers delegate to services",
-      "status": "active",
+      "status": "superseded:PLG-006",
+      "retired_reason": "Merged into PLG-006 (2026-10-28): three IDs covered one topic. PLG-006 now sits in sw-plugin-development/references/api-contracts.md, which sw-extension-review borrows, so build and review cite the same ID. The skill text keeps a pointer to `PLG-006`.",
       "since": "2026-10-20",
-      "eval": "business-logic-in-controller",
+      "eval": null,
       "core_guide_ids": [],
       "audience": [
         "core"
       ],
       "defer_on_trunk": false,
-      "see": [
-        "PLG-006"
-      ]
+      "eval_reason": "Superseded by PLG-006."
     },
     {
       "id": "CORE-036",

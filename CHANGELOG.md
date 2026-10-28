@@ -83,6 +83,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   changed tasks, and a draft PR opens with the evidence, the criteria
   answers, the checks and the A/B table, labelled `run-evals`. `--no-pr`
   stops before the push. See `docs/maintenance.md#drafting-a-proposal`.
+- Review pair `review-thin-controller-catch` / `-ignore` for `PLG-006`: a
+  Store API balance route in a loyalty plugin. In the catch diff the
+  controller builds the Criteria, runs the aggregation and picks the tier;
+  in the ignore diff it calls one injected calculator service.
+  Haiku passes both with skills off too (3/3 each), so `PLG-006` gets a
+  `keep_reason`: with the skill on, the review cites `PLG-006`; with it off,
+  it gives no rule ID. The catch grader accepts `minor`, because the
+  review's severity scale calls working but costly code minor.
 
 ### Changed
 
@@ -124,6 +132,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   blocklist in `CustomerEmailValidator`, and review moderation states. With
   skills off, Haiku kept `empty()` in 3 of 3 runs, and with skills on it
   removed it in 3 of 3. `PHP-002` holds on Haiku and keeps a `keep_reason`.
+- Thin controllers are one rule now, `PLG-006`, stated in
+  `sw-plugin-development/references/api-contracts.md` with audience core and
+  plugin. `REV-010` (sw-review-learnings) and `CORE-035`
+  (sw-core-development) said the same thing; they are superseded by
+  `PLG-006`, and both skills point at it. The rule lives in a reference the
+  extension review reads, so a review can cite it.
 - `dal-search-without-limit`, `business-logic-in-controller` and
   `no-dal-connection-for-entity-read` ask for a feature now instead of a fix
   that names the rule. On the old prompts every profile passed them with

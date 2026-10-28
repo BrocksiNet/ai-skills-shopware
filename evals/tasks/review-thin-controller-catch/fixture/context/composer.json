@@ -1,0 +1,20 @@
+{
+    "name": "swag/loyalty",
+    "description": "Loyalty points for customers",
+    "type": "shopware-platform-plugin",
+    "license": "MIT",
+    "autoload": {
+        "psr-4": {
+            "Swag\\Loyalty\\": "src/"
+        }
+    },
+    "require": {
+        "shopware/core": "~6.6.0 || ~6.7.0"
+    },
+    "extra": {
+        "shopware-plugin-class": "Swag\\Loyalty\\SwagLoyalty",
+        "label": {
+            "en-GB": "Loyalty"
+        }
+    }
+}

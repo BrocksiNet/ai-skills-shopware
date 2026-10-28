@@ -79,9 +79,9 @@ Detailed, growing lists live in references. Read only the one that matches the c
 - **REV-009** **New Store-API / Admin API route without OpenAPI schema.** Endpoints ship with
   no schema entry — headless clients and API docs drift. Add or extend the OpenAPI
   definition for every new public route. (See `references/api-aware.md`.)
-- **REV-010** **Business logic in controllers.** DAL calls, rules, orchestration, or branching
-  live in a controller instead of an injected service. Thin controllers: validate
-  input, delegate, return response. (Owning topic: `sw-plugin-development`.)
+- **Business logic in controllers** (`PLG-006`). DAL calls, rules or branching
+  live in a controller instead of an injected service. (Owning topic:
+  `sw-plugin-development` -> `references/api-contracts.md`.)
 - **REV-012** **`updateDestructive()` misused.** Long-running backfills or heavy work do not
   belong in destructive migrations; never edit shipped migrations — add a new class.
   (Owning topic: `sw-plugin-development` -> `references/migrations.md`; core:

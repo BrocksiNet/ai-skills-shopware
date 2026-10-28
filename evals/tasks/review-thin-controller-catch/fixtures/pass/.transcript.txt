@@ -1,0 +1,16 @@
+The new balance route works, but the controller does the data access and the tier rules itself.
+
+```json
+{
+  "findings": [
+    {
+      "rule_id": "PLG-006",
+      "severity": "minor",
+      "file": "src/Controller/LoyaltyBalanceController.php",
+      "line": 51,
+      "summary": "The controller injects the loyalty transaction repository, builds the Criteria and sum aggregation and computes the tier, so the balance logic cannot be tested without HTTP or reused from a CLI command or subscriber.",
+      "fix": "Move the query and the tier thresholds into an injected LoyaltyBalanceCalculator service and let the action call it."
+    }
+  ]
+}
+```

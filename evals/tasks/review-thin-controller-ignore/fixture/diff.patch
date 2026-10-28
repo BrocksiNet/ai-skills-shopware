@@ -1,0 +1,141 @@
+diff --git a/src/Controller/LoyaltyBalanceController.php b/src/Controller/LoyaltyBalanceController.php
+new file mode 100644
+index 0000000..903714a
+--- /dev/null
++++ b/src/Controller/LoyaltyBalanceController.php
+@@ -0,0 +1,47 @@
++<?php declare(strict_types=1);
++
++namespace Swag\Loyalty\Controller;
++
++use OpenApi\Attributes as OA;
++use Shopware\Core\System\SalesChannel\SalesChannelContext;
++use Swag\Loyalty\Service\LoyaltyBalanceCalculator;
++use Symfony\Component\HttpFoundation\JsonResponse;
++use Symfony\Component\Routing\Attribute\Route;
++
++#[Route(defaults: ['_routeScope' => ['store-api']])]
++class LoyaltyBalanceController
++{
++    public function __construct(
++        private readonly LoyaltyBalanceCalculator $balanceCalculator,
++    ) {
++    }
++
++    #[Route(
++        path: '/store-api/loyalty/balance',
++        name: 'store-api.swag-loyalty.balance',
++        defaults: ['_loginRequired' => true],
++        methods: ['GET'],
++    )]
++    #[OA\Get(
++        path: '/store-api/loyalty/balance',
++        operationId: 'readLoyaltyBalance',
++        description: 'Points balance and tier of the logged-in customer.',
++        tags: ['Store API', 'Loyalty'],
++        responses: [
++            new OA\Response(
++                response: 200,
++                description: 'Balance and tier',
++                content: new OA\JsonContent(properties: [
++                    new OA\Property(property: 'points', type: 'integer'),
++                    new OA\Property(property: 'tier', type: 'string', enum: ['bronze', 'silver', 'gold']),
++                ]),
++            ),
++        ],
++    )]
++    public function balance(SalesChannelContext $context): JsonResponse
++    {
++        $balance = $this->balanceCalculator->forCustomer($context->getCustomerId(), $context->getContext());
++
++        return new JsonResponse(['points' => $balance->points, 'tier' => $balance->tier]);
++    }
++}
+diff --git a/src/Resources/config/services.xml b/src/Resources/config/services.xml
+index f55bfdf..ec516de 100644
+--- a/src/Resources/config/services.xml
++++ b/src/Resources/config/services.xml
+@@ -6,5 +6,13 @@
+         <service id="Swag\Loyalty\Core\Content\LoyaltyTransaction\LoyaltyTransactionDefinition">
+             <tag name="shopware.entity.definition" entity="swag_loyalty_transaction"/>
+         </service>
++
++        <service id="Swag\Loyalty\Service\LoyaltyBalanceCalculator">
++            <argument type="service" id="swag_loyalty_transaction.repository"/>
++        </service>
++
++        <service id="Swag\Loyalty\Controller\LoyaltyBalanceController" public="true">
++            <argument type="service" id="Swag\Loyalty\Service\LoyaltyBalanceCalculator"/>
++        </service>
+     </services>
+ </container>
+diff --git a/src/Service/LoyaltyBalance.php b/src/Service/LoyaltyBalance.php
+new file mode 100644
+index 0000000..3249f53
+--- /dev/null
++++ b/src/Service/LoyaltyBalance.php
+@@ -0,0 +1,12 @@
++<?php declare(strict_types=1);
++
++namespace Swag\Loyalty\Service;
++
++final readonly class LoyaltyBalance
++{
++    public function __construct(
++        public int $points,
++        public string $tier,
++    ) {
++    }
++}
+diff --git a/src/Service/LoyaltyBalanceCalculator.php b/src/Service/LoyaltyBalanceCalculator.php
+new file mode 100644
+index 0000000..34625af
+--- /dev/null
++++ b/src/Service/LoyaltyBalanceCalculator.php
+@@ -0,0 +1,46 @@
++<?php declare(strict_types=1);
++
++namespace Swag\Loyalty\Service;
++
++use Shopware\Core\Framework\Context;
++use Shopware\Core\Framework\DataAbstractionLayer\EntityRepository;
++use Shopware\Core\Framework\DataAbstractionLayer\Search\Aggregation\Metric\SumAggregation;
++use Shopware\Core\Framework\DataAbstractionLayer\Search\AggregationResult\Metric\SumResult;
++use Shopware\Core\Framework\DataAbstractionLayer\Search\Criteria;
++use Shopware\Core\Framework\DataAbstractionLayer\Search\Filter\EqualsFilter;
++use Shopware\Core\Framework\DataAbstractionLayer\Search\Filter\MultiFilter;
++use Shopware\Core\Framework\DataAbstractionLayer\Search\Filter\RangeFilter;
++
++class LoyaltyBalanceCalculator
++{
++    public function __construct(
++        private readonly EntityRepository $loyaltyTransactionRepository,
++    ) {
++    }
++
++    public function forCustomer(?string $customerId, Context $context): LoyaltyBalance
++    {
++        $criteria = new Criteria();
++        $criteria->addFilter(new EqualsFilter('customerId', $customerId));
++        $criteria->addFilter(new MultiFilter(MultiFilter::CONNECTION_OR, [
++            new EqualsFilter('expiresAt', null),
++            new RangeFilter('expiresAt', [RangeFilter::GT => (new \DateTimeImmutable())->format(\DATE_ATOM)]),
++        ]));
++        $criteria->setLimit(1);
++        $criteria->addAggregation(new SumAggregation('points', 'points'));
++
++        $sum = $this->loyaltyTransactionRepository->aggregate($criteria, $context)->get('points');
++        $points = $sum instanceof SumResult ? (int) $sum->getSum() : 0;
++
++        return new LoyaltyBalance($points, $this->tier($points));
++    }
++
++    private function tier(int $points): string
++    {
++        return match (true) {
++            $points >= 5000 => 'gold',
++            $points >= 1000 => 'silver',
++            default => 'bronze',
++        };
++    }
++}

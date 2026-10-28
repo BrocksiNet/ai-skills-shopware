@@ -67,9 +67,9 @@ Read only the reference that matches the task or the files it changes:
 Inherits all **`sw-php-foundation` trunk habits** (`empty()`, interface injection,
 `ClockInterface`, typing). Also:
 
-- **PLG-006** **Thin controllers** — delegate to services; see `sw-architecture` and
-  `sw-review-learnings`. New Store-API routes need OpenAPI (see
-  `api-contracts.md`) and ACL (`sw-security`).
+- **Thin controllers** (`PLG-006`): the action calls one injected service,
+  which does the DAL work. New Store-API routes need OpenAPI and ACL too; see
+  [`api-contracts.md`](references/api-contracts.md) and `sw-security`.
 - **DAL first.** Read with `Criteria` (add associations before filtering on them;
   avoid N+1; request only the fields/associations you need). Every search
   sets a limit; a job that needs every row pages through them in a loop with
