@@ -14,6 +14,14 @@ Every **new public** Store-API or Admin API route must ship:
 4. **PLG-013** **Headless parity** — data shown only in Twig should also have a Store-API route
    when headless clients need it (`sw-review-learnings` → `api-aware.md`).
 
+## Controllers
+
+- **PLG-006** **Keep controllers thin.** A route action reads the request, calls
+  one injected service and turns the result into a response. Repository
+  calls, `Criteria`, SQL, business rules and branching on domain state belong
+  in that service, even for a small route. The service can then be tested
+  without HTTP and reused from a CLI command, a subscriber or another route.
+
 ## Changing a released route
 
 Headless clients and apps parse the response you shipped. They break on a

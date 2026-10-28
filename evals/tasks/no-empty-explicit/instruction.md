@@ -1,7 +1,10 @@
-# Task: remove empty()
+# Task: block email domains at customer registration (core)
 
-Refactor `fixture/UserValidator.php` so it **does not use `empty()`**. Use explicit
-checks instead (`=== null`, `=== ''`, or separate guards) while keeping the same
-behaviour for null, empty string, and valid emails.
+You are working on Shopware core (`shopware/shopware` trunk).
+`CustomerEmailValidator` in `src/Core/Checkout/Customer/Validation/` decides
+whether a registration email is accepted. Shop owners want to reject
+addresses from a configurable list of blocked domains.
 
-Do not add tests unless you need them; focus on the production class only.
+Give the validator the list of blocked domains (an empty list blocks nothing)
+and reject an email whose domain is on the list, ignoring case. Everything
+else is accepted or rejected as today. Leave the service wiring to us.

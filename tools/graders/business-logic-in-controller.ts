@@ -32,9 +32,11 @@ function typedProperties(code: string): [string, string][] {
   return out;
 }
 
-/** The name of the method carrying a #[Route] attribute, if any. */
+/** The name of the first method carrying a #[Route] attribute, if any. A
+ *  class-level #[Route] (the Store API scope) is followed by `class`, not by
+ *  a method, so it does not count. */
 function routeAction(code: string): string | undefined {
-  return /#\[Route\b[\s\S]*?function\s+(\w+)\s*\(/u.exec(code)?.[1];
+  return /#\[Route\b(?:(?!\bclass\b|\bfunction\b)[\s\S])*?\bfunction\s+(\w+)\s*\(/u.exec(code)?.[1];
 }
 
 /** PHP files other than `skip` that declare class `type` or a class

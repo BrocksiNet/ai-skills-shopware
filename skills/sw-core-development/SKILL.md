@@ -1,12 +1,16 @@
 ---
 name: sw-core-development
 description: >-
-  Use when a shopware/shopware diff touches a public API, a deprecation,
-  the PHPStan baseline, or RELEASE_INFO. The question is whether the change
-  breaks extensions. A private bugfix in src/Core stays with shopware-php-code
-  when that skill is installed. Do NOT use for a plugin
-  (sw-plugin-development), an app (sw-app-development), or generic
-  PHP style (sw-php-foundation).
+  Rules for changing shopware/shopware itself that only core review knows.
+  Load it before any edit on Shopware core trunk (src/Core, src/Storefront,
+  src/Administration, src/Elasticsearch), even a small one: a migration, a
+  new or changed Store API route, a public method or service, a deprecation
+  or call to deprecated code, a feature flag, the PHPStan baseline, or
+  RELEASE_INFO. The question is whether the change breaks extensions or
+  fails core review. A private bugfix in src/Core stays with
+  shopware-php-code when that skill is installed. Do NOT use for a plugin
+  (sw-plugin-development), an app (sw-app-development), or generic PHP style
+  (sw-php-foundation).
 license: MIT
 metadata:
   contexts: core
@@ -66,6 +70,10 @@ Read only the reference that matches the task or the files it changes:
 
 ## Core deltas on top of sw-php-foundation
 
+- **The trunk PHP baseline applies to every line you touch.** No `empty()`
+  (`PHP-001`; PHPStan rejects it on trunk) and a backed `enum` for a fixed set
+  of values in new code (`PHP-002`). The rest of the baseline is in
+  `sw-php-foundation`.
 - **`@internal` discipline.** New classes that are not meant for extension are
   marked `@internal`. Respect existing `@internal` — do not call or extend it
   from outside its bundle.

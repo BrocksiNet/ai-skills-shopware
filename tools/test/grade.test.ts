@@ -112,7 +112,10 @@ describe('review graders', () => {
 
 describe('gradeTask and the grade bin', () => {
   test('runs a task grader; rejects unknown and odd task names', async () => {
-    const workdir = tree({ 'src/UserValidator.php': "class UserValidator { if ($name === '') {} }" });
+    const workdir = tree({
+      'src/CustomerEmailValidator.php':
+        'class CustomerEmailValidator { public function __construct(private array $blockedDomains) {} }',
+    });
     assert.equal((await gradeTask(ROOT, 'no-empty-explicit', { workdir, transcript: '' })).pass, true);
     await assert.rejects(gradeTask(ROOT, 'no-such-task', { workdir, transcript: '' }), /no grader/u);
     await assert.rejects(gradeTask(ROOT, '../x', { workdir, transcript: '' }), /bad task name/u);
@@ -126,14 +129,14 @@ describe('gradeTask and the grade bin', () => {
   test('prints the score and exits 0, 1, or 2 on bad usage', () => {
     const bin = join(ROOT, 'tools/bin/grade.ts');
     const pass = spawnSync('node', [bin, 'no-empty-explicit'], {
-      env: env(tree({ 'UserValidator.php': 'class UserValidator { x !== null; }' })),
+      env: env(tree({ 'CustomerEmailValidator.php': 'class CustomerEmailValidator { $blockedDomains !== []; }' })),
       encoding: 'utf8',
     });
     assert.equal(pass.status, 0);
-    assert.equal(pass.stdout, 'score=1 (uses_empty=0 explicit_check=1)\n');
+    assert.equal(pass.stdout, 'score=1 (uses_empty=0 blocklist=1)\n');
     const failed = spawnSync('node', [bin, 'no-empty-explicit'], { env: env(tree({})), encoding: 'utf8' });
     assert.equal(failed.status, 1);
-    assert.equal(failed.stdout, 'score=0 (UserValidator.php not found)\n');
+    assert.equal(failed.stdout, 'score=0 (CustomerEmailValidator.php not found)\n');
     assert.equal(spawnSync('node', [bin], { env: env(tmp), encoding: 'utf8' }).status, 2);
   });
 });

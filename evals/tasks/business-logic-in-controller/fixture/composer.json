@@ -1,0 +1,20 @@
+{
+    "name": "swag/example",
+    "description": "Storefront and Store API extras for the example shop",
+    "type": "shopware-platform-plugin",
+    "license": "MIT",
+    "autoload": {
+        "psr-4": {
+            "Swag\\Example\\": "src/"
+        }
+    },
+    "require": {
+        "shopware/core": "~6.6.0 || ~6.7.0"
+    },
+    "extra": {
+        "shopware-plugin-class": "Swag\\Example\\SwagExample",
+        "label": {
+            "en-GB": "Example"
+        }
+    }
+}

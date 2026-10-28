@@ -83,9 +83,61 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   changed tasks, and a draft PR opens with the evidence, the criteria
   answers, the checks and the A/B table, labelled `run-evals`. `--no-pr`
   stops before the push. See `docs/maintenance.md#drafting-a-proposal`.
+- Review pair `review-thin-controller-catch` / `-ignore` for `PLG-006`: a
+  Store API balance route in a loyalty plugin. In the catch diff the
+  controller builds the Criteria, runs the aggregation and picks the tier;
+  in the ignore diff it calls one injected calculator service.
+  Haiku passes both with skills off too (3/3 each), so `PLG-006` gets a
+  `keep_reason`: with the skill on, the review cites `PLG-006`; with it off,
+  it gives no rule ID. The catch grader accepts `minor`, because the
+  review's severity scale calls working but costly code minor.
 
 ### Changed
 
+- The descriptions of `sw-plugin-development`, `sw-architecture`,
+  `sw-testing`, `sw-php-foundation`, `sw-core-development`, `sw-storefront`
+  and `sw-admin-js` say to load the skill before an edit, even a small and
+  fully specified one, and name the kinds of code that need it. In the
+  baseline, Haiku loaded no skill on build tasks it felt sure about. On 17
+  of those tasks it now loads one in 41 of 51 runs. No should-not-trigger
+  prompt of these skills fires. `sw-architecture` no longer tells the agent
+  to skip it for "one obvious edit". `sw-plugin-development` points at the
+  limit rule `ARCH-002`, because Haiku loads it without `sw-architecture`.
+- `ARCH-002` says how to read every row: a job that needs all of them pages
+  in a loop with `RepositoryIterator`, or with `IteratorFactory` or a DBAL
+  query and a last-ID cursor for a plain ID scan. One `setLimit()` without
+  the loop drops the rest. The old text allowed an undefined "export
+  exception".
+- `dal-search-without-limit` asks for a category teaser in a plugin with a
+  composer.json and a plugin class, instead of filtering a method called
+  `loadAll()`. On the old prompt the agent rightly refused to truncate "all".
+  Its grader checks every method that searches, following calls to helpers
+  in the class, so a limit in an unused helper no longer passes. Haiku: 3/3
+  with skills on, 0/3 off.
+- New task `dal-export-pages-through-all`: a nightly CLI export of every
+  product ID in a category. It passes only when a method that reads products
+  pages in a loop. A single `setLimit()` read fails. The new
+  `tools/src/grade/php-calls.ts` follows same-class calls for both DAL
+  graders. Haiku pages here without the skill, so the task holds.
+- `business-logic-in-controller` runs in a plugin skeleton and no longer
+  reads as "write one file". Its grader skipped a class-level `#[Route]`
+  (the Store API scope) and took the constructor for the route action, which
+  failed correct solutions.
+- `PHP-001` (no `empty()`) and `PHP-002` (backed enums for a fixed set of
+  values in new code) are tagged in `sw-php-foundation` with audience
+  `core`. `PHP-001` is enforced on trunk by PHPStan's `disallowedEmpty`;
+  `PHP-002` comes from the core coding guideline on PHP 8.1 features.
+  `sw-core-development` points at both, because Haiku loads it for core work
+  without `sw-php-foundation`. Their tasks are core features now: a domain
+  blocklist in `CustomerEmailValidator`, and review moderation states. With
+  skills off, Haiku kept `empty()` in 3 of 3 runs, and with skills on it
+  removed it in 3 of 3. `PHP-002` holds on Haiku and keeps a `keep_reason`.
+- Thin controllers are one rule now, `PLG-006`, stated in
+  `sw-plugin-development/references/api-contracts.md` with audience core and
+  plugin. `REV-010` (sw-review-learnings) and `CORE-035`
+  (sw-core-development) said the same thing; they are superseded by
+  `PLG-006`, and both skills point at it. The rule lives in a reference the
+  extension review reads, so a review can cite it.
 - `dal-search-without-limit`, `business-logic-in-controller` and
   `no-dal-connection-for-entity-read` ask for a feature now instead of a fix
   that names the rule. On the old prompts every profile passed them with

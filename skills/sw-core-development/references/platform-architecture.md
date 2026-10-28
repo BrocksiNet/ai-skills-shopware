@@ -42,7 +42,7 @@ Details: [`service-architecture.md`](service-architecture.md#classes-final-and-i
 
 ## HTTP / session
 
-- **CORE-035** **Thin controllers** — validate input, delegate to a service, return a response.
+- **Thin controllers** (`PLG-006`) — validate input, delegate to a service, return a response.
   No DAL orchestration or business rules in controllers when a service suffices.
 - **CORE-036** **Avoid lazy sessions** on read paths. Use safe session checks (`hasSession()`,
   request attributes) instead of touching the session when not required.

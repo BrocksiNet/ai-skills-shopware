@@ -1,15 +1,17 @@
 ---
 name: sw-architecture
 description: >-
-  Use when introducing a new Shopware architecture, or when a change can
-  break an existing one without the diff saying so. That includes a new
-  extension structure, a boundary between Core and Storefront or
-  Administration, a second path that fails silently for callers on the old
-  one, an event versus a decoration versus a core edit, and a repository
-  search with no limit. Do NOT use to write the ADR or RELEASE_INFO
-  (sw-core-development), for route privileges (sw-security),
-  or for a private bugfix with one obvious edit (shopware-php-code or
-  sw-plugin-development).
+  Shopware design decisions a plain edit gets wrong: where logic lives
+  (route or controller versus service), how data is read (repository with a
+  limit, not raw SQL on an entity table), and how code is extended (event,
+  decoration, or a core edit). Load it before adding or changing a route,
+  controller, service, repository or Criteria read, event, or extension
+  point in Shopware PHP, even when the task looks like one obvious edit.
+  Also use when a change can break an existing design without the diff
+  saying so: a new extension structure, a boundary between Core and
+  Storefront or Administration, or a second path that fails silently for
+  callers on the old one. Do NOT use to write the ADR or RELEASE_INFO
+  (sw-core-development) or for route privileges (sw-security).
 license: MIT
 metadata:
   contexts: core plugin app project
@@ -57,8 +59,13 @@ Read only the reference that matches the task or the files it changes:
 
 ## Hard guardrails
 
-1. **ARCH-002** **Never unbounded DAL reads** on large entities — always `setLimit` / pagination
-   unless a documented admin/export exception.
+1. **ARCH-002** **Never unbounded DAL reads** on large entities. A read for a page,
+   a widget or an API response sets a limit. A job that needs every row (an
+   export, a CLI command, an indexer) pages through them in a loop:
+   `RepositoryIterator` on the DAL, or for a plain ID scan `IteratorFactory` or
+   a DBAL query with a limit and a last-ID cursor (core does this in indexers;
+   a plugin states why, see `PLG-003`). One `setLimit()` without the loop drops
+   every row after the first page.
 2. **Never use Doctrine `Connection` for entity CRUD** when `EntityRepository` +
    `Criteria` express the query (`PLG-003`).
 3. **ARCH-003** **Never silent behaviour change** on paths extensions observe — flag, release

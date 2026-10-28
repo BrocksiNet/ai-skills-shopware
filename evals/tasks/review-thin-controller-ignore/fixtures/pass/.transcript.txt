@@ -1,0 +1,16 @@
+The action calls the injected LoyaltyBalanceCalculator, which owns the query and the tier thresholds.
+
+```json
+{
+  "findings": [
+    {
+      "rule_id": null,
+      "severity": "nit",
+      "file": "src/Service/LoyaltyBalanceCalculator.php",
+      "line": 40,
+      "summary": "The tier thresholds 5000 and 1000 are magic numbers.",
+      "fix": "Name them as class constants."
+    }
+  ]
+}
+```

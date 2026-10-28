@@ -1,14 +1,15 @@
 ---
 name: sw-storefront
 description: >-
-  Apply Shopware 6 Storefront rules for Twig, themes, Bootstrap/SCSS, and
-  PluginManager JS. Use when editing storefront templates, Twig blocks, theme
-  inheritance, storefront JavaScript plugins, or storefront SCSS under
-  src/Storefront, Resources/views/storefront, or Resources/app/storefront,
-  including Twig 4 changes such as the removed spaceless filter and null HTML
-  attributes. Do NOT use for Administration Vue/Jest (sw-admin-js), PHP
-  DAL/services (surface PHP skills), or generic modern CSS lectures (research
-  + Modern Web Guidance after Shopware primitives are checked).
+  Shopware 6 Storefront rules for Twig, themes, Bootstrap/SCSS, and
+  PluginManager JS. Load it before editing any storefront template, Twig
+  block, snippet, theme, storefront JavaScript plugin, or storefront SCSS,
+  even a small override: under src/Storefront, Resources/views/storefront,
+  or Resources/app/storefront, including Twig 4 changes such as the removed
+  spaceless filter and null HTML attributes. Do NOT use for Administration
+  Vue/Jest (sw-admin-js), PHP DAL/services (surface PHP skills), or generic
+  modern CSS lectures (research + Modern Web Guidance after Shopware
+  primitives are checked).
 license: MIT
 metadata:
   contexts: core plugin app project

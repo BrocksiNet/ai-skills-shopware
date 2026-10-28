@@ -1,0 +1,22 @@
+```json
+{
+  "findings": [
+    {
+      "rule_id": "PLG-006",
+      "severity": "nit",
+      "file": "src/Controller/LoyaltyBalanceController.php",
+      "line": 51,
+      "summary": "The controller builds the Criteria itself; consider a service.",
+      "fix": "Extract a service."
+    },
+    {
+      "rule_id": "ARCH-002",
+      "severity": "minor",
+      "file": "src/Controller/LoyaltyBalanceController.php",
+      "line": 61,
+      "summary": "The controller runs the repository aggregation and tier logic directly in the route action.",
+      "fix": "Move the query and the tier thresholds into a service."
+    }
+  ]
+}
+```

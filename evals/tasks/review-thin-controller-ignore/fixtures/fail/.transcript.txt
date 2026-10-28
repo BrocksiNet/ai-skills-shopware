@@ -1,0 +1,14 @@
+```json
+{
+  "findings": [
+    {
+      "rule_id": null,
+      "severity": "major",
+      "file": "src/Controller/LoyaltyBalanceController.php",
+      "line": 47,
+      "summary": "The controller holds the balance business logic instead of delegating to a service.",
+      "fix": "Move the logic into a service."
+    }
+  ]
+}
+```

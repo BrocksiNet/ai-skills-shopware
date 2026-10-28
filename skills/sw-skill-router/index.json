@@ -17,7 +17,7 @@
   "skills": [
     {
       "name": "sw-admin-js",
-      "summary": "Apply Shopware 6 Administration rules for JS, TypeScript, Vue, and Jest.",
+      "summary": "Shopware 6 Administration rules for JS, TypeScript, Vue, and Jest.",
       "contexts": [
         "core",
         "plugin",
@@ -142,7 +142,7 @@
     },
     {
       "name": "sw-architecture",
-      "summary": "Use when introducing a new Shopware architecture, or when a change can break an existing one without the diff saying so.",
+      "summary": "Shopware design decisions a plain edit gets wrong: where logic lives (route or controller versus service), how data is read (repository with a limit, not raw SQL on an entity table), and how code is extended (event, decoration, or a core edit).",
       "contexts": [
         "core",
         "plugin",
@@ -319,7 +319,7 @@
     },
     {
       "name": "sw-core-development",
-      "summary": "Use when a shopware/shopware diff touches a public API, a deprecation, the PHPStan baseline, or RELEASE_INFO.",
+      "summary": "Rules for changing shopware/shopware itself that only core review knows.",
       "contexts": [
         "core"
       ],
@@ -1065,7 +1065,7 @@
     },
     {
       "name": "sw-php-foundation",
-      "summary": "Apply the strict, modern PHP 8.x baseline to Shopware code.",
+      "summary": "The strict, modern PHP 8.x baseline for Shopware code.",
       "contexts": [
         "core",
         "plugin",
@@ -1084,7 +1084,7 @@
     },
     {
       "name": "sw-plugin-development",
-      "summary": "Extend Shopware 6 with PHP plugins and a shop project's own backend code.",
+      "summary": "Shopware 6 plugin and shop project backend rules that the code alone does not show.",
       "contexts": [
         "plugin",
         "project"
@@ -1527,7 +1527,7 @@
     },
     {
       "name": "sw-storefront",
-      "summary": "Apply Shopware 6 Storefront rules for Twig, themes, Bootstrap/SCSS, and PluginManager JS.",
+      "summary": "Shopware 6 Storefront rules for Twig, themes, Bootstrap/SCSS, and PluginManager JS.",
       "contexts": [
         "core",
         "plugin",
@@ -1606,7 +1606,7 @@
     },
     {
       "name": "sw-testing",
-      "summary": "Use when writing a Shopware PHPUnit test in a plugin or project, or when a trunk test is in the wrong suite, missing a Package attribute, flaky, or failing Codecov.",
+      "summary": "Shopware PHPUnit rules that generic PHPUnit knowledge misses.",
       "contexts": [
         "core",
         "plugin",
