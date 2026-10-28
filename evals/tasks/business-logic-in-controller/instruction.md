@@ -1,4 +1,5 @@
-# Task: thin controller
+# Task: product IDs route
 
-Refactor `ProductController.php` so business logic and DAL access live
-in an injected service. The controller should delegate and return the response.
+Our plugin needs a Store API route `GET /store-api/example/products` that
+returns the IDs of up to 25 products as JSON: `{"productIds": [...]}`. Add it
+as `ProductController` in `ProductController.php` in this directory.
