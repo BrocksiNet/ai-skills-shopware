@@ -44,7 +44,10 @@ shopware/shopware#21627 (PRD-001..009). v0.12.0 (2026-10-22) ships WP11
 phases 0 to 2: the API index and `api-facts`. v0.13.0 (2026-10-22) ships
 phase 3: routes, entities, feature flags and configuration in the index,
 and `api-diff`. v0.14.0 (2026-10-23) renames every skill to `sw-`
-and adds `sw-skill-router` and `sw-help`.
+and adds `sw-skill-router` and `sw-help`. v0.15.0 (2026-10-29) makes the
+build skills load before small edits, merges the thin-controller rules into
+`PLG-006`, tags `PHP-001`/`PHP-002` and ships `STY-001`, `TEST-036` and
+`ADM-041` with the weekly rule proposals (`suggest-rules`).
 
 Suggested milestones, as planned:
 
