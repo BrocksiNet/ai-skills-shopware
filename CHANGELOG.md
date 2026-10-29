@@ -10,6 +10,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- `ADM-041` in `sw-admin-js`, from the Administration lint gate in
+  shopware/shopware#21730: new components are TypeScript, export
+  `wrapComponentConfig({ ... })` and use composables instead of mixins. On
+  trunk they copy the reference implementations named in the Administration
+  `AGENTS.md`, not the neighbouring code. Eval `admin-component-wrap-config`
+  with an AST grader. The new `no-new-mixins` ESLint rule is listed under
+  "Already enforced by CI" for `ADM-007`. `ADM-006` stays, narrowed to
+  plugins: a plugin module built with `Component.register` and Twig blocks
+  gets no `.vue` file, because other extensions cannot override its blocks.
 - `STY-001` in `sw-assistant-style`: before handing back prose, the agent
   reads it once more and rewrites machine-writing tells (staged contrasts,
   run-ups, bold-label lists, inflated words, chat phrases) without adding or

@@ -10,8 +10,11 @@ Load when adding modules, components, services, or ACL-backed UI.
 
 ## Modules and UI
 
-- **ADM-006** Follow the patterns in the area you touch: component factory / Twig.JS
-  blocks on core, Vue SFC where the extension system already uses it.
+- **ADM-006** In a plugin, build a new component the way its module already
+  does. A module built with `Component.register` and Twig blocks gets no
+  `.vue` file: an SFC has no blocks, so other extensions cannot override it.
+  Where the module already renders SFCs, another one is fine. New core
+  components follow `ADM-041` instead.
 - **ADM-016** Protect routes, navigation, and templates with the required ACL
   privileges.
 - **ADM-004** **New Admin UI that reads or persists a DAL entity updates the

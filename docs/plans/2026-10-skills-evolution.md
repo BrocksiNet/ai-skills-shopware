@@ -30,7 +30,7 @@ criteria. Packages are ordered so that each one only depends on earlier ones.
 | WP12 | Skill update automation | WP8, WP9 | L | local only |
 
 Shipped: everything through WP10 landed in **v0.9.0** (2026-10-21), ahead
-of the milestones below. Still open: WP0 item 7 (waits for #21730). WP12
+of the milestones below. WP0 item 7 landed after #21730 merged (2026-10-28). WP12
 is done (2026-10-23). WP11 phases 0 to 4 (the PHP index, `api-facts`,
 `api-diff` for routes, entities, feature flags and configuration, and the
 admin and storefront surfaces) passed their gates. v0.10.0 (2026-10-21) added five rules from a real plugin review
@@ -60,7 +60,7 @@ gate.
 
 ## WP0: Fix drift and contradictions
 
-Status: **done 2026-10-19**, except item 7, which waits for #21730. The same
+Status: **done 2026-10-19**; item 7 followed on 2026-10-28, after #21730. The same
 pass also documented `Feature::throwIfActive()` from #21400 and #21139.
 
 Goal: bring existing guidance back in line with trunk and with the core
@@ -76,7 +76,7 @@ review guides before adding anything new.
 | 4 | Change "Danger fails new test files" to "every added or modified test file" | `skills/sw-testing/references/core-platform-patterns.md` | trunk 75b0a495 (#21572) | existing `one-covers-class-per-file` |
 | 5 | Add "observing events in tests": no listeners on the shared `event_dispatcher`; unit tests use a dispatcher the test owns (`CollectingEventDispatcher`); integration tests use `EventHookDispatcher::fromContainer()->on()`; capture in the hook, assert afterwards, assert that the hook fired | `skills/sw-testing/references/test-shape-and-flags.md` + one checklist line in `SKILL.md` | trunk f2bf3794 (#21438), 190d734b (#21343) | new `event-hook-capture-then-assert` |
 | 6 | Reconcile `final` vs `@internal` advice into one rule | `skills/sw-core-development/references/platform-architecture.md` and `service-architecture.md` | BCPHP-010 | none |
-| 7 | Add `wrapComponentConfig()` for new Administration components | `skills/sw-admin-js/SKILL.md` | open #21730, #21722 | after #21730 merges |
+| 7 | Add `wrapComponentConfig()` for new Administration components | `skills/sw-admin-js/SKILL.md` | #21730 merged 2026-10-28 (#21722 closed) | ADM-041 with eval `admin-component-wrap-config`; ADM-006 kept for plugins |
 
 ### Eval spec: `event-hook-capture-then-assert`
 

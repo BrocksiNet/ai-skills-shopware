@@ -60,8 +60,14 @@ Read only the reference that matches the task or the files it changes:
 
 ## Admin deltas
 
-- Follow the patterns in the area you touch: component factory / Twig.JS
-  blocks on core, Vue SFC where the extension system already uses it.
+- **ADM-041** New components are TypeScript and export
+  `Shopware.Component.wrapComponentConfig({ ... })`, which types `this` in
+  the options. Shared logic comes from composables such as
+  `useNotification()`, not mixins (`ADM-007`). On trunk, copy the shape of
+  the reference implementations named in the Administration `AGENTS.md`
+  (component `sw-media-folder-thumbnail`, composable `use-theme.ts`, store
+  `tabs.store.ts`), not the code next to the change, which often predates
+  these rules.
 - Prefer `Shopware.Component`, `Shopware.Service()`, `Shopware.Store` over
   importing factory internals.
 - Modules stay independent — no direct import from another module.
@@ -84,7 +90,8 @@ Read only the reference that matches the task or the files it changes:
 
 ## Definition of done
 
-- [ ] New code is TypeScript; public Admin APIs unchanged unless discussed.
+- [ ] New code is TypeScript; new components use `wrapComponentConfig()`.
+- [ ] Public Admin APIs unchanged unless discussed.
 - [ ] UI uses `mt-*` / existing Admin components, not raw dialog/popover.
 - [ ] ACL mapping (+ role migration when needed) matches the DAL entities.
 - [ ] Jest spec next to new TS; behavior tested, not Vue internals.
@@ -99,4 +106,5 @@ Checks marked *trunk only* are not active in plugin or app projects by
 default; there the rule still needs a reviewer.
 
 - `ADM-003` `no-deprecated-components` (ESLint, trunk only) reports listed deprecated `sw-*` components in Administration `.html.twig` templates and autofixes them to `mt-*`. It misses `.vue` templates, templates in JS or TS strings, raw `<dialog>` or popover markup, and `sw-*` components not in the configured list, such as `sw-loader` and `sw-popover`; flag those.
+- `ADM-007` `sw-core-rules/no-new-mixins` (ESLint, trunk only) reports `Mixin.register()` and `Shopware.Mixin.register()` in Administration `src` files, specs excluded, with inline disables blocked. It misses inline mixin objects in a `mixins` array, a renamed alias such as `const M = Shopware.Mixin`, `.vue` files, and a new component that pulls in an existing mixin through `Mixin.getByName()`; flag those.
 <!-- enforced:end -->
