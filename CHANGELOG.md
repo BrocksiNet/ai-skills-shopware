@@ -8,6 +8,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.15.0] - 2026-10-29
+
 ### Added
 
 - `ADM-041` in `sw-admin-js`, from the Administration lint gate in
@@ -922,7 +924,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   (`actions/checkout@v5`, `markdownlint-cli2-action@v23`).
 - `docs/local-validation.md` and GitHub issue templates for feedback.
 
-[Unreleased]: https://github.com/BrocksiNet/ai-skills-shopware/compare/v0.14.0...main
+[Unreleased]: https://github.com/BrocksiNet/ai-skills-shopware/compare/v0.15.0...main
+[0.15.0]: https://github.com/BrocksiNet/ai-skills-shopware/compare/v0.14.0...v0.15.0
 [0.14.0]: https://github.com/BrocksiNet/ai-skills-shopware/compare/v0.13.0...v0.14.0
 [0.13.0]: https://github.com/BrocksiNet/ai-skills-shopware/compare/v0.12.0...v0.13.0
 [0.12.0]: https://github.com/BrocksiNet/ai-skills-shopware/compare/v0.11.0...v0.12.0
