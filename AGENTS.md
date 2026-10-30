@@ -90,6 +90,7 @@ tools/                        # repo tooling in TypeScript (Node 24, no build st
   bin/test-graders.ts         # golden fixtures against every grade.sh
   bin/fake-agent.ts           # test double for SKILLS_AGENT_CMD
   bin/check-update.ts         # pinned version vs latest release tag
+  bin/skill-context.ts        # share of input tokens our skills took in your recent Claude Code sessions
   test/*.test.ts              # node --test
   api-index/                  # public API index of shopware/shopware per release (own package: php-parser):
                               # bin/build.ts one ref, bin/timeline.ts all tags, bin/api-facts.ts an extension's facts,
