@@ -11,6 +11,7 @@
     "render-routes": "node bin/render-routes.ts",
     "validate-routes": "node bin/validate-routes.ts",
     "route": "node bin/route.ts",
+    "skill-context": "node bin/skill-context.ts",
     "render-router-index": "node bin/render-router-index.ts",
     "eval-plan": "node bin/eval-plan.ts",
     "eval-gate": "node bin/eval-gate.ts",
