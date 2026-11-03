@@ -87,7 +87,7 @@ jobs:
     runs-on: ubuntu-latest
     outputs:
       run: ${{ steps.guard.outputs.run }}
-      profiles: ${{ steps.profiles.outputs.profiles }}
+      profiles: ${{ steps.preflight.outputs.profiles || steps.profiles.outputs.profiles }}
       count: ${{ steps.plan.outputs.count }}
       shards: ${{ steps.plan.outputs.shards }}
     steps:
@@ -156,9 +156,12 @@ jobs:
             jq -r '.[] | "- `\(.agent)`, model `\(.model)`"' <<<"$PROFILES"
           } >> "$GITHUB_STEP_SUMMARY"
 
-      # Free models come and go. A gone model makes every session an agent
-      # error, and each shard would retry for hours; fail here instead.
-      - name: Preflight - every model answers
+      # Free models come and go, and free quotas run out. A model that does
+      # not answer makes every session an agent error, and each shard would
+      # retry for hours. Drop that model here and run the others; fail only
+      # when no model answers.
+      - name: Preflight - drop models that do not answer
+        id: preflight
         if: steps.guard.outputs.run == 'true' && steps.plan.outputs.count != '0'
         env:
           PROFILES: ${{ steps.profiles.outputs.profiles }}
@@ -169,15 +172,28 @@ jobs:
           # install-agent.sh puts OpenCode on GITHUB_PATH, which only later
           # steps see; this step installs and calls it, so add it here too.
           export PATH="$HOME/.opencode/bin:$PATH"
-          mapfile -t profiles < <(jq -r '.[] | "\(.agent) \(.model)"' <<<"$PROFILES")
+          answering='[]'
+          mapfile -t profiles < <(jq -c '.[]' <<<"$PROFILES")
           for profile in "${profiles[@]}"; do
-            read -r agent model <<<"$profile"
+            agent="$(jq -r '.agent' <<<"$profile")"
+            model="$(jq -r '.model' <<<"$profile")"
             echo "::group::$agent / $model"
-            bash evals/runner/install-agent.sh "$agent"
-            SKILLS_AGENT_CMD="$GITHUB_WORKSPACE/evals/runner/$agent-task.sh" TASK_MODEL="$model" \
-              node tools/bin/agent-preflight.ts
-            echo "::endgroup::"
+            if bash evals/runner/install-agent.sh "$agent" &&
+              SKILLS_AGENT_CMD="$GITHUB_WORKSPACE/evals/runner/$agent-task.sh" TASK_MODEL="$model" \
+                node tools/bin/agent-preflight.ts; then
+              answering="$(jq -c --argjson p "$profile" '. + [$p]' <<<"$answering")"
+              echo "::endgroup::"
+            else
+              echo "::endgroup::"
+              echo "::warning::$agent / $model did not answer; this run skips it."
+              echo "- skipped \`$agent\`, model \`$model\`: preflight failed" >> "$GITHUB_STEP_SUMMARY"
+            fi
           done
+          if [ "$(jq 'length' <<<"$answering")" = "0" ]; then
+            echo "::error::No model answered the preflight."
+            exit 1
+          fi
+          echo "profiles=$answering" >> "$GITHUB_OUTPUT"
 
   activation:
     name: "activation (${{ matrix.profile.agent }} · ${{ matrix.profile.model }})"
