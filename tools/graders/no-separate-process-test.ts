@@ -1,8 +1,10 @@
 // Grader: no-separate-process-test (TEST-037)
 //
 // The unit test for TelemetryOptOut must run in the shared PHPUnit process:
-// no isolation attribute, docblock annotation or phpunit.xml switch anywhere
-// under tests/. A test that changes the environment restores it, and the
+// no isolation attribute or docblock annotation in any test that covers it,
+// and no phpunit.xml switch. The sibling TelemetryInstanceIdTest in the
+// fixture already isolates (legacy code the task does not touch); it is the
+// pattern a model might copy, so it is not scanned. A test that changes the environment restores it, and the
 // static cache in the class is reset between tests (a reset method, a
 // reflection reset, or no static cache left in the class).
 import { join } from 'node:path';
@@ -27,9 +29,9 @@ export const grade: Grader = ({ workdir }) => {
   if (!code.includes('isOptedOut')) return fail('the test never calls isOptedOut()');
   const inUnit = subject.slice(workdir.length + 1).startsWith('tests/unit/');
 
-  const isolated = tests.some(
-    (f) => ISOLATION_ATTRIBUTE.test(stripComments(read(f))) || ISOLATION_ANNOTATION.test(read(f)),
-  );
+  const isolated = tests
+    .filter((f) => read(f).includes('TelemetryOptOut'))
+    .some((f) => ISOLATION_ATTRIBUTE.test(stripComments(read(f))) || ISOLATION_ANNOTATION.test(read(f)));
   const config = filesUnder(workdir).some((f) => /phpunit\.xml(?:\.dist)?$/u.test(f) && ISOLATION_CONFIG.test(read(f)));
 
   const touchesEnv = TOUCHES_ENV.test(code);

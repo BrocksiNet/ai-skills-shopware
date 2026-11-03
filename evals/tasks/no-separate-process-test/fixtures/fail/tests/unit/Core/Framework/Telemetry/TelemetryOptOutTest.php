@@ -48,4 +48,15 @@ class TelemetryOptOutTest extends TestCase
 
         static::assertTrue(TelemetryOptOut::isOptedOut());
     }
+
+    #[RunInSeparateProcess]
+    #[PreserveGlobalState(false)]
+    public function testDecisionIsMadeOnce(): void
+    {
+        static::assertFalse(TelemetryOptOut::isOptedOut());
+
+        putenv(self::VARIABLE . '=1');
+
+        static::assertFalse(TelemetryOptOut::isOptedOut());
+    }
 }
