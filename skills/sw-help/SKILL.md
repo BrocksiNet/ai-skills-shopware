@@ -38,6 +38,7 @@ shows which skills are installed here.
 | Write plugin or project backend code | `sw-plugin-development` | "Add a scheduled task to my plugin" |
 | Build an app (manifest, app scripts, webhooks) | `sw-app-development` | "Should this be an app or a plugin?" |
 | Change shopware/shopware without breaking extensions | `sw-core-development` | "Deprecate this public method properly" |
+| Generate core API request and response DTOs from OpenAPI schemas (experimental) | `sw-openapi-dto` | "Add an optional field to this generated request DTO" |
 | Change the Administration (Vue, Meteor, Pinia) | `sw-admin-js` | "Override this sw-product-detail component" |
 | Change the Storefront (Twig, SCSS, JS plugins) | `sw-storefront` | "Extend the product box template" |
 | Write modern, strict PHP | `sw-php-foundation` | "Turn these constants into a backed enum" |

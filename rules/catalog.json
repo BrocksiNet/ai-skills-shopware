@@ -16,7 +16,8 @@
     "PRR": "sw-pr-review",
     "DEV": "sw-podman-dev",
     "XR": "sw-extension-review",
-    "STY": "sw-assistant-style"
+    "STY": "sw-assistant-style",
+    "DTO": "sw-openapi-dto"
   },
   "rules": [
     {
@@ -4907,6 +4908,147 @@
         "source": "coding-guidelines/core/6.5-new-php-language-features.md#enums",
         "commit": "69b4c74c"
       }
+    },
+    {
+      "id": "DTO-001",
+      "skill": "sw-openapi-dto",
+      "file": "skills/sw-openapi-dto/references/schema-and-generation.md",
+      "title": "Change the OpenAPI schema and regenerate; never hand-edit a generated DTO",
+      "status": "active",
+      "since": "2026-11-03",
+      "eval": "dto-schema-first",
+      "core_guide_ids": [],
+      "audience": [
+        "core"
+      ],
+      "defer_on_trunk": false
+    },
+    {
+      "id": "DTO-002",
+      "skill": "sw-openapi-dto",
+      "file": "skills/sw-openapi-dto/references/schema-and-generation.md",
+      "title": "Delete the DTOs of removed or renamed operations by hand",
+      "status": "active",
+      "since": "2026-11-03",
+      "eval": null,
+      "eval_reason": "Needs a generator run in a Shopware checkout to show which files are stale; the eval sandbox has none.",
+      "core_guide_ids": [],
+      "audience": [
+        "core"
+      ],
+      "defer_on_trunk": false
+    },
+    {
+      "id": "DTO-003",
+      "skill": "sw-openapi-dto",
+      "file": "skills/sw-openapi-dto/references/dto-contract.md",
+      "title": "Apply schema defaults in business code through has() and DEFAULT_ constants",
+      "status": "active",
+      "since": "2026-11-03",
+      "eval": "dto-default-in-business-code",
+      "core_guide_ids": [],
+      "audience": [
+        "core"
+      ],
+      "defer_on_trunk": true,
+      "upstream": [
+        {
+          "source": "shopware-dto-contract",
+          "path": "src/Core/Framework/Api/OpenApi/AGENTS.md#api-dto-contract"
+        }
+      ]
+    },
+    {
+      "id": "DTO-004",
+      "skill": "sw-openapi-dto",
+      "file": "skills/sw-openapi-dto/references/dto-contract.md",
+      "title": "Request and response DTOs stay mutable",
+      "status": "active",
+      "since": "2026-11-03",
+      "eval": null,
+      "eval_reason": "The generator renders the class; only a hand edit, already DTO-001, can add readonly.",
+      "core_guide_ids": [],
+      "audience": [
+        "core"
+      ],
+      "defer_on_trunk": true,
+      "upstream": [
+        {
+          "source": "shopware-dto-contract",
+          "path": "src/Core/Framework/Api/OpenApi/AGENTS.md#api-dto-contract"
+        }
+      ]
+    },
+    {
+      "id": "DTO-005",
+      "skill": "sw-openapi-dto",
+      "file": "skills/sw-openapi-dto/references/dto-contract.md",
+      "title": "extensions stays optional inherited plugin data, never required or redeclared",
+      "status": "active",
+      "since": "2026-11-03",
+      "eval": null,
+      "eval_reason": "Shows only in generated output and schema review; grading it needs the generator.",
+      "core_guide_ids": [],
+      "audience": [
+        "core"
+      ],
+      "defer_on_trunk": true,
+      "upstream": [
+        {
+          "source": "shopware-dto-contract",
+          "path": "src/Core/Framework/Api/OpenApi/AGENTS.md#api-dto-contract"
+        }
+      ]
+    },
+    {
+      "id": "DTO-006",
+      "skill": "sw-openapi-dto",
+      "file": "skills/sw-openapi-dto/references/route-wiring.md",
+      "title": "Return the response DTO and set status, headers and cookies on it",
+      "status": "active",
+      "since": "2026-11-03",
+      "eval": "dto-response-status-header",
+      "core_guide_ids": [],
+      "audience": [
+        "core"
+      ],
+      "defer_on_trunk": false
+    },
+    {
+      "id": "DTO-007",
+      "skill": "sw-openapi-dto",
+      "file": "skills/sw-openapi-dto/references/route-wiring.md",
+      "title": "MapRequestPayload does not fill path, query or header values",
+      "status": "active",
+      "since": "2026-11-03",
+      "eval": null,
+      "eval_reason": "Runtime mapping behavior; observing it needs a booted kernel and an HTTP request.",
+      "core_guide_ids": [],
+      "audience": [
+        "core"
+      ],
+      "defer_on_trunk": false
+    },
+    {
+      "id": "DTO-008",
+      "skill": "sw-openapi-dto",
+      "file": "skills/sw-openapi-dto/references/generator-tests.md",
+      "title": "Each generator behavior change gets a complete schema and PHP fixture",
+      "status": "active",
+      "since": "2026-11-03",
+      "eval": null,
+      "eval_reason": "Core-only test layout; a grader would need the generator to produce the expected PHP.",
+      "core_guide_ids": [],
+      "audience": [
+        "core"
+      ],
+      "defer_on_trunk": true,
+      "upstream": [
+        {
+          "source": "shopware-dto-contract",
+          "path": "tests/unit/Core/Framework/Api/OpenApi/AGENTS.md#openapi-dto-test-fixtures"
+        }
+      ]
     }
   ]
 }

@@ -20,6 +20,7 @@ etc. Install **delta overlay** from this repo:
 | `sw-change-impact` | After a feature works: blast radius before ship |
 | `sw-pr-review` | GitHub review thread triage |
 | `sw-podman-dev` | Podman/MCP execution |
+| `sw-openapi-dto` | Generated OpenAPI request/response DTOs (experimental, core PR 17858) |
 | `sw-skill-router` | Lists the skills and references a diff or plan needs (`/sw-skill-router`). |
 | `sw-help` | What every skill is for, with example prompts (`/sw-help`). |
 
@@ -36,6 +37,7 @@ npx skills add BrocksiNet/ai-skills-shopware \
   --skill sw-change-impact \
   --skill sw-pr-review \
   --skill sw-podman-dev \
+  --skill sw-openapi-dto \
   -a claude-code -a codex -a cursor
 ```
 

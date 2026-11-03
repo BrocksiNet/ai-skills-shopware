@@ -12,6 +12,9 @@ JSON schema under:
 src/Core/Framework/Api/ApiDefinition/Generator/Schema/<AdminApi|StoreApi>/paths
 ```
 
+When the operation has `x-dto-namespace`, the schema also generates PHP
+request and response DTOs. That workflow is owned by `sw-openapi-dto`.
+
 The HTTP route contract can be public even when the PHP controller class is
 `@internal` — document route and schema separately from the PHP surface.
 

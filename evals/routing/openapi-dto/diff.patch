@@ -1,0 +1,25 @@
+diff --git a/src/Core/Framework/Api/ApiDefinition/Generator/Schema/StoreApi/paths/wishlist.json b/src/Core/Framework/Api/ApiDefinition/Generator/Schema/StoreApi/paths/wishlist.json
+--- a/src/Core/Framework/Api/ApiDefinition/Generator/Schema/StoreApi/paths/wishlist.json
++++ b/src/Core/Framework/Api/ApiDefinition/Generator/Schema/StoreApi/paths/wishlist.json
+@@ -4,6 +4,7 @@
+       "post": {
+         "operationId": "addWishlistNote",
++        "x-dto-namespace": "Shopware\\Core\\Checkout\\Customer\\Wishlist",
+         "requestBody": {
+           "content": {
+             "application/json": {
+diff --git a/src/Core/Checkout/Customer/Wishlist/WishlistNoteRoute.php b/src/Core/Checkout/Customer/Wishlist/WishlistNoteRoute.php
+--- a/src/Core/Checkout/Customer/Wishlist/WishlistNoteRoute.php
++++ b/src/Core/Checkout/Customer/Wishlist/WishlistNoteRoute.php
+@@ -12,9 +12,11 @@ final class WishlistNoteRoute
+     #[Route(path: '/store-api/wishlist/note', name: 'store-api.wishlist.note', methods: ['POST'])]
+-    public function add(Request $request): JsonResponse
++    public function add(#[MapRequestPayload] AddWishlistNoteRequest $payload): AddWishlistNoteResponse
+     {
+-        return new JsonResponse(['note' => $request->get('note')]);
++        $response = new AddWishlistNoteResponse();
++        $response->note = $payload->has('note') ? $payload->note : AddWishlistNoteRequest::DEFAULT_NOTE;
++
++        return $response;
+     }
+ }
