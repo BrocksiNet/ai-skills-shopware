@@ -21,7 +21,7 @@ use Symfony\Component\Validator\Constraints as Assert;
 #[Package('framework')]
 final class CreateExampleRequest extends AbstractRequest
 {
-    public ?string $note;
+    public ?string $note = null;
 
     /**
      * @internal

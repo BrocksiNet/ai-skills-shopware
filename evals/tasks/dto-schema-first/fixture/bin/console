@@ -1,0 +1,189 @@
+#!/usr/bin/env node
+// <?php $args = array_map('escapeshellarg', array_slice($argv, 1)); passthru('node ' . escapeshellarg(__FILE__) . ' ' . implode(' ', $args), $rc); exit($rc); ?>
+// This checkout has no Composer dependencies, so bin/console has one command,
+// open-api:generate-dtos [--check], and runs on Node. `php bin/console` hands
+// over to Node. It writes the request and response DTO of every operation with
+// x-dto-namespace below src/**/Schema/, and `--check` fails on drift.
+'use strict';
+
+const fs = require('node:fs');
+const path = require('node:path');
+
+const root = process.cwd();
+const COMMAND = 'open-api:generate-dtos';
+
+function walk(dir) {
+  if (!fs.existsSync(dir)) return [];
+  return fs.readdirSync(dir, { withFileTypes: true }).flatMap((e) => {
+    const p = path.join(dir, e.name);
+    return e.isDirectory() ? walk(p) : [p];
+  });
+}
+
+const isRecord = (v) => typeof v === 'object' && v !== null && !Array.isArray(v);
+
+function loadDocs() {
+  return walk(path.join(root, 'src'))
+    .filter((f) => f.endsWith('.json') && f.split(path.sep).includes('Schema'))
+    .map((f) => {
+      try {
+        return JSON.parse(fs.readFileSync(f, 'utf8'));
+      } catch (e) {
+        throw new Error(`${path.relative(root, f)}: invalid JSON (${e.message})`);
+      }
+    });
+}
+
+function resolve(docs, schema, depth = 0) {
+  if (!isRecord(schema) || depth > 8) return { properties: {}, required: [] };
+  if (typeof schema.$ref === 'string') {
+    const name = /^#\/components\/schemas\/(.+)$/.exec(schema.$ref)?.[1];
+    const target = docs.map((d) => d?.components?.schemas?.[name]).find((s) => s !== undefined);
+    if (target === undefined) throw new Error(`unresolved $ref ${schema.$ref}`);
+    return resolve(docs, target, depth + 1);
+  }
+  const out = { properties: { ...(schema.properties ?? {}) }, required: [...(schema.required ?? [])] };
+  for (const part of schema.allOf ?? []) {
+    const r = resolve(docs, part, depth + 1);
+    Object.assign(out.properties, r.properties);
+    out.required.push(...r.required);
+  }
+  return out;
+}
+
+const PHP_TYPES = { string: 'string', integer: 'int', number: 'float', boolean: 'bool', array: 'array', object: 'array' };
+
+function phpType(prop) {
+  const types = Array.isArray(prop.type) ? prop.type : [prop.type];
+  const nullable = types.includes('null') || prop.nullable === true;
+  const base = types.find((t) => t !== 'null' && t !== undefined);
+  return { type: PHP_TYPES[base] ?? 'mixed', nullable };
+}
+
+function literal(v) {
+  if (v === null) return 'null';
+  if (typeof v === 'string') return `'${v.replace(/\\/g, '\\\\').replace(/'/g, "\\'")}'`;
+  if (typeof v === 'boolean' || typeof v === 'number') return String(v);
+  if (Array.isArray(v) && v.length === 0) return '[]';
+  throw new Error(`unsupported default ${JSON.stringify(v)}`);
+}
+
+const constName = (field) => `DEFAULT_${field.replace(/([a-z0-9])([A-Z])/g, '$1_$2').toUpperCase()}`;
+
+function declaration(name, prop) {
+  const { type, nullable } = phpType(prop);
+  return `${nullable && type !== 'mixed' ? '?' : ''}${type} $${name}`;
+}
+
+function constraints(prop, required) {
+  const out = [];
+  if (required && !phpType(prop).nullable) out.push('#[Assert\\NotNull]');
+  const len = [];
+  if (typeof prop.minLength === 'number') len.push(`min: ${prop.minLength}`);
+  if (typeof prop.maxLength === 'number') len.push(`max: ${prop.maxLength}`);
+  if (len.length > 0) out.push(`#[Assert\\Length(${len.join(', ')})]`);
+  return out;
+}
+
+function render(namespace, pkg, className, kind, schema, stamp) {
+  const lines = [];
+  const props = Object.entries(schema.properties).filter(([n]) => n !== 'extensions');
+  const required = props.filter(([n]) => schema.required.includes(n));
+  const optional = props.filter(([n]) => !schema.required.includes(n));
+  const defaults = props.filter(([, p]) => isRecord(p) && Object.hasOwn(p, 'default'));
+
+  // The open tag is split so that `php bin/console` does not parse this line.
+  lines.push('<' + '?php declare(strict_types=1);', '', '/**', ' * This file is auto-generated.', ' * Do not edit manually.', ' *');
+  lines.push(` * Last generated: ${stamp}`, ' */', '', `namespace ${namespace};`, '');
+  lines.push(`use Shopware\\Core\\Framework\\Api\\${kind}\\Abstract${kind};`);
+  lines.push('use Shopware\\Core\\Framework\\Log\\Package;', 'use Symfony\\Component\\Validator\\Constraints as Assert;', '');
+  lines.push('/**', ' * @internal', ' *', ' * @codeCoverageIgnore', ' */', `#[Package('${pkg}')]`);
+  lines.push(`final class ${className} extends Abstract${kind}`, '{');
+  for (const [n, p] of defaults) lines.push(`    public const ${constName(n)} = ${literal(p.default)};`, '');
+  for (const [n, p] of optional) {
+    for (const c of constraints(p, false)) lines.push(`    ${c}`);
+    lines.push(`    public ${declaration(n, p)};`, '');
+  }
+  lines.push('    /**', '     * @internal', '     */', '    public function __construct(');
+  for (const [n, p] of required) {
+    for (const c of constraints(p, true)) lines.push(`        ${c}`);
+    lines.push(`        public ${declaration(n, p)},`);
+  }
+  lines.push('    ) {');
+  if (kind === 'Response') lines.push('        parent::__construct();');
+  lines.push('    }', '}', '');
+  return lines.join('\n');
+}
+
+function targetPath(namespace, className) {
+  const rel = namespace.replace(/^Shopware\\Core\\/, 'src/Core/').split('\\').join('/');
+  return path.join(root, rel, `${className}.php`);
+}
+
+function plan() {
+  const docs = loadDocs();
+  const stamp = new Date().toISOString().slice(0, 19).replace('T', ' ');
+  const files = [];
+  for (const doc of docs) {
+    for (const ops of Object.values(doc?.paths ?? {})) {
+      for (const op of Object.values(ops ?? {})) {
+        if (!isRecord(op) || typeof op['x-dto-namespace'] !== 'string') continue;
+        if (typeof op.operationId !== 'string') throw new Error('operation with x-dto-namespace has no operationId');
+        const ns = op['x-dto-namespace'];
+        const pkg = op['x-dto-package'] ?? 'framework';
+        const base = op.operationId[0].toUpperCase() + op.operationId.slice(1);
+        const body = op.requestBody?.content?.['application/json']?.schema;
+        if (body !== undefined) {
+          const cls = `${base}Request`;
+          files.push([targetPath(ns, cls), render(ns, pkg, cls, 'Request', resolve(docs, body), stamp)]);
+        }
+        const ok = Object.entries(op.responses ?? {}).find(([code]) => /^2\d\d$/.test(code))?.[1];
+        const res = ok?.content?.['application/json']?.schema;
+        if (res !== undefined) {
+          const cls = `${base}Response`;
+          files.push([targetPath(ns, cls), render(ns, pkg, cls, 'Response', resolve(docs, res), stamp)]);
+        }
+      }
+    }
+  }
+  return files;
+}
+
+const withoutStamp = (text) => text.replace(/^ \* Last generated: .*$/m, '');
+
+function main(argv) {
+  if (argv[0] !== COMMAND) {
+    console.error(`Only "${COMMAND} [--check]" is available in this checkout (no Composer dependencies installed).`);
+    return 1;
+  }
+  const check = argv.includes('--check');
+  const drift = [];
+  for (const [file, content] of plan()) {
+    const current = fs.existsSync(file) ? fs.readFileSync(file, 'utf8') : undefined;
+    if (current !== undefined && withoutStamp(current) === withoutStamp(content)) continue;
+    drift.push(path.relative(root, file));
+    if (!check) {
+      fs.mkdirSync(path.dirname(file), { recursive: true });
+      fs.writeFileSync(file, content);
+    }
+  }
+  if (check) {
+    if (drift.length === 0) {
+      console.log('[OK] All DTOs are up to date.');
+      return 0;
+    }
+    console.error(`[ERROR] ${drift.length} DTO(s) are out of date. Run bin/console ${COMMAND}:`);
+    for (const f of drift) console.error(`  ${f}`);
+    return 1;
+  }
+  console.log(drift.length === 0 ? '[OK] All DTOs are up to date.' : `[OK] Generated ${drift.length} DTO(s):`);
+  for (const f of drift) console.log(`  ${f}`);
+  return 0;
+}
+
+try {
+  process.exitCode = main(process.argv.slice(2));
+} catch (e) {
+  console.error(`[ERROR] ${e.message}`);
+  process.exitCode = 1;
+}
