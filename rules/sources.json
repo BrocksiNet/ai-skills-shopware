@@ -19,6 +19,17 @@
       ]
     },
     {
+      "id": "shopware-dto-contract",
+      "repo": "shopware/shopware",
+      "branch": "trunk",
+      "extractor": "markdown",
+      "paths": ["src/Core/Framework/Api/OpenApi/AGENTS.md", "tests/unit/Core/Framework/Api/OpenApi/AGENTS.md"],
+      "skills": [
+        { "path": "src/Core/Framework/Api/OpenApi/AGENTS.md", "skills": ["sw-openapi-dto"] },
+        { "path": "tests/unit/Core/Framework/Api/OpenApi/AGENTS.md", "skills": ["sw-openapi-dto"] }
+      ]
+    },
+    {
       "id": "ai-coding-tools",
       "repo": "shopwareLabs/ai-coding-tools",
       "branch": "main",

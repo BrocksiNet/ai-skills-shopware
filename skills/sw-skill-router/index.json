@@ -1064,6 +1064,81 @@
       ]
     },
     {
+      "name": "sw-openapi-dto",
+      "summary": "Rules for the PHP request and response DTOs that shopware/shopware generates from its OpenAPI schema JSON.",
+      "contexts": [
+        "core"
+      ],
+      "tasks": [
+        "build",
+        "review",
+        "answer"
+      ],
+      "load_for": [],
+      "paths": [],
+      "defers_to": [],
+      "routes": [
+        {
+          "reference": "sw-openapi-dto/references/schema-and-generation.md",
+          "when": "You add or change an operation that generates DTOs, or touch a generated DTO.",
+          "paths_any": [
+            "src/Core/Framework/Api/OpenApi/**",
+            "src/Core/Framework/Api/Command/OpenApiDtoGenerationCommand.php"
+          ],
+          "anchors_any": [
+            "\"x-dto-(namespace|package|inline)\"",
+            "open-api:generate-dtos",
+            "This file is auto-generated\\."
+          ],
+          "exclude_paths": [
+            "**/tests/**",
+            "**/Test/**",
+            "**/*.md"
+          ]
+        },
+        {
+          "reference": "sw-openapi-dto/references/dto-contract.md",
+          "when": "Code reads or fills a generated DTO, or you change the DTO base classes.",
+          "paths_any": [
+            "src/Core/Framework/Api/AbstractDto.php",
+            "src/Core/Framework/Api/Request/**",
+            "src/Core/Framework/Api/Response/**"
+          ],
+          "anchors_any": [
+            "extends Abstract(Dto|Request|Response)\\b",
+            "(Request|Response)::DEFAULT_[A-Z0-9_]+"
+          ],
+          "exclude_paths": [
+            "**/tests/**",
+            "**/Test/**",
+            "**/*.md"
+          ]
+        },
+        {
+          "reference": "sw-openapi-dto/references/route-wiring.md",
+          "when": "A controller takes a generated request DTO or returns a generated response DTO.",
+          "anchors_any": [
+            "#\\[MapRequestPayload\\]",
+            "DTOResponseListener|DtoNormalizer"
+          ],
+          "exclude_paths": [
+            "**/tests/**",
+            "**/Test/**",
+            "**/*.md"
+          ]
+        },
+        {
+          "reference": "sw-openapi-dto/references/generator-tests.md",
+          "when": "You change the generator or its tests and fixtures.",
+          "paths_any": [
+            "src/Core/Framework/Api/OpenApi/OpenApiDto*.php",
+            "tests/unit/Core/Framework/Api/OpenApi/**",
+            "tests/integration/Core/Framework/Api/OpenApi/**"
+          ]
+        }
+      ]
+    },
+    {
       "name": "sw-php-foundation",
       "summary": "The strict, modern PHP 8.x baseline for Shopware code.",
       "contexts": [

@@ -1,0 +1,4 @@
+interface:
+  display_name: "Shopware OpenAPI DTOs"
+  short_description: "Generate and use core request and response DTOs from OpenAPI schemas."
+  default_prompt: "Use $sw-openapi-dto to add this field to the generated Store API DTOs."

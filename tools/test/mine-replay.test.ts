@@ -411,6 +411,7 @@ describe('every source over 2026-10-13..2026-10-19', () => {
     'shopware-cli-2026-10-13..2026-10-19.json',
     'fos-agent-skills-2026-10-13..2026-10-19.json',
     'humanizer-2026-10-13..2026-10-19.json',
+    'shopware-dto-contract-2026-10-13..2026-10-19.json',
   ];
   const repo = 'acme/skills-library';
   // Last week's issue, read up to 2026-10-12 in two sources: covered.
@@ -455,6 +456,7 @@ describe('every source over 2026-10-13..2026-10-19', () => {
       'shopware-cli',
       'fos-agent-skills',
       'humanizer',
+      'shopware-dto-contract',
     ]) {
       assert.match(out, new RegExp(`^\\| \`${id}\` \\| 2026-10-13 \\|`, 'mu'), id);
     }

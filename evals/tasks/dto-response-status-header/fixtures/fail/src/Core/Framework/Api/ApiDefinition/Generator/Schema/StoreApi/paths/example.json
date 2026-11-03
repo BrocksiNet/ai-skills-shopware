@@ -1,0 +1,48 @@
+{
+  "openapi": "3.2.0",
+  "info": [],
+  "paths": {
+    "/example": {
+      "post": {
+        "tags": ["Example"],
+        "summary": "Create an example",
+        "operationId": "createExample",
+        "x-dto-namespace": "Shopware\\Core\\Framework\\Api\\Example",
+        "x-dto-package": "framework",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["name"],
+                "properties": {
+                  "name": { "type": "string", "minLength": 1 },
+                  "note": { "type": ["string", "null"], "default": "No note given" }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Created example",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": ["name"],
+                  "properties": {
+                    "name": { "type": "string" },
+                    "note": { "type": ["string", "null"] }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "security": [{ "ApiKey": [] }]
+      }
+    }
+  }
+}

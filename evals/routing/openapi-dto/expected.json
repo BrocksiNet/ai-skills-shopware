@@ -1,0 +1,16 @@
+{
+  "sw-core-development": [
+    "references/api-schema.md"
+  ],
+  "sw-extension-review": [
+    "../sw-security/references/api-acl-and-input.md"
+  ],
+  "sw-openapi-dto": [
+    "references/schema-and-generation.md",
+    "references/dto-contract.md",
+    "references/route-wiring.md"
+  ],
+  "sw-security": [
+    "references/api-acl-and-input.md"
+  ]
+}

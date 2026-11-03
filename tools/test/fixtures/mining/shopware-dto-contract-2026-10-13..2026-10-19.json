@@ -1,0 +1,20 @@
+{
+ "repos/shopware/shopware/commits?sha=trunk&until=2026-10-19T23%3A59%3A59Z&per_page=1": [
+  {
+   "sha": "219491014944c6b6463cf6426c7001adea8dae0d",
+   "commit": {
+    "message": "feat(core): validate webhook subscriptions created through the API (#21122)",
+    "committer": {
+     "date": "2026-10-19T19:45:03Z"
+    }
+   },
+   "parents": [
+    {
+     "sha": "459b292debf1cf00b524fe75fc830467ff42886f"
+    }
+   ]
+  }
+ ],
+ "repos/shopware/shopware/commits?sha=trunk&path=src%2FCore%2FFramework%2FApi%2FOpenApi%2FAGENTS.md&since=2026-10-13T00%3A00%3A00Z&until=2026-10-19T23%3A59%3A59Z&per_page=100&page=1": [],
+ "repos/shopware/shopware/commits?sha=trunk&path=tests%2Funit%2FCore%2FFramework%2FApi%2FOpenApi%2FAGENTS.md&since=2026-10-13T00%3A00%3A00Z&until=2026-10-19T23%3A59%3A59Z&per_page=100&page=1": []
+}

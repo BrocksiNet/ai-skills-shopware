@@ -1,0 +1,54 @@
+{
+  "$comment": "Which reference to read for a change (plan WP4). paths_any: globs on changed files; anchors_any: regexes on added or removed lines; always: every change; on_demand: the task decides, the diff cannot. Render the SKILL.md table with node tools/bin/render-routes.ts.",
+  "exclude_paths": [
+    "**/tests/**",
+    "**/Test/**",
+    "**/*.md"
+  ],
+  "routes": [
+    {
+      "reference": "references/schema-and-generation.md",
+      "when": "You add or change an operation that generates DTOs, or touch a generated DTO.",
+      "paths_any": [
+        "src/Core/Framework/Api/OpenApi/**",
+        "src/Core/Framework/Api/Command/OpenApiDtoGenerationCommand.php"
+      ],
+      "anchors_any": [
+        "\"x-dto-(namespace|package|inline)\"",
+        "open-api:generate-dtos",
+        "This file is auto-generated\\."
+      ]
+    },
+    {
+      "reference": "references/dto-contract.md",
+      "when": "Code reads or fills a generated DTO, or you change the DTO base classes.",
+      "paths_any": [
+        "src/Core/Framework/Api/AbstractDto.php",
+        "src/Core/Framework/Api/Request/**",
+        "src/Core/Framework/Api/Response/**"
+      ],
+      "anchors_any": [
+        "extends Abstract(Dto|Request|Response)\\b",
+        "(Request|Response)::DEFAULT_[A-Z0-9_]+"
+      ]
+    },
+    {
+      "reference": "references/route-wiring.md",
+      "when": "A controller takes a generated request DTO or returns a generated response DTO.",
+      "anchors_any": [
+        "#\\[MapRequestPayload\\]",
+        "DTOResponseListener|DtoNormalizer"
+      ]
+    },
+    {
+      "reference": "references/generator-tests.md",
+      "when": "You change the generator or its tests and fixtures.",
+      "paths_any": [
+        "src/Core/Framework/Api/OpenApi/OpenApiDto*.php",
+        "tests/unit/Core/Framework/Api/OpenApi/**",
+        "tests/integration/Core/Framework/Api/OpenApi/**"
+      ],
+      "exclude_paths": []
+    }
+  ]
+}

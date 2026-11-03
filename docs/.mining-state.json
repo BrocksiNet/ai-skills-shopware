@@ -22,5 +22,9 @@
   "humanizer": {
     "last_sha": "0ef9fe5bc3572734fd3ae6c448fe00a30cd5dcf0",
     "last_date": "2026-10-28T07:17:33Z"
+  },
+  "shopware-dto-contract": {
+    "last_sha": "4928da13738e8cb346bbadf740e2468fd48d9438",
+    "last_date": "2026-11-02T12:03:41Z"
   }
 }
