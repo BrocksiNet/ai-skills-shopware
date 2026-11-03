@@ -304,8 +304,8 @@ wrong rule in `sw-plugin-development`, which turned the gate red.
 | Trigger | Agents | Tasks | Activation | Baseline PR |
 | ------- | ------ | ----- | ---------- | ----------- |
 | Monthly schedule (1st, 06:00 UTC) | `opencode`, `copilot` | all, 3 repeats | yes | yes, one per agent |
-| PR labeled `run-evals` | `opencode` | tasks whose folder changed or that load a changed skill | no | no |
-| Manual dispatch | `agents` input | `tasks`, `repeats`, `max_tasks`, `shards`, `model` inputs | `activation` input | `baseline` input |
+| PR labeled `run-evals` | `copilot` | tasks whose folder changed or that load a changed skill | no | no |
+| Manual dispatch | `agents` input (default `copilot`) | `tasks`, `repeats`, `max_tasks`, `shards`, `model` inputs | `activation` input | `baseline` input |
 
 Each agent of a run is a profile (`tools/bin/eval-profiles.ts`, default models
 in `tools/src/adapters.ts`). The A/B shards, the gate and the baseline run
@@ -313,7 +313,10 @@ once per profile, so each model gets its own `gate` check and its own
 baseline file. Two models make the keep-or-retire call safer than one:
 retire a rule only when no profile shows an effect.
 
-`opencode` uses a free model and needs no secret. `copilot` needs the
+`opencode` uses a free model and needs no secret, but on the GitHub runners
+the free models answer "Free usage limit reached" (November 2026), so labeled
+PRs and dispatch default to `copilot`. The monthly run keeps both; the
+preflight drops a model that does not answer. `copilot` needs the
 repository secret `COPILOT_GITHUB_TOKEN`: a fine-grained personal access token
 of a user with a Copilot seat, with the account permission "Copilot Requests".
 Its runs cost that user's premium requests. With `claude-haiku-4.5` a session

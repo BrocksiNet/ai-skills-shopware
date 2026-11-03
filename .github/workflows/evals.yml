@@ -4,7 +4,8 @@ name: evals
 #   - monthly schedule: all tasks, activation evals, baseline PRs, on two
 #     models (the free OpenCode one and Copilot)
 #   - a PR labeled `run-evals`: only tasks touched by the PR (changed task
-#     folder, or a changed skill the task loads), on the free model
+#     folder, or a changed skill the task loads), on Copilot (the free
+#     OpenCode models hit "Free usage limit reached" on the runners)
 #   - manual dispatch with inputs
 #
 # Each agent in a run is a profile (tools/bin/eval-profiles.ts): the A/B
@@ -39,7 +40,7 @@ on:
         description: "Agents, one gate each (opencode = free model, no key; copilot = needs COPILOT_GITHUB_TOKEN; claude = needs ANTHROPIC_API_KEY)"
         type: choice
         options: [opencode, copilot, claude, "opencode,copilot"]
-        default: opencode
+        default: copilot
       tasks:
         description: "Comma-separated task names (empty = all tasks)"
         default: ""
@@ -102,7 +103,7 @@ jobs:
       - name: Pick agents and models
         id: profiles
         env:
-          EVAL_AGENTS: ${{ inputs.agents || (github.event_name == 'schedule' && 'opencode,copilot' || 'opencode') }}
+          EVAL_AGENTS: ${{ inputs.agents || (github.event_name == 'schedule' && 'opencode,copilot' || 'copilot') }}
           EVAL_MODEL: ${{ inputs.model || '' }}
         run: |
           profiles="$(node tools/bin/eval-profiles.ts)"
