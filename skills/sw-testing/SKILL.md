@@ -89,8 +89,6 @@ These match PHPStan rules and reviewer expectations on core PRs:
   See reference.
 - **TEST-007** **Coverage attrs** — no `#[CoversClass]` on integration tests. See reference.
 - **TEST-008** **Cross-test docblocks** (test → test) — `@see OtherTest` with `use` import; no FQCN in prose.
-- **TEST-009** **`#[Package('…')]`** on every test class — must match the covered class or a
-  package in the mirrored `src/` tree (`TestPackageMatchRule`).
 - **TEST-010** **`@internal`** on every test class docblock.
 - **TEST-013** **Never `exit()` / `die()`** in a test path; `setAutoExit(false)` on
   `Application::run()`.
@@ -136,7 +134,7 @@ These match PHPStan rules and reviewer expectations on core PRs:
 - [ ] Dependencies mocked in unit tests (unless documented Codecov exception).
 - [ ] `assertSame` / `expectExceptionObject`; no `#[Depends]`; no mock `any()`.
 - [ ] Unit providers use named `yield`; integration tests omit `#[CoversClass]`.
-- [ ] Test classes carry `#[Package('…')]` and `@internal` when contributing to shopware/shopware.
+- [ ] Test classes carry `@internal` when contributing to shopware/shopware.
 - [ ] One `#[CoversClass]` per unit/migration file; no reflection into Shopware privates.
 - [ ] Own fixtures in integration tests; clock mocked where time matters.
 - [ ] Events captured in a hook or owned dispatcher and asserted after the call, never inside the listener.
@@ -150,7 +148,19 @@ These match PHPStan rules and reviewer expectations on core PRs:
 ## Already enforced by CI (do not repeat)
 
 <!-- enforced:start: generated from rules/catalog.json by `node tools/bin/render-enforced.ts`; do not edit -->
-CI already fails the build on 12 checks for this skill's rules. Before you
-flag a finding or write a checklist, read [`references/enforced-by-ci.md`](references/enforced-by-ci.md)
-and flag only what each check misses.
+CI already fails the build on these, so do not repeat them in reviews or
+checklists. Flag only what each check misses.
+Checks marked *trunk only* are not active in plugin or app projects by
+default; there the rule still needs a reviewer.
+
+- `TEST-001` `NoExpectExceptionMessageRule` (PHPStan, trunk only) reports `expectExceptionMessage()` in a test case. It misses `expectExceptionMessageMatches()`, `expectExceptionCode()`, calls in traits or helpers, and it does not ask for `expectExceptionObject()`; flag those.
+- `TEST-002` `NoDependsWithDataProviderRule` (PHPStan, trunk only) reports a test method with both `#[Depends]` and `#[DataProvider]`. It misses `#[Depends]` on its own and `@depends` annotations; flag those.
+- `TEST-006` `TestPreparationStartedSubscriber` (PHPUnit, trunk only) fails the run when an integration test method or its class carries `#[DisabledFeatures]`. It misses the attribute on a parent class or trait, and plugin test namespaces; flag those.
+- `TEST-006` `NoFeatureSkipInUnitTestsRule` (PHPStan, trunk only) reports `Feature::skipTestIfActive()` and `skipTestIfInActive()`, and a `markTestSkipped()` in any branch of an `if` chain whose conditions call `Feature::isActive()`, in a test class under `Shopware\Tests\Unit\`. It misses integration and other suites, a flag check through a helper or a variable, and plugin test namespaces; flag those.
+- `TEST-007` `CoversAttributeRule` (PHPStan, trunk only) reports `#[CoversClass]`, `#[CoversFunction]` or `#[CoversNothing]` outside unit and migration tests, and unit tests without a covers attribute. It misses a covers attribute that is not first in its `#[...]` group, such as `#[Package('x'), CoversClass(Foo::class)]`; flag those.
+- `TEST-010` `InternalClassRule` (PHPStan, trunk only) reports a test class without `@internal` in its docblock. It misses a docblock that only mentions `@internal` in prose, and test classes outside test namespaces whose parent is not `TestCase`; flag those.
+- `TEST-013` `CompletionGuard` (PHPUnit) fails the run when code under test calls `exit()` or `die()`. It misses which call exited, exits before PHPUnit starts executing, and projects that do not bootstrap through `TestBootstrapper`; flag those.
+- `TEST-016` `NoAssertionInEventHookRule` (PHPStan, trunk only) reports assertions inside a hook passed to `EventHookDispatcher::on()` or a subscriber passed to `subscribe()`. It misses hooks passed as variables or first-class callables, and listeners added to a plain dispatcher; flag those.
+- `TEST-016` `NoRuntimeListenerOnSharedEventDispatcherRule` (PHPStan, trunk only) reports `addListener()`, `addSubscriber()` and their `remove*` twins on the shared dispatcher in integration tests. It misses unit tests, and a dispatcher whose native type is the concrete `EventDispatcher`; flag those.
+- `TEST-037` `ProcessIsolationInTests` (Danger, trunk only) fails a PR that adds or modifies a `tests/unit/` or `tests/devops/` `*Test.php` file with `#[RunInSeparateProcess]`, `#[RunTestsInSeparateProcesses]` or `#[RunClassInSeparateProcess]`, short or fully qualified, alone or in a grouped attribute. It misses the docblock annotations `@runInSeparateProcess` and `@runTestsInSeparateProcesses`, `processIsolation="true"` in a PHPUnit config, an aliased import, integration tests, and test files under a `/data/` folder; flag those.
 <!-- enforced:end -->
