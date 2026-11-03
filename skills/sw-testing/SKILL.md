@@ -96,6 +96,12 @@ These match PHPStan rules and reviewer expectations on core PRs:
   `Application::run()`.
 - **TEST-014** **Stub DAL with `StaticEntityRepository`**, infer the generic (or `::of()`).
 - **TEST-015** **`#[CoversNothing]` safeguard tests** — `tests/devops/` on core, not `tests/unit/`.
+- **TEST-037** **No separate process** — unit and devops tests never use
+  `#[RunInSeparateProcess]`, `#[RunTestsInSeparateProcesses]`,
+  `#[RunClassInSeparateProcess]`, the `@run…InSeparateProcess` annotations or
+  `processIsolation`. A test that changes `$_SERVER`, `putenv()` or a static
+  cache restores it in `tearDown()`; give a static cache a `reset()`
+  (`ResetInterface`) instead of isolating the process.
 - **Events** — no runtime listeners on the shared `event_dispatcher`; observe
   through `CollectingEventDispatcher` (unit) or `EventHookDispatcher::on()`
   (integration), capture in the hook and assert afterwards, never inside it.
@@ -144,7 +150,7 @@ These match PHPStan rules and reviewer expectations on core PRs:
 ## Already enforced by CI (do not repeat)
 
 <!-- enforced:start: generated from rules/catalog.json by `node tools/bin/render-enforced.ts`; do not edit -->
-CI already fails the build on 11 checks for this skill's rules. Before you
+CI already fails the build on 12 checks for this skill's rules. Before you
 flag a finding or write a checklist, read [`references/enforced-by-ci.md`](references/enforced-by-ci.md)
 and flag only what each check misses.
 <!-- enforced:end -->

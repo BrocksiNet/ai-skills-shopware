@@ -21,3 +21,4 @@
 - This test expects an exception while the major flag is active — mark the method deprecated with the flag.
 - This integration test only asserts inside if ($event !== null). Can it ever fail?
 - This PR changes the route and flips assertArrayHasKey to assertArrayNotHasKey in the old test. Is that fine?
+- My unit test changes an env var and the static cache leaks into the next test. Should I add #[RunInSeparateProcess]?

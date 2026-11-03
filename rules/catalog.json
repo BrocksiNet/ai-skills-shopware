@@ -744,6 +744,33 @@
       }
     },
     {
+      "id": "TEST-037",
+      "skill": "sw-testing",
+      "file": "skills/sw-testing/SKILL.md",
+      "title": "Unit and devops tests run in the shared process and restore global state",
+      "status": "active",
+      "since": "2026-11-03",
+      "eval": "no-separate-process-test",
+      "core_guide_ids": [],
+      "audience": [
+        "core"
+      ],
+      "defer_on_trunk": true,
+      "trunk": {
+        "source": ".agents/skills/shopware-phpunit-tests/SKILL.md#feature-flags-and-coverage",
+        "commit": "bcd12bca",
+        "enforced_by": [
+          {
+            "tool": "ProcessIsolationInTests",
+            "kind": "danger",
+            "catches": "fails a PR that adds or modifies a `tests/unit/` or `tests/devops/` `*Test.php` file with `#[RunInSeparateProcess]`, `#[RunTestsInSeparateProcesses]` or `#[RunClassInSeparateProcess]`, short or fully qualified, alone or in a grouped attribute",
+            "misses": "the docblock annotations `@runInSeparateProcess` and `@runTestsInSeparateProcesses`, `processIsolation=\"true\"` in a PHPUnit config, an aliased import, integration tests, and test files under a `/data/` folder",
+            "trunk_only": true
+          }
+        ]
+      }
+    },
+    {
       "id": "PLG-001",
       "skill": "sw-plugin-development",
       "file": "skills/sw-plugin-development/references/version-compatibility.md",

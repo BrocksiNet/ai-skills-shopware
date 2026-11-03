@@ -55,7 +55,9 @@
       "paths": ["skills"],
       "skills": [
         { "path": "skills/shopware-phpunit", "skills": ["sw-testing"] },
-        { "path": "skills/shopware-admin-crud-module", "skills": ["sw-admin-js"] }
+        { "path": "skills/shopware-admin-crud-module", "skills": ["sw-admin-js"] },
+        { "path": "skills/shopware-extension-security", "skills": ["sw-security", "sw-extension-review"] },
+        { "path": "skills/shopware-store-preflight", "skills": ["sw-extension-review"] }
       ]
     },
     {
