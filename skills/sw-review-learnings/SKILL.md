@@ -89,9 +89,9 @@ Detailed, growing lists live in references. Read only the one that matches the c
 - **REV-013** **Cross-test docblock uses FQCN instead of `@see`.** Point at the covering test with
   `@see ImportedTestClass` and a `use` statement — not `\Shopware\Tests\…\OtherTest`
   in prose. (Owning topic: `sw-testing` -> `core-platform-patterns.md`.)
-- **REV-014** **`#[CoversNothing]` safeguard test in `tests/unit/`.** Config/wiring checks that do
-  not cover production code belong in `tests/devops/` on core — keep the unit suite
-  for Codecov. (Owning topic: `sw-testing` -> `core-platform-patterns.md`.)
+- **`#[CoversNothing]` safeguard test in `tests/unit/`** (`TEST-015`): config/wiring
+  checks that do not cover production code belong in `tests/devops/` on core — keep
+  the unit suite for Codecov. (Owning topic: `sw-testing` -> `core-platform-patterns.md`.)
 
 - **`class_exists` guard for a core framework class** (`REV-015`): dead code when the
   oldest release in the `shopware/core` range already ships the class. Only guard API

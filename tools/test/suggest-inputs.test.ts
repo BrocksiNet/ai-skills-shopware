@@ -98,15 +98,42 @@ describe('retirement evidence', () => {
       ['TEST-901'],
     );
   });
-  test('the skill-off arm passes every repeat in the latest result', () => {
+  test('the skill-off arm passes every repeat on two models', () => {
     const results = [
       abResult('task-a', 1, '2026-09-01'),
       abResult('task-a', 3, '2026-10-01'),
-      abResult('task-b', 2, '2026-10-01'),
+      abResult('task-a', 3, '2026-10-01', 'gpt-5-mini'),
+      abResult('task-b', 3, '2026-10-01'),
+      abResult('task-b', 2, '2026-10-01', 'gpt-5-mini'),
     ];
     assert.deepEqual(
       abCandidates(catalog, results, 'b.jsonl').map((c) => c.rule),
       ['TEST-903'],
+    );
+  });
+  test('one model alone is not enough', () => {
+    assert.deepEqual(abCandidates(catalog, [abResult('task-a', 3, '2026-10-01')], 'b.jsonl'), []);
+  });
+  test('a model where the skill helps blocks the retirement', () => {
+    const results = [
+      abResult('task-a', 3, '2026-10-01'),
+      abResult('task-a', 3, '2026-10-01', 'gpt-5-mini'),
+      abResult('task-a', 1, '2026-10-01', 'mimo', 3),
+    ];
+    assert.deepEqual(abCandidates(catalog, results, 'b.jsonl'), []);
+  });
+  test('a review task whose ignore twin is better with the skill stays', () => {
+    const review: typeof catalog = { ...catalog, rules: [rule('TEST-906', { eval: 'review-x-catch' })] };
+    const results = [
+      abResult('review-x-catch', 3, '2026-10-01'),
+      abResult('review-x-catch', 3, '2026-10-01', 'gpt-5-mini'),
+      abResult('review-x-ignore', 2, '2026-10-01'),
+    ];
+    assert.deepEqual(abCandidates(review, results, 'b.jsonl'), []);
+    const clean = results.map((r) => Object.assign({}, r, r.task === 'review-x-ignore' ? { off: 3 } : {}));
+    assert.deepEqual(
+      abCandidates(review, clean, 'b.jsonl').map((c) => c.rule),
+      ['TEST-906'],
     );
   });
   test('a rule with a keep_reason is never a candidate', () => {
@@ -114,7 +141,8 @@ describe('retirement evidence', () => {
       ...catalog,
       rules: catalog.rules.map((r) => (r.id === 'TEST-903' ? { ...r, keep_reason: 'severe on weaker models' } : r)),
     };
-    assert.deepEqual(abCandidates(kept, [abResult('task-a', 3, '2026-10-01')], 'b.jsonl'), []);
+    const results = [abResult('task-a', 3, '2026-10-01'), abResult('task-a', 3, '2026-10-01', 'gpt-5-mini')];
+    assert.deepEqual(abCandidates(kept, results, 'b.jsonl'), []);
   });
   test('every class the rule names is gone from the supported releases', () => {
     const path = join(tmp, 'index.json.gz');

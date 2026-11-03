@@ -83,7 +83,7 @@ const summary = (c: Cluster): ClusterSummary => ({
   rules: c.rules,
 });
 
-interface Queued {
+export interface Queued {
   c: Cluster;
   retire?: RetireCandidate;
 }
@@ -197,12 +197,24 @@ function rankAll(
   });
 }
 
-/** Retirements first, then the clusters; without those an earlier run asked. */
-function queueOf(retire: RetireCandidate[], clusters: Cluster[], previous: SuggestResult | undefined): Queued[] {
+/** Retirements asked about per run at most, so review and drift clusters
+ *  keep most of the agent calls. */
+export const MAX_RETIREMENTS = 5;
+
+/** Up to `MAX_RETIREMENTS` retirements, then the clusters; without those an
+ *  earlier run asked. The other retirements wait for a later run. */
+export function queueOf(
+  retire: RetireCandidate[],
+  clusters: Cluster[],
+  previous?: Pick<SuggestResult, 'asked'>,
+): Queued[] {
   const done = new Set((previous?.asked ?? []).map((c) => c.key));
-  return [...retire.map((r) => ({ c: retirementCluster(r), retire: r })), ...clusters.map((c) => ({ c }))].filter(
-    (q) => !done.has(q.c.key),
-  );
+  const open = (q: Queued): boolean => !done.has(q.c.key);
+  const pending = retire.map((r) => ({ c: retirementCluster(r), retire: r })).filter((q) => open(q));
+  const askedBefore = (previous?.asked ?? []).filter((c) => c.key.startsWith('retire:')).length;
+  const room = Math.max(0, MAX_RETIREMENTS - askedBefore);
+  const rest = clusters.map((c) => ({ c })).filter((q) => open(q));
+  return [...pending.slice(0, room), ...rest, ...pending.slice(room)];
 }
 
 export async function suggest(o: SuggestOptions): Promise<SuggestResult> {
