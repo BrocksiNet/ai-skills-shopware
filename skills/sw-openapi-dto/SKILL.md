@@ -23,8 +23,10 @@ metadata:
 
 > **Do not edit a generated DTO.** A file whose header says "This file is
 > auto-generated" changes only through its schema JSON and
-> `bin/console open-api:generate-dtos`. If you cannot run the command, edit
-> the schema alone and tell the user to regenerate. A hand-written property
+> `bin/console open-api:generate-dtos`. Run the command after the schema
+> change, then `--check`; do not assume it fails because `vendor/` looks
+> missing. Only when it has failed, keep the schema change, report the
+> error and tell the user to regenerate. A hand-written property
 > that "mirrors" the schema is still a hand edit (`DTO-001`).
 
 shopware/shopware can generate PHP request and response DTOs from its OpenAPI
