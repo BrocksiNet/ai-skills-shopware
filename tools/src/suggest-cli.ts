@@ -9,7 +9,7 @@ import { envInt, envOr } from './env.ts';
 import { githubApi } from './github.ts';
 import { parseSince } from './suggest-load.ts';
 import { writeSuggestions } from './suggest-render.ts';
-import { latestBaseline } from './suggest-retire.ts';
+import { allBaselines } from './suggest-retire.ts';
 import { DEFAULT_MAX_CLUSTERS, DEFAULT_MAX_SIGNALS, readResult, SUGGESTIONS_DIR, suggest } from './suggest-run.ts';
 
 /** The parsed flags; tools/bin/suggest-rules.ts documents them. */
@@ -72,7 +72,7 @@ export async function suggestCommand(
   const usageLog = join(scratch, 'usage.log');
   const env = { ...baseEnv, EVAL_USAGE_LOG: usageLog };
   try {
-    const baseline = f.baseline ?? latestBaseline(root);
+    const baselines = f.baseline === undefined ? allBaselines(root) : [resolve(f.baseline)];
     const previous = f.continue === undefined ? undefined : readResult(resolve(f.continue));
     if (previous !== undefined && (f.since !== undefined || f.until !== undefined))
       throw new Error('--continue takes the window of the earlier run; drop --since and --until');
@@ -97,7 +97,7 @@ export async function suggestCommand(
       maxSignals: envInt(env, 'SUGGEST_MAX_SIGNALS', DEFAULT_MAX_SIGNALS, 1),
       supportedFrom: envOr(env, 'SUGGEST_SUPPORTED_FROM', '6.6.0.0'),
       apiIndex: apiIndexPath(f['api-index'], env),
-      ...(baseline === undefined ? {} : { baseline }),
+      baselines,
       log,
     });
     const files = writeSuggestions(resolve(f.out ?? join(root, SUGGESTIONS_DIR)), result);

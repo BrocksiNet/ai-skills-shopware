@@ -209,7 +209,8 @@
       "skill": "sw-testing",
       "file": "skills/sw-testing/SKILL.md",
       "title": "Every test class has a #[Package] matching the covered class",
-      "status": "active",
+      "status": "retired",
+      "retired_reason": "No measured effect (2026-11-03): with the skill off, `test-class-has-package-attribute` passed every repeat on claude/haiku (3/3, baseline 2026-10-28) and on opencode/mimo-v2.6-flash-free (3/3, local). Core CI also catches it (TestPackageMatchRule, MissingPackageAttributeInTests). The task stays as a canary: a model that fails it with the skill off brings the rule back.",
       "since": "2026-10-20",
       "eval": "test-class-has-package-attribute",
       "core_guide_ids": [],
@@ -353,6 +354,7 @@
       "file": "skills/sw-testing/SKILL.md",
       "title": "Stub DAL repositories with StaticEntityRepository",
       "status": "active",
+      "keep_reason": "Held on a second model (2026-11-03): claude/haiku passed without the rule, but opencode/mimo-v2.6-flash-free passed only 2/3 with the skill off. Not a retirement candidate until a second model passes 3/3.",
       "since": "2026-10-20",
       "eval": "static-entity-repository-stub",
       "core_guide_ids": [],
@@ -513,6 +515,7 @@
       "file": "skills/sw-testing/references/integration-repository.md",
       "title": "Integration tests use only the traits the scenario needs",
       "status": "active",
+      "keep_reason": "Held on a second model (2026-11-03): opencode/mimo-v2.6-flash-free scored 3/3 with the skill and 2/3 without, so the rule helps a weaker model.",
       "since": "2026-10-20",
       "eval": "integration-narrow-test-traits",
       "core_guide_ids": [],
@@ -1058,6 +1061,7 @@
       "file": "skills/sw-plugin-development/references/migrations.md",
       "title": "Large data changes run in ordered batches",
       "status": "active",
+      "keep_reason": "Held on a second model (2026-11-03): openrouter nemotron-3-ultra scored 3/3 with the skill and 1/3 without on the catch task; claude/haiku passed both arms after the ignore fixture fix.",
       "since": "2026-10-20",
       "eval": "review-migration-unbatched-backfill-catch",
       "core_guide_ids": [
@@ -1188,6 +1192,7 @@
       "file": "skills/sw-plugin-development/references/api-contracts.md",
       "title": "Never change an existing API response field's type or nullability",
       "status": "active",
+      "keep_reason": "Kept for weaker models (2026-11-03): claude/haiku flagged this without the rule, but a missed Store API contract change breaks every headless client of the shop, and the rule costs a few lines. Retirement passes skip it; re-check with a small open model before dropping.",
       "since": "2026-10-21",
       "eval": "review-store-api-contract-catch",
       "core_guide_ids": [
@@ -1205,6 +1210,7 @@
       "file": "skills/sw-plugin-development/references/migrations.md",
       "title": "Content migrations skip rows the merchant edited",
       "status": "active",
+      "keep_reason": "Kept (2026-11-03): claude/haiku caught the problem without the rule, but on its -ignore twin the skill scored 3/3 against 2/3 without it, so the rule also stops false alarms. Overwriting merchant-customized data in a migration cannot be undone.",
       "since": "2026-10-21",
       "eval": "review-migration-customized-data-catch",
       "core_guide_ids": [
@@ -1222,6 +1228,7 @@
       "file": "skills/sw-plugin-development/references/migrations.md",
       "title": "No feature flags in migrations",
       "status": "active",
+      "keep_reason": "Kept (2026-11-03): claude/haiku caught the problem without the rule, but on its -ignore twin the skill scored 2/3 against 1/3 without it, so the rule also stops false alarms. Re-check with a second model before dropping.",
       "since": "2026-10-21",
       "eval": "review-migration-feature-flag-catch",
       "core_guide_ids": [
@@ -1238,6 +1245,7 @@
       "file": "skills/sw-plugin-development/references/migrations.md",
       "title": "update() never narrows a column; that goes to updateDestructive()",
       "status": "active",
+      "keep_reason": "Kept for weaker models (2026-11-03): claude/haiku did this without the rule, but a narrowing UPDATE in a migration silently loses shop data, and the rule costs a few lines. Retirement passes skip it; re-check with a small open model before dropping.",
       "since": "2026-10-21",
       "eval": "review-migration-narrowing-update-catch",
       "core_guide_ids": [
@@ -1274,6 +1282,7 @@
       "file": "skills/sw-plugin-development/references/version-compatibility.md",
       "title": "Boot-time code does not use a suggested package outside its guard",
       "status": "active",
+      "keep_reason": "Kept for weaker models (2026-11-03): claude/haiku did this without the rule, but an unguarded optional package crashes the container at boot, and the task is a cheap canary for review quality. Retirement passes skip it; re-check with a small open model before dropping.",
       "since": "2026-10-21",
       "eval": "review-optional-package-guard-catch",
       "core_guide_ids": [],
@@ -1510,17 +1519,16 @@
       "skill": "sw-review-learnings",
       "file": "skills/sw-review-learnings/SKILL.md",
       "title": "Safeguard tests do not live in tests/unit/",
-      "status": "active",
+      "status": "superseded:TEST-015",
+      "retired_reason": "Merged into TEST-015 (2026-11-03): two IDs covered one topic and shared one eval (safeguard-test-not-in-unit-suite). The skill text keeps a pointer to `TEST-015`.",
       "since": "2026-10-20",
-      "eval": "safeguard-test-not-in-unit-suite",
+      "eval": null,
       "core_guide_ids": [],
       "audience": [
         "core"
       ],
       "defer_on_trunk": false,
-      "see": [
-        "TEST-015"
-      ]
+      "eval_reason": "Superseded by TEST-015."
     },
     {
       "id": "REV-015",

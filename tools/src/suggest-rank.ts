@@ -80,18 +80,24 @@ export function evidenceScore(
   x: RankContext,
 ): { score: number; prs: number; changes_requested: number } {
   const best = new Map<string, { w: number; changes: boolean }>();
+  let retire = 0;
   for (const url of urls) {
     const s = x.signals.get(url);
-    // A retirement cites its evidence ID, not a review: it counts as one.
+    // A retirement cites its evidence ID, not a review: it scores like one
+    // signal but is no PR.
     const key = s === undefined ? url : prOf(s);
     const w = s === undefined ? (url.startsWith('retire:') ? 1 : 0) : weight(s, x.trustOf(s));
+    if (s === undefined && w > 0) {
+      retire += w;
+      continue;
+    }
     const changes = s?.review?.state === 'CHANGES_REQUESTED';
     const seen = best.get(key);
     best.set(key, { w: Math.max(w, seen?.w ?? 0), changes: changes || (seen?.changes ?? false) });
   }
   const values = [...best.values()].filter((v) => v.w > 0);
   return {
-    score: values.reduce((sum, v) => sum + v.w, 0),
+    score: values.reduce((sum, v) => sum + v.w, retire),
     prs: values.length,
     changes_requested: values.filter((v) => v.changes).length,
   };

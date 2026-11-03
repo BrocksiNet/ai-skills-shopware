@@ -45,7 +45,8 @@ class Migration1700000000AddExampleColumn extends MigrationStep
   there either.
 - **PLG-019** **Large data changes run in batches.** Update about 1,000 rows per statement,
   ordered by a deterministic key such as the primary key, and continue from the
-  last key you processed. Without a stable `ORDER BY`, batches skip or repeat rows.
+  last key you processed; bind a binary id cursor as `ParameterType::BINARY`.
+  Without a stable `ORDER BY`, batches skip or repeat rows.
   A single statement over a large table hits the update timeout on big shops.
 - **PLG-020** **Derived data belongs to an indexer, not to SQL.** Do not recompute hashes,
   keywords or listing values across a whole table in a migration. Register the

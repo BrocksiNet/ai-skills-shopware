@@ -8,7 +8,9 @@ import { join } from 'node:path';
 import { describe, test } from 'node:test';
 import { asker } from '../src/agent-ask.ts';
 import { renderSuggestions } from '../src/suggest-render.ts';
-import { suggest, type SuggestOptions } from '../src/suggest-run.ts';
+import type { Cluster } from '../src/suggest-cluster.ts';
+import type { RetireCandidate } from '../src/suggest-retire.ts';
+import { MAX_RETIREMENTS, queueOf, suggest, type SuggestOptions } from '../src/suggest-run.ts';
 import { abResult, FAKE, ROOT, scratch, signal } from './suggest-fixture.ts';
 
 const tmp = scratch();
@@ -86,8 +88,12 @@ describe('suggest with the fake agent', () => {
   });
   test('a retirement candidate is explained through the same checks', async () => {
     const baseline = join(tmp, 'baseline.jsonl');
-    writeFileSync(baseline, `${JSON.stringify(abResult('unit-test-exception-object', 3, '2026-10-01'))}\n`);
-    const r = await suggest({ ...options('retire'), skill: 'sw-testing', baseline });
+    const rows = [
+      abResult('unit-test-exception-object', 3, '2026-10-01'),
+      abResult('unit-test-exception-object', 3, '2026-10-01', 'gpt-5-mini'),
+    ];
+    writeFileSync(baseline, rows.map((r) => `${JSON.stringify(r)}\n`).join(''));
+    const r = await suggest({ ...options('retire'), skill: 'sw-testing', baselines: [baseline] });
     const s = r.suggestions.find((x) => x.cluster === 'retire:ab:TEST-001') ?? assert.fail('no TEST-001');
     assert.equal(s.action, 'retire');
     assert.equal(s.ok, true);
@@ -123,5 +129,33 @@ describe('suggest with the fake agent', () => {
       ids.slice(0, first.suggestions.length),
       first.suggestions.map((s) => s.id),
     );
+  });
+});
+
+const retire = (n: number): RetireCandidate => ({
+  rule: `TEST-9${String(n).padStart(2, '0')}`,
+  skill: 'sw-testing',
+  kind: 'ab',
+  evidence: 'off passes',
+});
+const sevenRetirements = (): RetireCandidate[] => [1, 2, 3, 4, 5, 6, 7].map((n) => retire(n));
+const cluster = (key: string): Cluster => ({ key, rules: [], signals: [], score: 1 });
+const keys = (q: { c: Cluster }[]): string[] => q.map((x) => x.c.key);
+
+describe('queue', () => {
+  test('at most five retirements go before the clusters', () => {
+    const queue = queueOf(sevenRetirements(), [cluster('a'), cluster('b')]);
+    const firstCluster = keys(queue).indexOf('a');
+    assert.equal(firstCluster, MAX_RETIREMENTS);
+    assert.equal(queue.length, 9);
+    assert.ok(queue.slice(firstCluster + 2).every((q) => q.retire !== undefined));
+  });
+
+  test('retirements asked in an earlier run use up the room', () => {
+    const first = queueOf(sevenRetirements(), []);
+    const asked = first.slice(0, 3).map((q) => ({ key: q.c.key, signals: 0, prs: 0, score: 1, rules: [] }));
+    const queue = queueOf(sevenRetirements(), [cluster('a')], { asked });
+    assert.equal(keys(queue).indexOf('a'), MAX_RETIREMENTS - 3);
+    assert.equal(queue.length, 5);
   });
 });
