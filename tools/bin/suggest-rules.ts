@@ -12,7 +12,7 @@
 // (default claude; a COMMAND reads the prompt on stdin and prints the
 // answer), --source ID (repeatable; review sources from the cache),
 // --offline (no download, no drift issue), --out DIR, --api-index FILE,
-// --baseline FILE (default the latest evals/baselines/*.jsonl), --continue
+// --baseline FILE (default every evals/baselines/*.jsonl), --continue
 // FILE (an earlier suggestions/<date>.json: ask only the clusters it did
 // not, in its window, and write both runs into one result).
 //

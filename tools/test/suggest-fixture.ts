@@ -72,11 +72,13 @@ export const rule = (id: string, fields: Partial<Rule>): Rule => ({
   ...fields,
 });
 
-export const abResult = (task: string, off: number, ts: string): AbResult => ({
+export const abResult = (task: string, off: number, ts: string, model = 'haiku', on = 3): AbResult => ({
   task,
   repeats: 3,
-  on: 3,
+  on,
   off,
   verdict: 'no_difference',
   ts,
+  agent: 'claude',
+  model,
 });

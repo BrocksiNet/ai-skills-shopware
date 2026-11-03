@@ -1212,6 +1212,7 @@
       "file": "skills/sw-plugin-development/references/api-contracts.md",
       "title": "Never change an existing API response field's type or nullability",
       "status": "active",
+      "keep_reason": "Kept for weaker models (2026-11-03): claude/haiku flagged this without the rule, but a missed Store API contract change breaks every headless client of the shop, and the rule costs a few lines. Retirement passes skip it; re-check with a small open model before dropping.",
       "since": "2026-10-21",
       "eval": "review-store-api-contract-catch",
       "core_guide_ids": [
@@ -1229,6 +1230,7 @@
       "file": "skills/sw-plugin-development/references/migrations.md",
       "title": "Content migrations skip rows the merchant edited",
       "status": "active",
+      "keep_reason": "Kept (2026-11-03): claude/haiku caught the problem without the rule, but on its -ignore twin the skill scored 3/3 against 2/3 without it, so the rule also stops false alarms. Overwriting merchant-customized data in a migration cannot be undone.",
       "since": "2026-10-21",
       "eval": "review-migration-customized-data-catch",
       "core_guide_ids": [
@@ -1246,6 +1248,7 @@
       "file": "skills/sw-plugin-development/references/migrations.md",
       "title": "No feature flags in migrations",
       "status": "active",
+      "keep_reason": "Kept (2026-11-03): claude/haiku caught the problem without the rule, but on its -ignore twin the skill scored 2/3 against 1/3 without it, so the rule also stops false alarms. Re-check with a second model before dropping.",
       "since": "2026-10-21",
       "eval": "review-migration-feature-flag-catch",
       "core_guide_ids": [
@@ -1262,6 +1265,7 @@
       "file": "skills/sw-plugin-development/references/migrations.md",
       "title": "update() never narrows a column; that goes to updateDestructive()",
       "status": "active",
+      "keep_reason": "Kept for weaker models (2026-11-03): claude/haiku did this without the rule, but a narrowing UPDATE in a migration silently loses shop data, and the rule costs a few lines. Retirement passes skip it; re-check with a small open model before dropping.",
       "since": "2026-10-21",
       "eval": "review-migration-narrowing-update-catch",
       "core_guide_ids": [
@@ -1298,6 +1302,7 @@
       "file": "skills/sw-plugin-development/references/version-compatibility.md",
       "title": "Boot-time code does not use a suggested package outside its guard",
       "status": "active",
+      "keep_reason": "Kept for weaker models (2026-11-03): claude/haiku did this without the rule, but an unguarded optional package crashes the container at boot, and the task is a cheap canary for review quality. Retirement passes skip it; re-check with a small open model before dropping.",
       "since": "2026-10-21",
       "eval": "review-optional-package-guard-catch",
       "core_guide_ids": [],

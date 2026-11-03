@@ -49,6 +49,12 @@ describe('rank', () => {
     assert.equal(e.score, 0.75 + 0.75);
   });
 
+  test('a retirement scores like one signal but is no PR', () => {
+    const e = evidenceScore(['retire:ab:CORE-001'], x);
+    assert.equal(e.prs, 0);
+    assert.equal(e.score, 1);
+  });
+
   test('core-only rules and overlaps are halved; failed and none are unranked', () => {
     const list = [
       suggestion('d-01', {
