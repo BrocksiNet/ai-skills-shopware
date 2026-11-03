@@ -319,9 +319,11 @@ of a user with a Copilot seat, with the account permission "Copilot Requests".
 Its runs cost that user's premium requests. With `claude-haiku-4.5` a session
 costs a third of one, so a full run (about 900 sessions) costs about 300, and
 one task A/B with 3 repeats about 2. Before the shards start, the plan job runs one tiny session
-(`tools/bin/agent-preflight.ts`); when the model is gone ("Endpoint is
-unavailable", "Model unavailable"), the run fails there in a minute with a
-hint, instead of every shard retrying agent errors for hours. `agents=claude`
+per model (`tools/bin/agent-preflight.ts`). A model that does not answer
+(gone, "Model unavailable", or a used-up free quota) is dropped from the run
+with a warning in the job summary, instead of every shard retrying agent
+errors for hours. The other models still run; the run fails only when no
+model answers. `agents=claude`
 on dispatch uses Claude Code and needs the repository secret
 `ANTHROPIC_API_KEY`. A run whose agent misses its secret fails on purpose.
 

@@ -1,5 +1,6 @@
-// One tiny session through SKILLS_AGENT_CMD, so evals.yml fails in a minute
-// when the model is gone instead of retrying in every shard for hours.
+// One tiny session through SKILLS_AGENT_CMD, so
+// when the model is gone, evals.yml drops it in a minute instead of every
+// shard retrying for hours.
 // tools/src/agent-preflight.ts documents the behavior.
 //
 //   SKILLS_AGENT_CMD=evals/runner/opencode-task.sh node tools/bin/agent-preflight.ts

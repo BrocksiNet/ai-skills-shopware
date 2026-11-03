@@ -2,8 +2,9 @@
 //
 // Free OpenCode models come and go. When the configured model is gone,
 // every session is an agent error, each shard retries for hours and the
-// gate only says "agent errors". The preflight fails the run in a minute,
-// with the reason and where to pick another model.
+// gate only says "agent errors". The preflight fails in a minute, with the
+// reason and where to pick another model; evals.yml then drops that model
+// and runs the others.
 import { mkdtempSync, rmSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
