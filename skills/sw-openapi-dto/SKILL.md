@@ -21,6 +21,12 @@ metadata:
 
 # OpenAPI DTO generation (core)
 
+> **Do not edit a generated DTO.** A file whose header says "This file is
+> auto-generated" changes only through its schema JSON and
+> `bin/console open-api:generate-dtos`. If you cannot run the command, edit
+> the schema alone and tell the user to regenerate. A hand-written property
+> that "mirrors" the schema is still a hand edit (`DTO-001`).
+
 shopware/shopware can generate PHP request and response DTOs from its OpenAPI
 schema JSON. The schema is the source; the PHP classes follow it. The runtime
 maps a JSON request body into the request DTO and turns a returned response
@@ -51,7 +57,8 @@ Read only the reference that matches the task or the files it changes:
 ## Hard rules
 
 1. Change the schema JSON and regenerate. Never hand-edit a generated DTO
-   (`DTO-001`). Delete stale DTOs of removed operations yourself (`DTO-002`).
+   (`DTO-001`), not even when `bin/console` cannot run. Delete stale DTOs of
+   removed operations yourself (`DTO-002`).
 2. Required fields are constructor arguments. Optional fields stay
    uninitialized. Business code applies schema defaults through `has()` and
    the `DEFAULT_<FIELD>` constant (`DTO-003`).

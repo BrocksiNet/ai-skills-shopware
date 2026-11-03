@@ -3,6 +3,11 @@
 Load when code reads or fills a generated DTO, or when you change the DTO
 base classes.
 
+This file describes what the generator writes; it is not a recipe for
+writing it. To add, remove or retype a field, change only the schema JSON
+(`DTO-001` in `schema-and-generation.md`) and leave the PHP to the
+generator, even when you cannot run it.
+
 ## How a generated DTO looks
 
 - A required field is a promoted constructor argument, even when it is
