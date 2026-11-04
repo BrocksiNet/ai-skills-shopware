@@ -85,7 +85,7 @@ limits mutation jobs to two at once, and makes no model calls.
 - The six hand-seeded audit survivors now have independent boundary tests:
   commit and repeat identity, unexpected tasks, duplicate repeat IDs, off-arm
   aggregates, and the inclusive maximum error percentage. The
-  [replay evidence](quality-seeded-faults-2026-11-04.json) records assertion
+  [replay evidence](evidence.md#quality-audits) records assertion
   failures in an isolated copy; it is not a general mutation score.
 - Manifest validation, result parsing, gate decisions, findings, version
   constraints, A/B decision logic and model-profile selection are tested for
@@ -132,7 +132,7 @@ release publication and a real Shopware runtime remain outside these checks.
 
 ## Original coverage and validation baseline
 
-The [machine-readable measurements](quality-checks-2026-11-04.json) preserve the
+The [machine-readable measurements](evidence.md#quality-audits) preserve the
 original audit alongside the new scope, source hashes, mutation survivors, and
 validation results.
 
@@ -177,7 +177,7 @@ The grouped delimiter regex remains in production to avoid unnecessary empty
 allocations; its equivalent mutation is retained in the score.
 
 All 24 remaining survivors have a recorded review in the
-[machine-readable follow-up](quality-95-2026-11-04.json). They include redundant
+[machine-readable follow-up](evidence.md#quality-audits). They include redundant
 guards, private sentinels, JSON Buffer coercion, and artificial marker inputs.
 The marker cases remain counted as survivors; no marker-specific assertions
 or exclusions inflate the score. The one detected timeout is still the

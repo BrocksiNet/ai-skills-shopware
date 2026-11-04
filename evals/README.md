@@ -271,7 +271,7 @@ unobservable retrieval. An infrastructure error stops later sessions. This
 runner currently requires the Claude adapter because other event formats have
 not been calibrated for reference observation.
 
-The [first-run record](experiments/discovery-transfer-2026-11-04.json) retains all
+The [first-run record](../docs/evidence.md#skill-experiments) retains all
 24 raw trials. Its cancellation task was invalidated because the prompt and
 fixture did not establish the teardown API assumed by the oracle; that task is
 excluded from the primary comparison and removed from the active task set.
@@ -316,7 +316,7 @@ links in the protocol; no browser, PHP interpreter, database or Shopware kernel
 is involved. Unsupported PHP/Vue adapter rewrites are ungradable infrastructure
 errors, not model failures. The ACL task was repaired after the first run to
 state persisted-role snapshots and an unshipped migration explicitly; its
-original scores are excluded from the [first-run record](experiments/facts-transfer-2026-11-04.json).
+original scores are excluded from the [first-run record](../docs/evidence.md#skill-experiments).
 
 The primary retrieval measure is a trial returning **at least one** acceptable
 fact-bearing reference. The cache task permits either of two references; reading

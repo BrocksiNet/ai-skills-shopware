@@ -7,6 +7,9 @@ Method: [`architecture.md`](architecture.md#how-a-rule-is-proven).
 Detail and history: the plans in [`plans/`](plans/) and the
 [changelog](../CHANGELOG.md).
 
+Detailed historical JSON is available through the
+[evidence archive](evidence.md), with per-record hashes and pinned originals.
+
 ## Where the skills change the answer
 
 The skills win where the answer is a Shopware fact the model cannot know: an
@@ -101,7 +104,7 @@ plugin-review task did not load a skill through the reported skill tool in
 any arm. The transfer comparison below follows up with prospective reference-retrieval
 and code tasks; additional model profiles remain outstanding.
 
-The [screening record](../evals/experiments/discovery-2026-11-04.json) includes
+The [screening record](evidence.md#skill-experiments) includes
 package hashes, trial outcomes, selections, skill loads and token use.
 [Running the pilot](../evals/README.md#routerhelp-consolidation-pilot) prepares
 fresh packages outside the checkout. Exploratory runs with an unstated
@@ -152,7 +155,7 @@ lack of discrimination.
 The JavaScript checks execute edited modules in a fixture VM; PHP checks AST
 and service configuration, not a running Shopware container. The cases were
 prospectively authored here, not independently curated, and are now regression
-data. The [full record](../evals/experiments/discovery-transfer-2026-11-04.json)
+data. The [full record](evidence.md#skill-experiments)
 contains the frozen manifest, prompts, per-trial retrieval/code/usage data,
 invalidated task inputs and failing answers. Raw events, exact evaluated
 sources and edited fixtures remain locally under
@@ -248,7 +251,7 @@ paired decision rule; count task families as the independent evidence, rather
 than treating repeated attempts as unrelated tasks. Reference reads, usable
 completion, code correctness and cost should remain separate outcomes.
 
-The [full record](../evals/experiments/facts-transfer-2026-11-04.json) retains
+The [full record](evidence.md#skill-experiments) retains
 the original protocol, all 54 scheduled rows, prompts, primary and diagnostic
 metrics, exclusions, failing template, original ACL oracle and source audit.
 Exact frozen inputs, raw traces and edited code remain locally in
@@ -273,5 +276,5 @@ repaired cases are regression data. No new rule or skill was published.
 
 The [maintenance report](skill-maintenance-2026-11-04.md) records the applied
 consolidations, source links, remaining candidates, evidence limits and the next
-decision method. The [screen record](../evals/experiments/queue-screen-2026-11-04.json)
+decision method. The [screen record](evidence.md#skill-experiments)
 retains the original protocol, evaluated inputs, hashes and all trial outcomes.
