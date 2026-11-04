@@ -78,6 +78,9 @@ Read only the reference that matches the task or the files it changes:
 - Reload an entity after a repository save so origin / change-set stay in
   sync.
 - 6.7+ Admin build is Vite. Do not add a new `webpack.config.js`.
+- For a form bundle spanning 6.5 and 6.6+, read the binding contracts in
+  [architecture.md](references/architecture.md) before editing. Legacy
+  value-based `sw-*` fields normally need `v-model:value` (`ADM-044`).
 
 ## Tests
 

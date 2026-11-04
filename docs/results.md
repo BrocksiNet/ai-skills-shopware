@@ -324,3 +324,75 @@ the local archive of frozen inputs, untested candidate, original grades,
 traces, retained workdirs, source audit and replay instructions. Detailed JSON
 and source snapshots stay out of tracked files. The archive is retained under
 `evals/.results/`; it is not published with this report.
+
+## Admin form-binding decision — November 4, 2026
+
+**Keep `ADM-044` for mixed-version plugin forms and correct its explanation.**
+This is a narrow engineering recommendation from source-audited exploratory
+evidence. The original prospective retention gate was not met.
+
+The [focused protocol](../evals/experiments/admin-binding-v1.json) compared
+the unchanged Admin skill with the same package minus only the `ADM-044`
+paragraph. Both arms were asked to read the architecture reference.
+The measured current package is pinned to `d81bd6f`, before the wording
+correction and entrypoint reminder; neither change was in the model runs.
+The two new tasks asked for a mail-profile editor and a two-step label wizard
+in standalone plugin repositories without vendored Administration sources.
+Every answer ran on Vue 2.7.14 and Vue 3.3.4, using unchanged Shopware
+6.5.8.0 / 6.6.0.0 field handlers in a reduced visual shell. The DOM was
+jsdom; this was not a full Administration installation.
+
+The workflows exercised editing, pending duplicate-submit prevention, save,
+reopen, empty overrides, preservation of other loaded fields, rendered errors
+and retry. The wizard also exercised Back/Next without persistence. Alternative
+bindings supporting both event contracts passed calibration; no particular
+template spelling or rule citation earned a pass.
+
+| Source-audited complete workflows; two attempts per feature | Current paragraph | Paragraph removed |
+| --- | --- | --- |
+| Haiku (`claude-haiku-5-5`) | 3/4 | 0/4 |
+| Sonnet (`claude-sonnet-5-5`) | 4/4 | 4/4 |
+| Total | 7/8 | 4/8 |
+
+All four ablated Haiku answers used plain `v-model`, which targets
+`modelValue` on Vue 3 while these fields expose `value`. The current-package
+miss used only `@update:value`, losing edits on the default 6.5 profile; that
+session invoked the skill but never returned the architecture reference.
+The rule text was returned in 7/8 current sessions and no ablated session.
+Changing only binding attributes fixed all five genuine failures in replay,
+without changing their save logic. Those repairs are diagnostic, not new trials.
+
+**The original scores remain 6/8 versus 4/8.** The frozen fixture backend
+created an Error in a different VM realm, falsely rejecting a correct
+`instanceof Error` guard. A separate replay shared the constructor, matching
+the browser's API/component realm, and changed one workflow classification.
+The correction was applied uniformly to all 16 retained answers. Neither
+answers nor original graders were overwritten. The eight-of-eight retention
+criterion still fails because one current answer genuinely missed the binding
+contract. The engineering recommendation must not be reported as a clean
+prospective-gate success.
+
+The source/runtime checks also disproved the rule's old "never fires"
+explanation: an old `change` listener can receive a native DOM event through
+attribute forwarding, rather than the scalar payload it expects. The rule now
+states that boundary, accepts both-contract bindings, and has a short entrypoint
+reminder. The reminder's effect on reference reading has **not** been A/B-tested.
+
+Confidence is moderate for retaining this specific information. These are two
+different feature implementations sharing **one binding API family**; model
+attempts are not independent task families. The observed benefit is on Haiku,
+and it depends on reading the reference. There is no population effect,
+safe-removal, automatic-discovery or whole-Admin-skill quality claim.
+The observed difference is +25 percentage points in the editor and +50 in the
+wizard, pooling the two models. These are descriptive sensitivity results,
+not independent population estimates or confidence bounds.
+
+The preceding [broad protocol](../evals/experiments/admin-workflows-v1.json)
+completed 32 sessions but had two invalid verification families: ordinary
+directory imports were mishandled, and route exit was underspecified with
+multiple table instances. Its remaining two families tied at 8/8 per arm.
+The invalid families and repaired regression replays are retained separately;
+they do not support a skill-retirement recommendation.
+
+The [compact record](../evals/experiments/admin-decisions-2026-11-04.json)
+pins both protocols and the local archives of original and audited evidence.

@@ -1,0 +1,66 @@
+{
+  "version": 1,
+  "status": "prospective-frozen",
+  "decision": "Retain sw-admin-js in the Administration implementation profile, or withhold a redundancy recommendation if its value is not demonstrated.",
+  "base_commit": "d81bd6fc37c8ea1ca805abccab7276739418d0b3",
+  "target": "Standalone plugin Administration work on Shopware v6.7.0.0; no upstream core skill installed.",
+  "models": [
+    "haiku",
+    "sonnet"
+  ],
+  "repeats": 2,
+  "arms": [
+    "on",
+    "off"
+  ],
+  "sessions": 32,
+  "seed": 20261104,
+  "exposure": "Identical project instruction requires reading any supplied project skill before editing. On supplies the unchanged sw-admin-js package; off supplies none. Both receive the same source snapshots. This measures supplied/read guidance, not natural activation.",
+  "cases": [
+    {
+      "task": "station-roles",
+      "family": "permissions",
+      "outcome": "Actual core privilege expansion plus mounted viewer/editor page: list, denial, edit, reload, least privilege."
+    },
+    {
+      "task": "export-session",
+      "family": "shared-state",
+      "outcome": "Actual core Store/Pinia and mounted tables/summary: shared selection, filter updates, route exit reset, reopen."
+    },
+    {
+      "task": "packing-build",
+      "family": "production-build",
+      "outcome": "Real Vite 6 build from platform extension entry contract, then mounted bundle and varied monetary values."
+    },
+    {
+      "task": "pick-list-batch",
+      "family": "extension-compatibility",
+      "outcome": "Actual core component/Twig factories, mounted batch interaction, unchanged merchant override, legacy methods/events and new snapshot payload."
+    }
+  ],
+  "primary": "Successful complete workflow: original frozen runtime oracle passes and session is a successful usable completion. No rule citation, prescribed API spelling or reference read is required to pass.",
+  "controls": "Two compliant implementations per case; pristine fixture fails; 16 one-fault variants fail before model sessions. Preserve existing role denials, state defaults, data-driven rendering and merchant extension behavior.",
+  "decision_rule": {
+    "retain": "Recommend retaining the skill if at least one workflow family improves in both models across the two attempts, neither model has a negative overall change, no workflow family has a negative mean change, and source audit finds no new security/compatibility failure type introduced by skill guidance. Scope the demonstrated benefit to the winning workflows.",
+    "broader_improvement": "Only describe improvement across multiple workflows if at least two different families improve. Never infer skill-wide quality, equivalence or safe deletion from a ceiling.",
+    "otherwise": "Do not claim a demonstrated retention benefit or safe removal. Report the failed decision criterion explicitly; do not add tasks or tune guidance to obtain a positive result."
+  },
+  "uncertainty": "Report each family/model/attempt pair, discordant pairs, effect in percentage points, and leave-one-family-out sensitivity. Four families are the clustering unit. An exact family sign-flip analysis has only 16 assignments, so even four same-direction families cannot establish p<0.05 one-sided. Curated fixtures are not a random sample; no population non-inferiority or removal claim.",
+  "limits": {
+    "max_turns": 24,
+    "max_budget_usd_per_session": 1.5,
+    "timeout_seconds": 300,
+    "retries": 0,
+    "tools": "Skill,Read,Edit,Write,Glob,Grep,Bash"
+  },
+  "execution": "Existing runTask, skillsProfile, agent adapter and referenceReads; sequential fresh workdirs. Freeze scripts, prompts, fixtures, current skill package, source snapshots, dependency lock and schedule before first session. Do not edit an oracle or task after observing results. Technical invalidity excludes a whole family from the primary comparison and is reported with original outcomes; repaired replays are regression data.",
+  "limitations": [
+    "Four new evaluator-authored task families; not an independent human-authored benchmark.",
+    "Framework source and dependencies execute, but no full Administration server, database, browser engine or Shopware PHP runtime. DOM is jsdom.",
+    "Role backend and module-navigation adapters are fixture code; Vite config is a focused extension build, not the full platform build.",
+    "Source fixtures cue some facts. Both arms can inspect them; selection is not blind to the skill's topics.",
+    "CLI builtin skills may be advertised. No OS filesystem isolation is claimed. Audit actual tool paths and package immutability.",
+    "Previously consumed transfer/review prompts are not rerun; underlying public APIs and current skill text are known to the evaluator."
+  ],
+  "evidence": "Detailed code, traces and original grades remain local in a verified git-ignored archive. Commit compact protocol, hashes, result and uncertainty only; no raw trace upload."
+}

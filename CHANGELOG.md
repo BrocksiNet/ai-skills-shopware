@@ -8,6 +8,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+
+- Clarify `ADM-044` for legacy Administration fields across 6.5 and 6.6:
+  default `v-model` targets the wrong prop on Vue 3, and an old `change`
+  listener can receive a native event rather than text. Accept explicit
+  bindings that support both contracts. Add an entrypoint reminder to read
+  the reference for mixed-version forms. The [workflow study](docs/results.md#admin-form-binding-decision--november-4-2026)
+  supports retaining this specific fact, with model-dependent results and
+  explicit grader-repair limitations.
+
 ## [0.15.0] - 2026-10-29
 
 ### Added

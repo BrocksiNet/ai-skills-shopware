@@ -1,0 +1,113 @@
+{
+  "version": 1,
+  "date": "2026-11-04",
+  "decision": {
+    "rule": "ADM-044",
+    "action": "retain and clarify; add an entrypoint reference reminder",
+    "basis": "Source-verified contracts and exploratory audited workflow outcomes; not a successful prospective gate.",
+    "confidence": "Moderate for retaining this specific information; no whole-skill or automatic-discovery conclusion."
+  },
+  "base_commit": "d81bd6fc37c8ea1ca805abccab7276739418d0b3",
+  "binding_ablation": {
+    "protocol": "evals/experiments/admin-binding-v1.json",
+    "protocol_commit": "8f1e84a",
+    "protocol_sha256": "f4a126caa2ab413d843c048991cad3302cf0692a354f2dfc82f434bb6969f3e1",
+    "frozen_inputs_sha256": "1f0ead38dadd1f81ef3e22123ce8fb045f27e3f38c75ce53a3a231ba10be1d5f",
+    "sessions": 16,
+    "new_workflows": 2,
+    "shared_api_families": 1,
+    "raw": {
+      "current": 6,
+      "ablated": 4,
+      "per_arm": 8
+    },
+    "audited": {
+      "current": 7,
+      "ablated": 4,
+      "per_arm": 8
+    },
+    "models": [
+      {
+        "model": "claude-haiku-5-5",
+        "current": 3,
+        "ablated": 0,
+        "per_arm": 4
+      },
+      {
+        "model": "claude-sonnet-5-5",
+        "current": 4,
+        "ablated": 4,
+        "per_arm": 4
+      }
+    ],
+    "paired_audited": {
+      "current_only_pass": 3,
+      "ablated_only_pass": 0,
+      "both_pass": 4,
+      "both_fail": 1
+    },
+    "rule_text_returned": {
+      "current": 7,
+      "ablated": 0,
+      "per_arm": 8
+    },
+    "binding_only_repairs": {
+      "cases": 5,
+      "pass": 5,
+      "new_trials": false
+    },
+    "prospective_gate": "Not met: original current 6/8; audited current 7/8 still misses eight-of-eight. One genuine current failure skipped the reference.",
+    "replay_change": "A separate oracle shares the host/VM Error constructor. One overall classification changes. Original graders, answers and scores remain intact.",
+    "uncertainty": [
+      "Two new feature implementations share one binding API; attempts/models are not independent task families.",
+      "Editor sample effect +25 percentage points; wizard +50. These are descriptive sensitivity results, not population confidence bounds.",
+      "The fact and older transfer-caption task were known before selection. The study is targeted, evaluator-authored and exploratory after a grader repair.",
+      "Actual Vue 2.7.14/3.3.4 and unchanged core field handlers run in jsdom with a reduced field shell; no full Administration server/browser/database.",
+      "The entrypoint reminder was added afterward and has not been A/B-tested."
+    ]
+  },
+  "broad_comparison": {
+    "protocol": "evals/experiments/admin-workflows-v1.json",
+    "protocol_commit": "ac6fc90",
+    "protocol_sha256": "978ba902b26ef0da16836cb530636edb054894a2a6acfdf06edfd9a90817192b",
+    "frozen_inputs_sha256": "3122550d16e074ee9a0b72947340569f14f596379d2ecb2e93a4d8deedf49942",
+    "sessions": 32,
+    "raw": {
+      "on": 12,
+      "off": 15,
+      "per_arm": 16
+    },
+    "excluded": [
+      "station-roles: normal directory imports mishandled by fixture loader",
+      "export-session: ambiguous route-exit boundary with multiple table instances"
+    ],
+    "valid_primary": {
+      "on": 8,
+      "off": 8,
+      "per_arm": 8,
+      "families": 2
+    },
+    "repaired_regression_replays": {
+      "pass": 16,
+      "total": 16,
+      "fresh_evidence": false
+    },
+    "decision": "No Admin-skill retention benefit established; no skill-retirement conclusion."
+  },
+  "archives": {
+    "publication": "local-only; no raw traces uploaded",
+    "broad": {
+      "path": "evals/.results/admin-workflow-decision-2026-11-04-v1.tar.gz",
+      "sha256": "bdb7ff68ad6caa4f288640186a364582c4340f14eb6cfdc17e4e8e9ff4e9753f",
+      "bytes": 2399402,
+      "root": "admin-workflow-decision-2026-11-04"
+    },
+    "binding": {
+      "path": "evals/.results/admin-binding-decision-2026-11-04-v1.tar.gz",
+      "sha256": "4f591ec1cd83bba0b23ec4dc79e79b25f258fc24499993625444feb07d49f1ee",
+      "bytes": 551127,
+      "root": "admin-binding-decision-2026-11-04"
+    },
+    "contents": "Frozen inputs, packages, schedules, original oracles/grades, traces, code, calibration, source audits and diagnostic replays; records.sha256 verifies every member. Runtime dependency locks are included; node_modules is omitted."
+  }
+}
