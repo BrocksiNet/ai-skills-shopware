@@ -3,7 +3,7 @@
 Consolidate duplicate rules before deleting skills. This pass keeps all **20
 skills**, reduces active rule IDs from **226 to 222**, updates two existing
 rules, and publishes no new rule. The machine-readable
-[evidence record](skill-maintenance-2026-11-04.json) contains the PR inventory,
+[evidence record](evidence.md#maintenance-review) contains the PR inventory,
 review links, source commits and per-skill decisions.
 
 ## What was reviewed
@@ -86,7 +86,7 @@ harm or equivalence. The normalizer control also hit a ceiling.
 
 The candidate therefore stays unpublished; its ID is reserved in the catalog.
 All original grades remain in the
-[screen record](../evals/experiments/queue-screen-2026-11-04.json), alongside
+[screen record](evidence.md#skill-experiments), alongside
 the evaluated inputs, protocol, provenance hashes and trace observations.
 Hashes were verified after every session had finished. The CLI reported
 $0.04984213 in usage; that is not an invoice. Skills loaded in all six on-arm

@@ -1,0 +1,55 @@
+{
+  "version": 1,
+  "date": "2026-11-04",
+  "repository": "BrocksiNet/ai-skills-shopware",
+  "source_commit": "cb95aaf878ba0e7ac7bd2e7ad783659718d72d99",
+  "records": {
+    "docs/quality-95-2026-11-04.json": {
+      "sha256": "8834060e74839073671497b0d96e79087eb8b74c79beea6912df57529508b632",
+      "bytes": 50165,
+      "summary": "docs/testing-quality.md#95-gate-and-cli-workflow-follow-up--november-4-2026"
+    },
+    "docs/quality-checks-2026-11-04.json": {
+      "sha256": "a0be452e9dad0a7a8326d40d23f02eb61cb931dcfd49af88b02a71bf95cb95db",
+      "bytes": 22490,
+      "summary": "docs/testing-quality.md#original-coverage-and-validation-baseline"
+    },
+    "docs/quality-seeded-faults-2026-11-04.json": {
+      "sha256": "5b2084f1c6ca3bbbdb1b574c5704dd8409d17c31b974d579e68a23ce323fd30a",
+      "bytes": 2604,
+      "summary": "docs/testing-quality.md#runtime-and-dependency-contracts"
+    },
+    "docs/skill-maintenance-2026-11-04.json": {
+      "sha256": "dda56dd4f390e9bca9b045e53ab05d21aaa8a75d365f5bada1ab99e9d7dc2a77",
+      "bytes": 135886,
+      "summary": "docs/skill-maintenance-2026-11-04.md"
+    },
+    "evals/experiments/discovery-2026-11-04.json": {
+      "sha256": "8be79f1e77328012a5f1d25f60584a342856013f041bfbb381ef3315cae36e84",
+      "bytes": 7961,
+      "summary": "docs/results.md#discovery-consolidation-screen--november-4-2026"
+    },
+    "evals/experiments/discovery-transfer-2026-11-04.json": {
+      "sha256": "270637a3d742f8264fe30f4fd9d7c3127890d279dc019aecb276463ca80270b2",
+      "bytes": 40689,
+      "summary": "docs/results.md#reference-retrieval-and-code-transfer--november-4-2026"
+    },
+    "evals/experiments/facts-transfer-2026-11-04.json": {
+      "sha256": "14b906d9fb1e1434f5f08ce4d4d853f231a36a984253215cb5a50fb54d0c10da",
+      "bytes": 218184,
+      "summary": "docs/results.md#fact-sensitive-transfer-across-three-models--november-4-2026"
+    },
+    "evals/experiments/queue-screen-2026-11-04.json": {
+      "sha256": "93d51ed9624420f107eb362607edb358d019864332debc21efd886eea8ab0785",
+      "bytes": 33414,
+      "summary": "docs/skill-maintenance-2026-11-04.md#a-candidate-rejected-by-development-screening"
+    }
+  },
+  "archive": {
+    "release": "evidence-2026-11-04-v1",
+    "url": "https://github.com/BrocksiNet/ai-skills-shopware/releases/download/evidence-2026-11-04-v1/shopware-evidence-2026-11-04-v1.tar.gz",
+    "sha256": "bf4bd808803ebde8adbca9cd5df83e023bc6343d5acbe5669e954765959685a8",
+    "bytes": 64950,
+    "format": "tar.gz"
+  }
+}
