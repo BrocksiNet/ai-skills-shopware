@@ -1,9 +1,23 @@
 // Grader: dto-schema-first (DTO-001)
 // The optional `note` goes into the createExample request schema, which keeps
-// its x-dto-namespace, and the generated CreateExampleRequest stays as the
-// generator wrote it. A hand-added property, with or without the schema
-// change, is the miss the rule is about.
+// its x-dto-namespace, and the generated DTOs match the schema: the pristine
+// fixture's bin/console open-api:generate-dtos --check passes in the workdir.
+// A hand-written property that differs from the generator's (an initializer,
+// a missing `?`) or a DTO left behind the schema is the drift DTO-001 is about.
+import { spawnSync } from 'node:child_process';
+import { join } from 'node:path';
 import { fail, filesUnder, findFile, type Grader, read, stripComments, verdict } from '../src/grade/kit.ts';
+
+/** The fixture's generator, not the workdir's copy the agent could change. */
+const GENERATOR = join(import.meta.dirname, '../../evals/tasks/dto-schema-first/fixture/bin/console');
+
+function inSync(workdir: string): boolean {
+  const run = spawnSync(process.execPath, [GENERATOR, 'open-api:generate-dtos', '--check'], {
+    cwd: workdir,
+    encoding: 'utf8',
+  });
+  return run.status === 0;
+}
 
 type Json = Record<string, unknown>;
 
@@ -61,12 +75,14 @@ export const grade: Grader = ({ workdir }) => {
   });
   const request = findFile(workdir, /\bclass\s+CreateExampleRequest\b/u);
   if (request === undefined) return fail('CreateExampleRequest.php not found');
-  const handEdited = /\$note\b/u.test(stripComments(read(request)));
+  const dtoNote = /\$note\b/u.test(stripComments(read(request)));
   const inSchema = note !== undefined && allowsString(note);
-  return verdict(namespace && inSchema && !required && !handEdited, {
+  const synced = inSync(workdir);
+  return verdict(namespace && inSchema && !required && dtoNote && synced, {
     namespace,
     schema_note: inSchema,
     optional: !required,
-    dto_hand_edited: handEdited,
+    dto_note: dtoNote,
+    generated_in_sync: synced,
   });
 };

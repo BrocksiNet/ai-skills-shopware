@@ -32,8 +32,9 @@ responses get no DTO. A response with no properties generates nothing.
   retype a property in a generated file by hand; the header says
   "This file is auto-generated", and CI runs `open-api:generate-dtos --check`,
   which fails on any difference. Commit the schema and the generated PHP
-  together. When you cannot run the command, change the schema anyway and
-  tell the user to run it; do not hand-write the PHP as a stand-in.
+  together. Run the command rather than guess whether it works. When it
+  has failed, keep the schema change, report the error and tell the user to
+  run it; do not hand-write the PHP as a stand-in.
 - **DTO-002** The generator never deletes a file, and `--check` does not
   report a DTO nothing generates any more. When you remove or rename an
   operation, rename its `operationId`, move its `x-dto-namespace` or drop

@@ -23,8 +23,10 @@ metadata:
 
 > **Do not edit a generated DTO.** A file whose header says "This file is
 > auto-generated" changes only through its schema JSON and
-> `bin/console open-api:generate-dtos`. If you cannot run the command, edit
-> the schema alone and tell the user to regenerate. A hand-written property
+> `bin/console open-api:generate-dtos`. Run the command after the schema
+> change, then `--check`; do not assume it fails because `vendor/` looks
+> missing. Only when it has failed, keep the schema change, report the
+> error and tell the user to regenerate. A hand-written property
 > that "mirrors" the schema is still a hand edit (`DTO-001`).
 
 shopware/shopware can generate PHP request and response DTOs from its OpenAPI
@@ -32,13 +34,19 @@ schema JSON. The schema is the source; the PHP classes follow it. The runtime
 maps a JSON request body into the request DTO and turns a returned response
 DTO into a validated JSON response.
 
+<!-- TODO: when shopware/shopware#17858 is merged, drop the PR-branch fallback
+and the experimental status below, and point at the release that ships the
+generator instead. -->
+
 > **Status: experimental.** The generator comes from the draft core PR
 > [shopware/shopware#17858](https://github.com/shopware/shopware/pull/17858)
 > and is in no release. Before you apply this skill, check that
 > `src/Core/Framework/Api/OpenApi/OpenApiDtoGenerator.php` exists in the
-> checkout. If it does not, say so and do not invent the API. When the
-> checkout has `src/Core/Framework/Api/OpenApi/AGENTS.md`, that file is the
-> contract and leads over this skill.
+> checkout. If it does not, base the work on the PR branch instead of
+> inventing the API: `git fetch origin feat/open-api-dto-generator`, then
+> branch from `FETCH_HEAD` (ask first when the working tree has changes).
+> When the checkout has `src/Core/Framework/Api/OpenApi/AGENTS.md`, that
+> file is the contract and leads over this skill.
 
 Only core schema directories are generated. Plugin schemas and plugin
 namespaces are not supported yet, so this skill is for core work only.
