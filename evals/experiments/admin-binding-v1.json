@@ -1,0 +1,56 @@
+{
+  "version": 1,
+  "status": "prospective-frozen",
+  "decision": "Keep, correct or retire ADM-044 in sw-admin-js for standalone plugins spanning Shopware 6.5 and 6.6.",
+  "base_commit": "d81bd6fc37c8ea1ca805abccab7276739418d0b3",
+  "models": [
+    "haiku",
+    "sonnet"
+  ],
+  "repeats": 2,
+  "arms": [
+    "current",
+    "ablated"
+  ],
+  "sessions": 16,
+  "seed": 20261105,
+  "cases": [
+    {
+      "task": "mail-profile",
+      "workflow": "Edit two profile fields, save once, block pending duplicates, reopen, clear override, reject and retry."
+    },
+    {
+      "task": "label-wizard",
+      "workflow": "Edit two wizard steps, Back/Next without saving, pending duplicate control, reopen, reject and retry."
+    }
+  ],
+  "treatment": "Both arms contain the same current sw-admin-js skill and receive identical instructions to read its architecture reference. The ablated package removes only the ADM-044 paragraph from that reference. No core source snapshots or event-contract answers are exposed in the standalone task workdirs.",
+  "primary": "Original frozen runtime oracle passes both release profiles and the agent produces a successful usable completion. No prescribed binding syntax or rule citation is required; explicit dual-event bindings are a calibrated compliant alternate.",
+  "decision_rule": {
+    "retention": "Retain ADM-044 as demonstrated guidance if current passes all eight workflows, ablation produces at least one audited binding-contract failure in each of the two workflows for at least one model, and the other model has no negative net effect. Attribute benefit only where the missing binding fact explains the failure.",
+    "otherwise": "Do not claim new measured necessity or safe deletion from ties. Keep the original results and report which criterion failed.",
+    "source_accuracy": "Independently correct the existing never-fires explanation if pinned core handlers plus actual DOM/Vue execution demonstrate native event fallthrough instead of a stable scalar value. This correction must be justified by source/runtime evidence, not claimed as a measured output-quality gain."
+  },
+  "calibration": "Before model calls, each workflow passes v-model:value and explicit input/change/update:value bindings on both Vue runtimes; legacy-only, modern-only, default-v-model and pristine incomplete implementations fail. Full save/reopen/reject/retry flows execute.",
+  "runtimes": [
+    "Vue 2.7.14 with unchanged Shopware v6.5.8.0 field onInput/onChange functions; VUE3 flag false.",
+    "Vue 3.3.4 with unchanged Shopware v6.6.0.0 field handlers and emits list."
+  ],
+  "uncertainty": "Two distinct feature implementations exercise one shared binding API family. Attempts/models are reproducibility checks, not eight independent task families. Report all paired outcomes and runtime failure profiles; no population confidence, non-inferiority, whole-skill deletion or automatic-discovery claim.",
+  "limits": {
+    "max_turns": 24,
+    "max_budget_usd_per_session": 1.5,
+    "timeout_seconds": 300,
+    "retries": 0,
+    "tools": "Skill,Read,Edit,Write,Glob,Grep,Bash"
+  },
+  "limitations": [
+    "DOM is jsdom. The parent components run in actual Vue runtimes, but the core field visual shell is reduced to its input; handler functions and modern emits metadata are unchanged upstream code.",
+    "The two prompts/fixtures are new; the API fact and existing transfer-admin-caption task were known beforehand. This is a targeted rule study, not an independently authored benchmark or fresh task family discovery.",
+    "Standalone offline plugin repositories without a vendored Administration checkout; results do not generalize to the earlier source-rich comparison.",
+    "Project guidance is explicitly read. Natural activation and reference routing are not the intervention.",
+    "No OS filesystem isolation. CLI builtin skills may remain advertised; audit tool paths and package immutability."
+  ],
+  "selection": "Chosen as a narrower decision after the broader four-family study failed to establish a retention benefit and exposed two invalid verification families. Preserve that entire study separately. No further task search or guidance tuning will follow this fixed 16-session comparison.",
+  "evidence": "Freeze every task, package, source, runtime lock, oracle and schedule before calls. Keep raw traces and originals local; publish compact protocol and results only."
+}
