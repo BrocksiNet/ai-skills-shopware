@@ -278,3 +278,49 @@ The [maintenance report](skill-maintenance-2026-11-04.md) records the applied
 consolidations, source links, remaining candidates, evidence limits and the next
 decision method. The [screen record](evidence.md#skill-experiments)
 retains the original protocol, evaluated inputs, hashes and all trial outcomes.
+
+## Sensitive-mail development screen — November 4, 2026
+
+**Keep the published skills unchanged.** Eight read-only reviews exposed no
+target defect miss or clean-case false positive with the current package.
+The prospective stop rule therefore ended the screen before candidate runs.
+
+The cases use the installed source from
+[core PR #22122](https://github.com/shopware/shopware/pull/22122), pinned to
+merge `e41e3f3`. They revert the sensitive-data guard on template sample
+persistence or on failed-mail exception/trace logging, with behavior-preserving
+clean controls. This target includes the new mail helpers; it does not establish
+their availability in every released 6.7 version.
+
+| Current package; one attempt per model and case | Haiku | Sonnet |
+| --- | --- | --- |
+| Template-sample leak detected | Yes | Yes |
+| Failure-log leak detected | Yes | Yes |
+| Safe sample change accepted | Yes | Yes |
+| Safe failure-log change accepted | Yes | Yes |
+
+Source-audited outcomes are **4/4 defect detections and 4/4 clean reviews**.
+The original automatic grade remains **7/8**: Haiku also identified the
+always-true `getError() !== null` check, which the strict catch oracle rejected
+as an unexpected finding. The pinned checkout requires Symfony Mailer
+`~7.4.12`; its
+[`getError(): Throwable`](https://github.com/symfony/mailer/blob/v7.4.12/Event/FailedMessageEvent.php)
+confirms that secondary observation. No raw score was overwritten, and no rule
+was added to compensate for a grader mismatch.
+
+Neither model invoked a skill or read the expected reference in any session.
+The source was enough for these reviews. The CLI also advertised builtin
+skills, although none were invoked and observed file accesses stayed inside
+the fixture. This is neither a package-isolation proof nor evidence that
+`sw-security` is redundant.
+
+These are source-cued, one-line guard mutations from two fault families in
+one PR. They are consumed development data, with no executed PHP or generated
+code outcome measurement. A rule change still needs a genuine baseline mistake
+and independent implementation tasks; these cases cannot supply that holdout.
+
+The [compact record](../evals/experiments/security-mail-screen-v1.json) links
+the local archive of frozen inputs, untested candidate, original grades,
+traces, retained workdirs, source audit and replay instructions. Detailed JSON
+and source snapshots stay out of tracked files. The archive is retained under
+`evals/.results/`; it is not published with this report.

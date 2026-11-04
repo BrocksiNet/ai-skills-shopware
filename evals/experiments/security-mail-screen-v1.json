@@ -1,0 +1,57 @@
+{
+  "version": 1,
+  "status": "consumed-development-screen",
+  "date": "2026-11-04",
+  "base_commit": "ae0cd5718096afe41eaf0a888da4d0e0f1c79435",
+  "decision": "Keep published skills unchanged; baseline ceiling stops candidate runs.",
+  "source": {
+    "pull_request": "https://github.com/shopware/shopware/pull/22122",
+    "commit": "e41e3f38b5d93b56534a8a8196bff32abd2250d8"
+  },
+  "protocol": {
+    "member": "protocol.json",
+    "sha256": "5557f8172a3bb76b63f918597f3bf3506007bcfe28cdc1db16220eac0861aa40",
+    "frozen_inputs_member": "frozen-inputs.sha256",
+    "frozen_inputs_sha256": "b6947df54fbd2cf6c50764165832281aec34edb6af52c7fd2b656132b5674da0",
+    "models": ["haiku", "sonnet"],
+    "repeats": 1,
+    "max_sessions": 16,
+    "stop": "Run eight current-package reviews first. Stop on a source-audited ceiling; candidate otherwise remains development only."
+  },
+  "results": {
+    "sessions": 8,
+    "candidate_sessions": 0,
+    "resolved_models": ["claude-haiku-5-5", "claude-sonnet-5-5"],
+    "raw_grader": {
+      "pass": 7,
+      "fail": 1,
+      "error": 0
+    },
+    "source_audited": {
+      "defects_detected": 4,
+      "defect_opportunities": 4,
+      "clean_reviews": 4,
+      "clean_opportunities": 4
+    },
+    "skill_invocations": 0,
+    "relevant_reference_reads": 0,
+    "input_tokens_including_cache": 378715,
+    "output_tokens": 12620
+  },
+  "oracle_note": "Haiku caught the failure-log leak and also noted the always-true null check. Symfony getError(): Throwable confirms that secondary observation. The strict grader rejected it; its original failed score is retained.",
+  "limitations": [
+    "Read-only review of one-line guard mutations; no executed PHP/code outcomes.",
+    "Two fault families from one upstream PR, not independent held-out confirmation.",
+    "Explicit helper source strongly cues the findings.",
+    "No skill was invoked. Runtime builtin skills were advertised; observed file accesses stayed inside the fixture. No skill-isolation or redundancy claim."
+  ],
+  "archive": {
+    "publication": "local-only; raw archive not uploaded",
+    "path": "evals/.results/security-mail-screen-2026-11-04-v1.tar.gz",
+    "sha256": "d46dff483d397b2872b7f89ae7fa6e8981e141061dd841bb196035346857a643",
+    "bytes": 233971,
+    "format": "tar.gz",
+    "root": "security-mail-study-2026-11-04",
+    "contents": "Frozen protocol, current/candidate packages, fixtures, original scripts and graders, replay helper, raw traces, retained workdirs, source audit and records.sha256."
+  }
+}
