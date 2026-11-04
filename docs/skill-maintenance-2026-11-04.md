@@ -115,6 +115,11 @@ Do not turn each new check into another reviewer instruction. Existing
 `ADM-007` already records the no-new-mixins check. Core-only enforcement is
 not grounds to delete guidance needed by extensions.
 
+The subsequent [sensitive-mail development screen](results.md#sensitive-mail-development-screen--november-4-2026)
+found no baseline defect miss or clean-case false positive in eight reviews.
+It stopped before candidate runs and left `SEC-002` unchanged. These cases
+are consumed; they do not justify adding a rule or removing `sw-security`.
+
 ## Which skills to consolidate next
 
 | Group | Decision |

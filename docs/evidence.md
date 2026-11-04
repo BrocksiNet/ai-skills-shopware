@@ -54,6 +54,22 @@ The [original maintenance record](https://github.com/BrocksiNet/ai-skills-shopwa
 contains the PR inventory, review links and per-skill decisions. See the
 [maintenance summary](skill-maintenance-2026-11-04.md).
 
+### Sensitive-mail development screen
+
+The [compact record](../evals/experiments/security-mail-screen-v1.json)
+contains the result, limitations, prospective protocol hash and archive hash.
+The local, git-ignored archive at
+`evals/.results/security-mail-screen-2026-11-04-v1.tar.gz` preserves the complete
+unpublished development screen, including runnable inputs, packages, scripts,
+grader outputs, raw traces and replay instructions. It was not uploaded.
+Its summary is in [results.md](results.md#sensitive-mail-development-screen--november-4-2026).
+
+The archive is 233,971 bytes. Its local copy was verified against the compact
+record and every member hash. To inspect it, verify its SHA-256, extract it,
+and run `shasum -a 256 -c records.sha256` inside
+`security-mail-study-2026-11-04/`. The original frozen input list is separate
+from the later source audit. No skill or shared grader changed after this screen.
+
 ## Download and verify
 
 Run from the repository root. Verification uses Node 24 and standard archive
@@ -85,8 +101,11 @@ temporary directory. They can be read without overwriting the pointer files.
 
 ## Adding future evidence
 
-- Keep protocols, compact result summaries, exclusions and content hashes in
-  Git. Define shared package, prompt and configuration data once in the
+- Keep compact protocols, result summaries, exclusions and content hashes in
+  Git. A complete unpublished development screen may keep its runnable inputs
+  in a verified archive; label local-only evidence explicitly. Published
+  regression fixtures stay in the checkout.
+  Define shared package, prompt and configuration data once in the
   experiment manifest; trials refer to those definitions and record outcomes.
 - Archive detailed observations and inventories in a versioned release asset
   before replacing a report with a pointer. Verify a downloaded copy against
