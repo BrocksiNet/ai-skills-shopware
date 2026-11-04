@@ -15,11 +15,21 @@ import { fileURLToPath } from 'node:url';
 import { parseArgs } from 'node:util';
 import { errorMessage } from '../../src/errors.ts';
 import { diffSnapshots } from '../src/api-diff.ts';
-import { checkMajor, isKnownBreaks, type MajorResult, resultText, totals } from '../src/known-breaks.ts';
+import { checkMajor, isKnownBreaks, type Major, type MajorResult, resultText, totals } from '../src/known-breaks.ts';
 import { openSource } from '../src/snapshot-source.ts';
 import { readJson } from '../src/store.ts';
 
 const KNOWN = fileURLToPath(new URL('../known-breaks.json', import.meta.url));
+
+/** Reject misspelled selectors rather than passing an empty comparison. */
+function selectedMajors(majors: Major[], selector: string | undefined): Major[] {
+  const wanted = selector?.split(',').map((part) => part.trim());
+  for (const name of wanted ?? [])
+    if (!majors.some((major) => major.major === name)) throw new Error(`unknown major: ${name}`);
+  const selected = wanted === undefined ? majors : majors.filter((major) => wanted.includes(major.major));
+  if (selected.length === 0) throw new Error('no majors selected for comparison');
+  return selected;
+}
 
 async function main(): Promise<number> {
   const { values } = parseArgs({
@@ -36,17 +46,20 @@ async function main(): Promise<number> {
   const known = readJson(values.known);
   if (!isKnownBreaks(known)) throw new Error(`${values.known}: not a known-breaks file`);
   const gate = Number(values.gate);
-  const wanted = values.major?.split(',').map((part) => part.trim());
+  if (values.gate.trim() === '' || !Number.isFinite(gate) || gate < 0 || gate > 1)
+    throw new Error('--gate must be a number between 0 and 1');
+  const selected = selectedMajors(known.majors, values.major);
   const source = await openSource(
     { repo: values.repo, index: values.index, cache: values.cache, fetch: !values['no-fetch'] },
     process.env,
   );
   const results: MajorResult[] = [];
-  for (const major of known.majors) {
-    if (wanted !== undefined && !wanted.includes(major.major)) continue;
+  for (const major of selected) {
     const base = source(major.base);
     const head = source(major.head);
     if (base === undefined || head === undefined) throw new Error(`${major.base} or ${major.head} not in the index`);
+    if (base.failed.length > 0 || head.failed.length > 0)
+      throw new Error('cannot compare snapshots with parse failures');
     const diff = diffSnapshots(base, head, ['route', 'entity', 'feature', 'config']);
     results.push(checkMajor(major, known, diff.changes, head));
   }

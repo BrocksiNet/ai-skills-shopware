@@ -5,13 +5,13 @@
 #
 #   ./ab.sh <task-name> [repeats]
 #
-# A skill that does not change the pass rate is not earning its context budget.
+# This is an observed comparison; a small sample cannot justify retirement.
 #
 # A real A/B needs SKILLS_PROFILE_CMD (or the legacy ON/OFF hooks); without
 # one, "on" and "off" load the same skills and the run is refused.
 #
 # Pass rates count completed runs only; an agent error is not a failed task.
-# A gap smaller than EVAL_AB_MIN_DELTA_PCT points (default 50) is noise: with 3
+# A gap smaller than EVAL_AB_MIN_DELTA_PCT points (default 50) is below the reporting threshold: with 3
 # repeats, one run is 33 points, so "improved" and "worse" need two runs.
 #
 # Verdicts and exit codes:
@@ -29,6 +29,11 @@
 #   EVAL_AGENT    label for the agent column (default: adapter name, e.g.
 #                 `opencode` for opencode-task.sh)
 #   TASK_MODEL    recorded as the model column (default: "default")
+#   EVAL_EXPERIMENT_ID identifies a frozen plan (eval-local and CI set it)
+#
+# Trials are balanced on/off pairs in random order. Per-trial outcomes and
+# task/skill/grader hashes accompany the summary. Output, errors, raw adapter
+# events and a trial journal live under <EVAL_RESULTS>.artifacts/.
 #
 # Skill loads: ab.sh gives every run its own EVAL_SKILLS_LOG file. Adapters
 # that support it (opencode-task.sh, claude-task.sh) list the skills they

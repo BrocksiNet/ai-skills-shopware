@@ -6,7 +6,14 @@
       "repo": "shopware/shopware",
       "branch": "trunk",
       "extractor": "shopware-trunk",
-      "paths": [".agents", "coding-guidelines", "src/Core/DevOps/StaticAnalyze", ".github/PULL_REQUEST_TEMPLATE.md"],
+      "paths": [
+        ".agents",
+        "coding-guidelines",
+        "src/Core/DevOps/StaticAnalyze",
+        ".github/PULL_REQUEST_TEMPLATE.md",
+        "AGENTS.md",
+        "src/Administration/Resources/app/administration/AGENTS.md"
+      ],
       "skills": [
         { "path": ".agents/skills/shopware-admin-js", "skills": ["sw-admin-js"] },
         { "path": ".agents/skills/shopware-change-scope", "skills": ["sw-review-learnings"] },
@@ -15,7 +22,9 @@
         { "path": ".agents/skills/shopware-pr-hygiene", "skills": ["sw-pr-description"] },
         { "path": ".agents/skills/shopware-release-docs", "skills": ["sw-core-development"] },
         { "path": ".agents/skills/sw-review", "skills": ["sw-pr-review", "sw-extension-review"] },
-        { "path": ".github/PULL_REQUEST_TEMPLATE.md", "skills": ["sw-pr-description"] }
+        { "path": ".github/PULL_REQUEST_TEMPLATE.md", "skills": ["sw-pr-description"] },
+        { "path": "AGENTS.md", "skills": ["sw-admin-js", "sw-core-development", "sw-testing"] },
+        { "path": "src/Administration/Resources/app/administration/AGENTS.md", "skills": ["sw-admin-js"] }
       ]
     },
     {

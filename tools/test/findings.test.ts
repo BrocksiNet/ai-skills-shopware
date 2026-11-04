@@ -1,4 +1,5 @@
 import assert from 'node:assert/strict';
+import { reviewNearMiss, reviewCatch } from '../src/grade/review.ts';
 import { describe, test } from 'node:test';
 import {
   caught,
@@ -12,6 +13,11 @@ import {
 
 const fence = (json: string): string => `\`\`\`json\n${json}\n\`\`\`\n`;
 const transcript = (findings: unknown[]): string => `Review done.\n\n${fence(JSON.stringify({ findings }, null, 2))}`;
+
+const gradingInput = (entries: unknown[]): { workdir: string; transcript: string } => ({
+  workdir: '.',
+  transcript: transcript(entries),
+});
 
 const hook: Expectation = {
   rule: 'TEST-016',
@@ -72,8 +78,8 @@ describe('globMatches', () => {
 });
 
 describe('caught', () => {
-  test('our ID, or a summary in the reviewer’s words, at the file and severity', () => {
-    assert.ok(caught([finding({ rule_id: 'TEST-016', summary: 'x' })], hook));
+  test('a matching explanation with an accepted ID or the reviewer’s own words', () => {
+    assert.ok(caught([finding({ rule_id: 'TEST-016' })], hook));
     assert.ok(caught([finding({})], hook));
     assert.ok(caught([finding({ rule_id: 'no-assert-in-listener' })], hook));
   });
@@ -85,11 +91,8 @@ describe('caught', () => {
   });
 
   test('an ID in also is as good as the rule', () => {
-    assert.ok(caught([finding({ rule_id: 'TEST-003', summary: 'x' })], { ...hook, also: ['TEST-003'] }));
-    assert.equal(
-      falsePositives([finding({ rule_id: 'TEST-003', summary: 'x' })], { ...hook, also: ['TEST-003'] }).length,
-      1,
-    );
+    assert.ok(caught([finding({ rule_id: 'TEST-003' })], { ...hook, also: ['TEST-003'] }));
+    assert.equal(falsePositives([finding({ rule_id: 'TEST-003' })], { ...hook, also: ['TEST-003'] }).length, 1);
   });
 });
 
@@ -99,12 +102,113 @@ describe('falsePositives', () => {
     assert.equal(falsePositives(wrong, hook).length, 2);
   });
 
-  test('nits, other catalog rules and unrelated findings are fine', () => {
-    const fine = [
-      finding({ rule_id: 'TEST-016', severity: 'nit' }),
-      finding({ rule_id: 'TEST-003' }),
-      finding({ summary: 'The test name does not say what it checks.' }),
-    ];
+  test('only nits and explicitly allowed findings are fine', () => {
+    const fine = [finding({ rule_id: 'TEST-016', severity: 'nit' })];
     assert.deepEqual(falsePositives(fine, hook), []);
   });
+});
+
+describe('review grading adversarial claims', () => {
+  test('a correct ID cannot replace an explanation of the defect', () => {
+    assert.equal(caught([finding({ rule_id: 'TEST-016', summary: 'Rename this variable.' })], hook), false);
+    assert.equal(caught([finding({ rule_id: 'TEST-016-extra' })], hook), false);
+  });
+  test('a clean task rejects unrelated major findings and wrong citations', () => {
+    assert.equal(falsePositives([finding({ rule_id: 'TEST-003' })], hook).length, 1);
+    assert.equal(falsePositives([finding({ summary: 'Rename this variable.' })], hook).length, 1);
+    assert.equal(falsePositives([finding({})], { ...hook, allowed: [hook] }).length, 0);
+    assert.equal(falsePositives([finding({ file: 'src/Foo.php' })], { ...hook, allowed: [hook] }).length, 1);
+  });
+});
+
+describe('review input boundaries and task outcomes', () => {
+  test('malformed roots and individual findings give contract diagnostics', () => {
+    for (const value of [null, [], false, 4, { findings: 'none' }])
+      assert.throws(() => parseFindings(fence(JSON.stringify(value))), /no findings list/u);
+    for (const value of [null, [], false, 4, 'finding'])
+      assert.throws(() => parseFindings(transcript([value])), /findings\[0\] is not an object/u);
+    for (const fields of [{ file: null }, { summary: 4 }, { file: 'a', summary: undefined }])
+      assert.throws(() => parseFindings(transcript([{ ...finding({}), ...fields }])), /file and summary strings/u);
+  });
+  test('unknown rule_id types are rejected at the transcript boundary', () => {
+    for (const rule_id of [1, false, {}, []])
+      assert.throws(() => parseFindings(transcript([{ ...finding({}), rule_id }])), /rule_id/u);
+  });
+  test('single-character globs and literal punctuation do not overmatch files', () => {
+    assert.equal(globMatches('src/Foo?.php', 'src/Foo1.php'), true);
+    assert.equal(globMatches('src/Foo?.php', 'src/Foo12.php'), false);
+    assert.equal(globMatches('src/Foo?.php', 'src/Foo/.php'), false);
+    assert.equal(globMatches('src/a+b[1].php', 'src/a+b[1].php'), true);
+    assert.equal(globMatches('src/a+b[1].php', 'src/aaab1.php'), false);
+  });
+  test('a near-miss needs the right problem, file, severity and attribution together', () => {
+    const grade = reviewNearMiss({ ...hook, rule: 'SF-013', accept: ['TEST-016'] });
+    const run = (entries: unknown[]): boolean => grade({ workdir: '.', transcript: transcript(entries) }).pass;
+    for (const rule_id of [null, 'TEST-016', 'listener-assertions']) assert.equal(run([finding({ rule_id })]), true);
+    for (const fields of [
+      { file: 'src/Other.php' },
+      { severity: 'minor' as const },
+      { summary: 'Rename a variable.' },
+      { rule_id: 'SEC-001' },
+    ])
+      assert.equal(run([finding(fields)]), false, JSON.stringify(fields));
+    assert.equal(
+      run([finding({}), finding({ rule_id: 'SF-013' })]),
+      false,
+      'a decoy citation cannot be hidden by a correct report',
+    );
+    assert.equal(run([finding({}), finding({ rule_id: 'SF-013', severity: 'nit' })]), true);
+  });
+  test('catch outcomes reject extra substantive claims but retain allowed genuine issues', () => {
+    const target = finding({ rule_id: 'TEST-016' });
+    const other = finding({ file: 'src/Other.php', summary: 'Wrong call.' });
+    const grade = reviewCatch(hook);
+    assert.equal(grade(gradingInput([target])).pass, true);
+    assert.equal(grade(gradingInput([target, other])).pass, false);
+    assert.equal(grade(gradingInput([target, { ...other, severity: 'nit' }])).pass, true);
+    const allowed = { ...hook, file: 'src/Other.php', summary: /Wrong call/u };
+    assert.equal(reviewCatch({ ...hook, allowed: [allowed] })(gradingInput([target, other])).pass, true);
+  });
+});
+
+test('citation-required tasks reject uncited explanations but accept documented aliases', () => {
+  const cited = { ...hook, requireCitation: true, also: ['TEST-003'] };
+  for (const rule_id of [null, 'listener-assertions', 'TEST-999'])
+    assert.equal(reviewCatch(cited)(gradingInput([finding({ rule_id })])).pass, false);
+  for (const rule_id of ['TEST-016', 'TEST-003'])
+    assert.equal(reviewCatch(cited)(gradingInput([finding({ rule_id })])).pass, true);
+  assert.equal(reviewCatch({ ...hook, requireCitation: false })(gradingInput([finding({})])).pass, true);
+});
+test('JSON fences must open and close on their own lines', () => {
+  for (const text of ['prefix ```json\n{}\n```\n', '```json\n{} ```\n', '```json\n{}\n``` trailing\n'])
+    assert.equal(lastJsonBlock(text), undefined);
+});
+test('recursive globs match deep folders as well as the folder root', () => {
+  assert.equal(globMatches('src/**/*.php', 'src/Foo.php'), true);
+  assert.equal(globMatches('src/**/*.php', 'src/a/b/Foo.php'), true);
+  assert.equal(globMatches('src/**/*.php', 'src/a/b/Foo.js'), false);
+});
+
+test('omitting an optional rule ID normalizes to the same uncited finding as null', () => {
+  const { rule_id: _rule, ...uncited } = finding({});
+  assert.deepEqual(parseFindings(transcript([uncited])), [finding({ rule_id: null })]);
+});
+test('a single-character file glob handles a Unicode code point', () => {
+  assert.equal(globMatches('src/?.php', 'src/😀.php'), true);
+  assert.equal(globMatches('src/?.php', 'src/😀x.php'), false);
+});
+test('non-catalog project references are permitted without treating embedded IDs as our catalog', () => {
+  for (const rule_id of ['project-style: RFC-123', 'ADR-2'])
+    assert.equal(caught([finding({ rule_id })], hook), true, rule_id);
+});
+test('severity diagnostics separate the permitted choices for correction', () => {
+  assert.throws(
+    () => parseFindings(transcript([{ severity: 'high', file: 'a.php', summary: 's' }])),
+    /severity must be one of nit, minor, major, blocking/u,
+  );
+});
+
+test('file matching ignores only the leading dot-slash and keeps literal path segments', () => {
+  assert.equal(globMatches('src/./Service.php', 'src/./Service.php'), true);
+  assert.equal(globMatches('src/DomainService.php', 'src/Domain./Service.php'), false);
 });

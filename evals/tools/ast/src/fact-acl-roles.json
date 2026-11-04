@@ -1,0 +1,27 @@
+[
+  {
+    "name": "viewer",
+    "privileges": ["swag_delivery_zone.viewer", "other:read"]
+  },
+  {
+    "name": "editor",
+    "privileges": ["swag_delivery_zone.editor", "swag_delivery_zone.viewer", "other:read"]
+  },
+  {
+    "name": "creator",
+    "privileges": [
+      "swag_delivery_zone.creator",
+      "swag_delivery_zone.editor",
+      "swag_delivery_zone.viewer",
+      "other:read"
+    ]
+  },
+  {
+    "name": "deleter",
+    "privileges": ["swag_delivery_zone.deleter", "swag_delivery_zone.viewer", "other:read"]
+  },
+  {
+    "name": "unrelated",
+    "privileges": ["other.viewer", "other:read"]
+  }
+]

@@ -45,6 +45,51 @@ describe('rule classes', () => {
 });
 
 describe('commit deltas', () => {
+  test('watched AGENTS prose is mined even without a bullet; fenced examples and moves are not', () => {
+    const patch = [
+      '@@ -110,6 +110,11 @@',
+      ' ## Snippets & Translations',
+      '+Pluralized snippets use two forms when zero has the plural wording.',
+      '+Use a third form only for distinct zero wording.',
+      '+',
+      '+```json',
+      '+"example": "one | many"',
+      '+```',
+      '-Moved guidance.',
+      '+Moved guidance.',
+    ].join('\n');
+    const deltas = commitDeltas(
+      {
+        sha: '8e4dcd7662f7e418ad0b0abc1dbb3cadc71f202a',
+        title: 'docs(agents): document the two-form rule for pluralized snippets (#21858)',
+        date: '2026-10-22T00:00:00Z',
+        files: [file('AGENTS.md', patch), file('unwatched/AGENTS.md', '+Unrelated local guidance.')],
+      },
+      'shopware-trunk',
+      ['AGENTS.md'],
+    );
+    assert.deepEqual(deltas.guidance, [
+      { file: 'AGENTS.md', change: '+', text: 'Pluralized snippets use two forms when zero has the plural wording.' },
+      { file: 'AGENTS.md', change: '+', text: 'Use a third form only for distinct zero wording.' },
+    ]);
+    assert.deepEqual(deltas.bullets, []);
+    assert.deepEqual(deltas.headings, []);
+  });
+
+  test('an unavailable watched AGENTS patch is reported, never treated as no guidance change', () => {
+    const deltas = commitDeltas(
+      {
+        sha: 'x',
+        title: 't',
+        date: 'd',
+        files: [file('src/Administration/Resources/app/administration/AGENTS.md'), file('unwatched/AGENTS.md')],
+      },
+      'shopware-trunk',
+      ['src/Administration/Resources/app/administration/AGENTS.md'],
+    );
+    assert.deepEqual(deltas.truncated, ['src/Administration/Resources/app/administration/AGENTS.md']);
+  });
+
   test('each watched file feeds its own list; a missing patch is reported', () => {
     const deltas = commitDeltas({
       sha: 'x',

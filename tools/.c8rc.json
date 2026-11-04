@@ -1,0 +1,8 @@
+{
+  "all": true,
+  "src": ["src", "bin", "graders"],
+  "include": ["src/**/*.ts", "bin/**/*.ts", "graders/**/*.ts"],
+  "extension": [".ts"],
+  "reporter": ["text-summary", "json-summary", "lcov", "html"],
+  "reports-dir": "coverage"
+}

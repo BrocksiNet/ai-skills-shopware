@@ -220,11 +220,29 @@ async function modes(task: string, repeats: number, over: NodeJS.ProcessEnv): Pr
       err += t;
     },
     sleep: async () => {},
+    random: () => 0,
   });
   return { ...c, err, d: decide(repeats, c.on, c.off, 50) };
 }
 
 describe('runModes with the fake agent', () => {
+  test('each repeat contains both modes and can put off first', async () => {
+    const calls: string[] = [];
+    await runModes({
+      root: ROOT,
+      task: TASK_A,
+      repeats: 2,
+      env: baseEnv(),
+      err: () => {},
+      random: () => 0.9,
+      run: async (o) => {
+        calls.push(o.mode);
+        await Promise.resolve();
+        return RUN.pass;
+      },
+    });
+    assert.deepEqual(calls, ['off', 'on', 'off', 'on']);
+  });
   test('skill-helps: improved, loads and tokens per mode', async () => {
     const r = await modes(TASK_A, 2, { FAKE_AGENT_MODE: 'skill-helps' });
     assert.equal(r.d.verdict, 'improved');

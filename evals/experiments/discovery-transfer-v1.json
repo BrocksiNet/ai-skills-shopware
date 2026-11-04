@@ -1,0 +1,33 @@
+{
+  "version": 1,
+  "holdout": "Consumed prospective tasks: now regression data. First-run package/task/grader hashes and the invalidated fourth case are retained in discovery-transfer-2026-11-04.json. Use new independent tasks for another held-out comparison.",
+  "cases": [
+    {
+      "task": "transfer-option-rename",
+      "expected_references": [
+        "sw-storefront/references/js-plugins.md"
+      ],
+      "outcome_kind": "executed JavaScript behavior"
+    },
+    {
+      "task": "transfer-admin-save",
+      "expected_references": [
+        "sw-admin-js/references/extension-api.md"
+      ],
+      "outcome_kind": "executed JavaScript behavior"
+    },
+    {
+      "task": "transfer-worker-reset",
+      "expected_references": [
+        "sw-architecture/references/symfony-in-shopware.md"
+      ],
+      "outcome_kind": "PHP AST and DI configuration contract"
+    }
+  ],
+  "excluded_cases": [
+    {
+      "task": "transfer-fetch-cancel",
+      "reason": "Invalidated lifecycle assumption; removed from active tasks after the first run. Exact prompt, fixture, answers and raw grades are retained in discovery-transfer-2026-11-04.json."
+    }
+  ]
+}

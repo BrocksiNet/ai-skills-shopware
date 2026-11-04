@@ -12,6 +12,8 @@
   "dependencies": {
     "@babel/parser": "^7.28.0",
     "@babel/traverse": "^7.28.0",
-    "php-parser": "^3.7.0"
+    "@vue/compiler-dom": "3.3.4",
+    "php-parser": "^3.7.0",
+    "vue-template-compiler": "2.7.14"
   }
 }

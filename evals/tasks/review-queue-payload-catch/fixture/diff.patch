@@ -1,0 +1,14 @@
+diff --git a/src/Message/ExportBatchMessage.php b/src/Message/ExportBatchMessage.php
+--- a/src/Message/ExportBatchMessage.php
++++ b/src/Message/ExportBatchMessage.php
+@@ -3,5 +3,9 @@ namespace Acme\Export\Message;
+ final class ExportBatchMessage
+ {
+-    public function __construct(private readonly bool $notify = true) {}
++    public function __construct(
++        private readonly bool $notify = true,
++        private readonly bool $includeAttachments = true,
++    ) {}
+     public function isNotify(): bool { return $this->notify; }
++    public function includeAttachments(): bool { return $this->includeAttachments; }
+ }

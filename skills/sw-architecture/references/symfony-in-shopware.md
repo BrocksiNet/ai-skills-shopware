@@ -36,6 +36,15 @@ the container alive across requests and messages.
   every input it depends on as well; a reset does not fix a memo keyed by
   product ID alone when the price depends on the sales channel.
 
+  Registration is only half the contract: the runtime must invoke the reset.
+  Trunk's [service-reset change](https://github.com/shopware/shopware/pull/19121)
+  adds the `LONGRUNNING_ENVIRONMENT` flag, off by default on its 6.7 path and
+  standard in 6.8. Before promising resets between HTTP requests on a 6.7
+  installation, check that its installed kernel contains this change, the
+  flag is enabled, and the kernel actually delegates to Symfony's lifecycle.
+  A tag alone does not repair the older kernel path. Messenger consumption
+  has its own reset lifecycle; do not infer HTTP behavior from a consumer test.
+
 ## Plugins
 
 See `sw-plugin-development` → `symfony-first.md` for extension-layer

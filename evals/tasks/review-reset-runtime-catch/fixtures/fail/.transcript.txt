@@ -1,0 +1,14 @@
+```json
+{
+  "findings": [
+    {
+      "rule_id": "ARCH-001",
+      "severity": "major",
+      "file": "src/Worker/http.php",
+      "line": 12,
+      "summary": "The service needs ResetInterface.",
+      "fix": "Implement ResetInterface on RateMemo."
+    }
+  ]
+}
+```

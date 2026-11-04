@@ -11,18 +11,21 @@ import { text as readAll } from 'node:stream/consumers';
 
 /** How long to read a child's output after it exited. */
 const PIPE_DRAIN_MS = 1000;
+const TERM_GRACE_MS = 500;
 
 export interface RunOptions {
   cwd?: string;
   env: NodeJS.ProcessEnv;
   /** Written to stdin, then closed. Without it stdin is closed at once. */
   input?: string;
-  /** 0 = no limit. On timeout the child's whole process group gets SIGTERM. */
+  /** 0 = no limit. Timeout sends SIGTERM, then SIGKILL after a short grace period. */
   timeoutSeconds?: number;
   /** Called with each stdout chunk as it arrives. */
   onStdout?: (chunk: string) => void;
   /** Called with each stderr chunk as it arrives. */
   onStderr?: (chunk: string) => void;
+  /** A terminal protocol result: allow exit grace, then stop the owned process group. */
+  stopWhen?: (stdout: string) => boolean;
 }
 
 export interface RunResult {
@@ -32,6 +35,7 @@ export interface RunResult {
   stdout: string;
   stderr: string;
   timedOut: boolean;
+  stoppedAfterOutput?: true;
 }
 
 export function shellStatus(code: number | null, signal: NodeJS.Signals | null): number {
@@ -40,58 +44,121 @@ export function shellStatus(code: number | null, signal: NodeJS.Signals | null):
 }
 
 /** Collects a child's output stream as text, passing each chunk on. */
-function collect(stream: Readable, onChunk: ((chunk: string) => void) | undefined): () => string {
+function collect(
+  stream: Readable,
+  onChunk: ((chunk: string) => void) | undefined,
+  onCollected?: (all: string) => void,
+): () => string {
   let all = '';
   stream.setEncoding('utf8').on('data', (chunk: string) => {
     all += chunk;
     onChunk?.(chunk);
+    onCollected?.(all);
   });
   return () => all;
 }
 
 /** SIGTERM to the child's process group, so its children stop too. */
-function killGroup(child: ChildProcessWithoutNullStreams): void {
+function killGroup(child: ChildProcessWithoutNullStreams, signal: NodeJS.Signals): void {
   if (child.pid === undefined) return;
   try {
-    process.kill(-child.pid, 'SIGTERM');
+    process.kill(-child.pid, signal);
   } catch {
     // already gone
   }
 }
 
-export function run(cmd: string, args: string[], o: RunOptions): Promise<RunResult> {
-  const timeout = o.timeoutSeconds ?? 0;
-  const child = spawn(cmd, args, {
+function deadline(child: ChildProcessWithoutNullStreams, seconds: number, expired: () => void): () => void {
+  let force: NodeJS.Timeout | undefined;
+  const timer =
+    seconds > 0
+      ? setTimeout(() => {
+          expired();
+          killGroup(child, 'SIGTERM');
+          force = setTimeout(() => {
+            killGroup(child, 'SIGKILL');
+          }, TERM_GRACE_MS);
+        }, seconds * 1000)
+      : undefined;
+  return () => {
+    clearTimeout(timer);
+    clearTimeout(force);
+  };
+}
+
+function terminalStop(
+  child: ChildProcessWithoutNullStreams,
+  when: RunOptions['stopWhen'],
+): { observe: (stdout: string) => void; cancel: () => void; stopped: () => boolean } {
+  let recognized = false;
+  let stopped = false;
+  const timers: NodeJS.Timeout[] = [];
+  return {
+    observe(stdout: string): void {
+      if (recognized || when?.(stdout) !== true) return;
+      recognized = true;
+      timers.push(
+        setTimeout(() => {
+          stopped = true;
+          killGroup(child, 'SIGTERM');
+          timers.push(
+            setTimeout(() => {
+              killGroup(child, 'SIGKILL');
+            }, TERM_GRACE_MS),
+          );
+        }, PIPE_DRAIN_MS),
+      );
+    },
+    cancel(): void {
+      for (const timer of timers) clearTimeout(timer);
+      if (stopped) killGroup(child, 'SIGKILL');
+    },
+    stopped: (): boolean => stopped,
+  };
+}
+
+function spawnChild(cmd: string, args: string[], o: RunOptions): ChildProcessWithoutNullStreams {
+  return spawn(cmd, args, {
     cwd: o.cwd,
     env: o.env,
     stdio: 'pipe',
-    // Own process group, so the timeout can stop the children too.
-    detached: timeout > 0,
+    detached: (o.timeoutSeconds ?? 0) > 0 || o.stopWhen !== undefined,
   });
-  const stdout = collect(child.stdout, o.onStdout);
+}
+
+export function run(cmd: string, args: string[], o: RunOptions): Promise<RunResult> {
+  const timeout = o.timeoutSeconds ?? 0;
+  const child = spawnChild(cmd, args, o);
+  const completion = terminalStop(child, o.stopWhen);
+  const stdout = collect(child.stdout, o.onStdout, completion.observe);
   const stderr = collect(child.stderr, o.onStderr);
   // A child that never reads stdin closes the pipe early; that is fine.
   child.stdin.on('error', () => {});
   child.stdin.end(o.input);
 
   let timedOut = false;
-  const timer =
-    timeout > 0
-      ? setTimeout(() => {
-          timedOut = true;
-          killGroup(child);
-        }, timeout * 1000)
-      : undefined;
+  const cancelDeadline = deadline(child, timeout, () => {
+    timedOut = true;
+  });
   let drain: NodeJS.Timeout | undefined;
   return new Promise((resolve) => {
     let done = false;
     const finish = (status: number, extra = ''): void => {
       if (done) return;
       done = true;
-      clearTimeout(timer);
+      // The leader may have exited while descendants ignored SIGTERM.
+      if (timedOut) killGroup(child, 'SIGKILL');
+      cancelDeadline();
+      completion.cancel();
       clearTimeout(drain);
       if (extra !== '') o.onStderr?.(extra);
-      resolve({ status, stdout: stdout(), stderr: stderr() + extra, timedOut });
+      resolve({
+        status,
+        stdout: stdout(),
+        stderr: stderr() + extra,
+        timedOut,
+        ...(completion.stopped() ? { stoppedAfterOutput: true } : {}),
+      });
     };
     child.on('error', (error) => {
       finish(127, `${error.message}\n`);

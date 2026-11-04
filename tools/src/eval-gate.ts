@@ -14,6 +14,7 @@
 // "held" and "no_difference" tasks are warnings: candidates for a sharper
 // eval or for removing the rule.
 import { envInt } from './env.ts';
+import { type EvalManifest, manifestErrors } from './eval-manifest.ts';
 import {
   type AbResult,
   hasTokens,
@@ -167,19 +168,23 @@ function failures(s: Stats, opts: GateOptions): string[] {
   return out;
 }
 
-export function gate(all: AbResult[], opts: GateOptions = GATE_DEFAULTS): GateReport {
+export function gate(all: AbResult[], opts: GateOptions = GATE_DEFAULTS, expected?: EvalManifest): GateReport {
   const results = latestPerTask(all);
   const [first] = results;
   if (first === undefined) {
     return { markdown: ['## A/B eval results', '', 'No results found. Did any task run?'].join('\n'), failed: true };
   }
   const s = stats(results);
-  const failed = failures(s, opts);
+  const incomplete = expected === undefined ? [] : manifestErrors(all, expected);
+  const failed = [...failures(s, opts), ...incomplete.map((e) => `- **FAIL**: ${e}`)];
   const out = [...summary(s, first, opts), ...perTask(results), ...failed];
+  if (expected === undefined)
+    out.push('- Warning: no experiment manifest; task completeness and experiment identity were not checked.');
+  else out.push(`- Experiment \`${expected.id}\`: ${results.length}/${expected.tasks.length} planned tasks reported.`);
   const quiet = results.filter((r) => r.verdict === 'held' || r.verdict === 'no_difference');
   if (quiet.length > 0) {
     out.push(
-      `- Warning: ${quiet.length} task(s) show no difference between skill on and off:`,
+      `- Warning: ${quiet.length} task(s) show no difference under the reporting threshold; this does not establish equivalence:`,
       ...quiet.map((r) => `  - \`${r.task}\` (${r.verdict}${r.loaded_on === 0 ? ', skill never loaded' : ''})`),
     );
   }

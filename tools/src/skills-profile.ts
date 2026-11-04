@@ -9,30 +9,41 @@
 //      skills (claude-task passes --setting-sources project, opencode-task
 //      runs with a throwaway HOME), otherwise machine-wide skills leak into
 //      the "off" run.
-import { existsSync, mkdirSync, rmSync, statSync, symlinkSync } from 'node:fs';
+import { existsSync, mkdirSync, readdirSync, rmSync, statSync, symlinkSync } from 'node:fs';
 import { join } from 'node:path';
 import { repoSkills, taskSkills } from './eval-plan.ts';
 
 export const PROFILE_DIRS = ['.claude/skills', '.agents/skills'] as const;
 
 /** The skills a task runs with: its `skills` file, else every repo skill. */
-export function profileSkills(root: string, task: string): string[] {
+export function profileSkills(root: string, task: string, skillsDir = join(root, 'skills')): string[] {
   const tasksRoot = join(root, 'evals/tasks');
   if (task !== '' && existsSync(join(tasksRoot, task, 'skills'))) return taskSkills(tasksRoot, task);
-  return repoSkills(root);
+  return skillsDir === join(root, 'skills')
+    ? repoSkills(root)
+    : readdirSync(skillsDir, { withFileTypes: true })
+        .filter((d) => d.isDirectory())
+        .map((d) => d.name)
+        .toSorted();
 }
 
 /** Applies the profile; returns an error message, or null on success. */
-export function skillsProfile(root: string, mode: string, workdir: string, task: string): string | null {
+export function skillsProfile(
+  root: string,
+  mode: string,
+  workdir: string,
+  task: string,
+  skillsDir = join(root, 'skills'),
+): string | null {
   if (mode === 'off') {
     for (const dir of PROFILE_DIRS) rmSync(join(workdir, dir), { recursive: true, force: true });
     return null;
   }
   if (mode !== 'on') return 'skills-profile: mode must be on|off';
   for (const dir of PROFILE_DIRS) mkdirSync(join(workdir, dir), { recursive: true });
-  const skills = profileSkills(root, task);
+  const skills = profileSkills(root, task, skillsDir);
   for (const skill of skills) {
-    const source = join(root, 'skills', skill);
+    const source = join(skillsDir, skill);
     if (skill.includes('/') || !existsSync(source) || !statSync(source).isDirectory())
       return `skills-profile: unknown skill '${skill}'`;
     for (const dir of PROFILE_DIRS) {

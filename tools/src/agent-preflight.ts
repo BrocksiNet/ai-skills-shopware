@@ -98,7 +98,7 @@ export async function preflight(o: PreflightOptions): Promise<number> {
     model.startsWith('opencode/')
       ? `agent-preflight: ${model} did not answer. Free OpenCode models come and go: list the current ones with ` +
           '`opencode models --standalone`, then pass another one with the `model` input or change ' +
-          'DEFAULT_MODELS in tools/src/adapters.ts.\n'
+          'DEFAULT_MODELS in tools/src/agent-config.ts.\n'
       : `agent-preflight: ${model} did not answer. Check the agent's secret (COPILOT_GITHUB_TOKEN, ` +
           'ANTHROPIC_API_KEY) and that the model id exists for it.\n',
   );

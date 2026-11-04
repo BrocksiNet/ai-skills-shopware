@@ -1,0 +1,11 @@
+diff --git a/config/packages/longrunning.yaml b/config/packages/longrunning.yaml
+new file mode 100644
+--- /dev/null
++++ b/config/packages/longrunning.yaml
+@@ -0,0 +1,6 @@
++shopware:
++    feature:
++        flags:
++            - name: LONGRUNNING_ENVIRONMENT
++              default: true
++              toggleable: true

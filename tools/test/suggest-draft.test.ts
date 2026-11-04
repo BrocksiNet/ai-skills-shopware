@@ -23,6 +23,10 @@ const ENV = {
   GIT_COMMITTER_NAME: 'Test',
   GIT_COMMITTER_EMAIL: 'test@example.com',
   FAKE_AGENT_MODE: 'draft',
+  // Test commits must not inherit a developer's interactive signing setup.
+  GIT_CONFIG_COUNT: '1',
+  GIT_CONFIG_KEY_0: 'commit.gpgsign',
+  GIT_CONFIG_VALUE_0: 'false',
 };
 const EVIDENCE = ['https://github.com/shopware/shopware/pull/1#discussion_r1'];
 
@@ -36,7 +40,11 @@ const suggestion = (id: string, fields: object): object => ({
   ...fields,
 });
 
-const git = async (args: string[]): Promise<string> => (await run('git', args, { cwd: repo, env: ENV })).stdout;
+const git = async (args: string[]): Promise<string> => {
+  const result = await run('git', args, { cwd: repo, env: ENV });
+  assert.equal(result.status, 0, result.stderr);
+  return result.stdout;
+};
 
 /** A repository with the real catalog and one suggestions file. */
 async function setup(): Promise<void> {

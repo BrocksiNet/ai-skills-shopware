@@ -8,8 +8,11 @@ import {
   START,
   applyTable,
   fixedReferences,
+  loadRoutes,
   parseDiff,
   renderTable,
+  routeMatches,
+  routeDiff,
   routeErrors,
   selectReferences,
   withDefaultExcludes,
@@ -232,4 +235,142 @@ describe('exclude_paths', () => {
     assert.match(errors, /s\/routes\.json: exclude_paths must be a list of globs/u);
     assert.match(errors, /routes\[0\]\.exclude_paths must be a list of globs/u);
   });
+});
+
+describe('routing input and rendering contracts', () => {
+  test('malformed top-level inputs and route entries return diagnostics rather than crashing', () => {
+    const dir = skill({ routes: [{ reference: 'references/a.md', when: 'A', always: true }] });
+    for (const value of [null, [], 1, {}, { routes: [] }]) {
+      writeFileSync(join(dir, 'routes.json'), JSON.stringify(value));
+      assert.match(routeErrors(dir, 's').join(), /routes must be a non-empty list/u);
+      assert.throws(() => loadRoutes(dir), /routes must be a non-empty list/u);
+    }
+    for (const entry of [null, [], 1, 'route']) {
+      writeFileSync(join(dir, 'routes.json'), JSON.stringify({ routes: [entry] }));
+      assert.match(routeErrors(dir, 's').join(), /routes\[0\] must be an object/u);
+    }
+  });
+  test('mixed valid and invalid trigger entries are rejected, as are invalid metadata fields', () => {
+    const route = { reference: 'references/a.md', when: 'A', paths_any: ['**/*.php'] };
+    const dir = skill({ routes: [route] });
+    const cases = [
+      { fields: { reference: '' }, error: /reference must be a string/u },
+      { fields: { when: '' }, error: /when must be a non-empty string/u },
+      { fields: { paths_any: ['**/*.php', 4] }, error: /paths_any must be a list/u },
+      { fields: { anchors_any: ['valid', null] }, error: /anchors_any must be a list/u },
+      { fields: { always: 'yes' }, error: /always must be true or false/u },
+      { fields: { on_demand: 1 }, error: /on_demand must be true or false/u },
+      { fields: { exclude_paths: ['**/test/**', ''] }, error: /exclude_paths must be a list/u },
+    ];
+    for (const { fields, error } of cases) {
+      writeFileSync(join(dir, 'routes.json'), JSON.stringify({ routes: [{ ...route, ...fields }] }));
+      assert.match(routeErrors(dir, 's').join(), error);
+      assert.throws(() => loadRoutes(dir), error);
+    }
+  });
+  test('the published marker contract is literal, and partial or reversed marker pairs fail', () => {
+    const table = renderTable(ROUTES);
+    assert.match(table, /^<!-- routes:start: generated/u);
+    assert.match(table, /<!-- routes:end -->$/u);
+    for (const text of ['<!-- routes:end -->', '<!-- routes:start -->', '<!-- routes:end -->\n<!-- routes:start -->'])
+      assert.throws(() => applyTable(text, ROUTES), /missing or unbalanced/u);
+  });
+  test('a skill with no route file is valid, and non-Markdown reference files are ignored', () => {
+    const empty = mkdtempSync(join(tmpdir(), 'routes-empty-'));
+    assert.equal(loadRoutes(empty), null);
+    assert.deepEqual(routeErrors(empty, 'empty'), []);
+    const dir = skill({ routes: [{ reference: 'references/a.md', when: 'A', always: true }] }, undefined, [
+      'a.md',
+      'notes.txt',
+    ]);
+    assert.deepEqual(routeErrors(dir, 's'), []);
+  });
+});
+
+const table = (paths: string[], anchors: string[]): string =>
+  renderTable({ routes: [{ reference: 'references/a.md', when: 'A', paths_any: paths, anchors_any: anchors }] });
+
+describe('routing decision and documentation workflows', () => {
+  test('fixed references never become diff triggers even when a caller also supplies matching signals', () => {
+    const route = { reference: 'references/a.md', when: 'A', paths_any: ['**/*.php'], anchors_any: ['needle'] };
+    const files = [{ path: 'src/Service.php', lines: ['needle'] }];
+    assert.equal(routeMatches({ ...route, always: true }, files), false);
+    assert.equal(routeMatches({ ...route, on_demand: true }, files), false);
+    assert.equal(routeMatches({ ...route, always: false, on_demand: false }, files), true);
+  });
+  test('anchor-only selection supports Unicode and safely ignores malformed regular expressions', () => {
+    const route = { reference: 'references/a.md', when: 'A' };
+    assert.equal(routeMatches({ ...route, anchors_any: ['\\p{L}'] }, [{ path: 'src/a.php', lines: ['é'] }]), true);
+    assert.equal(routeMatches({ ...route, anchors_any: ['('] }, changed('src/a.php')), false);
+    assert.equal(routeMatches(route, changed('src/a.php')), false);
+  });
+  test('the route report separates selected, always and on-demand references', () => {
+    const root = mkdtempSync(join(tmpdir(), 'route-report-'));
+    const dir = join(root, 'skills/sw-example');
+    mkdirSync(dir, { recursive: true });
+    mkdirSync(join(root, 'skills/sw-empty'));
+    const routes: RouteFile = {
+      routes: [
+        { reference: 'references/change.md', when: 'Changed PHP', paths_any: ['**/*.php'] },
+        { reference: 'references/base.md', when: 'Every task', always: true },
+        { reference: 'references/stuck.md', when: 'When stuck', on_demand: true },
+      ],
+    };
+    writeFileSync(join(dir, 'routes.json'), JSON.stringify(routes));
+    assert.deepEqual(routeDiff(root, DIFF), {
+      selected: { 'sw-example': ['references/change.md'] },
+      always: { 'sw-example': ['references/base.md'] },
+      on_demand: { 'sw-example': ['references/stuck.md'] },
+    });
+  });
+  test('table headers and truncation distinguish complete hints from omitted signals', () => {
+    assert.deepEqual(table(['a'], []).split('\n').slice(0, 3), [
+      START,
+      '| Read | When | Or the change touches |',
+      '| ---- | ---- | --------------------- |',
+    ]);
+    assert.match(table(['a', 'b'], ['x']), /\| A \| `a`, `b`, `x` \|/u);
+    assert.match(table(['a', 'b', 'c'], []), /\| A \| `a`, `b`, … \|/u);
+    assert.match(table(['a'], ['x', 'y']), /\| A \| `a`, `x`, … \|/u);
+    assert.match(table(['**/**/a', 'src/**/b'], []), /\| A \| `a`, `src\/\*\*\/b` \|/u);
+  });
+  test('load errors keep independent problems separated and malformed JSON keeps its parse diagnostic', () => {
+    const dir = skill({ routes: [{ reference: 'references/a.md', when: 'A', always: true }] });
+    writeFileSync(join(dir, 'routes.json'), JSON.stringify({ routes: [{ reference: '', when: '' }] }));
+    assert.throws(() => loadRoutes(dir), /reference must be a string; .*when must be a non-empty string/u);
+    writeFileSync(
+      join(dir, 'routes.json'),
+      JSON.stringify({
+        routes: [{ reference: '../sw-absent/references/a.md' }, { reference: '../sw-absent/references/b.md' }],
+      }),
+    );
+    assert.throws(() => loadRoutes(dir), /routes\[0\][^;]*; routes\[1\]/u);
+    writeFileSync(join(dir, 'routes.json'), '{');
+    assert.match(routeErrors(dir, 's').join('\n'), /Unexpected|Expected property|not valid JSON/u);
+  });
+  test('a borrower can validate its rendered table without a local references folder', () => {
+    const root = mkdtempSync(join(tmpdir(), 'borrow-only-'));
+    const owner = join(root, 'sw-owner');
+    const reader = join(root, 'sw-reader');
+    mkdirSync(join(owner, 'references'), { recursive: true });
+    mkdirSync(reader);
+    writeFileSync(join(owner, 'references/a.md'), '# Reference');
+    writeFileSync(
+      join(owner, 'routes.json'),
+      JSON.stringify({ routes: [{ reference: 'references/a.md', when: 'A', paths_any: ['**/*.php'] }] }),
+    );
+    writeFileSync(
+      join(reader, 'routes.json'),
+      JSON.stringify({ routes: [{ reference: '../sw-owner/references/a.md' }] }),
+    );
+    const loaded = loadRoutes(reader);
+    assert.ok(loaded);
+    writeFileSync(join(reader, 'SKILL.md'), renderTable(loaded));
+    assert.deepEqual(routeErrors(reader, 'sw-reader'), []);
+  });
+});
+
+test('a structurally valid route still fails when its reference target does not exist', () => {
+  const dir = skill({ routes: [{ reference: 'references/missing.md', when: 'A', always: true }] });
+  assert.deepEqual(routeErrors(dir, 's'), ['s/routes.json: routes[0]: references/missing.md not found']);
 });

@@ -1,0 +1,14 @@
+```json
+{
+  "findings": [
+    {
+      "rule_id": "ARCH-006",
+      "severity": "major",
+      "file": "src/Message/ExportBatchMessage.php",
+      "line": 12,
+      "summary": "The queued includeAttachments=false flag is lost by the default JSON serializer and becomes true again after decode.",
+      "fix": "Keep includeAttachments() for callers and add an isIncludeAttachments() getter, then round-trip a false value with the configured transport serializer."
+    }
+  ]
+}
+```

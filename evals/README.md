@@ -87,9 +87,11 @@ pairs per rule:
 
 - `-catch`: `fixture/diff.patch` plants the problem. The grader needs a
   finding at the right file and at least the task's minimum severity that
-  names the rule.
-- `-ignore`: a clean diff that looks similar. A finding above `nit` that names
-  the rule fails the task, so A/B counts false positives as failures.
+  explains the defect. A correct rule ID alone never passes. Extra substantive
+  findings must match an explicit `allowed` expectation for another real issue.
+- `-ignore`: a clean diff that looks similar. Every finding above `nit` fails
+  unless the task explicitly permits it in `allowed`; unrelated false claims
+  cannot pass by citing a different rule.
 
 Near-miss tasks (`review-<topic>-near-miss`) test the rule ID, not
 detection. The diff plants a real problem next to a rule that does not
@@ -122,9 +124,10 @@ The agent ends its answer with one fenced `json` block:
 
 `severity` is `blocking`, `major`, `minor` or `nit`; `rule_id` may be null.
 [`tools/src/grade/review.ts`](../tools/src/grade/review.ts) reads the last
-such block from `$TRANSCRIPT`. A finding names the rule when its `rule_id`
-starts with the rule's ID, or, when it has no catalog-shaped ID, when its
-`summary` matches the task's `summary` regex. The regex keeps the eval fair
+such block from `$TRANSCRIPT`. Its `summary` must match the task's defect
+description even when its `rule_id` is correct. Catalog IDs must match exactly;
+no catalog ID is also accepted unless `requireCitation: true` explicitly
+makes attribution part of the task. The regex keeps the eval fair
 with the skill off, when the model cannot know our IDs: A/B compares
 detection, not ID recall. A different catalog ID is a wrong rule.
 
@@ -160,19 +163,173 @@ fails both graders without `.skip-fixture-grade`.
   ```
 
 Pass rates count completed runs only; an agent error is not a failed task. A
-gap below `EVAL_AB_MIN_DELTA_PCT` points (default 50) is noise: with 3 repeats
-one run is 33 points, so `improved` and `worse` need a two-run difference.
+gap below `EVAL_AB_MIN_DELTA_PCT` points (default 50) is below the reporting
+threshold: with 3 repeats one run is 33 points. This heuristic is not a
+statistical test, and `held` or `no_difference` never establishes equivalence
+or justifies retiring a rule. Trials run in randomly ordered on/off pairs.
 
 | Verdict | Meaning | `ab.sh` exit |
 | ------- | ------- | ------------ |
 | `improved` | skill-on pass rate is at least the minimum gap higher | 0 |
-| `held` | every completed run passed in both modes; the model may not need the rule | 11 |
+| `held` | every completed run passed in both modes; a ceiling on these trials | 11 |
 | `no_difference` | the gap is below the minimum | 10 |
 | `worse` | skill-on pass rate is at least the minimum gap lower | 20 |
 | `error` | fewer than half of a mode's runs completed; no verdict | 5 |
 
 `ab.sh` refuses to run without a profile command, because "on" and "off" would
 otherwise load the same skills.
+
+### Complete experiments and retained evidence
+
+`eval-local.sh` freezes `<results>.manifest.json` before running any task.
+It records the experiment ID, full task plan, repeat count, agent, model and
+commit. Use a fresh `EVAL_RESULTS` path for each experiment. CI carries the
+same full plan across shards and checks it after merging their results.
+
+The gate rejects missing or duplicate tasks, mixed experiment IDs, mismatched
+profiles or commits, and missing or inconsistent trial records. Historical
+results without a manifest remain readable with an explicit completeness
+warning. Set `EVAL_MANIFEST` to require a particular manifest; an absent
+explicit file is an error.
+
+Each new A/B record includes per-trial outcomes, duration, loaded skills,
+tokens, content hashes for the task/skills/grader, and a relative artifact
+directory. `<results>.artifacts/` retains stdout, stderr, usage, skill logs,
+raw adapter events and an incrementally written trial journal. This evidence
+survives workdir cleanup; CI uploads it even when a shard fails. Retry traces
+can contain earlier attempts; the aggregate skill/token counts still use only
+the final attempt. Review a sample of transcripts before interpreting scores.
+
+The stricter review graders change the measurement: do not compare their scores
+directly with older baselines as if only the skills changed.
+
+### Router/help consolidation pilot
+
+```bash
+# Prepare packages without any model calls:
+node tools/bin/eval-discovery.ts /tmp/shopware-discovery-packages --prepare
+
+# A bounded model screen: three tasks, three packaging variants, fresh workdirs.
+EVAL_AGENT=claude TASK_MODEL=haiku REPEATS=1 \
+  SKILLS_AGENT_CMD="$PWD/evals/runner/claude-task.sh" \
+  node tools/bin/eval-discovery.ts evals/.results/discovery-new-run --run
+```
+
+The variants are the current library, router/help merged into one entry point,
+and both discovery entry points removed. The merged package derives its guide
+from the maintained help skill and retains the existing router and topic
+references. It does not change the published skills. Runtime packages are
+copied outside the checkout so ancestor documentation cannot restore removed
+guidance. Tasks have an explicit selection budget and grade skill selection;
+they do not establish implementation quality or statistical non-inferiority.
+An infrastructure error stops further model sessions and records the remaining
+trials as skipped. The manifest, trial journal, packages and raw traces stay
+in the output directory. Expand to held-out tasks and supported models before
+making a packaging or retirement decision.
+
+### Prospective reference and code transfer comparison
+
+```bash
+# Freeze the plan/packages without spending model usage:
+node tools/bin/eval-transfer.ts /tmp/shopware-transfer-plan --prepare
+
+# A NEW output directory is required for each run (18 sessions by default):
+EVAL_AGENT=claude TASK_MODEL=haiku REPEATS=2 TASK_MAX_TURNS=18 \
+  TASK_MAX_BUDGET_USD=0.50 EVAL_AGENT_TIMEOUT_SECONDS=180 \
+  SKILLS_AGENT_CMD="$PWD/evals/runner/claude-task.sh" \
+  node tools/bin/eval-transfer.ts evals/.results/transfer-new-run --run
+```
+
+[`experiments/discovery-transfer-v1.json`](experiments/discovery-transfer-v1.json)
+lists three retained tasks and their expected domain references. Each task/repeat runs
+all three packages in shuffled order, in fresh workdirs with the complete
+variant installed. No task names its expected reference. Packages, task/grader
+hashes, limits and trial order are recorded before the first model call.
+
+Two outcomes are reported independently: successful code outcomes and confirmed
+reference content returned to the agent. The Claude trace observer counts
+successful `Read` results with matching source content, or literal shell file
+reads with matching returned content; partial excerpts are marked. Citations, file listings, path echoes
+and failed calls do not count. Dynamic shell paths and implicit cwd changes may
+still be missed; missing or
+unsupported traces are unobservable, rather than zero-retrieval results.
+Reading a reference does not prove comprehension or causal use. Other reference
+reads are recorded without assuming they are mistakes.
+
+Two hidden oracles execute the generated Storefront/Administration JavaScript
+against a small fixture adapter: option compatibility including zero and inherited
+save ordering/results/rejection.
+The worker-reset case checks PHP AST relationships and service configuration;
+it does **not** execute Symfony, PHP or Messenger. Golden almost-pass answers
+and calibration mutations check these oracles before model trials.
+Install the existing AST dependencies with `npm ci --prefix evals/tools/ast`
+before running the transfer comparison or its `tools/` unit tests.
+
+Each trial retains the edited fixture, grader output, usage and raw events under
+`trials/`; `summary.json` separates code failures from infrastructure errors and
+unobservable retrieval. An infrastructure error stops later sessions. This
+runner currently requires the Claude adapter because other event formats have
+not been calibrated for reference observation.
+
+The [first-run record](experiments/discovery-transfer-2026-11-04.json) retains all
+24 raw trials. Its cancellation task was invalidated because the prompt and
+fixture did not establish the teardown API assumed by the oracle; that task is
+excluded from the primary comparison and removed from the active task set.
+
+These tasks were prospective holdouts for the first frozen run only. After
+inspection they are regression cases. Do not tune the package or grader on these
+results and describe reruns as held-out evidence. A small sample on one model
+cannot establish equivalence or justify retiring a skill; use new task families
+and additional supported model profiles for confirmation.
+
+### Fact-sensitive regression comparison across models
+
+```bash
+# No model calls; freezes all three model schedules and archives exact inputs:
+node tools/bin/eval-transfer-suite.ts /tmp/shopware-facts-preview --prepare
+
+# A different NEW directory; 54 serial regression sessions, no retries:
+node tools/bin/eval-transfer-suite.ts evals/.results/facts-new-run --run
+```
+
+The [protocol](experiments/facts-transfer-v2.json) replays three consumed cases, the
+current/merged/removed packages, Haiku/Sonnet/Opus, and two repeats per arm.
+The runner uses the logged-in Claude CLI with the same tools and limits for
+every model: 22 turns, $1.50 session budget and 240 seconds. Actual returned
+model IDs, cap terminations, usage and edited fixtures are retained. Preparation
+archives the task/fixture/golden inputs, grader and runner sources, dependency
+locks and published skill source. Source and package hashes are checked before
+and after each model; changing them invalidates continuation.
+
+These prompts explicitly request checking installed local guidance and reading
+relevant references, without naming a file or the required API. This measures
+guidance-directed retrieval, and cannot be compared causally with the earlier
+unprompted read rate. Before the first run, live positive read controls on all
+three models verified that returned reference content is observable.
+
+The cache case checks the earliest supported minor's API capability and matching
+invalidation tags through PHP AST paths. The Administration field case executes
+actual Vue 2.7.14 and 3.3.4 compiler output with the edited component's save
+method. The ACL case executes the imported registration and checks role
+resolution plus migration helper arguments. The adapters use the pinned source
+links in the protocol; no browser, PHP interpreter, database or Shopware kernel
+is involved. Unsupported PHP/Vue adapter rewrites are ungradable infrastructure
+errors, not model failures. The ACL task was repaired after the first run to
+state persisted-role snapshots and an unshipped migration explicitly; its
+original scores are excluded from the [first-run record](experiments/facts-transfer-2026-11-04.json).
+
+The primary retrieval measure is a trial returning **at least one** acceptable
+fact-bearing reference. The cache task permits either of two references; reading
+both is unnecessary. Code passes, retrieval, costs and capped sessions are
+reported separately. These are three authored task families, two sharing an
+Administration reference, across one provider's model family. This small,
+correlated sample cannot establish equivalence or causally attribute a fix to
+a reference read. These cases are now regression data. To run fresh tasks, first register a new
+protocol under `evals/experiments/` with `models`, `repeats` and `cases`, then
+pass `EVAL_TRANSFER_PLAN=evals/experiments/<new-protocol>.json`. Do not tune these
+cases and describe a replay as held out. Fresh workdirs do not restrict access
+to other local skill installations; a clean environment is needed to isolate
+package effects.
 
 Ready adapters:
 

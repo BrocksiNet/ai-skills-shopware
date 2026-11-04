@@ -8,4 +8,12 @@ import { reviewIgnore } from '../src/grade/review.ts';
 export const grade = reviewIgnore({
   rule: 'ADM-009',
   summary: /\bvite\b|webpack[^.]{0,60}(ignored|not (used|read|loaded|picked up)|no (effect|longer))|\b6\.7\b/iu,
+  allowed: [
+    {
+      rule: 'ADM-041',
+      file: 'src/Resources/app/administration/src/component/**',
+      minSeverity: 'minor',
+      summary: /TypeScript|plain JavaScript/iu,
+    },
+  ],
 });

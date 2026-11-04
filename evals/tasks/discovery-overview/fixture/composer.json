@@ -1,0 +1,7 @@
+{
+  "name": "swag/discovery-fixture",
+  "type": "shopware-platform-plugin",
+  "require": {
+    "shopware/core": "~6.7.0"
+  }
+}

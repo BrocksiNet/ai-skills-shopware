@@ -49,7 +49,7 @@ the surface skills can all be installed together without contradicting (see
 | Architecture decisions, DAL boundaries, progressive enhancement, anti-patterns | `sw-architecture` |
 | Bounded DAL reads; repository vs Connection for entity data | `sw-architecture` |
 | Extension mechanism choice (event vs decoration vs entity extension) | `sw-architecture` |
-| Long-running service state (`ResetInterface`, `kernel.reset`); extension event properties as contract | `sw-architecture` |
+| Long-running service state (`ResetInterface`, `kernel.reset`, HTTP reset lifecycle); extension event properties as contract | `sw-architecture` |
 | Secrets, access keys, API ACL, app least privilege | `sw-security` |
 | Access and cache defaults of existing routes (`_routeScope`, `_loginRequired`, `_httpCache`, `_acl`) | `sw-security` |
 | Idempotency keys and replayed responses scoped to their caller | `sw-security` |

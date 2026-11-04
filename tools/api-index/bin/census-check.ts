@@ -9,17 +9,19 @@
 import { existsSync, readdirSync } from 'node:fs';
 import { join } from 'node:path';
 import { parseArgs } from 'node:util';
+import { errorMessage } from '../../src/errors.ts';
 import { isPhpSource } from '../src/build.ts';
-import { GENERATOR, type Item } from '../src/model.ts';
+import { GENERATOR, type Item, type Snapshot } from '../src/model.ts';
 import { isNode } from '../src/node.ts';
 import { defaultCacheDir, loadSnapshot, readJson } from '../src/store.ts';
 
 const CLASS_KINDS = new Set(['class', 'interface', 'trait', 'enum']);
 
 function records(value: unknown, key: string): Record<string, unknown>[] {
-  if (!isNode(value)) return [];
-  const list = value[key];
-  return Array.isArray(list) ? list.filter((entry) => isNode(entry)) : [];
+  const list = isNode(value) ? value[key] : undefined;
+  if (!Array.isArray(list) || !list.every((entry) => isNode(entry)))
+    throw new Error(`${key} must be a list of census records`);
+  return list;
 }
 
 function stringField(entry: Record<string, unknown>, key: string): string {
@@ -55,6 +57,48 @@ function methodKey(item: Item): string {
   return `${item.file}|${match?.[1] ?? ''}::${match?.[2] ?? ''}`.toLowerCase();
 }
 
+interface Comparison {
+  classCount: number;
+  censusCount: number;
+  onlyCensus: string[];
+  onlyOurs: string[];
+  missing: Item[];
+  ok: boolean;
+}
+
+function compare(snapshot: Snapshot, dir: string): Comparison {
+  const classes = censusClasses(dir);
+  const ours = new Set(snapshot.items.filter((item) => CLASS_KINDS.has(item.kind)).map((item) => item.id.slice(4)));
+  const onlyCensus = [...classes].filter((name) => !ours.has(name));
+  const onlyOurs = [...ours].filter((name) => !classes.has(name));
+  const units = censusMethods(dir);
+  const interfaces = new Set(snapshot.items.filter((item) => item.kind === 'interface').map((item) => item.id));
+  const missing = snapshot.items
+    .filter((item) => item.kind === 'method' && item.abstract !== true)
+    .filter((item) => !units.has(methodKey(item)))
+    .filter((item) => !interfaces.has(item.id.replace(/::\w+\(\)$/u, '')));
+  return {
+    classCount: ours.size,
+    censusCount: classes.size,
+    onlyCensus,
+    onlyOurs,
+    missing,
+    ok: onlyCensus.length === 0 && onlyOurs.length === 0 && missing.length === 0,
+  };
+}
+
+function printComparison(ref: string, result: Comparison, details: number): void {
+  process.stdout.write(
+    `${result.ok ? 'ok  ' : 'DIFF'} ${ref}: classes ${result.classCount} vs ${result.censusCount}` +
+      ` (only census ${result.onlyCensus.length}, only index ${result.onlyOurs.length}),` +
+      ` methods with a body missing in census ${result.missing.length}\n`,
+  );
+  for (const name of result.onlyCensus.slice(0, details)) process.stdout.write(`  only census: ${name}\n`);
+  for (const name of result.onlyOurs.slice(0, details)) process.stdout.write(`  only index: ${name}\n`);
+  for (const item of result.missing.slice(0, details))
+    process.stdout.write(`  method not in census: ${item.id} (${item.file})\n`);
+}
+
 function main(): number {
   const { values } = parseArgs({
     options: {
@@ -68,41 +112,31 @@ function main(): number {
     return 2;
   }
   const details = Number(values.details);
+  if (values.details.trim() === '' || !Number.isSafeInteger(details) || details < 0)
+    throw new Error('--details must be a non-negative integer');
   const snapshotDir = join(values.cache ?? defaultCacheDir(process.env), GENERATOR.replaceAll(/[^\w.-]+/gu, '_'));
   const files = existsSync(snapshotDir) ? readdirSync(snapshotDir).filter((name) => name.startsWith('v')) : [];
   let mismatched = 0;
   let checked = 0;
   for (const file of files.toSorted()) {
     const snapshot = loadSnapshot(join(snapshotDir, file));
-    if (snapshot === undefined) continue;
+    if (snapshot === undefined) throw new Error(`${file}: not an API snapshot`);
+    if (snapshot.failed.length > 0) throw new Error(`${snapshot.ref}: snapshot has parse failures`);
     const dir = join(values.census, 'refs', snapshot.ref, 'raw');
     if (!existsSync(join(dir, 'classes.json.gz'))) continue;
-    checked += 1;
-    const classes = censusClasses(dir);
-    const ours = new Set(snapshot.items.filter((item) => CLASS_KINDS.has(item.kind)).map((item) => item.id.slice(4)));
-    const onlyCensus = [...classes].filter((name) => !ours.has(name));
-    const onlyOurs = [...ours].filter((name) => !classes.has(name));
-    const units = censusMethods(dir);
-    const missingMethods = snapshot.items
-      .filter((item) => item.kind === 'method' && item.abstract !== true)
-      .filter((item) => !units.has(methodKey(item)));
-    // Interface methods have no body; the index does not mark them abstract.
-    const interfaces = new Set(snapshot.items.filter((item) => item.kind === 'interface').map((item) => item.id));
-    const realMissing = missingMethods.filter((item) => !interfaces.has(item.id.replace(/::\w+\(\)$/u, '')));
-    const ok = onlyCensus.length === 0 && onlyOurs.length === 0 && realMissing.length === 0;
-    if (!ok) mismatched += 1;
-    process.stdout.write(
-      `${ok ? 'ok  ' : 'DIFF'} ${snapshot.ref}: classes ${ours.size} vs ${classes.size}` +
-        ` (only census ${onlyCensus.length}, only index ${onlyOurs.length}),` +
-        ` methods with a body missing in census ${realMissing.length}\n`,
-    );
-    for (const name of onlyCensus.slice(0, details)) process.stdout.write(`  only census: ${name}\n`);
-    for (const name of onlyOurs.slice(0, details)) process.stdout.write(`  only index: ${name}\n`);
-    for (const item of realMissing.slice(0, details))
-      process.stdout.write(`  method not in census: ${item.id} (${item.file})\n`);
+    checked++;
+    const result = compare(snapshot, dir);
+    if (!result.ok) mismatched++;
+    printComparison(snapshot.ref, result, details);
   }
+  if (checked === 0) throw new Error('no comparable cache/census tags found');
   process.stdout.write(`${checked} tags checked, ${mismatched} with differences\n`);
   return mismatched > 0 ? 1 : 0;
 }
 
-process.exitCode = main();
+try {
+  process.exitCode = main();
+} catch (error) {
+  process.stderr.write(`census-check: ${errorMessage(error)}\n`);
+  process.exitCode = 2;
+}

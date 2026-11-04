@@ -5,13 +5,17 @@
   "type": "module",
   "scripts": {
     "build": "node bin/build.ts",
-    "test": "node --test \"test/**/*.test.ts\""
+    "test": "node --test \"test/**/*.test.ts\"",
+    "test:coverage": "c8 node --test \"test/**/*.test.ts\""
   },
   "dependencies": {
     "@babel/parser": "8.1.0",
     "@babel/types": "8.1.0",
     "php-parser": "3.7.0",
     "yaml": "2.9.1"
+  },
+  "devDependencies": {
+    "c8": "12.0.0"
   },
   "engines": {
     "node": ">=24"

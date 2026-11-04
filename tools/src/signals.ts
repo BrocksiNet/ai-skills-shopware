@@ -88,6 +88,7 @@ export function commitSignals(source: Source, mined: MinedCommit): Signal[] {
   return [
     ...lines(upstream ? 'upstream-line' : 'skill-bullet', deltas.bullets),
     ...lines(upstream ? 'upstream-line' : 'guideline-heading', deltas.headings),
+    ...lines('upstream-line', deltas.guidance ?? []),
     ...lines('guide-id', deltas.guideIds),
     ...lines('template-line', deltas.template),
     ...deltas.classes.map((c) =>

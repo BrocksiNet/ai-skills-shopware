@@ -1,0 +1,14 @@
+```json
+{
+  "findings": [
+    {
+      "rule_id": "ARCH-001",
+      "severity": "major",
+      "file": "src/Worker/http.php",
+      "line": 12,
+      "summary": "LONGRUNNING_ENVIRONMENT stays disabled, so this kernel path never invokes service resets between HTTP requests and RateMemo retains stale rates.",
+      "fix": "Enable LONGRUNNING_ENVIRONMENT before boot on this installed kernel and test two requests on the same instance."
+    }
+  ]
+}
+```

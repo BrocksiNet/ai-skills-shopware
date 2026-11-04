@@ -1,0 +1,3 @@
+services:
+    Acme\Pricing\RateMemo:
+        tags: [{ name: kernel.reset, method: reset }]

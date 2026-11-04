@@ -1,0 +1,11 @@
+# This task registers a normalizer for the message, not just an arbitrary service.
+framework:
+    messenger:
+        serializer:
+            default_serializer: messenger.transport.symfony_serializer
+            symfony_serializer:
+                format: json
+
+services:
+    Acme\Export\Serializer\ExportBatchNormalizer:
+        tags: [{ name: serializer.normalizer, priority: 1000 }]

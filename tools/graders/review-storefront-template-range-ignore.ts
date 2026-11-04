@@ -10,4 +10,12 @@ export const grade = reviewIgnore({
   rule: 'PLG-001',
   summary:
     /^(?!.*deprecat).*?(?:(remov|no longer (exist|ship|render|load|regist)|(does not|doesn't|did not) exist|missing|gone|dropped|not registered)(?:[^.]|\.\S){0,80}6\.7|6\.7(?:[^.]|\.\S){0,80}(remov|no longer|(does not|doesn't) exist|missing|gone|drop|not registered|silently))/iu,
+  allowed: [
+    {
+      rule: 'PLG-001',
+      file: 'src/**',
+      minSeverity: 'minor',
+      summary: /(?=.*layout_navigation_flyout_bar_category)(?=.*deprecat)(?=.*6\.7)/iu,
+    },
+  ],
 });

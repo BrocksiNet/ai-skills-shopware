@@ -48,6 +48,8 @@ export interface CommitDeltas {
   /** Headings added to or removed from `coding-guidelines/**`, or from any
    *  Markdown file of an upstream source. */
   headings: LineDelta[];
+  /** Prose changes in watched AGENTS.md files, including non-bullet guidance. */
+  guidance?: LineDelta[];
   /** Rule IDs added to or removed from review guide frontmatter. */
   guideIds: LineDelta[];
   /** Lines of `.github/PULL_REQUEST_TEMPLATE.md`. */
@@ -61,6 +63,7 @@ export interface CommitDeltas {
 const SKILL_FILE = /^\.agents\/skills\/(?:[^/]+\/SKILL|sw-review\/personas\/[^/]+)\.md$/u;
 const GUIDE_FILE = /^\.agents\/skills\/sw-review\/guides\/[^/]+\.md$/u;
 const GUIDELINE_FILE = /^coding-guidelines\/.+\.md$/u;
+const AGENT_GUIDE = /(?:^|\/)AGENTS\.md$/u;
 const TEMPLATE_FILE = '.github/PULL_REQUEST_TEMPLATE.md';
 const RULE_CLASS = /^src\/Core\/DevOps\/StaticAnalyze\/(PHPStan|Danger)\/Rules\/(?:.+\/)?([A-Za-z0-9_]+)\.php$/u;
 /** Classes next to the rules that are no rule: shared helpers, the patterns
@@ -221,6 +224,11 @@ export function commitDeltas(
     const cls = ruleClass(file);
     if (cls !== undefined) deltas.classes.push(cls);
     const name = file.filename;
+    if (AGENT_GUIDE.test(name) && under(name, paths)) {
+      if (file.patch === undefined) deltas.truncated.push(name);
+      else (deltas.guidance ??= []).push(...changedLines(name, file.patch, TEXT, true));
+      continue;
+    }
     const target = SKILL_FILE.test(name)
       ? { list: deltas.bullets, pattern: BULLET, markdown: true }
       : GUIDE_FILE.test(name)

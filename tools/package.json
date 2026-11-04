@@ -19,10 +19,15 @@
     "mine-trunk": "node bin/mine-trunk.ts",
     "lint": "oxlint --type-aware --deny-warnings --report-unused-disable-directives src bin test graders api-index/src api-index/bin api-index/test",
     "format": "oxfmt .",
-    "format:check": "oxfmt --check ."
+    "format:check": "oxfmt --check .",
+    "test:deterministic": "node --test \"test/**/*.test.ts\" && bash ../evals/test-graders.sh",
+    "test:coverage": "c8 npm run test:deterministic",
+    "mutate": "node bin/mutate.ts"
   },
   "devDependencies": {
+    "@stryker-mutator/core": "10.1.1",
     "@types/node": "24.19.2",
+    "c8": "12.0.0",
     "oxfmt": "0.76.0",
     "oxlint": "1.90.0",
     "oxlint-tsgolint": "7.0.2005",

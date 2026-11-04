@@ -4,7 +4,7 @@ import { versionParts } from './timeline.ts';
 
 /** One comparison of a composer constraint. */
 interface Bound {
-  op: '>=' | '>' | '<=' | '<' | '=';
+  op: '>=' | '>' | '<=' | '<' | '=' | '!=';
   version: number[];
 }
 
@@ -16,15 +16,29 @@ function compareParts(left: number[], right: number[]): number {
   return 0;
 }
 
-function parts(text: string): number[] | undefined {
-  const match = /^v?(\d+(?:\.(?:\d+|\*|x))*)/u.exec(text);
+interface Version {
+  numbers: number[];
+  wildcard: boolean;
+}
+const OPERATORS: (Bound['op'] | '==' | '~' | '^')[] = ['>=', '<=', '==', '!=', '>', '<', '=', '~', '^'];
+
+const COMPARES: Record<Bound['op'], (diff: number) => boolean> = {
+  '>=': (diff) => diff >= 0,
+  '>': (diff) => diff > 0,
+  '<=': (diff) => diff <= 0,
+  '<': (diff) => diff < 0,
+  '=': (diff) => diff === 0,
+  '!=': (diff) => diff !== 0,
+};
+
+/** Parse the numeric version and its optional wildcard together. */
+function parts(text: string): Version | undefined {
+  const match = /^v?(\d+(?:\.\d+){0,3})(\.[*x])?$/iu.exec(text);
   if (match?.[1] === undefined) return undefined;
-  const out: number[] = [];
-  for (const part of match[1].split('.')) {
-    if (part === '*' || part === 'x') break;
-    out.push(Number(part));
-  }
-  return out;
+  const numbers = match[1].split('.').map(Number);
+  return numbers.every((part) => Number.isSafeInteger(part))
+    ? { numbers, wildcard: match[2] !== undefined }
+    : undefined;
 }
 
 /** `[a, b+1]` for the parts that are given: `6.6` → `6.7`. */
@@ -34,36 +48,44 @@ function bump(version: number[], at: number): number[] {
   return out;
 }
 
-/** The bounds of one composer term: `~6.6.0`, `^6.6`, `6.6.*`, `>=6.5 <6.7`. */
+/** One stable numeric term. Unsupported syntax is rejected instead of approximated. */
+function pieceBounds(raw: string): Bound[] | undefined {
+  const piece = raw.replace(/@(dev|alpha|beta|rc|stable)$/iu, '').replace(/-stable$/iu, '');
+  if (/^(?:\*|x)$/iu.test(piece)) return [];
+  const op = OPERATORS.find((operator) => piece.startsWith(operator));
+  const parsed = parts(piece.slice(op?.length ?? 0));
+  if (parsed === undefined || (parsed.wildcard && op !== undefined)) return undefined;
+  const version = parsed.numbers;
+  if (op === '~') {
+    return [
+      { op: '>=', version },
+      { op: '<', version: bump(version, Math.max(0, version.length - 2)) },
+    ];
+  }
+  if (op === '^') {
+    const first = version.findIndex((part) => part !== 0);
+    return [
+      { op: '>=', version },
+      { op: '<', version: bump(version, first === -1 ? version.length - 1 : first) },
+    ];
+  }
+  if (parsed.wildcard)
+    return [
+      { op: '>=', version },
+      { op: '<', version: bump(version, version.length - 1) },
+    ];
+  return [{ op: op === undefined || op === '==' ? '=' : op, version }];
+}
+
 function termBounds(term: string): Bound[] | undefined {
+  const normalized = term.replaceAll(/(>=|<=|!=|==|>|<|=|~|\^)\s+(?=v?\d)/gu, '$1');
+  const pieces = normalized.split(/[\s,]+/u).filter((piece) => piece !== '');
+  if (pieces.length === 0) return undefined;
   const bounds: Bound[] = [];
-  for (const raw of term.split(/[\s,]+/u).filter((piece) => piece !== '')) {
-    const piece = raw.replace(/@\w+$/u, '').replace(/-(dev|rc\d*|beta\d*|alpha\d*)$/iu, '');
-    const operator = /^(>=|<=|>|<|==|=|!=|~|\^)?(.*)$/u.exec(piece);
-    const op = operator?.[1] ?? '';
-    const version = parts(operator?.[2] ?? '');
-    if (version === undefined) {
-      if (piece === '*') continue;
-      return undefined;
-    }
-    if (op === '~') {
-      bounds.push({ op: '>=', version }, { op: '<', version: bump(version, Math.max(0, version.length - 2)) });
-    } else if (op === '^') {
-      const first = version.findIndex((part) => part !== 0);
-      bounds.push(
-        { op: '>=', version },
-        { op: '<', version: bump(version, first === -1 ? version.length - 1 : first) },
-      );
-    } else if (op === '' && /[*x]/u.test(piece)) {
-      bounds.push({ op: '>=', version }, { op: '<', version: bump(version, version.length - 1) });
-    } else if (op === '' || op === '=' || op === '==') {
-      const top = [...version, ...Array.from({ length: 4 - version.length }, () => Number.MAX_SAFE_INTEGER)];
-      bounds.push({ op: '>=', version }, { op: '<=', version: top });
-    } else if (op === '!=') {
-      continue;
-    } else if (op === '>=' || op === '>' || op === '<=' || op === '<') {
-      bounds.push({ op, version });
-    }
+  for (const raw of pieces) {
+    const part = pieceBounds(raw);
+    if (part === undefined) return undefined;
+    bounds.push(...part);
   }
   return bounds;
 }
@@ -71,28 +93,15 @@ function termBounds(term: string): Bound[] | undefined {
 /** A composer version constraint as a test on a release name. Undefined
  *  when the constraint cannot be read. */
 export function parseConstraint(constraint: string): ((release: string) => boolean) | undefined {
-  const terms = constraint.split(/\s*\|\|?\s*/u).map((term) => termBounds(term.trim()));
-  if (terms.some((term) => term === undefined)) return undefined;
+  const terms: Bound[][] = [];
+  for (const term of constraint.split(/\s*\|\|?\s*/u)) {
+    const bounds = termBounds(term);
+    if (bounds === undefined) return undefined;
+    terms.push(bounds);
+  }
   return (release) => {
     const version = versionParts(release);
     if (version === undefined) return false;
-    return terms.some((bounds) =>
-      (bounds ?? []).every((bound) => {
-        const diff = compareParts(version, bound.version);
-        switch (bound.op) {
-          case '>=':
-            return diff >= 0;
-          case '>':
-            return diff > 0;
-          case '<=':
-            return diff <= 0;
-          case '<':
-            return diff < 0;
-          case '=':
-            return diff === 0;
-        }
-        return false;
-      }),
-    );
+    return terms.some((bounds) => bounds.every((bound) => COMPARES[bound.op](compareParts(version, bound.version))));
   };
 }

@@ -91,6 +91,7 @@ jobs:
       profiles: ${{ steps.preflight.outputs.profiles || steps.profiles.outputs.profiles }}
       count: ${{ steps.plan.outputs.count }}
       shards: ${{ steps.plan.outputs.shards }}
+      tasks: ${{ steps.plan.outputs.tasks }}
     steps:
       - uses: actions/checkout@v5
         with:
@@ -150,8 +151,11 @@ jobs:
           fi
           plan="$(bash scripts/eval-plan.sh)"
           echo "$plan" | jq .
-          echo "count=$(jq '.count' <<<"$plan")" >> "$GITHUB_OUTPUT"
-          echo "shards=$(jq -c '.shards' <<<"$plan")" >> "$GITHUB_OUTPUT"
+          {
+            echo "count=$(jq '.count' <<<"$plan")"
+            echo "shards=$(jq -c '.shards' <<<"$plan")"
+            echo "tasks=$(jq -r '.tasks | join(",")' <<<"$plan")"
+          } >> "$GITHUB_OUTPUT"
           {
             echo "$(jq '.count' <<<"$plan") task(s) in $(jq '.shards | length' <<<"$plan") shard(s) per agent:"
             jq -r '.[] | "- `\(.agent)`, model `\(.model)`"' <<<"$PROFILES"
@@ -250,6 +254,8 @@ jobs:
       SKILLS_AGENT_CMD: ${{ github.workspace }}/evals/runner/${{ matrix.profile.agent }}-task.sh
       SKILLS_PROFILE_CMD: ${{ github.workspace }}/evals/runner/skills-profile.sh
       EVAL_RESULTS: ${{ github.workspace }}/evals/.results/ab-${{ matrix.profile.id }}-${{ matrix.shard.id }}.jsonl
+      EVAL_EXPERIMENT_ID: ${{ github.run_id }}-${{ github.run_attempt }}-${{ matrix.profile.id }}
+      EVAL_TASKS: ${{ needs.plan.outputs.tasks }}
     steps:
       - uses: actions/checkout@v5
 
@@ -271,6 +277,7 @@ jobs:
           SHARD_TASKS: ${{ matrix.shard.tasks }}
         run: |
           mkdir -p "$(dirname "$EVAL_RESULTS")"
+          node tools/bin/eval-manifest.ts "$EVAL_RESULTS.manifest.json"
           IFS=',' read -r -a tasks <<<"$SHARD_TASKS"
           for task in "${tasks[@]}"; do
             echo "::group::A/B $task"
@@ -283,7 +290,8 @@ jobs:
         if: always()
         with:
           name: eval-ab-${{ matrix.profile.id }}-${{ matrix.shard.id }}
-          path: evals/.results/ab-${{ matrix.profile.id }}-${{ matrix.shard.id }}.jsonl
+          path: evals/.results/ab-${{ matrix.profile.id }}-${{ matrix.shard.id }}.jsonl*
+          include-hidden-files: true
           if-no-files-found: warn
 
   gate:
@@ -313,6 +321,16 @@ jobs:
           mkdir -p evals/.results
           cat "$RUNNER_TEMP"/ab/*.jsonl > evals/.results/ab.jsonl 2>/dev/null || true
           wc -l evals/.results/ab.jsonl
+          cp "$RUNNER_TEMP"/ab/*.manifest.json evals/.results/ 2>/dev/null || true
+          cp -R "$RUNNER_TEMP"/ab/*.jsonl.artifacts evals/.results/ 2>/dev/null || true
+
+      - name: Freeze the expected plan for the gate
+        env:
+          EVAL_EXPERIMENT_ID: ${{ github.run_id }}-${{ github.run_attempt }}-${{ matrix.profile.id }}
+          EVAL_TASKS: ${{ needs.plan.outputs.tasks }}
+          EVAL_AGENT: ${{ matrix.profile.agent }}
+          TASK_MODEL: ${{ matrix.profile.model }}
+        run: node tools/bin/eval-manifest.ts evals/.results/ab.jsonl.manifest.json
 
       - name: Compare with the latest baseline of this agent
         env:
@@ -335,7 +353,8 @@ jobs:
         if: always()
         with:
           name: eval-results-${{ matrix.profile.id }}
-          path: evals/.results/ab.jsonl
+          path: evals/.results/
+          include-hidden-files: true
 
   baseline:
     name: "baseline (${{ matrix.profile.agent }} · ${{ matrix.profile.model }})"
@@ -382,6 +401,7 @@ jobs:
           mkdir -p evals/baselines
           previous="$(find evals/baselines -name "*-${PROFILE_ID}.jsonl" | sort | tail -n1)"
           cp "$RUNNER_TEMP/results/ab.jsonl" "$file"
+          cp "$RUNNER_TEMP/results/ab.jsonl.manifest.json" "$file.manifest.json"
 
           {
             echo "A/B baseline (agent \`${EVAL_AGENT}\`, model \`${TASK_MODEL}\`) from run ${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}/actions/runs/${GITHUB_RUN_ID}."
@@ -396,7 +416,7 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git switch -c "$branch"
-          git add "$file"
+          git add "$file" "$file.manifest.json"
           git commit -m "chore(evals): record ${PROFILE_ID} A/B baseline ${day}"
           git push origin "$branch"
           gh pr create --base main --head "$branch" \

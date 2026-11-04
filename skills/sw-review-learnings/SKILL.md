@@ -74,8 +74,8 @@ Detailed, growing lists live in references. Read only the one that matches the c
 - **REV-007** **Filtering on an association without loading it.** `addFilter` on
   `manufacturer.name` without `addAssociation('manufacturer')`. (Owning topic:
   `sw-plugin-development` -> `references/dal-usage.md`.)
-- **REV-008** **Deprecated `*CacheTagsEvent` in 6.7 code.** Migrate to `CacheTagCollector`.
-  (Owning topic: `sw-plugin-development` -> `references/cache-tags.md`.)
+- Cache-tag migration is owned by `PLG-007`; read
+  [cache-tags.md](../sw-plugin-development/references/cache-tags.md).
 - **REV-009** **New Store-API / Admin API route without OpenAPI schema.** Endpoints ship with
   no schema entry — headless clients and API docs drift. Add or extend the OpenAPI
   definition for every new public route. (See `references/api-aware.md`.)
@@ -86,12 +86,8 @@ Detailed, growing lists live in references. Read only the one that matches the c
   belong in destructive migrations; never edit shipped migrations — add a new class.
   (Owning topic: `sw-plugin-development` -> `references/migrations.md`; core:
   `platform-architecture.md`.)
-- **REV-013** **Cross-test docblock uses FQCN instead of `@see`.** Point at the covering test with
-  `@see ImportedTestClass` and a `use` statement — not `\Shopware\Tests\…\OtherTest`
-  in prose. (Owning topic: `sw-testing` -> `core-platform-patterns.md`.)
-- **REV-014** **`#[CoversNothing]` safeguard test in `tests/unit/`.** Config/wiring checks that do
-  not cover production code belong in `tests/devops/` on core — keep the unit suite
-  for Codecov. (Owning topic: `sw-testing` -> `core-platform-patterns.md`.)
+- Cross-test docblocks and safeguard-suite placement are owned by `TEST-008`
+  and `TEST-015` in [sw-testing](../sw-testing/SKILL.md).
 
 - **`class_exists` guard for a core framework class** (`REV-015`): dead code when the
   oldest release in the `shopware/core` range already ships the class. Only guard API
