@@ -72,6 +72,24 @@ from the later source audit. No skill or shared grader changed after this screen
 
 ## Download and verify
 
+### Administration workflow and binding studies
+
+The [decision record](../evals/experiments/admin-decisions-2026-11-04.json)
+stores both local archive paths, sizes, SHA-256 hashes, frozen protocol/input
+hashes, outcomes and exclusions. Full traces, edited workdirs, source snapshots,
+calibration and replay oracles stay in the git-ignored archives under
+`evals/.results/`; no raw evidence was uploaded. The
+[summary](results.md#admin-form-binding-decision--november-4-2026) distinguishes
+the failed prospective gate from the exploratory engineering recommendation.
+
+Verify an archive against the record before extracting it. Run
+`shasum -a 256 -c records.sha256` and then
+`shasum -a 256 -c frozen-inputs.sha256` inside its study directory. Both
+extracted archives were verified this way. Their READMEs describe the pinned
+runtimes and replay limits; `node_modules` is omitted.
+
+### Historical release archive
+
 Run from the repository root. Verification uses Node 24 and standard archive
 tools; no additional package or evidence runner is required. The hash in the
 committed manifest is checked before extraction, then every original record

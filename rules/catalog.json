@@ -4035,7 +4035,7 @@
       "id": "ADM-044",
       "skill": "sw-admin-js",
       "file": "skills/sw-admin-js/references/architecture.md",
-      "title": "One bundle for 6.5 and 6.6+ binds sw-* form fields with v-model:value",
+      "title": "Cross-version legacy value fields support both binding contracts",
       "status": "active",
       "since": "2026-10-21",
       "eval": "review-admin-field-event-catch",
@@ -4044,7 +4044,8 @@
         "admin",
         "plugin"
       ],
-      "defer_on_trunk": false
+      "defer_on_trunk": false,
+      "keep_reason": "Source-verified 6.5/6.6 field contracts and two implementation workflows support retaining this fact for cross-version plugin work. The ablation favors retention on Haiku, with grader-repair and missed-reference limits: docs/results.md#admin-form-binding-decision--november-4-2026. Do not retire from review-only ceiling tasks."
     },
     {
       "id": "ADM-045",

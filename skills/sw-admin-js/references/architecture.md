@@ -38,12 +38,19 @@ Load when adding modules, components, services, or ACL-backed UI.
   change every extension's settings, API keys and secrets included. Serve
   the feature's own settings through a plugin Admin API route that checks
   the feature's privilege and reads only the plugin's domain.
-- **ADM-044** **One bundle for 6.5 and 6.6+ binds `sw-*` form fields with
-  `v-model:value`.** On 6.5 (Vue 2) the fields emit `change`; from 6.6.0
-  they emit only `update:value`. `@change` never fires on 6.6+, and `:value`
-  with a bare `@update:value` never fires on 6.5, so the setting looks saved
-  and is not. `v-model:value` works on both. `mt-*` components (6.6.2+) use
-  `v-model`.
+- **ADM-044** **A bundle spanning 6.5 and 6.6+ must support both binding
+  contracts of legacy value-based `sw-*` form fields.** Prefer `v-model:value`;
+  explicit bindings that handle both contracts are also valid. In the default
+  6.5 Vue 2 profile, `sw-text-field` emits `input` / `change`; 6.6 emits
+  `update:value`. Bare `v-model` targets `modelValue` under Vue 3, leaving
+  the field's `value` unbound. A legacy `@change` listener can receive a native
+  DOM event through attribute forwarding instead of the edited string; do not
+  rely on its scalar payload. An `@update:value` handler alone misses the
+  default 6.5 events. `mt-*` components (6.6.2+) use `v-model`.
+  The [6.5 handlers](https://github.com/shopware/shopware/blob/v6.5.8.0/src/Administration/Resources/app/administration/src/app/component/form/sw-text-field/index.js),
+  [6.6 handlers](https://github.com/shopware/shopware/blob/v6.6.0.0/src/Administration/Resources/app/administration/src/app/component/form/sw-text-field/index.js)
+  and [6.6 attribute forwarding](https://github.com/shopware/shopware/blob/v6.6.0.0/src/Administration/Resources/app/administration/src/app/component/form/sw-text-field/sw-text-field.html.twig)
+  define that boundary.
 - **ADM-009** **6.7+ builds the Administration with Vite.** A plugin
   `build/webpack.config.js` is not read on 6.7, so its aliases, loaders and
   plugins do nothing and an import that relies on them fails the build. Do
