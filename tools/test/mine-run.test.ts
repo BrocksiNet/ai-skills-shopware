@@ -7,8 +7,10 @@ import { join, resolve } from 'node:path';
 import { describe, test } from 'node:test';
 import type { GitHubApi } from '../src/github.ts';
 import { advance, readStates, report as runReport } from '../src/mine-run.ts';
+import { historicalMiningRoot } from './mining-fixture.ts';
 
 const ROOT = resolve(import.meta.dirname, '../..');
+const RECORDED_ROOT = historicalMiningRoot(ROOT);
 const FIXTURE = join(import.meta.dirname, 'fixtures/mining/shopware-2026-10-13..2026-10-19.json');
 
 function recorded(): GitHubApi {
@@ -20,7 +22,7 @@ function recorded(): GitHubApi {
 describe('the report and advance commands', () => {
   test('report reads one source over a window', async () => {
     const t = await runReport({
-      root: ROOT,
+      root: RECORDED_ROOT,
       api: recorded(),
       since: '2026-10-13',
       until: '2026-10-19',

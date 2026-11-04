@@ -1,16 +1,3 @@
-The new calculator comes with a test. The test checks plain arithmetic, so it could sit elsewhere.
-
 ```json
-{
-  "findings": [
-    {
-      "rule_id": null,
-      "severity": "minor",
-      "file": "tests/integration/Service/LoyaltyCalculatorTest.php",
-      "line": 6,
-      "summary": "This test does not need the kernel, so it belongs in tests/unit/.",
-      "fix": "Move the test to tests/unit/Service/."
-    }
-  ]
-}
+{"findings":[{"rule_id":"TEST-034","severity":"minor","file":"tests/integration/Service/LoyaltyCalculatorTest.php","line":6,"summary":"The variable name is too short.","fix":"Rename the variable."}]}
 ```

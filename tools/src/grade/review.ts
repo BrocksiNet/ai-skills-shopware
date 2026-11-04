@@ -9,9 +9,11 @@ import {
   type Expectation,
   falsePositives,
   type Finding,
+  type IgnoreExpectation,
   type NearMiss,
   parseFindings,
   reportedRightly,
+  unexpectedFindings,
 } from '../findings.ts';
 import { fail, type Grader, type Verdict } from './kit.ts';
 
@@ -29,15 +31,17 @@ function withFindings(transcript: string, check: (findings: Finding[]) => Verdic
 export const reviewCatch =
   (e: Expectation): Grader =>
   ({ transcript }) =>
-    withFindings(transcript, (findings) =>
-      caught(findings, e)
+    withFindings(transcript, (findings) => {
+      const [wrong] = unexpectedFindings(findings, e);
+      if (wrong !== undefined) return fail(`unexpected finding: ${wrong.file}: ${wrong.summary}`);
+      return caught(findings, e)
         ? { pass: true, detail: `catch: ${findings.length} finding(s)` }
-        : fail(`no ${e.minSeverity}+ finding for ${e.rule} at ${e.file} (${findings.length} finding(s))`),
-    );
+        : fail(`no ${e.minSeverity}+ finding for ${e.rule} at ${e.file} (${findings.length} finding(s))`);
+    });
 
 /** Fails on a finding above `nit` that names the rule anywhere. */
 export const reviewIgnore =
-  (e: Pick<Expectation, 'rule' | 'also' | 'summary'>): Grader =>
+  (e: IgnoreExpectation): Grader =>
   ({ transcript }) =>
     withFindings(transcript, (findings) => {
       const [wrong] = falsePositives(findings, e);

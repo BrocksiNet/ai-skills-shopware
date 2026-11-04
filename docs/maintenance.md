@@ -66,6 +66,13 @@ watch, how to read a commit, and which of our skills learn from which path.
 
 A dedicated PHPUnit skill joins once it exists.
 
+The `shopware` source also watches root `AGENTS.md` and the Administration
+`AGENTS.md`. These files often state requirements in paragraphs, so their
+changed prose lines are mined as well as bullets. Fenced code examples are
+ignored. Root guidance falls back to the core, testing and Administration
+skills; Administration guidance falls back to `sw-admin-js`. A source match
+is a triage suggestion, not evidence that every rule in that skill applies.
+
 To add a source:
 
 1. Add an entry to `rules/sources.json`: `id`, `repo`, `branch`,

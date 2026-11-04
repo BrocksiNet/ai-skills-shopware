@@ -38,7 +38,7 @@ Read only the reference that matches the task or the files it changes:
 | [`progressive-enhancement.md`](references/progressive-enhancement.md) | A change must roll out without breaking existing callers. | `Feature::isActive(`, … |
 | [`component-independence.md`](references/component-independence.md) | A change couples two components or bundles. | `use Shopware\(Storefront\|Administration\|Elasticsearch)\` |
 | [`dal-contracts.md`](references/dal-contracts.md) | You touch a DAL definition, entity or repository contract. | `*Definition.php`, `*EntityExtension.php`, `extends (Entity\|EntityTranslation\|MappingEntity)Definition`, … |
-| [`symfony-in-shopware.md`](references/symfony-in-shopware.md) | You reach for a Symfony component or container feature, or a service keeps state in a property. | `HttpClientInterface`, … |
+| [`symfony-in-shopware.md`](references/symfony-in-shopware.md) | You reach for a Symfony component or container feature, or rely on service resets. | `HttpClientInterface`, … |
 | [`extension-mechanisms.md`](references/extension-mechanisms.md) | You choose between an event, a decoration and a core edit, or change an event. | `*Event.php`, `Resources/config/services.{xml,php}`, `decorates`, … |
 | [`anti-patterns.md`](references/anti-patterns.md) | You check a design against known mistakes. | `vendor/shopware/**`, `Doctrine\DBAL\Connection`, … |
 | [`pattern-catalog.md`](references/pattern-catalog.md) | You need an established pattern or want to propose one. | `[ (!]time()`, … |

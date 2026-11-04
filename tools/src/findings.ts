@@ -28,14 +28,20 @@ export interface Expectation {
   file: string;
   minSeverity: Severity;
   summary: RegExp;
+  /** Other genuine problems in this fixture, explicitly permitted by its author. */
+  allowed?: Expectation[];
+  /** Used only by a task explicitly measuring attribution as well as detection. */
+  requireCitation?: boolean;
 }
+
+export type IgnoreExpectation = Pick<Expectation, 'rule' | 'also' | 'summary' | 'allowed'>;
 
 type Json = Record<string, unknown>;
 const isRecord = (v: unknown): v is Json => typeof v === 'object' && v !== null && !Array.isArray(v);
 const isSeverity = (v: unknown): v is Severity => SEVERITIES.some((s) => s === v);
 
 /** A rule ID from a guideline catalog, like `PLG-027` or `BCPHP-001`. */
-const CATALOG_ID = /^[A-Z]+-[0-9]{3}$/u;
+const CATALOG_ID = /^[A-Z]+-[0-9]{3}/u;
 
 /** The text of the last fenced `json` block, or undefined. */
 export function lastJsonBlock(transcript: string): string | undefined {
@@ -46,6 +52,8 @@ export function lastJsonBlock(transcript: string): string | undefined {
 function finding(value: unknown, index: number): Finding {
   if (!isRecord(value)) throw new Error(`findings[${index}] is not an object`);
   const { rule_id: ruleId, severity, file, summary } = value;
+  if (ruleId !== undefined && ruleId !== null && typeof ruleId !== 'string')
+    throw new TypeError(`findings[${index}].rule_id must be a string or null`);
   if (!isSeverity(severity)) throw new Error(`findings[${index}].severity must be one of ${SEVERITIES.join(', ')}`);
   if (typeof file !== 'string' || typeof summary !== 'string') {
     throw new TypeError(`findings[${index}] needs file and summary strings`);
@@ -84,12 +92,14 @@ const atLeast = (s: Severity, min: Severity): boolean => SEVERITIES.indexOf(s) >
 /** The finding names the rule: our ID, or, without a catalog ID, a summary
  *  in the reviewer's own words. A different catalog ID is a wrong rule. */
 const citesRule = (f: Finding, e: Pick<Expectation, 'rule' | 'also'>): boolean =>
-  [e.rule, ...(e.also ?? [])].some((id) => f.rule_id?.startsWith(id) === true);
+  [e.rule, ...(e.also ?? [])].includes(f.rule_id ?? '');
 
 export function namesRule(f: Finding, e: Expectation): boolean {
-  if (citesRule(f, e)) return true;
-  if (f.rule_id !== null && CATALOG_ID.test(f.rule_id)) return false;
-  return e.summary.test(f.summary);
+  return (
+    e.summary.test(f.summary) &&
+    (e.requireCitation !== true || citesRule(f, e)) &&
+    (f.rule_id === null || !CATALOG_ID.test(f.rule_id) || citesRule(f, e))
+  );
 }
 
 /** The catch task passes when a finding names the rule, at the file, at the
@@ -97,14 +107,13 @@ export function namesRule(f: Finding, e: Expectation): boolean {
 export const caught = (findings: Finding[], e: Expectation): boolean =>
   findings.some((f) => namesRule(f, e) && globMatches(e.file, f.file) && atLeast(f.severity, e.minSeverity));
 
-/** The ignore task fails on a finding above `nit` that names the rule
- *  anywhere in the diff: the clean change only looks like the problem. */
-export const falsePositives = (findings: Finding[], e: Pick<Expectation, 'rule' | 'also' | 'summary'>): Finding[] =>
-  findings.filter(
-    (f) =>
-      f.severity !== 'nit' &&
-      (citesRule(f, e) || ((f.rule_id === null || !CATALOG_ID.test(f.rule_id)) && e.summary.test(f.summary))),
-  );
+/** Clean twins reject every substantive claim except documented real issues. */
+export const falsePositives = (findings: Finding[], e: IgnoreExpectation): Finding[] =>
+  findings.filter((f) => f.severity !== 'nit' && !(e.allowed ?? []).some((allowed) => caught([f], allowed)));
+
+/** Catch tasks also reject extra claims that their fixture does not justify. */
+export const unexpectedFindings = (findings: Finding[], e: Expectation): Finding[] =>
+  findings.filter((f) => f.severity !== 'nit' && ![e, ...(e.allowed ?? [])].some((expected) => caught([f], expected)));
 
 /** A near-miss task plants a real problem next to a rule that does not cover
  *  it. `rule` is that decoy; `accept` lists the IDs that do cover the problem
@@ -115,7 +124,7 @@ export interface NearMiss extends Expectation {
 
 /** Findings above `nit` that describe the problem and cite the decoy rule. */
 export const decoyCitations = (findings: Finding[], e: NearMiss): Finding[] =>
-  findings.filter((f) => f.severity !== 'nit' && f.rule_id?.startsWith(e.rule) === true && e.summary.test(f.summary));
+  findings.filter((f) => f.severity !== 'nit' && f.rule_id === e.rule && e.summary.test(f.summary));
 
 /** The near-miss task needs the problem reported at the file and severity,
  *  under an accepted ID, a non-catalog ID or none. */
@@ -125,5 +134,5 @@ export const reportedRightly = (findings: Finding[], e: NearMiss): boolean =>
       globMatches(e.file, f.file) &&
       atLeast(f.severity, e.minSeverity) &&
       e.summary.test(f.summary) &&
-      (f.rule_id === null || !CATALOG_ID.test(f.rule_id) || e.accept.some((id) => f.rule_id?.startsWith(id) === true)),
+      (f.rule_id === null || !CATALOG_ID.test(f.rule_id) || e.accept.includes(f.rule_id)),
   );

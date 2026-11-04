@@ -47,7 +47,7 @@ Read the references the change selects:
 | [`storefront: cache-and-modern-web.md`](../sw-storefront/references/cache-and-modern-web.md) | Content depends on the user or cache, or you need a modern web API. | `CacheTagCollector`, … |
 | [`admin-js: architecture.md`](../sw-admin-js/references/architecture.md) | You add a module, component override or ACL privilege. | `Resources/app/administration/src/module/**`, `Resources/app/administration/src/**/acl/index.{js,ts}`, `Shopware.Module.register(`, … |
 | [`admin-js: extension-api.md`](../sw-admin-js/references/extension-api.md) | You change a shipped component, template block or position identifier. | `blocks-list.json`, `positionIdentifier`, … |
-| [`architecture: symfony-in-shopware.md`](../sw-architecture/references/symfony-in-shopware.md) | You reach for a Symfony component or container feature, or a service keeps state in a property. | `HttpClientInterface`, … |
+| [`architecture: symfony-in-shopware.md`](../sw-architecture/references/symfony-in-shopware.md) | You reach for a Symfony component or container feature, or rely on service resets. | `HttpClientInterface`, … |
 | [`core-development: deprecations.md`](../sw-core-development/references/deprecations.md) | You deprecate or break a public API. | `@deprecated tag:v`, … |
 | [`core-development: removals-and-shims.md`](../sw-core-development/references/removals-and-shims.md) | You deprecate or remove an API, or add code that only lives until the next major. | `@deprecated tag:v`, … |
 | [`core-development: static-analysis-baseline.md`](../sw-core-development/references/static-analysis-baseline.md) | You touch the PHPStan baseline or suppress a PHPStan error. | `phpstan-baseline.neon`, `phpstan*.neon`, `@phpstan-ignore`, … |

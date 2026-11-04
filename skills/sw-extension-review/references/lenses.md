@@ -60,7 +60,7 @@ points at a replacement the extenders can use today: `CORE-063`.
   `PLG-019`?
 - Is a migration behind a feature flag: `PLG-029`?
 - Does the plugin write its entities with raw SQL, so DAL events, indexers
-  and cache invalidation never run: `PLG-003`, `REV-024`, `PLG-007`?
+  and cache invalidation never run: `PLG-003`, `PLG-007`?
 - Does a hot path load associations per row: `REV-021`?
 
 ## Workers and long-running processes
@@ -100,7 +100,7 @@ problem with `null`, or with the rule that does cover it:
 | Problem | Not | Use |
 | ------- | --- | --- |
 | A database query on every response or request, cache hits included | `SF-013` (cache switched off) | `null` |
-| A write that skips cache invalidation | `IMP-008` (cache key inputs) | `PLG-007`, or `PLG-003` / `REV-024` for raw SQL |
+| A write that skips cache invalidation | `IMP-008` (cache key inputs) | `PLG-007`, or `PLG-003` for raw SQL |
 | An HTTP call made synchronously in the request, with no queue anywhere | `REV-033` (inline fallback when queueing fails) | `null` |
 | An idempotency key or stored response not scoped to the caller | `SEC-005` (input validation) | `SEC-008` |
 | An admin override of a core component that skips `$super` | `ADM-039` (the API a shipped component offers) | `ADM-042` |

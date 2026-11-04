@@ -1,0 +1,7 @@
+# Effective transport configuration in this task. No custom message normalizer is registered.
+framework:
+    messenger:
+        serializer:
+            default_serializer: messenger.transport.symfony_serializer
+            symfony_serializer:
+                format: json

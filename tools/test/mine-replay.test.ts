@@ -4,8 +4,7 @@
 // commits on GitHub, not from a run of the miner; the comment above each
 // block says what a human finds there.
 import assert from 'node:assert/strict';
-import { mkdirSync, mkdtempSync, readFileSync, statSync, symlinkSync, writeFileSync } from 'node:fs';
-import { tmpdir } from 'node:os';
+import { mkdirSync, readFileSync, statSync, writeFileSync } from 'node:fs';
 import { join, resolve } from 'node:path';
 import { describe, test } from 'node:test';
 import type { GitHubApi, GitHubWrite } from '../src/github.ts';
@@ -13,8 +12,10 @@ import { notCovered, type OpenIssue, planIssue, publishIssue, run, weekTitle } f
 import { stateFromReport } from '../src/mine-report.ts';
 import { advance, minedSources, readStates, report } from '../src/mine-run.ts';
 import { type MiningState, type MiningStates, STATE_PATH } from '../src/mine-trunk.ts';
+import { historicalMiningRoot } from './mining-fixture.ts';
 
 const ROOT = resolve(import.meta.dirname, '../..');
+const RECORDED_ROOT = historicalMiningRoot(ROOT);
 const FIXTURES = join(import.meta.dirname, 'fixtures/mining');
 
 type Json = Record<string, unknown>;
@@ -37,15 +38,14 @@ function replay(...files: string[]): GitHubApi & { asked: string[] } {
 
 /** A scratch root with the repository's rules and skills and its own state. */
 function scratch(states: MiningStates): string {
-  const root = mkdtempSync(join(tmpdir(), 'mine-replay-'));
-  for (const dir of ['rules', 'skills']) symlinkSync(join(ROOT, dir), join(root, dir));
+  const root = historicalMiningRoot(ROOT);
   mkdirSync(join(root, 'docs'));
   writeFileSync(join(root, STATE_PATH), `${JSON.stringify(states, null, 2)}\n`);
   return root;
 }
 
 const week = (file: string, source: string, since: string, until: string): Promise<string> =>
-  report({ root: ROOT, api: replay(file), source, since, until });
+  report({ root: RECORDED_ROOT, api: replay(file), source, since, until });
 
 const section = (text: string, title: string): string => text.split(`\n## ${title}\n`)[1]?.split('\n## ')[0] ?? '';
 const group = (text: string, skill: string, title: string): string =>

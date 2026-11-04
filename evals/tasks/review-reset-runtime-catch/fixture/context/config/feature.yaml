@@ -1,0 +1,5 @@
+shopware:
+    feature:
+        flags:
+            - name: LONGRUNNING_ENVIRONMENT
+              default: false

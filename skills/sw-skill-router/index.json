@@ -209,14 +209,15 @@
         },
         {
           "reference": "sw-architecture/references/symfony-in-shopware.md",
-          "when": "You reach for a Symfony component or container feature, or a service keeps state in a property.",
+          "when": "You reach for a Symfony component or container feature, or rely on service resets.",
           "anchors_any": [
             "HttpClientInterface",
             "ClockInterface",
             "MessageBusInterface",
             "ResetInterface",
             "kernel\\.reset",
-            "\\$this->[A-Za-z]+\\[[^\\]]+\\] \\?\\?="
+            "\\$this->[A-Za-z]+\\[[^\\]]+\\] \\?\\?=",
+            "LONGRUNNING_ENVIRONMENT"
           ],
           "exclude_paths": [
             "**/tests/**",
@@ -812,14 +813,15 @@
         },
         {
           "reference": "sw-architecture/references/symfony-in-shopware.md",
-          "when": "You reach for a Symfony component or container feature, or a service keeps state in a property.",
+          "when": "You reach for a Symfony component or container feature, or rely on service resets.",
           "anchors_any": [
             "HttpClientInterface",
             "ClockInterface",
             "MessageBusInterface",
             "ResetInterface",
             "kernel\\.reset",
-            "\\$this->[A-Za-z]+\\[[^\\]]+\\] \\?\\?="
+            "\\$this->[A-Za-z]+\\[[^\\]]+\\] \\?\\?=",
+            "LONGRUNNING_ENVIRONMENT"
           ],
           "exclude_paths": [
             "**/tests/**",

@@ -1,3 +1,4 @@
+import { COPILOT_DEFAULT_MODEL } from './agent-config.ts';
 // The GitHub Copilot CLI adapters (`copilot -p`), the second eval model next
 // to the free OpenCode one. evals/runner/copilot-{task,activation}.sh are the
 // wrappers and document the environment. The task and activation contract is
@@ -11,6 +12,7 @@ import {
   activationWorkspace,
   isolatedHome,
   logSkills,
+  logTrace,
   logUsage,
   positive,
   scratchDir,
@@ -20,7 +22,7 @@ import { ghToken, onPath, run, tail } from './proc.ts';
 
 /** The cheapest Copilot model that loads skills: a third of a premium
  *  request per session (measured 2026-10-26 with Copilot CLI 1.0.103). */
-export const COPILOT_DEFAULT_MODEL = 'claude-haiku-4.5';
+export { COPILOT_DEFAULT_MODEL } from './agent-config.ts';
 
 /** The Copilot environment: a throwaway HOME and COPILOT_HOME, so no user
  *  login, config or personal skills (~/.copilot/skills, ~/.agents/skills)
@@ -140,6 +142,9 @@ export async function copilotSession(o: CopilotSessionOptions): Promise<CopilotS
     const proc = await run('copilot', copilotArgs(o.model, o.prompt, [...o.tools, ...skillDirGrants(cwd)]), {
       cwd,
       env: childEnv,
+      onStdout: (chunk) => {
+        logTrace(o.env, chunk);
+      },
       ...(o.timeoutSeconds === undefined ? {} : { timeoutSeconds: o.timeoutSeconds }),
     });
     const s = parseCopilot(proc.stdout);

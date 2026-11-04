@@ -9,24 +9,14 @@
 // Prints one line per fact: `ok`, `WRONG` with the release that disagrees,
 // or `manual` when the declaration is not found by text (inherited members).
 import { execFileSync } from 'node:child_process';
-import { readFileSync } from 'node:fs';
 import { parseArgs } from 'node:util';
-import { isNode } from '../src/node.ts';
-import { loadTimeline } from '../src/store.ts';
+import { loadTimeline, readJson } from '../src/store.ts';
+import { errorMessage } from '../../src/errors.ts';
+import { commitOf } from '../src/git.ts';
+import type { Fact } from '../src/facts.ts';
+import { parseVerificationReport, type VerificationReport as Report } from '../src/verification-report.ts';
 
-interface Fact {
-  target: string;
-  kind: string;
-  releases: [string, string][];
-  value?: string;
-  via?: string;
-}
-
-function isFact(value: unknown): value is Fact {
-  return (
-    isNode(value) && typeof value.target === 'string' && typeof value.kind === 'string' && Array.isArray(value.releases)
-  );
-}
+const CLASS_FLAGS: Fact['kind'][] = ['internal', 'deprecated', 'experimental'];
 
 const files = new Map<string, string | undefined>();
 
@@ -155,31 +145,12 @@ function holds(repo: string, tag: string, fact: Fact): Probe {
       const line = code.split('\n').find((text) => classDeclaration(short).test(text)) ?? '';
       return /\bfinal\b/u.test(line) || /@final\b/u.test(preamble(code, classDeclaration(short)) ?? '');
     }
-    default:
+    case 'unknown':
+    case 'guarded-everywhere':
       return undefined;
+    default:
+      throw new Error('unsupported fact kind');
   }
-}
-
-interface Report {
-  path: string;
-  releases: string[];
-  facts: Fact[];
-  symbols: string[];
-}
-
-function strings(value: unknown): string[] {
-  return Array.isArray(value) ? value.filter((entry): entry is string => typeof entry === 'string') : [];
-}
-
-function readReport(path: string): Report | undefined {
-  const report: unknown = JSON.parse(readFileSync(path, 'utf8'));
-  if (!isNode(report) || !Array.isArray(report.facts) || !Array.isArray(report.releases)) return undefined;
-  return {
-    path: path.split('/').pop() ?? path,
-    releases: strings(report.releases),
-    facts: report.facts.filter((entry) => isFact(entry)),
-    symbols: strings(report.symbols),
-  };
 }
 
 type RefOf = (release: string) => string;
@@ -252,7 +223,7 @@ function recall(repo: string, refOf: RefOf, reports: Report[]): number {
     const edges = [report.releases[0], report.releases.at(-1)].filter((release) => release !== undefined);
     const classes = report.symbols.filter((symbol) => !symbol.includes('::'));
     const checks = classes.flatMap((target) =>
-      edges.flatMap((release) => ['internal', 'deprecated', 'experimental'].map((kind) => ({ target, release, kind }))),
+      edges.flatMap((release) => CLASS_FLAGS.map((kind) => ({ target, release, kind }))),
     );
     for (const { target, release, kind } of checks) {
       probes += 1;
@@ -280,11 +251,26 @@ function main(): number {
   }
   const timeline = loadTimeline(values.index);
   const refs = new Map(timeline.releases.map((release) => [release.release, release.ref]));
-  const refOf: RefOf = (release) => refs.get(release) ?? `v${release}`;
-  const reports = positionals.map((path) => readReport(path)).filter((report) => report !== undefined);
+  const reports = positionals.map((path) => parseVerificationReport(readJson(path), path));
+  for (const report of reports)
+    for (const release of report.releases) {
+      const ref = refs.get(release);
+      if (ref === undefined) throw new Error(`${report.path}: release ${release} not in the index`);
+      commitOf(values.repo, ref);
+    }
+  const refOf: RefOf = (release) => {
+    const ref = refs.get(release);
+    if (ref === undefined) throw new Error(`release ${release} not in the index`);
+    return ref;
+  };
   const wrong = precision(values.repo, refOf, reports);
   const missed = recall(values.repo, refOf, reports);
   return wrong > 0 || missed > 0 ? 1 : 0;
 }
 
-process.exitCode = main();
+try {
+  process.exitCode = main();
+} catch (error) {
+  process.stderr.write(`verify-facts: ${errorMessage(error)}\n`);
+  process.exitCode = 2;
+}

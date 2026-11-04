@@ -6,7 +6,7 @@
 //   EVAL_AGENTS  comma-separated agents: opencode, copilot, claude
 //                (default opencode)
 //   EVAL_MODEL   model for a single agent; empty = the agent's default
-//                (tools/src/adapters.ts DEFAULT_MODELS)
+//                (tools/src/agent-config.ts DEFAULT_MODELS)
 //
 // Prints a JSON array:
 //   [{"id":"opencode","agent":"opencode","model":"opencode/mimo-v2.6-flash-free"}, ...]

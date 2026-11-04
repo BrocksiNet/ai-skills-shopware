@@ -125,8 +125,8 @@ Run the deterministic checks (same as CI):
 ```bash
 bash scripts/validate-skills.sh
 bash scripts/run-activation-evals.sh
-( cd tools && npm ci && npm run typecheck && npm run lint && npm run format:check && npm test )
 ( cd evals/tools/ast && npm ci && npm test )
+( cd tools && npm ci && npm run typecheck && npm run lint && npm run format:check && npm test )
 bash evals/test-graders.sh
 ```
 
@@ -332,7 +332,8 @@ review never reads that, and cites the nearest ID it did read instead.
 New tooling is TypeScript in [`tools/`](tools/): Node 24 runs the `.ts` files
 directly (type stripping, so only erasable syntax: no `enum`, no parameter
 properties, no namespaces). `npm run typecheck` runs `tsc` with `strict`;
-`npm test` runs `node --test`. Keep runtime dependencies at zero where you
+`npm test` runs `node --test`. Coverage and targeted Stryker checks keep that runner; see
+[`docs/testing-quality.md`](docs/testing-quality.md) for scope and commands. Keep runtime dependencies at zero where you
 can, so `node tools/bin/<tool>.ts` works without `npm ci`. The eval runner
 and the task graders live here; what is left in shell are thin wrappers
 that keep old entry points working. The AST graders in `evals/tools/ast/`

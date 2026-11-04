@@ -361,7 +361,20 @@
         "core",
         "plugin"
       ],
-      "defer_on_trunk": true
+      "defer_on_trunk": true,
+      "trunk": {
+        "source": "src/Core/DevOps/StaticAnalyze/PHPStan/Rules/Tests/StaticEntityRepositoryVarAnnotationRule.php",
+        "commit": "c69a7c86a6291393945d73e04ccfc8992e26d797",
+        "enforced_by": [
+          {
+            "tool": "StaticEntityRepositoryVarAnnotationRule",
+            "kind": "phpstan",
+            "catches": "reports inline `@var StaticEntityRepository<ConcreteCollection>` annotations on assigned or returned `new StaticEntityRepository` constructions in test classes, suggesting inference from typed searches or `::of()`; property annotations and `EntityCollection<T>` annotations that `::of()` cannot express remain allowed",
+            "misses": "repository mocks instead of the stub, and projects without the core test rules",
+            "trunk_only": true
+          }
+        ]
+      }
     },
     {
       "id": "TEST-015",
@@ -1404,7 +1417,7 @@
       "skill": "sw-review-learnings",
       "file": "skills/sw-review-learnings/SKILL.md",
       "title": "No deprecated *CacheTagsEvent in 6.7 code",
-      "status": "active",
+      "status": "superseded:PLG-007",
       "since": "2026-10-20",
       "eval": "cache-tag-no-deprecated-event",
       "core_guide_ids": [],
@@ -1414,7 +1427,8 @@
       "defer_on_trunk": false,
       "see": [
         "PLG-007"
-      ]
+      ],
+      "retired_reason": "Consolidated on 2026-11-04: the same obligation, audience and eval already belong to PLG-007. Keep that canonical rule and its eval; remove the duplicate ID and redirect callers. This is an ownership consolidation, not a claim of measured model non-inferiority."
     },
     {
       "id": "REV-009",
@@ -1494,7 +1508,7 @@
       "skill": "sw-review-learnings",
       "file": "skills/sw-review-learnings/SKILL.md",
       "title": "Cross-test docblocks use @see with an import",
-      "status": "active",
+      "status": "superseded:TEST-008",
       "since": "2026-10-20",
       "eval": "test-docblock-use-see",
       "core_guide_ids": [],
@@ -1504,14 +1518,15 @@
       "defer_on_trunk": false,
       "see": [
         "TEST-008"
-      ]
+      ],
+      "retired_reason": "Consolidated on 2026-11-04: the same obligation, audience and eval already belong to TEST-008. Keep that canonical rule and its eval; remove the duplicate ID and redirect callers. This is an ownership consolidation, not a claim of measured model non-inferiority."
     },
     {
       "id": "REV-014",
       "skill": "sw-review-learnings",
       "file": "skills/sw-review-learnings/SKILL.md",
       "title": "Safeguard tests do not live in tests/unit/",
-      "status": "active",
+      "status": "superseded:TEST-015",
       "since": "2026-10-20",
       "eval": "safeguard-test-not-in-unit-suite",
       "core_guide_ids": [],
@@ -1521,7 +1536,8 @@
       "defer_on_trunk": false,
       "see": [
         "TEST-015"
-      ]
+      ],
+      "retired_reason": "Consolidated on 2026-11-04: the same obligation, audience and eval already belong to TEST-015. Keep that canonical rule and its eval; remove the duplicate ID and redirect callers. This is an ownership consolidation, not a claim of measured model non-inferiority."
     },
     {
       "id": "REV-015",
@@ -1690,10 +1706,9 @@
       "skill": "sw-review-learnings",
       "file": "skills/sw-review-learnings/references/dal-and-performance.md",
       "title": "No raw SQL for ordinary entity reads and writes",
-      "status": "active",
+      "status": "superseded:PLG-003",
       "since": "2026-10-20",
       "eval": "no-dal-connection-for-entity-read",
-      "keep_reason": "Held on every profile, and on the neutral prompt (claude/haiku 5/5 with skills off): models write DAL reads on their own. Kept because review-raw-sql-invalidation-near-miss accepts it and the sw-extension-review lens names it for raw SQL that skips cache invalidation.",
       "core_guide_ids": [],
       "audience": [
         "plugin"
@@ -1701,7 +1716,8 @@
       "defer_on_trunk": false,
       "see": [
         "PLG-003"
-      ]
+      ],
+      "retired_reason": "Consolidated on 2026-11-04: the same obligation, audience and eval already belong to PLG-003. Keep that canonical rule and its eval; remove the duplicate ID and redirect callers. This is an ownership consolidation, not a claim of measured model non-inferiority."
     },
     {
       "id": "REV-025",
@@ -4060,7 +4076,11 @@
         "core",
         "plugin"
       ],
-      "defer_on_trunk": false
+      "defer_on_trunk": false,
+      "trunk": {
+        "source": "src/Core/Kernel.php",
+        "commit": "88fa9800975076007a6e98dc1e3f3f38c67ffb6d"
+      }
     },
     {
       "id": "ARCH-002",
@@ -5049,6 +5069,26 @@
           "path": "tests/unit/Core/Framework/Api/OpenApi/AGENTS.md#openapi-dto-test-fixtures"
         }
       ]
+    },
+    {
+      "id": "ARCH-006",
+      "skill": "sw-architecture",
+      "file": "skills/sw-architecture/references/symfony-in-shopware.md",
+      "title": "Queued message fields survive the configured transport serializer",
+      "status": "retired",
+      "since": "2026-11-04",
+      "eval": "review-queue-payload-catch",
+      "core_guide_ids": [],
+      "audience": [
+        "core",
+        "plugin"
+      ],
+      "defer_on_trunk": false,
+      "trunk": {
+        "source": "src/Storefront/Theme/Message/CompileThemeMessage.php",
+        "commit": "1307180770624626c4063d594d4b7c8d58ed5968"
+      },
+      "retired_reason": "Candidate screened but not published (2026-11-04). Both skills-off answers detected the serialization bug. The apparent 2/2 vs 1/2 catch grade came from an additional finding about an underspecified default; the clean fixture also omitted the round-trip test the candidate required. The development screen therefore establishes no utility, harm or equivalence. Preserve the ID and repaired regression cases; see evals/experiments/queue-screen-2026-11-04.json. Reconsider only with fresh, contract-complete tasks."
     }
   ]
 }

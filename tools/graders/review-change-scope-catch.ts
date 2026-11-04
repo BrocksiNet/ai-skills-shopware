@@ -9,5 +9,6 @@ export const grade = reviewCatch({
   rule: 'REV-032',
   file: 'src/**',
   minSeverity: 'minor',
-  summary: /\b(boy-?scout\w*|drive-by (refactor|cleanup))\b/iu,
+  summary:
+    /\b(boy-?scout\w*|drive-by (refactor|cleanup))\b|unrelated[^.]{0,100}(fix|change)|separate (change|PR|pull request)/iu,
 });

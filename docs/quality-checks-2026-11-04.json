@@ -1,0 +1,799 @@
+{
+  "date": "2026-11-04",
+  "node": "v24.22.2",
+  "scope": "Repository TypeScript tooling and API-index package; no model calls or Shopware runtime.",
+  "audit_baseline": {
+    "coverage": {
+      "tools": {
+        "tests": 457,
+        "lines": 95.45,
+        "branches": 87.21,
+        "functions": 94.92
+      },
+      "api_index": {
+        "tests": 55,
+        "lines": 90.88,
+        "branches": 79.79,
+        "functions": 90.38
+      },
+      "scope": "Native Node coverage for loaded files in the two suites. Does not aggregate the golden-grader process runs or include all unexecuted files."
+    },
+    "seeded_fault_sample": {
+      "total": 14,
+      "equivalent_excluded": 1,
+      "detected": 7,
+      "survived_full_tooling_suite": 6,
+      "survivors": [
+        "manifest ignores commit identity",
+        "manifest ignores off-arm aggregate consistency",
+        "manifest no longer rejects duplicate repeat indices",
+        "manifest permits an unexpected task",
+        "manifest ignores repeat-count identity",
+        "gate rejects error percentage exactly at allowed maximum"
+      ],
+      "scope": "Manually selected mutations, not a repository-wide Stryker score. Survivor candidates were rerun against all 457 tooling tests in an isolated repository copy."
+    },
+    "runtime_probes": [
+      {
+        "case": "grader exits 2",
+        "actual": "runTask returns RUN.fail (1)",
+        "expected": "infrastructure/grader error, not model failure"
+      },
+      {
+        "case": "child ignores SIGTERM and exits itself at 2500ms",
+        "timeout_ms": 1000,
+        "elapsed_ms": 2527,
+        "timedOut": true,
+        "exit_code": 0,
+        "finding": "No forced shutdown after SIGTERM"
+      },
+      {
+        "case": "trials have status pass and exit_code 4",
+        "actual": "parseResults and strict manifest gate accept the record",
+        "finding": "Missing cross-field invariant"
+      }
+    ],
+    "repository_files_modified_by_this_audit": false
+  },
+  "runtime_contracts": {
+    "grader_exit_2": "RUN.graderError (5), not RUN.fail (1); regression retained from the prior change.",
+    "timeout": "SIGTERM to process group, SIGKILL after 500ms; ignoring child forced to exit 137 before its self-exit.",
+    "trial_status": "pass requires 0; fail requires 1; error/skipped require integer exit codes greater than 1. Enforced by JSON parser and strict manifest gate."
+  },
+  "seeded_replay": {
+    "audited_survivors": 6,
+    "killed": 6,
+    "evidence": "docs/quality-seeded-faults-2026-11-04.json"
+  },
+  "coverage": {
+    "tool": "c8@12.0.0",
+    "all_files_included": true,
+    "tools_scope": [
+      "tools/src/**/*.ts",
+      "tools/bin/**/*.ts",
+      "tools/graders/**/*.ts"
+    ],
+    "api_index_scope": [
+      "tools/api-index/src/**/*.ts",
+      "tools/api-index/bin/**/*.ts"
+    ],
+    "totals": {
+      "tools": {
+        "lines": {
+          "total": 16240,
+          "covered": 14496,
+          "skipped": 0,
+          "pct": 89.26
+        },
+        "statements": {
+          "total": 16240,
+          "covered": 14496,
+          "skipped": 0,
+          "pct": 89.26
+        },
+        "functions": {
+          "total": 807,
+          "covered": 737,
+          "skipped": 0,
+          "pct": 91.32
+        },
+        "branches": {
+          "total": 4582,
+          "covered": 4014,
+          "skipped": 0,
+          "pct": 87.6
+        },
+        "branchesTrue": {
+          "total": 0,
+          "covered": 0,
+          "skipped": 0,
+          "pct": 100
+        }
+      },
+      "api_index": {
+        "lines": {
+          "total": 5632,
+          "covered": 4869,
+          "skipped": 0,
+          "pct": 86.45
+        },
+        "statements": {
+          "total": 5632,
+          "covered": 4869,
+          "skipped": 0,
+          "pct": 86.45
+        },
+        "functions": {
+          "total": 303,
+          "covered": 285,
+          "skipped": 0,
+          "pct": 94.05
+        },
+        "branches": {
+          "total": 2181,
+          "covered": 1722,
+          "skipped": 0,
+          "pct": 78.95
+        },
+        "branchesTrue": {
+          "total": 0,
+          "covered": 0,
+          "skipped": 0,
+          "pct": 100
+        }
+      }
+    },
+    "note": "All-file denominator and subprocess aggregation differ from the original loaded-file-only audit. Isolated child environments may omit NODE_V8_COVERAGE."
+  },
+  "mutation": {
+    "tool": "@stryker-mutator/core@10.1.1",
+    "runner": "command",
+    "coverage_analysis": "off",
+    "break_threshold": 80,
+    "profiles": [
+      {
+        "profile": "manifest",
+        "file": "tools/src/eval-manifest.ts",
+        "source_sha256": "6b1308f736e705935c58c68faa4c1ab8c2859326cacfdbd488d0da58d3583ddc",
+        "tests": [
+          "tools/test/eval-manifest.test.ts",
+          "tools/test/eval-results.test.ts"
+        ],
+        "mutants": 191,
+        "killed": 184,
+        "timeouts": 0,
+        "survived": 7,
+        "errors": 0,
+        "score_percent": 96.34,
+        "report": "tools/reports/mutation/manifest/mutation.json",
+        "survivors": [
+          {
+            "mutator": "ConditionalExpression",
+            "line": 4,
+            "replacement": "true"
+          },
+          {
+            "mutator": "ConditionalExpression",
+            "line": 27,
+            "replacement": "false"
+          },
+          {
+            "mutator": "MethodExpression",
+            "line": 39,
+            "replacement": "items"
+          },
+          {
+            "mutator": "ConditionalExpression",
+            "line": 39,
+            "replacement": "true"
+          },
+          {
+            "mutator": "ConditionalExpression",
+            "line": 55,
+            "replacement": "false"
+          },
+          {
+            "mutator": "StringLiteral",
+            "line": 59,
+            "replacement": "``"
+          },
+          {
+            "mutator": "ConditionalExpression",
+            "line": 65,
+            "replacement": "false"
+          }
+        ]
+      },
+      {
+        "profile": "gate",
+        "file": "tools/src/eval-gate.ts",
+        "source_sha256": "e8fec810821bbb44b51afd5de6831d60c871a30811576e5c41d7f980f2a4044f",
+        "tests": [
+          "tools/test/eval-results.test.ts",
+          "tools/test/eval-manifest.test.ts"
+        ],
+        "mutants": 211,
+        "killed": 181,
+        "timeouts": 0,
+        "survived": 30,
+        "errors": 0,
+        "score_percent": 85.78,
+        "report": "tools/reports/mutation/gate/mutation.json",
+        "survivors": [
+          {
+            "mutator": "ConditionalExpression",
+            "line": 89,
+            "replacement": "true"
+          },
+          {
+            "mutator": "EqualityOperator",
+            "line": 89,
+            "replacement": "loadRuns >= 0"
+          },
+          {
+            "mutator": "StringLiteral",
+            "line": 96,
+            "replacement": "\"\""
+          },
+          {
+            "mutator": "StringLiteral",
+            "line": 97,
+            "replacement": "\"Stryker was here!\""
+          },
+          {
+            "mutator": "StringLiteral",
+            "line": 99,
+            "replacement": "\"Stryker was here!\""
+          },
+          {
+            "mutator": "StringLiteral",
+            "line": 100,
+            "replacement": "\"\""
+          },
+          {
+            "mutator": "StringLiteral",
+            "line": 101,
+            "replacement": "\"\""
+          },
+          {
+            "mutator": "ArrowFunction",
+            "line": 102,
+            "replacement": "() => undefined"
+          },
+          {
+            "mutator": "StringLiteral",
+            "line": 102,
+            "replacement": "``"
+          },
+          {
+            "mutator": "StringLiteral",
+            "line": 103,
+            "replacement": "\"Stryker was here!\""
+          },
+          {
+            "mutator": "StringLiteral",
+            "line": 108,
+            "replacement": "\"Stryker was here!\""
+          },
+          {
+            "mutator": "StringLiteral",
+            "line": 120,
+            "replacement": "\"\""
+          },
+          {
+            "mutator": "StringLiteral",
+            "line": 124,
+            "replacement": "\"Stryker was here!\""
+          },
+          {
+            "mutator": "StringLiteral",
+            "line": 125,
+            "replacement": "\"\""
+          },
+          {
+            "mutator": "StringLiteral",
+            "line": 126,
+            "replacement": "\"Stryker was here!\""
+          },
+          {
+            "mutator": "StringLiteral",
+            "line": 127,
+            "replacement": "\"\""
+          },
+          {
+            "mutator": "StringLiteral",
+            "line": 128,
+            "replacement": "\"Stryker was here!\""
+          },
+          {
+            "mutator": "StringLiteral",
+            "line": 129,
+            "replacement": "\"\""
+          },
+          {
+            "mutator": "StringLiteral",
+            "line": 130,
+            "replacement": "\"\""
+          },
+          {
+            "mutator": "StringLiteral",
+            "line": 132,
+            "replacement": "\"Stryker was here!\""
+          },
+          {
+            "mutator": "StringLiteral",
+            "line": 133,
+            "replacement": "\"\""
+          },
+          {
+            "mutator": "StringLiteral",
+            "line": 134,
+            "replacement": "\"Stryker was here!\""
+          },
+          {
+            "mutator": "ConditionalExpression",
+            "line": 149,
+            "replacement": "true"
+          },
+          {
+            "mutator": "EqualityOperator",
+            "line": 149,
+            "replacement": "s.graded >= 0"
+          },
+          {
+            "mutator": "StringLiteral",
+            "line": 175,
+            "replacement": "\"\""
+          },
+          {
+            "mutator": "StringLiteral",
+            "line": 175,
+            "replacement": "\"Stryker was here!\""
+          },
+          {
+            "mutator": "StringLiteral",
+            "line": 175,
+            "replacement": "\"\""
+          },
+          {
+            "mutator": "ConditionalExpression",
+            "line": 181,
+            "replacement": "true"
+          },
+          {
+            "mutator": "StringLiteral",
+            "line": 182,
+            "replacement": "\"\""
+          },
+          {
+            "mutator": "StringLiteral",
+            "line": 183,
+            "replacement": "``"
+          }
+        ]
+      },
+      {
+        "profile": "findings",
+        "file": "tools/src/findings.ts",
+        "source_sha256": "02e666f35daaadddfe525c4fca345afe910c162f0d7a7e0ecfbc93caa1de303c",
+        "tests": [
+          "tools/test/findings.test.ts",
+          "tools/test/review-graders.test.ts"
+        ],
+        "mutants": 223,
+        "killed": 212,
+        "timeouts": 0,
+        "survived": 11,
+        "errors": 0,
+        "score_percent": 95.07,
+        "report": "tools/reports/mutation/findings/mutation.json",
+        "survivors": [
+          {
+            "mutator": "Regex",
+            "line": 44,
+            "replacement": "/[A-Z]+-[0-9]{3}/u"
+          },
+          {
+            "mutator": "Regex",
+            "line": 44,
+            "replacement": "/^[A-Z]+-[0-9]/u"
+          },
+          {
+            "mutator": "StringLiteral",
+            "line": 48,
+            "replacement": "\"Stryker was here!\""
+          },
+          {
+            "mutator": "StringLiteral",
+            "line": 57,
+            "replacement": "\"\""
+          },
+          {
+            "mutator": "ConditionalExpression",
+            "line": 61,
+            "replacement": "true"
+          },
+          {
+            "mutator": "StringLiteral",
+            "line": 87,
+            "replacement": "\"\""
+          },
+          {
+            "mutator": "Regex",
+            "line": 87,
+            "replacement": "/\\.\\//u"
+          },
+          {
+            "mutator": "ArrayDeclaration",
+            "line": 95,
+            "replacement": "[\"Stryker was here\"]"
+          },
+          {
+            "mutator": "StringLiteral",
+            "line": 95,
+            "replacement": "\"Stryker was here!\""
+          },
+          {
+            "mutator": "ConditionalExpression",
+            "line": 101,
+            "replacement": "false"
+          },
+          {
+            "mutator": "ConditionalExpression",
+            "line": 137,
+            "replacement": "false"
+          }
+        ]
+      },
+      {
+        "profile": "constraints",
+        "file": "tools/api-index/src/constraint.ts",
+        "source_sha256": "521e3ffababca812e00243eb208a8d7e5fbad0d21585430a6db8b4ddf5298dbc",
+        "tests": [
+          "tools/api-index/test/constraint.test.ts"
+        ],
+        "mutants": 240,
+        "killed": 218,
+        "timeouts": 1,
+        "survived": 21,
+        "errors": 0,
+        "score_percent": 91.25,
+        "report": "tools/reports/mutation/constraints/mutation.json",
+        "survivors": [
+          {
+            "mutator": "EqualityOperator",
+            "line": 12,
+            "replacement": "index <= Math.max(left.length, right.length)"
+          },
+          {
+            "mutator": "Regex",
+            "line": 36,
+            "replacement": "/@(dev|alpha|beta|rc|stable)/iu"
+          },
+          {
+            "mutator": "Regex",
+            "line": 36,
+            "replacement": "/-stable/iu"
+          },
+          {
+            "mutator": "Regex",
+            "line": 38,
+            "replacement": "/(>=|<=|>|<|==|=|!=|~|\\^)?(.*)$/u"
+          },
+          {
+            "mutator": "Regex",
+            "line": 38,
+            "replacement": "/^(>=|<=|>|<|==|=|!=|~|\\^)?(.*)/u"
+          },
+          {
+            "mutator": "OptionalChaining",
+            "line": 39,
+            "replacement": "operator[1]"
+          },
+          {
+            "mutator": "OptionalChaining",
+            "line": 40,
+            "replacement": "operator[2]"
+          },
+          {
+            "mutator": "StringLiteral",
+            "line": 40,
+            "replacement": "\"Stryker was here!\""
+          },
+          {
+            "mutator": "Regex",
+            "line": 42,
+            "replacement": "/[*x]/iu"
+          },
+          {
+            "mutator": "ConditionalExpression",
+            "line": 63,
+            "replacement": "true"
+          },
+          {
+            "mutator": "ConditionalExpression",
+            "line": 68,
+            "replacement": "false"
+          },
+          {
+            "mutator": "StringLiteral",
+            "line": 68,
+            "replacement": "\"Stryker was here!\""
+          },
+          {
+            "mutator": "Regex",
+            "line": 69,
+            "replacement": "/(>=|<=|!=|==|>|<|=|~|\\^)\\s(?=v?\\d)/gu"
+          },
+          {
+            "mutator": "MethodExpression",
+            "line": 70,
+            "replacement": "normalized.split(/[\\s,]+/u)"
+          },
+          {
+            "mutator": "Regex",
+            "line": 70,
+            "replacement": "/[\\s,]/u"
+          },
+          {
+            "mutator": "ConditionalExpression",
+            "line": 70,
+            "replacement": "true"
+          },
+          {
+            "mutator": "StringLiteral",
+            "line": 70,
+            "replacement": "\"Stryker was here!\""
+          },
+          {
+            "mutator": "MethodExpression",
+            "line": 84,
+            "replacement": "term"
+          },
+          {
+            "mutator": "ArrayDeclaration",
+            "line": 90,
+            "replacement": "[\"Stryker was here\"]"
+          },
+          {
+            "mutator": "ConditionalExpression",
+            "line": 105,
+            "replacement": "default:"
+          },
+          {
+            "mutator": "BooleanLiteral",
+            "line": 106,
+            "replacement": "true"
+          }
+        ]
+      },
+      {
+        "profile": "routing",
+        "file": "tools/src/routes.ts",
+        "source_sha256": "aa02fa9194abe16e851e9f57fea035ba02b6d2a3338e4b3d9365f46b9432c51c",
+        "tests": [
+          "tools/test/routes.test.ts",
+          "tools/test/route.test.ts",
+          "tools/test/route-borrow.test.ts"
+        ],
+        "mutants": 407,
+        "killed": 370,
+        "timeouts": 0,
+        "survived": 37,
+        "errors": 0,
+        "score_percent": 90.91,
+        "report": "tools/reports/mutation/routing/mutation.json",
+        "survivors": [
+          {
+            "mutator": "StringLiteral",
+            "line": 76,
+            "replacement": "\"\""
+          },
+          {
+            "mutator": "StringLiteral",
+            "line": 125,
+            "replacement": "\"Stryker was here!\""
+          },
+          {
+            "mutator": "ConditionalExpression",
+            "line": 132,
+            "replacement": "false"
+          },
+          {
+            "mutator": "LogicalOperator",
+            "line": 132,
+            "replacement": "route.always === true && route.on_demand === true"
+          },
+          {
+            "mutator": "ConditionalExpression",
+            "line": 132,
+            "replacement": "false"
+          },
+          {
+            "mutator": "BooleanLiteral",
+            "line": 132,
+            "replacement": "false"
+          },
+          {
+            "mutator": "ConditionalExpression",
+            "line": 132,
+            "replacement": "false"
+          },
+          {
+            "mutator": "BooleanLiteral",
+            "line": 132,
+            "replacement": "false"
+          },
+          {
+            "mutator": "ArrayDeclaration",
+            "line": 133,
+            "replacement": "[\"Stryker was here\"]"
+          },
+          {
+            "mutator": "MethodExpression",
+            "line": 134,
+            "replacement": "(route.anchors_any ?? []).map(a => anchorRegex(a))"
+          },
+          {
+            "mutator": "ArrayDeclaration",
+            "line": 134,
+            "replacement": "[\"Stryker was here\"]"
+          },
+          {
+            "mutator": "ConditionalExpression",
+            "line": 134,
+            "replacement": "true"
+          },
+          {
+            "mutator": "ArrayDeclaration",
+            "line": 135,
+            "replacement": "[\"Stryker was here\"]"
+          },
+          {
+            "mutator": "ConditionalExpression",
+            "line": 156,
+            "replacement": "false"
+          },
+          {
+            "mutator": "StringLiteral",
+            "line": 168,
+            "replacement": "\"\""
+          },
+          {
+            "mutator": "StringLiteral",
+            "line": 169,
+            "replacement": "\"\""
+          },
+          {
+            "mutator": "StringLiteral",
+            "line": 170,
+            "replacement": "\"\""
+          },
+          {
+            "mutator": "StringLiteral",
+            "line": 193,
+            "replacement": "\"\""
+          },
+          {
+            "mutator": "StringLiteral",
+            "line": 194,
+            "replacement": "\"\""
+          },
+          {
+            "mutator": "Regex",
+            "line": 205,
+            "replacement": "/(\\*\\*\\/)+/u"
+          },
+          {
+            "mutator": "Regex",
+            "line": 205,
+            "replacement": "/^(\\*\\*\\/)/u"
+          },
+          {
+            "mutator": "LogicalOperator",
+            "line": 219,
+            "replacement": "globs.length > SHOWN_GLOBS && anchors.length > SHOWN_ANCHORS"
+          },
+          {
+            "mutator": "ConditionalExpression",
+            "line": 219,
+            "replacement": "false"
+          },
+          {
+            "mutator": "EqualityOperator",
+            "line": 219,
+            "replacement": "globs.length >= SHOWN_GLOBS"
+          },
+          {
+            "mutator": "ConditionalExpression",
+            "line": 219,
+            "replacement": "false"
+          },
+          {
+            "mutator": "Regex",
+            "line": 226,
+            "replacement": "/sw-/u"
+          },
+          {
+            "mutator": "Regex",
+            "line": 226,
+            "replacement": "/references\\//u"
+          },
+          {
+            "mutator": "StringLiteral",
+            "line": 232,
+            "replacement": "\"\""
+          },
+          {
+            "mutator": "StringLiteral",
+            "line": 233,
+            "replacement": "\"\""
+          },
+          {
+            "mutator": "ConditionalExpression",
+            "line": 245,
+            "replacement": "false"
+          },
+          {
+            "mutator": "EqualityOperator",
+            "line": 245,
+            "replacement": "end <= start"
+          },
+          {
+            "mutator": "ConditionalExpression",
+            "line": 256,
+            "replacement": "false"
+          },
+          {
+            "mutator": "ArrayDeclaration",
+            "line": 256,
+            "replacement": "[\"Stryker was here\"]"
+          },
+          {
+            "mutator": "StringLiteral",
+            "line": 271,
+            "replacement": "\"\""
+          },
+          {
+            "mutator": "BlockStatement",
+            "line": 274,
+            "replacement": "{}"
+          },
+          {
+            "mutator": "LogicalOperator",
+            "line": 278,
+            "replacement": "shape.length > 0 && !isRouteFile(value)"
+          },
+          {
+            "mutator": "ConditionalExpression",
+            "line": 278,
+            "replacement": "false"
+          }
+        ]
+      }
+    ],
+    "note": "Independent scope scores, not a repository-wide score. Timeout detection is recorded separately. Surviving mutants remain visible; not all have been classified as equivalent."
+  },
+  "validation": {
+    "clean_install_tools": true,
+    "clean_install_api_index": true,
+    "typecheck": true,
+    "lint": true,
+    "format_check": true,
+    "tooling_tests": 501,
+    "api_index_tests": 64,
+    "ast_tests": 41,
+    "golden_tasks": 219,
+    "golden_cases": 638,
+    "skill_validation": true,
+    "activation_dry": true,
+    "actionlint": true,
+    "shellcheck": true
+  },
+  "remaining_gaps": [
+    "API-index census-check, check-breaks, and verify-facts CLI workflows are still uncovered.",
+    "Several tooling argument-parsing entry points are unexecuted even when their modules have unit tests.",
+    "New API-index workflow fixtures cover local Git/PHP/Twig paths, not network downloads, release publication, or a real Shopware application."
+  ],
+  "documentation": "docs/testing-quality.md"
+}

@@ -1,0 +1,7 @@
+{
+  "name": "swag/delivery-tools",
+  "type": "shopware-platform-plugin",
+  "require": {
+    "shopware/core": "~6.5.0 || ~6.6.0"
+  }
+}

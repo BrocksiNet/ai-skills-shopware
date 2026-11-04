@@ -13,6 +13,16 @@ export interface Tokens {
   runs: number;
 }
 
+export interface AbTrial {
+  mode: 'on' | 'off';
+  repeat: number;
+  status: 'pass' | 'fail' | 'error' | 'skipped';
+  exit_code: number;
+  duration_ms: number;
+  skills: string[] | null;
+  tokens: Tokens | null;
+}
+
 export interface AbResult {
   task: string;
   repeats: number;
@@ -35,6 +45,13 @@ export interface AbResult {
   model?: string;
   sha?: string;
   ts?: string;
+  experiment_id?: string;
+  run_id?: string;
+  artifacts?: string;
+  task_hash?: string;
+  skills_hash?: string;
+  grader_hash?: string;
+  trials?: AbTrial[];
 }
 
 type Json = Record<string, unknown>;
@@ -57,6 +74,26 @@ const nullable =
   (v) =>
     v === undefined || v === null || check(v);
 
+/** A graded outcome uses 0/1; infrastructure and skipped runs never do. */
+export const trialStatusMatches = (t: Pick<AbTrial, 'status' | 'exit_code'>): boolean =>
+  Number.isSafeInteger(t.exit_code) &&
+  (t.status === 'pass' ? t.exit_code === 0 : t.status === 'fail' ? t.exit_code === 1 : t.exit_code > 1);
+
+const isTrialStatus = (v: unknown): v is AbTrial['status'] =>
+  v === 'pass' || v === 'fail' || v === 'error' || v === 'skipped';
+
+const isTrial = (v: unknown): v is AbTrial =>
+  isRecord(v) &&
+  (v.mode === 'on' || v.mode === 'off') &&
+  isCount(v.repeat) &&
+  isTrialStatus(v.status) &&
+  isCount(v.exit_code) &&
+  trialStatusMatches({ status: v.status, exit_code: v.exit_code }) &&
+  isCount(v.duration_ms) &&
+  (v.skills === null || (Array.isArray(v.skills) && v.skills.every((s: unknown) => isString(s)))) &&
+  (v.tokens === null || hasTokens(v.tokens));
+const areTrials = (v: unknown): boolean => Array.isArray(v) && v.every((t: unknown) => isTrial(t));
+
 /** The type of every record field; the record type is checked against it. */
 const FIELDS = {
   task: isString,
@@ -76,6 +113,13 @@ const FIELDS = {
   model: optional(isString),
   sha: optional(isString),
   ts: optional(isString),
+  experiment_id: optional(isString),
+  run_id: optional(isString),
+  artifacts: optional(isString),
+  task_hash: optional(isString),
+  skills_hash: optional(isString),
+  grader_hash: optional(isString),
+  trials: optional(areTrials),
 } as const satisfies Record<keyof AbResult, Check>;
 
 /** The first field of `v` that is missing or has the wrong type. */

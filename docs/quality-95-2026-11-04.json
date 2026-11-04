@@ -1,0 +1,1896 @@
+{
+  "date": "2026-11-04",
+  "scope": "Completion of refreshed coverage, survivor improvements, a 95% mutation CI floor on each of five profiles, and API-index CLI workflow coverage.",
+  "runtime": {
+    "node": "v24.22.2",
+    "stryker": "10.1.1",
+    "c8": "12.0.0"
+  },
+  "mutation": {
+    "before": [
+      {
+        "profile": "manifest",
+        "sources": [
+          {
+            "file": "tools/src/eval-manifest.ts",
+            "sha256": "6b1308f736e705935c58c68faa4c1ab8c2859326cacfdbd488d0da58d3583ddc"
+          }
+        ],
+        "score_percent": 96.34,
+        "mutants": 191,
+        "killed": 184,
+        "timeouts": 0,
+        "survived": 7,
+        "no_coverage": 0,
+        "errors": 0,
+        "report": "tools/reports/mutation/manifest/mutation.json",
+        "survivor_review": []
+      },
+      {
+        "profile": "gate",
+        "sources": [
+          {
+            "file": "tools/src/eval-gate.ts",
+            "sha256": "e8fec810821bbb44b51afd5de6831d60c871a30811576e5c41d7f980f2a4044f"
+          }
+        ],
+        "score_percent": 85.78,
+        "mutants": 211,
+        "killed": 181,
+        "timeouts": 0,
+        "survived": 30,
+        "no_coverage": 0,
+        "errors": 0,
+        "report": "tools/reports/mutation/gate/mutation.json",
+        "survivor_review": []
+      },
+      {
+        "profile": "findings",
+        "sources": [
+          {
+            "file": "tools/src/findings.ts",
+            "sha256": "02e666f35daaadddfe525c4fca345afe910c162f0d7a7e0ecfbc93caa1de303c"
+          }
+        ],
+        "score_percent": 95.07,
+        "mutants": 223,
+        "killed": 212,
+        "timeouts": 0,
+        "survived": 11,
+        "no_coverage": 0,
+        "errors": 0,
+        "report": "tools/reports/mutation/findings/mutation.json",
+        "survivor_review": []
+      },
+      {
+        "profile": "constraints",
+        "sources": [
+          {
+            "file": "tools/api-index/src/constraint.ts",
+            "sha256": "521e3ffababca812e00243eb208a8d7e5fbad0d21585430a6db8b4ddf5298dbc"
+          }
+        ],
+        "score_percent": 91.25,
+        "mutants": 240,
+        "killed": 218,
+        "timeouts": 1,
+        "survived": 21,
+        "no_coverage": 0,
+        "errors": 0,
+        "report": "tools/reports/mutation/constraints/mutation.json",
+        "survivor_review": []
+      },
+      {
+        "profile": "routing",
+        "sources": [
+          {
+            "file": "tools/src/routes.ts",
+            "sha256": "aa02fa9194abe16e851e9f57fea035ba02b6d2a3338e4b3d9365f46b9432c51c"
+          }
+        ],
+        "score_percent": 90.91,
+        "mutants": 407,
+        "killed": 370,
+        "timeouts": 0,
+        "survived": 37,
+        "no_coverage": 0,
+        "errors": 0,
+        "report": "tools/reports/mutation/routing/mutation.json",
+        "survivor_review": []
+      }
+    ],
+    "after": [
+      {
+        "profile": "manifest",
+        "sources": [
+          {
+            "file": "tools/src/eval-manifest.ts",
+            "sha256": "6b1308f736e705935c58c68faa4c1ab8c2859326cacfdbd488d0da58d3583ddc"
+          }
+        ],
+        "score_percent": 97.91,
+        "mutants": 191,
+        "killed": 187,
+        "timeouts": 0,
+        "survived": 4,
+        "no_coverage": 0,
+        "errors": 0,
+        "report": "tools/reports/mutation/manifest/mutation.json",
+        "survivor_review": [
+          {
+            "id": "6",
+            "mutatorName": "ConditionalExpression",
+            "location": {
+              "end": {
+                "column": 85,
+                "line": 4
+              },
+              "start": {
+                "column": 64,
+                "line": 4
+              }
+            },
+            "replacement": "true",
+            "classification": "equivalent for parsed JSON",
+            "reason": "Non-object JSON primitives cannot satisfy the required version and field guards; null and arrays remain rejected.",
+            "excluded": false
+          },
+          {
+            "id": "67",
+            "mutatorName": "ConditionalExpression",
+            "location": {
+              "end": {
+                "column": 34,
+                "line": 27
+              },
+              "start": {
+                "column": 5,
+                "line": 27
+              }
+            },
+            "replacement": "false",
+            "classification": "equivalent",
+            "reason": "Number.isSafeInteger already rejects non-number repeat values.",
+            "excluded": false
+          },
+          {
+            "id": "86",
+            "mutatorName": "MethodExpression",
+            "location": {
+              "end": {
+                "column": 72,
+                "line": 39
+              },
+              "start": {
+                "column": 17,
+                "line": 39
+              }
+            },
+            "replacement": "items",
+            "classification": "equivalent",
+            "reason": "The tasks array has already passed an every-string validation; the filter is required for TypeScript narrowing.",
+            "excluded": false
+          },
+          {
+            "id": "88",
+            "mutatorName": "ConditionalExpression",
+            "location": {
+              "end": {
+                "column": 71,
+                "line": 39
+              },
+              "start": {
+                "column": 50,
+                "line": 39
+              }
+            },
+            "replacement": "true",
+            "classification": "equivalent",
+            "reason": "Every task has already been validated as a string before this narrowing filter.",
+            "excluded": false
+          }
+        ]
+      },
+      {
+        "profile": "gate",
+        "sources": [
+          {
+            "file": "tools/src/eval-gate.ts",
+            "sha256": "e8fec810821bbb44b51afd5de6831d60c871a30811576e5c41d7f980f2a4044f"
+          }
+        ],
+        "score_percent": 99.05,
+        "mutants": 211,
+        "killed": 209,
+        "timeouts": 0,
+        "survived": 2,
+        "no_coverage": 0,
+        "errors": 0,
+        "report": "tools/reports/mutation/gate/mutation.json",
+        "survivor_review": [
+          {
+            "id": "40",
+            "mutatorName": "ConditionalExpression",
+            "location": {
+              "end": {
+                "column": 26,
+                "line": 89
+              },
+              "start": {
+                "column": 14,
+                "line": 89
+              }
+            },
+            "replacement": "true",
+            "classification": "equivalent for valid counters",
+            "reason": "With zero reported load runs, pct(0,0) becomes NaN instead of the private -1 sentinel. Both suppress the same output and load gate; positive counts are unchanged.",
+            "excluded": false
+          },
+          {
+            "id": "42",
+            "mutatorName": "EqualityOperator",
+            "location": {
+              "end": {
+                "column": 26,
+                "line": 89
+              },
+              "start": {
+                "column": 14,
+                "line": 89
+              }
+            },
+            "replacement": "loadRuns >= 0",
+            "classification": "equivalent for valid counters",
+            "reason": "For zero nonnegative run counts, NaN and the private -1 sentinel take identical observable reporting branches.",
+            "excluded": false
+          }
+        ]
+      },
+      {
+        "profile": "findings",
+        "sources": [
+          {
+            "file": "tools/src/findings.ts",
+            "sha256": "02e666f35daaadddfe525c4fca345afe910c162f0d7a7e0ecfbc93caa1de303c"
+          }
+        ],
+        "score_percent": 97.76,
+        "mutants": 223,
+        "killed": 218,
+        "timeouts": 0,
+        "survived": 5,
+        "no_coverage": 0,
+        "errors": 0,
+        "report": "tools/reports/mutation/findings/mutation.json",
+        "survivor_review": [
+          {
+            "id": "37",
+            "mutatorName": "StringLiteral",
+            "location": {
+              "end": {
+                "column": 111,
+                "line": 48
+              },
+              "start": {
+                "column": 109,
+                "line": 48
+              }
+            },
+            "replacement": "\"Stryker was here!\"",
+            "classification": "unreachable fallback",
+            "reason": "The regex capture is mandatory, including an empty match, so the fallback value is never selected.",
+            "excluded": false
+          },
+          {
+            "id": "139",
+            "mutatorName": "ArrayDeclaration",
+            "location": {
+              "end": {
+                "column": 28,
+                "line": 95
+              },
+              "start": {
+                "column": 26,
+                "line": 95
+              }
+            },
+            "replacement": "[\"Stryker was here\"]",
+            "classification": "injected marker case",
+            "reason": "Only changes citation acceptance for a rule_id equal to the artificial Stryker marker when no aliases exist. Retained in the raw score; no marker-specific test added.",
+            "excluded": false
+          },
+          {
+            "id": "141",
+            "mutatorName": "StringLiteral",
+            "location": {
+              "end": {
+                "column": 55,
+                "line": 95
+              },
+              "start": {
+                "column": 53,
+                "line": 95
+              }
+            },
+            "replacement": "\"Stryker was here!\"",
+            "classification": "equivalent under catalog expectations",
+            "reason": "The replacement null fallback is not a registered catalog rule or permitted alias, so it still cannot satisfy a citation.",
+            "excluded": false
+          },
+          {
+            "id": "157",
+            "mutatorName": "ConditionalExpression",
+            "location": {
+              "end": {
+                "column": 24,
+                "line": 101
+              },
+              "start": {
+                "column": 6,
+                "line": 101
+              }
+            },
+            "replacement": "false",
+            "classification": "equivalent",
+            "reason": "For null, CATALOG_ID.test coerces the value to nonmatching text; the following disjunct already permits the uncited finding.",
+            "excluded": false
+          },
+          {
+            "id": "226",
+            "mutatorName": "ConditionalExpression",
+            "location": {
+              "end": {
+                "column": 26,
+                "line": 137
+              },
+              "start": {
+                "column": 8,
+                "line": 137
+              }
+            },
+            "replacement": "false",
+            "classification": "equivalent",
+            "reason": "The non-catalog disjunct already permits null after regex coercion.",
+            "excluded": false
+          }
+        ]
+      },
+      {
+        "profile": "constraints",
+        "sources": [
+          {
+            "file": "tools/api-index/src/constraint.ts",
+            "sha256": "83f4658f3194e07aca0200b525e3b1a4380eab23eac5d48c90e408a5b3eabbf5"
+          }
+        ],
+        "score_percent": 98.99,
+        "mutants": 199,
+        "killed": 196,
+        "timeouts": 1,
+        "survived": 2,
+        "no_coverage": 0,
+        "errors": 0,
+        "report": "tools/reports/mutation/constraints/mutation.json",
+        "survivor_review": [
+          {
+            "id": "2",
+            "mutatorName": "EqualityOperator",
+            "location": {
+              "end": {
+                "column": 66,
+                "line": 12
+              },
+              "start": {
+                "column": 23,
+                "line": 12
+              }
+            },
+            "replacement": "index <= Math.max(left.length, right.length)",
+            "classification": "equivalent",
+            "reason": "One extra iteration compares zero padding with zero padding after both version arrays end.",
+            "excluded": false
+          },
+          {
+            "id": "161",
+            "mutatorName": "Regex",
+            "location": {
+              "end": {
+                "column": 44,
+                "line": 82
+              },
+              "start": {
+                "column": 35,
+                "line": 82
+              }
+            },
+            "replacement": "/[\\s,]/u",
+            "classification": "equivalent",
+            "reason": "Splitting repeated separators individually or together yields the same bounds after empty pieces are filtered. Production keeps the grouped form to avoid extra allocations.",
+            "excluded": false
+          }
+        ]
+      },
+      {
+        "profile": "routing",
+        "sources": [
+          {
+            "file": "tools/src/routes.ts",
+            "sha256": "aa02fa9194abe16e851e9f57fea035ba02b6d2a3338e4b3d9365f46b9432c51c"
+          }
+        ],
+        "score_percent": 97.3,
+        "mutants": 407,
+        "killed": 396,
+        "timeouts": 0,
+        "survived": 11,
+        "no_coverage": 0,
+        "errors": 0,
+        "report": "tools/reports/mutation/routing/mutation.json",
+        "survivor_review": [
+          {
+            "id": "174",
+            "mutatorName": "StringLiteral",
+            "location": {
+              "end": {
+                "column": 82,
+                "line": 125
+              },
+              "start": {
+                "column": 80,
+                "line": 125
+              }
+            },
+            "replacement": "\"Stryker was here!\"",
+            "classification": "private diagnostic label",
+            "reason": "The type guard uses only the diagnostic count, never this label text.",
+            "excluded": false
+          },
+          {
+            "id": "187",
+            "mutatorName": "ArrayDeclaration",
+            "location": {
+              "end": {
+                "column": 38,
+                "line": 133
+              },
+              "start": {
+                "column": 36,
+                "line": 133
+              }
+            },
+            "replacement": "[\"Stryker was here\"]",
+            "classification": "injected marker case",
+            "reason": "Can spuriously match only a changed path equal to the artificial Stryker marker; remains counted as survived.",
+            "excluded": false
+          },
+          {
+            "id": "190",
+            "mutatorName": "ArrayDeclaration",
+            "location": {
+              "end": {
+                "column": 43,
+                "line": 134
+              },
+              "start": {
+                "column": 41,
+                "line": 134
+              }
+            },
+            "replacement": "[\"Stryker was here\"]",
+            "classification": "injected marker case",
+            "reason": "Can spuriously match only an added or removed line containing the artificial Stryker marker; remains counted as survived.",
+            "excluded": false
+          },
+          {
+            "id": "197",
+            "mutatorName": "ArrayDeclaration",
+            "location": {
+              "end": {
+                "column": 45,
+                "line": 135
+              },
+              "start": {
+                "column": 43,
+                "line": 135
+              }
+            },
+            "replacement": "[\"Stryker was here\"]",
+            "classification": "injected marker case",
+            "reason": "Can exclude only a path equal to the artificial Stryker marker; remains counted as survived.",
+            "excluded": false
+          },
+          {
+            "id": "230",
+            "mutatorName": "ConditionalExpression",
+            "location": {
+              "end": {
+                "column": 29,
+                "line": 156
+              },
+              "start": {
+                "column": 7,
+                "line": 156
+              }
+            },
+            "replacement": "false",
+            "classification": "equivalent for routing and serialization",
+            "reason": "When no defaults exist, the copy only adds undefined exclusion properties; selection, JSON and rendered tables are unchanged.",
+            "excluded": false
+          },
+          {
+            "id": "242",
+            "mutatorName": "StringLiteral",
+            "location": {
+              "end": {
+                "column": 91,
+                "line": 168
+              },
+              "start": {
+                "column": 85,
+                "line": 168
+              }
+            },
+            "replacement": "\"\"",
+            "classification": "equivalent",
+            "reason": "JSON.parse coerces the Buffer returned without an encoding to the same UTF-8 string.",
+            "excluded": false
+          },
+          {
+            "id": "325",
+            "mutatorName": "Regex",
+            "location": {
+              "end": {
+                "column": 38,
+                "line": 226
+              },
+              "start": {
+                "column": 31,
+                "line": 226
+              }
+            },
+            "replacement": "/sw-/u",
+            "classification": "equivalent under skill naming contract",
+            "reason": "All supported skill names begin with sw-, so removing the first occurrence has the same effect as removing the leading occurrence.",
+            "excluded": false
+          },
+          {
+            "id": "327",
+            "mutatorName": "Regex",
+            "location": {
+              "end": {
+                "column": 77,
+                "line": 226
+              },
+              "start": {
+                "column": 61,
+                "line": 226
+              }
+            },
+            "replacement": "/references\\//u",
+            "classification": "equivalent",
+            "reason": "The borrowed-route regex guarantees this file part starts with references/.",
+            "excluded": false
+          },
+          {
+            "id": "351",
+            "mutatorName": "ConditionalExpression",
+            "location": {
+              "end": {
+                "column": 33,
+                "line": 245
+              },
+              "start": {
+                "column": 23,
+                "line": 245
+              }
+            },
+            "replacement": "false",
+            "classification": "equivalent",
+            "reason": "When the end marker is absent, end < start or the missing-start guard already rejects the document.",
+            "excluded": false
+          },
+          {
+            "id": "355",
+            "mutatorName": "EqualityOperator",
+            "location": {
+              "end": {
+                "column": 48,
+                "line": 245
+              },
+              "start": {
+                "column": 37,
+                "line": 245
+              }
+            },
+            "replacement": "end <= start",
+            "classification": "equivalent",
+            "reason": "The distinct start and end marker strings cannot occupy the same line.",
+            "excluded": false
+          },
+          {
+            "id": "395",
+            "mutatorName": "StringLiteral",
+            "location": {
+              "end": {
+                "column": 84,
+                "line": 271
+              },
+              "start": {
+                "column": 78,
+                "line": 271
+              }
+            },
+            "replacement": "\"\"",
+            "classification": "equivalent",
+            "reason": "JSON.parse coerces the Buffer to the same UTF-8 string as the original read encoding.",
+            "excluded": false
+          }
+        ]
+      }
+    ],
+    "runner": "command",
+    "coverage_analysis": "off",
+    "thresholds": {
+      "high": 95,
+      "low": 95,
+      "break": 95
+    },
+    "operators_excluded": [],
+    "mutant_locations_excluded": [],
+    "raw_scores_adjusted_after_review": false,
+    "timeout_explanation": "The constraint comparison loop index increment is reversed, so equal versions never terminate; counted as detected by Stryker, separately from assertion kills."
+  },
+  "coverage": {
+    "tooling": {
+      "before": {
+        "lines": {
+          "total": 16576,
+          "covered": 14790,
+          "skipped": 0,
+          "pct": 89.22
+        },
+        "statements": {
+          "total": 16576,
+          "covered": 14790,
+          "skipped": 0,
+          "pct": 89.22
+        },
+        "functions": {
+          "total": 827,
+          "covered": 756,
+          "skipped": 0,
+          "pct": 91.41
+        },
+        "branches": {
+          "total": 4688,
+          "covered": 4110,
+          "skipped": 0,
+          "pct": 87.67
+        },
+        "branchesTrue": {
+          "total": 0,
+          "covered": 0,
+          "skipped": 0,
+          "pct": 100
+        }
+      },
+      "after": {
+        "lines": {
+          "total": 16576,
+          "covered": 14790,
+          "skipped": 0,
+          "pct": 89.22
+        },
+        "statements": {
+          "total": 16576,
+          "covered": 14790,
+          "skipped": 0,
+          "pct": 89.22
+        },
+        "functions": {
+          "total": 827,
+          "covered": 756,
+          "skipped": 0,
+          "pct": 91.41
+        },
+        "branches": {
+          "total": 4691,
+          "covered": 4114,
+          "skipped": 0,
+          "pct": 87.69
+        },
+        "branchesTrue": {
+          "total": 0,
+          "covered": 0,
+          "skipped": 0,
+          "pct": 100
+        }
+      },
+      "report": "tools/coverage/coverage-summary.json",
+      "cli_files": {
+        "tools/bin/ab.ts": {
+          "lines": {
+            "total": 26,
+            "covered": 23,
+            "skipped": 0,
+            "pct": 88.46
+          },
+          "functions": {
+            "total": 1,
+            "covered": 1,
+            "skipped": 0,
+            "pct": 100
+          },
+          "statements": {
+            "total": 26,
+            "covered": 23,
+            "skipped": 0,
+            "pct": 88.46
+          },
+          "branches": {
+            "total": 3,
+            "covered": 2,
+            "skipped": 0,
+            "pct": 66.66
+          }
+        },
+        "tools/bin/activation.ts": {
+          "lines": {
+            "total": 14,
+            "covered": 14,
+            "skipped": 0,
+            "pct": 100
+          },
+          "functions": {
+            "total": 0,
+            "covered": 0,
+            "skipped": 0,
+            "pct": 100
+          },
+          "statements": {
+            "total": 14,
+            "covered": 14,
+            "skipped": 0,
+            "pct": 100
+          },
+          "branches": {
+            "total": 1,
+            "covered": 1,
+            "skipped": 0,
+            "pct": 100
+          }
+        },
+        "tools/bin/adapter.ts": {
+          "lines": {
+            "total": 20,
+            "covered": 0,
+            "skipped": 0,
+            "pct": 0
+          },
+          "functions": {
+            "total": 1,
+            "covered": 0,
+            "skipped": 0,
+            "pct": 0
+          },
+          "statements": {
+            "total": 20,
+            "covered": 0,
+            "skipped": 0,
+            "pct": 0
+          },
+          "branches": {
+            "total": 1,
+            "covered": 0,
+            "skipped": 0,
+            "pct": 0
+          }
+        },
+        "tools/bin/agent-preflight.ts": {
+          "lines": {
+            "total": 22,
+            "covered": 0,
+            "skipped": 0,
+            "pct": 0
+          },
+          "functions": {
+            "total": 1,
+            "covered": 0,
+            "skipped": 0,
+            "pct": 0
+          },
+          "statements": {
+            "total": 22,
+            "covered": 0,
+            "skipped": 0,
+            "pct": 0
+          },
+          "branches": {
+            "total": 1,
+            "covered": 0,
+            "skipped": 0,
+            "pct": 0
+          }
+        },
+        "tools/bin/check-update.ts": {
+          "lines": {
+            "total": 16,
+            "covered": 0,
+            "skipped": 0,
+            "pct": 0
+          },
+          "functions": {
+            "total": 1,
+            "covered": 0,
+            "skipped": 0,
+            "pct": 0
+          },
+          "statements": {
+            "total": 16,
+            "covered": 0,
+            "skipped": 0,
+            "pct": 0
+          },
+          "branches": {
+            "total": 1,
+            "covered": 0,
+            "skipped": 0,
+            "pct": 0
+          }
+        },
+        "tools/bin/collect-reviews.ts": {
+          "lines": {
+            "total": 73,
+            "covered": 0,
+            "skipped": 0,
+            "pct": 0
+          },
+          "functions": {
+            "total": 1,
+            "covered": 0,
+            "skipped": 0,
+            "pct": 0
+          },
+          "statements": {
+            "total": 73,
+            "covered": 0,
+            "skipped": 0,
+            "pct": 0
+          },
+          "branches": {
+            "total": 1,
+            "covered": 0,
+            "skipped": 0,
+            "pct": 0
+          }
+        },
+        "tools/bin/draft-comment.ts": {
+          "lines": {
+            "total": 41,
+            "covered": 0,
+            "skipped": 0,
+            "pct": 0
+          },
+          "functions": {
+            "total": 1,
+            "covered": 0,
+            "skipped": 0,
+            "pct": 0
+          },
+          "statements": {
+            "total": 41,
+            "covered": 0,
+            "skipped": 0,
+            "pct": 0
+          },
+          "branches": {
+            "total": 1,
+            "covered": 0,
+            "skipped": 0,
+            "pct": 0
+          }
+        },
+        "tools/bin/eval-diff.ts": {
+          "lines": {
+            "total": 29,
+            "covered": 0,
+            "skipped": 0,
+            "pct": 0
+          },
+          "functions": {
+            "total": 1,
+            "covered": 0,
+            "skipped": 0,
+            "pct": 0
+          },
+          "statements": {
+            "total": 29,
+            "covered": 0,
+            "skipped": 0,
+            "pct": 0
+          },
+          "branches": {
+            "total": 1,
+            "covered": 0,
+            "skipped": 0,
+            "pct": 0
+          }
+        },
+        "tools/bin/eval-discovery.ts": {
+          "lines": {
+            "total": 34,
+            "covered": 0,
+            "skipped": 0,
+            "pct": 0
+          },
+          "functions": {
+            "total": 1,
+            "covered": 0,
+            "skipped": 0,
+            "pct": 0
+          },
+          "statements": {
+            "total": 34,
+            "covered": 0,
+            "skipped": 0,
+            "pct": 0
+          },
+          "branches": {
+            "total": 1,
+            "covered": 0,
+            "skipped": 0,
+            "pct": 0
+          }
+        },
+        "tools/bin/eval-gate.ts": {
+          "lines": {
+            "total": 39,
+            "covered": 33,
+            "skipped": 0,
+            "pct": 84.61
+          },
+          "functions": {
+            "total": 1,
+            "covered": 1,
+            "skipped": 0,
+            "pct": 100
+          },
+          "statements": {
+            "total": 39,
+            "covered": 33,
+            "skipped": 0,
+            "pct": 84.61
+          },
+          "branches": {
+            "total": 10,
+            "covered": 3,
+            "skipped": 0,
+            "pct": 30
+          }
+        },
+        "tools/bin/eval-local.ts": {
+          "lines": {
+            "total": 14,
+            "covered": 0,
+            "skipped": 0,
+            "pct": 0
+          },
+          "functions": {
+            "total": 1,
+            "covered": 0,
+            "skipped": 0,
+            "pct": 0
+          },
+          "statements": {
+            "total": 14,
+            "covered": 0,
+            "skipped": 0,
+            "pct": 0
+          },
+          "branches": {
+            "total": 1,
+            "covered": 0,
+            "skipped": 0,
+            "pct": 0
+          }
+        },
+        "tools/bin/eval-manifest.ts": {
+          "lines": {
+            "total": 35,
+            "covered": 0,
+            "skipped": 0,
+            "pct": 0
+          },
+          "functions": {
+            "total": 1,
+            "covered": 0,
+            "skipped": 0,
+            "pct": 0
+          },
+          "statements": {
+            "total": 35,
+            "covered": 0,
+            "skipped": 0,
+            "pct": 0
+          },
+          "branches": {
+            "total": 1,
+            "covered": 0,
+            "skipped": 0,
+            "pct": 0
+          }
+        },
+        "tools/bin/eval-plan.ts": {
+          "lines": {
+            "total": 30,
+            "covered": 30,
+            "skipped": 0,
+            "pct": 100
+          },
+          "functions": {
+            "total": 1,
+            "covered": 1,
+            "skipped": 0,
+            "pct": 100
+          },
+          "statements": {
+            "total": 30,
+            "covered": 30,
+            "skipped": 0,
+            "pct": 100
+          },
+          "branches": {
+            "total": 3,
+            "covered": 3,
+            "skipped": 0,
+            "pct": 100
+          }
+        },
+        "tools/bin/eval-profiles.ts": {
+          "lines": {
+            "total": 26,
+            "covered": 0,
+            "skipped": 0,
+            "pct": 0
+          },
+          "functions": {
+            "total": 1,
+            "covered": 0,
+            "skipped": 0,
+            "pct": 0
+          },
+          "statements": {
+            "total": 26,
+            "covered": 0,
+            "skipped": 0,
+            "pct": 0
+          },
+          "branches": {
+            "total": 1,
+            "covered": 0,
+            "skipped": 0,
+            "pct": 0
+          }
+        },
+        "tools/bin/eval-transfer-suite.ts": {
+          "lines": {
+            "total": 40,
+            "covered": 0,
+            "skipped": 0,
+            "pct": 0
+          },
+          "functions": {
+            "total": 1,
+            "covered": 0,
+            "skipped": 0,
+            "pct": 0
+          },
+          "statements": {
+            "total": 40,
+            "covered": 0,
+            "skipped": 0,
+            "pct": 0
+          },
+          "branches": {
+            "total": 1,
+            "covered": 0,
+            "skipped": 0,
+            "pct": 0
+          }
+        },
+        "tools/bin/eval-transfer.ts": {
+          "lines": {
+            "total": 44,
+            "covered": 0,
+            "skipped": 0,
+            "pct": 0
+          },
+          "functions": {
+            "total": 1,
+            "covered": 0,
+            "skipped": 0,
+            "pct": 0
+          },
+          "statements": {
+            "total": 44,
+            "covered": 0,
+            "skipped": 0,
+            "pct": 0
+          },
+          "branches": {
+            "total": 1,
+            "covered": 0,
+            "skipped": 0,
+            "pct": 0
+          }
+        },
+        "tools/bin/fake-agent.ts": {
+          "lines": {
+            "total": 22,
+            "covered": 22,
+            "skipped": 0,
+            "pct": 100
+          },
+          "functions": {
+            "total": 1,
+            "covered": 1,
+            "skipped": 0,
+            "pct": 100
+          },
+          "statements": {
+            "total": 22,
+            "covered": 22,
+            "skipped": 0,
+            "pct": 100
+          },
+          "branches": {
+            "total": 2,
+            "covered": 2,
+            "skipped": 0,
+            "pct": 100
+          }
+        },
+        "tools/bin/grade.ts": {
+          "lines": {
+            "total": 34,
+            "covered": 31,
+            "skipped": 0,
+            "pct": 91.17
+          },
+          "functions": {
+            "total": 1,
+            "covered": 1,
+            "skipped": 0,
+            "pct": 100
+          },
+          "statements": {
+            "total": 34,
+            "covered": 31,
+            "skipped": 0,
+            "pct": 91.17
+          },
+          "branches": {
+            "total": 13,
+            "covered": 11,
+            "skipped": 0,
+            "pct": 84.61
+          }
+        },
+        "tools/bin/mine-trunk.ts": {
+          "lines": {
+            "total": 94,
+            "covered": 0,
+            "skipped": 0,
+            "pct": 0
+          },
+          "functions": {
+            "total": 1,
+            "covered": 0,
+            "skipped": 0,
+            "pct": 0
+          },
+          "statements": {
+            "total": 94,
+            "covered": 0,
+            "skipped": 0,
+            "pct": 0
+          },
+          "branches": {
+            "total": 1,
+            "covered": 0,
+            "skipped": 0,
+            "pct": 0
+          }
+        },
+        "tools/bin/mutate.ts": {
+          "lines": {
+            "total": 19,
+            "covered": 0,
+            "skipped": 0,
+            "pct": 0
+          },
+          "functions": {
+            "total": 1,
+            "covered": 0,
+            "skipped": 0,
+            "pct": 0
+          },
+          "statements": {
+            "total": 19,
+            "covered": 0,
+            "skipped": 0,
+            "pct": 0
+          },
+          "branches": {
+            "total": 1,
+            "covered": 0,
+            "skipped": 0,
+            "pct": 0
+          }
+        },
+        "tools/bin/render-enforced.ts": {
+          "lines": {
+            "total": 33,
+            "covered": 0,
+            "skipped": 0,
+            "pct": 0
+          },
+          "functions": {
+            "total": 1,
+            "covered": 0,
+            "skipped": 0,
+            "pct": 0
+          },
+          "statements": {
+            "total": 33,
+            "covered": 0,
+            "skipped": 0,
+            "pct": 0
+          },
+          "branches": {
+            "total": 1,
+            "covered": 0,
+            "skipped": 0,
+            "pct": 0
+          }
+        },
+        "tools/bin/render-router-index.ts": {
+          "lines": {
+            "total": 31,
+            "covered": 0,
+            "skipped": 0,
+            "pct": 0
+          },
+          "functions": {
+            "total": 1,
+            "covered": 0,
+            "skipped": 0,
+            "pct": 0
+          },
+          "statements": {
+            "total": 31,
+            "covered": 0,
+            "skipped": 0,
+            "pct": 0
+          },
+          "branches": {
+            "total": 1,
+            "covered": 0,
+            "skipped": 0,
+            "pct": 0
+          }
+        },
+        "tools/bin/render-routes.ts": {
+          "lines": {
+            "total": 39,
+            "covered": 0,
+            "skipped": 0,
+            "pct": 0
+          },
+          "functions": {
+            "total": 1,
+            "covered": 0,
+            "skipped": 0,
+            "pct": 0
+          },
+          "statements": {
+            "total": 39,
+            "covered": 0,
+            "skipped": 0,
+            "pct": 0
+          },
+          "branches": {
+            "total": 1,
+            "covered": 0,
+            "skipped": 0,
+            "pct": 0
+          }
+        },
+        "tools/bin/replay-routes.ts": {
+          "lines": {
+            "total": 97,
+            "covered": 0,
+            "skipped": 0,
+            "pct": 0
+          },
+          "functions": {
+            "total": 1,
+            "covered": 0,
+            "skipped": 0,
+            "pct": 0
+          },
+          "statements": {
+            "total": 97,
+            "covered": 0,
+            "skipped": 0,
+            "pct": 0
+          },
+          "branches": {
+            "total": 1,
+            "covered": 0,
+            "skipped": 0,
+            "pct": 0
+          }
+        },
+        "tools/bin/route.ts": {
+          "lines": {
+            "total": 15,
+            "covered": 0,
+            "skipped": 0,
+            "pct": 0
+          },
+          "functions": {
+            "total": 1,
+            "covered": 0,
+            "skipped": 0,
+            "pct": 0
+          },
+          "statements": {
+            "total": 15,
+            "covered": 0,
+            "skipped": 0,
+            "pct": 0
+          },
+          "branches": {
+            "total": 1,
+            "covered": 0,
+            "skipped": 0,
+            "pct": 0
+          }
+        },
+        "tools/bin/run-task.ts": {
+          "lines": {
+            "total": 30,
+            "covered": 18,
+            "skipped": 0,
+            "pct": 60
+          },
+          "functions": {
+            "total": 1,
+            "covered": 1,
+            "skipped": 0,
+            "pct": 100
+          },
+          "statements": {
+            "total": 30,
+            "covered": 18,
+            "skipped": 0,
+            "pct": 60
+          },
+          "branches": {
+            "total": 4,
+            "covered": 2,
+            "skipped": 0,
+            "pct": 50
+          }
+        },
+        "tools/bin/skills-profile.ts": {
+          "lines": {
+            "total": 28,
+            "covered": 23,
+            "skipped": 0,
+            "pct": 82.14
+          },
+          "functions": {
+            "total": 1,
+            "covered": 1,
+            "skipped": 0,
+            "pct": 100
+          },
+          "statements": {
+            "total": 28,
+            "covered": 23,
+            "skipped": 0,
+            "pct": 82.14
+          },
+          "branches": {
+            "total": 4,
+            "covered": 2,
+            "skipped": 0,
+            "pct": 50
+          }
+        },
+        "tools/bin/suggest-rules.ts": {
+          "lines": {
+            "total": 97,
+            "covered": 0,
+            "skipped": 0,
+            "pct": 0
+          },
+          "functions": {
+            "total": 1,
+            "covered": 0,
+            "skipped": 0,
+            "pct": 0
+          },
+          "statements": {
+            "total": 97,
+            "covered": 0,
+            "skipped": 0,
+            "pct": 0
+          },
+          "branches": {
+            "total": 1,
+            "covered": 0,
+            "skipped": 0,
+            "pct": 0
+          }
+        },
+        "tools/bin/test-graders.ts": {
+          "lines": {
+            "total": 17,
+            "covered": 17,
+            "skipped": 0,
+            "pct": 100
+          },
+          "functions": {
+            "total": 0,
+            "covered": 0,
+            "skipped": 0,
+            "pct": 100
+          },
+          "statements": {
+            "total": 17,
+            "covered": 17,
+            "skipped": 0,
+            "pct": 100
+          },
+          "branches": {
+            "total": 1,
+            "covered": 1,
+            "skipped": 0,
+            "pct": 100
+          }
+        },
+        "tools/bin/validate-routes.ts": {
+          "lines": {
+            "total": 9,
+            "covered": 0,
+            "skipped": 0,
+            "pct": 0
+          },
+          "functions": {
+            "total": 1,
+            "covered": 0,
+            "skipped": 0,
+            "pct": 0
+          },
+          "statements": {
+            "total": 9,
+            "covered": 0,
+            "skipped": 0,
+            "pct": 0
+          },
+          "branches": {
+            "total": 1,
+            "covered": 0,
+            "skipped": 0,
+            "pct": 0
+          }
+        },
+        "tools/bin/validate-rules.ts": {
+          "lines": {
+            "total": 11,
+            "covered": 0,
+            "skipped": 0,
+            "pct": 0
+          },
+          "functions": {
+            "total": 1,
+            "covered": 0,
+            "skipped": 0,
+            "pct": 0
+          },
+          "statements": {
+            "total": 11,
+            "covered": 0,
+            "skipped": 0,
+            "pct": 0
+          },
+          "branches": {
+            "total": 1,
+            "covered": 0,
+            "skipped": 0,
+            "pct": 0
+          }
+        },
+        "tools/bin/validate-skills.ts": {
+          "lines": {
+            "total": 15,
+            "covered": 0,
+            "skipped": 0,
+            "pct": 0
+          },
+          "functions": {
+            "total": 1,
+            "covered": 0,
+            "skipped": 0,
+            "pct": 0
+          },
+          "statements": {
+            "total": 15,
+            "covered": 0,
+            "skipped": 0,
+            "pct": 0
+          },
+          "branches": {
+            "total": 1,
+            "covered": 0,
+            "skipped": 0,
+            "pct": 0
+          }
+        }
+      }
+    },
+    "api_index": {
+      "before": {
+        "lines": {
+          "total": 5632,
+          "covered": 4869,
+          "skipped": 0,
+          "pct": 86.45
+        },
+        "statements": {
+          "total": 5632,
+          "covered": 4869,
+          "skipped": 0,
+          "pct": 86.45
+        },
+        "functions": {
+          "total": 303,
+          "covered": 285,
+          "skipped": 0,
+          "pct": 94.05
+        },
+        "branches": {
+          "total": 2181,
+          "covered": 1722,
+          "skipped": 0,
+          "pct": 78.95
+        },
+        "branchesTrue": {
+          "total": 0,
+          "covered": 0,
+          "skipped": 0,
+          "pct": 100
+        }
+      },
+      "after": {
+        "lines": {
+          "total": 5731,
+          "covered": 5533,
+          "skipped": 0,
+          "pct": 96.54
+        },
+        "statements": {
+          "total": 5731,
+          "covered": 5533,
+          "skipped": 0,
+          "pct": 96.54
+        },
+        "functions": {
+          "total": 334,
+          "covered": 329,
+          "skipped": 0,
+          "pct": 98.5
+        },
+        "branches": {
+          "total": 2561,
+          "covered": 2074,
+          "skipped": 0,
+          "pct": 80.98
+        },
+        "branchesTrue": {
+          "total": 0,
+          "covered": 0,
+          "skipped": 0,
+          "pct": 100
+        }
+      },
+      "report": "tools/api-index/coverage/coverage-summary.json",
+      "cli_files": {
+        "tools/api-index/bin/api-diff.ts": {
+          "lines": {
+            "total": 73,
+            "covered": 70,
+            "skipped": 0,
+            "pct": 95.89
+          },
+          "functions": {
+            "total": 2,
+            "covered": 2,
+            "skipped": 0,
+            "pct": 100
+          },
+          "statements": {
+            "total": 73,
+            "covered": 70,
+            "skipped": 0,
+            "pct": 95.89
+          },
+          "branches": {
+            "total": 23,
+            "covered": 20,
+            "skipped": 0,
+            "pct": 86.95
+          }
+        },
+        "tools/api-index/bin/api-facts.ts": {
+          "lines": {
+            "total": 104,
+            "covered": 103,
+            "skipped": 0,
+            "pct": 99.03
+          },
+          "functions": {
+            "total": 3,
+            "covered": 3,
+            "skipped": 0,
+            "pct": 100
+          },
+          "statements": {
+            "total": 104,
+            "covered": 103,
+            "skipped": 0,
+            "pct": 99.03
+          },
+          "branches": {
+            "total": 38,
+            "covered": 30,
+            "skipped": 0,
+            "pct": 78.94
+          }
+        },
+        "tools/api-index/bin/build.ts": {
+          "lines": {
+            "total": 35,
+            "covered": 32,
+            "skipped": 0,
+            "pct": 91.42
+          },
+          "functions": {
+            "total": 2,
+            "covered": 2,
+            "skipped": 0,
+            "pct": 100
+          },
+          "statements": {
+            "total": 35,
+            "covered": 32,
+            "skipped": 0,
+            "pct": 91.42
+          },
+          "branches": {
+            "total": 10,
+            "covered": 8,
+            "skipped": 0,
+            "pct": 80
+          }
+        },
+        "tools/api-index/bin/census-check.ts": {
+          "lines": {
+            "total": 142,
+            "covered": 142,
+            "skipped": 0,
+            "pct": 100
+          },
+          "functions": {
+            "total": 8,
+            "covered": 8,
+            "skipped": 0,
+            "pct": 100
+          },
+          "statements": {
+            "total": 142,
+            "covered": 142,
+            "skipped": 0,
+            "pct": 100
+          },
+          "branches": {
+            "total": 70,
+            "covered": 64,
+            "skipped": 0,
+            "pct": 91.42
+          }
+        },
+        "tools/api-index/bin/check-breaks.ts": {
+          "lines": {
+            "total": 76,
+            "covered": 76,
+            "skipped": 0,
+            "pct": 100
+          },
+          "functions": {
+            "total": 2,
+            "covered": 2,
+            "skipped": 0,
+            "pct": 100
+          },
+          "statements": {
+            "total": 76,
+            "covered": 76,
+            "skipped": 0,
+            "pct": 100
+          },
+          "branches": {
+            "total": 38,
+            "covered": 38,
+            "skipped": 0,
+            "pct": 100
+          }
+        },
+        "tools/api-index/bin/timeline.ts": {
+          "lines": {
+            "total": 67,
+            "covered": 62,
+            "skipped": 0,
+            "pct": 92.53
+          },
+          "functions": {
+            "total": 1,
+            "covered": 1,
+            "skipped": 0,
+            "pct": 100
+          },
+          "statements": {
+            "total": 67,
+            "covered": 62,
+            "skipped": 0,
+            "pct": 92.53
+          },
+          "branches": {
+            "total": 10,
+            "covered": 7,
+            "skipped": 0,
+            "pct": 70
+          }
+        },
+        "tools/api-index/bin/verify-facts.ts": {
+          "lines": {
+            "total": 276,
+            "covered": 256,
+            "skipped": 0,
+            "pct": 92.75
+          },
+          "functions": {
+            "total": 13,
+            "covered": 13,
+            "skipped": 0,
+            "pct": 100
+          },
+          "statements": {
+            "total": 276,
+            "covered": 256,
+            "skipped": 0,
+            "pct": 92.75
+          },
+          "branches": {
+            "total": 126,
+            "covered": 95,
+            "skipped": 0,
+            "pct": 75.39
+          }
+        }
+      }
+    }
+  },
+  "validation": {
+    "tooling_tests": 534,
+    "api_index_tests": 83,
+    "ast_tests": 41,
+    "golden_cases": 647,
+    "golden_tasks": 222,
+    "typecheck": "pass",
+    "lint": "pass",
+    "format": "pass",
+    "skill_validation": "pass",
+    "activation": "dry pass",
+    "ci_workflow_run_on_github": false
+  },
+  "constraint_refactor": {
+    "before_after_cases": 3364,
+    "different_outcomes": 0,
+    "explanation": "Numeric/wildcard parsing is performed once. Operators and comparator dispatch are exhaustive typed data. Empty-term, trim, optional-array and impossible-operator fallbacks are removed where prior validation made them redundant. Mutant counts therefore differ; the comparison does not claim every disappeared mutant was killed by a new test.",
+    "cases_file": "/private/tmp/quality-95/constraints-before.json"
+  },
+  "cli_false_pass_replay": [
+    {
+      "command": "census-check",
+      "args": [
+        "--census",
+        "/private/tmp/quality-95/missing-census",
+        "--cache",
+        "/private/tmp/quality-95/missing-cache"
+      ],
+      "before_exit_code": 0,
+      "after_exit_code": 2,
+      "stderr": "census-check: no comparable cache/census tags found",
+      "stdout": ""
+    },
+    {
+      "command": "check-breaks",
+      "args": [
+        "--major",
+        "does-not-exist",
+        "--index",
+        "/private/tmp/quality-95/empty-index.json",
+        "--no-fetch"
+      ],
+      "before_exit_code": 0,
+      "after_exit_code": 2,
+      "stderr": "check-breaks: unknown major: does-not-exist",
+      "stdout": ""
+    },
+    {
+      "command": "verify-facts",
+      "args": [
+        "--repo",
+        "/private/tmp/quality-95/missing-repo",
+        "--index",
+        "/private/tmp/quality-95/empty-index.json",
+        "/private/tmp/quality-95/invalid-report.json"
+      ],
+      "before_exit_code": 0,
+      "after_exit_code": 2,
+      "stderr": "verify-facts: /private/tmp/quality-95/invalid-report.json: not a valid facts report",
+      "stdout": ""
+    }
+  ],
+  "new_workflow_tests": [
+    "tools/api-index/test/census-workflow.test.ts",
+    "tools/api-index/test/breaks-workflow.test.ts",
+    "tools/api-index/test/verify-workflow.test.ts"
+  ],
+  "expanded_workflow_tests": "tools/api-index/test/workflow.test.ts",
+  "test_quality_fix": "The terminal-cleanup regression uses a 15-second test deadline rather than a 5-second wall-clock assertion that included V8 coverage overhead. The fake cleanup still sleeps 20 seconds, so missing cleanup fails.",
+  "local_infrastructure": "The sandbox blocked Stryker localhost worker coordination; approved local execution resolved that. Concurrent profiles in one checkout raced while scanning another profile sandbox during cleanup; routing was rerun alone with a fresh report. CI matrix jobs have separate checkouts.",
+  "artifacts": "/private/tmp/quality-95",
+  "published_skills_changed": false,
+  "remaining_scope_limits": [
+    "The 95% floor is for each targeted mutation profile, not whole-repository line or branch coverage.",
+    "Tooling line coverage remains 89.22%; API-index branch coverage remains below 95%.",
+    "Injected-marker and equivalent survivors remain in the unadjusted scores.",
+    "Real Shopware/PHP runtime, network downloads and release publication are outside these local Git and fixture workflows."
+  ],
+  "implementation_inputs": {
+    "paths": [
+      "tools/src",
+      "tools/bin",
+      "tools/graders",
+      "tools/test",
+      "tools/api-index/src",
+      "tools/api-index/bin",
+      "tools/api-index/test",
+      "tools/package.json",
+      "tools/package-lock.json",
+      "tools/api-index/package.json",
+      "tools/api-index/package-lock.json",
+      "tools/stryker.config.mjs",
+      "tools/.c8rc.json",
+      "tools/api-index/.c8rc.json",
+      ".github/workflows/quality.yml"
+    ],
+    "file_count": 495,
+    "sha256": "baafda93377af0ccf636e1707187f46cbc51aab981a6b2499711ef78ead4a871"
+  }
+}

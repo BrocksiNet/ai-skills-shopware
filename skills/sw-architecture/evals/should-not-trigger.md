@@ -9,3 +9,4 @@
 - The cart total is wrong for a percentage discount. Fix it in CartProcessor. (-> shopware-php-code)
 - Run phpunit for CartProcessor. (-> sw-podman-dev)
 - Add the ADR and the RELEASE_INFO entry for this. (-> sw-core-development)
+- Serialize a Python dataclass as JSON for a standalone script unrelated to Shopware.

@@ -132,6 +132,7 @@ weekly, and model evals run monthly and before releases. See
 | [`docs/skill-resolution.md`](docs/skill-resolution.md) | Core trunk's own skills next to ours |
 | [`docs/local-validation.md`](docs/local-validation.md) | Try the skills on your own shop and send feedback |
 | [`evals/README.md`](evals/README.md) | Writing and running eval tasks |
+| [`docs/testing-quality.md`](docs/testing-quality.md) | Coverage, targeted mutation checks, runtime contracts and measured gaps |
 | [`AGENTS.md`](AGENTS.md) | Contributing: repo layout, checks, adding rules and skills |
 
 ## Curation & governance

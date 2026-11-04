@@ -1,0 +1,14 @@
+diff --git a/src/Worker/http.php b/src/Worker/http.php
+new file mode 100644
+--- /dev/null
++++ b/src/Worker/http.php
+@@ -0,0 +1,9 @@
++<?php declare(strict_types=1);
++use Shopware\Core\Kernel;
++use Symfony\Component\HttpFoundation\Request;
++// LONGRUNNING_ENVIRONMENT is left at the installed default.
++$kernel = new Kernel('prod', false);
++foreach ($requests as $request) {
++    $response = $kernel->handle($request);
++    $kernel->terminate($request, $response);
++}

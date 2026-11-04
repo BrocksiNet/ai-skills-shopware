@@ -41,7 +41,7 @@ function isRecord(value: unknown): value is Record<string, unknown> {
   return typeof value === 'object' && value !== null && !Array.isArray(value);
 }
 
-function strings(value: unknown, keys: string[]): value is Record<string, string> {
+function strings(value: unknown, keys: string[]): value is Record<string, unknown> {
   return isRecord(value) && keys.every((key) => typeof value[key] === 'string');
 }
 
@@ -55,7 +55,11 @@ export function isKnownBreaks(value: unknown): value is KnownBreaks {
         strings(entry, ['major', 'base', 'head']) && (entry.expect === 'removed' || entry.expect === 'deprecated'),
     ) &&
     Array.isArray(breaks) &&
-    breaks.every((entry) => strings(entry, ['major', 'id', 'kind', 'heading'])) &&
+    breaks.every(
+      (entry) =>
+        strings(entry, ['major', 'id', 'kind', 'heading']) &&
+        (entry.excluded === undefined || typeof entry.excluded === 'string'),
+    ) &&
     Array.isArray(confirmed) &&
     confirmed.every((entry) => strings(entry, ['major', 'id', 'evidence']))
   );

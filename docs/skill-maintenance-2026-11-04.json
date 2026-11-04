@@ -1,0 +1,4273 @@
+{
+  "date": "2026-11-04",
+  "scope": {
+    "repository": "shopware/shopware",
+    "base": "trunk",
+    "merged_since": "2026-10-14",
+    "merged_until": "2026-11-04",
+    "observed_trunk_head": {
+      "sha": "0e5bc01bba36daa19915b2baf4cbec980613b6e2",
+      "date": "2026-11-04T10:34:19Z"
+    },
+    "private_repositories_reviewed": false
+  },
+  "collection": {
+    "merged_prs": 321,
+    "github_search_incomplete_results": false,
+    "github_search_pages": 4,
+    "raw_inline_comments_fetched": 1261,
+    "eligible_inline_comments": 262,
+    "prs_with_eligible_comments": 97,
+    "filters": [
+      "PR merged into trunk within the window",
+      "top-level inline thread comments only",
+      "exclude bots and PR author",
+      "at least 40 characters after stripping suggestion and HTML blocks"
+    ],
+    "limitations": [
+      "Inline API was queried by updated_at since October 14; older unchanged threads may be absent.",
+      "321 PRs is an inventory, not 321 full-diff reviews. Twelve selected PRs had complete PR snapshots; 27 watched-path commit diffs were extracted separately.",
+      "Review frequency and route matches are leads, not proof a rule improves models.",
+      "Only public core was fetched; private SwagCommercial and other upstream skill repositories are outside this pass."
+    ]
+  },
+  "decisions": {
+    "skills_before": 20,
+    "skills_after": 20,
+    "active_rules_before": 226,
+    "active_rules_after": 222,
+    "consolidations": [
+      {
+        "from": "REV-008",
+        "to": "PLG-007",
+        "same_eval": "cache-tag-no-deprecated-event",
+        "same_audience": [
+          "plugin"
+        ],
+        "status": "superseded:PLG-007",
+        "reason": "Consolidated on 2026-11-04: the same obligation, audience and eval already belong to PLG-007. Keep that canonical rule and its eval; remove the duplicate ID and redirect callers. This is an ownership consolidation, not a claim of measured model non-inferiority."
+      },
+      {
+        "from": "REV-013",
+        "to": "TEST-008",
+        "same_eval": "test-docblock-use-see",
+        "same_audience": [
+          "core"
+        ],
+        "status": "superseded:TEST-008",
+        "reason": "Consolidated on 2026-11-04: the same obligation, audience and eval already belong to TEST-008. Keep that canonical rule and its eval; remove the duplicate ID and redirect callers. This is an ownership consolidation, not a claim of measured model non-inferiority."
+      },
+      {
+        "from": "REV-014",
+        "to": "TEST-015",
+        "same_eval": "safeguard-test-not-in-unit-suite",
+        "same_audience": [
+          "core"
+        ],
+        "status": "superseded:TEST-015",
+        "reason": "Consolidated on 2026-11-04: the same obligation, audience and eval already belong to TEST-015. Keep that canonical rule and its eval; remove the duplicate ID and redirect callers. This is an ownership consolidation, not a claim of measured model non-inferiority."
+      },
+      {
+        "from": "REV-024",
+        "to": "PLG-003",
+        "same_eval": "no-dal-connection-for-entity-read",
+        "same_audience": [
+          "plugin"
+        ],
+        "status": "superseded:PLG-003",
+        "reason": "Consolidated on 2026-11-04: the same obligation, audience and eval already belong to PLG-003. Keep that canonical rule and its eval; remove the duplicate ID and redirect callers. This is an ownership consolidation, not a claim of measured model non-inferiority."
+      }
+    ],
+    "updates": [
+      "ARCH-001",
+      "TEST-014"
+    ],
+    "new_active_rules": [],
+    "candidate_not_published": "ARCH-006"
+  },
+  "skill_decisions": {
+    "sw-admin-js": {
+      "decision": "keep",
+      "active_rules": 31
+    },
+    "sw-app-development": {
+      "decision": "keep",
+      "active_rules": 0
+    },
+    "sw-architecture": {
+      "decision": "keep",
+      "active_rules": 5,
+      "change": "ARCH-001 distinguishes registration from the installed HTTP reset lifecycle; candidate ARCH-006 is not published."
+    },
+    "sw-assistant-style": {
+      "decision": "keep",
+      "active_rules": 3
+    },
+    "sw-change-impact": {
+      "decision": "keep",
+      "active_rules": 6
+    },
+    "sw-core-development": {
+      "decision": "keep",
+      "active_rules": 63
+    },
+    "sw-extension-review": {
+      "decision": "keep",
+      "active_rules": 0
+    },
+    "sw-help": {
+      "decision": "keep",
+      "active_rules": 0,
+      "follow_up": "Help/router merge remains an experimental packaging candidate; existing runs do not establish non-inferiority."
+    },
+    "sw-openapi-dto": {
+      "decision": "keep",
+      "active_rules": 8
+    },
+    "sw-php-foundation": {
+      "decision": "keep",
+      "active_rules": 2
+    },
+    "sw-plugin-development": {
+      "decision": "keep",
+      "active_rules": 26
+    },
+    "sw-podman-dev": {
+      "decision": "keep",
+      "active_rules": 0
+    },
+    "sw-pr-description": {
+      "decision": "keep",
+      "active_rules": 4
+    },
+    "sw-pr-review": {
+      "decision": "keep",
+      "active_rules": 0
+    },
+    "sw-research-and-escalation": {
+      "decision": "keep",
+      "active_rules": 0
+    },
+    "sw-review-learnings": {
+      "decision": "keep",
+      "active_rules": 25,
+      "change": "Four duplicate IDs redirected to canonical owners; review lenses and the raw-SQL near-miss grader updated."
+    },
+    "sw-security": {
+      "decision": "keep",
+      "active_rules": 8
+    },
+    "sw-skill-router": {
+      "decision": "keep",
+      "active_rules": 0,
+      "follow_up": "Help/router merge remains an experimental packaging candidate; existing runs do not establish non-inferiority."
+    },
+    "sw-storefront": {
+      "decision": "keep",
+      "active_rules": 13
+    },
+    "sw-testing": {
+      "decision": "keep",
+      "active_rules": 28,
+      "change": "TEST-014 records the new trunk-only PHPStan enforcement and its limits."
+    }
+  },
+  "candidates": [
+    {
+      "topic": "Queued field serialization",
+      "owner": "sw-architecture",
+      "rule": "ARCH-006",
+      "decision": "candidate not published; repaired tasks are canaries",
+      "evidence": [
+        21779
+      ],
+      "next_test": "Fresh business-contract-complete transport tasks with a genuine baseline miss, normal getter and custom-normalizer controls."
+    },
+    {
+      "topic": "Sensitive data in queued requests and mail logs",
+      "owner": "sw-security",
+      "decision": "propose a source-backed extension of the existing secrets lens; no new rule yet",
+      "evidence": [
+        21783,
+        22122
+      ],
+      "next_test": "Track a recovery token through queued payloads, mail-template samples, exception logs and metadata; ordinary mail must remain observable. Pin a release before naming SensitiveMail as available API."
+    },
+    {
+      "topic": "Authentication identity and rate-limit buckets",
+      "owner": "sw-security",
+      "decision": "candidate; no new rule yet",
+      "evidence": [
+        22226,
+        22282
+      ],
+      "next_test": "Equivalent identifiers under the installed authentication/collation rules must share a bucket; different principals must remain separate."
+    },
+    {
+      "topic": "Whole UI/database workflow tests",
+      "owner": "sw-admin-js",
+      "decision": "build a workflow eval before reviving ADM-031 or introducing a replacement",
+      "evidence": [
+        19985,
+        22270,
+        22020
+      ],
+      "next_test": "A mounted page must render failure output after asynchronous events; use integration coverage where SQL mocks cannot observe database behavior."
+    },
+    {
+      "topic": "Request work budgets beyond per-query limits",
+      "owner": "sw-architecture",
+      "rule": "ARCH-002",
+      "decision": "candidate refinement of existing bounded-read guidance, not another pagination rule",
+      "evidence": [
+        21801,
+        21291,
+        22253,
+        22255
+      ],
+      "next_test": "A large stream must not cause an unbounded number of pages in one HTTP request; small pages must not silently truncate results."
+    },
+    {
+      "topic": "Administration snippet plural forms",
+      "owner": "sw-admin-js",
+      "decision": "candidate only; upstream convention found by backfill",
+      "evidence": [
+        21858
+      ],
+      "next_test": "Two forms for the documented en/de plural-equals-zero case; preserve a distinct zero wording. Confirm model error before adding style guidance."
+    },
+    {
+      "topic": "Administration lint/deprecation baselines and dead-code checks",
+      "owner": "sw-admin-js",
+      "decision": "delegate to trunk checks and docs; avoid another general lint skill",
+      "evidence": [
+        21725,
+        21727,
+        21728,
+        21729,
+        21730,
+        21806,
+        21678,
+        21704,
+        21679
+      ],
+      "next_test": "Only author an eval for a concrete behavior or extension gap beyond what the configured checks enforce."
+    }
+  ],
+  "mining": {
+    "watched_commits": [
+      {
+        "sha": "970f3e91ce6711fa966a3def865688cbcfd77d66",
+        "date": "2026-10-30T15:05:03Z",
+        "title": "fix(core): improve username validation errors (#22249)",
+        "url": "https://github.com/shopware/shopware/commit/970f3e91ce6711fa966a3def865688cbcfd77d66",
+        "signals": 3
+      },
+      {
+        "sha": "42695db645b6dd5b47a2cf3e61b2ff64febb3374",
+        "date": "2026-10-28T08:04:19Z",
+        "title": "feat(administration): block new JavaScript files and mixins (#21730)",
+        "url": "https://github.com/shopware/shopware/commit/42695db645b6dd5b47a2cf3e61b2ff64febb3374",
+        "signals": 7
+      },
+      {
+        "sha": "bcd12bcaf95db9692462ae3081888dccf7d334ee",
+        "date": "2026-10-26T12:22:36Z",
+        "title": "ci(danger): fail unit and devops tests that run in a separate process (#21740)",
+        "url": "https://github.com/shopware/shopware/commit/bcd12bcaf95db9692462ae3081888dccf7d334ee",
+        "signals": 2
+      },
+      {
+        "sha": "f31fb198e73eec97223a5bc2f5ff0072ef9b1985",
+        "date": "2026-10-23T08:06:08Z",
+        "title": "feat(agent-skills): route topic guides into sw-review (#21455)",
+        "url": "https://github.com/shopware/shopware/commit/f31fb198e73eec97223a5bc2f5ff0072ef9b1985",
+        "signals": 171
+      },
+      {
+        "sha": "314d3b70628f74a3ee5a8e7ced40d2dcf5979762",
+        "date": "2026-10-21T12:40:14Z",
+        "title": "docs(github): restructure the pull request template (#21627)",
+        "url": "https://github.com/shopware/shopware/commit/314d3b70628f74a3ee5a8e7ced40d2dcf5979762",
+        "signals": 117
+      },
+      {
+        "sha": "0fa3e10a6d6214f479f5e6f188bce9f82b1bdea4",
+        "date": "2026-10-19T09:21:53Z",
+        "title": "docs(coding-guidelines): add backward-compatibility and HTTP cache guidelines (#21541)",
+        "url": "https://github.com/shopware/shopware/commit/0fa3e10a6d6214f479f5e6f188bce9f82b1bdea4",
+        "signals": 38
+      },
+      {
+        "sha": "f2bf3794c9d831fe9c54b670e2d6ae00653468dd",
+        "date": "2026-10-15T10:03:41Z",
+        "title": "test: forbid assertions inside event hooks and describe how tests observe events (#21438)",
+        "url": "https://github.com/shopware/shopware/commit/f2bf3794c9d831fe9c54b670e2d6ae00653468dd",
+        "signals": 3
+      },
+      {
+        "sha": "75b0a495c813d9e8e50714aa900a378c451d3399",
+        "date": "2026-10-15T09:14:09Z",
+        "title": "ci(danger): fail every touched test file that covers more than one class (#21572)",
+        "url": "https://github.com/shopware/shopware/commit/75b0a495c813d9e8e50714aa900a378c451d3399",
+        "signals": 3
+      },
+      {
+        "sha": "cc3449eb8c30d322d66a384168711871056a171c",
+        "date": "2026-10-23T06:49:45Z",
+        "title": "feat(administration): log baselined deprecations instead of throwing in the major (#21679)",
+        "url": "https://github.com/shopware/shopware/commit/cc3449eb8c30d322d66a384168711871056a171c",
+        "signals": 0
+      },
+      {
+        "sha": "64caef4bc1c7ef6a2ec8ed17bf38dd9a98febbc9",
+        "date": "2026-10-23T06:49:44Z",
+        "title": "test(administration): check and update the deprecation baseline after a full run (#21704)",
+        "url": "https://github.com/shopware/shopware/commit/64caef4bc1c7ef6a2ec8ed17bf38dd9a98febbc9",
+        "signals": 0
+      },
+      {
+        "sha": "32f6df26d5d168e0fcfef93064a30c4b805dac92",
+        "date": "2026-10-23T06:49:43Z",
+        "title": "test(administration): let known usages listed in a deprecation baseline pass (#21678)",
+        "url": "https://github.com/shopware/shopware/commit/32f6df26d5d168e0fcfef93064a30c4b805dac92",
+        "signals": 1
+      },
+      {
+        "sha": "8dc74f24f0f32650ec1553f7ab3b1ac5ffa372ae",
+        "date": "2026-10-14T18:10:51Z",
+        "title": "refactor(framework): remove exception deprecation reason exemptions (#21400)",
+        "url": "https://github.com/shopware/shopware/commit/8dc74f24f0f32650ec1553f7ab3b1ac5ffa372ae",
+        "signals": 1
+      },
+      {
+        "sha": "53a6cceb130892ed385933a3eac502f6d0b9cbfc",
+        "date": "2026-10-14T09:33:10Z",
+        "title": "chore: Remove last gitlab references and fix links to XSD files (#21565)",
+        "url": "https://github.com/shopware/shopware/commit/53a6cceb130892ed385933a3eac502f6d0b9cbfc",
+        "signals": 34
+      },
+      {
+        "sha": "c69a7c86a6291393945d73e04ccfc8992e26d797",
+        "date": "2026-11-04T09:12:02Z",
+        "title": "test(framework): add a PHPStan rule against @var annotations on StaticEntityRepository constructions (#22266)",
+        "url": "https://github.com/shopware/shopware/commit/c69a7c86a6291393945d73e04ccfc8992e26d797",
+        "signals": 1
+      },
+      {
+        "sha": "4827f64c7b9e74772eae0ecc0cdea86848d7b1ed",
+        "date": "2026-10-22T09:14:05Z",
+        "title": "feat(core): report end-anchored regex patterns without the D modifier (#21178)",
+        "url": "https://github.com/shopware/shopware/commit/4827f64c7b9e74772eae0ecc0cdea86848d7b1ed",
+        "signals": 1
+      },
+      {
+        "sha": "84182fe36a97aef4f1f417bb2e46109640b032f8",
+        "date": "2026-10-21T10:42:36Z",
+        "title": "fix(core): add the D modifier to end anchors in Regex constraints, Finder filters and alternations (#21671)",
+        "url": "https://github.com/shopware/shopware/commit/84182fe36a97aef4f1f417bb2e46109640b032f8",
+        "signals": 2
+      },
+      {
+        "sha": "c5c34686752602b9e5b7010b7a36bc1be33ef095",
+        "date": "2026-10-21T08:07:39Z",
+        "title": "ci: skip the release info reminder for pull requests confined to .github (#21219)",
+        "url": "https://github.com/shopware/shopware/commit/c5c34686752602b9e5b7010b7a36bc1be33ef095",
+        "signals": 1
+      },
+      {
+        "sha": "0e782aa79e93b15cc3b832c1a7eae30c92208786",
+        "date": "2026-10-19T08:10:21Z",
+        "title": "fix(core): guard deprecated DAL construction without accessor notices (#21660)",
+        "url": "https://github.com/shopware/shopware/commit/0e782aa79e93b15cc3b832c1a7eae30c92208786",
+        "signals": 2
+      },
+      {
+        "sha": "36e19f9d5228ff0650c487a73a9fee975e6d06e9",
+        "date": "2026-10-15T20:09:43Z",
+        "title": "feat: telemetry improvements (#21444)",
+        "url": "https://github.com/shopware/shopware/commit/36e19f9d5228ff0650c487a73a9fee975e6d06e9",
+        "signals": 1
+      },
+      {
+        "sha": "006893091e935ccdd805444fe746275f00affb80",
+        "date": "2026-10-14T16:23:31Z",
+        "title": "chore: PHPStan Update 10/2026 (#21323)",
+        "url": "https://github.com/shopware/shopware/commit/006893091e935ccdd805444fe746275f00affb80",
+        "signals": 1
+      },
+      {
+        "sha": "190d734b562fead431b6b241211f6579259e4993",
+        "date": "2026-10-14T09:34:38Z",
+        "title": "test: forbid runtime listener changes on the shared event dispatcher in integration tests (#21343)",
+        "url": "https://github.com/shopware/shopware/commit/190d734b562fead431b6b241211f6579259e4993",
+        "signals": 1
+      },
+      {
+        "sha": "f0e46ffa76c8d7d315c9ca1d9d446794bbc84340",
+        "date": "2026-10-14T09:26:32Z",
+        "title": "fix(core): anchor end-of-string regex patterns with the D modifier (framework) (#21177)",
+        "url": "https://github.com/shopware/shopware/commit/f0e46ffa76c8d7d315c9ca1d9d446794bbc84340",
+        "signals": 5
+      },
+      {
+        "sha": "d10e3c4f26ea6b7309774afb8c10bb639ba60e78",
+        "date": "2026-10-14T08:25:46Z",
+        "title": "fix: Allow usage of arrow functions in extension events of store API routes (#21599)",
+        "url": "https://github.com/shopware/shopware/commit/d10e3c4f26ea6b7309774afb8c10bb639ba60e78",
+        "signals": 1
+      },
+      {
+        "sha": "4d0ca6184c24dfda14a3abebd36cd2307ba48ac6",
+        "date": "2026-11-04T07:21:05Z",
+        "title": "feat(administration): check unused files, exports and dependencies with Fallow (#21806)",
+        "url": "https://github.com/shopware/shopware/commit/4d0ca6184c24dfda14a3abebd36cd2307ba48ac6",
+        "signals": 5
+      },
+      {
+        "sha": "8e4dcd7662f7e418ad0b0abc1dbb3cadc71f202a",
+        "date": "2026-10-22T08:55:53Z",
+        "title": "docs(agents): document the two-form rule for pluralized snippets (#21858)",
+        "url": "https://github.com/shopware/shopware/commit/8e4dcd7662f7e418ad0b0abc1dbb3cadc71f202a",
+        "signals": 2
+      },
+      {
+        "sha": "2fbf77935e881a5c9db66e746ed9e335602e8091",
+        "date": "2026-10-14T09:19:46Z",
+        "title": "docs: Improve AGENTS.md file (#21605)",
+        "url": "https://github.com/shopware/shopware/commit/2fbf77935e881a5c9db66e746ed9e335602e8091",
+        "signals": 4
+      },
+      {
+        "sha": "aa057a158afebba2c896ec2d67581dff8e97fb30",
+        "date": "2026-10-27T14:34:44Z",
+        "title": "feat(administration): add lint baselines that may only shrink (#21725)",
+        "url": "https://github.com/shopware/shopware/commit/aa057a158afebba2c896ec2d67581dff8e97fb30",
+        "signals": 1
+      }
+    ],
+    "signals_before": 357,
+    "signals_after": 408,
+    "recovered_agents_prose_changes": 51,
+    "missing_patches": [],
+    "mining_state_advanced": false,
+    "state_before_sha256": "4976b5df8089d026becbd7da0089a548aac291775abd30857f1e279236492d7e",
+    "state_after_sha256": "4976b5df8089d026becbd7da0089a548aac291775abd30857f1e279236492d7e",
+    "note": "The 51 additional prose changes are triage leads, not 51 accepted rules. Old source/state dates remain intact; this audit backfills the missed paths explicitly."
+  },
+  "screen": {
+    "record": "../evals/experiments/queue-screen-2026-11-04.json",
+    "decision": "No new rule published; the nominal A/B win was not a baseline defect miss, and the clean oracle was incomplete.",
+    "sessions": 12,
+    "model": "claude-haiku-5-5",
+    "repeats_per_arm": 2,
+    "cli_reported_cost_usd": 0.04984213,
+    "held_out": false,
+    "scores_repaired": false
+  },
+  "review_evidence": [
+    {
+      "pr": 19121,
+      "comments": [
+        {
+          "id": 4279941446,
+          "url": "https://github.com/shopware/shopware/pull/19121#discussion_r4279941446"
+        }
+      ]
+    },
+    {
+      "pr": 19474,
+      "comments": [
+        {
+          "id": 4386283571,
+          "url": "https://github.com/shopware/shopware/pull/19474#discussion_r4386283571"
+        },
+        {
+          "id": 4411845556,
+          "url": "https://github.com/shopware/shopware/pull/19474#discussion_r4411845556"
+        },
+        {
+          "id": 4411182628,
+          "url": "https://github.com/shopware/shopware/pull/19474#discussion_r4411182628"
+        },
+        {
+          "id": 4411213776,
+          "url": "https://github.com/shopware/shopware/pull/19474#discussion_r4411213776"
+        }
+      ]
+    },
+    {
+      "pr": 19940,
+      "comments": [
+        {
+          "id": 4388583984,
+          "url": "https://github.com/shopware/shopware/pull/19940#discussion_r4388583984"
+        }
+      ]
+    },
+    {
+      "pr": 19985,
+      "comments": [
+        {
+          "id": 4434410158,
+          "url": "https://github.com/shopware/shopware/pull/19985#discussion_r4434410158"
+        },
+        {
+          "id": 4434410159,
+          "url": "https://github.com/shopware/shopware/pull/19985#discussion_r4434410159"
+        },
+        {
+          "id": 4434410162,
+          "url": "https://github.com/shopware/shopware/pull/19985#discussion_r4434410162"
+        }
+      ]
+    },
+    {
+      "pr": 20478,
+      "comments": [
+        {
+          "id": 4292657621,
+          "url": "https://github.com/shopware/shopware/pull/20478#discussion_r4292657621"
+        }
+      ]
+    },
+    {
+      "pr": 20615,
+      "comments": [
+        {
+          "id": 4270292079,
+          "url": "https://github.com/shopware/shopware/pull/20615#discussion_r4270292079"
+        },
+        {
+          "id": 4270295939,
+          "url": "https://github.com/shopware/shopware/pull/20615#discussion_r4270295939"
+        }
+      ]
+    },
+    {
+      "pr": 20742,
+      "comments": [
+        {
+          "id": 4091543269,
+          "url": "https://github.com/shopware/shopware/pull/20742#discussion_r4091543269"
+        },
+        {
+          "id": 4091550601,
+          "url": "https://github.com/shopware/shopware/pull/20742#discussion_r4091550601"
+        },
+        {
+          "id": 4402194206,
+          "url": "https://github.com/shopware/shopware/pull/20742#discussion_r4402194206"
+        }
+      ]
+    },
+    {
+      "pr": 20934,
+      "comments": [
+        {
+          "id": 4271531244,
+          "url": "https://github.com/shopware/shopware/pull/20934#discussion_r4271531244"
+        }
+      ]
+    },
+    {
+      "pr": 20952,
+      "comments": [
+        {
+          "id": 4268670413,
+          "url": "https://github.com/shopware/shopware/pull/20952#discussion_r4268670413"
+        }
+      ]
+    },
+    {
+      "pr": 21086,
+      "comments": [
+        {
+          "id": 4316576411,
+          "url": "https://github.com/shopware/shopware/pull/21086#discussion_r4316576411"
+        }
+      ]
+    },
+    {
+      "pr": 21173,
+      "comments": [
+        {
+          "id": 4244443616,
+          "url": "https://github.com/shopware/shopware/pull/21173#discussion_r4244443616"
+        },
+        {
+          "id": 4410235956,
+          "url": "https://github.com/shopware/shopware/pull/21173#discussion_r4410235956"
+        },
+        {
+          "id": 4421487105,
+          "url": "https://github.com/shopware/shopware/pull/21173#discussion_r4421487105"
+        }
+      ]
+    },
+    {
+      "pr": 21178,
+      "comments": [
+        {
+          "id": 4324887951,
+          "url": "https://github.com/shopware/shopware/pull/21178#discussion_r4324887951"
+        },
+        {
+          "id": 4339710390,
+          "url": "https://github.com/shopware/shopware/pull/21178#discussion_r4339710390"
+        },
+        {
+          "id": 4339748542,
+          "url": "https://github.com/shopware/shopware/pull/21178#discussion_r4339748542"
+        },
+        {
+          "id": 4339790306,
+          "url": "https://github.com/shopware/shopware/pull/21178#discussion_r4339790306"
+        },
+        {
+          "id": 4339797148,
+          "url": "https://github.com/shopware/shopware/pull/21178#discussion_r4339797148"
+        },
+        {
+          "id": 4339807876,
+          "url": "https://github.com/shopware/shopware/pull/21178#discussion_r4339807876"
+        }
+      ]
+    },
+    {
+      "pr": 21186,
+      "comments": [
+        {
+          "id": 4329486854,
+          "url": "https://github.com/shopware/shopware/pull/21186#discussion_r4329486854"
+        },
+        {
+          "id": 4329756431,
+          "url": "https://github.com/shopware/shopware/pull/21186#discussion_r4329756431"
+        },
+        {
+          "id": 4329828463,
+          "url": "https://github.com/shopware/shopware/pull/21186#discussion_r4329828463"
+        }
+      ]
+    },
+    {
+      "pr": 21295,
+      "comments": [
+        {
+          "id": 4270262680,
+          "url": "https://github.com/shopware/shopware/pull/21295#discussion_r4270262680"
+        }
+      ]
+    },
+    {
+      "pr": 21359,
+      "comments": [
+        {
+          "id": 4271772354,
+          "url": "https://github.com/shopware/shopware/pull/21359#discussion_r4271772354"
+        }
+      ]
+    },
+    {
+      "pr": 21389,
+      "comments": [
+        {
+          "id": 4268233274,
+          "url": "https://github.com/shopware/shopware/pull/21389#discussion_r4268233274"
+        },
+        {
+          "id": 4280411340,
+          "url": "https://github.com/shopware/shopware/pull/21389#discussion_r4280411340"
+        },
+        {
+          "id": 4280411792,
+          "url": "https://github.com/shopware/shopware/pull/21389#discussion_r4280411792"
+        },
+        {
+          "id": 4280412248,
+          "url": "https://github.com/shopware/shopware/pull/21389#discussion_r4280412248"
+        },
+        {
+          "id": 4282498592,
+          "url": "https://github.com/shopware/shopware/pull/21389#discussion_r4282498592"
+        }
+      ]
+    },
+    {
+      "pr": 21417,
+      "comments": [
+        {
+          "id": 4403889218,
+          "url": "https://github.com/shopware/shopware/pull/21417#discussion_r4403889218"
+        }
+      ]
+    },
+    {
+      "pr": 21444,
+      "comments": [
+        {
+          "id": 4267884328,
+          "url": "https://github.com/shopware/shopware/pull/21444#discussion_r4267884328"
+        },
+        {
+          "id": 4267905554,
+          "url": "https://github.com/shopware/shopware/pull/21444#discussion_r4267905554"
+        }
+      ]
+    },
+    {
+      "pr": 21450,
+      "comments": [
+        {
+          "id": 4314299854,
+          "url": "https://github.com/shopware/shopware/pull/21450#discussion_r4314299854"
+        }
+      ]
+    },
+    {
+      "pr": 21455,
+      "comments": [
+        {
+          "id": 4269841347,
+          "url": "https://github.com/shopware/shopware/pull/21455#discussion_r4269841347"
+        },
+        {
+          "id": 4315307693,
+          "url": "https://github.com/shopware/shopware/pull/21455#discussion_r4315307693"
+        },
+        {
+          "id": 4316049544,
+          "url": "https://github.com/shopware/shopware/pull/21455#discussion_r4316049544"
+        },
+        {
+          "id": 4316083555,
+          "url": "https://github.com/shopware/shopware/pull/21455#discussion_r4316083555"
+        },
+        {
+          "id": 4322904330,
+          "url": "https://github.com/shopware/shopware/pull/21455#discussion_r4322904330"
+        }
+      ]
+    },
+    {
+      "pr": 21491,
+      "comments": [
+        {
+          "id": 4280952315,
+          "url": "https://github.com/shopware/shopware/pull/21491#discussion_r4280952315"
+        },
+        {
+          "id": 4280971945,
+          "url": "https://github.com/shopware/shopware/pull/21491#discussion_r4280971945"
+        },
+        {
+          "id": 4280990590,
+          "url": "https://github.com/shopware/shopware/pull/21491#discussion_r4280990590"
+        },
+        {
+          "id": 4281023605,
+          "url": "https://github.com/shopware/shopware/pull/21491#discussion_r4281023605"
+        },
+        {
+          "id": 4292612544,
+          "url": "https://github.com/shopware/shopware/pull/21491#discussion_r4292612544"
+        },
+        {
+          "id": 4293136500,
+          "url": "https://github.com/shopware/shopware/pull/21491#discussion_r4293136500"
+        }
+      ]
+    },
+    {
+      "pr": 21497,
+      "comments": [
+        {
+          "id": 4314967150,
+          "url": "https://github.com/shopware/shopware/pull/21497#discussion_r4314967150"
+        },
+        {
+          "id": 4316625420,
+          "url": "https://github.com/shopware/shopware/pull/21497#discussion_r4316625420"
+        }
+      ]
+    },
+    {
+      "pr": 21565,
+      "comments": [
+        {
+          "id": 4268832806,
+          "url": "https://github.com/shopware/shopware/pull/21565#discussion_r4268832806"
+        }
+      ]
+    },
+    {
+      "pr": 21602,
+      "comments": [
+        {
+          "id": 4268596159,
+          "url": "https://github.com/shopware/shopware/pull/21602#discussion_r4268596159"
+        }
+      ]
+    },
+    {
+      "pr": 21606,
+      "comments": [
+        {
+          "id": 4359080079,
+          "url": "https://github.com/shopware/shopware/pull/21606#discussion_r4359080079"
+        },
+        {
+          "id": 4359087957,
+          "url": "https://github.com/shopware/shopware/pull/21606#discussion_r4359087957"
+        },
+        {
+          "id": 4391311369,
+          "url": "https://github.com/shopware/shopware/pull/21606#discussion_r4391311369"
+        },
+        {
+          "id": 4391361963,
+          "url": "https://github.com/shopware/shopware/pull/21606#discussion_r4391361963"
+        },
+        {
+          "id": 4391383370,
+          "url": "https://github.com/shopware/shopware/pull/21606#discussion_r4391383370"
+        },
+        {
+          "id": 4391474073,
+          "url": "https://github.com/shopware/shopware/pull/21606#discussion_r4391474073"
+        }
+      ]
+    },
+    {
+      "pr": 21608,
+      "comments": [
+        {
+          "id": 4359132564,
+          "url": "https://github.com/shopware/shopware/pull/21608#discussion_r4359132564"
+        },
+        {
+          "id": 4391594702,
+          "url": "https://github.com/shopware/shopware/pull/21608#discussion_r4391594702"
+        },
+        {
+          "id": 4391619471,
+          "url": "https://github.com/shopware/shopware/pull/21608#discussion_r4391619471"
+        }
+      ]
+    },
+    {
+      "pr": 21611,
+      "comments": [
+        {
+          "id": 4293594559,
+          "url": "https://github.com/shopware/shopware/pull/21611#discussion_r4293594559"
+        },
+        {
+          "id": 4293650238,
+          "url": "https://github.com/shopware/shopware/pull/21611#discussion_r4293650238"
+        },
+        {
+          "id": 4293659054,
+          "url": "https://github.com/shopware/shopware/pull/21611#discussion_r4293659054"
+        },
+        {
+          "id": 4293663702,
+          "url": "https://github.com/shopware/shopware/pull/21611#discussion_r4293663702"
+        },
+        {
+          "id": 4293699628,
+          "url": "https://github.com/shopware/shopware/pull/21611#discussion_r4293699628"
+        },
+        {
+          "id": 4293708790,
+          "url": "https://github.com/shopware/shopware/pull/21611#discussion_r4293708790"
+        },
+        {
+          "id": 4293716712,
+          "url": "https://github.com/shopware/shopware/pull/21611#discussion_r4293716712"
+        },
+        {
+          "id": 4293718424,
+          "url": "https://github.com/shopware/shopware/pull/21611#discussion_r4293718424"
+        },
+        {
+          "id": 4293765265,
+          "url": "https://github.com/shopware/shopware/pull/21611#discussion_r4293765265"
+        },
+        {
+          "id": 4359157525,
+          "url": "https://github.com/shopware/shopware/pull/21611#discussion_r4359157525"
+        },
+        {
+          "id": 4391728646,
+          "url": "https://github.com/shopware/shopware/pull/21611#discussion_r4391728646"
+        }
+      ]
+    },
+    {
+      "pr": 21617,
+      "comments": [
+        {
+          "id": 4278703465,
+          "url": "https://github.com/shopware/shopware/pull/21617#discussion_r4278703465"
+        },
+        {
+          "id": 4278716667,
+          "url": "https://github.com/shopware/shopware/pull/21617#discussion_r4278716667"
+        }
+      ]
+    },
+    {
+      "pr": 21623,
+      "comments": [
+        {
+          "id": 4270502549,
+          "url": "https://github.com/shopware/shopware/pull/21623#discussion_r4270502549"
+        }
+      ]
+    },
+    {
+      "pr": 21627,
+      "comments": [
+        {
+          "id": 4280555746,
+          "url": "https://github.com/shopware/shopware/pull/21627#discussion_r4280555746"
+        },
+        {
+          "id": 4283202146,
+          "url": "https://github.com/shopware/shopware/pull/21627#discussion_r4283202146"
+        },
+        {
+          "id": 4292055609,
+          "url": "https://github.com/shopware/shopware/pull/21627#discussion_r4292055609"
+        },
+        {
+          "id": 4292100682,
+          "url": "https://github.com/shopware/shopware/pull/21627#discussion_r4292100682"
+        },
+        {
+          "id": 4296332026,
+          "url": "https://github.com/shopware/shopware/pull/21627#discussion_r4296332026"
+        }
+      ]
+    },
+    {
+      "pr": 21629,
+      "comments": [
+        {
+          "id": 4281085170,
+          "url": "https://github.com/shopware/shopware/pull/21629#discussion_r4281085170"
+        },
+        {
+          "id": 4281085188,
+          "url": "https://github.com/shopware/shopware/pull/21629#discussion_r4281085188"
+        },
+        {
+          "id": 4282314125,
+          "url": "https://github.com/shopware/shopware/pull/21629#discussion_r4282314125"
+        }
+      ]
+    },
+    {
+      "pr": 21641,
+      "comments": [
+        {
+          "id": 4280420817,
+          "url": "https://github.com/shopware/shopware/pull/21641#discussion_r4280420817"
+        }
+      ]
+    },
+    {
+      "pr": 21665,
+      "comments": [
+        {
+          "id": 4285370140,
+          "url": "https://github.com/shopware/shopware/pull/21665#discussion_r4285370140"
+        },
+        {
+          "id": 4291933274,
+          "url": "https://github.com/shopware/shopware/pull/21665#discussion_r4291933274"
+        },
+        {
+          "id": 4291940226,
+          "url": "https://github.com/shopware/shopware/pull/21665#discussion_r4291940226"
+        },
+        {
+          "id": 4312843248,
+          "url": "https://github.com/shopware/shopware/pull/21665#discussion_r4312843248"
+        },
+        {
+          "id": 4312843257,
+          "url": "https://github.com/shopware/shopware/pull/21665#discussion_r4312843257"
+        },
+        {
+          "id": 4312843269,
+          "url": "https://github.com/shopware/shopware/pull/21665#discussion_r4312843269"
+        },
+        {
+          "id": 4334183281,
+          "url": "https://github.com/shopware/shopware/pull/21665#discussion_r4334183281"
+        }
+      ]
+    },
+    {
+      "pr": 21668,
+      "comments": [
+        {
+          "id": 4290399594,
+          "url": "https://github.com/shopware/shopware/pull/21668#discussion_r4290399594"
+        },
+        {
+          "id": 4290399596,
+          "url": "https://github.com/shopware/shopware/pull/21668#discussion_r4290399596"
+        },
+        {
+          "id": 4290399602,
+          "url": "https://github.com/shopware/shopware/pull/21668#discussion_r4290399602"
+        },
+        {
+          "id": 4311998489,
+          "url": "https://github.com/shopware/shopware/pull/21668#discussion_r4311998489"
+        },
+        {
+          "id": 4320914645,
+          "url": "https://github.com/shopware/shopware/pull/21668#discussion_r4320914645"
+        }
+      ]
+    },
+    {
+      "pr": 21670,
+      "comments": [
+        {
+          "id": 4284524895,
+          "url": "https://github.com/shopware/shopware/pull/21670#discussion_r4284524895"
+        }
+      ]
+    },
+    {
+      "pr": 21671,
+      "comments": [
+        {
+          "id": 4300279806,
+          "url": "https://github.com/shopware/shopware/pull/21671#discussion_r4300279806"
+        },
+        {
+          "id": 4300285905,
+          "url": "https://github.com/shopware/shopware/pull/21671#discussion_r4300285905"
+        }
+      ]
+    },
+    {
+      "pr": 21673,
+      "comments": [
+        {
+          "id": 4285272518,
+          "url": "https://github.com/shopware/shopware/pull/21673#discussion_r4285272518"
+        },
+        {
+          "id": 4288383665,
+          "url": "https://github.com/shopware/shopware/pull/21673#discussion_r4288383665"
+        },
+        {
+          "id": 4288383679,
+          "url": "https://github.com/shopware/shopware/pull/21673#discussion_r4288383679"
+        },
+        {
+          "id": 4288383688,
+          "url": "https://github.com/shopware/shopware/pull/21673#discussion_r4288383688"
+        },
+        {
+          "id": 4288383719,
+          "url": "https://github.com/shopware/shopware/pull/21673#discussion_r4288383719"
+        }
+      ]
+    },
+    {
+      "pr": 21676,
+      "comments": [
+        {
+          "id": 4291625302,
+          "url": "https://github.com/shopware/shopware/pull/21676#discussion_r4291625302"
+        }
+      ]
+    },
+    {
+      "pr": 21706,
+      "comments": [
+        {
+          "id": 4310776224,
+          "url": "https://github.com/shopware/shopware/pull/21706#discussion_r4310776224"
+        },
+        {
+          "id": 4310776238,
+          "url": "https://github.com/shopware/shopware/pull/21706#discussion_r4310776238"
+        }
+      ]
+    },
+    {
+      "pr": 21711,
+      "comments": [
+        {
+          "id": 4322690609,
+          "url": "https://github.com/shopware/shopware/pull/21711#discussion_r4322690609"
+        },
+        {
+          "id": 4322690781,
+          "url": "https://github.com/shopware/shopware/pull/21711#discussion_r4322690781"
+        }
+      ]
+    },
+    {
+      "pr": 21719,
+      "comments": [
+        {
+          "id": 4338210800,
+          "url": "https://github.com/shopware/shopware/pull/21719#discussion_r4338210800"
+        }
+      ]
+    },
+    {
+      "pr": 21721,
+      "comments": [
+        {
+          "id": 4348034968,
+          "url": "https://github.com/shopware/shopware/pull/21721#discussion_r4348034968"
+        },
+        {
+          "id": 4348068427,
+          "url": "https://github.com/shopware/shopware/pull/21721#discussion_r4348068427"
+        }
+      ]
+    },
+    {
+      "pr": 21725,
+      "comments": [
+        {
+          "id": 4337558607,
+          "url": "https://github.com/shopware/shopware/pull/21725#discussion_r4337558607"
+        },
+        {
+          "id": 4337638836,
+          "url": "https://github.com/shopware/shopware/pull/21725#discussion_r4337638836"
+        },
+        {
+          "id": 4386298851,
+          "url": "https://github.com/shopware/shopware/pull/21725#discussion_r4386298851"
+        }
+      ]
+    },
+    {
+      "pr": 21729,
+      "comments": [
+        {
+          "id": 4337870038,
+          "url": "https://github.com/shopware/shopware/pull/21729#discussion_r4337870038"
+        }
+      ]
+    },
+    {
+      "pr": 21730,
+      "comments": [
+        {
+          "id": 4338118876,
+          "url": "https://github.com/shopware/shopware/pull/21730#discussion_r4338118876"
+        }
+      ]
+    },
+    {
+      "pr": 21733,
+      "comments": [
+        {
+          "id": 4310388893,
+          "url": "https://github.com/shopware/shopware/pull/21733#discussion_r4310388893"
+        },
+        {
+          "id": 4310411028,
+          "url": "https://github.com/shopware/shopware/pull/21733#discussion_r4310411028"
+        }
+      ]
+    },
+    {
+      "pr": 21755,
+      "comments": [
+        {
+          "id": 4357640697,
+          "url": "https://github.com/shopware/shopware/pull/21755#discussion_r4357640697"
+        },
+        {
+          "id": 4357748581,
+          "url": "https://github.com/shopware/shopware/pull/21755#discussion_r4357748581"
+        },
+        {
+          "id": 4377212841,
+          "url": "https://github.com/shopware/shopware/pull/21755#discussion_r4377212841"
+        }
+      ]
+    },
+    {
+      "pr": 21759,
+      "comments": [
+        {
+          "id": 4332250216,
+          "url": "https://github.com/shopware/shopware/pull/21759#discussion_r4332250216"
+        }
+      ]
+    },
+    {
+      "pr": 21764,
+      "comments": [
+        {
+          "id": 4324256016,
+          "url": "https://github.com/shopware/shopware/pull/21764#discussion_r4324256016"
+        }
+      ]
+    },
+    {
+      "pr": 21770,
+      "comments": [
+        {
+          "id": 4399658304,
+          "url": "https://github.com/shopware/shopware/pull/21770#discussion_r4399658304"
+        },
+        {
+          "id": 4399794698,
+          "url": "https://github.com/shopware/shopware/pull/21770#discussion_r4399794698"
+        }
+      ]
+    },
+    {
+      "pr": 21779,
+      "comments": [
+        {
+          "id": 4348458773,
+          "url": "https://github.com/shopware/shopware/pull/21779#discussion_r4348458773"
+        }
+      ]
+    },
+    {
+      "pr": 21781,
+      "comments": [
+        {
+          "id": 4322376864,
+          "url": "https://github.com/shopware/shopware/pull/21781#discussion_r4322376864"
+        }
+      ]
+    },
+    {
+      "pr": 21783,
+      "comments": [
+        {
+          "id": 4315123523,
+          "url": "https://github.com/shopware/shopware/pull/21783#discussion_r4315123523"
+        },
+        {
+          "id": 4322696556,
+          "url": "https://github.com/shopware/shopware/pull/21783#discussion_r4322696556"
+        },
+        {
+          "id": 4324903354,
+          "url": "https://github.com/shopware/shopware/pull/21783#discussion_r4324903354"
+        },
+        {
+          "id": 4325376003,
+          "url": "https://github.com/shopware/shopware/pull/21783#discussion_r4325376003"
+        },
+        {
+          "id": 4325426626,
+          "url": "https://github.com/shopware/shopware/pull/21783#discussion_r4325426626"
+        },
+        {
+          "id": 4325414022,
+          "url": "https://github.com/shopware/shopware/pull/21783#discussion_r4325414022"
+        }
+      ]
+    },
+    {
+      "pr": 21785,
+      "comments": [
+        {
+          "id": 4322837538,
+          "url": "https://github.com/shopware/shopware/pull/21785#discussion_r4322837538"
+        }
+      ]
+    },
+    {
+      "pr": 21788,
+      "comments": [
+        {
+          "id": 4323289632,
+          "url": "https://github.com/shopware/shopware/pull/21788#discussion_r4323289632"
+        }
+      ]
+    },
+    {
+      "pr": 21799,
+      "comments": [
+        {
+          "id": 4348459101,
+          "url": "https://github.com/shopware/shopware/pull/21799#discussion_r4348459101"
+        },
+        {
+          "id": 4348459113,
+          "url": "https://github.com/shopware/shopware/pull/21799#discussion_r4348459113"
+        },
+        {
+          "id": 4389034506,
+          "url": "https://github.com/shopware/shopware/pull/21799#discussion_r4389034506"
+        },
+        {
+          "id": 4389245901,
+          "url": "https://github.com/shopware/shopware/pull/21799#discussion_r4389245901"
+        },
+        {
+          "id": 4389348123,
+          "url": "https://github.com/shopware/shopware/pull/21799#discussion_r4389348123"
+        }
+      ]
+    },
+    {
+      "pr": 21800,
+      "comments": [
+        {
+          "id": 4325646281,
+          "url": "https://github.com/shopware/shopware/pull/21800#discussion_r4325646281"
+        },
+        {
+          "id": 4325669658,
+          "url": "https://github.com/shopware/shopware/pull/21800#discussion_r4325669658"
+        },
+        {
+          "id": 4325701455,
+          "url": "https://github.com/shopware/shopware/pull/21800#discussion_r4325701455"
+        }
+      ]
+    },
+    {
+      "pr": 21801,
+      "comments": [
+        {
+          "id": 4326826606,
+          "url": "https://github.com/shopware/shopware/pull/21801#discussion_r4326826606"
+        },
+        {
+          "id": 4326826637,
+          "url": "https://github.com/shopware/shopware/pull/21801#discussion_r4326826637"
+        },
+        {
+          "id": 4326826652,
+          "url": "https://github.com/shopware/shopware/pull/21801#discussion_r4326826652"
+        },
+        {
+          "id": 4326826659,
+          "url": "https://github.com/shopware/shopware/pull/21801#discussion_r4326826659"
+        },
+        {
+          "id": 4326826674,
+          "url": "https://github.com/shopware/shopware/pull/21801#discussion_r4326826674"
+        },
+        {
+          "id": 4326826683,
+          "url": "https://github.com/shopware/shopware/pull/21801#discussion_r4326826683"
+        },
+        {
+          "id": 4326826694,
+          "url": "https://github.com/shopware/shopware/pull/21801#discussion_r4326826694"
+        },
+        {
+          "id": 4326857503,
+          "url": "https://github.com/shopware/shopware/pull/21801#discussion_r4326857503"
+        },
+        {
+          "id": 4326980573,
+          "url": "https://github.com/shopware/shopware/pull/21801#discussion_r4326980573"
+        },
+        {
+          "id": 4334816359,
+          "url": "https://github.com/shopware/shopware/pull/21801#discussion_r4334816359"
+        },
+        {
+          "id": 4343421584,
+          "url": "https://github.com/shopware/shopware/pull/21801#discussion_r4343421584"
+        },
+        {
+          "id": 4343421590,
+          "url": "https://github.com/shopware/shopware/pull/21801#discussion_r4343421590"
+        },
+        {
+          "id": 4343421596,
+          "url": "https://github.com/shopware/shopware/pull/21801#discussion_r4343421596"
+        },
+        {
+          "id": 4343421574,
+          "url": "https://github.com/shopware/shopware/pull/21801#discussion_r4343421574"
+        },
+        {
+          "id": 4375762643,
+          "url": "https://github.com/shopware/shopware/pull/21801#discussion_r4375762643"
+        },
+        {
+          "id": 4376435549,
+          "url": "https://github.com/shopware/shopware/pull/21801#discussion_r4376435549"
+        },
+        {
+          "id": 4378804295,
+          "url": "https://github.com/shopware/shopware/pull/21801#discussion_r4378804295"
+        },
+        {
+          "id": 4379065698,
+          "url": "https://github.com/shopware/shopware/pull/21801#discussion_r4379065698"
+        },
+        {
+          "id": 4379132202,
+          "url": "https://github.com/shopware/shopware/pull/21801#discussion_r4379132202"
+        },
+        {
+          "id": 4388489708,
+          "url": "https://github.com/shopware/shopware/pull/21801#discussion_r4388489708"
+        },
+        {
+          "id": 4389913206,
+          "url": "https://github.com/shopware/shopware/pull/21801#discussion_r4389913206"
+        },
+        {
+          "id": 4389932353,
+          "url": "https://github.com/shopware/shopware/pull/21801#discussion_r4389932353"
+        },
+        {
+          "id": 4389943442,
+          "url": "https://github.com/shopware/shopware/pull/21801#discussion_r4389943442"
+        },
+        {
+          "id": 4389966613,
+          "url": "https://github.com/shopware/shopware/pull/21801#discussion_r4389966613"
+        }
+      ]
+    },
+    {
+      "pr": 21802,
+      "comments": [
+        {
+          "id": 4327942755,
+          "url": "https://github.com/shopware/shopware/pull/21802#discussion_r4327942755"
+        }
+      ]
+    },
+    {
+      "pr": 21806,
+      "comments": [
+        {
+          "id": 4465338663,
+          "url": "https://github.com/shopware/shopware/pull/21806#discussion_r4465338663"
+        },
+        {
+          "id": 4465340283,
+          "url": "https://github.com/shopware/shopware/pull/21806#discussion_r4465340283"
+        }
+      ]
+    },
+    {
+      "pr": 21813,
+      "comments": [
+        {
+          "id": 4332344546,
+          "url": "https://github.com/shopware/shopware/pull/21813#discussion_r4332344546"
+        }
+      ]
+    },
+    {
+      "pr": 21830,
+      "comments": [
+        {
+          "id": 4348459503,
+          "url": "https://github.com/shopware/shopware/pull/21830#discussion_r4348459503"
+        },
+        {
+          "id": 4389109455,
+          "url": "https://github.com/shopware/shopware/pull/21830#discussion_r4389109455"
+        },
+        {
+          "id": 4389109462,
+          "url": "https://github.com/shopware/shopware/pull/21830#discussion_r4389109462"
+        },
+        {
+          "id": 4389109479,
+          "url": "https://github.com/shopware/shopware/pull/21830#discussion_r4389109479"
+        }
+      ]
+    },
+    {
+      "pr": 21942,
+      "comments": [
+        {
+          "id": 4387001560,
+          "url": "https://github.com/shopware/shopware/pull/21942#discussion_r4387001560"
+        },
+        {
+          "id": 4387040468,
+          "url": "https://github.com/shopware/shopware/pull/21942#discussion_r4387040468"
+        }
+      ]
+    },
+    {
+      "pr": 21986,
+      "comments": [
+        {
+          "id": 4410172842,
+          "url": "https://github.com/shopware/shopware/pull/21986#discussion_r4410172842"
+        },
+        {
+          "id": 4410205837,
+          "url": "https://github.com/shopware/shopware/pull/21986#discussion_r4410205837"
+        },
+        {
+          "id": 4410219337,
+          "url": "https://github.com/shopware/shopware/pull/21986#discussion_r4410219337"
+        }
+      ]
+    },
+    {
+      "pr": 22012,
+      "comments": [
+        {
+          "id": 4419936771,
+          "url": "https://github.com/shopware/shopware/pull/22012#discussion_r4419936771"
+        }
+      ]
+    },
+    {
+      "pr": 22013,
+      "comments": [
+        {
+          "id": 4422444649,
+          "url": "https://github.com/shopware/shopware/pull/22013#discussion_r4422444649"
+        }
+      ]
+    },
+    {
+      "pr": 22020,
+      "comments": [
+        {
+          "id": 4388306261,
+          "url": "https://github.com/shopware/shopware/pull/22020#discussion_r4388306261"
+        },
+        {
+          "id": 4388524088,
+          "url": "https://github.com/shopware/shopware/pull/22020#discussion_r4388524088"
+        },
+        {
+          "id": 4388586109,
+          "url": "https://github.com/shopware/shopware/pull/22020#discussion_r4388586109"
+        },
+        {
+          "id": 4388606127,
+          "url": "https://github.com/shopware/shopware/pull/22020#discussion_r4388606127"
+        },
+        {
+          "id": 4388653832,
+          "url": "https://github.com/shopware/shopware/pull/22020#discussion_r4388653832"
+        },
+        {
+          "id": 4391205501,
+          "url": "https://github.com/shopware/shopware/pull/22020#discussion_r4391205501"
+        }
+      ]
+    },
+    {
+      "pr": 22021,
+      "comments": [
+        {
+          "id": 4375876955,
+          "url": "https://github.com/shopware/shopware/pull/22021#discussion_r4375876955"
+        }
+      ]
+    },
+    {
+      "pr": 22053,
+      "comments": [
+        {
+          "id": 4397692950,
+          "url": "https://github.com/shopware/shopware/pull/22053#discussion_r4397692950"
+        },
+        {
+          "id": 4397695774,
+          "url": "https://github.com/shopware/shopware/pull/22053#discussion_r4397695774"
+        },
+        {
+          "id": 4397702598,
+          "url": "https://github.com/shopware/shopware/pull/22053#discussion_r4397702598"
+        },
+        {
+          "id": 4397704550,
+          "url": "https://github.com/shopware/shopware/pull/22053#discussion_r4397704550"
+        },
+        {
+          "id": 4397707641,
+          "url": "https://github.com/shopware/shopware/pull/22053#discussion_r4397707641"
+        },
+        {
+          "id": 4397711872,
+          "url": "https://github.com/shopware/shopware/pull/22053#discussion_r4397711872"
+        },
+        {
+          "id": 4397715359,
+          "url": "https://github.com/shopware/shopware/pull/22053#discussion_r4397715359"
+        },
+        {
+          "id": 4443544152,
+          "url": "https://github.com/shopware/shopware/pull/22053#discussion_r4443544152"
+        },
+        {
+          "id": 4443544157,
+          "url": "https://github.com/shopware/shopware/pull/22053#discussion_r4443544157"
+        }
+      ]
+    },
+    {
+      "pr": 22056,
+      "comments": [
+        {
+          "id": 4401898323,
+          "url": "https://github.com/shopware/shopware/pull/22056#discussion_r4401898323"
+        }
+      ]
+    },
+    {
+      "pr": 22082,
+      "comments": [
+        {
+          "id": 4399091852,
+          "url": "https://github.com/shopware/shopware/pull/22082#discussion_r4399091852"
+        }
+      ]
+    },
+    {
+      "pr": 22094,
+      "comments": [
+        {
+          "id": 4393598565,
+          "url": "https://github.com/shopware/shopware/pull/22094#discussion_r4393598565"
+        }
+      ]
+    },
+    {
+      "pr": 22096,
+      "comments": [
+        {
+          "id": 4401681617,
+          "url": "https://github.com/shopware/shopware/pull/22096#discussion_r4401681617"
+        },
+        {
+          "id": 4401855536,
+          "url": "https://github.com/shopware/shopware/pull/22096#discussion_r4401855536"
+        },
+        {
+          "id": 4402124796,
+          "url": "https://github.com/shopware/shopware/pull/22096#discussion_r4402124796"
+        },
+        {
+          "id": 4421657747,
+          "url": "https://github.com/shopware/shopware/pull/22096#discussion_r4421657747"
+        }
+      ]
+    },
+    {
+      "pr": 22104,
+      "comments": [
+        {
+          "id": 4390033792,
+          "url": "https://github.com/shopware/shopware/pull/22104#discussion_r4390033792"
+        }
+      ]
+    },
+    {
+      "pr": 22122,
+      "comments": [
+        {
+          "id": 4424291492,
+          "url": "https://github.com/shopware/shopware/pull/22122#discussion_r4424291492"
+        },
+        {
+          "id": 4424308856,
+          "url": "https://github.com/shopware/shopware/pull/22122#discussion_r4424308856"
+        },
+        {
+          "id": 4424260875,
+          "url": "https://github.com/shopware/shopware/pull/22122#discussion_r4424260875"
+        }
+      ]
+    },
+    {
+      "pr": 22128,
+      "comments": [
+        {
+          "id": 4414494554,
+          "url": "https://github.com/shopware/shopware/pull/22128#discussion_r4414494554"
+        },
+        {
+          "id": 4414708443,
+          "url": "https://github.com/shopware/shopware/pull/22128#discussion_r4414708443"
+        }
+      ]
+    },
+    {
+      "pr": 22176,
+      "comments": [
+        {
+          "id": 4444787381,
+          "url": "https://github.com/shopware/shopware/pull/22176#discussion_r4444787381"
+        }
+      ]
+    },
+    {
+      "pr": 22182,
+      "comments": [
+        {
+          "id": 4413293908,
+          "url": "https://github.com/shopware/shopware/pull/22182#discussion_r4413293908"
+        },
+        {
+          "id": 4413333345,
+          "url": "https://github.com/shopware/shopware/pull/22182#discussion_r4413333345"
+        }
+      ]
+    },
+    {
+      "pr": 22185,
+      "comments": [
+        {
+          "id": 4420039878,
+          "url": "https://github.com/shopware/shopware/pull/22185#discussion_r4420039878"
+        }
+      ]
+    },
+    {
+      "pr": 22187,
+      "comments": [
+        {
+          "id": 4432085134,
+          "url": "https://github.com/shopware/shopware/pull/22187#discussion_r4432085134"
+        },
+        {
+          "id": 4441331881,
+          "url": "https://github.com/shopware/shopware/pull/22187#discussion_r4441331881"
+        },
+        {
+          "id": 4441331896,
+          "url": "https://github.com/shopware/shopware/pull/22187#discussion_r4441331896"
+        }
+      ]
+    },
+    {
+      "pr": 22193,
+      "comments": [
+        {
+          "id": 4410648726,
+          "url": "https://github.com/shopware/shopware/pull/22193#discussion_r4410648726"
+        },
+        {
+          "id": 4410648745,
+          "url": "https://github.com/shopware/shopware/pull/22193#discussion_r4410648745"
+        },
+        {
+          "id": 4410648759,
+          "url": "https://github.com/shopware/shopware/pull/22193#discussion_r4410648759"
+        },
+        {
+          "id": 4410648778,
+          "url": "https://github.com/shopware/shopware/pull/22193#discussion_r4410648778"
+        },
+        {
+          "id": 4413380885,
+          "url": "https://github.com/shopware/shopware/pull/22193#discussion_r4413380885"
+        },
+        {
+          "id": 4413927380,
+          "url": "https://github.com/shopware/shopware/pull/22193#discussion_r4413927380"
+        },
+        {
+          "id": 4413927403,
+          "url": "https://github.com/shopware/shopware/pull/22193#discussion_r4413927403"
+        }
+      ]
+    },
+    {
+      "pr": 22194,
+      "comments": [
+        {
+          "id": 4410924939,
+          "url": "https://github.com/shopware/shopware/pull/22194#discussion_r4410924939"
+        }
+      ]
+    },
+    {
+      "pr": 22199,
+      "comments": [
+        {
+          "id": 4410215003,
+          "url": "https://github.com/shopware/shopware/pull/22199#discussion_r4410215003"
+        },
+        {
+          "id": 4410239717,
+          "url": "https://github.com/shopware/shopware/pull/22199#discussion_r4410239717"
+        },
+        {
+          "id": 4410262363,
+          "url": "https://github.com/shopware/shopware/pull/22199#discussion_r4410262363"
+        }
+      ]
+    },
+    {
+      "pr": 22213,
+      "comments": [
+        {
+          "id": 4414515145,
+          "url": "https://github.com/shopware/shopware/pull/22213#discussion_r4414515145"
+        }
+      ]
+    },
+    {
+      "pr": 22215,
+      "comments": [
+        {
+          "id": 4420032418,
+          "url": "https://github.com/shopware/shopware/pull/22215#discussion_r4420032418"
+        }
+      ]
+    },
+    {
+      "pr": 22225,
+      "comments": [
+        {
+          "id": 4421856772,
+          "url": "https://github.com/shopware/shopware/pull/22225#discussion_r4421856772"
+        },
+        {
+          "id": 4422314182,
+          "url": "https://github.com/shopware/shopware/pull/22225#discussion_r4422314182"
+        },
+        {
+          "id": 4422314195,
+          "url": "https://github.com/shopware/shopware/pull/22225#discussion_r4422314195"
+        },
+        {
+          "id": 4422314201,
+          "url": "https://github.com/shopware/shopware/pull/22225#discussion_r4422314201"
+        },
+        {
+          "id": 4422314208,
+          "url": "https://github.com/shopware/shopware/pull/22225#discussion_r4422314208"
+        },
+        {
+          "id": 4422314218,
+          "url": "https://github.com/shopware/shopware/pull/22225#discussion_r4422314218"
+        }
+      ]
+    },
+    {
+      "pr": 22226,
+      "comments": [
+        {
+          "id": 4413330474,
+          "url": "https://github.com/shopware/shopware/pull/22226#discussion_r4413330474"
+        },
+        {
+          "id": 4413350947,
+          "url": "https://github.com/shopware/shopware/pull/22226#discussion_r4413350947"
+        },
+        {
+          "id": 4413351979,
+          "url": "https://github.com/shopware/shopware/pull/22226#discussion_r4413351979"
+        },
+        {
+          "id": 4413357687,
+          "url": "https://github.com/shopware/shopware/pull/22226#discussion_r4413357687"
+        },
+        {
+          "id": 4413358877,
+          "url": "https://github.com/shopware/shopware/pull/22226#discussion_r4413358877"
+        }
+      ]
+    },
+    {
+      "pr": 22258,
+      "comments": [
+        {
+          "id": 4415917827,
+          "url": "https://github.com/shopware/shopware/pull/22258#discussion_r4415917827"
+        },
+        {
+          "id": 4415935420,
+          "url": "https://github.com/shopware/shopware/pull/22258#discussion_r4415935420"
+        }
+      ]
+    },
+    {
+      "pr": 22268,
+      "comments": [
+        {
+          "id": 4421216521,
+          "url": "https://github.com/shopware/shopware/pull/22268#discussion_r4421216521"
+        }
+      ]
+    },
+    {
+      "pr": 22270,
+      "comments": [
+        {
+          "id": 4421088123,
+          "url": "https://github.com/shopware/shopware/pull/22270#discussion_r4421088123"
+        }
+      ]
+    },
+    {
+      "pr": 22287,
+      "comments": [
+        {
+          "id": 4441099785,
+          "url": "https://github.com/shopware/shopware/pull/22287#discussion_r4441099785"
+        }
+      ]
+    },
+    {
+      "pr": 22308,
+      "comments": [
+        {
+          "id": 4423937790,
+          "url": "https://github.com/shopware/shopware/pull/22308#discussion_r4423937790"
+        }
+      ]
+    },
+    {
+      "pr": 22326,
+      "comments": [
+        {
+          "id": 4432114971,
+          "url": "https://github.com/shopware/shopware/pull/22326#discussion_r4432114971"
+        }
+      ]
+    },
+    {
+      "pr": 22329,
+      "comments": [
+        {
+          "id": 4453300586,
+          "url": "https://github.com/shopware/shopware/pull/22329#discussion_r4453300586"
+        },
+        {
+          "id": 4453317238,
+          "url": "https://github.com/shopware/shopware/pull/22329#discussion_r4453317238"
+        },
+        {
+          "id": 4453393766,
+          "url": "https://github.com/shopware/shopware/pull/22329#discussion_r4453393766"
+        }
+      ]
+    },
+    {
+      "pr": 22348,
+      "comments": [
+        {
+          "id": 4442985714,
+          "url": "https://github.com/shopware/shopware/pull/22348#discussion_r4442985714"
+        },
+        {
+          "id": 4442963043,
+          "url": "https://github.com/shopware/shopware/pull/22348#discussion_r4442963043"
+        }
+      ]
+    },
+    {
+      "pr": 22396,
+      "comments": [
+        {
+          "id": 4452002946,
+          "url": "https://github.com/shopware/shopware/pull/22396#discussion_r4452002946"
+        }
+      ]
+    },
+    {
+      "pr": 22423,
+      "comments": [
+        {
+          "id": 4453156781,
+          "url": "https://github.com/shopware/shopware/pull/22423#discussion_r4453156781"
+        },
+        {
+          "id": 4453156788,
+          "url": "https://github.com/shopware/shopware/pull/22423#discussion_r4453156788"
+        }
+      ]
+    }
+  ],
+  "pr_inventory": [
+    {
+      "number": 21736,
+      "title": "fix(core): keep out-of-stock variants inheriting clearance sale in the sitemap",
+      "merged_at": "2026-10-20T08:35:28Z",
+      "eligible_comments": 0,
+      "full_pr_snapshot_read": false
+    },
+    {
+      "number": 21413,
+      "title": "fix(core): report products deleted earlier in a sync request as deleted",
+      "merged_at": "2026-10-29T07:34:57Z",
+      "eligible_comments": 0,
+      "full_pr_snapshot_read": false
+    },
+    {
+      "number": 22100,
+      "title": "fix(storefront): Request renewed cookie consent only for newly added cookies",
+      "merged_at": "2026-11-04T10:14:46Z",
+      "eligible_comments": 0,
+      "full_pr_snapshot_read": false
+    },
+    {
+      "number": 21737,
+      "title": "fix(administration): give each search preference checkbox its own id",
+      "merged_at": "2026-10-20T15:08:05Z",
+      "eligible_comments": 0,
+      "full_pr_snapshot_read": false
+    },
+    {
+      "number": 21090,
+      "title": "fix(administration): keep keyboard selection in select result lists",
+      "merged_at": "2026-10-16T14:33:38Z",
+      "eligible_comments": 0,
+      "full_pr_snapshot_read": false
+    },
+    {
+      "number": 21417,
+      "title": "fix(core): report every level of a deleted tree as deleted",
+      "merged_at": "2026-11-03T14:36:14Z",
+      "eligible_comments": 1,
+      "full_pr_snapshot_read": false
+    },
+    {
+      "number": 21777,
+      "title": "fix(core): skip product line items without a product in stock updates",
+      "merged_at": "2026-10-23T02:36:25Z",
+      "eligible_comments": 0,
+      "full_pr_snapshot_read": false
+    },
+    {
+      "number": 22233,
+      "title": "fix(administration): exclude cancelled orders from dashboard statistics",
+      "merged_at": "2026-11-02T15:18:29Z",
+      "eligible_comments": 0,
+      "full_pr_snapshot_read": false
+    },
+    {
+      "number": 21086,
+      "title": "fix(core): set null references of entities removed by cascade deletes",
+      "merged_at": "2026-10-26T16:40:46Z",
+      "eligible_comments": 1,
+      "full_pr_snapshot_read": false
+    },
+    {
+      "number": 21806,
+      "title": "feat(administration): check unused files, exports and dependencies with Fallow",
+      "merged_at": "2026-11-04T07:37:43Z",
+      "eligible_comments": 2,
+      "full_pr_snapshot_read": false
+    },
+    {
+      "number": 21747,
+      "title": "ci: report code owners success only for the evaluated head",
+      "merged_at": "2026-11-04T10:54:07Z",
+      "eligible_comments": 0,
+      "full_pr_snapshot_read": false
+    },
+    {
+      "number": 20478,
+      "title": "chore(core): keep result subclasses in the EntitySearchResult hierarchy",
+      "merged_at": "2026-11-04T09:40:00Z",
+      "eligible_comments": 1,
+      "full_pr_snapshot_read": false
+    },
+    {
+      "number": 22266,
+      "title": "test(framework): add a PHPStan rule against @var annotations on StaticEntityRepository constructions",
+      "merged_at": "2026-11-04T09:29:15Z",
+      "eligible_comments": 0,
+      "full_pr_snapshot_read": true
+    },
+    {
+      "number": 22224,
+      "title": "fix(administration): keep update modal footer buttons in one row",
+      "merged_at": "2026-11-04T09:24:54Z",
+      "eligible_comments": 0,
+      "full_pr_snapshot_read": false
+    },
+    {
+      "number": 22432,
+      "title": "fix(storefront): return the current request from app.request",
+      "merged_at": "2026-11-04T08:08:37Z",
+      "eligible_comments": 0,
+      "full_pr_snapshot_read": false
+    },
+    {
+      "number": 22454,
+      "title": "refactor(api): list JSON responses first in OpenAPI",
+      "merged_at": "2026-11-04T04:11:27Z",
+      "eligible_comments": 0,
+      "full_pr_snapshot_read": false
+    },
+    {
+      "number": 22423,
+      "title": "fix(storefront): read forwarded order id on the checkout finish page",
+      "merged_at": "2026-11-04T03:50:36Z",
+      "eligible_comments": 2,
+      "full_pr_snapshot_read": false
+    },
+    {
+      "number": 21982,
+      "title": "fix(core): enforce restrict delete on many-to-many and composite-key associations",
+      "merged_at": "2026-11-04T01:30:19Z",
+      "eligible_comments": 0,
+      "full_pr_snapshot_read": false
+    },
+    {
+      "number": 21492,
+      "title": "feat(core): add a standard unit code to units",
+      "merged_at": "2026-11-04T01:21:44Z",
+      "eligible_comments": 0,
+      "full_pr_snapshot_read": false
+    },
+    {
+      "number": 21641,
+      "title": "fix(storefront): propagate theme saves through all inheritance levels",
+      "merged_at": "2026-10-16T08:24:51Z",
+      "eligible_comments": 1,
+      "full_pr_snapshot_read": false
+    },
+    {
+      "number": 22417,
+      "title": "fix: remove border of product group variant matching switch",
+      "merged_at": "2026-11-03T19:07:24Z",
+      "eligible_comments": 0,
+      "full_pr_snapshot_read": false
+    },
+    {
+      "number": 22425,
+      "title": "feat(administration): show app tabs in the media modal",
+      "merged_at": "2026-11-03T15:30:36Z",
+      "eligible_comments": 0,
+      "full_pr_snapshot_read": false
+    },
+    {
+      "number": 22333,
+      "title": "fix(core): check the config.xml of services for disallowed components",
+      "merged_at": "2026-11-03T15:05:23Z",
+      "eligible_comments": 0,
+      "full_pr_snapshot_read": false
+    },
+    {
+      "number": 22363,
+      "title": "feat(api): default Admin API responses to JSON in 6.8",
+      "merged_at": "2026-11-03T14:41:40Z",
+      "eligible_comments": 0,
+      "full_pr_snapshot_read": false
+    },
+    {
+      "number": 22260,
+      "title": "feat(core): make webhook owners readable through the API",
+      "merged_at": "2026-11-03T13:10:52Z",
+      "eligible_comments": 0,
+      "full_pr_snapshot_read": false
+    },
+    {
+      "number": 22430,
+      "title": "chore: Remove deprecated usage of PHP functions",
+      "merged_at": "2026-11-03T11:26:07Z",
+      "eligible_comments": 0,
+      "full_pr_snapshot_read": false
+    },
+    {
+      "number": 22329,
+      "title": "refactor(core): return app manifest validation errors as a result",
+      "merged_at": "2026-11-03T11:10:40Z",
+      "eligible_comments": 3,
+      "full_pr_snapshot_read": false
+    },
+    {
+      "number": 22360,
+      "title": "feat(administration): confirm before keeping the shop identifier",
+      "merged_at": "2026-11-03T10:56:31Z",
+      "eligible_comments": 0,
+      "full_pr_snapshot_read": false
+    },
+    {
+      "number": 22053,
+      "title": "fix: restore FTP sources for media upload by URL",
+      "merged_at": "2026-11-03T10:49:34Z",
+      "eligible_comments": 9,
+      "full_pr_snapshot_read": false
+    },
+    {
+      "number": 22364,
+      "title": "chore(administration): update meteor to 5.9.0",
+      "merged_at": "2026-11-03T10:26:08Z",
+      "eligible_comments": 0,
+      "full_pr_snapshot_read": false
+    },
+    {
+      "number": 21799,
+      "title": "fix: add filter synchronization with multiple filter panels on page",
+      "merged_at": "2026-10-28T08:01:24Z",
+      "eligible_comments": 5,
+      "full_pr_snapshot_read": false
+    },
+    {
+      "number": 22221,
+      "title": "fix(storefront): do not cache failed renderings of the 404 page",
+      "merged_at": "2026-11-03T08:35:02Z",
+      "eligible_comments": 0,
+      "full_pr_snapshot_read": false
+    },
+    {
+      "number": 22396,
+      "title": "fix(core): keep plugin installed until uninstall cleanup succeeds",
+      "merged_at": "2026-11-03T08:21:22Z",
+      "eligible_comments": 1,
+      "full_pr_snapshot_read": true
+    },
+    {
+      "number": 19121,
+      "title": "fix: Restore Symfony service reset between requests",
+      "merged_at": "2026-10-30T16:10:04Z",
+      "eligible_comments": 1,
+      "full_pr_snapshot_read": true
+    },
+    {
+      "number": 22177,
+      "title": "fix(core): Log `CustomerNotLoggedInRoutingException` as notice",
+      "merged_at": "2026-10-30T15:55:13Z",
+      "eligible_comments": 0,
+      "full_pr_snapshot_read": false
+    },
+    {
+      "number": 22213,
+      "title": "fix(plugin-create): allow backslashes in plugin namespaces",
+      "merged_at": "2026-11-02T15:24:36Z",
+      "eligible_comments": 1,
+      "full_pr_snapshot_read": false
+    },
+    {
+      "number": 22270,
+      "title": "fix(administration): load currency before variants in overview modal",
+      "merged_at": "2026-11-03T04:51:59Z",
+      "eligible_comments": 1,
+      "full_pr_snapshot_read": false
+    },
+    {
+      "number": 22287,
+      "title": "fix(elasticsearch): drop the alias switch task of a deleted index",
+      "merged_at": "2026-11-03T03:52:53Z",
+      "eligible_comments": 1,
+      "full_pr_snapshot_read": false
+    },
+    {
+      "number": 22128,
+      "title": "fix(storefront): redirect language switch to the SEO URL of the new language",
+      "merged_at": "2026-11-03T03:48:16Z",
+      "eligible_comments": 2,
+      "full_pr_snapshot_read": false
+    },
+    {
+      "number": 22123,
+      "title": "fix(elasticsearch): handle custom fields without a set in the custom field updater",
+      "merged_at": "2026-11-03T03:40:31Z",
+      "eligible_comments": 0,
+      "full_pr_snapshot_read": false
+    },
+    {
+      "number": 22384,
+      "title": "fix(checkout): reject non-string guest credentials",
+      "merged_at": "2026-11-03T03:05:03Z",
+      "eligible_comments": 0,
+      "full_pr_snapshot_read": false
+    },
+    {
+      "number": 22176,
+      "title": "feat(core): add an APP_URL verification system check",
+      "merged_at": "2026-11-02T18:27:00Z",
+      "eligible_comments": 1,
+      "full_pr_snapshot_read": false
+    },
+    {
+      "number": 22388,
+      "title": "chore(ci): update acceptance test snapshots (docker)",
+      "merged_at": "2026-11-02T16:59:52Z",
+      "eligible_comments": 0,
+      "full_pr_snapshot_read": false
+    },
+    {
+      "number": 21291,
+      "title": "fix(administration): load all custom field sets of an entity",
+      "merged_at": "2026-11-02T15:35:55Z",
+      "eligible_comments": 0,
+      "full_pr_snapshot_read": false
+    },
+    {
+      "number": 22348,
+      "title": "fix(administration): avoid duplicate mail template attachment when sending order documents",
+      "merged_at": "2026-11-02T15:31:01Z",
+      "eligible_comments": 2,
+      "full_pr_snapshot_read": false
+    },
+    {
+      "number": 22284,
+      "title": "fix(storefront): respect CMS slider and gallery alignment",
+      "merged_at": "2026-11-02T15:27:24Z",
+      "eligible_comments": 0,
+      "full_pr_snapshot_read": false
+    },
+    {
+      "number": 22347,
+      "title": "fix(storefront): Keep CMS text alignment div full width",
+      "merged_at": "2026-11-02T14:55:30Z",
+      "eligible_comments": 0,
+      "full_pr_snapshot_read": false
+    },
+    {
+      "number": 22341,
+      "title": "fix(storefront): show hover frame on product slider arrows",
+      "merged_at": "2026-11-02T14:55:30Z",
+      "eligible_comments": 0,
+      "full_pr_snapshot_read": false
+    },
+    {
+      "number": 22295,
+      "title": "fix(api): index refresh tokens by user",
+      "merged_at": "2026-11-02T14:55:30Z",
+      "eligible_comments": 0,
+      "full_pr_snapshot_read": false
+    },
+    {
+      "number": 22289,
+      "title": "fix(administration): keep media added twice apart in the media list",
+      "merged_at": "2026-11-02T14:52:14Z",
+      "eligible_comments": 0,
+      "full_pr_snapshot_read": false
+    },
+    {
+      "number": 22357,
+      "title": "fix(framework): resolve npm audit failures for the 2026-10-30 advisories",
+      "merged_at": "2026-11-02T13:49:14Z",
+      "eligible_comments": 0,
+      "full_pr_snapshot_read": false
+    },
+    {
+      "number": 22013,
+      "title": "fix(core): keep previous SEO URLs when persisting sales channels",
+      "merged_at": "2026-11-02T13:28:35Z",
+      "eligible_comments": 1,
+      "full_pr_snapshot_read": false
+    },
+    {
+      "number": 22187,
+      "title": "fix(storefront): move the legal guarantee notice out of the privacy section",
+      "merged_at": "2026-11-02T12:21:19Z",
+      "eligible_comments": 3,
+      "full_pr_snapshot_read": false
+    },
+    {
+      "number": 22016,
+      "title": "fix(core): load canonical SEO URLs only of the persisted sales channels",
+      "merged_at": "2026-11-02T12:17:18Z",
+      "eligible_comments": 0,
+      "full_pr_snapshot_read": false
+    },
+    {
+      "number": 22079,
+      "title": "fix(framework): versioning bundle assets against the asset filesystem",
+      "merged_at": "2026-11-02T10:33:01Z",
+      "eligible_comments": 0,
+      "full_pr_snapshot_read": false
+    },
+    {
+      "number": 22326,
+      "title": "fix(administration): make the customer number editable on the customer detail page",
+      "merged_at": "2026-11-02T11:05:04Z",
+      "eligible_comments": 1,
+      "full_pr_snapshot_read": false
+    },
+    {
+      "number": 22268,
+      "title": "ci: remove needs-triage when a domain label is assigned",
+      "merged_at": "2026-11-02T09:53:11Z",
+      "eligible_comments": 1,
+      "full_pr_snapshot_read": false
+    },
+    {
+      "number": 22256,
+      "title": "fix(administration): update dependencies with npm audit advisories",
+      "merged_at": "2026-11-02T08:57:48Z",
+      "eligible_comments": 0,
+      "full_pr_snapshot_read": false
+    },
+    {
+      "number": 21568,
+      "title": "docs(framework): fix the ScalarValuesAware interface name in the flow storer ADR",
+      "merged_at": "2026-11-02T08:36:17Z",
+      "eligible_comments": 0,
+      "full_pr_snapshot_read": false
+    },
+    {
+      "number": 22145,
+      "title": "fix(core): check a product line item's product fields after the whole write",
+      "merged_at": "2026-11-02T07:22:26Z",
+      "eligible_comments": 0,
+      "full_pr_snapshot_read": false
+    },
+    {
+      "number": 22254,
+      "title": "fix(administration): apply every default sales channel to a new product",
+      "merged_at": "2026-11-02T06:54:35Z",
+      "eligible_comments": 0,
+      "full_pr_snapshot_read": false
+    },
+    {
+      "number": 19985,
+      "title": "fix(administration): limit bulk order transition concurrency",
+      "merged_at": "2026-11-02T04:38:15Z",
+      "eligible_comments": 3,
+      "full_pr_snapshot_read": false
+    },
+    {
+      "number": 22258,
+      "title": "fix(storefront): throw a domain exception when the default theme is missing",
+      "merged_at": "2026-11-02T03:38:35Z",
+      "eligible_comments": 2,
+      "full_pr_snapshot_read": false
+    },
+    {
+      "number": 22255,
+      "title": "perf(administration): check every sales channel assigned to a mail header and footer",
+      "merged_at": "2026-11-02T03:38:35Z",
+      "eligible_comments": 0,
+      "full_pr_snapshot_read": false
+    },
+    {
+      "number": 22253,
+      "title": "fix(administration): load every entity referenced by a flow",
+      "merged_at": "2026-11-02T03:37:49Z",
+      "eligible_comments": 0,
+      "full_pr_snapshot_read": false
+    },
+    {
+      "number": 22012,
+      "title": "fix(core): regenerate SEO URLs only for sales channels using the changed template",
+      "merged_at": "2026-11-02T02:36:10Z",
+      "eligible_comments": 1,
+      "full_pr_snapshot_read": false
+    },
+    {
+      "number": 22237,
+      "title": "fix(checkout): send refund positions to apps and declare their line item version",
+      "merged_at": "2026-10-30T15:49:26Z",
+      "eligible_comments": 0,
+      "full_pr_snapshot_read": false
+    },
+    {
+      "number": 22185,
+      "title": "perf(checkout): let the order list promotion code filter use an index",
+      "merged_at": "2026-10-30T15:46:07Z",
+      "eligible_comments": 1,
+      "full_pr_snapshot_read": false
+    },
+    {
+      "number": 22318,
+      "title": "chore(ci): update acceptance test snapshots (docker)",
+      "merged_at": "2026-10-30T15:34:11Z",
+      "eligible_comments": 0,
+      "full_pr_snapshot_read": false
+    },
+    {
+      "number": 22215,
+      "title": "fix(storefront): accept array redirect parameters in the address manager",
+      "merged_at": "2026-10-30T15:33:26Z",
+      "eligible_comments": 1,
+      "full_pr_snapshot_read": false
+    },
+    {
+      "number": 22122,
+      "title": "fix(mail): omit sensitive email content from logs",
+      "merged_at": "2026-10-30T15:31:39Z",
+      "eligible_comments": 3,
+      "full_pr_snapshot_read": true
+    },
+    {
+      "number": 22249,
+      "title": "fix(core): improve username validation errors",
+      "merged_at": "2026-10-30T15:21:24Z",
+      "eligible_comments": 0,
+      "full_pr_snapshot_read": false
+    },
+    {
+      "number": 21359,
+      "title": "feat(administration): let search types supply criteria and result link",
+      "merged_at": "2026-10-30T09:24:08Z",
+      "eligible_comments": 1,
+      "full_pr_snapshot_read": false
+    },
+    {
+      "number": 22282,
+      "title": "fix(core): align guest order and MCP attempt counters",
+      "merged_at": "2026-10-30T13:43:01Z",
+      "eligible_comments": 0,
+      "full_pr_snapshot_read": false
+    },
+    {
+      "number": 22308,
+      "title": "feat(core): remove deleted roles from webhooks and log refused deliveries",
+      "merged_at": "2026-10-30T13:30:55Z",
+      "eligible_comments": 1,
+      "full_pr_snapshot_read": false
+    },
+    {
+      "number": 22225,
+      "title": "fix(administration): select CMS layouts with radio buttons",
+      "merged_at": "2026-10-30T13:23:08Z",
+      "eligible_comments": 6,
+      "full_pr_snapshot_read": false
+    },
+    {
+      "number": 22269,
+      "title": "ci: list each PHPStan error once in the job log",
+      "merged_at": "2026-10-30T13:18:35Z",
+      "eligible_comments": 0,
+      "full_pr_snapshot_read": false
+    },
+    {
+      "number": 22296,
+      "title": "test(storefront): render JSON-LD in the analytics event tests for the major lane",
+      "merged_at": "2026-10-30T12:45:25Z",
+      "eligible_comments": 0,
+      "full_pr_snapshot_read": false
+    },
+    {
+      "number": 21186,
+      "title": "perf(core): look up each locale once per plugin refresh",
+      "merged_at": "2026-10-29T10:43:07Z",
+      "eligible_comments": 3,
+      "full_pr_snapshot_read": false
+    },
+    {
+      "number": 22115,
+      "title": "fix: keep the cache tag versions across a service reset in tests",
+      "merged_at": "2026-10-30T11:37:15Z",
+      "eligible_comments": 0,
+      "full_pr_snapshot_read": false
+    },
+    {
+      "number": 22014,
+      "title": "fix(administration): stop loading all visibilities when using dynamic product groups",
+      "merged_at": "2026-10-26T08:35:20Z",
+      "eligible_comments": 0,
+      "full_pr_snapshot_read": false
+    },
+    {
+      "number": 22267,
+      "title": "test: remove the @var annotations on StaticEntityRepository constructions",
+      "merged_at": "2026-10-30T11:20:41Z",
+      "eligible_comments": 0,
+      "full_pr_snapshot_read": false
+    },
+    {
+      "number": 22193,
+      "title": "fix(checkout): pass the validated address to address validation listeners",
+      "merged_at": "2026-10-30T10:47:52Z",
+      "eligible_comments": 7,
+      "full_pr_snapshot_read": false
+    },
+    {
+      "number": 22171,
+      "title": "fix(cache): honor cleared response cookies when generating cache keys",
+      "merged_at": "2026-10-30T10:31:33Z",
+      "eligible_comments": 0,
+      "full_pr_snapshot_read": false
+    },
+    {
+      "number": 22182,
+      "title": "fix(core): treat 0 in import CSV cells as a value",
+      "merged_at": "2026-10-30T10:11:46Z",
+      "eligible_comments": 2,
+      "full_pr_snapshot_read": false
+    },
+    {
+      "number": 21986,
+      "title": "fix(storefront): keep pathIdList option in NavbarPlugin",
+      "merged_at": "2026-10-30T10:04:21Z",
+      "eligible_comments": 3,
+      "full_pr_snapshot_read": false
+    },
+    {
+      "number": 22283,
+      "title": "fix: align default favicons with current branding",
+      "merged_at": "2026-10-30T09:58:52Z",
+      "eligible_comments": 0,
+      "full_pr_snapshot_read": false
+    },
+    {
+      "number": 21007,
+      "title": "feat(storefront): add triggerDeprecationOrThrow for JS deprecations",
+      "merged_at": "2026-10-30T09:53:39Z",
+      "eligible_comments": 0,
+      "full_pr_snapshot_read": false
+    },
+    {
+      "number": 21173,
+      "title": "fix(framework): return client error for invalid sync references",
+      "merged_at": "2026-10-30T09:51:41Z",
+      "eligible_comments": 3,
+      "full_pr_snapshot_read": false
+    },
+    {
+      "number": 22096,
+      "title": "fix(elasticsearch): never fail system:update:finish on an Elasticsearch error",
+      "merged_at": "2026-10-30T09:49:01Z",
+      "eligible_comments": 4,
+      "full_pr_snapshot_read": false
+    },
+    {
+      "number": 22226,
+      "title": "fix(core): trim identifiers in login rate limiter keys",
+      "merged_at": "2026-10-30T08:28:27Z",
+      "eligible_comments": 5,
+      "full_pr_snapshot_read": false
+    },
+    {
+      "number": 21956,
+      "title": "refactor(administration): use the empty state slot for the stats button",
+      "merged_at": "2026-10-30T09:35:04Z",
+      "eligible_comments": 0,
+      "full_pr_snapshot_read": false
+    },
+    {
+      "number": 21612,
+      "title": "feat(storefront): report select_item and the list of a product to analytics",
+      "merged_at": "2026-10-30T08:46:16Z",
+      "eligible_comments": 0,
+      "full_pr_snapshot_read": false
+    },
+    {
+      "number": 18089,
+      "title": "feat(framework): add configurable last-modified version strategy for theme assets",
+      "merged_at": "2026-10-30T07:40:23Z",
+      "eligible_comments": 0,
+      "full_pr_snapshot_read": false
+    },
+    {
+      "number": 22240,
+      "title": "feat(storefront): make product box information extendable",
+      "merged_at": "2026-10-30T04:15:39Z",
+      "eligible_comments": 0,
+      "full_pr_snapshot_read": false
+    },
+    {
+      "number": 21778,
+      "title": "fix(core): stop search score queries at circular associations",
+      "merged_at": "2026-10-30T03:21:59Z",
+      "eligible_comments": 0,
+      "full_pr_snapshot_read": false
+    },
+    {
+      "number": 19474,
+      "title": "feat(checkout): allow a fixed net price basis per customer group",
+      "merged_at": "2026-10-29T19:02:07Z",
+      "eligible_comments": 4,
+      "full_pr_snapshot_read": false
+    },
+    {
+      "number": 21611,
+      "title": "feat(storefront): request the analytics categories of products outside a category",
+      "merged_at": "2026-10-29T15:41:23Z",
+      "eligible_comments": 11,
+      "full_pr_snapshot_read": false
+    },
+    {
+      "number": 22056,
+      "title": "fix(framework): hydrate the primary key of partially loaded inverse one-to-one associations",
+      "merged_at": "2026-10-29T14:53:10Z",
+      "eligible_comments": 1,
+      "full_pr_snapshot_read": false
+    },
+    {
+      "number": 22094,
+      "title": "fix(core): check every write to a webhook in one Sync request",
+      "merged_at": "2026-10-29T14:56:45Z",
+      "eligible_comments": 1,
+      "full_pr_snapshot_read": false
+    },
+    {
+      "number": 22234,
+      "title": "test(import-export): freeze clock in download service tests",
+      "merged_at": "2026-10-29T14:22:41Z",
+      "eligible_comments": 0,
+      "full_pr_snapshot_read": false
+    },
+    {
+      "number": 21610,
+      "title": "fix(storefront): report item variants and graduated prices to analytics",
+      "merged_at": "2026-10-29T14:05:19Z",
+      "eligible_comments": 0,
+      "full_pr_snapshot_read": false
+    },
+    {
+      "number": 21609,
+      "title": "fix(storefront): report each analytics checkout step once",
+      "merged_at": "2026-10-29T13:23:51Z",
+      "eligible_comments": 0,
+      "full_pr_snapshot_read": false
+    },
+    {
+      "number": 22132,
+      "title": "fix(administration): Allow deleting the first rule-based shipping price",
+      "merged_at": "2026-10-29T11:52:08Z",
+      "eligible_comments": 0,
+      "full_pr_snapshot_read": false
+    },
+    {
+      "number": 22103,
+      "title": "fix(storefront): use link decoration variables for btn-link-inline",
+      "merged_at": "2026-10-29T12:50:41Z",
+      "eligible_comments": 0,
+      "full_pr_snapshot_read": false
+    },
+    {
+      "number": 22131,
+      "title": "fix: remove system_config ACL requirement for landing page update",
+      "merged_at": "2026-10-29T12:30:54Z",
+      "eligible_comments": 0,
+      "full_pr_snapshot_read": false
+    },
+    {
+      "number": 22135,
+      "title": "fix(core): keep external media URLs in media:update-path --force",
+      "merged_at": "2026-10-29T10:57:18Z",
+      "eligible_comments": 0,
+      "full_pr_snapshot_read": false
+    },
+    {
+      "number": 22188,
+      "title": "fix(storefront): select configured variant in CMS buy box",
+      "merged_at": "2026-10-29T10:54:52Z",
+      "eligible_comments": 0,
+      "full_pr_snapshot_read": false
+    },
+    {
+      "number": 22199,
+      "title": "chore(cms): Use thumbnails for background section images",
+      "merged_at": "2026-10-29T10:09:41Z",
+      "eligible_comments": 3,
+      "full_pr_snapshot_read": false
+    },
+    {
+      "number": 22194,
+      "title": "fix(checkout): clear stale fields when replacing an order address",
+      "merged_at": "2026-10-29T11:59:41Z",
+      "eligible_comments": 1,
+      "full_pr_snapshot_read": false
+    },
+    {
+      "number": 21608,
+      "title": "fix(storefront): post brand and category of product boxes to the cart for analytics",
+      "merged_at": "2026-10-29T11:12:46Z",
+      "eligible_comments": 3,
+      "full_pr_snapshot_read": false
+    },
+    {
+      "number": 22202,
+      "title": "fix(cms): Responsive CMS nav",
+      "merged_at": "2026-10-29T10:30:42Z",
+      "eligible_comments": 0,
+      "full_pr_snapshot_read": false
+    },
+    {
+      "number": 22186,
+      "title": "fix(storefront): let guests change their account type with their billing address",
+      "merged_at": "2026-10-29T10:11:20Z",
+      "eligible_comments": 0,
+      "full_pr_snapshot_read": false
+    },
+    {
+      "number": 22183,
+      "title": "test(framework): take the expected retry time from the rate limiter",
+      "merged_at": "2026-10-28T20:31:07Z",
+      "eligible_comments": 0,
+      "full_pr_snapshot_read": false
+    },
+    {
+      "number": 21607,
+      "title": "fix(storefront): read analytics product data from the product element",
+      "merged_at": "2026-10-29T09:00:56Z",
+      "eligible_comments": 0,
+      "full_pr_snapshot_read": false
+    },
+    {
+      "number": 21768,
+      "title": "fix(administration): copy override configs per component build",
+      "merged_at": "2026-10-27T17:31:14Z",
+      "eligible_comments": 0,
+      "full_pr_snapshot_read": false
+    },
+    {
+      "number": 21606,
+      "title": "fix(storefront): send GA4 ecommerce events in the documented format",
+      "merged_at": "2026-10-29T08:15:54Z",
+      "eligible_comments": 6,
+      "full_pr_snapshot_read": false
+    },
+    {
+      "number": 22169,
+      "title": "fix(core): remove the app communication notes from the app:url commands",
+      "merged_at": "2026-10-28T21:15:39Z",
+      "eligible_comments": 0,
+      "full_pr_snapshot_read": false
+    },
+    {
+      "number": 22151,
+      "title": "test(core): add assertions for whether a DAL write is accepted or rejected",
+      "merged_at": "2026-10-28T21:09:44Z",
+      "eligible_comments": 0,
+      "full_pr_snapshot_read": false
+    },
+    {
+      "number": 21746,
+      "title": "ci: dispatch the waiting-on update so cancelled runs stay off the pull request",
+      "merged_at": "2026-10-28T21:09:26Z",
+      "eligible_comments": 0,
+      "full_pr_snapshot_read": false
+    },
+    {
+      "number": 22134,
+      "title": "feat(core): add WriteOutcome::touchedRows() for every record a write touches",
+      "merged_at": "2026-10-28T18:28:30Z",
+      "eligible_comments": 0,
+      "full_pr_snapshot_read": false
+    },
+    {
+      "number": 22082,
+      "title": "fix(storefront): match blocked shipping and payment methods by id",
+      "merged_at": "2026-10-28T18:28:29Z",
+      "eligible_comments": 1,
+      "full_pr_snapshot_read": false
+    },
+    {
+      "number": 21785,
+      "title": "fix(storefront): define the breadcrumb Twig variable contract for 6.8",
+      "merged_at": "2026-10-28T14:33:40Z",
+      "eligible_comments": 1,
+      "full_pr_snapshot_read": false
+    },
+    {
+      "number": 20742,
+      "title": "fix(storefront): gate deprecated Twig variables and output",
+      "merged_at": "2026-10-19T14:33:46Z",
+      "eligible_comments": 3,
+      "full_pr_snapshot_read": false
+    },
+    {
+      "number": 22105,
+      "title": "fix(checkout): check every write to a customer for a unique email",
+      "merged_at": "2026-10-27T17:53:54Z",
+      "eligible_comments": 0,
+      "full_pr_snapshot_read": false
+    },
+    {
+      "number": 22084,
+      "title": "test(acceptance): mask timezone label in your profile visual test",
+      "merged_at": "2026-10-28T08:07:50Z",
+      "eligible_comments": 0,
+      "full_pr_snapshot_read": false
+    },
+    {
+      "number": 22106,
+      "title": "refactor(checkout): check the tax of each shipping method as it will be after the write",
+      "merged_at": "2026-10-27T18:31:19Z",
+      "eligible_comments": 0,
+      "full_pr_snapshot_read": false
+    },
+    {
+      "number": 21770,
+      "title": "test: Wishlist functionality between guest and logged in sessions",
+      "merged_at": "2026-10-28T11:31:27Z",
+      "eligible_comments": 2,
+      "full_pr_snapshot_read": false
+    },
+    {
+      "number": 21692,
+      "title": "test: add storefront test for landing pages",
+      "merged_at": "2026-10-28T11:24:09Z",
+      "eligible_comments": 0,
+      "full_pr_snapshot_read": false
+    },
+    {
+      "number": 22085,
+      "title": "chore(ci): update acceptance test snapshots (docker)",
+      "merged_at": "2026-10-28T10:57:45Z",
+      "eligible_comments": 0,
+      "full_pr_snapshot_read": false
+    },
+    {
+      "number": 21729,
+      "title": "feat(administration): stop new wrapper.vm access in specs",
+      "merged_at": "2026-10-28T09:24:28Z",
+      "eligible_comments": 1,
+      "full_pr_snapshot_read": true
+    },
+    {
+      "number": 22095,
+      "title": "fix(snippet): keep snippets with the value 0 out of the empty snippet filter",
+      "merged_at": "2026-10-28T08:55:19Z",
+      "eligible_comments": 0,
+      "full_pr_snapshot_read": false
+    },
+    {
+      "number": 21988,
+      "title": "fix(core): reset services between readiness probe requests",
+      "merged_at": "2026-10-28T08:53:00Z",
+      "eligible_comments": 0,
+      "full_pr_snapshot_read": false
+    },
+    {
+      "number": 22022,
+      "title": "fix(administration): target IPv4 for Vite extension proxies",
+      "merged_at": "2026-10-28T08:52:09Z",
+      "eligible_comments": 0,
+      "full_pr_snapshot_read": false
+    },
+    {
+      "number": 22108,
+      "title": "fix(core): restrict HTTP method overrides to form actions",
+      "merged_at": "2026-10-28T08:37:00Z",
+      "eligible_comments": 0,
+      "full_pr_snapshot_read": false
+    },
+    {
+      "number": 21730,
+      "title": "feat(administration): block new JavaScript files and mixins",
+      "merged_at": "2026-10-28T08:19:41Z",
+      "eligible_comments": 1,
+      "full_pr_snapshot_read": false
+    },
+    {
+      "number": 21793,
+      "title": "feat(inventory): publish product search and suggest extensions before resolving the criteria",
+      "merged_at": "2026-10-28T07:58:55Z",
+      "eligible_comments": 0,
+      "full_pr_snapshot_read": false
+    },
+    {
+      "number": 22004,
+      "title": "fix(administration): wrap multi-select values in rule conditions",
+      "merged_at": "2026-10-28T07:57:55Z",
+      "eligible_comments": 0,
+      "full_pr_snapshot_read": false
+    },
+    {
+      "number": 21830,
+      "title": "fix: provide bootstrap default offcanvas z-indexes in global css variables",
+      "merged_at": "2026-10-27T15:08:05Z",
+      "eligible_comments": 4,
+      "full_pr_snapshot_read": false
+    },
+    {
+      "number": 21728,
+      "title": "feat(administration): require a reason for every escape hatch",
+      "merged_at": "2026-10-28T07:33:51Z",
+      "eligible_comments": 0,
+      "full_pr_snapshot_read": true
+    },
+    {
+      "number": 21450,
+      "title": "fix(core): check entity privileges on the version endpoints",
+      "merged_at": "2026-10-28T07:18:05Z",
+      "eligible_comments": 1,
+      "full_pr_snapshot_read": false
+    },
+    {
+      "number": 22104,
+      "title": "perf(core): skip extension events nobody listens to",
+      "merged_at": "2026-10-27T22:06:58Z",
+      "eligible_comments": 1,
+      "full_pr_snapshot_read": false
+    },
+    {
+      "number": 21985,
+      "title": "fix(core): limit term search to fields the API exposes",
+      "merged_at": "2026-10-27T19:55:52Z",
+      "eligible_comments": 0,
+      "full_pr_snapshot_read": false
+    },
+    {
+      "number": 22020,
+      "title": "feat(core): validate writes against each record as it will be after the write",
+      "merged_at": "2026-10-27T17:09:25Z",
+      "eligible_comments": 6,
+      "full_pr_snapshot_read": false
+    },
+    {
+      "number": 20433,
+      "title": "feat(system-number-range): warn about colliding document number range patterns",
+      "merged_at": "2026-10-27T17:09:24Z",
+      "eligible_comments": 0,
+      "full_pr_snapshot_read": false
+    },
+    {
+      "number": 21727,
+      "title": "feat(administration): limit the size and complexity of new code",
+      "merged_at": "2026-10-27T16:18:40Z",
+      "eligible_comments": 0,
+      "full_pr_snapshot_read": true
+    },
+    {
+      "number": 21801,
+      "title": "fix(sales-channel): Unlimits product limit in group",
+      "merged_at": "2026-10-27T15:31:18Z",
+      "eligible_comments": 24,
+      "full_pr_snapshot_read": false
+    },
+    {
+      "number": 21980,
+      "title": "fix: Use exec command to register paste command",
+      "merged_at": "2026-10-27T15:05:32Z",
+      "eligible_comments": 0,
+      "full_pr_snapshot_read": false
+    },
+    {
+      "number": 21750,
+      "title": "fix: fix restoring cms inheritance on new element config fields",
+      "merged_at": "2026-10-20T08:52:10Z",
+      "eligible_comments": 0,
+      "full_pr_snapshot_read": false
+    },
+    {
+      "number": 21725,
+      "title": "feat(administration): add lint baselines that may only shrink",
+      "merged_at": "2026-10-27T14:52:07Z",
+      "eligible_comments": 3,
+      "full_pr_snapshot_read": true
+    },
+    {
+      "number": 21942,
+      "title": "fix(framework): send MCP SDK event streams after their headers",
+      "merged_at": "2026-10-27T14:49:43Z",
+      "eligible_comments": 2,
+      "full_pr_snapshot_read": false
+    },
+    {
+      "number": 22091,
+      "title": "fix(framework): delete system configuration by primary key",
+      "merged_at": "2026-10-27T14:49:43Z",
+      "eligible_comments": 0,
+      "full_pr_snapshot_read": false
+    },
+    {
+      "number": 19940,
+      "title": "fix(checkout): retry order state transitions on contention",
+      "merged_at": "2026-10-27T14:42:46Z",
+      "eligible_comments": 1,
+      "full_pr_snapshot_read": false
+    },
+    {
+      "number": 21764,
+      "title": "perf(checkout): stop rebuilding promotion redemptions on every order",
+      "merged_at": "2026-10-27T13:44:07Z",
+      "eligible_comments": 1,
+      "full_pr_snapshot_read": false
+    },
+    {
+      "number": 21723,
+      "title": "test(administration): replace .vm.$nextTick() with flushPromises() in specs",
+      "merged_at": "2026-10-27T13:44:07Z",
+      "eligible_comments": 0,
+      "full_pr_snapshot_read": false
+    },
+    {
+      "number": 21721,
+      "title": "fix(administration): check the emits of TypeScript components",
+      "merged_at": "2026-10-27T13:40:44Z",
+      "eligible_comments": 2,
+      "full_pr_snapshot_read": false
+    },
+    {
+      "number": 21719,
+      "title": "feat(administration): turn on lint rules that start without violations",
+      "merged_at": "2026-10-27T13:40:27Z",
+      "eligible_comments": 1,
+      "full_pr_snapshot_read": false
+    },
+    {
+      "number": 22001,
+      "title": "fix(administration): change the primary transaction in order bulk edit",
+      "merged_at": "2026-10-27T13:18:06Z",
+      "eligible_comments": 0,
+      "full_pr_snapshot_read": false
+    },
+    {
+      "number": 22021,
+      "title": "fix(core): handle missing conditions in rule containers",
+      "merged_at": "2026-10-27T10:48:07Z",
+      "eligible_comments": 1,
+      "full_pr_snapshot_read": false
+    },
+    {
+      "number": 22093,
+      "title": "test(core): expect the download output instead of buffering it",
+      "merged_at": "2026-10-27T12:21:53Z",
+      "eligible_comments": 0,
+      "full_pr_snapshot_read": false
+    },
+    {
+      "number": 21643,
+      "title": "fix(storefront): render the legal guarantee modal on the order payment page",
+      "merged_at": "2026-10-27T12:01:23Z",
+      "eligible_comments": 0,
+      "full_pr_snapshot_read": false
+    },
+    {
+      "number": 21952,
+      "title": "fix(administration): remove leftover vue compatConfig",
+      "merged_at": "2026-10-27T11:48:44Z",
+      "eligible_comments": 0,
+      "full_pr_snapshot_read": false
+    },
+    {
+      "number": 21542,
+      "title": "feat(core): uninstall services the registry lists as retired",
+      "merged_at": "2026-10-27T10:55:30Z",
+      "eligible_comments": 0,
+      "full_pr_snapshot_read": false
+    },
+    {
+      "number": 21800,
+      "title": "fix(core): only let a webhook's owner read its event log",
+      "merged_at": "2026-10-27T10:03:07Z",
+      "eligible_comments": 3,
+      "full_pr_snapshot_read": false
+    },
+    {
+      "number": 22088,
+      "title": "fix(devops): pin phpdoc-parser to 2.3.6",
+      "merged_at": "2026-10-27T09:51:12Z",
+      "eligible_comments": 0,
+      "full_pr_snapshot_read": false
+    },
+    {
+      "number": 22069,
+      "title": "ci: run private acceptance shards on 4-CPU runners",
+      "merged_at": "2026-10-26T16:32:04Z",
+      "eligible_comments": 0,
+      "full_pr_snapshot_read": false
+    },
+    {
+      "number": 22038,
+      "title": "test(framework): roll back the sales channels McpToolResultLinkTest creates",
+      "merged_at": "2026-10-26T15:08:12Z",
+      "eligible_comments": 0,
+      "full_pr_snapshot_read": false
+    },
+    {
+      "number": 21662,
+      "title": "chore(deps): update PHPStan Shopware extension to 0.2.5",
+      "merged_at": "2026-10-15T11:41:14Z",
+      "eligible_comments": 0,
+      "full_pr_snapshot_read": false
+    },
+    {
+      "number": 21767,
+      "title": "chore: add 6.7.17.0 (upcoming) section to RELEASE_INFO-6.7.md",
+      "merged_at": "2026-10-19T14:53:43Z",
+      "eligible_comments": 0,
+      "full_pr_snapshot_read": false
+    },
+    {
+      "number": 21689,
+      "title": "fix(core): answer criteria on fields the API does not expose with 400",
+      "merged_at": "2026-10-19T16:07:47Z",
+      "eligible_comments": 0,
+      "full_pr_snapshot_read": false
+    },
+    {
+      "number": 21691,
+      "title": "fix: stop repeating the field name in write-protection error pointers",
+      "merged_at": "2026-10-19T15:12:35Z",
+      "eligible_comments": 0,
+      "full_pr_snapshot_read": false
+    },
+    {
+      "number": 21771,
+      "title": "chore(tests): bump @shopware-ag/acceptance-test-suite to 12.24.1",
+      "merged_at": "2026-10-19T13:31:20Z",
+      "eligible_comments": 0,
+      "full_pr_snapshot_read": false
+    },
+    {
+      "number": 21755,
+      "title": "feat(framework): restrict application connections to single SQL statements",
+      "merged_at": "2026-10-26T14:03:55Z",
+      "eligible_comments": 3,
+      "full_pr_snapshot_read": false
+    },
+    {
+      "number": 21920,
+      "title": "fix: require media:read for existing mediaId in document-v2 upload",
+      "merged_at": "2026-10-26T13:48:56Z",
+      "eligible_comments": 0,
+      "full_pr_snapshot_read": false
+    },
+    {
+      "number": 21803,
+      "title": "test: cover CMS and landing page duplication via the clone API",
+      "merged_at": "2026-10-26T13:30:27Z",
+      "eligible_comments": 0,
+      "full_pr_snapshot_read": false
+    },
+    {
+      "number": 21744,
+      "title": "test(framework): run the plugin loader and lifecycle tests without a separate process",
+      "merged_at": "2026-10-26T11:39:47Z",
+      "eligible_comments": 0,
+      "full_pr_snapshot_read": false
+    },
+    {
+      "number": 22006,
+      "title": "chore(tests): bump @shopware-ag/acceptance-test-suite to 12.25.0",
+      "merged_at": "2026-10-26T13:25:03Z",
+      "eligible_comments": 0,
+      "full_pr_snapshot_read": false
+    },
+    {
+      "number": 21740,
+      "title": "ci(danger): fail unit and devops tests that run in a separate process",
+      "merged_at": "2026-10-26T12:39:16Z",
+      "eligible_comments": 0,
+      "full_pr_snapshot_read": false
+    },
+    {
+      "number": 21990,
+      "title": "ci(core): isolate label-triggered Commercial major tests",
+      "merged_at": "2026-10-26T10:45:27Z",
+      "eligible_comments": 0,
+      "full_pr_snapshot_read": false
+    },
+    {
+      "number": 22018,
+      "title": "ci: wait for the dpkg lock when retrying the Playwright install",
+      "merged_at": "2026-10-26T11:39:47Z",
+      "eligible_comments": 0,
+      "full_pr_snapshot_read": false
+    },
+    {
+      "number": 22024,
+      "title": "fix(framework): resolve nightly npm audit failures",
+      "merged_at": "2026-10-26T10:10:31Z",
+      "eligible_comments": 0,
+      "full_pr_snapshot_read": false
+    },
+    {
+      "number": 21743,
+      "title": "test(framework): replay the foreign default language migrations without a separate process",
+      "merged_at": "2026-10-26T10:58:51Z",
+      "eligible_comments": 0,
+      "full_pr_snapshot_read": false
+    },
+    {
+      "number": 21738,
+      "title": "test(framework): check the session rotation without a separate process",
+      "merged_at": "2026-10-26T10:31:04Z",
+      "eligible_comments": 0,
+      "full_pr_snapshot_read": false
+    },
+    {
+      "number": 22030,
+      "title": "fix(administration): ship the deprecation baseline with the Administration package",
+      "merged_at": "2026-10-26T10:13:00Z",
+      "eligible_comments": 0,
+      "full_pr_snapshot_read": false
+    },
+    {
+      "number": 21698,
+      "title": "feat(framework): allow NotFilter to negate a single filter",
+      "merged_at": "2026-10-26T08:56:28Z",
+      "eligible_comments": 0,
+      "full_pr_snapshot_read": false
+    },
+    {
+      "number": 21779,
+      "title": "fix(storefront): notify the async theme compilation completion only once",
+      "merged_at": "2026-10-26T07:55:06Z",
+      "eligible_comments": 1,
+      "full_pr_snapshot_read": true
+    },
+    {
+      "number": 21809,
+      "title": "test(framework): record searched criteria in StaticEntityRepository",
+      "merged_at": "2026-10-23T17:46:43Z",
+      "eligible_comments": 0,
+      "full_pr_snapshot_read": false
+    },
+    {
+      "number": 22003,
+      "title": "fix(administration): keep extension cards visible behind their loader",
+      "merged_at": "2026-10-23T13:57:23Z",
+      "eligible_comments": 0,
+      "full_pr_snapshot_read": false
+    },
+    {
+      "number": 21236,
+      "title": "fix(administration): make the product image context button visible",
+      "merged_at": "2026-10-23T12:35:40Z",
+      "eligible_comments": 0,
+      "full_pr_snapshot_read": false
+    },
+    {
+      "number": 21802,
+      "title": "fix(administration): sort order list deliveries like the detail page",
+      "merged_at": "2026-10-20T20:05:11Z",
+      "eligible_comments": 1,
+      "full_pr_snapshot_read": false
+    },
+    {
+      "number": 21261,
+      "title": "feat(administration): add module colours hint to UI shell update modal",
+      "merged_at": "2026-10-23T12:12:00Z",
+      "eligible_comments": 0,
+      "full_pr_snapshot_read": false
+    },
+    {
+      "number": 21491,
+      "title": "feat(administration): allow digital products without uploaded files",
+      "merged_at": "2026-10-19T07:22:38Z",
+      "eligible_comments": 6,
+      "full_pr_snapshot_read": false
+    },
+    {
+      "number": 21783,
+      "title": "fix(framework): keep environment variables out of the HTTP cache refresh message",
+      "merged_at": "2026-10-21T07:13:05Z",
+      "eligible_comments": 6,
+      "full_pr_snapshot_read": true
+    },
+    {
+      "number": 21955,
+      "title": "feat(storefront): add a title to the product description and review tabs",
+      "merged_at": "2026-10-23T09:26:12Z",
+      "eligible_comments": 0,
+      "full_pr_snapshot_read": false
+    },
+    {
+      "number": 21865,
+      "title": "fix(country): correct help text of VAT Reg.No. required switch (Admin)",
+      "merged_at": "2026-10-23T09:09:05Z",
+      "eligible_comments": 0,
+      "full_pr_snapshot_read": false
+    },
+    {
+      "number": 21774,
+      "title": "fix(storefront): keep the address manager modal within narrow screens",
+      "merged_at": "2026-10-23T07:30:44Z",
+      "eligible_comments": 0,
+      "full_pr_snapshot_read": false
+    },
+    {
+      "number": 21673,
+      "title": "feat(checkout): add configurable promotion code rate limiting",
+      "merged_at": "2026-10-23T08:24:38Z",
+      "eligible_comments": 5,
+      "full_pr_snapshot_read": false
+    },
+    {
+      "number": 21455,
+      "title": "feat(agent-skills): route topic guides into sw-review",
+      "merged_at": "2026-10-23T08:24:38Z",
+      "eligible_comments": 5,
+      "full_pr_snapshot_read": true
+    },
+    {
+      "number": 20972,
+      "title": "feat(core): verify APP_URL before registering with an app server",
+      "merged_at": "2026-10-23T08:18:51Z",
+      "eligible_comments": 0,
+      "full_pr_snapshot_read": false
+    },
+    {
+      "number": 21758,
+      "title": "fix(checkout): align context tax-free detection with the cart",
+      "merged_at": "2026-10-23T08:09:50Z",
+      "eligible_comments": 0,
+      "full_pr_snapshot_read": false
+    },
+    {
+      "number": 21665,
+      "title": "fix(core): store the GARAN label in the cart line item payload",
+      "merged_at": "2026-10-23T07:48:11Z",
+      "eligible_comments": 7,
+      "full_pr_snapshot_read": false
+    },
+    {
+      "number": 21676,
+      "title": "test(administration): add getter and setter for default active feature flags in jest",
+      "merged_at": "2026-10-23T07:26:31Z",
+      "eligible_comments": 1,
+      "full_pr_snapshot_read": false
+    },
+    {
+      "number": 21943,
+      "title": "chore: remove IE11 from issue templates",
+      "merged_at": "2026-10-22T15:57:21Z",
+      "eligible_comments": 0,
+      "full_pr_snapshot_read": false
+    },
+    {
+      "number": 21773,
+      "title": "fix(storefront): keep account context menus within narrow screens",
+      "merged_at": "2026-10-22T12:55:52Z",
+      "eligible_comments": 0,
+      "full_pr_snapshot_read": false
+    },
+    {
+      "number": 21775,
+      "title": "fix(storefront): keep quantity inputs readable on narrow screens",
+      "merged_at": "2026-10-22T12:55:52Z",
+      "eligible_comments": 0,
+      "full_pr_snapshot_read": false
+    },
+    {
+      "number": 21810,
+      "title": "fix(framework): fail RepositoryIterator::fetchIds() when the autoIncrement cursor is missing",
+      "merged_at": "2026-10-22T11:10:59Z",
+      "eligible_comments": 0,
+      "full_pr_snapshot_read": false
+    },
+    {
+      "number": 21178,
+      "title": "feat(core): report end-anchored regex patterns without the D modifier",
+      "merged_at": "2026-10-22T09:36:53Z",
+      "eligible_comments": 6,
+      "full_pr_snapshot_read": false
+    },
+    {
+      "number": 21858,
+      "title": "docs(agents): document the two-form rule for pluralized snippets",
+      "merged_at": "2026-10-22T09:13:32Z",
+      "eligible_comments": 0,
+      "full_pr_snapshot_read": true
+    },
+    {
+      "number": 21077,
+      "title": "fix(core): avoid rebuilding snippet path index after each file",
+      "merged_at": "2026-10-22T09:00:26Z",
+      "eligible_comments": 0,
+      "full_pr_snapshot_read": false
+    },
+    {
+      "number": 21852,
+      "title": "ci: check the PHPUnit extensions through PHP instead of php -m piped into grep",
+      "merged_at": "2026-10-22T08:40:44Z",
+      "eligible_comments": 0,
+      "full_pr_snapshot_read": false
+    },
+    {
+      "number": 21848,
+      "title": "fix(storefront): compile theme SCSS asynchronously in the Vite dev server",
+      "merged_at": "2026-10-22T08:31:17Z",
+      "eligible_comments": 0,
+      "full_pr_snapshot_read": false
+    },
+    {
+      "number": 21857,
+      "title": "test: wait for flow template listing before searching in FlowBuilderTemplates",
+      "merged_at": "2026-10-22T08:18:30Z",
+      "eligible_comments": 0,
+      "full_pr_snapshot_read": false
+    },
+    {
+      "number": 21792,
+      "title": "fix(core): skip remote thumbnails for SVGs",
+      "merged_at": "2026-10-22T08:14:42Z",
+      "eligible_comments": 0,
+      "full_pr_snapshot_read": false
+    },
+    {
+      "number": 21845,
+      "title": "ci: use runs-on for some jobs on private repo",
+      "merged_at": "2026-10-22T07:24:37Z",
+      "eligible_comments": 0,
+      "full_pr_snapshot_read": false
+    },
+    {
+      "number": 21759,
+      "title": "fix(checkout): block orders without VAT ID when the billing country requires one",
+      "merged_at": "2026-10-21T13:46:25Z",
+      "eligible_comments": 1,
+      "full_pr_snapshot_read": false
+    },
+    {
+      "number": 21627,
+      "title": "docs(github): restructure the pull request template",
+      "merged_at": "2026-10-21T12:57:44Z",
+      "eligible_comments": 5,
+      "full_pr_snapshot_read": false
+    },
+    {
+      "number": 21711,
+      "title": "feat(administration): add sw-empty-state migration codemod",
+      "merged_at": "2026-10-21T12:53:15Z",
+      "eligible_comments": 2,
+      "full_pr_snapshot_read": false
+    },
+    {
+      "number": 21816,
+      "title": "fix(administration): update digital product file requirements snippets",
+      "merged_at": "2026-10-21T11:53:18Z",
+      "eligible_comments": 0,
+      "full_pr_snapshot_read": false
+    },
+    {
+      "number": 21671,
+      "title": "fix(core): add the D modifier to end anchors in Regex constraints, Finder filters and alternations",
+      "merged_at": "2026-10-21T10:58:14Z",
+      "eligible_comments": 2,
+      "full_pr_snapshot_read": false
+    },
+    {
+      "number": 20698,
+      "title": "fix: require read privilege for referenced media in document v2 upload",
+      "merged_at": "2026-10-21T10:11:16Z",
+      "eligible_comments": 0,
+      "full_pr_snapshot_read": false
+    },
+    {
+      "number": 21772,
+      "title": "fix(framework): report MCP connect-URL toolsets as enabled",
+      "merged_at": "2026-10-21T09:56:29Z",
+      "eligible_comments": 0,
+      "full_pr_snapshot_read": false
+    },
+    {
+      "number": 21828,
+      "title": "fix(ci): resolve npm audit failures for the 2026-10-20 advisories",
+      "merged_at": "2026-10-21T09:29:18Z",
+      "eligible_comments": 0,
+      "full_pr_snapshot_read": false
+    },
+    {
+      "number": 21570,
+      "title": "chore(release-calendar): add 6.8 and update support dates",
+      "merged_at": "2026-10-21T09:13:38Z",
+      "eligible_comments": 0,
+      "full_pr_snapshot_read": false
+    },
+    {
+      "number": 21813,
+      "title": "fix(storefront): keep submitted profile data after a validation error",
+      "merged_at": "2026-10-21T08:40:41Z",
+      "eligible_comments": 1,
+      "full_pr_snapshot_read": false
+    },
+    {
+      "number": 21219,
+      "title": "ci: skip the release info reminder for pull requests confined to .github",
+      "merged_at": "2026-10-21T08:23:18Z",
+      "eligible_comments": 0,
+      "full_pr_snapshot_read": false
+    },
+    {
+      "number": 21428,
+      "title": "feat(administration): track digital product usage in analytics",
+      "merged_at": "2026-10-21T04:27:15Z",
+      "eligible_comments": 0,
+      "full_pr_snapshot_read": false
+    },
+    {
+      "number": 19690,
+      "title": "feat: customer group registration seo urls for headless sales channels",
+      "merged_at": "2026-10-20T19:45:32Z",
+      "eligible_comments": 0,
+      "full_pr_snapshot_read": false
+    },
+    {
+      "number": 21788,
+      "title": "fix(administration): disable VAT Reg.No. format check for countries without a pattern",
+      "merged_at": "2026-10-20T19:41:08Z",
+      "eligible_comments": 1,
+      "full_pr_snapshot_read": false
+    },
+    {
+      "number": 21637,
+      "title": "feat(core): add option to disable administration user password recovery",
+      "merged_at": "2026-10-20T17:58:17Z",
+      "eligible_comments": 0,
+      "full_pr_snapshot_read": false
+    },
+    {
+      "number": 21497,
+      "title": "fix(administration): prevent loading duplicate fallback snippets",
+      "merged_at": "2026-10-20T14:38:16Z",
+      "eligible_comments": 2,
+      "full_pr_snapshot_read": false
+    },
+    {
+      "number": 21734,
+      "title": "fix(administration): reload order documents when the order changes",
+      "merged_at": "2026-10-20T15:13:26Z",
+      "eligible_comments": 0,
+      "full_pr_snapshot_read": false
+    },
+    {
+      "number": 19917,
+      "title": "fix(storefront): probe only storefront-visible pages in readiness checks",
+      "merged_at": "2026-10-20T14:30:08Z",
+      "eligible_comments": 0,
+      "full_pr_snapshot_read": false
+    },
+    {
+      "number": 21668,
+      "title": "fix(core): strip brackets around words from search terms",
+      "merged_at": "2026-10-20T13:09:16Z",
+      "eligible_comments": 5,
+      "full_pr_snapshot_read": false
+    },
+    {
+      "number": 21389,
+      "title": "feat(administration): Vite 8 upgrade + HTTP/2 watcher + experimental bundled dev mode",
+      "merged_at": "2026-10-20T11:21:29Z",
+      "eligible_comments": 5,
+      "full_pr_snapshot_read": false
+    },
+    {
+      "number": 21548,
+      "title": "test: clean up data left behind by acceptance tests",
+      "merged_at": "2026-10-20T11:07:17Z",
+      "eligible_comments": 0,
+      "full_pr_snapshot_read": false
+    },
+    {
+      "number": 21781,
+      "title": "fix(administration): clear stale api errors when a delete starts",
+      "merged_at": "2026-10-20T09:41:33Z",
+      "eligible_comments": 1,
+      "full_pr_snapshot_read": false
+    },
+    {
+      "number": 21786,
+      "title": "fix(administration): restore match-all toggle for line item custom field condition",
+      "merged_at": "2026-10-20T09:06:05Z",
+      "eligible_comments": 0,
+      "full_pr_snapshot_read": false
+    },
+    {
+      "number": 21533,
+      "title": "test(core): share one helper for creating webhooks in tests",
+      "merged_at": "2026-10-20T08:51:52Z",
+      "eligible_comments": 0,
+      "full_pr_snapshot_read": false
+    },
+    {
+      "number": 21664,
+      "title": "fix(storefront): show email confirmation errors on the register form",
+      "merged_at": "2026-10-20T08:35:11Z",
+      "eligible_comments": 0,
+      "full_pr_snapshot_read": false
+    },
+    {
+      "number": 20663,
+      "title": "fix(administration): support mutation of state in sw-block extends",
+      "merged_at": "2026-10-20T08:06:04Z",
+      "eligible_comments": 0,
+      "full_pr_snapshot_read": false
+    },
+    {
+      "number": 21762,
+      "title": "fix(inventory): backfill product type of all older order line items",
+      "merged_at": "2026-10-20T07:56:59Z",
+      "eligible_comments": 0,
+      "full_pr_snapshot_read": false
+    },
+    {
+      "number": 21670,
+      "title": "ci: run major test lanes for fork PRs and gate the merge queue on them",
+      "merged_at": "2026-10-20T07:05:25Z",
+      "eligible_comments": 1,
+      "full_pr_snapshot_read": false
+    },
+    {
+      "number": 21527,
+      "title": "fix(administration): keep object injections when a later override uses array injections",
+      "merged_at": "2026-10-20T05:37:16Z",
+      "eligible_comments": 0,
+      "full_pr_snapshot_read": false
+    },
+    {
+      "number": 21123,
+      "title": "feat(core): limit API webhooks to some ACL roles, and harden webhook write checks",
+      "merged_at": "2026-10-20T03:40:49Z",
+      "eligible_comments": 0,
+      "full_pr_snapshot_read": false
+    },
+    {
+      "number": 21120,
+      "title": "fix(core): stop API callers from changing app-owned webhooks",
+      "merged_at": "2026-10-19T20:00:40Z",
+      "eligible_comments": 0,
+      "full_pr_snapshot_read": false
+    },
+    {
+      "number": 21117,
+      "title": "fix(core): authorize app-less webhooks against their owner",
+      "merged_at": "2026-10-19T18:29:53Z",
+      "eligible_comments": 0,
+      "full_pr_snapshot_read": false
+    },
+    {
+      "number": 20762,
+      "title": "fix(storefront): guard legacy order fallback reads",
+      "merged_at": "2026-10-19T14:33:46Z",
+      "eligible_comments": 0,
+      "full_pr_snapshot_read": false
+    },
+    {
+      "number": 21629,
+      "title": "feat(core): add sales-channel:file:enable command",
+      "merged_at": "2026-10-19T14:33:46Z",
+      "eligible_comments": 3,
+      "full_pr_snapshot_read": false
+    },
+    {
+      "number": 21756,
+      "title": "chore(core): remove obsolete deprecation reason markers",
+      "merged_at": "2026-10-19T13:39:55Z",
+      "eligible_comments": 0,
+      "full_pr_snapshot_read": false
+    },
+    {
+      "number": 19010,
+      "title": "feat(core): migrate app MCP capabilities to app feature storage",
+      "merged_at": "2026-10-19T12:15:06Z",
+      "eligible_comments": 0,
+      "full_pr_snapshot_read": false
+    },
+    {
+      "number": 21682,
+      "title": "fix(checkout): render documents when the twig service is decorated",
+      "merged_at": "2026-10-19T11:32:41Z",
+      "eligible_comments": 0,
+      "full_pr_snapshot_read": false
+    },
+    {
+      "number": 21733,
+      "title": "refactor(checkout): deprecate PromotionItemBuilder::buildPlaceholderItem()",
+      "merged_at": "2026-10-19T10:31:03Z",
+      "eligible_comments": 2,
+      "full_pr_snapshot_read": false
+    },
+    {
+      "number": 21654,
+      "title": "fix(framework): align MCP allowlist leftovers with explicit selection",
+      "merged_at": "2026-10-19T10:09:43Z",
+      "eligible_comments": 0,
+      "full_pr_snapshot_read": false
+    },
+    {
+      "number": 21541,
+      "title": "docs(coding-guidelines): add backward-compatibility and HTTP cache guidelines",
+      "merged_at": "2026-10-19T09:38:24Z",
+      "eligible_comments": 0,
+      "full_pr_snapshot_read": false
+    },
+    {
+      "number": 21706,
+      "title": "feat(sales-channel): Grouped snippet sets in domain selection",
+      "merged_at": "2026-10-19T08:53:33Z",
+      "eligible_comments": 2,
+      "full_pr_snapshot_read": false
+    },
+    {
+      "number": 21660,
+      "title": "fix(core): guard deprecated DAL construction without accessor notices",
+      "merged_at": "2026-10-19T08:27:00Z",
+      "eligible_comments": 0,
+      "full_pr_snapshot_read": false
+    },
+    {
+      "number": 20967,
+      "title": "fix(store-api): read all fields of the compressed _criteria parameter",
+      "merged_at": "2026-10-19T08:25:32Z",
+      "eligible_comments": 0,
+      "full_pr_snapshot_read": false
+    },
+    {
+      "number": 21624,
+      "title": "fix(administration): add catch-all route for Vue router with 404 error page",
+      "merged_at": "2026-10-19T07:44:53Z",
+      "eligible_comments": 0,
+      "full_pr_snapshot_read": false
+    },
+    {
+      "number": 21742,
+      "title": "fix(administration): allow profile creation in any content language",
+      "merged_at": "2026-10-19T07:43:31Z",
+      "eligible_comments": 0,
+      "full_pr_snapshot_read": false
+    },
+    {
+      "number": 21752,
+      "title": "test(acceptance): update Category-Layout visual snapshot",
+      "merged_at": "2026-10-19T07:15:25Z",
+      "eligible_comments": 0,
+      "full_pr_snapshot_read": false
+    },
+    {
+      "number": 21686,
+      "title": "fix: do not handle a missing list price as ratio 0 in list price rato rule",
+      "merged_at": "2026-10-19T05:05:28Z",
+      "eligible_comments": 0,
+      "full_pr_snapshot_read": false
+    },
+    {
+      "number": 21716,
+      "title": "chore(tests): bump @shopware-ag/acceptance-test-suite to 12.23.2",
+      "merged_at": "2026-10-19T03:37:40Z",
+      "eligible_comments": 0,
+      "full_pr_snapshot_read": false
+    },
+    {
+      "number": 21628,
+      "title": "ci: let a maintainer's reply flip a changes-requested pull request back to the author",
+      "merged_at": "2026-10-16T15:01:49Z",
+      "eligible_comments": 0,
+      "full_pr_snapshot_read": false
+    },
+    {
+      "number": 21623,
+      "title": "fix: allow checkout source rules in shipping and payment assignments",
+      "merged_at": "2026-10-16T13:45:58Z",
+      "eligible_comments": 1,
+      "full_pr_snapshot_read": false
+    },
+    {
+      "number": 21523,
+      "title": "fix(framework): build SSO login URLs from trusted origin",
+      "merged_at": "2026-10-16T12:25:00Z",
+      "eligible_comments": 0,
+      "full_pr_snapshot_read": false
+    },
+    {
+      "number": 20907,
+      "title": "fix(framework): keep the Twig escape cache with the escaper property Twig 3.30 compiles",
+      "merged_at": "2026-10-16T11:24:51Z",
+      "eligible_comments": 0,
+      "full_pr_snapshot_read": false
+    },
+    {
+      "number": 21681,
+      "title": "fix(administration): bump handlebars to 4.7.10 to resolve audit advisories",
+      "merged_at": "2026-10-16T09:14:31Z",
+      "eligible_comments": 0,
+      "full_pr_snapshot_read": false
+    },
+    {
+      "number": 21617,
+      "title": "fix(administration): use configured labels in product streams",
+      "merged_at": "2026-10-16T08:08:53Z",
+      "eligible_comments": 2,
+      "full_pr_snapshot_read": false
+    },
+    {
+      "number": 21329,
+      "title": "ci: queue code owners runs instead of cancelling them",
+      "merged_at": "2026-10-16T07:28:42Z",
+      "eligible_comments": 0,
+      "full_pr_snapshot_read": false
+    },
+    {
+      "number": 21659,
+      "title": "fix(media): apply CSP to static HTML and SVG assets",
+      "merged_at": "2026-10-16T07:20:25Z",
+      "eligible_comments": 0,
+      "full_pr_snapshot_read": false
+    },
+    {
+      "number": 21365,
+      "title": "feat(administration): show product number in product stream multi-select & style updates",
+      "merged_at": "2026-10-16T03:27:44Z",
+      "eligible_comments": 0,
+      "full_pr_snapshot_read": false
+    },
+    {
+      "number": 20713,
+      "title": "feat(checkout): add store-api route to reorder an order",
+      "merged_at": "2026-10-16T05:33:17Z",
+      "eligible_comments": 0,
+      "full_pr_snapshot_read": false
+    },
+    {
+      "number": 21293,
+      "title": "fix(administration): hide the currency suffix in product price grids",
+      "merged_at": "2026-10-16T03:39:54Z",
+      "eligible_comments": 0,
+      "full_pr_snapshot_read": false
+    },
+    {
+      "number": 21653,
+      "title": "fix(tests): wait for product listing in ProductSearch acceptance test",
+      "merged_at": "2026-10-16T02:57:10Z",
+      "eligible_comments": 0,
+      "full_pr_snapshot_read": false
+    },
+    {
+      "number": 21444,
+      "title": "feat: telemetry improvements",
+      "merged_at": "2026-10-15T20:25:20Z",
+      "eligible_comments": 2,
+      "full_pr_snapshot_read": false
+    },
+    {
+      "number": 21591,
+      "title": "fix(core): anchor end-of-string regex patterns with the D modifier (discovery, checkout, framework)",
+      "merged_at": "2026-10-15T19:08:22Z",
+      "eligible_comments": 0,
+      "full_pr_snapshot_read": false
+    },
+    {
+      "number": 21500,
+      "title": "fix(administration): deprecate the `snippets` property of admin modules",
+      "merged_at": "2026-10-15T15:03:45Z",
+      "eligible_comments": 0,
+      "full_pr_snapshot_read": false
+    },
+    {
+      "number": 21567,
+      "title": "docs(core): move the login required annotation ADR to superseded",
+      "merged_at": "2026-10-15T16:07:40Z",
+      "eligible_comments": 0,
+      "full_pr_snapshot_read": false
+    },
+    {
+      "number": 8418,
+      "title": "feat(checkout): move the open transaction to the new total on order recalculation",
+      "merged_at": "2026-10-15T16:05:25Z",
+      "eligible_comments": 0,
+      "full_pr_snapshot_read": false
+    },
+    {
+      "number": 21526,
+      "title": "fix(administration): postpone sw-empty-state removal to 6.9 and report deprecated usages",
+      "merged_at": "2026-10-15T15:28:31Z",
+      "eligible_comments": 0,
+      "full_pr_snapshot_read": false
+    },
+    {
+      "number": 21666,
+      "title": "test(content): write valid product reviews in the 6.8 integration lane",
+      "merged_at": "2026-10-15T14:03:01Z",
+      "eligible_comments": 0,
+      "full_pr_snapshot_read": false
+    },
+    {
+      "number": 20934,
+      "title": "fix(core): require a rating when saving a product review",
+      "merged_at": "2026-10-15T07:41:09Z",
+      "eligible_comments": 1,
+      "full_pr_snapshot_read": false
+    },
+    {
+      "number": 21438,
+      "title": "test: forbid assertions inside event hooks and describe how tests observe events",
+      "merged_at": "2026-10-15T10:18:20Z",
+      "eligible_comments": 0,
+      "full_pr_snapshot_read": false
+    },
+    {
+      "number": 21572,
+      "title": "ci(danger): fail every touched test file that covers more than one class",
+      "merged_at": "2026-10-15T09:28:38Z",
+      "eligible_comments": 0,
+      "full_pr_snapshot_read": false
+    },
+    {
+      "number": 21636,
+      "title": "fix: lowercase the app integration id from the request header",
+      "merged_at": "2026-10-15T09:23:05Z",
+      "eligible_comments": 0,
+      "full_pr_snapshot_read": false
+    },
+    {
+      "number": 21630,
+      "title": "fix: revert cms inheritance with system default language",
+      "merged_at": "2026-10-15T08:04:36Z",
+      "eligible_comments": 0,
+      "full_pr_snapshot_read": false
+    },
+    {
+      "number": 21601,
+      "title": "ci: retry and better error logging for getDX coverage push",
+      "merged_at": "2026-10-15T08:31:40Z",
+      "eligible_comments": 0,
+      "full_pr_snapshot_read": false
+    },
+    {
+      "number": 21602,
+      "title": "fix: Custom field type swap",
+      "merged_at": "2026-10-15T08:00:44Z",
+      "eligible_comments": 1,
+      "full_pr_snapshot_read": false
+    },
+    {
+      "number": 21620,
+      "title": "ci: notify on failed backports",
+      "merged_at": "2026-10-15T07:44:06Z",
+      "eligible_comments": 0,
+      "full_pr_snapshot_read": false
+    },
+    {
+      "number": 21172,
+      "title": "fix: scope the address validator cache per sales channel and reset the cache tag collector",
+      "merged_at": "2026-10-15T07:05:56Z",
+      "eligible_comments": 0,
+      "full_pr_snapshot_read": false
+    },
+    {
+      "number": 21019,
+      "title": "fix(checkout): add VAT ID constraints before customer.create validation event",
+      "merged_at": "2026-10-15T06:11:20Z",
+      "eligible_comments": 0,
+      "full_pr_snapshot_read": false
+    },
+    {
+      "number": 21616,
+      "title": "chore: bump ATS to 12.23.0",
+      "merged_at": "2026-10-15T03:55:06Z",
+      "eligible_comments": 0,
+      "full_pr_snapshot_read": false
+    },
+    {
+      "number": 21400,
+      "title": "refactor(framework): remove exception deprecation reason exemptions",
+      "merged_at": "2026-10-14T18:27:21Z",
+      "eligible_comments": 0,
+      "full_pr_snapshot_read": false
+    },
+    {
+      "number": 20952,
+      "title": "chore(framework): bump symfony/mcp-bundle to 0.14.1",
+      "merged_at": "2026-10-14T18:20:22Z",
+      "eligible_comments": 1,
+      "full_pr_snapshot_read": false
+    },
+    {
+      "number": 21323,
+      "title": "chore: PHPStan Update 10/2026",
+      "merged_at": "2026-10-14T16:38:15Z",
+      "eligible_comments": 0,
+      "full_pr_snapshot_read": false
+    },
+    {
+      "number": 21295,
+      "title": "fix(framework): notify MCP list changes through versions instead of a session registry",
+      "merged_at": "2026-10-14T14:21:41Z",
+      "eligible_comments": 1,
+      "full_pr_snapshot_read": false
+    },
+    {
+      "number": 20615,
+      "title": "feat: improve plugin create command",
+      "merged_at": "2026-10-14T14:06:33Z",
+      "eligible_comments": 2,
+      "full_pr_snapshot_read": false
+    },
+    {
+      "number": 20951,
+      "title": "feat(framework): link large MCP tool results with signed resource_link pointers",
+      "merged_at": "2026-10-14T13:26:35Z",
+      "eligible_comments": 0,
+      "full_pr_snapshot_read": false
+    },
+    {
+      "number": 21104,
+      "title": "fix(store-api): describe line item payloads per type and allow extension types",
+      "merged_at": "2026-10-14T11:52:32Z",
+      "eligible_comments": 0,
+      "full_pr_snapshot_read": false
+    },
+    {
+      "number": 21363,
+      "title": "feat(core): add event to extend the product cart data context hash",
+      "merged_at": "2026-10-14T10:24:27Z",
+      "eligible_comments": 0,
+      "full_pr_snapshot_read": false
+    },
+    {
+      "number": 20869,
+      "title": "fix(framework): let MCP remove many-to-many links through the mapping entity",
+      "merged_at": "2026-10-14T11:38:44Z",
+      "eligible_comments": 0,
+      "full_pr_snapshot_read": false
+    },
+    {
+      "number": 21271,
+      "title": "fix(storefront): postpone category Twig function removal to 6.9",
+      "merged_at": "2026-10-14T11:37:01Z",
+      "eligible_comments": 0,
+      "full_pr_snapshot_read": false
+    },
+    {
+      "number": 21529,
+      "title": "test: split checkout unit tests that cover more than one class",
+      "merged_at": "2026-10-14T11:26:04Z",
+      "eligible_comments": 0,
+      "full_pr_snapshot_read": false
+    },
+    {
+      "number": 21343,
+      "title": "test: forbid runtime listener changes on the shared event dispatcher in integration tests",
+      "merged_at": "2026-10-14T09:58:56Z",
+      "eligible_comments": 0,
+      "full_pr_snapshot_read": false
+    },
+    {
+      "number": 21565,
+      "title": "chore: Remove last gitlab references and fix links to XSD files",
+      "merged_at": "2026-10-14T09:50:25Z",
+      "eligible_comments": 1,
+      "full_pr_snapshot_read": false
+    },
+    {
+      "number": 21177,
+      "title": "fix(core): anchor end-of-string regex patterns with the D modifier (framework)",
+      "merged_at": "2026-10-14T09:43:53Z",
+      "eligible_comments": 0,
+      "full_pr_snapshot_read": false
+    },
+    {
+      "number": 20948,
+      "title": "feat(framework): render MCP tool results through a central result object",
+      "merged_at": "2026-10-14T09:40:48Z",
+      "eligible_comments": 0,
+      "full_pr_snapshot_read": false
+    },
+    {
+      "number": 21605,
+      "title": "docs: Improve AGENTS.md file",
+      "merged_at": "2026-10-14T09:39:23Z",
+      "eligible_comments": 0,
+      "full_pr_snapshot_read": false
+    },
+    {
+      "number": 21181,
+      "title": "fix(core): anchor end-of-string regex patterns with the D modifier (inventory)",
+      "merged_at": "2026-10-14T09:05:43Z",
+      "eligible_comments": 0,
+      "full_pr_snapshot_read": false
+    },
+    {
+      "number": 21599,
+      "title": "fix: Allow usage of arrow functions in extension events of store API routes",
+      "merged_at": "2026-10-14T08:44:15Z",
+      "eligible_comments": 0,
+      "full_pr_snapshot_read": false
+    },
+    {
+      "number": 21451,
+      "title": "fix(storefront): keep the GARAN label an order was placed within its lineitem payload",
+      "merged_at": "2026-10-14T08:39:35Z",
+      "eligible_comments": 0,
+      "full_pr_snapshot_read": false
+    },
+    {
+      "number": 21575,
+      "title": "ci: hand approved pull requests with open review threads to whoever wrote last",
+      "merged_at": "2026-10-14T08:23:07Z",
+      "eligible_comments": 0,
+      "full_pr_snapshot_read": false
+    },
+    {
+      "number": 20881,
+      "title": "fix(framework): offload large MCP results for every tool, and only where they can be read",
+      "merged_at": "2026-10-14T08:22:34Z",
+      "eligible_comments": 0,
+      "full_pr_snapshot_read": false
+    },
+    {
+      "number": 21550,
+      "title": "feat(custom-fields): Add snippet usage for storefront custom fields",
+      "merged_at": "2026-10-14T08:06:12Z",
+      "eligible_comments": 0,
+      "full_pr_snapshot_read": false
+    },
+    {
+      "number": 21593,
+      "title": "chore(ci): update acceptance test snapshots (docker)",
+      "merged_at": "2026-10-14T08:06:12Z",
+      "eligible_comments": 0,
+      "full_pr_snapshot_read": false
+    },
+    {
+      "number": 21387,
+      "title": "fix(administration): skip license checks for ddev.site domains",
+      "merged_at": "2026-10-14T08:06:12Z",
+      "eligible_comments": 0,
+      "full_pr_snapshot_read": false
+    },
+    {
+      "number": 20856,
+      "title": "fix(framework): add TTL cleanup for mcp_tool_result_cache",
+      "merged_at": "2026-10-14T08:06:12Z",
+      "eligible_comments": 0,
+      "full_pr_snapshot_read": false
+    },
+    {
+      "number": 21447,
+      "title": "ci: mirror waiting-on verdicts into team projects and update them per event",
+      "merged_at": "2026-10-14T07:47:34Z",
+      "eligible_comments": 0,
+      "full_pr_snapshot_read": false
+    },
+    {
+      "number": 21341,
+      "title": "test: hook into events instead of runtime listeners in after-sales integration tests",
+      "merged_at": "2026-10-14T07:29:08Z",
+      "eligible_comments": 0,
+      "full_pr_snapshot_read": false
+    },
+    {
+      "number": 20707,
+      "title": "feat(administration): support defineModel() in native setup blocks",
+      "merged_at": "2026-10-14T06:59:15Z",
+      "eligible_comments": 0,
+      "full_pr_snapshot_read": false
+    },
+    {
+      "number": 21525,
+      "title": "fix(checkout): align customer recovery hash flags",
+      "merged_at": "2026-10-14T06:44:14Z",
+      "eligible_comments": 0,
+      "full_pr_snapshot_read": false
+    }
+  ],
+  "validation": {
+    "status": "pass",
+    "tooling_tests": 537,
+    "ast_tests": 41,
+    "golden_cases": 662,
+    "golden_tasks": 227,
+    "new_review_tasks": 5,
+    "typecheck": "pass",
+    "lint": "pass",
+    "format": "pass",
+    "markdownlint": "pass",
+    "skill_validation": "pass",
+    "activation": "dry pass",
+    "skill_creator_quick_validation": "pass for four updated skill entrypoints",
+    "fixture_patch_application": "pass for five new fixtures",
+    "published_skills_removed": 0,
+    "new_active_rules": 0,
+    "github_mutations": false,
+    "github_ci_dispatched": false
+  },
+  "local_artifacts": "/private/tmp/skills-review-2026-11-04"
+}

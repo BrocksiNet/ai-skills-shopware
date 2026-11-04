@@ -14,8 +14,8 @@ Seeded from real reviews; grow as findings recur.
 - **REV-023** **Wrong context for storefront reads.** Using the plain `Context` /
   `product.repository` instead of the sales-channel context, so rules/pricing/
   availability are wrong.
-- **REV-024** **Raw SQL where the DAL would do.** Dropping to the connection for ordinary
-  entity reads/writes, losing events, extensions, and indexing.
+- Entity reads and writes through the DAL are owned by `PLG-003`; read
+  [dal-usage.md](../../sw-plugin-development/references/dal-usage.md).
 - **REV-033** **Inline fallback for queued work.** A subscriber or controller dispatches a
   message, and when dispatch fails or no transport is configured it runs the
   heavy work synchronously in the request instead. The fallback is the path

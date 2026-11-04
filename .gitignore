@@ -30,3 +30,9 @@ skills-lock.json
 
 # Rule suggestions from review signals (tools/bin/suggest-rules.ts); may quote private reviews
 suggestions/
+
+# Deterministic coverage and targeted mutation reports
+.stryker-tmp/
+tools/reports/
+tools/coverage/
+tools/api-index/coverage/

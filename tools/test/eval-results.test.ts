@@ -1,7 +1,8 @@
 import assert from 'node:assert/strict';
+import { readFileSync } from 'node:fs';
 import { describe, test } from 'node:test';
 import { diff, changePct } from '../src/eval-diff.ts';
-import { gate } from '../src/eval-gate.ts';
+import { gate, gateOptionsFromEnv } from '../src/eval-gate.ts';
 import { type AbResult, latestPerTask, parseResults } from '../src/eval-results.ts';
 
 const rec = (task: string, over: Partial<AbResult> = {}): AbResult => ({
@@ -47,6 +48,31 @@ describe('parseResults', () => {
   test('a line that is not JSON throws', () => {
     assert.throws(() => parseResults(`${JSON.stringify(improved)}\n{oops`), /line 2 is not JSON/u);
   });
+  test('trial statuses agree with their run-task exit codes', () => {
+    const base = { mode: 'on', repeat: 1, status: 'pass', exit_code: 0, duration_ms: 1, skills: null, tokens: null };
+    for (const [status, exit_code] of [
+      ['pass', 4],
+      ['pass', 1],
+      ['fail', 0],
+      ['fail', 5],
+      ['error', 0],
+      ['error', 1],
+      ['skipped', 0],
+    ] as const)
+      assert.throws(
+        () => parseResults(line({ trials: [{ ...base, status, exit_code }] })),
+        /trials/u,
+        `${status}/${exit_code}`,
+      );
+    for (const [status, exit_code] of [
+      ['pass', 0],
+      ['fail', 1],
+      ['error', 4],
+      ['error', 5],
+      ['skipped', 6],
+    ] as const)
+      assert.equal(parseResults(line({ trials: [{ ...base, status, exit_code }] })).length, 1);
+  });
   test('a record with a missing or mistyped field throws', () => {
     assert.throws(() => parseResults('{"task":"a"}'), /line 1: field 'repeats' is missing or mistyped/u);
     assert.throws(() => parseResults(line({ verdict: 'better' })), /field 'verdict'/u);
@@ -84,6 +110,14 @@ describe('gate', () => {
     const r = gate([held, error]);
     assert.equal(r.failed, true);
     assert.match(r.markdown, /agent errors/u);
+  });
+  test('the allowed error percentage is inclusive; exceeding it fails', () => {
+    const good = ['a', 'b', 'c'].map((task) => rec(task, { verdict: 'held', off: 2 }));
+    const boundary = gate([...good, error]);
+    assert.equal(boundary.failed, false, boundary.markdown);
+    const above = gate([good[0], good[1], error, { ...error, task: 'another-error' }].filter((r) => r !== undefined));
+    assert.equal(above.failed, true);
+    assert.match(above.markdown, /50 % of tasks ended in agent errors/u);
   });
   test('a pass rate below the gate fails', () => {
     const r = gate([rec('a', { on: 1, verdict: 'held', off: 1 }), held]);
@@ -173,4 +207,104 @@ describe('diff', () => {
     assert.equal(changePct(1000, 1000.5), 0.1);
     assert.equal(changePct(1000, 999.5), -0.1);
   });
+});
+
+test('gate environment options preserve defaults and accept explicit zero', () => {
+  assert.deepEqual(gateOptionsFromEnv({}), { minPassPct: 70, maxErrorPct: 25, minLoadPct: 50 });
+  assert.deepEqual(
+    gateOptionsFromEnv({ EVAL_GATE_MIN_PASS_PCT: '0', EVAL_GATE_MAX_ERROR_PCT: '0', EVAL_GATE_MIN_LOAD_PCT: '0' }),
+    { minPassPct: 0, maxErrorPct: 0, minLoadPct: 0 },
+  );
+  assert.deepEqual(
+    gateOptionsFromEnv({ EVAL_GATE_MIN_PASS_PCT: '80', EVAL_GATE_MAX_ERROR_PCT: '10', EVAL_GATE_MIN_LOAD_PCT: '90' }),
+    { minPassPct: 80, maxErrorPct: 10, minLoadPct: 90 },
+  );
+});
+
+describe('gate workflow boundaries', () => {
+  test('partial error runs do not inflate pass counts or skill-load rates', () => {
+    const partial = { ...error, on: 1, on_done: 1, loaded_on: 1 };
+    const result = gate([rec('healthy', { loaded_on: 0 }), partial], {
+      minPassPct: 70,
+      maxErrorPct: 50,
+      minLoadPct: 0,
+    });
+    assert.equal(result.failed, false, result.markdown);
+    assert.match(result.markdown, /full pass: \*\*1 \/ 1\*\* \(100 %/u);
+    assert.match(result.markdown, /loaded a task skill: \*\*0 \/ 2\*\* \(0 %/u);
+  });
+  test('load rates use run counts and include the exact passing boundary', () => {
+    const half = [rec('a', { loaded_on: 0 }), rec('b', { loaded_on: 2 })];
+    const at = gate(half);
+    assert.equal(at.failed, false, at.markdown);
+    assert.match(at.markdown, /loaded a task skill: \*\*2 \/ 4\*\* \(50 %/u);
+    const below = gate([half[0], rec('b', { loaded_on: 1 })].filter((r) => r !== undefined));
+    assert.equal(below.failed, true);
+    assert.match(below.markdown, /only 25 %/u);
+    assert.doesNotMatch(below.markdown, /Gate: \*\*PASS\*\*/u);
+  });
+  test('the exact full-pass threshold is accepted and the report names only worse tasks', () => {
+    const opts = { minPassPct: 50, maxErrorPct: 100, minLoadPct: 0 };
+    const result = gate([held, rec('a', { on: 1, off: 1, verdict: 'no_difference' })], opts);
+    assert.equal(result.failed, false);
+    assert.match(result.markdown, /full pass: \*\*1 \/ 2\*\* \(50 %/u);
+    const failed = gate([worse, held], { ...opts, minPassPct: 0 });
+    const failure = failed.markdown.slice(failed.markdown.indexOf('- **FAIL**'));
+    assert.match(failure, /got worse[\s\S]*`task-a`/u);
+    assert.doesNotMatch(failure.split('- Warning:')[0] ?? '', /`task-b`/u);
+  });
+  test('an all-error result has no graded success and no NaN percentages', () => {
+    const result = gate([error]);
+    assert.equal(result.failed, true);
+    assert.match(result.markdown, /full pass: \*\*0 \/ 0\*\* \(0 %/u);
+    assert.doesNotMatch(result.markdown, /NaN|loaded a task skill:|Gate: \*\*PASS\*\*/u);
+  });
+  test('ranked review rows put worse and errors before successes regardless of task name', () => {
+    const result = gate([
+      rec('a'),
+      { ...held, task: 'b' },
+      rec('c', { on: 1, verdict: 'no_difference' }),
+      { ...error, task: 'd' },
+      { ...worse, task: 'e' },
+    ]);
+    assert.deepEqual(
+      [...result.markdown.matchAll(/^\| `(\w)`/gmu)].map((m) => m[1]),
+      ['e', 'd', 'c', 'b', 'a'],
+    );
+  });
+  test('an improved task has no no-difference warning; a held task does', () => {
+    assert.doesNotMatch(gate([improved]).markdown, /show no difference/u);
+    const quiet = gate([held]).markdown;
+    assert.match(quiet, /show no difference.*does not establish equivalence/u);
+    assert.match(quiet, /`task-b` \(held\)/u);
+    assert.doesNotMatch(quiet, /skill never loaded/u);
+  });
+});
+
+// A GitHub summary is a user-facing artifact: missing tables, misplaced task
+// evidence or anonymous failures must not silently pass its behavioral checks.
+test('the failing GitHub summary preserves totals, evidence, gate reasons and readable Markdown', () => {
+  const report = gate(
+    [
+      rec('a-improved'),
+      rec('b-held', { off: 2, verdict: 'held', loaded_on: null, tokens_on: null }),
+      rec('c-quiet', { on: 1, off: 1, verdict: 'no_difference', loaded_on: 0 }),
+      { ...error, task: 'd-error' },
+      rec('e-worse', { on: 0, off: 2, verdict: 'worse', loaded_on: 1, loaded_off: 1, tokens_on: null }),
+    ],
+    { minPassPct: 70, maxErrorPct: 10, minLoadPct: 75 },
+  );
+  assert.equal(report.failed, true);
+  const expected = readFileSync(new URL('./golden/eval-gate-failing.txt', import.meta.url), 'utf8');
+  assert.equal(report.markdown, expected.trimEnd());
+});
+test('an empty experiment tells CI users that no task ran', () => {
+  const expected = readFileSync(new URL('./golden/eval-gate-empty.txt', import.meta.url), 'utf8');
+  assert.deepEqual(gate([]), { failed: true, markdown: expected.trimEnd() });
+});
+test('all-provider failures do not also blame an unmeasured code pass rate', () => {
+  const report = gate([error]);
+  assert.equal(report.failed, true);
+  assert.match(report.markdown, /agent errors/u);
+  assert.doesNotMatch(report.markdown, /FAIL.*skill-on full pass rate/u);
 });

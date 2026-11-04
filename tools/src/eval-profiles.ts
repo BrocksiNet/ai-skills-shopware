@@ -3,7 +3,7 @@
 // each model gets its own verdict. A rule is only retired when no profile
 // shows an effect.
 
-import { DEFAULT_MODELS } from './adapters.ts';
+import { DEFAULT_MODELS } from './agent-config.ts';
 import { envOr } from './env.ts';
 
 export interface EvalProfile {

@@ -4,7 +4,7 @@
 //
 // Pass rates count completed runs only; an agent error is not a failed task.
 // A gap smaller than the min delta (EVAL_AB_MIN_DELTA_PCT, default 50 points)
-// is noise: with 3 repeats one run is 33 points, so "improved" and "worse"
+// is below the reporting threshold: with 3 repeats one run is 33 points, so "improved" and "worse"
 // need two runs.
 //
 // Verdicts and exit codes:
@@ -14,9 +14,9 @@
 //   worse          off rate - on rate >= min delta   20
 //   error          fewer than half of the runs of a
 //                  mode completed                    5
-import { basename } from 'node:path';
-import { envOr } from './env.ts';
 import type { AbResult, Tokens, Verdict } from './eval-results.ts';
+export { agentLabel, modelLabel } from './agent-config.ts';
+export type { AbTrial } from './eval-results.ts';
 
 export const AB_EXIT: Record<Verdict, number> = { improved: 0, held: 11, no_difference: 10, worse: 20, error: 5 };
 
@@ -100,16 +100,6 @@ export function decide(repeats: number, on: ModeCounts, off: ModeCounts, minDelt
   return { verdict, code: AB_EXIT[verdict], onDone, offDone };
 }
 
-/** The agent column: EVAL_AGENT, else the adapter file name without `.sh`
- *  and a `-task` suffix (`opencode-task.sh` gives `opencode`). */
-export function agentLabel(env: NodeJS.ProcessEnv): string {
-  const agent = envOr(env, 'EVAL_AGENT', '');
-  if (agent !== '') return agent.replace(/-task$/u, '');
-  let label = basename((env.SKILLS_AGENT_CMD ?? '').split(' ')[0] ?? '');
-  if (label.endsWith('.sh') && label !== '.sh') label = label.slice(0, -3);
-  return label.replace(/-task$/u, '');
-}
-
 export interface RecordMeta {
   agent: string;
   model: string;
@@ -148,10 +138,10 @@ export function abRecord(
 }
 
 const VERDICT_TEXT: Record<Verdict, string> = {
-  improved: 'skill IMPROVES the result (earns its budget).',
-  held: 'both pass every run. The model may not need this rule.',
-  no_difference: 'no measurable difference. Re-examine whether this rule is needed/tested.',
-  worse: 'skill made it WORSE. Investigate immediately.',
+  improved: 'skill IMPROVES the observed pass rate; confirm on held-out tasks.',
+  held: 'both pass every run: ceiling on these trials, not evidence to retire a rule.',
+  no_difference: 'gap below the reporting threshold: insufficient evidence of benefit, harm or equivalence.',
+  worse: 'skill has a WORSE observed pass rate. Investigate the trials.',
   error: '',
 };
 

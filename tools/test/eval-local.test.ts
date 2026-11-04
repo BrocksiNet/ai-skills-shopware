@@ -5,6 +5,7 @@ import { tmpdir } from 'node:os';
 import { join, resolve } from 'node:path';
 import { after, describe, test } from 'node:test';
 import type { RunAbOptions } from '../src/ab-run.ts';
+import { parseManifest } from '../src/eval-manifest.ts';
 import { evalLocal, stamp } from '../src/eval-local.ts';
 import { inSeries } from '../src/series.ts';
 
@@ -49,7 +50,7 @@ async function local(env: NodeJS.ProcessEnv, verdict = 'improved'): Promise<Loca
   let err = '';
   const rc = await evalLocal({
     root: ROOT,
-    env: { PATH: `${fakeBin}:/usr/bin:/bin`, HOME: '/home/u', ...env },
+    env: { PATH: `${fakeBin}:/usr/bin:/bin`, HOME: '/home/u', EVAL_RESULTS: fresh('local.jsonl'), ...env },
     out: (t) => {
       out += t;
     },
@@ -59,7 +60,35 @@ async function local(env: NodeJS.ProcessEnv, verdict = 'improved'): Promise<Loca
     now: new Date('2026-10-21T07:03:31.123Z'),
     ab: async (o) => {
       calls.push(o);
-      const record = { task: o.task, repeats: 1, on: 1, off: 0, verdict, loaded_on: null, loaded_off: null };
+      const repeats = Number(o.repeats);
+      const expected = parseManifest(readFileSync(`${o.env.EVAL_RESULTS ?? ''}.manifest.json`, 'utf8'));
+      const trials = Array.from({ length: repeats }, (_, i) =>
+        ['on', 'off'].map((mode) => ({
+          mode,
+          repeat: i + 1,
+          status: mode === 'on' ? 'pass' : 'fail',
+          exit_code: mode === 'on' ? 0 : 1,
+          duration_ms: 1,
+          skills: null,
+          tokens: null,
+        })),
+      ).flat();
+      const record = {
+        task: o.task,
+        repeats,
+        on: repeats,
+        off: 0,
+        on_done: repeats,
+        off_done: repeats,
+        verdict,
+        loaded_on: null,
+        loaded_off: null,
+        trials,
+        experiment_id: o.env.EVAL_EXPERIMENT_ID,
+        agent: o.env.EVAL_AGENT,
+        model: o.env.TASK_MODEL ?? 'default',
+        sha: expected.sha,
+      };
       const file = o.env.EVAL_RESULTS ?? '';
       writeFileSync(file, `${existsSync(file) ? readFileSync(file, 'utf8') : ''}${JSON.stringify(record)}\n`);
       await Promise.resolve();
@@ -87,6 +116,9 @@ describe('eval-local', () => {
     assert.match(r.out, /- Gate: \*\*PASS\*\*/u);
   });
   test('opencode brings the user login; the results file is stamped', async () => {
+    const defaultResults = join(ROOT, 'evals/.results/local-20261021T070331Z.jsonl');
+    rmSync(defaultResults, { force: true });
+    rmSync(`${defaultResults}.manifest.json`, { force: true });
     const r = await local({ EVAL_LOCAL_AGENT: 'opencode', EVAL_TASKS: TASK_B, EVAL_RESULTS: '' }, 'worse');
     assert.equal(r.rc, 1);
     const [call] = r.calls;
@@ -95,6 +127,7 @@ describe('eval-local', () => {
     assert.equal(call.env.SKILLS_AGENT_CMD, join(RUNNER, 'opencode-task.sh'));
     assert.equal(call.env.EVAL_RESULTS, join(ROOT, 'evals/.results/local-20261021T070331Z.jsonl'));
     rmSync(call.env.EVAL_RESULTS, { force: true });
+    rmSync(`${call.env.EVAL_RESULTS}.manifest.json`, { force: true });
   });
   test('copilot takes the gh login as its token, unless one is set', async () => {
     const r = await local({ EVAL_LOCAL_AGENT: 'copilot', EVAL_TASKS: TASK_B, FAKE_GH_TOKEN: 'gho_x' });

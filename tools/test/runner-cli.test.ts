@@ -77,6 +77,14 @@ describe('runAb', () => {
       records.map((x) => `${x.verdict} ${x.agent ?? ''} ${x.model ?? ''}`),
       ['held fake none', 'no_difference fake none'],
     );
+    const [first] = records;
+    assert.ok(first?.artifacts !== undefined);
+    assert.equal(first.trials?.length, 2);
+    assert.match(first.task_hash ?? '', /^[a-f0-9]{64}$/u);
+    const artifacts = join(tmp, first.artifacts);
+    assert.ok(existsSync(join(artifacts, 'on-1.stdout.txt')));
+    assert.ok(existsSync(join(artifacts, 'off-1.stderr.txt')));
+    assert.equal(readFileSync(join(artifacts, 'trials.jsonl'), 'utf8').trim().split('\n').length, 2);
   });
   test('the agent label defaults to the adapter name', async () => {
     const results = fresh('label.jsonl');

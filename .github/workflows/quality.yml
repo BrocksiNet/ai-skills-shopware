@@ -1,0 +1,79 @@
+name: tooling-quality
+
+on:
+  pull_request:
+    paths:
+      - 'tools/**'
+      - 'evals/tools/ast/**'
+      - '.github/workflows/quality.yml'
+  workflow_dispatch:
+    inputs:
+      profile:
+        description: 'Targeted mutation profile'
+        type: choice
+        default: all
+        options: [all, manifest, gate, findings, constraints, routing]
+
+permissions:
+  contents: read
+
+jobs:
+  coverage:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
+        with:
+          node-version: '24'
+          cache: npm
+          cache-dependency-path: |
+            tools/package-lock.json
+            tools/api-index/package-lock.json
+            evals/tools/ast/package-lock.json
+      - name: Install deterministic test dependencies
+        run: |
+          npm ci --prefix tools
+          npm ci --prefix tools/api-index
+          npm ci --prefix evals/tools/ast
+      - name: Tooling and golden-grader coverage
+        working-directory: tools
+        run: npm run test:coverage
+      - name: API-index workflow and unit coverage
+        working-directory: tools/api-index
+        run: npm run test:coverage
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: tooling-coverage
+          path: |
+            tools/coverage/**
+            tools/api-index/coverage/**
+            !**/coverage/tmp/**
+          retention-days: 14
+
+  mutation:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    strategy:
+      fail-fast: false
+      max-parallel: 2
+      matrix:
+        profile: ${{ fromJSON((github.event_name == 'pull_request' || inputs.profile == 'all') && '["manifest","gate","findings","constraints","routing"]' || format('["{0}"]', inputs.profile)) }}
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
+        with:
+          node-version: '24'
+          cache: npm
+          cache-dependency-path: tools/package-lock.json
+      - run: npm ci --prefix tools
+      - name: Targeted mutations with node --test
+        working-directory: tools
+        run: npm run mutate -- ${{ matrix.profile }}
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: mutation-${{ matrix.profile }}
+          path: tools/reports/mutation/${{ matrix.profile }}/
+          retention-days: 14

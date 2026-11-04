@@ -1,14 +1,14 @@
 // Model evals on this machine with an agent you are logged in to, then the
 // CI gate (plan WP10 step 4; ported from scripts/eval-local.sh, which is now
 // a wrapper and documents the environment).
-import { existsSync, mkdirSync, readFileSync } from 'node:fs';
-import { dirname, join } from 'node:path';
+import { join } from 'node:path';
 import { type RunAbOptions, runAb } from './ab-run.ts';
 import { envOr } from './env.ts';
 import { errorMessage } from './errors.ts';
 import { gate, gateOptionsFromEnv } from './eval-gate.ts';
 import { plan, planOptionsFromEnv } from './eval-plan.ts';
-import { parseResults } from './eval-results.ts';
+import { readResults } from './eval-result-file.ts';
+import { type EvalManifest, freezeManifest } from './eval-experiment.ts';
 import { ghToken, onPath } from './proc.ts';
 import { inSeries } from './series.ts';
 
@@ -72,7 +72,6 @@ export async function evalLocal(o: EvalLocalOptions): Promise<number> {
   const repeats = envOr(env, 'REPEATS', '3');
   const results = envOr(env, 'EVAL_RESULTS', join(o.root, `evals/.results/local-${stamp(o.now ?? new Date())}.jsonl`));
   env.EVAL_RESULTS = results;
-  mkdirSync(dirname(results), { recursive: true });
   let tasks: string[];
   try {
     tasks = plan(join(o.root, 'evals/tasks'), { ...planOptionsFromEnv(env), shards: 1 }).tasks;
@@ -82,6 +81,15 @@ export async function evalLocal(o: EvalLocalOptions): Promise<number> {
   }
   if (tasks.length === 0) {
     o.err('No tasks selected.\n');
+    return 2;
+  }
+  let expected: EvalManifest;
+  try {
+    expected = freezeManifest(o.root, results, tasks, Number(repeats), env);
+    env.EVAL_EXPERIMENT_ID = expected.id;
+    env.TASK_MODEL = expected.model;
+  } catch (error) {
+    o.err(`eval-manifest: ${errorMessage(error)}\n`);
     return 2;
   }
 
@@ -95,8 +103,8 @@ export async function evalLocal(o: EvalLocalOptions): Promise<number> {
   });
 
   try {
-    const records = existsSync(results) ? parseResults(readFileSync(results, 'utf8')) : [];
-    const report = gate(records, gateOptionsFromEnv(env));
+    const records = readResults(results);
+    const report = gate(records, gateOptionsFromEnv(env), expected);
     o.out(`${report.markdown}\n`);
     return report.failed ? 1 : 0;
   } catch (error) {

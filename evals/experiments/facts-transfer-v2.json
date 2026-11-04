@@ -1,0 +1,50 @@
+{
+  "version": 1,
+  "purpose": "Regression replay of the fact-sensitive comparison. Original prospective protocol and raw outcomes are retained in facts-transfer-2026-11-04.json.",
+  "holdout": "All cases are consumed. The ACL case was excluded from the original packaging conclusion and repaired afterward with explicit persisted-role snapshots and an unshipped migration precondition. Replays are regression data, not fresh held-out evidence.",
+  "retrieval_primary": "Current observer accepts successful Read or literal shell file reads with matching content, marking partial excerpts. The original frozen run required complete-reference Bash output; its primary counts are retained unchanged in the record.",
+  "models": [
+    "haiku",
+    "sonnet",
+    "opus"
+  ],
+  "repeats": 2,
+  "cases": [
+    {
+      "task": "transfer-cache-minor-floor",
+      "expected_references": [
+        "sw-plugin-development/references/cache-tags.md",
+        "sw-plugin-development/references/version-compatibility.md"
+      ],
+      "outcome_kind": "PHP AST path/data-flow contract across old/new cache collector capability; no PHP or Shopware runtime",
+      "primary_sources": [
+        "https://github.com/shopware/shopware/blob/v6.7.0.0/src/Core/Framework/Adapter/Cache/CacheTagCollector.php",
+        "https://github.com/shopware/shopware/blob/v6.7.2.0/src/Core/Framework/Adapter/Cache/CacheTagCollector.php",
+        "https://github.com/shopware/shopware/blob/v6.7.0.0/src/Core/Framework/Adapter/Cache/Event/AddCacheTagEvent.php"
+      ]
+    },
+    {
+      "task": "transfer-admin-caption",
+      "expected_references": [
+        "sw-admin-js/references/architecture.md"
+      ],
+      "outcome_kind": "Actual Vue 2.7.14/3.3.4 compiler output executes field events and save against a fixture adapter; no browser or full Administration",
+      "primary_sources": [
+        "https://github.com/shopware/shopware/blob/v6.5.8.0/src/Administration/Resources/app/administration/src/app/component/form/sw-text-field/index.js",
+        "https://github.com/shopware/shopware/blob/v6.6.0.0/src/Administration/Resources/app/administration/src/app/component/form/sw-text-field/index.js"
+      ]
+    },
+    {
+      "task": "transfer-acl-roundtrip",
+      "expected_references": [
+        "sw-admin-js/references/architecture.md"
+      ],
+      "outcome_kind": "Actual edited ACL registration executes in JS VM; permission resolution uses source-derived adapter; migration is PHP AST contract, no database",
+      "primary_sources": [
+        "https://github.com/shopware/shopware/blob/v6.7.0.0/src/Administration/Resources/app/administration/src/app/service/privileges.service.ts",
+        "https://github.com/shopware/shopware/blob/v6.7.0.0/src/Core/Framework/Migration/MigrationStep.php"
+      ]
+    }
+  ],
+  "status": "consumed-regression"
+}

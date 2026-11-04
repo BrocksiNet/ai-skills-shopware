@@ -164,6 +164,17 @@ describe('process helpers', () => {
     const r = await run('bash', ['-c', '(sleep 20 &); sleep 20'], { env: process.env, timeoutSeconds: 1 });
     assert.deepEqual([r.timedOut, r.status], [true, 143]);
   });
+  test('a child that ignores SIGTERM is forcibly stopped before its own exit', async () => {
+    const started = Date.now();
+    const r = await run(
+      process.execPath,
+      ['-e', "process.on('SIGTERM', () => {}); setTimeout(() => process.exit(0), 4500)"],
+      { env: process.env, timeoutSeconds: 1 },
+    );
+    assert.equal(r.timedOut, true);
+    assert.equal(r.status, 137);
+    assert.ok(Date.now() - started < 3500, 'force shutdown must not wait for the child to exit itself');
+  });
   test('a missing command is status 127', async () => {
     assert.equal((await run('no-such-cli-here', [], { env: process.env })).status, 127);
   });
@@ -182,6 +193,7 @@ for (const name of ['opencode', 'claude', 'copilot']) {
 [ -n "\${FAKE_ERR:-}" ] && printf '%b' "$FAKE_ERR" >&2
 [ -n "\${FAKE_SLEEP:-}" ] && sleep "$FAKE_SLEEP"
 [ -n "\${FAKE_OUT:-}" ] && cat "$FAKE_OUT"
+[ -n "\${FAKE_AFTER_OUTPUT_SLEEP:-}" ] && sleep "$FAKE_AFTER_OUTPUT_SLEEP"
 exit "\${FAKE_RC:-0}"
 `,
   );
@@ -212,6 +224,7 @@ interface Call {
   args: string | null;
   stdin: string | null;
   env: string | null;
+  trace: string | null;
 }
 
 let n = 0;
@@ -223,6 +236,7 @@ async function call(adapter: Adapter, over: NodeJS.ProcessEnv): Promise<Call> {
     TMPDIR: tmp,
     EVAL_SKILLS_LOG: join(dir, 'skills'),
     EVAL_USAGE_LOG: join(dir, 'usage'),
+    EVAL_TRACE_LOG: join(dir, 'trace'),
     FAKE_REC: join(dir, 'rec'),
     ...over,
   };
@@ -247,6 +261,7 @@ async function call(adapter: Adapter, over: NodeJS.ProcessEnv): Promise<Call> {
     args: read('rec.args'),
     stdin: read('rec.stdin'),
     env: read('rec.env'),
+    trace: read('trace'),
   };
 }
 
@@ -308,9 +323,31 @@ describe('opencode-task adapter', () => {
 });
 
 describe('claude-task adapter', () => {
+  test('a terminal result finishes an attempt even when CLI cleanup hangs', { timeout: 15000 }, async () => {
+    const result = await call(claudeTask, {
+      FAKE_OUT: join(FIXTURES, 'claude-task.jsonl'),
+      FAKE_AFTER_OUTPUT_SLEEP: '20',
+    });
+    assert.equal(result.rc, 0);
+    assert.equal(result.trace, recorded('claude-task.jsonl'));
+    // The deadline includes process startup and V8 coverage collection. The
+    // fake cleanup sleeps for 20 seconds, so missing cleanup still times out.
+  });
+  test('bounded terminal cleanup preserves protocol errors', async () => {
+    const result = await call(claudeTask, {
+      FAKE_OUT: fixture(
+        'cl-hanging-error.jsonl',
+        withResult({ subtype: 'error_during_execution', is_error: true, result: 'API Error: 529' }),
+      ),
+      FAKE_AFTER_OUTPUT_SLEEP: '20',
+    });
+    assert.equal(result.rc, 4);
+    assert.match(result.err, /claude-task: API Error: 529\n$/u);
+  });
   test('a finished session prints the text and logs skills and tokens', async () => {
     const r = await call(claudeTask, { FAKE_OUT: join(FIXTURES, 'claude-task.jsonl') });
     assert.equal(r.rc, 0);
+    assert.equal(r.trace, recorded('claude-task.jsonl'));
     assert.ok(r.out.endsWith('\n'));
     assert.deepEqual([r.skills, r.usage, r.stdin], ['sw-testing\n', '95286 626\n', 'do it']);
     assert.match(

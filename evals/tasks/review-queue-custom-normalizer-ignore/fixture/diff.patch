@@ -1,0 +1,37 @@
+diff --git a/src/Export/BatchProducer.php b/src/Export/BatchProducer.php
+--- a/src/Export/BatchProducer.php
++++ b/src/Export/BatchProducer.php
+@@ -6,6 +6,6 @@
+ {
+     public function dispatch(MessageBusInterface $bus): void
+     {
+-        $bus->dispatch(new ExportBatchMessage());
++        $bus->dispatch(new ExportBatchMessage(includeAttachments: false));
+     }
+ }
+diff --git a/tests/integration/ExportBatchMessageTransportTest.php b/tests/integration/ExportBatchMessageTransportTest.php
+new file mode 100644
+--- /dev/null
++++ b/tests/integration/ExportBatchMessageTransportTest.php
+@@ -0,0 +1,21 @@
++<?php declare(strict_types=1);
++namespace Acme\Export\Tests\Integration;
++
++use Acme\Export\Message\ExportBatchMessage;
++use PHPUnit\Framework\TestCase;
++use Shopware\Core\Framework\Test\TestCaseBase\IntegrationTestBehaviour;
++use Symfony\Component\Messenger\Envelope;
++
++final class ExportBatchMessageTransportTest extends TestCase
++{
++    use IntegrationTestBehaviour;
++
++    public function testNonDefaultAttachmentsFlagSurvivesTheConfiguredTransport(): void
++    {
++        $serializer = static::getContainer()->get('messenger.transport.symfony_serializer');
++        $envelope = new Envelope(new ExportBatchMessage(includeAttachments: false));
++        $decoded = $serializer->decode($serializer->encode($envelope))->getMessage();
++        static::assertInstanceOf(ExportBatchMessage::class, $decoded);
++        static::assertFalse($decoded->includeAttachments());
++    }
++}

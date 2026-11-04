@@ -1,0 +1,14 @@
+```json
+{
+  "findings": [
+    {
+      "rule_id": "ARCH-006",
+      "severity": "nit",
+      "file": "src/Message/ExportBatchMessage.php",
+      "line": 12,
+      "summary": "The queued flag is lost during serialization.",
+      "fix": "Use a supported getter."
+    }
+  ]
+}
+```

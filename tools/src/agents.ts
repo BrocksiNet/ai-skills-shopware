@@ -1,3 +1,4 @@
+import { OPENCODE_FREE_MODEL, CLAUDE_DEFAULT_MODEL } from './agent-config.ts';
 // Agent adapters for the evals (plan WP10 step 3; ported from
 // evals/runner/{opencode,claude}-{task,activation}.sh, which are now wrappers
 // and still document the environment of each adapter).
@@ -36,8 +37,7 @@ export type Adapter = (prompt: string, env: NodeJS.ProcessEnv, io: AdapterIo, ro
 
 /** Task adapter exit code for an agent error; run-task never grades it. */
 export const AGENT_ERROR = 4;
-export const OPENCODE_FREE_MODEL = 'opencode/mimo-v2.6-flash-free';
-export const CLAUDE_DEFAULT_MODEL = 'sonnet';
+export { OPENCODE_FREE_MODEL, CLAUDE_DEFAULT_MODEL } from './agent-config.ts';
 
 export const positive = (v: string): boolean => /^[1-9][0-9]*$/u.test(v);
 
@@ -50,6 +50,12 @@ export function logUsage(env: NodeJS.ProcessEnv, usage: Usage | null): void {
   const log = envOr(env, 'EVAL_USAGE_LOG', '');
   if (log !== '' && usage !== null) appendFileSync(log, `${usage.input} ${usage.output}\n`);
 }
+
+/** Preserve tool events as they arrive, including a session that later hangs. */
+export const logTrace = (env: NodeJS.ProcessEnv, chunk: string): void => {
+  const path = envOr(env, 'EVAL_TRACE_LOG', '');
+  if (path !== '') appendFileSync(path, chunk);
+};
 
 export const scratchDir = (env: NodeJS.ProcessEnv, prefix: string): string =>
   mkdtempSync(join(envOr(env, 'TMPDIR', tmpdir()), prefix));
@@ -132,7 +138,13 @@ export const opencodeTask: Adapter = async (prompt, env, { out, err }) => {
       permission: { question: 'deny' },
       tools: { websearch: false },
     });
-    const proc = await run('opencode', opencodeArgs(model, prompt), { env: childEnv, timeoutSeconds: Number(timeout) });
+    const proc = await run('opencode', opencodeArgs(model, prompt), {
+      env: childEnv,
+      timeoutSeconds: Number(timeout),
+      onStdout: (s) => {
+        logTrace(env, s);
+      },
+    });
 
     const s = parseOpencode(proc.stdout);
     out(`${s.texts.join('\n\n')}\n`);
@@ -179,7 +191,17 @@ export const claudeTask: Adapter = async (prompt, env, { out, err }) => {
     'stream-json',
     '--verbose',
   ];
-  const proc = await run('claude', args, { env, input: prompt, onStderr: err });
+  const tools = envOr(env, 'TASK_TOOLS', '');
+  if (tools !== '') args.push('--tools', tools, '--strict-mcp-config');
+  const proc = await run('claude', args, {
+    env,
+    input: prompt,
+    stopWhen: (stdout) => parseClaude(stdout).result !== null,
+    onStderr: err,
+    onStdout: (s) => {
+      logTrace(env, s);
+    },
+  });
 
   const s = parseClaude(proc.stdout);
   out(`${s.texts.join('\n\n')}\n`);
@@ -194,7 +216,7 @@ export const claudeTask: Adapter = async (prompt, env, { out, err }) => {
   }
   // claude exits 1 when it stops at a turn or budget cap, accepted above; any
   // other non-zero exit (crash, signal) is an agent error.
-  return proc.status === 0 || proc.status === 1 ? 0 : AGENT_ERROR;
+  return proc.status === 0 || proc.status === 1 || proc.stoppedAfterOutput === true ? 0 : AGENT_ERROR;
 };
 
 /** A temp workspace whose only project skills are `skillsDir`, linked as

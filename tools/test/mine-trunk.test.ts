@@ -43,7 +43,9 @@ const group = (text: string, skill: string, title: string): string =>
   section(text, skill).split(`### ${title}`)[1]?.split('\n### ')[0] ?? '';
 
 describe('the 2026-10-13..2026-10-19 window', () => {
-  const mined = mineSource(recorded(), TRUNK, windowOfDays('2026-10-13', '2026-10-19'));
+  // This historical recording covers the four paths watched when it was made.
+  const recordedSource = { ...TRUNK, paths: TRUNK.paths.filter((p) => !p.endsWith('AGENTS.md')) };
+  const mined = mineSource(recorded(), recordedSource, windowOfDays('2026-10-13', '2026-10-19'));
   const text = mined.then((m) => report([m]));
 
   test('reports the five commits found by hand', async () => {

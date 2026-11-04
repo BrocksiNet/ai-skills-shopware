@@ -1,0 +1,41 @@
+## A/B eval results
+
+fake / m @ abc, 2 repeat(s)
+
+| Verdict | Tasks |
+| ------- | ----- |
+| improved | 1 |
+| held | 1 |
+| no_difference | 1 |
+| worse | 1 |
+| error | 1 |
+
+Skill-on full pass: **2 / 4** (50 %, gate 70 %).
+
+Skill-on runs that loaded a task skill: **3 / 6** (50 %, gate 75 %).
+
+<details><summary>Per task</summary>
+
+On and Off count passed / completed runs.
+
+| Task | On | Off | Skill loaded (on) | Tokens on (in/out) | Verdict |
+| ---- | -- | --- | ----------------- | ------------------ | ------- |
+| `e-worse` | 0/2 | 2/2 | 1/2 | n/a | worse |
+| `d-error` | 0/0 | 0/0 | n/a | n/a | error |
+| `c-quiet` | 1/2 | 1/2 | 0/2 | 1200/200 | no_difference |
+| `b-held` | 2/2 | 2/2 | n/a | n/a | held |
+| `a-improved` | 2/2 | 1/2 | 2/2 | 1200/200 | improved |
+
+</details>
+
+- **FAIL**: 1 task(s) got worse with the skill on:
+  - `e-worse`
+- **FAIL**: skill-on full pass rate 50 % is below 70 %.
+- **FAIL**: 20 % of tasks ended in agent errors (limit 10 %). Check the provider, then rerun.
+- **FAIL**: only 50 % of skill-on runs loaded a task skill (gate 75 %). The model ignores the skills, so on and off are the same run. Use a model that loads skills.
+- **FAIL**: 1 task(s) loaded a repo skill with skills off; the baseline is not skill-free:
+  - `e-worse`
+- Warning: no experiment manifest; task completeness and experiment identity were not checked.
+- Warning: 2 task(s) show no difference under the reporting threshold; this does not establish equivalence:
+  - `b-held` (held)
+  - `c-quiet` (no_difference, skill never loaded)

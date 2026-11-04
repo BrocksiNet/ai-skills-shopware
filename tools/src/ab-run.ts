@@ -1,7 +1,6 @@
 // Running an A/B (plan WP10 step 2): both modes of one task through
 // runTask, then the record, the results line and the summary. The verdict
 // rules and the record format are in ab.ts.
-import { spawnSync } from 'node:child_process';
 import {
   appendFileSync,
   existsSync,
@@ -13,18 +12,27 @@ import {
   writeFileSync,
 } from 'node:fs';
 import { tmpdir } from 'node:os';
-import { dirname, join } from 'node:path';
-import { type ModeCounts, abRecord, abSummary, agentLabel, decide, emptyCounts, loadedOneOf, sumUsage } from './ab.ts';
+import { dirname, join, relative } from 'node:path';
+import {
+  type AbTrial,
+  type ModeCounts,
+  abRecord,
+  abSummary,
+  agentLabel,
+  decide,
+  emptyCounts,
+  loadedOneOf,
+  modelLabel,
+  sumUsage,
+} from './ab.ts';
 import { envInt, envOr, envSet } from './env.ts';
 import { errorMessage } from './errors.ts';
 import { repoSkills, taskSkills } from './eval-plan.ts';
+import { shortSha, startEvidence } from './eval-provenance.ts';
 import { type Mode, RUN, type RunTaskOptions, runTask } from './run-task.ts';
 import { inSeries } from './series.ts';
 
-export function shortSha(root: string): string {
-  const r = spawnSync('git', ['-C', root, 'rev-parse', '--short', 'HEAD'], { encoding: 'utf8' });
-  return r.status === 0 ? r.stdout.trim() : 'unknown';
-}
+export { shortSha } from './eval-provenance.ts';
 
 /** Where the A/B appends its record: EVAL_RESULTS, else evals/.results/ab.jsonl. */
 export const resultsPath = (root: string, env: NodeJS.ProcessEnv): string =>
@@ -45,6 +53,8 @@ export interface AbOptions {
   /** Runs one task once; tests replace it. */
   run?: (o: RunTaskOptions) => Promise<number>;
   sleep?: (ms: number) => Promise<void>;
+  artifacts?: string;
+  random?: () => number;
 }
 
 /** What one run left behind. */
@@ -63,18 +73,25 @@ async function runOnce(o: AbOptions, mode: Mode, logs: string, i: number): Promi
   const skillsLog = join(logs, `${mode}-${i}`);
   const usageLog = `${skillsLog}.usage`;
   let stderr = '';
+  let stdout = '';
   const opts: RunTaskOptions = {
     root: o.root,
     task: o.task,
     mode,
-    env: { ...o.env, EVAL_SKILLS_LOG: skillsLog, EVAL_USAGE_LOG: usageLog },
-    out: () => {},
+    env: { ...o.env, EVAL_SKILLS_LOG: skillsLog, EVAL_USAGE_LOG: usageLog, EVAL_TRACE_LOG: `${skillsLog}.trace.jsonl` },
+    out: (t) => {
+      if (o.artifacts !== undefined) stdout += t;
+    },
     err: (t) => {
       stderr += t;
     },
   };
   if (o.sleep) opts.sleep = o.sleep;
   const rc = await run(opts);
+  if (o.artifacts !== undefined) {
+    writeFileSync(join(o.artifacts, `${mode}-${i}.stdout.txt`), stdout);
+    writeFileSync(join(o.artifacts, `${mode}-${i}.stderr.txt`), stderr);
+  }
   // Agent errors and retries go to stderr (CI log); stdout stays the summary.
   for (const line of stderr.split('\n')) if (line.includes('----- agent error')) o.err(`${line}\n`);
   const usage = existsSync(usageLog) && statSync(usageLog).size > 0 ? sumUsage(readFileSync(usageLog, 'utf8')) : null;
@@ -96,42 +113,70 @@ function addOutcome(c: ModeCounts, run: RunOutcome, match: string[]): void {
   }
 }
 
-/** Runs every "on" repeat, then every "off" repeat, and counts what happened.
+function trialOutcome(mode: Mode, repeat: number, outcome: RunOutcome | null, started: number): AbTrial {
+  return {
+    mode,
+    repeat,
+    status:
+      outcome === null ? 'skipped' : outcome.rc === RUN.pass ? 'pass' : outcome.rc === RUN.fail ? 'fail' : 'error',
+    exit_code: outcome?.rc ?? RUN.quota,
+    duration_ms: outcome === null ? 0 : Date.now() - started,
+    skills:
+      outcome?.skillsLog === null || outcome === null ? null : outcome.skillsLog.split('\n').filter((s) => s !== ''),
+    tokens:
+      outcome?.usage === null || outcome === null
+        ? null
+        : { input: outcome.usage[0], output: outcome.usage[1], runs: 1 },
+  };
+}
+
+function saveTrial(o: AbOptions, logs: string, trials: AbTrial[], trial: AbTrial): void {
+  trials.push(trial);
+  if (o.artifacts !== undefined) appendFileSync(join(logs, 'trials.jsonl'), `${JSON.stringify(trial)}\n`);
+}
+
+/** Balanced blocks put one trial of each mode together, in random order.
  *  Each run gets its own EVAL_SKILLS_LOG and EVAL_USAGE_LOG file. A skill-on
  *  run counts as loaded when it loaded one of the task's skills (its `skills`
  *  file, else all); a skill-off run when it loaded any repo skill, which means
  *  skills leaked into the baseline. */
-export async function runModes(o: AbOptions): Promise<{ on: ModeCounts; off: ModeCounts }> {
+export async function runModes(o: AbOptions): Promise<{ on: ModeCounts; off: ModeCounts; trials: AbTrial[] }> {
   const all = repoSkills(o.root);
   const own = existsSync(join(o.root, 'evals/tasks', o.task, 'skills'))
     ? taskSkills(join(o.root, 'evals/tasks'), o.task)
     : all;
-  const logs = mkdtempSync(join(envOr(o.env, 'TMPDIR', tmpdir()), 'ab-skills.'));
+  const logs = o.artifacts ?? mkdtempSync(join(envOr(o.env, 'TMPDIR', tmpdir()), 'ab-skills.'));
+  mkdirSync(logs, { recursive: true });
   try {
     const counts = { on: emptyCounts(), off: emptyCounts() };
+    const trials: AbTrial[] = [];
     const mark = quotaMark(o.root, o.env);
     let quota = existsSync(mark);
     if (quota) o.err(`ab: ${o.task} skipped, the agent's quota ran out earlier (delete ${mark} to retry)\n`);
-    const runs = (['on', 'off'] as const satisfies readonly Mode[]).flatMap((mode) =>
-      Array.from({ length: o.repeats }, (_, k) => ({ mode, i: k + 1 })),
-    );
+    const runs = Array.from({ length: o.repeats }, (_, k) => {
+      const modes: Mode[] = (o.random ?? Math.random)() < 0.5 ? ['on', 'off'] : ['off', 'on'];
+      return modes.map((mode) => ({ mode, i: k + 1 }));
+    }).flat();
     await inSeries(runs, async ({ mode, i }) => {
       // A skipped run is an agent error: the record says "error", not "worse".
       if (quota) {
         counts[mode].err++;
+        saveTrial(o, logs, trials, trialOutcome(mode, i, null, 0));
         return;
       }
+      const started = Date.now();
       const outcome = await runOnce(o, mode, logs, i);
       addOutcome(counts[mode], outcome, mode === 'on' ? own : all);
+      saveTrial(o, logs, trials, trialOutcome(mode, i, outcome, started));
       if (outcome.rc !== RUN.quota) return;
       quota = true;
       mkdirSync(dirname(mark), { recursive: true });
       writeFileSync(mark, `${o.task} ${mode} ${i}\n`);
       o.err(`ab: the agent's quota is used up; skipping every later run (delete ${mark} to retry)\n`);
     });
-    return counts;
+    return { ...counts, trials };
   } finally {
-    rmSync(logs, { recursive: true, force: true });
+    if (o.artifacts === undefined) rmSync(logs, { recursive: true, force: true });
   }
 }
 
@@ -186,17 +231,19 @@ export async function runAb(o: RunAbOptions): Promise<number> {
   const repeats = Number(o.repeats);
   const results = resultsPath(root, env);
   mkdirSync(dirname(results), { recursive: true });
-
-  const modes: AbOptions = { root, task, repeats, env, err: o.err };
+  const { runId, artifacts, snapshot } = startEvidence(root, task, `${results}.artifacts`, env);
+  const modes: AbOptions = { root, task, repeats, env, err: o.err, artifacts };
   if (o.run) modes.run = o.run;
-  const { on, off } = await runModes(modes);
+  const { on, off, trials } = await runModes(modes);
   const decision = decide(repeats, on, off, minDelta);
   const record = abRecord(task, repeats, on, off, decision, {
     agent: agentLabel(env),
-    model: envOr(env, 'TASK_MODEL', 'default'),
+    model: modelLabel(env),
     sha: shortSha(root),
     ts: new Date().toISOString().replace(/\.\d{3}Z$/u, 'Z'),
   });
+  Object.assign(record, snapshot, { run_id: runId, artifacts: relative(dirname(results), artifacts), trials });
+  if (envSet(env, 'EVAL_EXPERIMENT_ID')) record.experiment_id = envOr(env, 'EVAL_EXPERIMENT_ID', '');
   appendFileSync(results, `${JSON.stringify(record)}\n`);
   o.out(`${abSummary(record, on, off)}\n`);
   return decision.code;

@@ -14,6 +14,8 @@ import {
   readdirSync,
   rmSync,
   statSync,
+  mkdirSync,
+  lstatSync,
 } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
@@ -23,7 +25,7 @@ import { errorMessage } from './errors.ts';
 import { run } from './proc.ts';
 
 /** run-task exit codes. */
-export const RUN = { pass: 0, fail: 1, usage: 2, noAgent: 3, agentError: 4, quota: 6 } as const;
+export const RUN = { pass: 0, fail: 1, usage: 2, noAgent: 3, agentError: 4, graderError: 5, quota: 6 } as const;
 
 /** What agents print when the plan's quota is used up (OpenCode free tier,
  *  Copilot premium requests, Claude and Codex plans, API credit). A retry
@@ -44,6 +46,8 @@ export interface RunTaskOptions {
   err: (text: string) => void;
   /** Waits between retries; tests pass a no-op. */
   sleep?: (ms: number) => Promise<void>;
+  /** Retain the edited fixture after grading, outside the agent's workdir. */
+  artifacts?: string;
 }
 
 const wait = async (ms: number): Promise<void> => {
@@ -141,7 +145,7 @@ async function runAgent(job: Job, agent: string, prompt: string, attempt: number
   await new Promise<void>((done) => {
     file.end(done);
   });
-  if (agentRun.status === 0) return RUN.pass;
+  if (agentRun.status === 0 && !agentRun.timedOut) return RUN.pass;
   const reason =
     (agentRun.timedOut ? `timed out after ${retry.timeout}s` : errorReason(agentRun.stderr)) || 'no detail';
   if (!agentRun.timedOut && QUOTA_PATTERN.test(agentRun.stderr)) {
@@ -205,7 +209,17 @@ async function runInWorkdir(job: Job): Promise<number> {
     out,
     err,
   );
-  return graded === 0 ? RUN.pass : RUN.fail;
+  return graded === 0 ? RUN.pass : graded === 1 ? RUN.fail : RUN.graderError;
+}
+
+function retainWorkdir(workdir: string, artifacts: string): void {
+  mkdirSync(artifacts, { recursive: true });
+  cpSync(workdir, join(artifacts, 'workdir'), {
+    recursive: true,
+    filter: (source) =>
+      !source.split('/').some((part) => ['.agents', '.claude', '.git', 'node_modules'].includes(part)) &&
+      !lstatSync(source).isSymbolicLink(),
+  });
 }
 
 export async function runTask(o: RunTaskOptions): Promise<number> {
@@ -223,6 +237,7 @@ export async function runTask(o: RunTaskOptions): Promise<number> {
   try {
     return await runInWorkdir({ ...o, taskDir, workdir, transcript: join(workdir, '.transcript.txt'), retry });
   } finally {
+    if (o.artifacts !== undefined) retainWorkdir(workdir, o.artifacts);
     if (!keep) rmSync(workdir, { recursive: true, force: true });
   }
 }
