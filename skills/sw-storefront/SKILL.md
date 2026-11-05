@@ -64,10 +64,14 @@ Read only the reference that matches the task or the files it changes:
 
    It lists each block, template and JS plugin the plugin uses that is
    missing in a release of the range, with the release span and the
-   plugin's `file:line`. For a block that is gone, keep the old override
-   for the releases that have it and add one on a block the newer releases
-   have; check the new block with the same command. Without Node, say the
-   check was not run.
+   plugin's `file:line`. The script is a built index of each release's
+   source, so its spans are the release evidence: report the first release
+   of the span and do not fetch the core template per tag or read the
+   script to confirm it. For a block that is gone, the line also names the
+   blocks its template still has in those releases, the ones present in
+   the whole range first: keep the old override for the releases that
+   have the block, add one on the first block named, and run the command
+   again to check it. Without Node, say the check was not run.
 
 ## Storefront deltas
 
