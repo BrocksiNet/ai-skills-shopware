@@ -21,6 +21,7 @@ export class Lookup {
   readonly #byId: Map<string, TimelineItem>;
   readonly #indexes = new Map<TimelineItem, Map<string, Set<number>>>();
   readonly #present = new Map<TimelineItem, Set<number>>();
+  #blocks: Map<string, TimelineItem[]> | undefined;
 
   constructor(timeline: Timeline) {
     this.timeline = timeline;
@@ -46,6 +47,20 @@ export class Lookup {
       this.#present.set(item, set);
     }
     return set.has(index);
+  }
+
+  /** The `#` members of a template or component: its blocks, in every release. */
+  blocks(owner: string): TimelineItem[] {
+    if (this.#blocks === undefined) {
+      this.#blocks = new Map();
+      for (const item of this.timeline.items) {
+        const hash = item.id.indexOf('#');
+        if (hash === -1) continue;
+        const key = item.id.slice(0, hash).toLowerCase();
+        this.#blocks.set(key, [...(this.#blocks.get(key) ?? []), item]);
+      }
+    }
+    return this.#blocks.get(owner.toLowerCase()) ?? [];
   }
 
   /** The value of a tracked field at a release, if any. */

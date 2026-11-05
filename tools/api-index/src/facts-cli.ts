@@ -7,7 +7,7 @@ import { appliedCopy, type DiffLines, parseDiff } from './diff.ts';
 import type { Io } from './diff-cli.ts';
 import { formatRuns, Lookup } from './facts.ts';
 import { locateIndex } from './locate.ts';
-import { coreConstraint, describe, factsOfDir, type Report } from './report.ts';
+import { coreConstraint, describe, factsOfDir, type Report, type ReportFact } from './report.ts';
 import { loadTimeline } from './store.ts';
 import type { Timeline } from './timeline.ts';
 
@@ -64,6 +64,18 @@ export function factsSummary(facts: readonly { kind: string }[]): string {
   return `Summary: ${facts.length} ${facts.length === 1 ? 'fact' : 'facts'}${parts.length === 0 ? '' : ` (${parts.join(', ')})`}.`;
 }
 
+const NEARBY_SHOWN = 6;
+
+/** `; blocks there: a (whole range), b, +3 more` for a missing block. */
+export function nearbyText(fact: ReportFact): string {
+  if (fact.nearby === undefined || fact.nearby.length === 0) return '';
+  const shown = fact.nearby
+    .slice(0, NEARBY_SHOWN)
+    .map((block) => `${block.name}${block.throughout ? ' (whole range)' : ''}`);
+  const more = fact.nearby.length - shown.length;
+  return `; blocks there: ${shown.join(', ')}${more > 0 ? `, +${more} more` : ''}`;
+}
+
 export function factsText(report: Report, timeline: Timeline, note: string | undefined): string {
   const out = [header(report, timeline, note), `${factsSummary(report.facts)}\n`];
   for (const fact of report.facts) {
@@ -78,14 +90,14 @@ export function factsText(report: Report, timeline: Timeline, note: string | und
         : fact.unguarded === undefined
           ? `, guarded at ${guard}`
           : `, not guarded in ${formatRuns(fact.unguarded)}: the class guard at ${guard} only covers releases without the class`;
-    out.push(`- ${fact.target.replace(/^php:/u, '')}: ${describe(fact)}${guarded}  [${at}]\n`);
+    out.push(`- ${fact.target.replace(/^php:/u, '')}: ${describe(fact)}${guarded}${nearbyText(fact)}  [${at}]\n`);
   }
   if (report.facts.length === 0) out.push('- no version facts for this code\n');
   if (report.unresolved > 0)
     out.push(`- ${report.unresolved} method calls not checked (receiver type unknown in the file)\n`);
   if (report.failed.length > 0) out.push(`- not parsed: ${report.failed.join(', ')}\n`);
   out.push(
-    'These are facts from the source of each release, not findings. Check each one against the code before you report it.\n',
+    'These are facts from the source of each release, not findings: judge each one by where the plugin runs that code in those releases.\n',
   );
   return out.join('');
 }

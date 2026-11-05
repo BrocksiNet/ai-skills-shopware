@@ -3,4 +3,4 @@ Shopware API this change adds, checked against 6.7.0.0 … 6.7.15.1 (40 releases
 - Shopware\Core\Content\Product\Events\ProductDetailRouteCacheTagsEvent::addTags(): @deprecated v6.8.0 in 6.7.0.0 … 6.7.15.1 (via Shopware\Core\Content\Product\Events\ProductDetailRouteCacheTagsEvent)  [src/Subscriber/LoyaltyBadgeCacheTagSubscriber.php:25]
 - Shopware\Core\Content\Product\Events\ProductDetailRouteCacheTagsEvent::getResponse(): @deprecated v6.8.0 in 6.7.0.0 … 6.7.15.1 (via Shopware\Core\Content\Product\Events\ProductDetailRouteCacheTagsEvent)  [src/Subscriber/LoyaltyBadgeCacheTagSubscriber.php:20]
 - 2 method calls not checked (receiver type unknown in the file)
-These are facts from the source of each release, not findings. Check each one against the code before you report it.
+These are facts from the source of each release, not findings: judge each one by where the plugin runs that code in those releases.

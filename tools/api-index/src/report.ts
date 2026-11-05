@@ -34,12 +34,21 @@ export function coreConstraint(dir: string): string | undefined {
   return typeof core === 'string' ? core : undefined;
 }
 
+/** A block the template or component has in every release a block is missing in. */
+export interface Nearby {
+  name: string;
+  /** Present in every release of the range, so one override can serve the whole range. */
+  throughout: boolean;
+}
+
 export type ReportFact = Fact & {
   uses: Use[];
   /** For a missing symbol: the guard that covers it, its own or its class's. */
   guard?: Use;
   /** Releases a class guard leaves open: the member is missing there, the class is not. */
   unguarded?: [string, string][];
+  /** For a missing block: blocks of its owner that exist in those releases, nearest by name first. */
+  nearby?: Nearby[];
 };
 
 export interface Report {
@@ -141,6 +150,44 @@ function attachGuards(facts: ReportFact[], uses: Use[], releases: string[]): voi
   }
 }
 
+/** The blocks the owner of a missing block has in all the releases it is
+ *  missing in, nearest by name: the ones sharing the longest `_` prefix
+ *  with it. Those present in the whole range come first, then the shorter
+ *  names (the parent block before its children), so a fix needs no look at
+ *  core's source for a block to move the override to. */
+function nearbyBlocks(lookup: Lookup, fact: ReportFact, releases: string[]): Nearby[] {
+  const hash = fact.target.indexOf('#');
+  if (hash === -1) return [];
+  const missing = expand(fact.releases, releases).map((release) => lookup.names.indexOf(release));
+  const whole = releases.map((release) => lookup.names.indexOf(release));
+  const present = lookup
+    .blocks(fact.target.slice(0, hash))
+    .filter((item) => missing.every((index) => lookup.present(item, index)))
+    .map((item) => ({
+      name: item.id.slice(hash + 1),
+      throughout: whole.every((index) => lookup.present(item, index)),
+    }));
+  const segments = fact.target.slice(hash + 1).split('_');
+  for (let count = segments.length - 1; count >= 1; count -= 1) {
+    const prefix = segments.slice(0, count).join('_');
+    const near = present.filter((block) => block.name.startsWith(prefix));
+    if (near.length > 0) {
+      return near.toSorted(
+        (a, b) =>
+          Number(b.throughout) - Number(a.throughout) || a.name.length - b.name.length || a.name.localeCompare(b.name),
+      );
+    }
+  }
+  return [];
+}
+
+function attachNearby(facts: ReportFact[], lookup: Lookup, releases: string[]): void {
+  for (const fact of facts.filter((candidate) => candidate.kind === 'missing')) {
+    const nearby = nearbyBlocks(lookup, fact, releases);
+    if (nearby.length > 0) fact.nearby = nearby;
+  }
+}
+
 /** A diff that changes composer.json may change the range: every fact counts then. */
 function narrowTo(diff: DiffLines | undefined): ((use: Use) => boolean) | undefined {
   if (diff === undefined || diff.files.has('composer.json')) return undefined;
@@ -163,6 +210,7 @@ export function factsOfDir(lookup: Lookup, dir: string, range: string, diff?: Di
   const inDiff = narrowTo(diff);
   const all = [...byTarget].flatMap(([target, list]) => symbolFacts(lookup, target, list, releases));
   attachGuards(all, read.uses, releases);
+  attachNearby(all, lookup, releases);
   const facts = all
     .filter((fact) => inDiff === undefined || fact.uses.some(inDiff))
     .toSorted((a, b) => a.kind.localeCompare(b.kind) || a.target.localeCompare(b.target));
