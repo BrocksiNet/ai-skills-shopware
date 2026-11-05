@@ -72,7 +72,8 @@ test('api-diff: breaks, announced removals, collapsed owners, moved routes, new 
     /- BREAK removed: route:api\.moved: removed \(GET \/api\/moved\) \(same path now route:api\.renamed\)/u,
   );
   assert.match(text, /- removed after deprecation: route:api\.old/u);
-  assert.match(text, /breaks without a deprecation in v1, 1 internal or experimental items skipped/u);
+  assert.match(text, /^Public API from v1 to v2\.\nSummary: \d+ breaking changes? without a deprecation in v1, /u);
+  assert.match(text, /\n1 internal or experimental items skipped\.\n$/u);
 });
 
 test('api-diff: a key whose parent became a prototype is not removed', () => {

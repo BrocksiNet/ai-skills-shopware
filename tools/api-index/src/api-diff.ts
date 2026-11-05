@@ -22,6 +22,9 @@ export interface Change {
   /** Where the item now is, when a removed route or field reappears under another id. */
   movedTo?: string;
   file: string;
+  /** The line in `file`: at the base for a removal, at the head otherwise.
+   *  Set only when the refs come from a clone (`withLines`). */
+  line?: number;
 }
 
 export interface ApiDiff {
@@ -190,11 +193,51 @@ function labelOf(change: Change): string {
   return `BREAK ${change.kind}`;
 }
 
+/** A removal or change without a deprecation in the base. */
+export function isBreak(change: Change): boolean {
+  return change.kind !== 'deprecated' && change.announced !== true;
+}
+
+/** Sets each change's line from the file text at the ref that has the item:
+ *  the base for a removal, the head otherwise. `read` returns undefined for
+ *  a file it cannot read. */
+export function withLines(
+  diff: ApiDiff,
+  read: (ref: string, files: string[]) => Map<string, string>,
+  lineOf: (id: string, text: string) => number | undefined,
+): ApiDiff {
+  const files = (removed: boolean): string[] => [
+    ...new Set(diff.changes.filter((change) => (change.kind === 'removed') === removed).map((change) => change.file)),
+  ];
+  const atBase = read(diff.base, files(true));
+  const atHead = read(diff.head, files(false));
+  const changes = diff.changes.map((change) => {
+    const text = (change.kind === 'removed' ? atBase : atHead).get(change.file);
+    const line = text === undefined ? undefined : lineOf(change.id, text);
+    return line === undefined ? change : { ...change, line };
+  });
+  return { ...diff, changes };
+}
+
+const plural = (count: number, one: string, many: string): string => `${count} ${count === 1 ? one : many}`;
+
+/** One line an agent can act on: the breaks first, then what was announced. */
+export function diffSummary(diff: ApiDiff): string {
+  const breaks = diff.changes.filter((change) => isBreak(change)).length;
+  const announced = diff.changes.filter((change) => change.kind !== 'deprecated' && change.announced === true).length;
+  const deprecated = diff.changes.filter((change) => change.kind === 'deprecated').length;
+  return (
+    `Summary: ${plural(breaks, 'breaking change', 'breaking changes')} without a deprecation in ${diff.base}, ` +
+    `${plural(announced, 'removal or change', 'removals or changes')} after a deprecation, ` +
+    `${plural(deprecated, 'new deprecation', 'new deprecations')}.`
+  );
+}
+
 const ORDER: Record<ChangeKind, number> = { removed: 0, changed: 1, deprecated: 2 };
 
-/** The diff as text, by surface: breaks first, then what was announced. */
+/** The diff as text: the summary, then by surface, breaks first. */
 export function diffText(diff: ApiDiff): string {
-  const out = [`Public API from ${diff.base} to ${diff.head}:\n`];
+  const out = [`Public API from ${diff.base} to ${diff.head}.\n${diffSummary(diff)}\n`];
   for (const surface of SURFACES) {
     const changes = diff.changes
       .filter((change) => change.surface === surface)
@@ -209,12 +252,10 @@ export function diffText(diff: ApiDiff): string {
     for (const change of changes) {
       const label = labelOf(change);
       const moved = change.movedTo === undefined ? '' : ` (same path now ${change.movedTo})`;
-      out.push(`- ${label}: ${change.id}: ${change.detail}${moved}  [${change.file}]\n`);
+      const where = change.line === undefined ? change.file : `${change.file}:${change.line}`;
+      out.push(`- ${label}: ${change.id}: ${change.detail}${moved}  [${where}]\n`);
     }
   }
-  const breaks = diff.changes.filter((change) => change.kind !== 'deprecated' && change.announced !== true);
-  out.push(
-    `\n${breaks.length} breaks without a deprecation in ${diff.base}, ${diff.skipped} internal or experimental items skipped.\n`,
-  );
+  if (diff.skipped > 0) out.push(`\n${diff.skipped} internal or experimental items skipped.\n`);
   return out.join('');
 }

@@ -4,13 +4,29 @@ Load when you change a DAL definition's API flags or associations, a feature
 flag registration, a configuration default or key, or a console command.
 
 None of these have a PHP signature, so no BC check notices the change.
-Operators and integrations notice after the update. With the
-ai-skills-shopware tools, `node tools/api-index/bin/api-diff.ts --repo .
---base origin/trunk --head HEAD` lists the routes, entity fields and flags,
-feature flags and configuration keys a branch removes or changes without a
-deprecation, and what it newly deprecates. `--surface admin,storefront,twig`
-does the same for admin components, props and blocks, storefront templates,
-blocks and JS plugins, and Twig functions.
+Operators and integrations notice after the update. This skill ships
+`scripts/shopware-api.mjs`, one file next to the `references/` folder. Run
+it with plain Node from the root of the shopware/shopware clone:
+
+```bash
+node <this-skill-folder>/scripts/shopware-api.mjs diff --repo . --base origin/trunk --head HEAD
+```
+
+It lists the routes, entity fields and flags, feature flags, configuration
+keys, admin components, props and blocks, storefront templates, blocks and
+JS plugins, and Twig functions the branch removes or changes without a
+deprecation, and what it newly deprecates, each with `[file:line]`. The
+second line is the summary. Exit code 3 means a breaking change was found;
+0 means none.
+
+- **Clone mode** (`--repo .`): base and head are git refs. Use it for your
+  branch, with `--base` set to the branch the PR targets.
+- **Release mode** (no `--repo`): base and head are releases such as
+  `6.6.10.4` and `6.7.0.0`, or `trunk`, from the weekly index the script
+  downloads. Use it to see what an earlier release already removed.
+- **No Node 20 or newer** (`node --version`): the script refuses to run.
+  Read `git diff origin/trunk...HEAD` for the files below by hand, and say
+  that the API diff did not run.
 
 ## Rules
 

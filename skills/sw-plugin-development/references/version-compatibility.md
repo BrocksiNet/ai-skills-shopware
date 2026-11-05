@@ -19,15 +19,35 @@ you must consciously narrow the range and call it out.
   or narrow the range in `composer.json` and say so in the changelog with a
   major version.
 
-Check when an API arrived in the source of the oldest supported tag
-(`git show v6.6.0.0:src/…`), not from memory. A class and its methods can
-arrive in different releases. With the ai-skills-shopware tools,
-`node tools/api-index/bin/api-facts.ts <plugin>` lists, for every release
-in the range, the Shopware API the plugin uses that is missing, deprecated
-or internal there: PHP classes and members, and the admin components and
-blocks, storefront templates, blocks and JS plugins, and Twig functions its
-overrides and templates rely on. A template block or plugin core removed is
-not an error: the override just stops working.
+Check when an API arrived from the source of each release, not from
+memory. A class and its methods can arrive in different releases, and a
+patch release can add a method. This skill ships `scripts/shopware-api.mjs`,
+one file next to the `references/` folder. Run it with plain Node from the
+plugin's root, the folder with `composer.json`:
+
+```bash
+node <this-skill-folder>/scripts/shopware-api.mjs facts .
+```
+
+It lists, for every release the `shopware/core` range allows, the Shopware
+API the plugin uses that is missing, deprecated or internal there, with the
+`file:line` that uses it: PHP classes and members, and the admin components
+and blocks, storefront templates, blocks and JS plugins, and Twig functions
+its overrides and templates rely on. The second line is the summary. A
+template block or JS plugin core removed is not an error: the override just
+stops working.
+
+- **For one change**, pipe the diff in, and the script reports only what
+  the change adds:
+  `git diff | node <this-skill-folder>/scripts/shopware-api.mjs facts --diff - .` `--range '~6.6.0 || ~6.7.0'` checks a
+  range other than the one in `composer.json`.
+- **Release mode** is what `facts` does: it reads each release from a
+  weekly index it downloads once. To compare two refs of a
+  shopware/shopware clone, such as a release tag and trunk, use
+  `diff --repo <clone> --base v6.6.0.0 --head origin/trunk`.
+- **No Node 20 or newer** (`node --version`): the script refuses to run.
+  Read the oldest supported tag by hand, `git show v6.6.0.0:src/…` in a
+  shopware/shopware clone, and say that the check was manual.
 
 ## Guarding version-specific code
 
