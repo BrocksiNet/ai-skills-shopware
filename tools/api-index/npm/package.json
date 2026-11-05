@@ -1,0 +1,29 @@
+{
+  "name": "shopware-api-index",
+  "version": "0.0.0",
+  "description": "Public API diff and extension facts for Shopware 6: what broke between two refs, and which APIs an extension uses that its supported range lacks.",
+  "keywords": [
+    "api",
+    "bc-break",
+    "deprecation",
+    "shopware"
+  ],
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/BrocksiNet/ai-skills-shopware.git",
+    "directory": "tools/api-index/npm"
+  },
+  "bin": {
+    "shopware-api": "shopware-api.mjs"
+  },
+  "files": [
+    "shopware-api.mjs",
+    "README.md",
+    "LICENSE"
+  ],
+  "type": "module",
+  "engines": {
+    "node": ">=20"
+  }
+}

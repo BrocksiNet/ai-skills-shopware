@@ -1,0 +1,70 @@
+name: publish-shopware-api
+
+# Publishes the bundled shopware-api.mjs as the npm package in
+# tools/api-index/npm, so `npx shopware-api-index diff|facts` works without
+# the skills. Manual only: run it with the version to publish.
+#
+#   - Bundles the same file the skills ship (tools/api-index/bin/bundle.ts).
+#   - Needs the NPM_TOKEN secret (an npm automation token); without it the
+#     job stops before anything is published.
+#   - dry_run packs and lists the files without publishing.
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: Version to publish, e.g. 0.1.0
+        required: true
+      dry_run:
+        description: Pack only, do not publish
+        type: boolean
+        default: true
+
+permissions:
+  contents: read
+
+concurrency: publish-shopware-api
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      id-token: write # npm provenance
+    steps:
+      - uses: actions/checkout@v5
+
+      - uses: actions/setup-node@v5
+        with:
+          node-version: '24'
+          registry-url: https://registry.npmjs.org
+
+      - name: Bundle into the package
+        run: |
+          npm ci --prefix tools/api-index
+          node tools/api-index/bin/bundle.ts --out tools/api-index/npm/shopware-api.mjs
+          cp LICENSE tools/api-index/npm/LICENSE
+
+      - name: Set the version
+        working-directory: tools/api-index/npm
+        env:
+          VERSION: ${{ inputs.version }}
+        run: npm version "$VERSION" --no-git-tag-version
+
+      - name: The packed bundle runs
+        working-directory: tools/api-index/npm
+        run: |
+          npm pack --dry-run
+          node shopware-api.mjs --help
+
+      - name: Publish
+        if: ${{ !inputs.dry_run }}
+        working-directory: tools/api-index/npm
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+        run: |
+          if [ -z "$NODE_AUTH_TOKEN" ]; then
+            echo "::error::NPM_TOKEN is not set; nothing published."
+            exit 1
+          fi
+          npm publish --provenance --access public

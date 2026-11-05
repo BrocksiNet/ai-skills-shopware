@@ -201,6 +201,22 @@ One line each, never a rule of their own:
 Both tools are optional. Installing the skills does not need them, and CI
 for this repository runs them only on recorded fixtures.
 
+Update (2026-11): both commands ship bundled as `scripts/shopware-api.mjs`
+in the four skills above, one file with no dependencies, built by
+`tools/api-index/bin/bundle.ts`. The agent runs
+`node <skill folder>/scripts/shopware-api.mjs diff|facts` from the user's
+project with Node 20 or newer; each reference says what to do without Node.
+The output starts with a summary line, every item carries `[file:line]` in
+clone mode, and `diff` exits with 3 on a break. The eval
+`supported-range-api-arrival` needs a patch-release boundary only the
+script knows. The same file can go to npm as `shopware-api-index` through
+the manual `publish-shopware-api.yml` workflow.
+
+Every Monday, `api-index.yml` also compares the new index with last week's:
+trunk against last week's trunk, each new tag against the tag before it.
+The result, `api-changes.md`, goes into the run summary, onto the release,
+and into the weekly drift issue as the "Public API changes" section.
+
 ## Phases
 
 **Phase 0: PHP surface, one tag (done 2026-10-22).** The generator for
