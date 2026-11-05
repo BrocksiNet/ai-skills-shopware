@@ -136,7 +136,7 @@ installed Symfony is the contract, not the latest Symfony docs. See
 The 6.8 scope is not frozen (fixed around the end of 2026, release targeted
 for mid-2027). Do not treat a slide deck as the migration. Do not narrow
 `composer.json` to 6.8 unless the user asked to drop a minor. Polyfills and
-version-aware Rector sets are proposals, not a finished upgrade. Prefer
+version-aware Rector transformations are not proof of a finished upgrade. Prefer
 deprecation warnings and Shopware's future-compatibility rules when they
 exist on the version you run. Do not transcribe them here.
 
@@ -192,9 +192,17 @@ experimental Vue single-file API for this upgrade; that refusal is
 For cross-version migrations (e.g. 6.6 → 6.7) and PHP modernization, prefer
 **Rector** over hand-editing — it is Shopware's own recommended upgrade tool:
 
-- Add `rector/rector` + `frosh/shopware-rector` (`--dev`) and pick the matching
-  set, e.g. `Frosh\Rector\Set\ShopwareSetList::SHOPWARE_6_7_0`, alongside the
-  Symfony set for language/framework modernization.
+- Consult [FriendsOfShopware/shopware-rector](https://github.com/FriendsOfShopware/shopware-rector)
+  as the maintained source: its [rules overview](https://github.com/FriendsOfShopware/shopware-rector/blob/main/docs/rector_rules_overview.md)
+  and [6.7 compatibility guide](https://github.com/FriendsOfShopware/shopware-rector/blob/main/docs/shopware-6.7.md)
+  explain the transformations and their limits. Read the selected rule, set
+  config and fixture at the package revision actually used. A rule namespace
+  or set name alone does not establish compatibility with the oldest supported
+  Shopware minor.
+- Reuse installed `rector/rector` + `frosh/shopware-rector` and existing config.
+  Propose adding dev dependencies only if missing and needed by the task.
+  Pick the matching available Shopware/Symfony sets without narrowing the
+  plugin's supported range; record their package versions and selected sets.
 - Run **dry-run first** (`vendor/bin/rector process --dry-run`), **review the
   diff**, then apply — never trust a blind rewrite.
 - For Administration JavaScript, use the Shopware **codemods**; Rector is PHP only.

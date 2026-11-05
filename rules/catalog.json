@@ -929,7 +929,17 @@
       "audience": [
         "plugin"
       ],
-      "defer_on_trunk": false
+      "defer_on_trunk": false,
+      "upstream": [
+        {
+          "source": "shopware-rector",
+          "path": "README.md#use-sets"
+        },
+        {
+          "source": "shopware-rector",
+          "path": "docs/shopware-6.7.md#compatibility-boundaries"
+        }
+      ]
     },
     {
       "id": "PLG-010",
@@ -5090,6 +5100,22 @@
         "commit": "1307180770624626c4063d594d4b7c8d58ed5968"
       },
       "retired_reason": "Candidate screened but not published (2026-11-04). Both skills-off answers detected the serialization bug. The apparent 2/2 vs 1/2 catch grade came from an additional finding about an underspecified default; the clean fixture also omitted the round-trip test the candidate required. The development screen therefore establishes no utility, harm or equivalence. Preserve the ID and repaired regression cases; see evals/experiments/queue-screen-2026-11-04.json. Reconsider only with fresh, contract-complete tasks."
+    },
+    {
+      "id": "DEV-001",
+      "skill": "sw-podman-dev",
+      "file": "skills/sw-podman-dev/references/shopware-cli-routing.md",
+      "title": "Route Shopware CLI checks by project ownership and installed capabilities",
+      "status": "active",
+      "since": "2026-11-05",
+      "eval": "shopware-cli-routing",
+      "core_guide_ids": [],
+      "audience": [
+        "core",
+        "plugin",
+        "app"
+      ],
+      "defer_on_trunk": false
     }
   ]
 }

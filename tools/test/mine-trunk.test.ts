@@ -107,14 +107,16 @@ describe('the 2026-10-13..2026-10-19 window', () => {
       shopware: { last_sha: '219491014944c6b6463cf6426c7001adea8dae0d', last_date: '2026-10-19T19:45:03Z' },
     });
   });
-  test('the committed state is mined up to this window or later, for every source', async () => {
+  test('recorded source cursors stay current; new Rector starts without a fabricated cursor', async () => {
     // `/mined` moves docs/.mining-state.json on, so it only ever passes the
     // recorded window; it never equals it for long.
     const states = parseStates(JSON.parse(readFileSync(join(ROOT, 'docs/.mining-state.json'), 'utf8')));
     const trunk = states.shopware ?? assert.fail('no shopware state');
     assert.match(trunk.last_sha, /^[0-9a-f]{40}$/u);
     assert.ok(trunk.last_date >= (stateFromReport(await text).shopware?.last_date ?? ''), trunk.last_date);
-    assert.deepEqual(Object.keys(states).toSorted(), SOURCES.map((s) => s.id).toSorted());
+    // The new source starts with firstPass; preserve historical cursors until an actual read.
+    const recordedSources = SOURCES.filter((s) => s.id !== 'shopware-rector' || s.id in states);
+    assert.deepEqual(Object.keys(states).toSorted(), recordedSources.map((s) => s.id).toSorted());
   });
 });
 

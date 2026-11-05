@@ -1,0 +1,6 @@
+{
+  "name": "nuxt-site",
+  "scripts": {
+    "check": "nuxt typecheck"
+  }
+}

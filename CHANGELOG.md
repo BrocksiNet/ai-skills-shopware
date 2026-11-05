@@ -8,7 +8,24 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- `DEV-001` and the `shopware-cli-routing` eval cover runner selection for
+  linked core checkouts, CLI-managed shops, standalone plugins and unrelated
+  projects. Deterministic fixtures check command scope and validation coverage;
+  model activation and A/B behavior have not been measured for this change.
+- Track `FriendsOfShopware/shopware-rector` documentation as an upstream source
+  for Shopware compatibility guidance and drift mapping.
+
 ### Changed
+
+- `sw-podman-dev` hands CLI-managed Shopware work to the upstream CLI skills,
+  checks installed command capabilities and separates project quality checks
+  from extension metadata validation. Unrelated projects keep their own tools;
+  managed core checkouts keep their Podman/Mutagen route.
+- Plugin migration guidance links upstream Rector rules and compatibility
+  boundaries, reuses installed dependencies and records the selected versions
+  and sets rather than copying transformations into skills.
 
 - `sw-podman-dev` covers the new shopware-dev lane lifecycle: `sw-dev lane
   create|update|remove`, `sw-dev versions`, `sw-dev space` and `sw-dev prune`.

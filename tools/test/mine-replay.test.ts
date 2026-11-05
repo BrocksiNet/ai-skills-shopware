@@ -409,6 +409,8 @@ describe('every source over 2026-10-13..2026-10-19', () => {
     'ai-coding-tools-2026-10-13..2026-10-19.json',
     'php-modernization-2026-10-13..2026-10-19.json',
     'shopware-cli-2026-10-13..2026-10-19.json',
+    // Registered after this historical window: synthetic no-change coverage only.
+    'shopware-rector-synthetic-no-changes.json',
     'fos-agent-skills-2026-10-13..2026-10-19.json',
     'humanizer-2026-10-13..2026-10-19.json',
     'shopware-dto-contract-2026-10-13..2026-10-19.json',
@@ -454,6 +456,7 @@ describe('every source over 2026-10-13..2026-10-19', () => {
       'ai-coding-tools',
       'php-modernization',
       'shopware-cli',
+      'shopware-rector',
       'fos-agent-skills',
       'humanizer',
       'shopware-dto-contract',
