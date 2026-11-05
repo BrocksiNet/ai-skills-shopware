@@ -71,7 +71,9 @@ Read only the reference that matches the task or the files it changes:
    blocks its template still has in those releases, the ones present in
    the whole range first: keep the old override for the releases that
    have the block, add one on the first block named, and run the command
-   again to check it. Without Node, say the check was not run.
+   again to check it. The new override needs no core markup: it wraps
+   `{{ parent() }}` and adds the plugin's own, so there is nothing to
+   fetch. Without Node, say the check was not run.
 
 ## Storefront deltas
 
