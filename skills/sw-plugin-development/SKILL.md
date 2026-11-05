@@ -8,13 +8,14 @@ description: >-
   subscriber, a decorator, a migration, cache tags, an HTTP client, or DI
   config. Targets custom/plugins, custom/static-plugins,
   vendor/store.shopware.com, a plugin repo (a class extending
-  Shopware\Core\Framework\Plugin\Plugin), or project src/. Covers services
-  and DI (PHP on 6.8, XML on 6.6/6.7, migrating services.xml to PHP), DAL
-  queries, HTTP cache tags, migrations, decorating core services, Symfony
-  HttpClient, and 6.6 to 6.8 compatibility. Do NOT use for the platform
-  itself (sw-core-development), for declarative apps with a manifest.xml
-  (sw-app-development), generic PHP style (sw-php-foundation), or test
-  authoring (sw-testing).
+  Plugin\Plugin), or project src/. Covers services and DI (PHP on 6.8, XML
+  on 6.6/6.7, migrating services.xml to PHP), DAL queries, HTTP cache tags,
+  migrations, decorating core services, Symfony HttpClient, 6.6 to 6.8
+  compatibility, and the check before a release that the plugin works on
+  every Shopware release its composer range allows. Do NOT use for the
+  platform itself (sw-core-development), for declarative apps with a
+  manifest.xml (sw-app-development), generic PHP style (sw-php-foundation),
+  or test authoring (sw-testing).
 license: MIT
 metadata:
   contexts: plugin project
