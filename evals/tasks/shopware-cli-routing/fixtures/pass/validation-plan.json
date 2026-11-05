@@ -1,0 +1,67 @@
+{
+  "core": {
+    "runner": "podman",
+    "commands": [
+      [
+        "podman",
+        "compose",
+        "exec",
+        "web",
+        "vendor/bin/phpunit",
+        "--filter",
+        "CartProcessorTest"
+      ],
+      [
+        "podman",
+        "compose",
+        "exec",
+        "web",
+        "composer",
+        "phpstan"
+      ]
+    ]
+  },
+  "shop": {
+    "runner": "shopware-cli",
+    "commands": [
+      [
+        "shopware-cli",
+        "project",
+        "validate",
+        "--reporter",
+        "json"
+      ],
+      [
+        "shopware-cli",
+        "extension",
+        "validate",
+        "custom/plugins/Example",
+        "--reporter",
+        "json"
+      ]
+    ]
+  },
+  "plugin": {
+    "runner": "shopware-cli",
+    "commands": [
+      [
+        "shopware-cli",
+        "extension",
+        "validate",
+        ".",
+        "--reporter",
+        "json"
+      ]
+    ]
+  },
+  "site": {
+    "runner": "project-native",
+    "commands": [
+      [
+        "npm",
+        "run",
+        "check"
+      ]
+    ]
+  }
+}

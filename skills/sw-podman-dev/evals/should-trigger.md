@@ -18,3 +18,6 @@
 - "Set up a new lane for Shopware 6.7.16.0"
 - "The Podman VM disk is full, what can I clean up?"
 - "Why is composer.json always modified in my trunk checkout?"
+
+- Plan project and extension checks for this .shopware-project.yml workspace; do not execute them.
+- Validate a standalone shopware-platform-plugin with the installed Shopware CLI.

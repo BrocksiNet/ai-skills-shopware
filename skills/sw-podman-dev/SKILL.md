@@ -9,10 +9,10 @@ description: >-
   a lane) and for Shopware CLI
   projects with .shopware-project.yml (shopware-cli project console, project validate,
   extension validate). Do NOT use for CI log interpretation, PR descriptions,
-  or PHPUnit test structure rules (sw-testing).
+  or PHPUnit test structure rules (sw-testing), or unrelated PHP, Node, Nuxt or Astro projects.
 license: MIT
 metadata:
-  contexts: core plugin project
+  contexts: core plugin app project
   tasks: run
   load_for: run
 ---
@@ -24,6 +24,20 @@ with **Mutagen** sync — host PHP/Composer/PHPUnit/Node are wrong because code
 and `vendor/` live in the container volume. Shopware CLI projects
 (`.shopware-project.yml`) should go through **shopware-cli**, not reconstructed
 composer/`bin/console`/npm. MCP is optional and must never block a fallback.
+
+## Applicability and CLI handoff
+
+Apply this skill only to Shopware work: a verified Shopware core checkout,
+plugin/app, a project requiring Shopware packages, or `.shopware-project.yml`.
+A generic `composer.json`, `package.json`, `compose.yaml` or installed CLI does
+not establish applicability. For unrelated projects, retain their own tooling.
+
+For CLI-managed projects, standalone extensions, or a requested Shopware setup,
+read [Shopware CLI routing](references/shopware-cli-routing.md) and load the
+installed upstream `shopware-cli` skill. Use its Docker or Store skill only when
+that operation needs it. Keep those skills upstream-owned; do not copy them into
+this library or SoftwareFactory. If missing, use the installed binary's help for
+the bounded task and report the missing skill; do not silently install it.
 
 ## Hard rules
 
@@ -50,8 +64,10 @@ Match the project, then use the first option that works:
 | Detect | Prefer | Fallback |
 | ------ | ------ | -------- |
 | `.env` contains `shopware-dev (managed by sw-dev)` | `podman compose exec web …` (MCP php-tooling if it is actually callable) | Host CLI only if the user confirms native |
-| `.shopware-project.yml` and **not** a linked shopware-dev tree | `shopware-cli` (`project console`, `project validate`, `extension validate`, `project dev`) | CLI Docker skill if the project is Docker-backed |
-| User said native | Host CLI | — |
+| `.shopware-project.yml` and **not** a linked shopware-dev tree | `shopware-cli` after checking the installed version and command help | CLI Docker skill if the project is Docker-backed |
+| Standalone Shopware plugin/app | `shopware-cli extension validate <path>` after checking help | Keep project toolset checks separate |
+| Unrelated project | Its own runner; no Shopware CLI handoff | — |
+| User said native (Shopware) | Host CLI | — |
 
 Do **not** route a linked `shopware-dev` trunk through `shopware-cli` by default
 (Docker vs Podman mismatch). Install the CLI skills separately; do not copy them:
@@ -295,4 +311,5 @@ Read the reference that matches the task or the files it changes:
 | Read | When | Or the change touches |
 | ---- | ---- | --------------------- |
 | [`shopware-dev-hub.md`](references/shopware-dev-hub.md) | You need the hub layout or a command not listed above. | `compose*.y*ml`, `docker-compose*.y*ml`, `COMPOSE_(FILE\|PROFILES)=`, … |
+| [`shopware-cli-routing.md`](references/shopware-cli-routing.md) | Choose Shopware CLI project or standalone extension commands, validation scope, or version-specific flags. | on demand |
 <!-- routes:end -->

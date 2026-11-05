@@ -1,0 +1,17 @@
+{
+  "_fixture_note": "Synthetic no-change responses for testing the newly registered source; not recorded historical repository evidence.",
+  "repos/FriendsOfShopware/shopware-rector/commits?sha=main&until=2026-10-19T23%3A59%3A59Z&per_page=1": [
+    {
+      "sha": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "commit": {
+        "message": "Synthetic fixture baseline",
+        "committer": {
+          "date": "2026-10-12T00:00:00Z"
+        }
+      },
+      "parents": []
+    }
+  ],
+  "repos/FriendsOfShopware/shopware-rector/commits?sha=main&path=README.md&since=2026-10-13T00%3A00%3A00Z&until=2026-10-19T23%3A59%3A59Z&per_page=100&page=1": [],
+  "repos/FriendsOfShopware/shopware-rector/commits?sha=main&path=docs&since=2026-10-13T00%3A00%3A00Z&until=2026-10-19T23%3A59%3A59Z&per_page=100&page=1": []
+}

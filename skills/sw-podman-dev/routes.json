@@ -6,6 +6,11 @@
       "when": "You need the hub layout or a command not listed above.",
       "paths_any": ["**/compose*.y*ml", "**/docker-compose*.y*ml", "**/Containerfile", "**/.devcontainer/**", "**/mutagen*.y*ml"],
       "anchors_any": ["COMPOSE_(FILE|PROFILES)=", "SHOPWARE_(ADMIN_)?ES_ENABLED", "podman compose", "sw-dev\\b"]
+    },
+    {
+      "reference": "references/shopware-cli-routing.md",
+      "when": "Choose Shopware CLI project or standalone extension commands, validation scope, or version-specific flags.",
+      "on_demand": true
     }
   ]
 }

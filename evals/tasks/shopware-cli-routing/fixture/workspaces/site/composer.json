@@ -1,0 +1,6 @@
+{
+  "name": "example/site-helper",
+  "require": {
+    "symfony/console": "^7.0"
+  }
+}
