@@ -125,9 +125,11 @@ export const grade: Grader = ({ workdir, transcript }) => {
     keeps_6_6: /6\.6/u.test(constraint),
     keeps_6_7: /6\.7/u.test(constraint),
     names_6_7_0_0: /\b6\.7\.0(\.0)?(?![.\d])/u.test(transcript),
+    // Each problem is identified by its block: the headline block, and the
+    // trigger block (the old `_icon` child or the parent the fix moves to).
     names_blocks:
       transcript.includes('page_account_address_welcome_headline') &&
-      transcript.includes('page_checkout_cart_shipping_costs_trigger_icon'),
+      transcript.includes('page_checkout_cart_shipping_costs_trigger'),
     says_silent: SILENT.test(transcript),
     no_false_alarm: !falseAlarm(transcript),
   };
