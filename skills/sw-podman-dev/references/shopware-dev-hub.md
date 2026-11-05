@@ -57,6 +57,13 @@ Mutagen-ignored, so the container owns them. Because `composer.lock` is also
 git-ignored, `sw-dev lane update` falls back to `composer update` when the lock
 does not match the new ref.
 
+The source volume is mounted without SELinux relabeling. A file written by a
+different container keeps that container's private label (`container_file_t:s0:cX,cY`)
+and a recreated web container gets `Permission denied` on it even as the same
+uid. `sw-dev lane update` and `lane create` reset such files to `s0` before
+provisioning. To check by hand, run `sudo find <volume> -context '*:s0:c*'`
+inside `podman machine ssh`.
+
 ## OpenSearch (opt-in per lane)
 
 `overrides/shared.podman-mutagen.yaml` puts the upstream `opensearch` service

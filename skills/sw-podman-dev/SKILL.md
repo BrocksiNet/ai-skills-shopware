@@ -144,7 +144,10 @@ update` refuses a dirty checkout, except for old extension wiring in
 `composer.json`, which it moves into the overlay. `composer.lock` is git-ignored
 upstream and goes stale on every ref change, so a failing `composer install`
 falls back to `composer update`. The Mutagen flush is retried for about three
-minutes while the recreated web container starts. Only lanes listed in an
+minutes while the recreated web container starts. Before provisioning, files
+in the source volume that still carry another container's private SELinux label
+are reset to the shared label; otherwise steps like `feature:dump` fail with
+`Permission denied` although owner and mode look right. Only lanes listed in an
 `agentic_commerce` or `mcp_extensions` lane order get extensions re-wired at the
 end. `lane remove` deletes the lane database and keeps the checkout unless you
 pass `--delete-checkout`.
