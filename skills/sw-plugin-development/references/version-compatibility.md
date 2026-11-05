@@ -37,6 +37,16 @@ its overrides and templates rely on. The second line is the summary. A
 template block or JS plugin core removed is not an error: the override just
 stops working.
 
+The script is a built index of each release's source, so its spans are the
+release evidence: `missing in 6.6.0.0 … 6.6.6.1` means the member arrived
+in the next release, 6.6.7.0. Report that release, then fix it right away:
+guard the call with `method_exists` on the member (`PLG-024`), keeping the
+call and the range, or start the range at that release. Do not fetch the
+core source per tag, search the web or read the script to confirm the
+span, and do not look for what the older releases offer instead: the guard
+is the fix, and the shop on an older release just does without. Run the
+command again after the edit; a guarded call is no longer listed.
+
 - **For one change**, pipe the diff in, and the script reports only what
   the change adds:
   `git diff | node <this-skill-folder>/scripts/shopware-api.mjs facts --diff - .` `--range '~6.6.0 || ~6.7.0'` checks a
