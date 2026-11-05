@@ -64,6 +64,14 @@ jobs:
             gh release download review-signals --dir "$RUNNER_TEMP/review-signals" --pattern '*.jsonl' || true
           fi
 
+      - name: Download the public API changes
+        # Written weekly by api-index.yml an hour earlier. Without it, the
+        # report has no API section.
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release download api-index --dir "$RUNNER_TEMP" --pattern api-changes.md || true
+
       - name: Mine every source since its last state and file the issue
         env:
           GH_TOKEN: ${{ github.token }}
@@ -71,6 +79,7 @@ jobs:
         run: |
           # shellcheck disable=SC2086 # DRY_RUN is empty or one flag
           node tools/bin/mine-trunk.ts run $DRY_RUN --reviews "$RUNNER_TEMP/review-signals" \
+            --api-changes "$RUNNER_TEMP/api-changes.md" \
             --repo "$GITHUB_REPOSITORY" --out "$RUNNER_TEMP/report.md" \
             --run-url "${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}/actions/runs/${GITHUB_RUN_ID}"
 

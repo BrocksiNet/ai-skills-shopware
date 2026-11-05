@@ -6,6 +6,7 @@
 //   node tools/bin/mine-trunk.ts report --source shopware    # one source only
 //   node tools/bin/mine-trunk.ts report --signals out.jsonl  # also write the mapped signals
 //   node tools/bin/mine-trunk.ts report --reviews DIR        # add the week's review comments from a review-signals store
+//   node tools/bin/mine-trunk.ts report --api-changes FILE   # add api-changes.md of the api-index release (missing file: no section)
 //   node tools/bin/mine-trunk.ts run --repo OWNER/NAME [--out FILE] [--run-url URL]  # report, then open or update the issue
 //   node tools/bin/mine-trunk.ts run --dry-run [--repo OWNER/NAME]                    # report and issue plan, nothing written
 //   node tools/bin/mine-trunk.ts advance [--comment '/mined shopware'] < issue-body.md  # write the states the report recorded
@@ -31,7 +32,7 @@ import { readStdin } from '../src/proc.ts';
 const ROOT = resolve(import.meta.dirname, '../..');
 const USAGE =
   'usage: mine-trunk.ts report|run [--since YYYY-MM-DD --until YYYY-MM-DD] [--source ID] [--signals FILE]' +
-  ' [--reviews DIR] [run: --repo OWNER/NAME --out FILE --run-url URL --dry-run]' +
+  ' [--reviews DIR] [--api-changes FILE] [run: --repo OWNER/NAME --out FILE --run-url URL --dry-run]' +
   " | advance [--comment '/mined [ID...]'] < issue-body.md\n";
 const COMMANDS = new Set(['report', 'run', 'advance']);
 
@@ -41,6 +42,7 @@ const OPTIONS = {
   source: { type: 'string' },
   signals: { type: 'string' },
   reviews: { type: 'string' },
+  'api-changes': { type: 'string' },
   repo: { type: 'string' },
   out: { type: 'string' },
   'run-url': { type: 'string' },
@@ -52,7 +54,8 @@ type Values = ReturnType<typeof parseArgs<{ allowPositionals: true; options: typ
 
 /** Runs one command; returns what it prints. */
 async function execute(command: string, values: Values): Promise<string> {
-  const { repo, out, comment, 'run-url': runUrl, 'dry-run': dryRun, ...mining } = values;
+  const { repo, out, comment, 'run-url': runUrl, 'dry-run': dryRun, 'api-changes': apiChanges, ...rest } = values;
+  const mining = { ...rest, ...(apiChanges === undefined ? {} : { apiChanges }) };
   if (command === 'advance') {
     const only = comment === undefined ? undefined : minedSources(comment);
     const states = advance(ROOT, await readStdin(), only);

@@ -202,8 +202,15 @@ export function reportSignals(mined: Mined[], index: MapIndex): Signal[] {
 export const reportJsonLines = (mined: Mined[], index: MapIndex): string => toJsonLines(reportSignals(mined, index));
 
 /** The issue body. It ends with the states a `/mined` comment moves to.
- *  `reviews`, when given, adds the week's review comments. */
-export function renderReport(mined: Mined[], catalog: Catalog, index: MapIndex, reviews?: ReviewWeek): string {
+ *  `reviews`, when given, adds the week's review comments; `apiChanges`, the
+ *  Markdown api-changes.ts wrote for the week's public API. */
+export function renderReport(
+  mined: Mined[],
+  catalog: Catalog,
+  index: MapIndex,
+  reviews?: ReviewWeek,
+  apiChanges?: string,
+): string {
   const signals = reportSignals(mined, index);
   const keptBySha = new Set(signals.flatMap((s) => (s.commit === undefined ? [] : [s.commit.sha])));
   const deltas = new Map(mined.map((m) => [m, m.commits.filter((c) => hasDelta(c, keptBySha)).length]));
@@ -226,6 +233,7 @@ export function renderReport(mined: Mined[], catalog: Catalog, index: MapIndex, 
     ...skillSections(signals, catalog),
     unmappedSection(signals),
     ...(reviews === undefined ? [] : [renderReviewSection(reviews)].filter((r) => r.length > 0)),
+    ...(apiChanges === undefined || apiChanges.trim() === '' ? [] : [[apiChanges.trimEnd()]]),
     commitsSection(mined, keptBySha),
     [
       'Comment `/mined` once every change is mapped, ticketed or dismissed. That opens a PR that moves ' +
