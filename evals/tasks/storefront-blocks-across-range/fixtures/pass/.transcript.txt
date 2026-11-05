@@ -1,0 +1,7 @@
+Ran `node .claude/skills/sw-plugin-development/scripts/shopware-api.mjs facts .`:
+two blocks the plugin extends are missing in 6.7.0.0 … 6.7.16.0.
+
+Risk report
+1. page_account_address_welcome_headline is gone from 6.7.0.0 on. Twig raises no error for an override of a missing block, so the hint silently disappears from the address book. Customers would only notice that the pick-up station hint is not shown. Do not ship without the fix. Fixed: the hint now also goes into page_account_main_content_header.
+2. page_checkout_cart_shipping_costs_trigger_icon is gone from 6.7.0.0 on, same silent failure: the truck icon is not rendered. Cosmetic, could ship, but fixed by extending page_checkout_cart_shipping_costs_trigger, which exists in every 6.6 and 6.7 release.
+page_checkout_cart_header still exists in every release, no change needed.

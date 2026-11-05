@@ -44,6 +44,7 @@ evals/tasks/<task-name>/
   fixtures/fail/              # optional golden FAIL case
   grade.sh                    # fixed entry: runs tools/graders/<task>.ts (or an AST grader)
   skills                      # optional: extra skills for smoke A/B (one name per line)
+  expect-tool                 # optional: command the A/B checks each trace for (ran_on / ran_off)
 
 evals/smoke/                  # local A/B harness (Claude, Codex, Cursor CLI)
 evals/runner/                 # shell wrappers for tools/bin (fake-agent.sh is the test double), install-agent.sh

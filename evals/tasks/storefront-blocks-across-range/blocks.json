@@ -1,0 +1,285 @@
+{
+  "about": "Storefront blocks present in every release of each minor, from the api-index release of 2026-11-02 (tools/api-index). Used by tools/graders/storefront-blocks-across-range.ts.",
+  "releases": {
+    "6.6": "6.6.0.0 … 6.6.10.30",
+    "6.7": "6.7.0.0 … 6.7.16.0"
+  },
+  "templates": {
+    "component/checkout/cart-header.html.twig": {
+      "6.6": [
+        "component_checkout_cart_header",
+        "component_checkout_cart_header_element",
+        "component_checkout_cart_header_product_info",
+        "component_checkout_cart_header_quantity",
+        "component_checkout_cart_header_total_price",
+        "component_checkout_cart_header_unit_price"
+      ],
+      "6.7": [
+        "component_checkout_cart_header",
+        "component_checkout_cart_header_element",
+        "component_checkout_cart_header_product_info",
+        "component_checkout_cart_header_quantity",
+        "component_checkout_cart_header_total_price",
+        "component_checkout_cart_header_unit_price"
+      ]
+    },
+    "component/shipping/shipping-fields.html.twig": {
+      "6.6": [
+        "component_shipping_method",
+        "component_shipping_method_collapse",
+        "component_shipping_method_collapse_trigger",
+        "component_shipping_method_collapse_trigger_icon",
+        "component_shipping_method_collapse_trigger_label",
+        "component_shipping_methods"
+      ],
+      "6.7": []
+    },
+    "component/shipping/shipping-form.html.twig": {
+      "6.6": [
+        "page_checkout_change_shipping_form",
+        "page_checkout_change_shipping_form_element",
+        "page_checkout_change_shipping_form_fields",
+        "page_checkout_change_shipping_form_redirect"
+      ],
+      "6.7": [
+        "component_shipping_form",
+        "component_shipping_form_element",
+        "component_shipping_form_list",
+        "component_shipping_form_method",
+        "component_shipping_form_redirect"
+      ]
+    },
+    "component/shipping/shipping-method.html.twig": {
+      "6.6": [
+        "component_shipping_method_control",
+        "component_shipping_method_description",
+        "component_shipping_method_field",
+        "component_shipping_method_image",
+        "component_shipping_method_input",
+        "component_shipping_method_label"
+      ],
+      "6.7": [
+        "component_shipping_method_control",
+        "component_shipping_method_description",
+        "component_shipping_method_field",
+        "component_shipping_method_image",
+        "component_shipping_method_input",
+        "component_shipping_method_label"
+      ]
+    },
+    "page/account/addressbook/address-actions.html.twig": {
+      "6.6": [
+        "page_account_address_actions",
+        "page_account_address_actions_buttons",
+        "page_account_address_actions_delete",
+        "page_account_address_actions_set_default",
+        "page_account_address_actions_set_default_billing",
+        "page_account_address_actions_set_default_shipping",
+        "page_account_address_actions_update"
+      ],
+      "6.7": [
+        "page_account_address_actions",
+        "page_account_address_actions_buttons",
+        "page_account_address_actions_delete",
+        "page_account_address_actions_set_default",
+        "page_account_address_actions_set_default_billing",
+        "page_account_address_actions_set_default_shipping",
+        "page_account_address_actions_update"
+      ]
+    },
+    "page/account/addressbook/address-card.html.twig": {
+      "6.6": [
+        "page_account_address_item_content",
+        "page_account_address_item_content_actions",
+        "page_account_address_item_content_body",
+        "page_account_address_item_content_inner",
+        "page_account_address_item_content_title"
+      ],
+      "6.7": []
+    },
+    "page/account/addressbook/address-item.html.twig": {
+      "6.7": [
+        "address_item_address",
+        "address_item_badge",
+        "address_item_dropdown",
+        "address_item_dropdown_button",
+        "address_item_dropdown_items"
+      ],
+      "6.6": []
+    },
+    "page/account/addressbook/address-manager.html.twig": {
+      "6.7": [
+        "address_base_default_address_item",
+        "address_base_list_address_item",
+        "address_base_list_create_address"
+      ],
+      "6.6": []
+    },
+    "page/account/addressbook/create.html.twig": {
+      "6.6": [
+        "page_account_address_action_button_send",
+        "page_account_address_action_buttons",
+        "page_account_address_form_create",
+        "page_account_address_form_create_general",
+        "page_account_address_form_create_personal",
+        "page_account_address_form_main",
+        "page_account_address_form_welcome",
+        "page_account_address_form_welcome_headline",
+        "page_account_address_required",
+        "page_account_main_content"
+      ],
+      "6.7": [
+        "page_account_address_action_button_back",
+        "page_account_address_action_button_send",
+        "page_account_address_action_buttons",
+        "page_account_address_form_create",
+        "page_account_address_form_create_general",
+        "page_account_address_form_create_personal",
+        "page_account_address_form_main",
+        "page_account_address_form_welcome",
+        "page_account_address_form_welcome_headline",
+        "page_account_address_required",
+        "page_account_main_content"
+      ]
+    },
+    "page/account/addressbook/default-address-actions.html.twig": {
+      "6.6": [
+        "page_account_default_address_actions",
+        "page_account_default_address_actions_edit"
+      ],
+      "6.7": [
+        "page_account_default_address_actions",
+        "page_account_default_address_actions_edit"
+      ]
+    },
+    "page/account/addressbook/edit.html.twig": {
+      "6.6": [
+        "page_account_address_action_button_send",
+        "page_account_address_action_buttons",
+        "page_account_address_form_edit",
+        "page_account_address_form_edit_general",
+        "page_account_address_form_edit_personal",
+        "page_account_address_form_main",
+        "page_account_address_form_welcome",
+        "page_account_address_form_welcome_headline",
+        "page_account_address_required",
+        "page_account_main_content"
+      ],
+      "6.7": [
+        "page_account_address_action_button_back",
+        "page_account_address_action_button_send",
+        "page_account_address_action_buttons",
+        "page_account_address_form_edit",
+        "page_account_address_form_edit_general",
+        "page_account_address_form_edit_personal",
+        "page_account_address_form_main",
+        "page_account_address_form_welcome",
+        "page_account_address_form_welcome_headline",
+        "page_account_address_required",
+        "page_account_main_content"
+      ]
+    },
+    "page/account/addressbook/index.html.twig": {
+      "6.6": [
+        "page_account_address_billing",
+        "page_account_address_billing_address",
+        "page_account_address_billing_body",
+        "page_account_address_billing_headline",
+        "page_account_address_billing_title",
+        "page_account_address_default",
+        "page_account_address_error_messages",
+        "page_account_address_item_content_create",
+        "page_account_address_list",
+        "page_account_address_main",
+        "page_account_address_overview_actions",
+        "page_account_address_overview_address",
+        "page_account_address_overview_body",
+        "page_account_address_shipping",
+        "page_account_address_shipping_address",
+        "page_account_address_shipping_body",
+        "page_account_address_shipping_headline",
+        "page_account_address_shipping_title",
+        "page_account_address_success_messages",
+        "page_account_address_welcome",
+        "page_account_address_welcome_headline",
+        "page_account_address_welcome_intro",
+        "page_account_main_content"
+      ],
+      "6.7": [
+        "page_account_main_content",
+        "page_account_main_content_address_manager",
+        "page_account_main_content_header"
+      ]
+    },
+    "page/checkout/cart/index.html.twig": {
+      "6.6": [
+        "base_head",
+        "page_checkout_aside_actions",
+        "page_checkout_cart",
+        "page_checkout_cart_action_proceed",
+        "page_checkout_cart_add_product",
+        "page_checkout_cart_add_product_and_shipping",
+        "page_checkout_cart_add_product_input",
+        "page_checkout_cart_add_product_input_group",
+        "page_checkout_cart_add_product_label",
+        "page_checkout_cart_add_product_redirect",
+        "page_checkout_cart_add_product_submit",
+        "page_checkout_cart_add_promotion",
+        "page_checkout_cart_add_promotion_forward",
+        "page_checkout_cart_add_promotion_input",
+        "page_checkout_cart_add_promotion_input_group",
+        "page_checkout_cart_add_promotion_label",
+        "page_checkout_cart_add_promotion_submit",
+        "page_checkout_cart_header",
+        "page_checkout_cart_hidden_line_items_information",
+        "page_checkout_cart_product_table",
+        "page_checkout_cart_shipping_costs",
+        "page_checkout_cart_shipping_costs_form_group",
+        "page_checkout_cart_shipping_costs_form_group_country",
+        "page_checkout_cart_shipping_costs_form_group_payment_method",
+        "page_checkout_cart_shipping_costs_form_group_shipping_method",
+        "page_checkout_cart_shipping_costs_trigger",
+        "page_checkout_cart_shipping_costs_trigger_icon",
+        "page_checkout_cart_table_header",
+        "page_checkout_cart_table_item",
+        "page_checkout_cart_table_items",
+        "page_checkout_container",
+        "page_checkout_item",
+        "page_checkout_main_content"
+      ],
+      "6.7": [
+        "page_checkout_aside_actions",
+        "page_checkout_cart",
+        "page_checkout_cart_action_proceed",
+        "page_checkout_cart_add_product",
+        "page_checkout_cart_add_product_and_shipping",
+        "page_checkout_cart_add_product_input",
+        "page_checkout_cart_add_product_input_group",
+        "page_checkout_cart_add_product_label",
+        "page_checkout_cart_add_product_redirect",
+        "page_checkout_cart_add_product_submit",
+        "page_checkout_cart_add_promotion",
+        "page_checkout_cart_add_promotion_forward",
+        "page_checkout_cart_add_promotion_input",
+        "page_checkout_cart_add_promotion_input_group",
+        "page_checkout_cart_add_promotion_label",
+        "page_checkout_cart_add_promotion_submit",
+        "page_checkout_cart_header",
+        "page_checkout_cart_hidden_line_items_information",
+        "page_checkout_cart_product_table",
+        "page_checkout_cart_shipping_costs",
+        "page_checkout_cart_shipping_costs_form_group",
+        "page_checkout_cart_shipping_costs_form_group_country",
+        "page_checkout_cart_shipping_costs_form_group_payment_method",
+        "page_checkout_cart_shipping_costs_form_group_shipping_method",
+        "page_checkout_cart_shipping_costs_trigger",
+        "page_checkout_cart_table_header",
+        "page_checkout_cart_table_item",
+        "page_checkout_cart_table_items",
+        "page_checkout_container",
+        "page_checkout_item",
+        "page_checkout_main_content"
+      ]
+    }
+  }
+}

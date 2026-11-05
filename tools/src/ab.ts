@@ -29,6 +29,8 @@ export interface ModeCounts {
   loaded: number;
   /** Runs whose adapter wrote a skills log at all. */
   reported: number;
+  /** Runs that ran the task's `expect-tool` command; null when the task names none. */
+  ran: number | null;
   tokensIn: number;
   tokensOut: number;
   /** Completed runs that reported tokens. */
@@ -40,6 +42,7 @@ export const emptyCounts = (): ModeCounts => ({
   err: 0,
   loaded: 0,
   reported: 0,
+  ran: null,
   tokensIn: 0,
   tokensOut: 0,
   tokenRuns: 0,
@@ -128,6 +131,7 @@ export function abRecord(
     verdict: d.verdict,
     loaded_on: on.reported > 0 ? on.loaded : null,
     loaded_off: off.reported > 0 ? off.loaded : null,
+    ...(on.ran === null ? {} : { ran_on: on.ran, ran_off: off.ran }),
     tokens_on: tokensAverage(on),
     tokens_off: tokensAverage(off),
     agent: meta.agent,
@@ -157,6 +161,9 @@ export function abSummary(r: AbResult, on: ModeCounts, off: ModeCounts): string 
     `  skill ON : ${r.on}/${r.on_done} completed runs passed (${on.err} agent error(s))`,
     `  skill OFF: ${r.off}/${r.off_done} completed runs passed (${off.err} agent error(s))`,
     `  skill loaded: on ${r.loaded_on ?? 'null'}/${r.repeats}, off ${r.loaded_off ?? 'null'}/${r.repeats}`,
+    ...(r.ran_on === undefined || r.ran_on === null
+      ? []
+      : [`  ran the tool: on ${r.ran_on}/${r.repeats}, off ${r.ran_off ?? 'null'}/${r.repeats}`]),
     `  tokens per run (input/output): on ${tokenText(r.tokens_on)}, off ${tokenText(r.tokens_off)}`,
     `  => ${last}`,
   ].join('\n');

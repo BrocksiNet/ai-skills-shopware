@@ -38,6 +38,9 @@ export interface AbResult {
   /** null when the adapter does not report skill loads. */
   loaded_on?: number | null;
   loaded_off?: number | null;
+  /** Runs whose trace shows the task's `expect-tool` command; missing when the task names none. */
+  ran_on?: number | null;
+  ran_off?: number | null;
   /** null when the adapter does not report tokens; missing on older lines. */
   tokens_on?: Tokens | null;
   tokens_off?: Tokens | null;
@@ -107,6 +110,8 @@ const FIELDS = {
   verdict: isVerdict,
   loaded_on: nullable(isCount),
   loaded_off: nullable(isCount),
+  ran_on: nullable(isCount),
+  ran_off: nullable(isCount),
   tokens_on: nullable(hasTokens),
   tokens_off: nullable(hasTokens),
   agent: optional(isString),

@@ -1,0 +1,13 @@
+{% sw_extends '@Storefront/storefront/page/account/addressbook/index.html.twig' %}
+
+{# Shopware 6.6: the address book still has the welcome headline. #}
+{% block page_account_address_welcome_headline %}
+    {{ parent() }}
+    <p class="acme-address-hint">{{ 'acmeAddressHints.addressHint'|trans|sw_sanitize }}</p>
+{% endblock %}
+
+{# Shopware 6.7.0.0 removed the block above; the page header replaces it. #}
+{% block page_account_main_content_header %}
+    {{ parent() }}
+    <p class="acme-address-hint">{{ 'acmeAddressHints.addressHint'|trans|sw_sanitize }}</p>
+{% endblock %}
