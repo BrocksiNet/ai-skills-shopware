@@ -53,7 +53,9 @@ tracks the next unreleased major. Lanes made by `sw-dev lane create` live at
 Each lane's host checkout syncs into its container with a `two-way-resolved`
 Mutagen session named `shopware-<lane>`. `sw-dev startup` and `sw-dev sync all`
 recreate missing sessions after a reboot. `vendor/` and `composer.lock` are
-Mutagen-ignored, so the container owns them.
+Mutagen-ignored, so the container owns them. Because `composer.lock` is also
+git-ignored, `sw-dev lane update` falls back to `composer update` when the lock
+does not match the new ref.
 
 ## OpenSearch (opt-in per lane)
 

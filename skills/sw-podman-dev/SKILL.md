@@ -140,8 +140,14 @@ sw-dev lane remove sw65 --yes                    # containers, volumes, sessions
 `lane create` picks free ports, writes `instances/<id>.yaml`, links the
 checkout, starts the stack and the Mutagen session, then installs and builds
 inside the container. `--no-install` and `--no-build` stop earlier. `lane
-update` refuses a dirty checkout. `lane remove` deletes the lane database and
-keeps the checkout unless you pass `--delete-checkout`.
+update` refuses a dirty checkout, except for old extension wiring in
+`composer.json`, which it moves into the overlay. `composer.lock` is git-ignored
+upstream and goes stale on every ref change, so a failing `composer install`
+falls back to `composer update`. The Mutagen flush is retried for about three
+minutes while the recreated web container starts. Only lanes listed in an
+`agentic_commerce` or `mcp_extensions` lane order get extensions re-wired at the
+end. `lane remove` deletes the lane database and keeps the checkout unless you
+pass `--delete-checkout`.
 
 ## Disk space
 
