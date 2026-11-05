@@ -181,6 +181,12 @@ sw-dev ext adopt trunk    # move an old composer.json diff into the overlay
 A plain `composer install` uses `composer.json` and drops the extensions from
 `vendor/`. Run `sw-dev ext sync <lane>` after it.
 
+Lanes always link the local ucp-php-sdk checkout, normally `main`. When the
+plugin still pins an older exact SDK release, the overlay registers the SDK
+under that pin and aliases it as the newest SDK tag, for example
+`0.0.7 as 0.0.8`. The plugin's version guard passes and the linked code is
+still `main`. `UCP_SDK_VERSION` overrides the newest-tag lookup.
+
 ## Fresh-clone traps
 
 A bare `shopware/shopware` clone ships **no built assets and no `install.lock`**.
