@@ -15,3 +15,6 @@
 - "Run cache:clear through shopware-cli project console"
 - "es:index says no OpenSearch host is reachable on trunk"
 - "Enable Elasticsearch for the 6.7 lane so I can test product search"
+- "Set up a new lane for Shopware 6.7.16.0"
+- "The Podman VM disk is full, what can I clean up?"
+- "Why is composer.json always modified in my trunk checkout?"

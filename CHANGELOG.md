@@ -8,6 +8,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- `sw-podman-dev` covers the new shopware-dev lane lifecycle: `sw-dev lane
+  create|update|remove`, `sw-dev versions`, `sw-dev space` and `sw-dev prune`.
+  It forbids removing lanes or volumes without the user's go-ahead and keeps
+  `trunk` permanent. Extension wiring goes through `sw-dev ext` and the
+  git-excluded `composer.sw-dev.json`, so agents no longer dirty
+  `composer.json`. The hard-coded lane port table is replaced by `sw-dev list`.
+
 ### Fixed
 
 - Clarify `ADM-044` for legacy Administration fields across 6.5 and 6.6:

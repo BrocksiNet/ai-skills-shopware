@@ -34,21 +34,35 @@ sw-dev link <instance> [path]
 sw-dev link-all
 sw-dev doctor
 sw-dev unlink <instance>
+sw-dev versions
+sw-dev lane create|update|remove <instance> …
+sw-dev space [--host]
+sw-dev prune [--apply] [--unused-images] [--sessions]
+sw-dev ext status|sync|adopt|reset <lane>
 ```
 
-## Instances (default registry)
+## Instances
 
-| ID | Path | Proxy |
-| -- | ---- | ----- |
-| trunk | `~/Documents/Projects/shopware-trunk` | trunk.localhost:8088 |
-| sw66 | `~/Documents/Projects/shopware-6-6-branch` | sw66.localhost:8088 |
-| sw65 | `~/Documents/Projects/shopware-6-5-branch` | sw65.localhost:8088 |
-| commercial | `~/Documents/Projects/shopware-commercial` | (base compose ports) |
+`sw-dev list` prints the registry. `trunk` at
+`~/Documents/Projects/shopware-trunk` (`trunk.localhost:8088`) is permanent and
+tracks the next unreleased major. Lanes made by `sw-dev lane create` live at
+`~/Documents/Projects/shopware-<id>` and are served at `<id>.localhost:8088`.
 
 ## Mutagen
 
-Host directory syncs into container volume `shopware-src` via Mutagen.
-`~/scripts/dev-startup.sh` ensures lane + commercial sessions after reboot.
+Each lane's host checkout syncs into its container with a `two-way-resolved`
+Mutagen session named `shopware-<lane>`. `sw-dev startup` and `sw-dev sync all`
+recreate missing sessions after a reboot. `vendor/` and `composer.lock` are
+Mutagen-ignored, so the container owns them. Because `composer.lock` is also
+git-ignored, `sw-dev lane update` falls back to `composer update` when the lock
+does not match the new ref.
+
+The source volume is mounted without SELinux relabeling. A file written by a
+different container keeps that container's private label (`container_file_t:s0:cX,cY`)
+and a recreated web container gets `Permission denied` on it even as the same
+uid. `sw-dev lane update` and `lane create` reset such files to `s0` before
+provisioning. To check by hand, run `sudo find <volume> -context '*:s0:c*'`
+inside `podman machine ssh`.
 
 ## OpenSearch (opt-in per lane)
 
@@ -106,7 +120,6 @@ leave it running.
 
 ## New checkout
 
-1. Clone Shopware into `~/Documents/Projects/…`
-2. Add entry to `~/shopware-dev/instances.json` + `instances/<name>.yaml`
-3. `sw-dev link <name>`
-4. `podman compose up -d` + mutagen session (or `dev-startup.sh`)
+Run `sw-dev lane create <id> --ref <tag|branch> --plan`, check the plan, then
+run it without `--plan`. To retire a lane, run `sw-dev lane remove <id>` as a
+dry run, show the user the output, and add `--yes` only after they agree.
