@@ -6,7 +6,9 @@ description: >-
   block, snippet, theme, storefront JavaScript plugin, or storefront SCSS,
   even a small override: under src/Storefront, Resources/views/storefront,
   or Resources/app/storefront, including Twig 4 changes such as the removed
-  spaceless filter and null HTML attributes. Do NOT use for Administration
+  spaceless filter and null HTML attributes, and checking that a plugin's
+  template overrides still render on every Shopware release its range
+  allows. Do NOT use for Administration
   Vue/Jest (sw-admin-js), PHP DAL/services (surface PHP skills), or generic
   modern CSS lectures (research + Modern Web Guidance after Shopware
   primitives are checked).
@@ -49,6 +51,23 @@ Read only the reference that matches the task or the files it changes:
    AJAX on those pages for personalized data. Load genuinely private
    responses asynchronously after first paint; do not put `no-store` on
    the shared document.
+5. **SF-014** **Check every extended block against the whole range.** Core
+   removes storefront blocks and templates in a minor without a
+   deprecation, and Twig raises nothing for an override of a missing
+   block: it just never renders. When the plugin's `composer.json` allows
+   more than one Shopware minor, run this from the plugin root before you
+   finish, instead of reading core source per tag:
+
+   ```bash
+   node <this-skill-folder>/scripts/shopware-api.mjs facts .
+   ```
+
+   It lists each block, template and JS plugin the plugin uses that is
+   missing in a release of the range, with the release span and the
+   plugin's `file:line`. For a block that is gone, keep the old override
+   for the releases that have it and add one on a block the newer releases
+   have; check the new block with the same command. Without Node, say the
+   check was not run.
 
 ## Storefront deltas
 

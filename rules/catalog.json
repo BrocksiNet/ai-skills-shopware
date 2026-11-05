@@ -4380,6 +4380,21 @@
       }
     },
     {
+      "id": "SF-014",
+      "skill": "sw-storefront",
+      "file": "skills/sw-storefront/SKILL.md",
+      "title": "Check every extended storefront block against the whole composer range",
+      "status": "active",
+      "since": "2026-11-05",
+      "eval": "storefront-blocks-across-range",
+      "core_guide_ids": [],
+      "audience": [
+        "storefront",
+        "plugin"
+      ],
+      "defer_on_trunk": false
+    },
+    {
       "id": "SEC-001",
       "skill": "sw-security",
       "file": "skills/sw-security/SKILL.md",
