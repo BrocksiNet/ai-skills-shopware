@@ -4,7 +4,9 @@ description: >-
   Run Shopware dev commands in the right environment. Use for linked
   shopware-dev checkouts (Podman and Mutagen: php, composer install, phpunit,
   bin/console, phpstan, ecs, npm, podman compose, mutagen sync,
-  trunk.localhost lanes, enabling OpenSearch on a lane) and for Shopware CLI
+  trunk.localhost lanes, creating, updating or removing a lane, Podman disk
+  cleanup, extension wiring that dirties composer.json, enabling OpenSearch on
+  a lane) and for Shopware CLI
   projects with .shopware-project.yml (shopware-cli project console, project validate,
   extension validate). Do NOT use for CI log interpretation, PR descriptions,
   or PHPUnit test structure rules (sw-testing).
@@ -34,6 +36,12 @@ composer/`bin/console`/npm. MCP is optional and must never block a fallback.
    `.shopware-project.yml` lives) before compose, CLI, or MCP commands.
 4. **Do not block** on missing MCP. If php-tooling MCP is down, use Podman or
    `shopware-cli` instead of stalling.
+5. **Never** `composer require` private extensions (agentic commerce, UCP SDK,
+   MCP extensions) into a lane's tracked `composer.json`. Use `sw-dev ext sync
+   <lane>`, which wires them through the git-excluded `composer.sw-dev.json`.
+6. **Never** remove a lane, a lane volume or a checkout without the user's
+   go-ahead. `trunk` is permanent. Run `sw-dev lane remove` and `sw-dev prune`
+   as a dry run first and show the user what they would delete.
 
 ## Command priority
 
@@ -109,28 +117,65 @@ unless debugging — linked projects use `COMPOSE_FILE` in `.env`.
 Several checkouts run in parallel. **Use the workspace's project** — do not
 cross lanes.
 
-| Instance | Proxy (browser / HTTP MCP) | App port |
-| -------- | -------------------------- | -------- |
-| trunk | `http://trunk.localhost:8088` | 8100 |
-| sw66 | `http://sw66.localhost:8088` | 8101 |
-| sw65 | `http://sw65.localhost:8088` | 8102 |
-| sw67 | `http://sw67.localhost:8088` | 8103 |
+Each lane is reachable at `http://<instance>.localhost:8088` through the shared
+proxy. `sw-dev list` shows the lanes, `sw-dev show <instance>` the path and app
+port. `trunk` always tracks the next unreleased major. The other lanes pin a
+release tag or a branch.
 
 `.mcp.json` Shopware HTTP URL must match **this** workspace's lane.
 
-## Add a new instance (fresh clone)
+## Lane lifecycle
 
-Full walkthrough: `~/shopware-dev/README.md` → "Add a new instance". Short version:
-clone the tag/branch into its own folder, register the lane in
-`instances.json` + create `instances/<lane>.yaml` (unique ports), `sw-dev link
-<lane>`, `podman compose up -d`, `sw-dev sync all`, then **inside the container**:
-`composer install` → `bin/console system:install --create-database --basic-setup
---force` → build admin (`npm ci && npm run build` in
-`src/Administration/Resources/app/administration`) → `bundle:dump` +
-`assets:install`.
+Use the `sw-dev lane` commands instead of editing `instances.json` by hand:
+
+```bash
+sw-dev versions                                  # each lane vs the latest tag of its line
+sw-dev lane create sw6716 --ref v6.7.16.0 --plan # dry run: lane, path, ports
+sw-dev lane create sw6716 --ref v6.7.16.0        # clone, register, link, install, build
+sw-dev lane update sw67 --ref v6.7.16.0          # new tag, migrations, rebuild
+sw-dev lane remove sw65                          # dry run
+sw-dev lane remove sw65 --yes                    # containers, volumes, sessions, registry
+```
+
+`lane create` picks free ports, writes `instances/<id>.yaml`, links the
+checkout, starts the stack and the Mutagen session, then installs and builds
+inside the container. `--no-install` and `--no-build` stop earlier. `lane
+update` refuses a dirty checkout. `lane remove` deletes the lane database and
+keeps the checkout unless you pass `--delete-checkout`.
+
+## Disk space
+
+The Podman VM disk fills up first. Check it before large builds:
+
+```bash
+sw-dev space                 # VM disk, podman system df, volumes per lane
+sw-dev prune                 # dry run: orphaned containers, volumes, images, sessions
+sw-dev prune --apply         # remove them; add --unused-images or --sessions for more
+```
+
+Do not run `podman system prune` or `podman volume prune`. After a `compose
+down`, a lane's volumes belong to no container, so these commands delete the
+lane database too. `sw-dev prune` keeps the volumes of every registered lane.
+
+## composer.json stays clean
+
+`sw-dev agentic bootstrap` and `sw-dev mcp bootstrap` run their `composer
+config` and `composer require` with `COMPOSER=composer.sw-dev.json`. The
+tracked `composer.json` therefore shows no diff.
+
+```bash
+sw-dev ext status trunk   # composer.json clean? overlay present or stale?
+sw-dev ext sync trunk     # rebuild the overlay and re-wire the extensions
+sw-dev ext adopt trunk    # move an old composer.json diff into the overlay
+```
+
+A plain `composer install` uses `composer.json` and drops the extensions from
+`vendor/`. Run `sw-dev ext sync <lane>` after it.
+
+## Fresh-clone traps
 
 A bare `shopware/shopware` clone ships **no built assets and no `install.lock`**.
-The shared tooling handles the traps, but know them:
+`sw-dev lane create` handles these traps. Know them when you debug a lane:
 
 - **Never build on the host.** Admin/storefront builds run in the `web` container.
 - **Check the Mutagen mode when container-created files vanish.** Lanes use
@@ -179,7 +224,7 @@ The shared tooling handles the traps, but know them:
 sw-dev startup --quiet       # GPG, phpactor, Podman, proxy, Mutagen
 sw-dev sync all              # all lane and non-agentic Mutagen sessions
 sw-dev sync status           # lane Mutagen/container file status
-sw-dev proxy restart         # reload local trunk/sw66/sw65 proxy
+sw-dev proxy restart         # reload the proxy after the lane list changed
 sw-dev lane shell trunk      # open shell in the lane's web container
 sw-dev lane exec 66 bin/console cache:clear
 sw-dev agentic bootstrap 65
@@ -210,6 +255,10 @@ sw-dev validate --static-only   # no podman exec / no HTTP
 | `shopware-cli` against a linked shopware-dev trunk | `podman compose exec web …` |
 | Read host `vendor/` for symbols | Search source or use LSP/MCP in container |
 | Edit `compose.override.yaml` in project | Edit `~/shopware-dev/instances/*.yaml` |
+| `composer require` a private extension in a lane | `sw-dev ext sync <lane>` |
+| Commit a `composer.json` with extension wiring | `sw-dev ext adopt <lane>`, then commit |
+| Hand-edit `instances.json` for a new version | `sw-dev lane create <id> --ref <tag>` |
+| `podman volume prune` when the VM disk is full | `sw-dev space`, then `sw-dev prune` |
 | `es:index` fails with no OpenSearch host, so remove the profile from the shared override | Enable OpenSearch for this lane only (`COMPOSE_PROFILES=opensearch` in `.env`), see the hub reference |
 
 ## Hub layout (edit once)
@@ -221,7 +270,7 @@ sw-dev validate --static-only   # no podman exec / no HTTP
   instances/trunk.yaml, sw66.yaml, …
   tooling/mcp-*.base.json
   proxy/dev_host_proxy.py
-  lib/startup.sh, lib/mutagen.sh, lib/agentic.sh, …
+  lib/startup.sh, lib/mutagen.sh, lib/agentic.sh, lib/lanes.sh, …
   bin/sw-dev
 ```
 
