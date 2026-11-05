@@ -1,0 +1,11 @@
+I ran the bundled check from the plugin root:
+
+    node .claude/skills/sw-plugin-development/scripts/shopware-api.mjs facts .
+
+Summary: 1 fact (1 missing).
+- LineItem::setShippingCostAware(): missing in 6.6.0.0 … 6.6.6.1 [src/Subscriber/DigitalLineItemSubscriber.php:29]
+
+So the call fails with an undefined method on 6.6.0.0 up to 6.6.6.1; the
+method exists from 6.6.7.0 on. I kept the ~6.6.0 || ~6.7.0 range and guarded
+the call with method_exists(). On 6.6.0.0 to 6.6.6.1 digital goods keep
+counting towards shipping, which is the behaviour before 2.1.0.

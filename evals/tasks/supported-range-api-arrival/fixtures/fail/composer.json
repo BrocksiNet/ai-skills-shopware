@@ -1,0 +1,21 @@
+{
+    "name": "swag/digital-goods-shipping",
+    "description": "Excludes digital line items from shipping cost calculation",
+    "type": "shopware-platform-plugin",
+    "version": "2.1.0",
+    "license": "MIT",
+    "require": {
+        "shopware/core": "~6.6.0 || ~6.7.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "Swag\\DigitalGoodsShipping\\": "src/"
+        }
+    },
+    "extra": {
+        "shopware-plugin-class": "Swag\\DigitalGoodsShipping\\SwagDigitalGoodsShipping",
+        "label": {
+            "en-GB": "Digital goods shipping"
+        }
+    }
+}

@@ -200,6 +200,14 @@ survives workdir cleanup; CI uploads it even when a shard fails. Retry traces
 can contain earlier attempts; the aggregate skill/token counts still use only
 the final attempt. Review a sample of transcripts before interpreting scores.
 
+Whether an agent ran a bundled script is in the raw traces, not in the
+transcript, which holds only the agent's text. For example, for
+`supported-range-api-arrival`:
+
+```bash
+grep -rl --include='on-*.trace.jsonl' 'shopware-api.mjs' <results>.artifacts
+```
+
 The stricter review graders change the measurement: do not compare their scores
 directly with older baselines as if only the skills changed.
 
