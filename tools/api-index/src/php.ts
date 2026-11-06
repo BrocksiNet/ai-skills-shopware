@@ -78,6 +78,32 @@ function argText(args: Node[], named: string): string | undefined {
   return text(value, 'value');
 }
 
+/** A string argument by name, else by position. */
+function argAt(args: Node[], index: number, named: string): string | undefined {
+  const byName = argText(args, named);
+  if (byName !== undefined) return byName;
+  return text(args.filter((arg) => arg.kind !== 'namedargument')[index], 'value');
+}
+
+/** The previous names a moved class keeps as runtime aliases
+ *  (`#[ClassMoved(version, previousClassName)]`, one item each). */
+function aliasItems(node: Node, head: Item, fqcn: string, scope: Scope, file: string): Item[] {
+  return attributes(node, scope)
+    .filter((attr) => attr.name === `${BC_CHANGE}ClassMoved`)
+    .flatMap((attr) => {
+      const previous = argAt(attr.args, 1, 'previousClassName')?.replace(/^\\/u, '');
+      if (previous === undefined || previous === '') return [];
+      const alias: Item = {
+        id: `php:${previous}`,
+        kind: head.kind,
+        file,
+        flags: { deprecated: argAt(attr.args, 0, 'version') ?? '' },
+        aliasOf: fqcn,
+      };
+      return [alias];
+    });
+}
+
 /** Flags of a declaration from its docblock and attributes. */
 export function flagsOf(node: Node, scope: Scope, isFinal: boolean): Flags {
   const doc = docblock(node);
@@ -236,7 +262,7 @@ function classItems(node: Node, scope: Scope, file: string): Item[] {
     .filter((value) => value !== undefined);
   if (traits.length > 0) head.traits = traits;
   const members = children(node, 'body').flatMap((member) => memberItems(member, fqcn, scope, file));
-  return [head, ...members];
+  return [head, ...members, ...aliasItems(node, head, fqcn, scope, file)];
 }
 
 /** Class-likes in a statement, also inside `if (class_exists(…))` blocks,

@@ -5,7 +5,8 @@ import { readFileSync, rmSync } from 'node:fs';
 import { parseArgs } from 'node:util';
 import { appliedCopy, type DiffLines, parseDiff } from './diff.ts';
 import type { Io } from './diff-cli.ts';
-import { formatRuns, Lookup } from './facts.ts';
+import { Lookup } from './facts.ts';
+import { formatRuns } from './runs.ts';
 import { locateIndex } from './locate.ts';
 import { coreConstraint, describe, factsOfDir, type Report, type ReportFact } from './report.ts';
 import { loadTimeline } from './store.ts';
@@ -16,7 +17,8 @@ export const FACTS_USAGE = `usage: facts [options] <extension dir>
 Lists, for every Shopware release the extension's composer range allows,
 the Shopware API it uses that is missing, deprecated, internal or
 experimental there: PHP classes and members, admin components and blocks,
-storefront templates, blocks and JS plugins, and Twig functions.
+storefront templates, blocks and JS plugins, and Twig functions. A class
+that moved and keeps its old name as a runtime alias is listed as moved.
 
   --range <constraint>  instead of shopware/core in composer.json
   --diff <patch|->      the tree has the change; report only what it adds
@@ -54,6 +56,7 @@ export function factsSummary(facts: readonly { kind: string }[]): string {
     'deprecated',
     'experimental',
     'bc-change',
+    'moved',
     'guarded-everywhere',
   ];
   const counts = new Map<string, number>();

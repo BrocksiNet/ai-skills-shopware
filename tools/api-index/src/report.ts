@@ -4,7 +4,8 @@
 import { existsSync, readdirSync, readFileSync, statSync } from 'node:fs';
 import { join, relative } from 'node:path';
 import type { DiffLines } from './diff.ts';
-import { type Fact, factsFor, formatRuns, type Lookup, presentThroughout, releasesIn } from './facts.ts';
+import { type Fact, factsFor, type Lookup, presentThroughout } from './facts.ts';
+import { formatRuns, releasesIn } from './runs.ts';
 import { isNode } from './node.ts';
 import { frontendUses, isFrontendFile } from './frontend-uses.ts';
 import { memberOwner } from './surfaces.ts';
@@ -249,6 +250,11 @@ export function describe(fact: Fact): string {
       return `announced change ${fact.value ?? ''} in ${where}${via}`;
     case 'guarded-everywhere':
       return `guarded, but present in every release of the range (${where})`;
+    case 'moved':
+      return (
+        `a runtime alias of ${(fact.value ?? '').replace(/^php:/u, '')} in ${where}` +
+        (fact.until === undefined ? '' : `; the old name goes away in ${fact.until}`)
+      );
   }
   return fact.kind;
 }

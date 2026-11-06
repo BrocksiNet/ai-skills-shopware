@@ -3,13 +3,18 @@
 // deprecated. A removal is a break unless the base already deprecated the
 // item (CORE-063). Items `@internal` or `@experimental` in the base are
 // skipped and counted. PHP signatures are left to core's `bc-check`; the PHP
-// surface reports removals only, labelled as also checked there.
+// surface reports removals only, labelled as also checked there. A PHP
+// member a parent, trait or interface took over, and a class that moved
+// and keeps its old name as a runtime alias, are moves, not removals.
+import { Lookup } from './facts.ts';
 import type { Item, Snapshot } from './model.ts';
 import { frontendChange, ownerOf, type Surface, SURFACES, surfaceOf } from './surfaces.ts';
+import { movedClass, movedMember } from './moves.ts';
+import { mergeSnapshots } from './timeline.ts';
 
 export { type Surface, SURFACES, surfaceOf };
 
-export type ChangeKind = 'removed' | 'changed' | 'deprecated';
+export type ChangeKind = 'removed' | 'moved' | 'changed' | 'deprecated';
 
 export interface Change {
   surface: Surface;
@@ -19,7 +24,9 @@ export interface Change {
   announced?: boolean;
   /** What changed, in words. */
   detail: string;
-  /** Where the item now is, when a removed route or field reappears under another id. */
+  /** Where the item now is: a removed route under another id, a moved PHP
+   *  member on the class that declares it now, a moved class under its
+   *  canonical name. */
   movedTo?: string;
   file: string;
   /** The line in `file`: at the base for a removal, at the head otherwise.
@@ -124,6 +131,8 @@ interface Sides {
   baseById: Map<string, Item>;
   headById: Map<string, Item>;
   added: Item[];
+  /** The head as a one-release timeline, to resolve PHP members through inheritance. */
+  headLookup: Lookup | undefined;
 }
 
 function removal(item: Item, surface: Surface, sides: Sides): Change | undefined {
@@ -134,6 +143,12 @@ function removal(item: Item, surface: Surface, sides: Sides): Change | undefined
   if (owner !== undefined && baseById.has(owner) && !headById.has(owner)) return undefined;
   // A key whose parent became a prototype is still accepted under it.
   if (item.kind === 'config' && headById.has(`${owner ?? ''}.*`)) return undefined;
+  // The members of a moved class live on under its canonical name; the class's own line says so.
+  if (owner !== undefined && headById.get(owner)?.aliasOf !== undefined) return undefined;
+  if (surface === 'php' && owner !== undefined && sides.headLookup !== undefined) {
+    const moved = movedMember(item, owner, sides.headLookup);
+    if (moved !== undefined) return moved;
+  }
   const change: Change = {
     surface,
     kind: 'removed',
@@ -152,7 +167,8 @@ export function diffSnapshots(base: Snapshot, head: Snapshot, surfaces: Surface[
   const baseById = new Map(base.items.map((item) => [item.id, item]));
   const headById = new Map(head.items.map((item) => [item.id, item]));
   const added = head.items.filter((item) => !baseById.has(item.id));
-  const sides: Sides = { base: base.items, baseById, headById, added };
+  const headLookup = wanted.has('php') ? new Lookup(mergeSnapshots([head])) : undefined;
+  const sides: Sides = { base: base.items, baseById, headById, added, headLookup };
   const changes: Change[] = [];
   let skipped = 0;
   for (const item of base.items) {
@@ -166,6 +182,11 @@ export function diffSnapshots(base: Snapshot, head: Snapshot, surfaces: Surface[
     if (after === undefined) {
       const change = removal(item, surface, sides);
       if (change !== undefined) changes.push(change);
+      continue;
+    }
+    const moved = movedClass(surface, item, after);
+    if (moved !== undefined) {
+      changes.push(moved);
       continue;
     }
     const detail = changeOf(item, after);
@@ -188,14 +209,14 @@ export function diffSnapshots(base: Snapshot, head: Snapshot, surfaces: Surface[
 }
 
 function labelOf(change: Change): string {
-  if (change.kind === 'deprecated') return 'deprecated';
+  if (change.kind === 'deprecated' || change.kind === 'moved') return change.kind;
   if (change.announced === true) return `${change.kind} after deprecation`;
   return `BREAK ${change.kind}`;
 }
 
 /** A removal or change without a deprecation in the base. */
 export function isBreak(change: Change): boolean {
-  return change.kind !== 'deprecated' && change.announced !== true;
+  return change.kind !== 'deprecated' && change.kind !== 'moved' && change.announced !== true;
 }
 
 /** Sets each change's line from the file text at the ref that has the item:
@@ -226,14 +247,16 @@ export function diffSummary(diff: ApiDiff): string {
   const breaks = diff.changes.filter((change) => isBreak(change)).length;
   const announced = diff.changes.filter((change) => change.kind !== 'deprecated' && change.announced === true).length;
   const deprecated = diff.changes.filter((change) => change.kind === 'deprecated').length;
+  const moved = diff.changes.filter((change) => change.kind === 'moved').length;
   return (
     `Summary: ${plural(breaks, 'breaking change', 'breaking changes')} without a deprecation in ${diff.base}, ` +
     `${plural(announced, 'removal or change', 'removals or changes')} after a deprecation, ` +
-    `${plural(deprecated, 'new deprecation', 'new deprecations')}.`
+    plural(deprecated, 'new deprecation', 'new deprecations') +
+    `${moved === 0 ? '' : `, ${plural(moved, 'move', 'moves')}`}.`
   );
 }
 
-const ORDER: Record<ChangeKind, number> = { removed: 0, changed: 1, deprecated: 2 };
+const ORDER: Record<ChangeKind, number> = { removed: 0, moved: 1, changed: 2, deprecated: 3 };
 
 /** The diff as text: the summary, then by surface, breaks first. */
 export function diffText(diff: ApiDiff): string {
@@ -251,7 +274,7 @@ export function diffText(diff: ApiDiff): string {
     out.push(`\n${surface}\n`);
     for (const change of changes) {
       const label = labelOf(change);
-      const moved = change.movedTo === undefined ? '' : ` (same path now ${change.movedTo})`;
+      const moved = change.movedTo === undefined || change.kind === 'moved' ? '' : ` (same path now ${change.movedTo})`;
       const where = change.line === undefined ? change.file : `${change.file}:${change.line}`;
       out.push(`- ${label}: ${change.id}: ${change.detail}${moved}  [${where}]\n`);
     }

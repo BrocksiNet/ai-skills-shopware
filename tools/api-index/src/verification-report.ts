@@ -9,6 +9,7 @@ const FACT_KINDS: Record<Fact['kind'], true> = {
   experimental: true,
   'final-extended': true,
   'bc-change': true,
+  moved: true,
   'guarded-everywhere': true,
 };
 const isText = (value: unknown): value is string => typeof value === 'string' && value !== '';

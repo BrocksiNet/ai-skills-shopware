@@ -507,7 +507,7 @@ checkout with tags, about 1 GB, and builds only new tags.
 | Risk | Answer |
 | ---- | ------ |
 | Symbol extraction misses calls | phase 1 uses hand-picked symbols first; unresolved calls are reported as unknown |
-| A class moved, so "missing" is a rename | phase 1 counts these; if common, match the short name across namespaces and report "moved" |
+| A class moved, so "missing" is a rename | done: `#[ClassMoved]` adds the old name as an alias item; facts report it as `moved` and resolve its members on the new class, and the diff reports a move, not a break. A member a parent took over is a move too |
 | Entity fields are built in code, not declared | best effort from `defineFields()`; what the parser cannot read is left out and counted, not guessed |
 | Admin and storefront promises are unclear | phase 0 writes down the promise per surface from the docs; items outside it are indexed but never reported as breaks |
 | `api-diff` repeats `bc-check` | PHP signature breaks in core PRs are labelled "also checked by bc-check" or left out |
