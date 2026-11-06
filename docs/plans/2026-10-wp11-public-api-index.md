@@ -508,6 +508,7 @@ checkout with tags, about 1 GB, and builds only new tags.
 | ---- | ------ |
 | Symbol extraction misses calls | phase 1 uses hand-picked symbols first; unresolved calls are reported as unknown |
 | A class moved, so "missing" is a rename | done: `#[ClassMoved]` adds the old name as an alias item; facts report it as `moved` and resolve its members on the new class, and the diff reports a move, not a break. A member a parent took over is a move too |
+| A block stays but its markup changes, so an override silently stops fitting | done: each block carries a hash of its body (comments and layout whitespace dropped, child blocks reduced to their names); facts list it as `changed` with the releases that reworked it, the diff as `body changed`, never a break. Measured on 134 releases: 11,456 blocks, the gzipped index grows from 1.32 MB to 1.70 MB |
 | Entity fields are built in code, not declared | best effort from `defineFields()`; what the parser cannot read is left out and counted, not guessed |
 | Admin and storefront promises are unclear | phase 0 writes down the promise per surface from the docs; items outside it are indexed but never reported as breaks |
 | `api-diff` repeats `bc-check` | PHP signature breaks in core PRs are labelled "also checked by bc-check" or left out |
