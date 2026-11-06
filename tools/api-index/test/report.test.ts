@@ -112,3 +112,43 @@ test('a missing block names the blocks its template still has there, whole-range
     rmSync(dir, { recursive: true, force: true });
   }
 });
+
+const item = (id: string, signature?: string): Item => ({
+  id,
+  kind: signature === undefined ? 'class' : 'method',
+  file: 'src/X.php',
+  flags: {},
+  ...(signature === undefined ? {} : { visibility: 'public', signature }),
+});
+
+test('a chain joins the target it resolves to, and counts as unresolved when it resolves nowhere', () => {
+  const page = [
+    item('php:Shopware\\Core\\Page'),
+    item('php:Shopware\\Core\\Product'),
+    item('php:Shopware\\Core\\Page::getProduct()', '(): Shopware\\Core\\Product'),
+    item('php:Shopware\\Core\\Page::getAll()', '(): array'),
+  ];
+  const index = new Lookup(
+    mergeSnapshots([
+      snapshot('v6.6.0.0', page),
+      snapshot('v6.6.1.0', [...page, item('php:Shopware\\Core\\Product::getTeaser()', '(): string')]),
+    ]),
+  );
+  const dir = mkdtempSync(join(tmpdir(), 'api-facts-'));
+  try {
+    mkdirSync(join(dir, 'src'));
+    writeFileSync(
+      join(dir, 'src/A.php'),
+      `<?php\nuse Shopware\\Core\\Page;\nclass A {\n  public function on(Page $page): void {\n    $page->getProduct()->getTeaser();\n    $page->getAll()->count();\n  }\n}\n`,
+    );
+    const report = factsOfDir(index, dir, '~6.6.0');
+    assert.deepEqual(
+      report.facts.map((fact) => [fact.kind, fact.target, fact.releases]),
+      [['missing', 'php:Shopware\\Core\\Product::getTeaser()', [['6.6.0.0', '6.6.0.0']]]],
+    );
+    assert.equal(report.unresolved, 1);
+    assert.ok(report.symbols.includes('php:Shopware\\Core\\Product::getTeaser()'));
+  } finally {
+    rmSync(dir, { recursive: true, force: true });
+  }
+});

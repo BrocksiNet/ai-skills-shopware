@@ -3,6 +3,7 @@
 // the report to what the change adds, unless it changes the range itself.
 import { existsSync, readdirSync, readFileSync, statSync } from 'node:fs';
 import { join, relative } from 'node:path';
+import { chainTargets, isChain } from './chains.ts';
 import type { DiffLines } from './diff.ts';
 import { type Fact, factsFor, type Lookup, presentThroughout } from './facts.ts';
 import { formatRuns, releasesIn } from './runs.ts';
@@ -202,6 +203,30 @@ function fromShopware(lookup: Lookup, target: string): boolean {
   return lookup.get(target) !== undefined || (owner !== undefined && lookup.get(owner) !== undefined);
 }
 
+interface Chains {
+  /** Chains that resolve to different targets across the range: each with its releases. */
+  split: { target: string; uses: Use[]; within: string[] }[];
+  /** Chain uses no release of the range resolves. */
+  unresolved: number;
+}
+
+/** Replaces each chain target in `byTarget` by what it resolves to. A chain
+ *  that names one target throughout joins that target's uses; one that
+ *  changes across the range is checked per part of the range. */
+function resolveChains(lookup: Lookup, byTarget: Map<string, Use[]>, releases: string[]): Chains {
+  const out: Chains = { split: [], unresolved: 0 };
+  for (const [target, uses] of [...byTarget].filter(([candidate]) => isChain(candidate))) {
+    byTarget.delete(target);
+    const resolved = [...chainTargets(lookup, target, releases)];
+    if (resolved.length === 0) out.unresolved += uses.length;
+    const [only] = resolved;
+    if (resolved.length === 1 && only !== undefined && only[1].length === releases.length) {
+      byTarget.set(only[0], [...(byTarget.get(only[0]) ?? []), ...uses]);
+    } else for (const [resolvedTarget, within] of resolved) out.split.push({ target: resolvedTarget, uses, within });
+  }
+  return out;
+}
+
 export function factsOfDir(lookup: Lookup, dir: string, range: string, diff?: DiffLines): Report {
   const releases = releasesIn(lookup.timeline, range);
   const read = readExtension(dir);
@@ -209,7 +234,11 @@ export function factsOfDir(lookup: Lookup, dir: string, range: string, diff?: Di
   for (const use of read.uses.filter((candidate) => fromShopware(lookup, candidate.target)))
     byTarget.set(use.target, [...(byTarget.get(use.target) ?? []), use]);
   const inDiff = narrowTo(diff);
-  const all = [...byTarget].flatMap(([target, list]) => symbolFacts(lookup, target, list, releases));
+  const chains = resolveChains(lookup, byTarget, releases);
+  const all = [
+    ...[...byTarget].flatMap(([target, list]) => symbolFacts(lookup, target, list, releases)),
+    ...chains.split.flatMap(({ target, uses, within }) => symbolFacts(lookup, target, uses, within)),
+  ];
   attachGuards(all, read.uses, releases);
   attachNearby(all, lookup, releases);
   const facts = all
@@ -223,8 +252,8 @@ export function factsOfDir(lookup: Lookup, dir: string, range: string, diff?: Di
     failed: read.failed,
     uses: read.uses.length,
     targets: byTarget.size,
-    symbols: [...byTarget.keys()].toSorted(),
-    unresolved: read.unresolved,
+    symbols: [...new Set([...byTarget.keys(), ...chains.split.map(({ target }) => target)])].toSorted(),
+    unresolved: read.unresolved + chains.unresolved,
     narrowed: inDiff !== undefined,
     facts,
   };

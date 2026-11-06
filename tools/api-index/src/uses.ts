@@ -1,13 +1,18 @@
 // The Shopware API an extension's PHP uses, read from the AST: imports,
 // extends and implements, `new`, static calls and constants, type hints,
 // attributes, and method calls on a receiver whose type is declared in the
-// same class (`$this->…`, a typed property or parameter). Anything else is
-// counted as unresolved, never guessed.
+// same class (`$this->…`, a typed property or parameter) or narrowed by an
+// `instanceof`. A call on what a Shopware call returns is a chain target,
+// `Foo::getPage()->getProduct()`, that the report resolves per release from
+// the return types in the index. Anything else is counted as unresolved,
+// never guessed.
 import { Engine } from 'php-parser';
 import { child, children, isNode, nameOf, type Node, text } from './node.ts';
 import { addUses, resolve } from './php-scope.ts';
+import { exitNarrowing, narrowedBranch, narrowing } from './uses-narrowing.ts';
 import {
   add,
+  callOn,
   classContext,
   classOfReference,
   type FileUses,
@@ -74,15 +79,15 @@ function visitCall(node: Node, walk: Walk): void {
       if (walk.klass.methods.has(name.toLowerCase())) return;
       if (walk.klass.parent === undefined || walk.klass.foreignTraits) walk.unresolved += 1;
       else add(walk, `php:${walk.klass.parent}::${name}()`, 'call', node);
-    } else add(walk, `php:${owner}::${name}()`, 'call', node);
+    } else add(walk, `php:${callOn(owner, name)}`, 'call', node);
   }
 }
 
-/** `$x = new Foo()` types `$x` for the rest of the method. */
+/** `$x = new Foo()` and `$x = $event->getPage()` type `$x` for the rest of the method. */
 function typeVariable(node: Node, walk: Walk): void {
   const left = child(node, 'left');
   const right = child(node, 'right');
-  const owner = right?.kind === 'new' ? classOfReference(child(right, 'what'), walk) : undefined;
+  const owner = right?.kind === 'new' ? classOfReference(child(right, 'what'), walk) : receiverType(right, walk);
   const name = left?.kind === 'variable' ? text(left, 'name') : undefined;
   if (owner !== undefined && name !== undefined) walk.vars.set(name, owner);
 }
@@ -145,43 +150,6 @@ function childNodes(node: Node): Node[] {
     .filter((entry): entry is Node => isNode(entry) && typeof entry.kind === 'string');
 }
 
-/** `$x instanceof Foo` in a condition: the variables it types, also through `&&`. */
-function narrowing(test: Node, walk: Walk): Map<string, string> {
-  if (test.kind !== 'bin') return new Map<string, string>();
-  const left = child(test, 'left');
-  const right = child(test, 'right');
-  if (text(test, 'type') === '&&') {
-    return new Map<string, string>([...(left ? narrowing(left, walk) : []), ...(right ? narrowing(right, walk) : [])]);
-  }
-  if (text(test, 'type') !== 'instanceof' || left?.kind !== 'variable') return new Map<string, string>();
-  const name = text(left, 'name');
-  const owner = classOfReference(right, walk);
-  const types = new Map<string, string>();
-  if (name !== undefined && owner !== undefined) types.set(name, owner);
-  return types;
-}
-
-interface Branch {
-  test: Node;
-  /** What runs only when the test holds. */
-  guarded: Node[];
-  rest: Node[];
-}
-
-/** A ternary, an `if` or an `&&`, split into its test and the part the test guards. */
-function narrowedBranch(node: Node): Branch | undefined {
-  const pick = (key: string): Node[] => {
-    const value = child(node, key);
-    return value === undefined ? [] : [value];
-  };
-  const test = child(node, node.kind === 'bin' ? 'left' : 'test');
-  if (test === undefined) return undefined;
-  if (node.kind === 'retif') return { test, guarded: pick('trueExpr'), rest: pick('falseExpr') };
-  if (node.kind === 'if') return { test, guarded: pick('body'), rest: pick('alternate') };
-  if (node.kind === 'bin' && text(node, 'type') === '&&') return { test, guarded: pick('right'), rest: [] };
-  return undefined;
-}
-
 /** Visits every node below `node`; methods and closures get their own variables. */
 function walkTree(node: Node, walk: Walk): void {
   if (node.kind === 'method' || node.kind === 'function' || node.kind === 'closure' || node.kind === 'arrowfunc') {
@@ -206,6 +174,8 @@ function walkTree(node: Node, walk: Walk): void {
     for (const entry of branch.guarded) walkTree(entry, inner);
     walk.unresolved += inner.unresolved;
     for (const entry of branch.rest) walkTree(entry, walk);
+    // `if (!$x instanceof Foo) { return; }` types `$x` for what follows.
+    for (const [name, type] of exitNarrowing(node, walk)) walk.vars.set(name, type);
     return;
   }
   if (node.kind === 'call' && child(node, 'what')?.kind === 'staticlookup') {

@@ -126,9 +126,33 @@ export function classOfReference(node: Node | undefined, walk: Walk): string | u
   return undefined;
 }
 
-/** The class of a receiver expression, when the file declares it. */
+export function methodName(offset: Node | undefined): string | undefined {
+  return offset?.kind === 'identifier' ? text(offset, 'name') : undefined;
+}
+
+/** The target of calling `name` on a receiver type: `Foo::name()` on a
+ *  class, `Foo::getPage()->name()` on what a call returns. */
+export function callOn(type: string, name: string): string {
+  return `${type}${type.includes('::') ? '->' : '::'}${name}()`;
+}
+
+/** The class of a receiver expression, when the file declares it, or the
+ *  chain of a call on a Shopware class whose return type the index knows. */
 export function receiverType(node: Node | undefined, walk: Walk): string | undefined {
   if (node === undefined) return undefined;
+  if (node.kind === 'call') {
+    // What a call on a Shopware class returns, as a chain the report resolves.
+    const what = child(node, 'what');
+    const name = methodName(child(what ?? {}, 'offset'));
+    if (what === undefined || name === undefined) return undefined;
+    const owner =
+      what.kind === 'staticlookup'
+        ? classOfReference(child(what, 'what'), walk)
+        : what.kind === 'propertylookup' || what.kind === 'nullsafepropertylookup'
+          ? receiverType(child(what, 'what'), walk)
+          : undefined;
+    return owner === undefined || !isShopware(owner.split('::')[0] ?? '') ? undefined : callOn(owner, name);
+  }
   if (node.kind === 'variable') {
     const name = text(node, 'name');
     if (name === 'this') return walk.klass?.fqcn;
@@ -141,10 +165,6 @@ export function receiverType(node: Node | undefined, walk: Walk): string | undef
     return property === undefined ? undefined : walk.klass?.properties.get(property);
   }
   return undefined;
-}
-
-export function methodName(offset: Node | undefined): string | undefined {
-  return offset?.kind === 'identifier' ? text(offset, 'name') : undefined;
 }
 
 export function classContext(node: Node, walk: Walk): ClassContext {
