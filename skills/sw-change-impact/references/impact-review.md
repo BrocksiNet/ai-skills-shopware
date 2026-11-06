@@ -24,11 +24,34 @@ Ask what else this change touches, even if those files are not in the diff.
   one tag per row turns every write into a mass invalidation.
 
 If you cannot name who else is affected, you have not reviewed the change.
-For the public API, `node tools/api-index/bin/api-diff.ts --repo .
---base origin/trunk --head HEAD` (ai-skills-shopware tools) names the
-routes, entity fields, feature flags, configuration keys, admin components
-and blocks, storefront templates, blocks and JS plugins, and Twig functions
-the change removes, changes or deprecates.
+
+### Public API: run the bundled script
+
+This skill ships `scripts/shopware-api.mjs`, one file next to the
+`references/` folder. Run it with plain Node from the root of the
+shopware/shopware clone; nothing to install:
+
+```bash
+node <this-skill-folder>/scripts/shopware-api.mjs diff --repo . --base origin/trunk --head HEAD
+```
+
+It names the routes, entity fields, feature flags, configuration keys,
+admin components and blocks, storefront templates, blocks and JS plugins,
+and Twig functions the branch removes, changes or deprecates, each with
+`[file:line]`. The second line is the summary. Exit code 3 means at least
+one breaking change without a deprecation; 0 means none.
+
+- **Clone mode** (`--repo .`): base and head are git refs of the clone, so
+  use it for a branch, a commit or a stacked PR (`--base <parent-branch>`).
+  Each change names its line, so check it against the diff.
+- **Release mode** (no `--repo`): base and head are release names such as
+  `--base 6.6.10.4 --head 6.7.0.0`, or `trunk`. The script downloads the
+  weekly index once a week. Use it for "what did this update change" when
+  no clone is at hand. It has files, not lines.
+- **No Node 20 or newer** (`node --version`): the script refuses to run. Do
+  the check by hand with `git diff origin/trunk...HEAD` on routes,
+  definitions, `feature.yaml` and config files, and say in the review that
+  the API diff did not run.
 
 ## Who pays
 

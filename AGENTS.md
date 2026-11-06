@@ -44,6 +44,7 @@ evals/tasks/<task-name>/
   fixtures/fail/              # optional golden FAIL case
   grade.sh                    # fixed entry: runs tools/graders/<task>.ts (or an AST grader)
   skills                      # optional: extra skills for smoke A/B (one name per line)
+  expect-tool                 # optional: command the A/B checks each trace for (ran_on / ran_off)
 
 evals/smoke/                  # local A/B harness (Claude, Codex, Cursor CLI)
 evals/runner/                 # shell wrappers for tools/bin (fake-agent.sh is the test double), install-agent.sh
@@ -94,7 +95,10 @@ tools/                        # repo tooling in TypeScript (Node 24, no build st
   api-index/                  # public API index of shopware/shopware per release (own package: php-parser):
                               # bin/build.ts one ref, bin/timeline.ts all tags, bin/api-facts.ts an extension's facts,
                               # bin/api-diff.ts public API changes between two refs, bin/check-breaks.ts api-diff vs known-breaks.json;
-                              # PHP, routes, entities, flags, config, admin, storefront, Twig and build surfaces
+                              # PHP, routes, entities, flags, config, admin, storefront, Twig and build surfaces;
+                              # bin/shopware-api.ts both commands in one CLI, bin/bundle.ts bundles it into
+                              # skills/<skill>/scripts/shopware-api.mjs (CI fails on a stale copy; npm/ the package),
+                              # bin/api-changes.ts what changed since last week's index
 
 scripts/
   validate-skills.sh          # structure, budgets, REGISTRY conflicts, rule IDs (wrapper for tools/bin/validate-skills.ts)
@@ -109,7 +113,8 @@ docs/                         # local validation, smoke evals, tooling stack
   validate.yml                # cheap CI on every push (no model calls)
   evals.yml                   # model evals (gated: schedule, label, dispatch)
   mine-trunk.yml              # weekly drift issue for every source; /mined moves docs/.mining-state.json
-  api-index.yml               # weekly public API index build, published as the `api-index` release
+  api-index.yml               # weekly public API index build, published as the `api-index` release with api-changes.md
+  publish-shopware-api.yml    # manual: the bundled shopware-api.mjs as an npm package (needs NPM_TOKEN)
   collect-reviews.yml         # daily review comments of merged core PRs, published as the `review-signals` release
   suggest-rules.yml           # weekly rule proposals on the drift issue; /draft <ID> opens a draft PR
 ```

@@ -9,6 +9,9 @@ name: api-index
 #   - Snapshots of built tags are cached per generator version, so a run
 #     only builds new tags and trunk; a new generator version rebuilds all
 #     (about four minutes).
+#   - Before the upload, the previous index is downloaded and compared:
+#     api-changes.md (run summary and release asset) lists what trunk and
+#     each new tag changed in the public API.
 #   - The release is a prerelease and never marked latest, so the skills'
 #     version check (tools/bin/check-update.ts) keeps reading the real
 #     release tags.
@@ -66,6 +69,26 @@ jobs:
             --out "$RUNNER_TEMP/dist/api-index.json.gz" \
             --index "$RUNNER_TEMP/dist/index.json"
 
+      - name: Download the previous index
+        # Last week's assets, before the upload replaces them. The first run
+        # has none; the report then says there is nothing to compare.
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          mkdir -p "$RUNNER_TEMP/previous"
+          gh release download api-index --dir "$RUNNER_TEMP/previous" --pattern api-index.json.gz || true
+
+      - name: Report what changed since the previous index
+        # Trunk against last week's trunk, each new tag against the tag
+        # before it. Into the run summary, and as the api-changes.md asset
+        # the weekly drift issue (mine-trunk.yml) adds as a section.
+        run: |
+          node tools/api-index/bin/api-changes.ts \
+            --previous "$RUNNER_TEMP/previous/api-index.json.gz" \
+            --current "$RUNNER_TEMP/dist/api-index.json.gz" \
+            --out "$RUNNER_TEMP/dist/api-changes.md"
+          cat "$RUNNER_TEMP/dist/api-changes.md" >> "$GITHUB_STEP_SUMMARY"
+
       - name: Publish the release assets
         env:
           GH_TOKEN: ${{ github.token }}
@@ -75,7 +98,8 @@ jobs:
               --title "Public API index of Shopware" \
               --notes "Built weekly by .github/workflows/api-index.yml. Read by tools/api-index/bin/api-facts.ts. Not a release of the skills."
           fi
-          gh release upload api-index "$RUNNER_TEMP/dist/api-index.json.gz" "$RUNNER_TEMP/dist/index.json" --clobber
+          gh release upload api-index "$RUNNER_TEMP/dist/api-index.json.gz" "$RUNNER_TEMP/dist/index.json" \
+            "$RUNNER_TEMP/dist/api-changes.md" --clobber
 
       - name: Check api-diff against the known breaks
         # After the upload, so a drop below the gate shows as a failed run

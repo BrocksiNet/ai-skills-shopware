@@ -98,6 +98,10 @@ jobs:
         working-directory: tools
         run: npm test && npm test --prefix api-index
 
+      - name: Bundled shopware-api.mjs is fresh
+        working-directory: tools
+        run: npm run bundle:check --prefix api-index
+
   markdown-lint:
     runs-on: ubuntu-latest
     steps:

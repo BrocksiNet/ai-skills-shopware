@@ -15,7 +15,7 @@ import {
   sumUsage,
   tokensAverage,
 } from '../src/ab.ts';
-import { runModes } from '../src/ab-run.ts';
+import { expectedTool, ranTool, runModes } from '../src/ab-run.ts';
 import { RUN, errorReason, runTask } from '../src/run-task.ts';
 
 const ROOT = resolve(import.meta.dirname, '../..');
@@ -92,6 +92,24 @@ describe('record and summary', () => {
       abSummary(r, on, off),
       /skill loaded: on 2\/2, off null\/2\n {2}tokens per run \(input\/output\): on 1200\/200, off n\/a\n {2}=> skill IMPROVES/u,
     );
+  });
+  test('a task with expect-tool records and prints how often the tool ran', () => {
+    const on = counts({ pass: 1, ran: 2 });
+    const off = counts({ ran: 0 });
+    const r = abRecord('t', 3, on, off, decide(3, on, off, 50), { agent: 'a', model: 'm', sha: 's', ts: 'x' });
+    assert.equal(r.ran_on, 2);
+    assert.equal(r.ran_off, 0);
+    assert.match(abSummary(r, on, off), /\n {2}ran the tool: on 2\/3, off 0\/3\n/u);
+  });
+  test('ran the tool: only shell commands count, not text that names it', () => {
+    const run = '{"type":"tool_use","input":{"command":"node .claude/skills/x/scripts/shopware-api.mjs facts ."}}';
+    const quoted = String.raw`{"input":{"command":"echo \"a\" && node shopware-api.mjs diff"}}`;
+    const read = '{"type":"tool_result","content":"Run node scripts/shopware-api.mjs facts ."}';
+    assert.equal(ranTool(run, 'shopware-api.mjs'), true);
+    assert.equal(ranTool(quoted, 'shopware-api.mjs'), true);
+    assert.equal(ranTool(read, 'shopware-api.mjs'), false);
+    assert.equal(expectedTool(ROOT, 'storefront-blocks-across-range'), 'shopware-api.mjs');
+    assert.equal(expectedTool(ROOT, TASK_B), null);
   });
   test('error reason is the last three stderr lines', () => {
     assert.equal(errorReason('a\nb\nc\nd\n'), 'b c d');

@@ -2,7 +2,7 @@
 import assert from 'node:assert/strict';
 import { chmodSync, existsSync, mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
-import { join, resolve } from 'node:path';
+import { join, relative, resolve } from 'node:path';
 import { after, describe, test } from 'node:test';
 import type { RunAbOptions } from '../src/ab-run.ts';
 import { parseManifest } from '../src/eval-manifest.ts';
@@ -128,6 +128,11 @@ describe('eval-local', () => {
     assert.equal(call.env.EVAL_RESULTS, join(ROOT, 'evals/.results/local-20261021T070331Z.jsonl'));
     rmSync(call.env.EVAL_RESULTS, { force: true });
     rmSync(`${call.env.EVAL_RESULTS}.manifest.json`, { force: true });
+  });
+  test('a relative EVAL_RESULTS becomes absolute, so the agent workdir can write the logs', async () => {
+    const absolute = fresh('relative.jsonl');
+    const r = await local({ EVAL_TASKS: TASK_A, EVAL_RESULTS: relative(process.cwd(), absolute) });
+    assert.equal(r.calls[0]?.env.EVAL_RESULTS, absolute);
   });
   test('copilot takes the gh login as its token, unless one is set', async () => {
     const r = await local({ EVAL_LOCAL_AGENT: 'copilot', EVAL_TASKS: TASK_B, FAKE_GH_TOKEN: 'gho_x' });

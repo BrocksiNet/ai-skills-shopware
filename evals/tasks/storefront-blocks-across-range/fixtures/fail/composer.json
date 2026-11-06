@@ -1,0 +1,23 @@
+{
+    "name": "acme/address-hints",
+    "description": "Delivery hints on the address book and a truck icon on the cart's shipping costs",
+    "type": "shopware-platform-plugin",
+    "version": "2.0.0",
+    "license": "MIT",
+    "require": {
+        "shopware/core": "~6.6.0 || ~6.7.0",
+        "shopware/storefront": "~6.6.0 || ~6.7.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "Acme\\AddressHints\\": "src/"
+        }
+    },
+    "extra": {
+        "shopware-plugin-class": "Acme\\AddressHints\\AcmeAddressHints",
+        "label": {
+            "en-GB": "Address hints",
+            "de-DE": "Adresshinweise"
+        }
+    }
+}

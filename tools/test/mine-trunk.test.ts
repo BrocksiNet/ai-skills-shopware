@@ -107,6 +107,15 @@ describe('the 2026-10-13..2026-10-19 window', () => {
       shopware: { last_sha: '219491014944c6b6463cf6426c7001adea8dae0d', last_date: '2026-10-19T19:45:03Z' },
     });
   });
+  test('the public API changes go in as a section before the commits; empty adds none', async () => {
+    const catalog = loadCatalog(ROOT);
+    const index = mapIndex(ROOT, catalog, SOURCES);
+    const api = '## Public API changes\n\n| Compared | Base → head | Breaking |\n';
+    const t = renderReport([await mined], catalog, index, undefined, api);
+    assert.match(section(t, 'Public API changes'), /\| Compared \| Base → head \| Breaking \|/u);
+    assert.ok(t.indexOf('## Public API changes') < t.indexOf('## Commits'));
+    assert.doesNotMatch(renderReport([await mined], catalog, index, undefined, '\n'), /Public API changes/u);
+  });
   test('recorded source cursors stay current; new Rector starts without a fabricated cursor', async () => {
     // `/mined` moves docs/.mining-state.json on, so it only ever passes the
     // recorded window; it never equals it for long.

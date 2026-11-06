@@ -68,3 +68,47 @@ test('a method_exists guard covers the member in every release', () => {
   );
   assert.equal(facts.get('php:Shopware\\Core\\Event::hash()'), 'src/Subscriber.php');
 });
+
+const CART = 'storefront:@Storefront/storefront/page/checkout/cart/index.html.twig';
+function block(name: string): Item {
+  return { id: `${CART}#${name}`, kind: 'block', file: 'f', signature: '', flags: {} };
+}
+const cartTemplate: Item = { id: CART, kind: 'template', file: 'f', signature: '', flags: {} };
+
+// 6.7 drops page_checkout_cart_shipping_costs_trigger; its siblings stay, one of them only from 6.7.
+const blocks = new Lookup(
+  mergeSnapshots([
+    snapshot('v6.6.0.0', [
+      cartTemplate,
+      block('page_checkout_cart_shipping_costs'),
+      block('page_checkout_cart_shipping_costs_trigger'),
+    ]),
+    snapshot('v6.7.0.0', [
+      cartTemplate,
+      block('page_checkout_cart_shipping_costs'),
+      block('page_checkout_cart_shipping_costs_form'),
+      block('page_checkout_cart_other'),
+    ]),
+  ]),
+);
+
+test('a missing block names the blocks its template still has there, whole-range ones first', () => {
+  const dir = mkdtempSync(join(tmpdir(), 'api-facts-'));
+  try {
+    mkdirSync(join(dir, 'src/Resources/views/storefront/page/checkout/cart'), { recursive: true });
+    writeFileSync(
+      join(dir, 'src/Resources/views/storefront/page/checkout/cart/index.html.twig'),
+      `{% sw_extends '@Storefront/storefront/page/checkout/cart/index.html.twig' %}\n{% block page_checkout_cart_shipping_costs_trigger %}x{% endblock %}\n`,
+    );
+    const report = factsOfDir(blocks, dir, '~6.6.0 || ~6.7.0');
+    const missing = report.facts.find((fact) => fact.kind === 'missing');
+    assert.ok(missing !== undefined);
+    assert.equal(missing.target, `${CART}#page_checkout_cart_shipping_costs_trigger`);
+    assert.deepEqual(missing.nearby, [
+      { name: 'page_checkout_cart_shipping_costs', throughout: true },
+      { name: 'page_checkout_cart_shipping_costs_form', throughout: false },
+    ]);
+  } finally {
+    rmSync(dir, { recursive: true, force: true });
+  }
+});

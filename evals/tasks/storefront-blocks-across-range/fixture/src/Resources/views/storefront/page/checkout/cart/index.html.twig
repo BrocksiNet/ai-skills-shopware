@@ -1,0 +1,10 @@
+{% sw_extends '@Storefront/storefront/page/checkout/cart/index.html.twig' %}
+
+{% block page_checkout_cart_header %}
+    {{ parent() }}
+{% endblock %}
+
+{# A truck instead of the default icon on the shipping cost toggle. #}
+{% block page_checkout_cart_shipping_costs_trigger_icon %}
+    <span class="acme-truck-icon">{% sw_icon 'truck' %}</span>
+{% endblock %}

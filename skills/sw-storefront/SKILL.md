@@ -6,7 +6,9 @@ description: >-
   block, snippet, theme, storefront JavaScript plugin, or storefront SCSS,
   even a small override: under src/Storefront, Resources/views/storefront,
   or Resources/app/storefront, including Twig 4 changes such as the removed
-  spaceless filter and null HTML attributes. Do NOT use for Administration
+  spaceless filter and null HTML attributes, and checking that a plugin's
+  template overrides still render on every Shopware release its range
+  allows. Do NOT use for Administration
   Vue/Jest (sw-admin-js), PHP DAL/services (surface PHP skills), or generic
   modern CSS lectures (research + Modern Web Guidance after Shopware
   primitives are checked).
@@ -49,6 +51,29 @@ Read only the reference that matches the task or the files it changes:
    AJAX on those pages for personalized data. Load genuinely private
    responses asynchronously after first paint; do not put `no-store` on
    the shared document.
+5. **SF-014** **Check every extended block against the whole range.** Core
+   removes storefront blocks and templates in a minor without a
+   deprecation, and Twig raises nothing for an override of a missing
+   block: it just never renders. When the plugin's `composer.json` allows
+   more than one Shopware minor, run this from the plugin root before you
+   finish, instead of reading core source per tag:
+
+   ```bash
+   node <this-skill-folder>/scripts/shopware-api.mjs facts .
+   ```
+
+   It lists each block, template and JS plugin the plugin uses that is
+   missing in a release of the range, with the release span and the
+   plugin's `file:line`. The script is a built index of each release's
+   source, so its spans are the release evidence: report the first release
+   of the span and do not fetch the core template per tag or read the
+   script to confirm it. For a block that is gone, the line also names the
+   blocks its template still has in those releases, the ones present in
+   the whole range first: keep the old override for the releases that
+   have the block, add one on the first block named, and run the command
+   again to check it. The new override needs no core markup: it wraps
+   `{{ parent() }}` and adds the plugin's own, so there is nothing to
+   fetch. Without Node, say the check was not run.
 
 ## Storefront deltas
 

@@ -1,0 +1,11 @@
+{% sw_extends '@Storefront/storefront/page/checkout/cart/index.html.twig' %}
+
+{% block page_checkout_cart_header %}
+    {{ parent() }}
+{% endblock %}
+
+{# The icon block is gone in 6.7.0.0; the toggle exists in 6.6 and 6.7. #}
+{% block page_checkout_cart_shipping_costs_trigger %}
+    <span class="acme-truck-icon">{% sw_icon 'truck' %}</span>
+    {{ parent() }}
+{% endblock %}

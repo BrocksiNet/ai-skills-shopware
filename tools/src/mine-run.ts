@@ -35,6 +35,9 @@ export interface ReportOptions {
   /** A review-signals store: adds the review comments of the week up to
    *  the report's end, mapped again with today's rules. */
   reviews?: string;
+  /** api-changes.md from the api-index release: what the public API changed
+   *  since last week. A missing file adds no section. */
+  apiChanges?: string;
   /** End of the window when it follows the state; tests fix it. */
   now?: string;
 }
@@ -74,7 +77,8 @@ export async function report(o: ReportOptions): Promise<string> {
             .filter((r) => r.private)
             .map((r) => r.id),
         );
-  return renderReport(mined, catalog, index, reviews);
+  const api = o.apiChanges === undefined || !existsSync(o.apiChanges) ? undefined : readFileSync(o.apiChanges, 'utf8');
+  return renderReport(mined, catalog, index, reviews, api);
 }
 
 /** The sources a `/mined` comment names: `/mined` alone means every source

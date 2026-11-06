@@ -200,6 +200,14 @@ survives workdir cleanup; CI uploads it even when a shard fails. Retry traces
 can contain earlier attempts; the aggregate skill/token counts still use only
 the final attempt. Review a sample of transcripts before interpreting scores.
 
+A task that only works with a bundled script names it in an `expect-tool`
+file (one substring of the command, e.g. `shopware-api.mjs`). The A/B then
+counts the runs whose trace shows a shell command containing it, records
+`ran_on` / `ran_off` and prints `ran the tool: on n/N, off n/N`. A reference
+the agent only read does not count. A low pass rate with `ran_on` 0 says the
+agent never got to the tool (activation, or it preferred the web), not that
+the tool does not help; look at `skill loaded` next.
+
 The stricter review graders change the measurement: do not compare their scores
 directly with older baselines as if only the skills changed.
 

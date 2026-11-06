@@ -64,6 +64,25 @@ interface RunOutcome {
   usage: [number, number] | null;
   /** The skills log, or null when the adapter wrote none. */
   skillsLog: string | null;
+  /** The run's trace (EVAL_TRACE_LOG), or null when the adapter wrote none. */
+  trace: string | null;
+}
+
+/** The command the task expects the agent to run (`expect-tool`), or null. */
+export function expectedTool(root: string, task: string): string | null {
+  const path = join(root, 'evals/tasks', task, 'expect-tool');
+  if (!existsSync(path)) return null;
+  const text = readFileSync(path, 'utf8').trim();
+  return text === '' ? null : text;
+}
+
+/** Whether a trace shows a shell command that contains `tool`. Only
+ *  `"command":"…"` fields count, so a reference the agent read that names
+ *  the tool is not a run. */
+export function ranTool(trace: string, tool: string): boolean {
+  for (const match of trace.matchAll(/"command"\s*:\s*"((?:[^"\\]|\\.)*)"/gu))
+    if ((match[1] ?? '').includes(tool)) return true;
+  return false;
 }
 
 const readIfAny = (path: string): string | null => (existsSync(path) ? readFileSync(path, 'utf8') : null);
@@ -95,10 +114,10 @@ async function runOnce(o: AbOptions, mode: Mode, logs: string, i: number): Promi
   // Agent errors and retries go to stderr (CI log); stdout stays the summary.
   for (const line of stderr.split('\n')) if (line.includes('----- agent error')) o.err(`${line}\n`);
   const usage = existsSync(usageLog) && statSync(usageLog).size > 0 ? sumUsage(readFileSync(usageLog, 'utf8')) : null;
-  return { rc, usage, skillsLog: readIfAny(skillsLog) };
+  return { rc, usage, skillsLog: readIfAny(skillsLog), trace: readIfAny(`${skillsLog}.trace.jsonl`) };
 }
 
-function addOutcome(c: ModeCounts, run: RunOutcome, match: string[]): void {
+function addOutcome(c: ModeCounts, run: RunOutcome, match: string[], tool: string | null): void {
   if (run.rc === RUN.pass) c.pass++;
   else if (run.rc !== RUN.fail) c.err++;
   // Tokens of completed runs only; an agent error says nothing about the skill.
@@ -111,6 +130,7 @@ function addOutcome(c: ModeCounts, run: RunOutcome, match: string[]): void {
     c.reported++;
     if (loadedOneOf(run.skillsLog, match)) c.loaded++;
   }
+  if (tool !== null) c.ran = (c.ran ?? 0) + (run.trace !== null && ranTool(run.trace, tool) ? 1 : 0);
 }
 
 function trialOutcome(mode: Mode, repeat: number, outcome: RunOutcome | null, started: number): AbTrial {
@@ -145,10 +165,15 @@ export async function runModes(o: AbOptions): Promise<{ on: ModeCounts; off: Mod
   const own = existsSync(join(o.root, 'evals/tasks', o.task, 'skills'))
     ? taskSkills(join(o.root, 'evals/tasks'), o.task)
     : all;
+  const tool = expectedTool(o.root, o.task);
   const logs = o.artifacts ?? mkdtempSync(join(envOr(o.env, 'TMPDIR', tmpdir()), 'ab-skills.'));
   mkdirSync(logs, { recursive: true });
   try {
     const counts = { on: emptyCounts(), off: emptyCounts() };
+    if (tool !== null) {
+      counts.on.ran = 0;
+      counts.off.ran = 0;
+    }
     const trials: AbTrial[] = [];
     const mark = quotaMark(o.root, o.env);
     let quota = existsSync(mark);
@@ -166,7 +191,7 @@ export async function runModes(o: AbOptions): Promise<{ on: ModeCounts; off: Mod
       }
       const started = Date.now();
       const outcome = await runOnce(o, mode, logs, i);
-      addOutcome(counts[mode], outcome, mode === 'on' ? own : all);
+      addOutcome(counts[mode], outcome, mode === 'on' ? own : all, tool);
       saveTrial(o, logs, trials, trialOutcome(mode, i, outcome, started));
       if (outcome.rc !== RUN.quota) return;
       quota = true;

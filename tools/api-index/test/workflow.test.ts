@@ -76,18 +76,22 @@ function verifyExtensionFacts(extension: string, index: string): void {
 
 function verifyApiDiff(index: string): void {
   const diff = objectJson(
-    cli('api-diff', [
-      '--base',
-      '6.7.0.0',
-      '--head',
-      '6.7.1.0',
-      '--index',
-      index,
-      '--surface',
-      'php,storefront',
-      '--no-fetch',
-      '--json',
-    ]),
+    cli(
+      'api-diff',
+      [
+        '--base',
+        '6.7.0.0',
+        '--head',
+        '6.7.1.0',
+        '--index',
+        index,
+        '--surface',
+        'php,storefront',
+        '--no-fetch',
+        '--json',
+      ],
+      3,
+    ),
   );
   assert.ok(Array.isArray(diff.changes));
   assert.ok(
@@ -253,7 +257,12 @@ test('human API diffs and invalid surface selections use the same built timeline
   const f = setup();
   cli('timeline', timelineArgs(f));
   const args = ['--base', '6.7.0.0', '--head', '6.7.1.0', '--index', f.index, '--no-fetch'];
-  assert.match(cli('api-diff', [...args, '--surface', 'storefront']), /base_content/u);
+  // A break exits 3; a diff without one exits 0.
+  const text = cli('api-diff', [...args, '--surface', 'storefront'], 3);
+  assert.match(text, /^Public API from 6\.7\.0\.0 to 6\.7\.1\.0\.\nSummary: 1 breaking change /u);
+  assert.match(text, /base_content/u);
+  assert.match(cli('api-diff', [...args, '--surface', 'route']), /Summary: 0 breaking changes/u);
+  assert.match(cli('api-diff', ['--help']), /Exit code: 0 no breaking change, 3 breaking changes found/u);
   const invalid = cliResult('api-diff', [...args, '--surface', 'not-a-surface']);
   assert.equal(invalid.status, 2);
   assert.match(invalid.stderr, /unknown surface/u);

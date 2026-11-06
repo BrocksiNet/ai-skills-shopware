@@ -1,7 +1,7 @@
 // Model evals on this machine with an agent you are logged in to, then the
 // CI gate (plan WP10 step 4; ported from scripts/eval-local.sh, which is now
 // a wrapper and documents the environment).
-import { join } from 'node:path';
+import { join, resolve } from 'node:path';
 import { type RunAbOptions, runAb } from './ab-run.ts';
 import { envOr } from './env.ts';
 import { errorMessage } from './errors.ts';
@@ -70,7 +70,11 @@ export async function evalLocal(o: EvalLocalOptions): Promise<number> {
     return 2;
   }
   const repeats = envOr(env, 'REPEATS', '3');
-  const results = envOr(env, 'EVAL_RESULTS', join(o.root, `evals/.results/local-${stamp(o.now ?? new Date())}.jsonl`));
+  // Absolute: the agent runs in a scratch workdir, where a relative trace or
+  // usage log next to the results would not exist.
+  const results = resolve(
+    envOr(env, 'EVAL_RESULTS', join(o.root, `evals/.results/local-${stamp(o.now ?? new Date())}.jsonl`)),
+  );
   env.EVAL_RESULTS = results;
   let tasks: string[];
   try {
