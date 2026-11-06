@@ -217,8 +217,14 @@ test('a chain resolves per release from the return types the index stores', () =
       ]),
     ]),
   );
-  assert.equal(resolveChain(index, 'php:Shopware\\Event::getPage()->getProduct()->getName()', 0), 'php:Shopware\\Product::getName()');
-  assert.equal(resolveChain(index, 'php:Shopware\\Event::getPage()->self()->getProduct()', 0), 'php:Shopware\\Page::getProduct()');
+  assert.equal(
+    resolveChain(index, 'php:Shopware\\Event::getPage()->getProduct()->getName()', 0),
+    'php:Shopware\\Product::getName()',
+  );
+  assert.equal(
+    resolveChain(index, 'php:Shopware\\Event::getPage()->self()->getProduct()', 0),
+    'php:Shopware\\Page::getProduct()',
+  );
   // A union return type, or a step that is gone, leaves the chain unresolved.
   assert.equal(resolveChain(index, 'php:Shopware\\Event::getPage()->getProduct()->getName()', 1), undefined);
   assert.equal(resolveChain(index, 'php:Shopware\\Event::getPage()->self()->getProduct()', 1), undefined);
