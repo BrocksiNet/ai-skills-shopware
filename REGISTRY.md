@@ -146,6 +146,7 @@ the right one activates. There is no project-level "core vs plugin" choice.
 | `shopwareLabs/ai-coding-tools` | Testing rules + optional MCP (do not copy hooks) | MIT (depend/link) |
 | `shopwareLabs/ai-coding-tools` `xml-config-migrating` | 6.8 XML DI → PHP (rewritten; no dump scripts) | MIT (rewrite) |
 | `shopware/shopware-cli` skills | CLI project/extension workflows (install, do not vendor) | MIT (link) |
+| [`FriendsOfShopware/shopware-rector`](https://github.com/FriendsOfShopware/shopware-rector) | Maintained Shopware PHP migration sets, rules and compatibility evidence; consult upstream, do not copy rule implementations | MIT (link) |
 | `bartundmett/skills` shopware6/rules | Granular rule inspiration (DAL, admin, storefront…) | rewrite |
 | `biotech-shopware/claude-shopware-skill` | Skill shape + source policy + docs-map idea | model-after |
 | `netresearch/php-modernization-skill` | PHP 8.x modernization patterns + guardrail idea | CC-BY-SA → rewrite |

@@ -9,3 +9,7 @@
 - User explicitly says "run on host native PHP without container"
 - Tests are green. Open the PR. (-> shopware-pr-hygiene, then sw-change-impact)
 - The cart total is wrong for a percentage discount. Fix it in CartProcessor. (-> shopware-php-code)
+
+- Run npm checks for this Nuxt application; it has no Shopware dependencies.
+- Validate this Laravel project; composer.json and Docker do not make it a Shopware project.
+- Build this Astro website without Shopware tooling.

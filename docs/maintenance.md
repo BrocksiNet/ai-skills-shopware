@@ -62,6 +62,7 @@ watch, how to read a commit, and which of our skills learn from which path.
 | `ai-coding-tools` ([`shopwareLabs/ai-coding-tools`](https://github.com/shopwareLabs/ai-coding-tools)) | Markdown bullets and headings in the test-writing, contributor-writing, code-migration and dev-tooling plugins | `sw-testing`, `sw-pr-description`, `sw-plugin-development`, `sw-podman-dev` |
 | `php-modernization` ([`netresearch/php-modernization-skill`](https://github.com/netresearch/php-modernization-skill)) | Markdown bullets and headings | `sw-php-foundation` |
 | `shopware-cli` ([`shopware/shopware-cli`](https://github.com/shopware/shopware-cli)) | Markdown bullets and headings of its skills | `sw-podman-dev` |
+| `shopware-rector` ([`FriendsOfShopware/shopware-rector`](https://github.com/FriendsOfShopware/shopware-rector)) | README and documentation for rules, version sets and compatibility boundaries; rule implementations stay upstream | `sw-plugin-development` |
 | `fos-agent-skills` ([`FriendsOfShopware/agent-skills`](https://github.com/FriendsOfShopware/agent-skills)) | Markdown bullets and headings | `sw-testing`, `sw-admin-js` |
 
 A dedicated PHPUnit skill joins once it exists.

@@ -68,6 +68,17 @@
       "skills": [{ "path": "skills", "skills": ["sw-podman-dev"] }]
     },
     {
+      "id": "shopware-rector",
+      "repo": "FriendsOfShopware/shopware-rector",
+      "branch": "main",
+      "extractor": "markdown",
+      "paths": ["README.md", "docs"],
+      "skills": [
+        { "path": "README.md", "skills": ["sw-plugin-development"] },
+        { "path": "docs", "skills": ["sw-plugin-development"] }
+      ]
+    },
+    {
       "id": "fos-agent-skills",
       "repo": "FriendsOfShopware/agent-skills",
       "branch": "main",

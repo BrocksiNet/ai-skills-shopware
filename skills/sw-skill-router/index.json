@@ -1285,6 +1285,7 @@
       "contexts": [
         "core",
         "plugin",
+        "app",
         "project"
       ],
       "tasks": [
@@ -1312,6 +1313,11 @@
             "podman compose",
             "sw-dev\\b"
           ]
+        },
+        {
+          "reference": "sw-podman-dev/references/shopware-cli-routing.md",
+          "when": "Choose Shopware CLI project or standalone extension commands, validation scope, or version-specific flags.",
+          "on_demand": true
         }
       ]
     },
