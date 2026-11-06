@@ -37,7 +37,10 @@ its overrides and templates rely on. The second line is the summary. A
 template block or JS plugin core removed is not an error: the override just
 stops working. A class core moved, whose old name is a runtime alias, is
 listed as `moved`: the old name still works, but switch to the new one
-before the release the line names, which removes the alias.
+before the release the line names, which removes the alias. A block
+listed as `changed` still renders, but core reworked its body in the
+releases named; an override that copies core markup instead of wrapping
+`{{ parent() }}` must follow it.
 
 The script is a built index of each release's source, so its spans are the
 release evidence: `missing in 6.6.0.0 … 6.6.6.1` means the member arrived

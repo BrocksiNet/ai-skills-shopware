@@ -5,7 +5,9 @@
 // skipped and counted. PHP signatures are left to core's `bc-check`; the PHP
 // surface reports removals only, labelled as also checked there. A PHP
 // member a parent, trait or interface took over, and a class that moved
-// and keeps its old name as a runtime alias, are moves, not removals.
+// and keeps its old name as a runtime alias, are moves, not removals. A
+// template block whose body changed is listed, but not as a break: an
+// override of it still renders.
 import { Lookup } from './facts.ts';
 import type { Item, Snapshot } from './model.ts';
 import { frontendChange, ownerOf, type Surface, SURFACES, surfaceOf } from './surfaces.ts';
@@ -14,7 +16,7 @@ import { mergeSnapshots } from './timeline.ts';
 
 export { type Surface, SURFACES, surfaceOf };
 
-export type ChangeKind = 'removed' | 'moved' | 'changed' | 'deprecated';
+export type ChangeKind = 'removed' | 'moved' | 'changed' | 'body-changed' | 'deprecated';
 
 export interface Change {
   surface: Surface;
@@ -162,7 +164,18 @@ function removal(item: Item, surface: Surface, sides: Sides): Change | undefined
   return change;
 }
 
-export function diffSnapshots(base: Snapshot, head: Snapshot, surfaces: Surface[] = SURFACES): ApiDiff {
+export interface DiffOptions {
+  /** List blocks whose body changed (default true). */
+  bodies?: boolean;
+}
+
+export function diffSnapshots(
+  base: Snapshot,
+  head: Snapshot,
+  surfaces: Surface[] = SURFACES,
+  options: DiffOptions = {},
+): ApiDiff {
+  const bodies = options.bodies ?? true;
   const wanted = new Set(surfaces);
   const baseById = new Map(base.items.map((item) => [item.id, item]));
   const headById = new Map(head.items.map((item) => [item.id, item]));
@@ -195,6 +208,14 @@ export function diffSnapshots(base: Snapshot, head: Snapshot, surfaces: Surface[
       if (deprecatedIn(item, baseById)) change.announced = true;
       changes.push(change);
     }
+    if (
+      bodies &&
+      item.kind === 'block' &&
+      item.body !== undefined &&
+      after.body !== undefined &&
+      item.body !== after.body
+    )
+      changes.push({ surface, kind: 'body-changed', id: item.id, detail: 'body changed', file: after.file });
     if (after.flags.deprecated !== undefined && item.flags.deprecated === undefined) {
       changes.push({
         surface,
@@ -208,15 +229,19 @@ export function diffSnapshots(base: Snapshot, head: Snapshot, surfaces: Surface[
   return { base: base.ref, head: head.ref, changes, skipped };
 }
 
+/** Kinds that are never a break: they tell, they do not remove. */
+const NOT_BREAKS: ReadonlySet<ChangeKind> = new Set(['deprecated', 'moved', 'body-changed']);
+
 function labelOf(change: Change): string {
-  if (change.kind === 'deprecated' || change.kind === 'moved') return change.kind;
+  if (change.kind === 'body-changed') return 'body changed';
+  if (NOT_BREAKS.has(change.kind)) return change.kind;
   if (change.announced === true) return `${change.kind} after deprecation`;
   return `BREAK ${change.kind}`;
 }
 
 /** A removal or change without a deprecation in the base. */
 export function isBreak(change: Change): boolean {
-  return change.kind !== 'deprecated' && change.kind !== 'moved' && change.announced !== true;
+  return !NOT_BREAKS.has(change.kind) && change.announced !== true;
 }
 
 /** Sets each change's line from the file text at the ref that has the item:
@@ -248,15 +273,17 @@ export function diffSummary(diff: ApiDiff): string {
   const announced = diff.changes.filter((change) => change.kind !== 'deprecated' && change.announced === true).length;
   const deprecated = diff.changes.filter((change) => change.kind === 'deprecated').length;
   const moved = diff.changes.filter((change) => change.kind === 'moved').length;
+  const bodies = diff.changes.filter((change) => change.kind === 'body-changed').length;
   return (
     `Summary: ${plural(breaks, 'breaking change', 'breaking changes')} without a deprecation in ${diff.base}, ` +
     `${plural(announced, 'removal or change', 'removals or changes')} after a deprecation, ` +
     plural(deprecated, 'new deprecation', 'new deprecations') +
-    `${moved === 0 ? '' : `, ${plural(moved, 'move', 'moves')}`}.`
+    `${moved === 0 ? '' : `, ${plural(moved, 'move', 'moves')}`}` +
+    `${bodies === 0 ? '' : `, ${plural(bodies, 'block body change', 'block body changes')}`}.`
   );
 }
 
-const ORDER: Record<ChangeKind, number> = { removed: 0, moved: 1, changed: 2, deprecated: 3 };
+const ORDER: Record<ChangeKind, number> = { removed: 0, moved: 1, changed: 2, 'body-changed': 3, deprecated: 4 };
 
 /** The diff as text: the summary, then by surface, breaks first. */
 export function diffText(diff: ApiDiff): string {

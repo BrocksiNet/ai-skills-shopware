@@ -5,7 +5,7 @@ import { join } from 'node:path';
 import { test } from 'node:test';
 import { Lookup } from '../src/facts.ts';
 import type { Item, Snapshot } from '../src/model.ts';
-import { factsOfDir } from '../src/report.ts';
+import { describe, factsOfDir } from '../src/report.ts';
 import { mergeSnapshots } from '../src/timeline.ts';
 
 const event: Item = { id: 'php:Shopware\\Core\\Event', kind: 'class', file: 'src/Event.php', flags: {} };
@@ -70,8 +70,15 @@ test('a method_exists guard covers the member in every release', () => {
 });
 
 const CART = 'storefront:@Storefront/storefront/page/checkout/cart/index.html.twig';
-function block(name: string): Item {
-  return { id: `${CART}#${name}`, kind: 'block', file: 'f', signature: '', flags: {} };
+function block(name: string, body?: string): Item {
+  return {
+    id: `${CART}#${name}`,
+    kind: 'block',
+    file: 'f',
+    signature: '',
+    flags: {},
+    ...(body === undefined ? {} : { body }),
+  };
 }
 const cartTemplate: Item = { id: CART, kind: 'template', file: 'f', signature: '', flags: {} };
 
@@ -108,6 +115,39 @@ test('a missing block names the blocks its template still has there, whole-range
       { name: 'page_checkout_cart_shipping_costs', throughout: true },
       { name: 'page_checkout_cart_shipping_costs_form', throughout: false },
     ]);
+  } finally {
+    rmSync(dir, { recursive: true, force: true });
+  }
+});
+
+test('a block whose body changed lists each release that changed it, after missing', () => {
+  // The body changes in 6.6.3.0 and back in 6.7.0.0; 6.6.2.0 lacks the block, which is no change.
+  const changed = new Lookup(
+    mergeSnapshots([
+      snapshot('v6.6.0.0', [cartTemplate, block('page_checkout_cart_tax', 'one')]),
+      snapshot('v6.6.2.0', [cartTemplate]),
+      snapshot('v6.6.3.0', [cartTemplate, block('page_checkout_cart_tax', 'two')]),
+      snapshot('v6.6.4.0', [cartTemplate, block('page_checkout_cart_tax', 'two')]),
+      snapshot('v6.7.0.0', [cartTemplate, block('page_checkout_cart_tax', 'one')]),
+    ]),
+  );
+  const dir = mkdtempSync(join(tmpdir(), 'api-facts-'));
+  try {
+    mkdirSync(join(dir, 'src/Resources/views/storefront/page/checkout/cart'), { recursive: true });
+    writeFileSync(
+      join(dir, 'src/Resources/views/storefront/page/checkout/cart/index.html.twig'),
+      `{% sw_extends '@Storefront/storefront/page/checkout/cart/index.html.twig' %}\n{% block page_checkout_cart_tax %}x{% endblock %}\n`,
+    );
+    const report = factsOfDir(changed, dir, '~6.6.0 || ~6.7.0');
+    assert.deepEqual(
+      report.facts.map((fact) => [fact.kind, describe(fact)]),
+      [
+        ['missing', 'missing in 6.6.2.0'],
+        ['changed', 'body changed in 6.6.3.0, 6.7.0.0'],
+      ],
+    );
+    const narrowed = factsOfDir(changed, dir, '~6.6.3');
+    assert.deepEqual(narrowed.facts, []);
   } finally {
     rmSync(dir, { recursive: true, force: true });
   }

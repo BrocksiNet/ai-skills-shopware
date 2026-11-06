@@ -47,7 +47,9 @@ points at a replacement the extenders can use today: `CORE-063`.
   findings: check each against the diff before you report it. When the
   task already comes with `facts` output, use that. A `moved` class
   still works under its old name, a runtime alias; it is not `PLG-001`,
-  but the alias goes away in the release the line names.
+  but the alias goes away in the release the line names. A block
+  `changed` in a release still renders; it is a finding only when the
+  override copies core markup that release reworked.
 - The `facts` command reads releases from a weekly index it downloads
   once. To compare two refs of a shopware/shopware clone instead, use
   `diff --repo <clone> --base <ref> --head <ref>` (`--help` lists the

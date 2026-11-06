@@ -149,6 +149,8 @@ export type FactKind =
   | 'experimental'
   | 'final-extended'
   | 'bc-change'
+  /** A template block whose body differs from the release before it in the range. */
+  | 'changed'
   /** The previous name of a moved class: a runtime alias of the canonical class, until `until`. */
   | 'moved'
   /** A `class_exists` or `method_exists` guard on a symbol every release of the range has. */
@@ -250,6 +252,23 @@ function movedFacts(lookup: Lookup, target: string, indexes: number[]): Fact[] {
   });
 }
 
+/** The releases of the range in which a block's body differs from the
+ *  previous release that has the block. Each release is its own run: two
+ *  changes in a row are two changes. */
+function changedFacts(lookup: Lookup, target: string, resolved: Resolved[]): Fact[] {
+  const changes: [string, string][] = [];
+  let previous: string | undefined;
+  for (const { index, item } of resolved) {
+    if (item === undefined || !lookup.present(item, index)) continue;
+    const body = lookup.value(item, 'body', index);
+    if (body === undefined) continue;
+    const name = lookup.names[index] ?? '';
+    if (previous !== undefined && body !== previous) changes.push([name, name]);
+    previous = body;
+  }
+  return changes.length === 0 ? [] : [{ target, kind: 'changed', releases: changes }];
+}
+
 /** Facts about one target over the releases of a range. A member inherits
  *  `internal`, `deprecated` and `experimental` from its class. A name that
  *  is a runtime alias of a moved class resolves to the canonical class,
@@ -288,6 +307,7 @@ export function factsFor(lookup: Lookup, target: string, how: string, range: str
       ),
     });
   }
+  if (frontend !== undefined && target.includes('#')) facts.push(...changedFacts(lookup, target, resolved));
   facts.push(...flagFacts(lookup, target, member !== undefined || frontend !== undefined, resolved, indexes));
   if (member === undefined && frontend === undefined) facts.push(...movedFacts(lookup, target, indexes));
   if (how === 'extends') {

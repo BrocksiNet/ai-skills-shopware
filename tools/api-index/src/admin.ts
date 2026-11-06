@@ -193,7 +193,15 @@ export function componentItems(registration: Registration, read: (path: string) 
   for (const block of scanned.blocks) {
     const flags: Flags = {};
     if (block.deprecated !== undefined) flags.deprecated = block.deprecated;
-    push({ id: `${id}#${block.name}`, kind: 'block', file: templateFile, signature: block.parent ?? '', flags });
+    const item: Item = {
+      id: `${id}#${block.name}`,
+      kind: 'block',
+      file: templateFile,
+      signature: block.parent ?? '',
+      flags,
+    };
+    if (block.body !== undefined) item.body = block.body;
+    push(item);
   }
   for (const slot of scanned.slots) {
     push({ id: `${id}.slot.${slot}`, kind: 'slot', file: templateFile, signature: '', flags: {} });
