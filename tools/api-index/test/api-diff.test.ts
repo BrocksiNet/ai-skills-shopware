@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import { test } from 'node:test';
-import { diffSnapshots, diffText } from '../src/api-diff.ts';
+import { diffSnapshots, diffText, isBreak } from '../src/api-diff.ts';
 import { checkMajor, covers, type KnownBreaks, totals } from '../src/known-breaks.ts';
 import type { Item, Snapshot } from '../src/model.ts';
 import { mergeSnapshots, snapshotAt } from '../src/timeline.ts';
@@ -74,6 +74,25 @@ test('api-diff: breaks, announced removals, collapsed owners, moved routes, new 
   assert.match(text, /- removed after deprecation: route:api\.old/u);
   assert.match(text, /^Public API from v1 to v2\.\nSummary: \d+ breaking changes? without a deprecation in v1, /u);
   assert.match(text, /\n1 internal or experimental items skipped\.\n$/u);
+});
+
+test('api-diff: a block body change is listed, not a break, and the weekly report can leave it out', () => {
+  const id = 'storefront:@Storefront/storefront/base.html.twig#base_body';
+  const block = (body: string): Item => ({ id, kind: 'block', file: 'base.html.twig', signature: '', flags: {}, body });
+  const diff = diffSnapshots(snapshot('v1', [block('one')]), snapshot('v2', [block('two')]));
+  assert.deepEqual(
+    diff.changes.map((change) => [change.kind, change.id, isBreak(change)]),
+    [['body-changed', id, false]],
+  );
+  assert.match(
+    diffText(diff),
+    /1 block body change\.\n[\s\S]*- body changed: .*#base_body: body changed {2}\[base\.html\.twig\]/u,
+  );
+  assert.deepEqual(
+    diffSnapshots(snapshot('v1', [block('one')]), snapshot('v2', [block('two')]), undefined, { bodies: false }).changes,
+    [],
+  );
+  assert.deepEqual(diffSnapshots(snapshot('v1', [block('one')]), snapshot('v2', [block('one')])).changes, []);
 });
 
 test('api-diff: a key whose parent became a prototype is not removed', () => {

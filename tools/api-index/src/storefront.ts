@@ -52,13 +52,15 @@ export function templateItems(twig: string, file: string): Item[] {
   for (const block of scanned.blocks) {
     if (seen.has(block.name)) continue;
     seen.add(block.name);
-    items.push({
+    const item: Item = {
       id: `${id}#${block.name}`,
       kind: 'block',
       file,
       signature: block.parent ?? '',
       flags: deprecation(block.deprecated),
-    });
+    };
+    if (block.body !== undefined) item.body = block.body;
+    items.push(item);
   }
   return items;
 }

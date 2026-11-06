@@ -19,6 +19,8 @@ deprecation, and what it newly deprecates, each with `[file:line]`. The
 second line is the summary. Exit code 3 means a breaking change was found;
 0 means none. A method a parent class took over and a class moved with
 `#[ClassMoved]` and a runtime alias are listed as `moved`, not as breaks.
+A template block whose body changed is listed as `body changed`, not as a
+break: check that extensions overriding it with copied markup still fit.
 
 - **Clone mode** (`--repo .`): base and head are git refs. Use it for your
   branch, with `--base` set to the branch the PR targets.

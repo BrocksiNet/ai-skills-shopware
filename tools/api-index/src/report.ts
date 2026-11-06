@@ -227,6 +227,24 @@ function resolveChains(lookup: Lookup, byTarget: Map<string, Use[]>, releases: s
   return out;
 }
 
+/** Fact kinds, the ones that break a release first. */
+export const KIND_ORDER = [
+  'missing',
+  'changed',
+  'final-extended',
+  'internal',
+  'deprecated',
+  'experimental',
+  'bc-change',
+  'moved',
+  'guarded-everywhere',
+];
+
+/** The place of a kind in `KIND_ORDER`; unknown kinds go last. */
+export function kindRank(kind: string): number {
+  return KIND_ORDER.indexOf(kind) + 1 || 99;
+}
+
 export function factsOfDir(lookup: Lookup, dir: string, range: string, diff?: DiffLines): Report {
   const releases = releasesIn(lookup.timeline, range);
   const read = readExtension(dir);
@@ -243,7 +261,7 @@ export function factsOfDir(lookup: Lookup, dir: string, range: string, diff?: Di
   attachNearby(all, lookup, releases);
   const facts = all
     .filter((fact) => inDiff === undefined || fact.uses.some(inDiff))
-    .toSorted((a, b) => a.kind.localeCompare(b.kind) || a.target.localeCompare(b.target));
+    .toSorted((a, b) => kindRank(a.kind) - kindRank(b.kind) || a.target.localeCompare(b.target));
   return {
     dir,
     range,
@@ -267,6 +285,8 @@ export function describe(fact: Fact): string {
       return 'not in the index for any release';
     case 'missing':
       return `missing in ${where}`;
+    case 'changed':
+      return `body changed in ${where}`;
     case 'deprecated':
       return `@deprecated${fact.value === '' || fact.value === undefined ? '' : ` ${fact.value}`} in ${where}${via}`;
     case 'experimental':

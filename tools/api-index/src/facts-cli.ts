@@ -8,7 +8,7 @@ import type { Io } from './diff-cli.ts';
 import { Lookup } from './facts.ts';
 import { formatRuns } from './runs.ts';
 import { locateIndex } from './locate.ts';
-import { coreConstraint, describe, factsOfDir, type Report, type ReportFact } from './report.ts';
+import { coreConstraint, describe, factsOfDir, kindRank, type Report, type ReportFact } from './report.ts';
 import { loadTimeline } from './store.ts';
 import type { Timeline } from './timeline.ts';
 
@@ -19,6 +19,9 @@ the Shopware API it uses that is missing, deprecated, internal or
 experimental there: PHP classes and members, admin components and blocks,
 storefront templates, blocks and JS plugins, and Twig functions. A class
 that moved and keeps its old name as a runtime alias is listed as moved.
+A block whose body core reworked is listed as changed, with the releases
+that changed it: the override still renders, so judge it against the new
+markup.
 
   --range <constraint>  instead of shopware/core in composer.json
   --diff <patch|->      the tree has the change; report only what it adds
@@ -49,20 +52,10 @@ function header(report: Report, timeline: Timeline, note: string | undefined): s
 
 /** Counts by kind, the ones that break a release first. */
 export function factsSummary(facts: readonly { kind: string }[]): string {
-  const order = [
-    'missing',
-    'final-extended',
-    'internal',
-    'deprecated',
-    'experimental',
-    'bc-change',
-    'moved',
-    'guarded-everywhere',
-  ];
   const counts = new Map<string, number>();
   for (const fact of facts) counts.set(fact.kind, (counts.get(fact.kind) ?? 0) + 1);
   const parts = [...counts]
-    .toSorted(([a], [b]) => (order.indexOf(a) + 1 || 99) - (order.indexOf(b) + 1 || 99))
+    .toSorted(([a], [b]) => kindRank(a) - kindRank(b))
     .map(([kind, count]) => `${count} ${kind}`);
   return `Summary: ${facts.length} ${facts.length === 1 ? 'fact' : 'facts'}${parts.length === 0 ? '' : ` (${parts.join(', ')})`}.`;
 }

@@ -2,7 +2,7 @@
 // symbol. docs/plans/2026-10-wp11-public-api-index.md explains the surfaces.
 
 export const SCHEMA = 1;
-export const GENERATOR = 'api-index/0.5.0';
+export const GENERATOR = 'api-index/0.6.0';
 
 export type ItemKind =
   | 'class'
@@ -80,6 +80,9 @@ export interface Item {
    *  class it is a runtime alias of. `flags.deprecated` is the version that
    *  removes the old name. */
   aliasOf?: string;
+  /** Blocks: a hash of the body, to tell a release that reworked the
+   *  markup an override sits on (see `bodyHash` in twig.ts). */
+  body?: string;
   flags: Flags;
 }
 
