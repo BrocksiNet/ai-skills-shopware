@@ -2,7 +2,7 @@
 // symbol. docs/plans/2026-10-wp11-public-api-index.md explains the surfaces.
 
 export const SCHEMA = 1;
-export const GENERATOR = 'api-index/0.4.0';
+export const GENERATOR = 'api-index/0.5.0';
 
 export type ItemKind =
   | 'class'
@@ -76,6 +76,10 @@ export interface Item {
   scope?: string;
   /** Routes: documented in the OpenAPI schema files of core. */
   schema?: true;
+  /** The previous name of a moved class (`#[ClassMoved]`): the canonical
+   *  class it is a runtime alias of. `flags.deprecated` is the version that
+   *  removes the old name. */
+  aliasOf?: string;
   flags: Flags;
 }
 

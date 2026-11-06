@@ -3,16 +3,9 @@
 // what holds in which releases. No dependencies, so a tool that reads the
 // index can use it as is.
 import { builtinMembers } from './builtin.ts';
-import { parseConstraint } from './constraint.ts';
+import { runs } from './runs.ts';
 import { memberOwner, parentOwner } from './surfaces.ts';
-import { compareReleases, fromRanges, type Timeline, type TimelineItem, type Tracked } from './timeline.ts';
-
-/** Releases of the timeline in the range, oldest first. Trunk is never in a range. */
-export function releasesIn(timeline: Timeline, constraint: string): string[] {
-  const test = parseConstraint(constraint);
-  if (test === undefined) throw new Error(`cannot read the version constraint "${constraint}"`);
-  return timeline.releases.map((release) => release.release).filter((name) => test(name));
-}
+import { fromRanges, type Timeline, type TimelineItem, type Tracked } from './timeline.ts';
 
 /** Looks items up by ID, case-insensitively for class and method names, like PHP. */
 export class Lookup {
@@ -93,8 +86,21 @@ export class Lookup {
     return parent === undefined ? undefined : this.inherited(`${parent}${id.slice(owner.length)}`, index, depth + 1);
   }
 
+  /** The item `id` names at a release: itself, or the canonical class when
+   *  the name is a runtime alias of a moved class. */
+  canonical(id: string, index: number): TimelineItem | undefined {
+    let item = this.get(id);
+    for (let depth = 0; item !== undefined && depth < 12; depth += 1) {
+      const alias = this.value(item, 'aliasOf', index);
+      if (alias === undefined) return item;
+      item = this.get(`php:${alias}`);
+    }
+    return item;
+  }
+
   /** The item that declares `member` for `owner` at a release: the class
-   *  itself, then its traits, parents, interfaces and their parents.
+   *  itself (or the canonical class its name is an alias of), then its
+   *  traits, parents, interfaces and their parents.
    *  `external` when the chain reaches a class outside the index (Symfony,
    *  Doctrine), which may declare the member. */
   member(
@@ -116,6 +122,8 @@ export class Lookup {
       return builtin === undefined || builtin.has(member.toLowerCase()) ? 'external' : undefined;
     }
     if (!this.present(klass, index)) return undefined;
+    const alias = this.value(klass, 'aliasOf', index);
+    if (alias !== undefined) return this.member(alias, member, index, seen);
     const parents = [
       this.value(klass, 'traits', index),
       this.value(klass, 'extends', index),
@@ -141,6 +149,8 @@ export type FactKind =
   | 'experimental'
   | 'final-extended'
   | 'bc-change'
+  /** The previous name of a moved class: a runtime alias of the canonical class, until `until`. */
+  | 'moved'
   /** A `class_exists` or `method_exists` guard on a symbol every release of the range has. */
   | 'guarded-everywhere';
 
@@ -153,24 +163,8 @@ export interface Fact {
   value?: string;
   /** The item that carries the flag, when it is not the target (its class or a parent). */
   via?: string;
-}
-
-/** Collapses release indexes into `[first, last]` runs within the range. */
-function runs(indexes: number[], inRange: number[], names: string[]): [string, string][] {
-  const out: [string, string][] = [];
-  let start: number | undefined;
-  let last: number | undefined;
-  for (const index of inRange) {
-    const hit = indexes.includes(index);
-    if (hit && start === undefined) start = index;
-    if (!hit && start !== undefined) {
-      out.push([names[start] ?? '', names[last ?? start] ?? '']);
-      start = undefined;
-    }
-    last = index;
-  }
-  if (start !== undefined) out.push([names[start] ?? '', names[last ?? start] ?? '']);
-  return out;
+  /** For a moved class: the version that removes the old name. */
+  until?: string;
 }
 
 const FLAGS: { field: Tracked; kind: FactKind }[] = [
@@ -233,11 +227,33 @@ export function presentThroughout(lookup: Lookup, target: string, range: string[
 
 function phpItem(lookup: Lookup, target: string, index: number): TimelineItem | 'external' | undefined {
   const [owner = '', member] = target.replace(/^php:/u, '').split('::');
-  return member === undefined ? lookup.get(target) : lookup.member(owner, member, index);
+  return member === undefined ? lookup.canonical(target, index) : lookup.member(owner, member, index);
+}
+
+/** The releases a class name is a runtime alias of a moved class in, one
+ *  fact per canonical class and removal version. */
+function movedFacts(lookup: Lookup, target: string, indexes: number[]): Fact[] {
+  const own = lookup.get(target);
+  if (own === undefined) return [];
+  const hits = new Map<string, number[]>();
+  for (const index of indexes) {
+    const alias = lookup.present(own, index) ? lookup.value(own, 'aliasOf', index) : undefined;
+    if (alias === undefined) continue;
+    const key = `${alias}\0${lookup.value(own, 'deprecated', index) ?? ''}`;
+    hits.set(key, [...(hits.get(key) ?? []), index]);
+  }
+  return [...hits].map(([key, hit]) => {
+    const [alias = '', until = ''] = key.split('\0');
+    const fact: Fact = { target, kind: 'moved', releases: runs(hit, indexes, lookup.names), value: `php:${alias}` };
+    if (until !== '') fact.until = until;
+    return fact;
+  });
 }
 
 /** Facts about one target over the releases of a range. A member inherits
- *  `internal`, `deprecated` and `experimental` from its class. */
+ *  `internal`, `deprecated` and `experimental` from its class. A name that
+ *  is a runtime alias of a moved class resolves to the canonical class,
+ *  and says so in a `moved` fact. */
 export function factsFor(lookup: Lookup, target: string, how: string, range: string[]): Fact[] {
   const names = lookup.names;
   const indexes = range.map((release) => names.indexOf(release)).filter((index) => index !== -1);
@@ -246,7 +262,7 @@ export function factsFor(lookup: Lookup, target: string, how: string, range: str
   const frontend = memberOwner(target);
   const found = indexes.map((index) => ({
     index,
-    klass: lookup.get(frontend ?? `php:${owner}`),
+    klass: frontend === undefined ? lookup.canonical(`php:${owner}`, index) : lookup.get(frontend),
     item: frontend === undefined ? phpItem(lookup, target, index) : lookup.inherited(target, index),
   }));
   if (found.every(({ klass, item }) => klass === undefined && item === undefined)) {
@@ -273,6 +289,7 @@ export function factsFor(lookup: Lookup, target: string, how: string, range: str
     });
   }
   facts.push(...flagFacts(lookup, target, member !== undefined || frontend !== undefined, resolved, indexes));
+  if (member === undefined && frontend === undefined) facts.push(...movedFacts(lookup, target, indexes));
   if (how === 'extends') {
     const final = resolved
       .filter(({ index, item }) => item !== undefined && lookup.value(item, 'final', index) !== undefined)
@@ -280,13 +297,4 @@ export function factsFor(lookup: Lookup, target: string, how: string, range: str
     if (final.length > 0) facts.push({ target, kind: 'final-extended', releases: runs(final, indexes, names) });
   }
   return facts;
-}
-
-/** `6.6.0.0 … 6.6.10.29` or a single release. */
-export function formatRuns(releases: [string, string][]): string {
-  return releases.map(([first, last]) => (first === last ? first : `${first} … ${last}`)).join(', ');
-}
-
-export function sortReleases(names: string[]): string[] {
-  return names.toSorted(compareReleases);
 }

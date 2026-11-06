@@ -104,6 +104,14 @@ function classDeclaration(short: string): RegExp {
 
 type Probe = boolean | undefined;
 
+/** A moved class: its canonical class names the old one in `#[ClassMoved]`. */
+function movedHolds(repo: string, tag: string, fact: Fact, short: string): Probe {
+  const canonical = (fact.value ?? '').replace(/^php:/u, '');
+  const source = classSource(repo, tag, canonical);
+  const doc = source === undefined ? undefined : preamble(source, classDeclaration(canonical.split('\\').pop() ?? ''));
+  return doc === undefined ? undefined : /#\[(.*\\)?ClassMoved\(/u.test(doc) && doc.includes(short);
+}
+
 /** Does the fact hold at one release? undefined when text cannot tell. */
 function holds(repo: string, tag: string, fact: Fact): Probe {
   const [owner = '', member] = fact.target.replace(/^php:/u, '').split('::');
@@ -114,6 +122,7 @@ function holds(repo: string, tag: string, fact: Fact): Probe {
     if (member === undefined) return false;
     return memberDeclaration(member).test(code) ? false : undefined;
   }
+  if (fact.kind === 'moved') return movedHolds(repo, tag, fact, short);
   if (code === undefined) return false;
   // A member that is gone carries no flag; one that is not declared here may be inherited.
   if (member !== undefined && fact.via === undefined && !memberDeclaration(member).test(code)) return undefined;

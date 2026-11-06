@@ -17,7 +17,8 @@ keys, admin components, props and blocks, storefront templates, blocks and
 JS plugins, and Twig functions the branch removes or changes without a
 deprecation, and what it newly deprecates, each with `[file:line]`. The
 second line is the summary. Exit code 3 means a breaking change was found;
-0 means none.
+0 means none. A method a parent class took over and a class moved with
+`#[ClassMoved]` and a runtime alias are listed as `moved`, not as breaks.
 
 - **Clone mode** (`--repo .`): base and head are git refs. Use it for your
   branch, with `--base` set to the branch the PR targets.

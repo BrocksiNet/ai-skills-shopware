@@ -35,7 +35,9 @@ API the plugin uses that is missing, deprecated or internal there, with the
 and blocks, storefront templates, blocks and JS plugins, and Twig functions
 its overrides and templates rely on. The second line is the summary. A
 template block or JS plugin core removed is not an error: the override just
-stops working.
+stops working. A class core moved, whose old name is a runtime alias, is
+listed as `moved`: the old name still works, but switch to the new one
+before the release the line names, which removes the alias.
 
 The script is a built index of each release's source, so its spans are the
 release evidence: `missing in 6.6.0.0 … 6.6.6.1` means the member arrived

@@ -39,7 +39,9 @@ It names the routes, entity fields, feature flags, configuration keys,
 admin components and blocks, storefront templates, blocks and JS plugins,
 and Twig functions the branch removes, changes or deprecates, each with
 `[file:line]`. The second line is the summary. Exit code 3 means at least
-one breaking change without a deprecation; 0 means none.
+one breaking change without a deprecation; 0 means none. With
+`--surface php`, a method a parent class now declares and a class that
+moved with a runtime alias are listed as `moved`, not as breaks.
 
 - **Clone mode** (`--repo .`): base and head are git refs of the clone, so
   use it for a branch, a commit or a stacked PR (`--base <parent-branch>`).

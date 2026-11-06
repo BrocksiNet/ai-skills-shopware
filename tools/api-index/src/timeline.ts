@@ -31,6 +31,7 @@ export const TRACKED = [
   'package',
   'scope',
   'schema',
+  'aliasOf',
 ] as const;
 
 export type Tracked = (typeof TRACKED)[number];
@@ -115,6 +116,7 @@ export function fieldValue(item: Item, field: Tracked): string | undefined {
     case 'signature':
     case 'package':
     case 'scope':
+    case 'aliasOf':
       return item[field];
   }
   return undefined;
@@ -270,6 +272,7 @@ export function snapshotAt(timeline: Timeline, ref: string): Snapshot | undefine
     if (values.package !== undefined) rebuilt.package = values.package;
     if (values.scope !== undefined) rebuilt.scope = values.scope;
     if (values.schema === 'true') rebuilt.schema = true;
+    if (values.aliasOf !== undefined) rebuilt.aliasOf = values.aliasOf;
     items.push(rebuilt);
   }
   return {

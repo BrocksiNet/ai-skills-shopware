@@ -5,7 +5,7 @@
 // expects each break deprecated there. Reported breaks the UPGRADE file
 // does not name count as right only when they were checked and listed as
 // `confirmed`.
-import type { Change } from './api-diff.ts';
+import { type Change, isBreak } from './api-diff.ts';
 import type { Item, Snapshot } from './model.ts';
 
 export interface Major {
@@ -105,7 +105,7 @@ export function checkMajor(major: Major, known: KnownBreaks, changes: Change[], 
     );
     return changed || (major.expect === 'deprecated' && deprecatedAt(entry.id, headById));
   };
-  const reported = changes.filter((change) => change.kind !== 'deprecated' && change.announced !== true);
+  const reported = changes.filter((change) => isBreak(change));
   const confirmed = new Set(known.confirmed.filter((entry) => entry.major === major.major).map((entry) => entry.id));
   const isRight = (change: Change): boolean =>
     confirmed.has(change.id) || counted.some((entry) => covers(change.id, entry.id) || covers(entry.id, change.id));

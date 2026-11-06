@@ -45,7 +45,9 @@ points at a replacement the extenders can use today: `CORE-063`.
   too. Without `--diff` it checks the whole extension. The second line is
   the summary. These are facts about Shopware's source per release, not
   findings: check each against the diff before you report it. When the
-  task already comes with `facts` output, use that.
+  task already comes with `facts` output, use that. A `moved` class
+  still works under its old name, a runtime alias; it is not `PLG-001`,
+  but the alias goes away in the release the line names.
 - The `facts` command reads releases from a weekly index it downloads
   once. To compare two refs of a shopware/shopware clone instead, use
   `diff --repo <clone> --base <ref> --head <ref>` (`--help` lists the

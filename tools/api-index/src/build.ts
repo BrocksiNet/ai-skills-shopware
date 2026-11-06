@@ -78,19 +78,26 @@ function surfaceItems(
   return { items, unread };
 }
 
+/** Alias items whose previous name is still declared: that declaration wins. */
+export function withoutDeclaredAliases(items: Item[]): Item[] {
+  const declared = new Set(items.filter((item) => item.aliasOf === undefined).map((item) => item.id));
+  return items.filter((item) => item.aliasOf === undefined || !declared.has(item.id));
+}
+
 export function buildSnapshot(options: BuildOptions): Snapshot {
   const all = listFiles(options.repo, options.ref, 'src');
   const paths = all.filter((path) => isPhpSource(path));
   const files = readFiles(options.repo, options.ref, paths);
-  const items: Item[] = [];
+  const parsed: Item[] = [];
   const failed: string[] = [];
   for (const [path, code] of files) {
     try {
-      items.push(...phpItems(code, path));
+      parsed.push(...phpItems(code, path));
     } catch {
       failed.push(path);
     }
   }
+  const items = withoutDeclaredAliases(parsed);
   const classFiles = new Map(
     items.filter((item) => !item.id.includes('::')).map((item) => [item.id.slice('php:'.length), item.file]),
   );
