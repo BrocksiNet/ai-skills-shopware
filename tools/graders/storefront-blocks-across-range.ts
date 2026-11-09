@@ -100,15 +100,17 @@ function range(workdir: string): string {
 }
 
 const SILENT =
-  /silent|no (error|exception|warning)|without (an? )?(error|exception|warning)|(not|never) (be )?(shown|visible|rendered|displayed)|disappear|vanish|no longer (shown|visible|rendered|displayed|appear)|simply (gone|missing)/iu;
+  /silent|no (error|exception|warning)|without (an? )?(error|exception|warning)|(not|never) (be )?(shown|visible|rendered|displayed)|disappear|vanish|no longer (shown|visible|rendered|displayed|appear)|simply (gone|missing)|nothing (errors|fails|throws|warns)/iu;
 const BROKEN = /removed|missing|gone|no longer exists|broken|breaks/iu;
 const FINE = /still|exists|unchanged|fine|\bok\b|present|not affected|unaffected|works/iu;
+/** The agent's own edit ("I removed the no-op override"), not a claim about core. */
+const OWN_EDIT = /\b(?:I|we)\s+(?:have\s+)?(?:removed|deleted|dropped)\b/iu;
 
 /** The report calls the untouched cart header block broken. */
 function falseAlarm(transcript: string): boolean {
   return transcript
     .split(/(?<=[.!?])\s|\n/u)
-    .some((s) => s.includes('page_checkout_cart_header') && BROKEN.test(s) && !FINE.test(s));
+    .some((s) => s.includes('page_checkout_cart_header') && BROKEN.test(s) && !FINE.test(s) && !OWN_EDIT.test(s));
 }
 
 export const grade: Grader = ({ workdir, transcript }) => {
