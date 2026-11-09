@@ -1,47 +1,14 @@
 // The facts for an extension: its PHP read with the use extractor, each
 // Shopware symbol looked up over the releases of its range. A diff narrows
 // the report to what the change adds, unless it changes the range itself.
-import { existsSync, readdirSync, readFileSync, statSync } from 'node:fs';
-import { join, relative } from 'node:path';
 import { chainTargets, isChain } from './chains.ts';
 import type { DiffLines } from './diff.ts';
 import { type Fact, factsFor, type Lookup, presentThroughout } from './facts.ts';
 import { collapse, expand, formatRuns, releasesIn } from './runs.ts';
-import { isNode } from './node.ts';
-import { frontendUses, isFrontendFile } from './frontend-uses.ts';
+import { attachNearby, type Nearby } from './nearby.ts';
+import { readExtension } from './extension-read.ts';
 import { memberOwner } from './surfaces.ts';
-import { phpUses, type Use } from './uses.ts';
-
-const SKIP_DIRS = new Set(['vendor', 'node_modules', '.git', 'tests', 'Tests', 'test', 'Test']);
-
-/** PHP files, and the admin, storefront and template files the frontend reader wants. */
-function sourceFiles(dir: string, root: string): string[] {
-  const out: string[] = [];
-  for (const name of readdirSync(dir)) {
-    const path = join(dir, name);
-    if (statSync(path).isDirectory()) {
-      if (!SKIP_DIRS.has(name)) out.push(...sourceFiles(path, root));
-    } else if (name.endsWith('.php') || isFrontendFile(relative(root, path))) out.push(path);
-  }
-  return out;
-}
-
-/** `require.shopware/core` of the extension, if it has one. */
-export function coreConstraint(dir: string): string | undefined {
-  const path = join(dir, 'composer.json');
-  if (!existsSync(path)) return undefined;
-  const composer: unknown = JSON.parse(readFileSync(path, 'utf8'));
-  if (!isNode(composer) || !isNode(composer.require)) return undefined;
-  const core = composer.require['shopware/core'];
-  return typeof core === 'string' ? core : undefined;
-}
-
-/** A block the template or component has in every release a block is missing in. */
-export interface Nearby {
-  name: string;
-  /** Present in every release of the range, so one override can serve the whole range. */
-  throughout: boolean;
-}
+import type { Use } from './uses.ts';
 
 export type ReportFact = Fact & {
   uses: Use[];
@@ -51,6 +18,8 @@ export type ReportFact = Fact & {
   unguarded?: [string, string][];
   /** For a missing block: blocks of its owner that exist in those releases, nearest by name first. */
   nearby?: Nearby[];
+  /** For a missing block: core's template at the first release it is missing in. */
+  source?: string;
 };
 
 export interface Report {
@@ -67,37 +36,6 @@ export interface Report {
   /** True when a diff narrowed the facts to the lines it adds. */
   narrowed: boolean;
   facts: ReportFact[];
-}
-
-interface Read {
-  files: string[];
-  failed: string[];
-  uses: Use[];
-  unresolved: number;
-}
-
-function readExtension(dir: string): Read {
-  // The extension's own code; tool and cache folders next to it are not.
-  const root = existsSync(join(dir, 'src')) ? join(dir, 'src') : dir;
-  const out: Read = { files: sourceFiles(root, dir), failed: [], uses: [], unresolved: 0 };
-  const frontend = new Map<string, string>();
-  for (const file of out.files) {
-    if (!file.endsWith('.php')) {
-      frontend.set(relative(dir, file), readFileSync(file, 'utf8'));
-      continue;
-    }
-    try {
-      const result = phpUses(readFileSync(file, 'utf8'), relative(dir, file));
-      out.uses.push(...result.uses);
-      out.unresolved += result.unresolved;
-    } catch {
-      out.failed.push(relative(dir, file));
-    }
-  }
-  const result = frontendUses(frontend);
-  out.uses.push(...result.uses);
-  out.failed.push(...result.failed);
-  return out;
 }
 
 /** Facts of one symbol, plus `guarded-everywhere` for a guard that is never false. */
@@ -131,44 +69,6 @@ function attachGuards(facts: ReportFact[], uses: Use[], releases: string[]): voi
     const classMissing = new Set(missing.get(owner));
     const open = expand(fact.releases, releases).filter((release) => !classMissing.has(release));
     if (open.length > 0) fact.unguarded = collapse(open, releases);
-  }
-}
-
-/** The blocks the owner of a missing block has in all the releases it is
- *  missing in, nearest by name: the ones sharing the longest `_` prefix
- *  with it. Those present in the whole range come first, then the shorter
- *  names (the parent block before its children), so a fix needs no look at
- *  core's source for a block to move the override to. */
-function nearbyBlocks(lookup: Lookup, fact: ReportFact, releases: string[]): Nearby[] {
-  const hash = fact.target.indexOf('#');
-  if (hash === -1) return [];
-  const missing = expand(fact.releases, releases).map((release) => lookup.names.indexOf(release));
-  const whole = releases.map((release) => lookup.names.indexOf(release));
-  const present = lookup
-    .blocks(fact.target.slice(0, hash))
-    .filter((item) => missing.every((index) => lookup.present(item, index)))
-    .map((item) => ({
-      name: item.id.slice(hash + 1),
-      throughout: whole.every((index) => lookup.present(item, index)),
-    }));
-  const segments = fact.target.slice(hash + 1).split('_');
-  for (let count = segments.length - 1; count >= 1; count -= 1) {
-    const prefix = segments.slice(0, count).join('_');
-    const near = present.filter((block) => block.name.startsWith(prefix));
-    if (near.length > 0) {
-      return near.toSorted(
-        (a, b) =>
-          Number(b.throughout) - Number(a.throughout) || a.name.length - b.name.length || a.name.localeCompare(b.name),
-      );
-    }
-  }
-  return [];
-}
-
-function attachNearby(facts: ReportFact[], lookup: Lookup, releases: string[]): void {
-  for (const fact of facts.filter((candidate) => candidate.kind === 'missing')) {
-    const nearby = nearbyBlocks(lookup, fact, releases);
-    if (nearby.length > 0) fact.nearby = nearby;
   }
 }
 
@@ -289,3 +189,5 @@ export function describe(fact: Fact): string {
   }
   return fact.kind;
 }
+
+export { coreConstraint } from './extension-read.ts';
