@@ -1,0 +1,29 @@
+diff --git a/src/Controller/Admin/PointsExportController.php b/src/Controller/Admin/PointsExportController.php
+index 040159e..b56332a 100644
+--- a/src/Controller/Admin/PointsExportController.php
++++ b/src/Controller/Admin/PointsExportController.php
+@@ -8,6 +8,7 @@ use Swag\Loyalty\Export\PointsCsvExporter;
+ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+ use Symfony\Component\HttpFoundation\JsonResponse;
+ use Symfony\Component\HttpFoundation\Request;
++use Symfony\Component\HttpFoundation\Response;
+ use Symfony\Component\Routing\Attribute\Route;
+ 
+ #[Route(defaults: ['_routeScope' => ['api']])]
+@@ -26,7 +27,15 @@ class PointsExportController extends AbstractController
+     )]
+     public function export(Request $request, Context $context): JsonResponse
+     {
+-        $path = $this->exporter->export('exports/points.csv', $context);
++        $fileName = $request->request->getString('fileName', 'points');
++
++        // Letters, digits, dash and underscore only: the name becomes a path
++        // in the private filesystem and is shown in the Administration.
++        if (preg_match('/^[a-z0-9][a-z0-9_-]{0,63}\z/i', $fileName) !== 1) {
++            return new JsonResponse(['errors' => [['code' => 'SWAG_LOYALTY__INVALID_EXPORT_FILE_NAME']]], Response::HTTP_BAD_REQUEST);
++        }
++
++        $path = $this->exporter->export('exports/' . $fileName . '.csv', $context);
+ 
+         return new JsonResponse(['path' => $path]);
+     }

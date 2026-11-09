@@ -1,0 +1,14 @@
+```json
+{
+  "findings": [
+    {
+      "rule_id": "SEC-009",
+      "severity": "major",
+      "file": "src/Controller/Admin/PointsExportController.php",
+      "line": 35,
+      "summary": "The validation pattern has no D modifier, so a trailing newline could pass.",
+      "fix": "Add the D modifier."
+    }
+  ]
+}
+```

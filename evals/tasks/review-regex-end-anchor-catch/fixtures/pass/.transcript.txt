@@ -1,0 +1,16 @@
+The file name check ends in a bare `$`, which also matches before a trailing newline.
+
+```json
+{
+  "findings": [
+    {
+      "rule_id": "SEC-009",
+      "severity": "major",
+      "file": "src/Controller/Admin/PointsExportController.php",
+      "line": 35,
+      "summary": "The pattern ends in $ without the D modifier, so a file name with a trailing newline such as \"points\\n\" passes the check and reaches the export path.",
+      "fix": "End the pattern with \\z or add the D modifier."
+    }
+  ]
+}
+```

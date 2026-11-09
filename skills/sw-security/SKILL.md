@@ -46,3 +46,14 @@ Read only the reference that matches the task or the files it changes:
 
 - [`docs/skill-resolution.md`](../../docs/skill-resolution.md) — install profiles
 - MCP local keys: `sw-podman-dev` / `docs/tooling-stack.md` (local only)
+
+## Already enforced by CI (do not repeat)
+
+<!-- enforced:start: generated from rules/catalog.json by `node tools/bin/render-enforced.ts`; do not edit -->
+CI already fails the build on these, so do not repeat them in reviews or
+checklists. Flag only what each check misses.
+Checks marked *trunk only* are not active in plugin or app projects by
+default; there the rule still needs a reviewer.
+
+- `SEC-009` `PregDollarWithoutDRule` (PHPStan, trunk only) reports a `$` without the `D` modifier and any `\Z` in `preg_*` patterns, the Symfony `Regex` constraint and the Finder regex filters, in core's enabled namespaces. It misses patterns built at runtime, regexes in Twig or JavaScript, and every extension, because the rule ships only in core's PHPStan config; flag those.
+<!-- enforced:end -->

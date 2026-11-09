@@ -689,7 +689,8 @@
             "_httpCache",
             "[Ii]dempotency",
             "addPrivilegeMappingEntry\\(",
-            "\\$request->(get\\(|query->|request->)"
+            "\\$request->(get\\(|query->|request->)",
+            "(\\$|\\\\Z)[/#~!@%|][a-zA-Z]*['\"]"
           ],
           "exclude_paths": [
             "**/tests/**",
@@ -1581,7 +1582,8 @@
             "_httpCache",
             "[Ii]dempotency",
             "addPrivilegeMappingEntry\\(",
-            "\\$request->(get\\(|query->|request->)"
+            "\\$request->(get\\(|query->|request->)",
+            "(\\$|\\\\Z)[/#~!@%|][a-zA-Z]*['\"]"
           ],
           "exclude_paths": [
             "**/tests/**",

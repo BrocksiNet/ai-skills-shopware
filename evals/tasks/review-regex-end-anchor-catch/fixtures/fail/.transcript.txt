@@ -1,0 +1,14 @@
+```json
+{
+  "findings": [
+    {
+      "rule_id": "SEC-005",
+      "severity": "major",
+      "file": "src/Controller/Admin/PointsExportController.php",
+      "line": 30,
+      "summary": "The fileName request parameter is user input that reaches the filesystem; validate it with a Symfony constraint instead of preg_match.",
+      "fix": "Use a DataValidationDefinition with a Regex constraint."
+    }
+  ]
+}
+```
