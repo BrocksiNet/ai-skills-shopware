@@ -38,7 +38,6 @@ export interface Report {
   facts: ReportFact[];
 }
 
-
 /** Facts of one symbol, plus `guarded-everywhere` for a guard that is never false. */
 function symbolFacts(lookup: Lookup, target: string, uses: Use[], releases: string[]): ReportFact[] {
   // An import only matters when nothing else in the file uses the class.
