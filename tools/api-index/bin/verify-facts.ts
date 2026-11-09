@@ -114,6 +114,8 @@ function movedHolds(repo: string, tag: string, fact: Fact, short: string): Probe
 
 /** Does the fact hold at one release? undefined when text cannot tell. */
 function holds(repo: string, tag: string, fact: Fact): Probe {
+  // A block body change is a hash in the index; the text cannot tell it here.
+  if (fact.kind === 'changed') return undefined;
   const [owner = '', member] = fact.target.replace(/^php:/u, '').split('::');
   const code = classSource(repo, tag, owner);
   const short = owner.split('\\').pop() ?? '';
