@@ -47,7 +47,9 @@ and `api-diff`. v0.14.0 (2026-10-23) renames every skill to `sw-`
 and adds `sw-skill-router` and `sw-help`. v0.15.0 (2026-10-29) makes the
 build skills load before small edits, merges the thin-controller rules into
 `PLG-006`, tags `PHP-001`/`PHP-002` and ships `STY-001`, `TEST-036` and
-`ADM-041` with the weekly rule proposals (`suggest-rules`).
+`ADM-041` with the weekly rule proposals (`suggest-rules`). v0.16.0
+(2026-11-09) adds `sw-openapi-dto`, `TEST-037` and `DEV-001` and bundles
+the API index tools as `scripts/shopware-api.mjs` in four skills.
 
 Suggested milestones, as planned:
 
