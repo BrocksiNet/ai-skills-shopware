@@ -89,8 +89,6 @@ These match PHPStan rules and reviewer expectations on core PRs:
   See reference.
 - **TEST-007** **Coverage attrs** — no `#[CoversClass]` on integration tests. See reference.
 - **TEST-008** **Cross-test docblocks** (test → test) — `@see OtherTest` with `use` import; no FQCN in prose.
-- **TEST-009** **`#[Package('…')]`** on every test class — must match the covered class or a
-  package in the mirrored `src/` tree (`TestPackageMatchRule`).
 - **TEST-010** **`@internal`** on every test class docblock.
 - **TEST-013** **Never `exit()` / `die()`** in a test path; `setAutoExit(false)` on
   `Application::run()`.
@@ -136,7 +134,6 @@ These match PHPStan rules and reviewer expectations on core PRs:
 - [ ] Dependencies mocked in unit tests (unless documented Codecov exception).
 - [ ] `assertSame` / `expectExceptionObject`; no `#[Depends]`; no mock `any()`.
 - [ ] Unit providers use named `yield`; integration tests omit `#[CoversClass]`.
-- [ ] Test classes carry `#[Package('…')]` and `@internal` when contributing to shopware/shopware.
 - [ ] One `#[CoversClass]` per unit/migration file; no reflection into Shopware privates.
 - [ ] Own fixtures in integration tests; clock mocked where time matters.
 - [ ] Events captured in a hook or owned dispatcher and asserted after the call, never inside the listener.
@@ -150,7 +147,7 @@ These match PHPStan rules and reviewer expectations on core PRs:
 ## Already enforced by CI (do not repeat)
 
 <!-- enforced:start: generated from rules/catalog.json by `node tools/bin/render-enforced.ts`; do not edit -->
-CI already fails the build on 13 checks for this skill's rules. Before you
+CI already fails the build on 11 checks for this skill's rules. Before you
 flag a finding or write a checklist, read [`references/enforced-by-ci.md`](references/enforced-by-ci.md)
 and flag only what each check misses.
 <!-- enforced:end -->

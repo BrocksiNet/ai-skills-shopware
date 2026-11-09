@@ -6,13 +6,16 @@
 //             belongs in "Already enforced"
 //   api       every class the rule names is gone from the API index in
 //             every supported release
-//   ab        the latest A/B baseline passes the rule's task with the skill
-//             off in every repeat, so the delta principle no longer holds
+//   ab        the skill-off arm passes the rule's task in every repeat on
+//             at least two models (newest result per model across all
+//             baselines), no model shows an effect, and a review task's
+//             `-ignore` twin is no better with the skill. The bar TEST-011
+//             was retired on; one model alone is not enough.
 import { existsSync, readdirSync, readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { gunzipSync } from 'node:zlib';
 import { type Catalog, isActive, type Rule } from './catalog.ts';
-import { type AbResult, latestPerTask, parseResults } from './eval-results.ts';
+import { type AbResult, parseResults } from './eval-results.ts';
 import { errorMessage } from './errors.ts';
 import type { Signal } from './signals.ts';
 import { currentRuleText } from './suggest-checks.ts';
@@ -56,35 +59,67 @@ export function enforcedCandidates(catalog: Catalog): RetireCandidate[] {
   });
 }
 
-/** The latest baseline in `evals/baselines/`, or undefined. */
-export function latestBaseline(root: string): string | undefined {
+/** Every baseline in `evals/baselines/`, oldest first. */
+export function allBaselines(root: string): string[] {
   const dir = join(root, 'evals/baselines');
-  if (!existsSync(dir)) return undefined;
-  const file = readdirSync(dir)
+  if (!existsSync(dir)) return [];
+  return readdirSync(dir)
     .filter((f) => f.endsWith('.jsonl'))
     .toSorted(compareText)
-    .at(-1);
-  return file === undefined ? undefined : join(dir, file);
+    .map((f) => join(dir, f));
 }
+
+/** The latest baseline in `evals/baselines/`, or undefined. */
+export const latestBaseline = (root: string): string | undefined => allBaselines(root).at(-1);
+
+/** Models that must agree before a rule is an A/B retirement candidate. */
+export const MIN_RETIRE_MODELS = 2;
 
 const offPassesAll = (r: AbResult): boolean =>
   r.repeats > 0 && r.off === r.repeats && (r.off_done ?? r.repeats) === r.repeats;
 
-/** Rules whose task the skill-off arm passes in every repeat. */
-export function abCandidates(catalog: Catalog, results: AbResult[], file: string): RetireCandidate[] {
-  const byTask = new Map(latestPerTask(results).map((r) => [r.task, r]));
+/** The skill helps on this row: more passes with it than without. */
+const helps = (r: AbResult): boolean => r.on > r.off;
+
+const profileOf = (r: AbResult): string => `${r.agent ?? 'unknown'}/${r.model ?? 'unknown'}`;
+
+/** The newest row per task and model; `results` in file order, oldest first. */
+function latestPerProfile(results: AbResult[]): Map<string, Map<string, AbResult>> {
+  const out = new Map<string, Map<string, AbResult>>();
+  for (const r of results) {
+    const byProfile = out.get(r.task) ?? new Map<string, AbResult>();
+    byProfile.set(profileOf(r), r);
+    out.set(r.task, byProfile);
+  }
+  return out;
+}
+
+/** `review-x-catch` -> `review-x-ignore`; undefined for other tasks. */
+const ignoreTwin = (task: string): string | undefined =>
+  task.endsWith('-catch') ? `${task.slice(0, -'-catch'.length)}-ignore` : undefined;
+
+/** Rules whose task the skill-off arm passes in every repeat on at least
+ *  `MIN_RETIRE_MODELS` models, with no model where the skill helps the task
+ *  or its `-ignore` twin. */
+export function abCandidates(catalog: Catalog, results: AbResult[], label: string): RetireCandidate[] {
+  const byTask = latestPerProfile(results);
   return catalog.rules.filter(retirable).flatMap((rule) => {
-    const r = rule.eval === null ? undefined : byTask.get(rule.eval);
-    return r === undefined || !offPassesAll(r)
-      ? []
-      : [
-          {
-            rule: rule.id,
-            skill: rule.skill,
-            kind: 'ab' as const,
-            evidence: `skill off passed \`${r.task}\` ${r.off}/${r.repeats} in ${file}`,
-          },
-        ];
+    if (rule.eval === null) return [];
+    const rows = [...(byTask.get(rule.eval)?.values() ?? [])];
+    const twin = ignoreTwin(rule.eval);
+    const twinRows = twin === undefined ? [] : [...(byTask.get(twin)?.values() ?? [])];
+    const passing = rows.filter((r) => offPassesAll(r));
+    if (passing.length < MIN_RETIRE_MODELS || passing.length < rows.length) return [];
+    if (rows.some((r) => helps(r)) || twinRows.some((r) => helps(r))) return [];
+    const models = passing.map((r) => `${profileOf(r)} ${String(r.off)}/${String(r.repeats)}`).join(', ');
+    return [
+      {
+        rule: rule.id,
+        skill: rule.skill,
+        kind: 'ab' as const,
+        evidence: `skill off passed \`${rule.eval}\` on every model (${models}) in ${label}`,
+      },
+    ];
   });
 }
 
@@ -176,8 +211,8 @@ export function apiCandidates(
 export interface RetireOptions {
   root: string;
   skill?: string;
-  /** A/B results file; the A/B check is skipped without one. */
-  baseline?: string;
+  /** A/B result files, oldest first; the A/B check is skipped without one. */
+  baselines?: string[];
   /** API index timeline; the API check is skipped when it is missing. */
   apiIndex?: string;
   supportedFrom: string;
@@ -186,8 +221,15 @@ export interface RetireOptions {
 /** Every retirement candidate; `notes` gets what could not be checked. */
 export function retirements(o: RetireOptions, catalog: Catalog, notes: string[]): RetireCandidate[] {
   const found = enforcedCandidates(catalog);
-  if (o.baseline !== undefined && existsSync(o.baseline))
-    found.push(...abCandidates(catalog, readBaseline(o.baseline), o.baseline.replace(`${o.root}/`, '')));
+  const files = (o.baselines ?? []).filter((f) => existsSync(f));
+  if (files.length > 0)
+    found.push(
+      ...abCandidates(
+        catalog,
+        files.flatMap((f) => readBaseline(f)),
+        files.map((f) => f.replace(`${o.root}/`, '')).join(', '),
+      ),
+    );
   if (o.apiIndex !== undefined && existsSync(o.apiIndex)) {
     try {
       const index = readApiIndex(o.apiIndex);
