@@ -69,16 +69,23 @@ Read only the reference that matches the task or the files it changes:
    of the span and do not fetch the core template per tag or read the
    script to confirm it. For a block that is gone, the line also names the
    blocks its template still has in those releases, the ones present in
-   the whole range first: keep the old override for the releases that
-   have the block, add one on the first block named, and run the command
-   again to check it. When the old override only added to core's markup,
-   the new one wraps `{{ parent() }}` and adds the same. When it replaced
-   part of core's markup (an icon, a label), `{{ parent() }}` would show
-   both: fetch the core template URL the line ends with, once, copy that
-   block's markup from it and swap in the plugin's part. A block listed
-   as `changed` still renders, but core reworked its body in the releases
-   named: an override that wraps `{{ parent() }}`
-   needs nothing, one that copies core markup must match the new body.
+   the whole range first. When the first one is present in the whole
+   range, move the plugin's markup onto it, directly in that block and
+   not in a nested block of the old name, and delete the old override:
+   one override serves every release and cannot render twice. Otherwise
+   keep the old override for the releases that have the block and add one
+   on the first block named. Run the command again to check it. When the
+   old override only added to core's markup, the new one wraps
+   `{{ parent() }}` and adds the same. When it replaced part of core's
+   markup (an icon, a label), `{{ parent() }}` would show both: fetch the
+   core template URL the line ends with as raw text (`curl -s <url>`, not
+   a fetch tool that summarizes; again if the block's markup is not in
+   the result), copy that block's markup
+   from it and swap in the plugin's part. A block listed as `changed`
+   still renders, but core reworked its body in the releases named. An
+   override that wraps `{{ parent() }}` needs nothing. For one that copies
+   core markup, do not fetch and compare each of those releases: name
+   them in the report as releases to check the copy against.
    Without Node, say the check was not run.
 
 ## Storefront deltas
