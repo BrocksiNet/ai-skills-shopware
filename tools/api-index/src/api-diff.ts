@@ -169,6 +169,32 @@ export interface DiffOptions {
   bodies?: boolean;
 }
 
+/** What changed on an item both snapshots have. */
+function keptChanges(
+  item: Item,
+  after: Item,
+  surface: Surface,
+  baseById: Map<string, Item>,
+  bodies: boolean,
+): Change[] {
+  const changes: Change[] = [];
+  const detail = changeOf(item, after);
+  if (detail !== undefined) {
+    const change: Change = { surface, kind: 'changed', id: item.id, detail, file: after.file };
+    if (deprecatedIn(item, baseById)) change.announced = true;
+    changes.push(change);
+  }
+  const before = item.kind === 'block' ? item.body : undefined;
+  if (bodies && before !== undefined && after.body !== undefined && before !== after.body)
+    changes.push({ surface, kind: 'body-changed', id: item.id, detail: 'body changed', file: after.file });
+  if (after.flags.deprecated !== undefined && item.flags.deprecated === undefined) {
+    const version = after.flags.deprecated;
+    const text = version === '' ? 'deprecated' : `deprecated for ${version}`;
+    changes.push({ surface, kind: 'deprecated', id: item.id, detail: text, file: after.file });
+  }
+  return changes;
+}
+
 export function diffSnapshots(
   base: Snapshot,
   head: Snapshot,
@@ -202,29 +228,7 @@ export function diffSnapshots(
       changes.push(moved);
       continue;
     }
-    const detail = changeOf(item, after);
-    if (detail !== undefined) {
-      const change: Change = { surface, kind: 'changed', id: item.id, detail, file: after.file };
-      if (deprecatedIn(item, baseById)) change.announced = true;
-      changes.push(change);
-    }
-    if (
-      bodies &&
-      item.kind === 'block' &&
-      item.body !== undefined &&
-      after.body !== undefined &&
-      item.body !== after.body
-    )
-      changes.push({ surface, kind: 'body-changed', id: item.id, detail: 'body changed', file: after.file });
-    if (after.flags.deprecated !== undefined && item.flags.deprecated === undefined) {
-      changes.push({
-        surface,
-        kind: 'deprecated',
-        id: item.id,
-        detail: after.flags.deprecated === '' ? 'deprecated' : `deprecated for ${after.flags.deprecated}`,
-        file: after.file,
-      });
-    }
+    changes.push(...keptChanges(item, after, surface, baseById, bodies));
   }
   return { base: base.ref, head: head.ref, changes, skipped };
 }
@@ -244,27 +248,6 @@ export function isBreak(change: Change): boolean {
   return !NOT_BREAKS.has(change.kind) && change.announced !== true;
 }
 
-/** Sets each change's line from the file text at the ref that has the item:
- *  the base for a removal, the head otherwise. `read` returns undefined for
- *  a file it cannot read. */
-export function withLines(
-  diff: ApiDiff,
-  read: (ref: string, files: string[]) => Map<string, string>,
-  lineOf: (id: string, text: string) => number | undefined,
-): ApiDiff {
-  const files = (removed: boolean): string[] => [
-    ...new Set(diff.changes.filter((change) => (change.kind === 'removed') === removed).map((change) => change.file)),
-  ];
-  const atBase = read(diff.base, files(true));
-  const atHead = read(diff.head, files(false));
-  const changes = diff.changes.map((change) => {
-    const text = (change.kind === 'removed' ? atBase : atHead).get(change.file);
-    const line = text === undefined ? undefined : lineOf(change.id, text);
-    return line === undefined ? change : { ...change, line };
-  });
-  return { ...diff, changes };
-}
-
 const plural = (count: number, one: string, many: string): string => `${count} ${count === 1 ? one : many}`;
 
 /** One line an agent can act on: the breaks first, then what was announced. */
@@ -278,8 +261,9 @@ export function diffSummary(diff: ApiDiff): string {
     `Summary: ${plural(breaks, 'breaking change', 'breaking changes')} without a deprecation in ${diff.base}, ` +
     `${plural(announced, 'removal or change', 'removals or changes')} after a deprecation, ` +
     plural(deprecated, 'new deprecation', 'new deprecations') +
-    `${moved === 0 ? '' : `, ${plural(moved, 'move', 'moves')}`}` +
-    `${bodies === 0 ? '' : `, ${plural(bodies, 'block body change', 'block body changes')}`}.`
+    (moved === 0 ? '' : `, ${plural(moved, 'move', 'moves')}`) +
+    (bodies === 0 ? '' : `, ${plural(bodies, 'block body change', 'block body changes')}`) +
+    '.'
   );
 }
 

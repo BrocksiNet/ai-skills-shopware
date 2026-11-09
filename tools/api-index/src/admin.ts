@@ -21,7 +21,7 @@ import {
   walkJs,
 } from './js.ts';
 import type { Flags, Item, ItemKind } from './model.ts';
-import { scanTwig } from './twig.ts';
+import { scanTwig, type TwigFile } from './twig.ts';
 
 export const ADMIN_SRC = 'src/Administration/Resources/app/administration/src';
 
@@ -190,21 +190,21 @@ export function componentItems(registration: Registration, read: (path: string) 
   const scanned = scanTwig(twig);
   if (scanned.deprecated !== undefined && head.flags.deprecated === undefined)
     head.flags.deprecated = scanned.deprecated;
-  for (const block of scanned.blocks) {
+  for (const item of templateItems(scanned, id, templateFile)) push(item);
+  return items;
+}
+
+/** The blocks and slots of a component's template. */
+function templateItems(scanned: TwigFile, id: string, file: string): Item[] {
+  const items: Item[] = scanned.blocks.map((block) => {
     const flags: Flags = {};
     if (block.deprecated !== undefined) flags.deprecated = block.deprecated;
-    const item: Item = {
-      id: `${id}#${block.name}`,
-      kind: 'block',
-      file: templateFile,
-      signature: block.parent ?? '',
-      flags,
-    };
+    const item: Item = { id: `${id}#${block.name}`, kind: 'block', file, signature: block.parent ?? '', flags };
     if (block.body !== undefined) item.body = block.body;
-    push(item);
-  }
+    return item;
+  });
   for (const slot of scanned.slots) {
-    push({ id: `${id}.slot.${slot}`, kind: 'slot', file: templateFile, signature: '', flags: {} });
+    items.push({ id: `${id}.slot.${slot}`, kind: 'slot', file, signature: '', flags: {} });
   }
   return items;
 }

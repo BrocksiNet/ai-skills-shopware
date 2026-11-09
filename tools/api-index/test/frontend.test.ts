@@ -48,9 +48,10 @@ test('scanTwig: blocks with parents and lines, deprecations, slots and positions
   assert.deepEqual(file.positions, ['sw-product-detail-base']);
 });
 
+const bodies = (twig: string): Record<string, string | undefined> =>
+  Object.fromEntries(scanTwig(twig).blocks.map((block) => [block.name, block.body]));
+
 test('scanTwig: a body hash ignores whitespace and comments, and a child change stays in the child', () => {
-  const bodies = (twig: string): Record<string, string | undefined> =>
-    Object.fromEntries(scanTwig(twig).blocks.map((block) => [block.name, block.body]));
   const base = bodies('{% block a %}<div>{% block b %}<p>x</p>{% endblock %}</div>{% endblock %}');
   const spaced = bodies(
     '{% block a %}\n  <div>\n  {# note #}{% block b %}\n<p>x</p>\n{% endblock %}\n</div>{% endblock %}',

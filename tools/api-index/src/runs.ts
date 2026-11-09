@@ -36,3 +36,21 @@ export function formatRuns(releases: [string, string][]): string {
 export function sortReleases(names: string[]): string[] {
   return names.toSorted(compareReleases);
 }
+
+/** The release names of `[first, last]` runs, in range order. */
+export function expand(runs: [string, string][], releases: string[]): string[] {
+  return runs.flatMap(([first, last]) => releases.slice(releases.indexOf(first), releases.indexOf(last) + 1));
+}
+
+/** Collapses release names back into `[first, last]` runs of the range. */
+export function collapse(names: string[], releases: string[]): [string, string][] {
+  const out: [string, string][] = [];
+  let previous = -2;
+  for (const index of names.map((name) => releases.indexOf(name)).toSorted((a, b) => a - b)) {
+    const run = out.at(-1);
+    if (run !== undefined && index === previous + 1) run[1] = releases[index] ?? run[1];
+    else out.push([releases[index] ?? '', releases[index] ?? '']);
+    previous = index;
+  }
+  return out;
+}

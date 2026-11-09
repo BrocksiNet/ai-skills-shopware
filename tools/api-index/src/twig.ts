@@ -65,10 +65,10 @@ interface Frame {
  *  no comments, and whitespace only where it separates words. */
 export function bodyHash(text: string): string {
   const normal = text
-    .replace(/\{#[\s\S]*?#\}/gu, '')
-    .replace(/\s+/gu, ' ')
+    .replaceAll(/\{#[\s\S]*?#\}/gu, '')
+    .replaceAll(/\s+/gu, ' ')
     // Indentation and line breaks between tags are layout, not markup.
-    .replace(/ ?([<>]|\{[%{]|[%}]\}) ?/gu, '$1')
+    .replaceAll(/ ?([<>]|\{[%{]|[%}]\}) ?/gu, '$1')
     .trim();
   return createHash('sha1').update(normal).digest('base64url').slice(0, 8);
 }
@@ -81,6 +81,31 @@ function bodyOf(source: string, frame: Frame, end: number): string {
     at = child.to;
   }
   return text + source.slice(at, end);
+}
+
+/** A `{% block %}` tag from `start` to `end`: the block, pushed as open
+ *  unless it closes itself. */
+function openBlock(
+  rest: string,
+  source: string,
+  start: number,
+  end: number,
+  stack: Frame[],
+  pending: string | undefined,
+): TwigBlock | undefined {
+  const name = /^(\w+)/u.exec(rest)?.[1];
+  if (name === undefined) return undefined;
+  const block: TwigBlock = { name, line: lineAt(source, start) };
+  const parent = stack.at(-1);
+  if (parent !== undefined) block.parent = parent.block.name;
+  if (pending !== undefined) block.deprecated = pending;
+  // `{% block x 'inline' %}` closes itself; its body is the expression.
+  if (rest.trim() === name) stack.push({ block, tagStart: start, bodyStart: end, children: [] });
+  else {
+    block.body = bodyHash(rest.trim().slice(name.length));
+    parent?.children.push({ from: start, to: end, name });
+  }
+  return block;
 }
 
 export function scanTwig(source: string): TwigFile {
@@ -104,20 +129,8 @@ export function scanTwig(source: string): TwigFile {
       continue;
     }
     if (tag === 'block') {
-      const name = /^(\w+)/u.exec(rest)?.[1];
-      if (name !== undefined) {
-        const block: TwigBlock = { name, line: lineAt(source, match.index) };
-        const parent = stack.at(-1);
-        if (parent !== undefined) block.parent = parent.block.name;
-        if (pending !== undefined) block.deprecated = pending;
-        file.blocks.push(block);
-        // `{% block x 'inline' %}` closes itself; its body is the expression.
-        if (rest.trim() === name) stack.push({ block, tagStart: match.index, bodyStart: last, children: [] });
-        else {
-          block.body = bodyHash(rest.trim().slice(name.length));
-          parent?.children.push({ from: match.index, to: last, name });
-        }
-      }
+      const block = openBlock(rest, source, match.index, last, stack, pending);
+      if (block !== undefined) file.blocks.push(block);
     } else if (tag === 'endblock') {
       const frame = stack.pop();
       if (frame !== undefined) {

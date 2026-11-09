@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import { test } from 'node:test';
-import { diffSummary, withLines } from '../src/api-diff.ts';
-import { lineOf } from '../src/source-line.ts';
+import { diffSummary } from '../src/api-diff.ts';
+import { lineOf, withLines } from '../src/source-line.ts';
 
 const PHP = `<?php
 namespace Shopware\\Core\\Foo;
