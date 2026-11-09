@@ -42,9 +42,11 @@ Choose checks by scope:
   cover behavior the CLI validation does not exercise.
 
 Before execution, include the selected runner, binary/version, working directory,
-checks, proposed limits and side effects in the task plan. Validation may copy
-files and install tools; `--no-copy` changes the target to the working tree.
-Preserve the default unless in-place execution is intended. An inspection-only
+checks, proposed limits and side effects in the task plan. Validation runs in
+the given folder and may install tools; PHPStan's Composer dependencies go to
+`var/cache/shopware-cli` inside it, while an existing `vendor/` and
+`composer.lock` stay untouched. `--no-copy` is deprecated and does nothing;
+do not pass it. An inspection-only
 request authorizes discovery and a plan, not validation, dependency installs,
 formatting, project creation, database changes or account publication.
 
