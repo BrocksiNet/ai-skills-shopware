@@ -8,14 +8,48 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.16.0] - 2026-11-09
+
 ### Added
 
+- `sw-openapi-dto`, a core-only skill for the PHP request and response DTOs
+  that core generates from its OpenAPI schema (shopware/shopware#17858,
+  still a draft, so the skill is experimental). Rules `DTO-001` to `DTO-008`:
+  change the schema and regenerate instead of editing a generated DTO,
+  delete stale DTOs by hand, apply defaults in business code, return the
+  response DTO and set status and headers on it. Eval tasks
+  `dto-schema-first` (with a working generator stand-in in the fixture),
+  `dto-default-in-business-code` and `dto-response-status-header`.
+- `TEST-037` in `sw-testing`: unit and devops tests never run in a separate
+  process. Trunk's Danger rule `ProcessIsolationInTests` already catches it,
+  so the rule defers on trunk. Eval `no-separate-process-test`; Haiku
+  passes it without the skill too, so there is no measured gain yet.
 - `DEV-001` and the `shopware-cli-routing` eval cover runner selection for
   linked core checkouts, CLI-managed shops, standalone plugins and unrelated
   projects. Deterministic fixtures check command scope and validation coverage;
   model activation and A/B behavior have not been measured for this change.
+- The API index tools ship inside the skills: `scripts/shopware-api.mjs` in
+  `sw-change-impact`, `sw-core-development`, `sw-extension-review` and
+  `sw-plugin-development` runs `diff` and `facts` with plain Node from the
+  installed skill folder. Output starts with a summary line, items carry
+  `[file:line]` in clone mode, and `diff` exits with 3 on a break. Eval
+  `supported-range-api-arrival`.
+- `facts` and `diff` report storefront and admin blocks whose body changed
+  between releases (`changed`, never a break). A missing block links to
+  core's template at the first release without it, and `SF-014` says when
+  to wrap `{{ parent() }}`, when to copy that template and when to move the
+  markup onto a block present in the whole range.
+- `api-index.yml` writes a weekly API change report (`api-changes.md`):
+  trunk against last week's trunk and each new tag against the tag before.
+- `tools/bin/skill-context.ts` measures how much of the input tokens in
+  Claude Code transcripts our skills take (under half a percent over 14
+  days), and `docs/plans/2026-10-slim-skill-context.md` plans a smaller
+  skill listing.
 - Track `FriendsOfShopware/shopware-rector` documentation as an upstream source
-  for Shopware compatibility guidance and drift mapping.
+  for Shopware compatibility guidance and drift mapping. The new
+  FriendsOfShopware `shopware-extension-security` and
+  `shopware-store-preflight` skills map to `sw-security` and
+  `sw-extension-review` in the drift issue.
 
 ### Changed
 
@@ -26,6 +60,23 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Plugin migration guidance links upstream Rector rules and compatibility
   boundaries, reuses installed dependencies and records the selected versions
   and sets rather than copying transformations into skills.
+- Four duplicate review rules merge into their owning rules (226 to 222
+  active rules). Eval runs freeze their task plan and keep trial outcomes
+  and provenance; the tools tests gain coverage and scoped Stryker profiles
+  with a 95% floor. Bulky historical eval reports moved to a versioned
+  evidence archive.
+- `api-index` reports a class with `#[ClassMoved]` and a member a parent,
+  trait or interface took over as a move, not a removal; moves are not
+  breaks. Negated `instanceof` guards narrow the type, and chained calls
+  (`$event->getPage()->getProduct()`) resolve, which adds real `@internal`
+  and `@deprecated` facts and drops false positives. The generator is at
+  `api-index/0.6.0`, so the weekly job rebuilds every tag.
+- `suggest-rules` proposes retiring a rule only when the skill-off arm
+  passes 3/3 on at least two models and neither the rule nor its `-ignore`
+  twin shows a gain. `PLG-027` to `PLG-030` and `PLG-032` stay.
+- `evals.yml`: a `run-evals` label and a manual dispatch run on Copilot by
+  default, and a model that fails the preflight is dropped instead of
+  failing the whole run.
 
 - `sw-podman-dev` covers the new shopware-dev lane lifecycle: `sw-dev lane
   create|update|remove`, `sw-dev versions`, `sw-dev space` and `sw-dev prune`.
@@ -43,6 +94,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   the reference for mixed-version forms. The [workflow study](docs/results.md#admin-form-binding-decision--november-4-2026)
   supports retaining this specific fact, with model-dependent results and
   explicit grader-repair limitations.
+- `sw-podman-dev` no longer passes `--no-copy` to
+  `shopware-cli extension validate`: since shopware-cli 0.19.8 it validates
+  the folder in place.
+- The `storefront-blocks-across-range` grader no longer counts the agent's
+  own cleanup ("I removed …") as a false alarm.
 
 ## [0.15.0] - 2026-10-29
 
@@ -960,7 +1016,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   (`actions/checkout@v5`, `markdownlint-cli2-action@v23`).
 - `docs/local-validation.md` and GitHub issue templates for feedback.
 
-[Unreleased]: https://github.com/BrocksiNet/ai-skills-shopware/compare/v0.15.0...main
+[Unreleased]: https://github.com/BrocksiNet/ai-skills-shopware/compare/v0.16.0...main
+[0.16.0]: https://github.com/BrocksiNet/ai-skills-shopware/compare/v0.15.0...v0.16.0
 [0.15.0]: https://github.com/BrocksiNet/ai-skills-shopware/compare/v0.14.0...v0.15.0
 [0.14.0]: https://github.com/BrocksiNet/ai-skills-shopware/compare/v0.13.0...v0.14.0
 [0.13.0]: https://github.com/BrocksiNet/ai-skills-shopware/compare/v0.12.0...v0.13.0
