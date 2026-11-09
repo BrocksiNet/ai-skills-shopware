@@ -71,9 +71,11 @@ Read only the reference that matches the task or the files it changes:
    blocks its template still has in those releases, the ones present in
    the whole range first: keep the old override for the releases that
    have the block, add one on the first block named, and run the command
-   again to check it. The new override needs no core markup: it wraps
-   `{{ parent() }}` and adds the plugin's own, so there is nothing to
-   fetch. A block listed as `changed` still renders, but core reworked
+   again to check it. When the old override only added to core's markup,
+   the new one wraps `{{ parent() }}` and adds the same. When it replaced
+   part of core's markup (an icon, a label), `{{ parent() }}` would show
+   both: fetch the core template URL the line ends with, once, copy that
+   block's markup from it and swap in the plugin's part. A block listed as `changed` still renders, but core reworked
    its body in the releases named: an override that wraps `{{ parent() }}`
    needs nothing, one that copies core markup must match the new body.
    Without Node, say the check was not run.

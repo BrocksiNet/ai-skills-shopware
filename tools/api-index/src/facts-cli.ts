@@ -62,14 +62,16 @@ export function factsSummary(facts: readonly { kind: string }[]): string {
 
 const NEARBY_SHOWN = 6;
 
-/** `; blocks there: a (whole range), b, +3 more` for a missing block. */
+/** `; blocks there: a (whole range), b, +3 more; core template at 6.7.0.0: <url>`
+ *  for a missing block. */
 export function nearbyText(fact: ReportFact): string {
   if (fact.nearby === undefined || fact.nearby.length === 0) return '';
   const shown = fact.nearby
     .slice(0, NEARBY_SHOWN)
     .map((block) => `${block.name}${block.throughout ? ' (whole range)' : ''}`);
   const more = fact.nearby.length - shown.length;
-  return `; blocks there: ${shown.join(', ')}${more > 0 ? `, +${more} more` : ''}`;
+  const source = fact.source === undefined ? '' : `; core template at ${fact.releases[0]?.[0] ?? ''}: ${fact.source}`;
+  return `; blocks there: ${shown.join(', ')}${more > 0 ? `, +${more} more` : ''}${source}`;
 }
 
 export function factsText(report: Report, timeline: Timeline, note: string | undefined): string {

@@ -4,6 +4,7 @@ import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { test } from 'node:test';
 import { Lookup } from '../src/facts.ts';
+import { nearbyText } from '../src/facts-cli.ts';
 import type { Item, Snapshot } from '../src/model.ts';
 import { describe, factsOfDir } from '../src/report.ts';
 import { mergeSnapshots } from '../src/timeline.ts';
@@ -115,6 +116,12 @@ test('a missing block names the blocks its template still has there, whole-range
       { name: 'page_checkout_cart_shipping_costs', throughout: true },
       { name: 'page_checkout_cart_shipping_costs_form', throughout: false },
     ]);
+    // The parent block's markup is one fetch away: core's template at the first release without the block.
+    assert.equal(missing.source, 'https://raw.githubusercontent.com/shopware/shopware/v6.7.0.0/f');
+    assert.match(
+      nearbyText(missing),
+      /; core template at 6\.7\.0\.0: https:\/\/raw\.githubusercontent\.com\/shopware\/shopware\/v6\.7\.0\.0\/f$/u,
+    );
   } finally {
     rmSync(dir, { recursive: true, force: true });
   }
