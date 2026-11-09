@@ -78,7 +78,9 @@ Read only the reference that matches the task or the files it changes:
    old override only added to core's markup, the new one wraps
    `{{ parent() }}` and adds the same. When it replaced part of core's
    markup (an icon, a label), `{{ parent() }}` would show both: fetch the
-   core template URL the line ends with, once, copy that block's markup
+   core template URL the line ends with as raw text (`curl -s <url>`, not
+   a fetch tool that summarizes; again if the block's markup is not in
+   the result), copy that block's markup
    from it and swap in the plugin's part. A block listed as `changed`
    still renders, but core reworked its body in the releases named. An
    override that wraps `{{ parent() }}` needs nothing. For one that copies
