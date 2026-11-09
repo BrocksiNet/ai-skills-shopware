@@ -76,7 +76,7 @@ export function lineOf(id: string, text: string): number | undefined {
 export function withLines(
   diff: ApiDiff,
   read: (ref: string, files: string[]) => Map<string, string>,
-  lineOf: (id: string, text: string) => number | undefined,
+  locate: (id: string, text: string) => number | undefined,
 ): ApiDiff {
   const files = (removed: boolean): string[] => [
     ...new Set(diff.changes.filter((change) => (change.kind === 'removed') === removed).map((change) => change.file)),
@@ -85,7 +85,7 @@ export function withLines(
   const atHead = read(diff.head, files(false));
   const changes = diff.changes.map((change) => {
     const text = (change.kind === 'removed' ? atBase : atHead).get(change.file);
-    const line = text === undefined ? undefined : lineOf(change.id, text);
+    const line = text === undefined ? undefined : locate(change.id, text);
     return line === undefined ? change : { ...change, line };
   });
   return { ...diff, changes };

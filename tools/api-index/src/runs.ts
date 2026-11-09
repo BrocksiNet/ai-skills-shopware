@@ -38,8 +38,8 @@ export function sortReleases(names: string[]): string[] {
 }
 
 /** The release names of `[first, last]` runs, in range order. */
-export function expand(runs: [string, string][], releases: string[]): string[] {
-  return runs.flatMap(([first, last]) => releases.slice(releases.indexOf(first), releases.indexOf(last) + 1));
+export function expand(spans: [string, string][], releases: string[]): string[] {
+  return spans.flatMap(([first, last]) => releases.slice(releases.indexOf(first), releases.indexOf(last) + 1));
 }
 
 /** Collapses release names back into `[first, last]` runs of the range. */
