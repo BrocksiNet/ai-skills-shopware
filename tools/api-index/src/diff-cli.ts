@@ -2,10 +2,10 @@
 // shopware-api.mjs the skills ship. Exit codes: 0 no breaking change,
 // 3 breaking changes found, 2 usage or unknown ref, 1 any other error.
 import { parseArgs } from 'node:util';
-import { type ApiDiff, diffSnapshots, diffText, isBreak, SURFACES, type Surface, withLines } from './api-diff.ts';
+import { type ApiDiff, diffSnapshots, diffText, isBreak, SURFACES, type Surface } from './api-diff.ts';
 import { readFiles } from './git.ts';
 import { openSource } from './snapshot-source.ts';
-import { lineOf } from './source-line.ts';
+import { lineOf, withLines } from './source-line.ts';
 
 export const EXIT_BREAKS = 3;
 

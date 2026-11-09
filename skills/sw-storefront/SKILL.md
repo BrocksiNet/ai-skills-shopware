@@ -73,7 +73,10 @@ Read only the reference that matches the task or the files it changes:
    have the block, add one on the first block named, and run the command
    again to check it. The new override needs no core markup: it wraps
    `{{ parent() }}` and adds the plugin's own, so there is nothing to
-   fetch. Without Node, say the check was not run.
+   fetch. A block listed as `changed` still renders, but core reworked
+   its body in the releases named: an override that wraps `{{ parent() }}`
+   needs nothing, one that copies core markup must match the new body.
+   Without Node, say the check was not run.
 
 ## Storefront deltas
 

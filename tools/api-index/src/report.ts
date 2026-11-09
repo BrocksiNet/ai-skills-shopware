@@ -6,7 +6,7 @@ import { join, relative } from 'node:path';
 import { chainTargets, isChain } from './chains.ts';
 import type { DiffLines } from './diff.ts';
 import { type Fact, factsFor, type Lookup, presentThroughout } from './facts.ts';
-import { formatRuns, releasesIn } from './runs.ts';
+import { collapse, expand, formatRuns, releasesIn } from './runs.ts';
 import { isNode } from './node.ts';
 import { frontendUses, isFrontendFile } from './frontend-uses.ts';
 import { memberOwner } from './surfaces.ts';
@@ -114,24 +114,6 @@ function symbolFacts(lookup: Lookup, target: string, uses: Use[], releases: stri
   return facts;
 }
 
-/** The release names of `[first, last]` runs, in range order. */
-function expand(runs: [string, string][], releases: string[]): string[] {
-  return runs.flatMap(([first, last]) => releases.slice(releases.indexOf(first), releases.indexOf(last) + 1));
-}
-
-/** Collapses release names back into `[first, last]` runs of the range. */
-function collapse(names: string[], releases: string[]): [string, string][] {
-  const out: [string, string][] = [];
-  let previous = -2;
-  for (const index of names.map((name) => releases.indexOf(name)).toSorted((a, b) => a - b)) {
-    const run = out.at(-1);
-    if (run !== undefined && index === previous + 1) run[1] = releases[index] ?? run[1];
-    else out.push([releases[index] ?? '', releases[index] ?? '']);
-    previous = index;
-  }
-  return out;
-}
-
 /** Names the guard of each missing symbol: its own `method_exists`, or the
  *  `class_exists` of its class, which covers only the releases without the
  *  class. A member that arrived after its class stays open in between. */
@@ -227,6 +209,24 @@ function resolveChains(lookup: Lookup, byTarget: Map<string, Use[]>, releases: s
   return out;
 }
 
+/** Fact kinds, the ones that break a release first. */
+export const KIND_ORDER = [
+  'missing',
+  'changed',
+  'final-extended',
+  'internal',
+  'deprecated',
+  'experimental',
+  'bc-change',
+  'moved',
+  'guarded-everywhere',
+];
+
+/** The place of a kind in `KIND_ORDER`; unknown kinds go last. */
+export function kindRank(kind: string): number {
+  return KIND_ORDER.indexOf(kind) + 1 || 99;
+}
+
 export function factsOfDir(lookup: Lookup, dir: string, range: string, diff?: DiffLines): Report {
   const releases = releasesIn(lookup.timeline, range);
   const read = readExtension(dir);
@@ -243,7 +243,7 @@ export function factsOfDir(lookup: Lookup, dir: string, range: string, diff?: Di
   attachNearby(all, lookup, releases);
   const facts = all
     .filter((fact) => inDiff === undefined || fact.uses.some(inDiff))
-    .toSorted((a, b) => a.kind.localeCompare(b.kind) || a.target.localeCompare(b.target));
+    .toSorted((a, b) => kindRank(a.kind) - kindRank(b.kind) || a.target.localeCompare(b.target));
   return {
     dir,
     range,
@@ -267,6 +267,8 @@ export function describe(fact: Fact): string {
       return 'not in the index for any release';
     case 'missing':
       return `missing in ${where}`;
+    case 'changed':
+      return `body changed in ${where}`;
     case 'deprecated':
       return `@deprecated${fact.value === '' || fact.value === undefined ? '' : ` ${fact.value}`} in ${where}${via}`;
     case 'experimental':

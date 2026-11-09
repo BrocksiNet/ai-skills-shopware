@@ -1,8 +1,11 @@
 // What a Twig template offers an extension: its blocks, the template it
 // extends, and in admin templates the slots and literal position
-// identifiers. Core marks a block it will remove with a comment right above
-// it, `{# @deprecated tag:v6.8.0 - … #}`; a template whose first content is
-// such a comment is deprecated as a whole.
+// identifiers. Each block carries a hash of its body, so a release that
+// reworks the markup an override sits on shows up. Core marks a block it
+// will remove with a comment right above it, `{# @deprecated tag:v6.8.0 -
+// … #}`; a template whose first content is such a comment is deprecated as
+// a whole.
+import { createHash } from 'node:crypto';
 
 export interface TwigBlock {
   name: string;
@@ -12,6 +15,10 @@ export interface TwigBlock {
   deprecated?: string;
   /** 1-based line of the `{% block %}` tag. */
   line: number;
+  /** Hash of the body: comments dropped, whitespace collapsed, each child
+   *  block reduced to its name, so a change inside a child does not count
+   *  for the parent. Undefined for a block that is never closed. */
+  body?: string;
 }
 
 export interface TwigFile {
@@ -45,9 +52,65 @@ function quoted(text: string): string | undefined {
   return /^['"]([^'"]+)['"]/u.exec(text)?.[1];
 }
 
+/** An open block: where its tag starts, where its body starts, and the
+ *  children closed inside it so far. */
+interface Frame {
+  block: TwigBlock;
+  tagStart: number;
+  bodyStart: number;
+  children: { from: number; to: number; name: string }[];
+}
+
+/** Eight base64url characters of the SHA-1 of the normalised body:
+ *  no comments, and whitespace only where it separates words. */
+export function bodyHash(text: string): string {
+  const normal = text
+    .replaceAll(/\{#[\s\S]*?#\}/gu, '')
+    .replaceAll(/\s+/gu, ' ')
+    // Indentation and line breaks between tags are layout, not markup.
+    .replaceAll(/ ?([<>]|\{[%{]|[%}]\}) ?/gu, '$1')
+    .trim();
+  return createHash('sha1').update(normal).digest('base64url').slice(0, 8);
+}
+
+function bodyOf(source: string, frame: Frame, end: number): string {
+  let text = '';
+  let at = frame.bodyStart;
+  for (const child of frame.children) {
+    text += `${source.slice(at, child.from)}{% block ${child.name} %}`;
+    at = child.to;
+  }
+  return text + source.slice(at, end);
+}
+
+/** A `{% block %}` tag from `start` to `end`: the block, pushed as open
+ *  unless it closes itself. */
+function openBlock(
+  rest: string,
+  source: string,
+  start: number,
+  end: number,
+  stack: Frame[],
+  pending: string | undefined,
+): TwigBlock | undefined {
+  const name = /^(\w+)/u.exec(rest)?.[1];
+  if (name === undefined) return undefined;
+  const block: TwigBlock = { name, line: lineAt(source, start) };
+  const parent = stack.at(-1);
+  if (parent !== undefined) block.parent = parent.block.name;
+  if (pending !== undefined) block.deprecated = pending;
+  // `{% block x 'inline' %}` closes itself; its body is the expression.
+  if (rest.trim() === name) stack.push({ block, tagStart: start, bodyStart: end, children: [] });
+  else {
+    block.body = bodyHash(rest.trim().slice(name.length));
+    parent?.children.push({ from: start, to: end, name });
+  }
+  return block;
+}
+
 export function scanTwig(source: string): TwigFile {
   const file: TwigFile = { blocks: [], positions: [], slots: [] };
-  const stack: string[] = [];
+  const stack: Frame[] = [];
   let pending: string | undefined;
   let seenContent = false;
   let last = 0;
@@ -66,18 +129,15 @@ export function scanTwig(source: string): TwigFile {
       continue;
     }
     if (tag === 'block') {
-      const name = /^(\w+)/u.exec(rest)?.[1];
-      if (name !== undefined) {
-        const block: TwigBlock = { name, line: lineAt(source, match.index) };
-        const parent = stack.at(-1);
-        if (parent !== undefined) block.parent = parent;
-        if (pending !== undefined) block.deprecated = pending;
-        file.blocks.push(block);
-        // `{% block x 'inline' %}` closes itself.
-        if (rest.trim() === name) stack.push(name);
+      const block = openBlock(rest, source, match.index, last, stack, pending);
+      if (block !== undefined) file.blocks.push(block);
+    } else if (tag === 'endblock') {
+      const frame = stack.pop();
+      if (frame !== undefined) {
+        frame.block.body = bodyHash(bodyOf(source, frame, match.index));
+        stack.at(-1)?.children.push({ from: frame.tagStart, to: last, name: frame.block.name });
       }
-    } else if (tag === 'endblock') stack.pop();
-    else if (tag === 'sw_extends' || tag === 'extends') {
+    } else if (tag === 'sw_extends' || tag === 'extends') {
       const parent = quoted(rest.trim());
       if (parent !== undefined) file.extends = parent;
     }

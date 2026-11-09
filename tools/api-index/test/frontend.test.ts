@@ -36,13 +36,36 @@ test('scanTwig: blocks with parents and lines, deprecations, slots and positions
   const file = scanTwig(twig);
   assert.equal(file.extends, '@Storefront/storefront/base.html.twig');
   assert.equal(file.deprecated, undefined);
-  assert.deepEqual(file.blocks, [
-    { name: 'outer', line: 2 },
-    { name: 'inner', parent: 'outer', deprecated: 'v6.8.0', line: 4 },
-    { name: 'inline', parent: 'outer', line: 5 },
-  ]);
+  assert.deepEqual(
+    file.blocks.map(({ body, ...rest }) => (assert.match(body ?? '', /^[\w-]{8}$/u), rest)),
+    [
+      { name: 'outer', line: 2 },
+      { name: 'inner', parent: 'outer', deprecated: 'v6.8.0', line: 4 },
+      { name: 'inline', parent: 'outer', line: 5 },
+    ],
+  );
   assert.deepEqual(file.slots, ['title', 'default']);
   assert.deepEqual(file.positions, ['sw-product-detail-base']);
+});
+
+const bodies = (twig: string): Record<string, string | undefined> =>
+  Object.fromEntries(scanTwig(twig).blocks.map((block) => [block.name, block.body]));
+
+test('scanTwig: a body hash ignores whitespace and comments, and a child change stays in the child', () => {
+  const base = bodies('{% block a %}<div>{% block b %}<p>x</p>{% endblock %}</div>{% endblock %}');
+  const spaced = bodies(
+    '{% block a %}\n  <div>\n  {# note #}{% block b %}\n<p>x</p>\n{% endblock %}\n</div>{% endblock %}',
+  );
+  assert.deepEqual(spaced, base);
+  const child = bodies('{% block a %}<div>{% block b %}<p>y</p>{% endblock %}</div>{% endblock %}');
+  assert.equal(child.a, base.a);
+  assert.notEqual(child.b, base.b);
+  const parent = bodies('{% block a %}<section>{% block b %}<p>x</p>{% endblock %}</section>{% endblock %}');
+  assert.notEqual(parent.a, base.a);
+  assert.equal(parent.b, base.b);
+  const renamed = bodies('{% block a %}<div>{% block c %}<p>x</p>{% endblock %}</div>{% endblock %}');
+  assert.notEqual(renamed.a, base.a);
+  assert.equal(bodies('{% block a %}<div>').a, undefined);
 });
 
 test('scanTwig: a deprecation before any content deprecates the template', () => {
@@ -149,6 +172,7 @@ test('storefront: a template, its blocks and the template it extends', () => {
   assert.deepEqual(ids(items), [id, `${id}#a`, `${id}#b`]);
   assert.equal(items[0]?.signature, '@Storefront/storefront/base.html.twig');
   assert.deepEqual(byId(items, `${id}#b`)?.flags, { deprecated: 'v6.8.0' });
+  assert.match(byId(items, `${id}#a`)?.body ?? '', /^[\w-]{8}$/u);
 });
 
 test('storefront: plugins from main.js, with options and public methods', () => {

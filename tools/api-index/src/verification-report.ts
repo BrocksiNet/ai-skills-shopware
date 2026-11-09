@@ -4,6 +4,7 @@ import type { Fact } from './facts.ts';
 const FACT_KINDS: Record<Fact['kind'], true> = {
   unknown: true,
   missing: true,
+  changed: true,
   internal: true,
   deprecated: true,
   experimental: true,

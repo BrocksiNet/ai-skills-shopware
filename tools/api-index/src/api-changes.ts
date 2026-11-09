@@ -1,7 +1,8 @@
 // What changed in Shopware's public API since the last index: trunk of the
 // previous index against trunk of the new one, and each new release tag
 // against the tag before it. Markdown for the run summary of api-index.yml
-// and the `api-changes.md` asset the weekly drift issue reads.
+// and the `api-changes.md` asset the weekly drift issue reads. Block body
+// changes are left out: every release has many, and none breaks.
 import { type ApiDiff, diffSnapshots, diffSummary, diffText, isBreak, SURFACES } from './api-diff.ts';
 import { compareReleases, snapshotAt, type Timeline, versionParts } from './timeline.ts';
 
@@ -29,7 +30,7 @@ function trunkComparison(previous: Timeline, current: Timeline): Comparison | un
   const base = snapshotAt(previous, 'trunk');
   const head = snapshotAt(current, 'trunk');
   if (base === undefined || head === undefined) return undefined;
-  const diff = diffSnapshots(base, head, REPORTED);
+  const diff = diffSnapshots(base, head, REPORTED, { bodies: false });
   return {
     title: 'trunk',
     diff: {
@@ -55,7 +56,7 @@ export function comparisons(previous: Timeline | undefined, current: Timeline): 
     const base = snapshotAt(current, before);
     const head = snapshotAt(current, tag);
     if (base === undefined || head === undefined) continue;
-    out.push({ title: tag, diff: diffSnapshots(base, head, REPORTED) });
+    out.push({ title: tag, diff: diffSnapshots(base, head, REPORTED, { bodies: false }) });
   }
   return out;
 }
