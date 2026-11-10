@@ -1,10 +1,21 @@
-// Model metadata is independent of CLI adapters and process execution.
+// Model defaults and OpenCode agent settings, independent of CLI adapters and process execution.
 import { basename } from 'node:path';
 import { envOr } from './env.ts';
 
 export const OPENCODE_FREE_MODEL = 'opencode/mimo-v2.6-flash-free';
 export const CLAUDE_DEFAULT_MODEL = 'sonnet';
 export const COPILOT_DEFAULT_MODEL = 'claude-haiku-4.5';
+
+/** The step cap for the build agent, and no title agent: OpenCode asks the
+ *  model for a session title next to the first turn. A local server that
+ *  answers one request at a time (Ollama) runs the title first, and a
+ *  thinking model can spend minutes on it while the task waits; hosted
+ *  models pay tokens for a title nobody reads. */
+export const opencodeAgents = (maxTurns: string): object => ({
+  build: { steps: Number(maxTurns) },
+  title: { disable: true },
+});
+
 export const DEFAULT_MODELS: Record<string, string> = {
   opencode: OPENCODE_FREE_MODEL,
   copilot: COPILOT_DEFAULT_MODEL,
