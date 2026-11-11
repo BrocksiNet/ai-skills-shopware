@@ -1,0 +1,10 @@
+diff --git a/scripts/check.sh b/scripts/check.sh
+--- a/scripts/check.sh
++++ b/scripts/check.sh
+@@ -1,5 +1,5 @@
+ #!/usr/bin/env bash
+ set -euo pipefail
+ 
+-php vendor/bin/phpunit --filter CartProcessorTest
++podman compose exec web vendor/bin/phpunit --filter CartProcessorTest
+ composer phpstan

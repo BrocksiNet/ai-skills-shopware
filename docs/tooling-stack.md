@@ -24,17 +24,19 @@ npx skills add BrocksiNet/ai-skills-shopware \
   --skill sw-pr-description \
   --skill sw-assistant-style \
   --skill sw-pr-review \
-  --skill sw-podman-dev \
+  --skill sw-local-dev \
   -a cursor
 ```
 
-`sw-podman-dev` picks the runner: **Podman** on a linked `~/shopware-dev`
-tree, **shopware-cli** when `.shopware-project.yml` exists.
+`sw-local-dev` picks the runner from the project's files: **DDEV**
+(`.ddev/`), **Docker Compose**, **Vagrant**, **native** host tools,
+**Podman** on a linked `~/shopware-dev` tree, and **shopware-cli** when
+`.shopware-project.yml` exists.
 
 If you use the `~/shopware-dev` hub, you do **not** need `npx skills add` per
 project — `sw-dev link` symlinks skills from **this repo's** `skills/` into
-`.cursor/`, `.claude/`, `.codex/`, and `.agents/`. Omit `sw-podman-dev`
-from `instances.json` if you do not use Podman.
+`.cursor/`, `.claude/`, `.codex/`, and `.agents/`. List `sw-local-dev`
+in `instances.json` (it replaced `sw-podman-dev`).
 
 Install the CLI's own skills next to ours (do not copy them into this repo):
 

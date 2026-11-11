@@ -14,7 +14,7 @@
     "ADM": "sw-admin-js",
     "PRD": "sw-pr-description",
     "PRR": "sw-pr-review",
-    "DEV": "sw-podman-dev",
+    "DEV": "sw-local-dev",
     "XR": "sw-extension-review",
     "STY": "sw-assistant-style",
     "DTO": "sw-openapi-dto"
@@ -5154,12 +5154,108 @@
     },
     {
       "id": "DEV-001",
-      "skill": "sw-podman-dev",
-      "file": "skills/sw-podman-dev/references/shopware-cli-routing.md",
+      "skill": "sw-local-dev",
+      "file": "skills/sw-local-dev/references/shopware-cli-routing.md",
       "title": "Route Shopware CLI checks by project ownership and installed capabilities",
       "status": "active",
       "since": "2026-11-05",
       "eval": "shopware-cli-routing",
+      "core_guide_ids": [],
+      "audience": [
+        "core",
+        "plugin",
+        "app"
+      ],
+      "defer_on_trunk": false
+    },
+    {
+      "id": "DEV-002",
+      "skill": "sw-local-dev",
+      "file": "skills/sw-local-dev/references/ddev.md",
+      "title": "In a DDEV project, run PHP, Composer, console and npm through ddev",
+      "status": "active",
+      "since": "2026-11-11",
+      "eval": "ddev-project-runs-in-ddev",
+      "core_guide_ids": [],
+      "audience": [
+        "core",
+        "plugin",
+        "app"
+      ],
+      "trunk": {
+        "source": ".agents-templates/AGENTS.local.template.ddev.md",
+        "commit": "5ec430a9a3b2c84184a365cb93666aba7e0e0d05"
+      },
+      "defer_on_trunk": false
+    },
+    {
+      "id": "DEV-003",
+      "skill": "sw-local-dev",
+      "file": "skills/sw-local-dev/references/docker.md",
+      "title": "In a Docker Compose project, run in the service compose.yaml defines, not a container name from a template",
+      "status": "active",
+      "since": "2026-11-11",
+      "eval": "docker-project-uses-compose-service",
+      "core_guide_ids": [],
+      "audience": [
+        "core",
+        "plugin",
+        "app"
+      ],
+      "trunk": {
+        "source": ".agents-templates/AGENTS.local.template.docker.md",
+        "commit": "5ec430a9a3b2c84184a365cb93666aba7e0e0d05"
+      },
+      "defer_on_trunk": false
+    },
+    {
+      "id": "DEV-004",
+      "skill": "sw-local-dev",
+      "file": "skills/sw-local-dev/references/vagrant.md",
+      "title": "In a Vagrant project, run through vagrant ssh -c after a cd to the synced guest folder",
+      "status": "active",
+      "since": "2026-11-11",
+      "eval": "vagrant-project-uses-synced-folder",
+      "core_guide_ids": [],
+      "audience": [
+        "core",
+        "plugin",
+        "app"
+      ],
+      "trunk": {
+        "source": ".agents-templates/AGENTS.local.template.vagrant.md",
+        "commit": "5ec430a9a3b2c84184a365cb93666aba7e0e0d05"
+      },
+      "defer_on_trunk": false
+    },
+    {
+      "id": "DEV-005",
+      "skill": "sw-local-dev",
+      "file": "skills/sw-local-dev/references/native.md",
+      "title": "In a native setup, run tools on the host without a container or VM wrapper",
+      "status": "active",
+      "since": "2026-11-11",
+      "eval": "native-project-runs-on-host",
+      "core_guide_ids": [],
+      "audience": [
+        "core",
+        "plugin",
+        "app"
+      ],
+      "trunk": {
+        "source": ".agents-templates/AGENTS.local.template.native.md",
+        "commit": "5ec430a9a3b2c84184a365cb93666aba7e0e0d05"
+      },
+      "defer_on_trunk": false
+    },
+    {
+      "id": "DEV-006",
+      "skill": "sw-local-dev",
+      "file": "skills/sw-local-dev/references/podman.md",
+      "title": "In a linked shopware-dev lane, run PHP tools via podman compose exec web, never on the host or through docker",
+      "status": "active",
+      "since": "2026-11-11",
+      "eval": "linked-project-runs-in-container",
       "core_guide_ids": [],
       "audience": [
         "core",

@@ -1,0 +1,9 @@
+services:
+  web:
+    image: ghcr.io/shopware/docker-dev:php8.4-node24-caddy
+    volumes:
+      - .:/var/www/html
+    depends_on:
+      - database
+  database:
+    image: mariadb:11.4

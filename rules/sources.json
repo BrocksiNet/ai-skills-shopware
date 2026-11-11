@@ -39,7 +39,7 @@
         { "path": ".agents/skills/shopware-release-docs", "skills": ["sw-core-development"] },
         { "path": ".agents/skills/sw-bugfixer", "skills": ["sw-research-and-escalation", "sw-change-impact"] },
         { "path": ".agents/skills/sw-review", "skills": ["sw-pr-review", "sw-extension-review"] },
-        { "path": ".agents-templates", "skills": ["sw-podman-dev"] },
+        { "path": ".agents-templates", "skills": ["sw-local-dev"] },
         { "path": "adr/2026-06-17-shared-guidance-files-for-humans-and-agents.md", "skills": ["sw-core-development"] },
         { "path": "coding-guidelines/core/agent-skills.md", "skills": ["sw-core-development"] },
         { "path": ".github/AGENTS.md", "skills": ["sw-core-development"] },
@@ -76,7 +76,7 @@
         { "path": "plugins/test-writing", "skills": ["sw-testing"] },
         { "path": "plugins/contributor-writing", "skills": ["sw-pr-description"] },
         { "path": "plugins/code-migration", "skills": ["sw-plugin-development"] },
-        { "path": "plugins/dev-tooling", "skills": ["sw-podman-dev"] }
+        { "path": "plugins/dev-tooling", "skills": ["sw-local-dev"] }
       ]
     },
     {
@@ -93,7 +93,7 @@
       "branch": "main",
       "extractor": "markdown",
       "paths": ["skills"],
-      "skills": [{ "path": "skills", "skills": ["sw-podman-dev"] }]
+      "skills": [{ "path": "skills", "skills": ["sw-local-dev"] }]
     },
     {
       "id": "shopware-rector",

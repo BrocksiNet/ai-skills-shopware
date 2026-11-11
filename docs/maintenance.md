@@ -59,9 +59,9 @@ watch, how to read a commit, and which of our skills learn from which path.
 | Source | What it reads | Our skills |
 | ------ | ------------- | ---------- |
 | `shopware` ([`shopware/shopware`](https://github.com/shopware/shopware) trunk) | Agent skill bullets, coding guideline headings, review guide rule IDs, PR template lines, PHPStan and Danger rule classes, the lines of the root, Administration and `.github` `AGENTS.md` files, the shared-guidance ADR and the environment templates, and rule settings in the Admin and Storefront ESLint, Stylelint and ludtwig configs | By path: core's agent skills map to ours, the PR template to `sw-pr-description`, the lint configs to `sw-admin-js` and `sw-storefront`; `ignore` leaves out the triage skills |
-| `ai-coding-tools` ([`shopwareLabs/ai-coding-tools`](https://github.com/shopwareLabs/ai-coding-tools)) | Markdown bullets and headings in the test-writing, contributor-writing, code-migration and dev-tooling plugins | `sw-testing`, `sw-pr-description`, `sw-plugin-development`, `sw-podman-dev` |
+| `ai-coding-tools` ([`shopwareLabs/ai-coding-tools`](https://github.com/shopwareLabs/ai-coding-tools)) | Markdown bullets and headings in the test-writing, contributor-writing, code-migration and dev-tooling plugins | `sw-testing`, `sw-pr-description`, `sw-plugin-development`, `sw-local-dev` |
 | `php-modernization` ([`netresearch/php-modernization-skill`](https://github.com/netresearch/php-modernization-skill)) | Markdown bullets and headings | `sw-php-foundation` |
-| `shopware-cli` ([`shopware/shopware-cli`](https://github.com/shopware/shopware-cli)) | Markdown bullets and headings of its skills | `sw-podman-dev` |
+| `shopware-cli` ([`shopware/shopware-cli`](https://github.com/shopware/shopware-cli)) | Markdown bullets and headings of its skills | `sw-local-dev` |
 | `shopware-rector` ([`FriendsOfShopware/shopware-rector`](https://github.com/FriendsOfShopware/shopware-rector)) | README and documentation for rules, version sets and compatibility boundaries; rule implementations stay upstream | `sw-plugin-development` |
 | `fos-agent-skills` ([`FriendsOfShopware/agent-skills`](https://github.com/FriendsOfShopware/agent-skills)) | Markdown bullets and headings | `sw-testing`, `sw-admin-js` |
 

@@ -1,6 +1,6 @@
 # Core sources, local environments, MCP and the admin API index
 
-Status: **accepted 2026-11-11.** Nothing here is started. Decisions are at
+Status: **accepted 2026-11-11.** WP A and WP B are done. Decisions are at
 the end.
 
 ## Summary
@@ -69,6 +69,15 @@ new path under a skill or an explicit ignore, and `validate-skills.sh`
 passes.
 
 ## WP B: `sw-local-dev`
+
+**Status: done.** Differences from the steps below: the behavioral tasks
+grade the fixed `scripts/check.sh`, not the command the agent runs
+(`expect-tool`), because an eval sandbox has no DDEV, Docker or Vagrant to
+run. Native has no file to detect, so its reference is `on_demand` and
+`SKILL.md` picks it when no other environment matches. Core's Docker
+template names containers (`shopware_app`, `shopware_node`) that core's own
+`compose.yaml` does not define; `DEV-003` and its task cover that trap.
+Core also ships `devenv.nix` and `.devcontainer`; neither is covered yet.
 
 `sw-podman-dev` is one personal setup. Core ships four environment
 templates, and most plugin developers use DDEV or Docker.

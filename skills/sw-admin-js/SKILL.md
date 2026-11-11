@@ -89,7 +89,7 @@ Read only the reference that matches the task or the files it changes:
 - `shallowMount` unless child rendering is the behavior. Clean up wrappers
   in `afterEach()`. `flushPromises()` after async repository/UI work.
 - **ADM-011** On trunk, run via composer wrappers (`composer eslint:admin`,
-  `composer admin:unit`) or `sw-podman-dev` — not a random host Node.
+  `composer admin:unit`) or `sw-local-dev` — not a random host Node.
 
 ## Definition of done
 

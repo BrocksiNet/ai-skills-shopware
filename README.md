@@ -86,7 +86,7 @@ Pinning, updating and tool folders are covered in
 | Build | `sw-plugin-development`, `sw-app-development`, `sw-core-development`, `sw-openapi-dto`, `sw-admin-js`, `sw-storefront`, `sw-php-foundation`, `sw-testing`, `sw-security`, `sw-architecture` |
 | Ship | `sw-change-impact`, `sw-pr-description` |
 | Review | `sw-extension-review`, `sw-review-learnings`, `sw-pr-review` |
-| Run, research, answer | `sw-podman-dev`, `sw-research-and-escalation`, `sw-assistant-style` |
+| Run, research, answer | `sw-local-dev`, `sw-research-and-escalation`, `sw-assistant-style` |
 | Find your way | `sw-skill-router`, `sw-help` |
 
 [`REGISTRY.md`](REGISTRY.md) lists what each skill owns. Every topic has

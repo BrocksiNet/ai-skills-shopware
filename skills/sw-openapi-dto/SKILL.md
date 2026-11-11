@@ -80,7 +80,7 @@ Read only the reference that matches the task or the files it changes:
 ## Commands
 
 Run them in the Shopware checkout, through the project's runner
-(`sw-podman-dev` for a linked dev checkout):
+(`sw-local-dev` for a linked dev checkout):
 
 ```bash
 bin/console open-api:generate-dtos          # write missing or changed DTOs

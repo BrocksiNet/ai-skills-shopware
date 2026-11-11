@@ -31,7 +31,8 @@ the surface skills can all be installed together without contradicting (see
 | `sw-assistant-style` | maintainer | any communication | Support ticket replies, short/plain answers, copy-ready customer text | Code rules, PR templates, release notes |
 | `sw-pr-review` | maintainer | PR review threads | Reacting to GitHub review comments, fix vs reply vs push back | Initial PR body, generic idiomatic review |
 | `sw-extension-review` | maintainer | plugin / app review (`custom/plugins`, `custom/apps`) | Reviewing a whole plugin or app diff before merge, release or Store submission; findings with rule IDs and severities | Core PRs (core `sw-review`), review thread replies, writing the code, feature blast radius |
-| `sw-podman-dev` | maintainer | linked Podman checkout or Shopware CLI project | Running php/composer/phpunit/console/npm in shopware-dev, or shopware-cli project/extension validate | Test structure, PR text, release notes |
+| `sw-local-dev` | maintainer | local environment: DDEV, Docker Compose, Vagrant, native, linked Podman checkout, or Shopware CLI project | Running php/composer/phpunit/console/npm where the project runs, or shopware-cli project/extension validate | Test structure, PR text, release notes |
+| `sw-podman-dev` | maintainer | renamed | Pointer to `sw-local-dev` for one release | Everything; load `sw-local-dev` |
 | `sw-storefront` | maintainer | storefront (Twig/theme/JS) | Storefront plugins, Twig blocks, theme SCSS, HTTP-cache-safe AJAX | Admin Vue, PHP DAL, generic CSS lectures |
 | `sw-admin-js` | maintainer | Administration JS/TS/Vue | Admin Vue/TS, Meteor `mt-*`, Jest specs, Admin ACL | Storefront Twig, PHPUnit, PHP services |
 | `sw-skill-router` | maintainer | any (the library itself) | "Which skill should I use", the start of Shopware work, a diff or a plan to route; runs `scripts/route.mjs` | Explaining the library (`sw-help`), the topics themselves |
@@ -100,8 +101,8 @@ the surface skills can all be installed together without contradicting (see
 | Reacting to GitHub PR review comments (fix / reply / push back, confidence %) | `sw-pr-review` |
 | Reviewing plugin and app diffs as a whole: route rules by changed paths, rule-tagged findings (workflow only; each rule stays with its topic skill) | `sw-extension-review` |
 | Migration tests, Codecov `#[CoversClass]`, core platform test placement | `sw-testing` |
-| Container execution (Podman on shopware-dev; shopware-cli on CLI projects; MCP never blocking) | `sw-podman-dev` |
-| shopware-dev hub (`~/shopware-dev`, `sw-dev link`, Mutagen, multi-lane proxy) | `sw-podman-dev` |
+| Local execution per environment (DDEV, Docker Compose, Vagrant, native, Podman on shopware-dev; shopware-cli on CLI projects; MCP never blocking) | `sw-local-dev` |
+| shopware-dev hub (`~/shopware-dev`, `sw-dev link`, Mutagen, multi-lane proxy) | `sw-local-dev` |
 | Storefront Twig/theme inheritance, PluginManager JS, Bootstrap storefront components, Twig 4 (`spaceless`, null attributes) | `sw-storefront` |
 | Storefront HTTP cache vs AJAX; no speculation/prerender on cart/checkout/account | `sw-storefront` |
 | Storefront public API for themes (Twig blocks and variables, JS plugin options and events, SCSS variables, `theme.json` fields, snippet keys) | `sw-storefront` |

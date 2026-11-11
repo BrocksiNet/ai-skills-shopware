@@ -41,7 +41,7 @@ config and texts.
   components for a color change.
 - Prefer existing utility / component classes. New SCSS is BEM-ish and
   scoped to the plugin/theme prefix.
-- Builds run in the project toolchain (container / `sw-podman-dev`),
+- Builds run in the project toolchain (container / `sw-local-dev`),
   never a host `npm run` against a different Node than the platform.
 
 ## Twig 4 (Shopware 6.8)
