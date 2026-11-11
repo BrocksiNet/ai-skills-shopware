@@ -4,14 +4,16 @@ import { existsSync } from 'node:fs';
 import { join } from 'node:path';
 import { read } from './kit.ts';
 
-const ASSIGN = /^\s*(?:export\s+|readonly\s+|local\s+)?([A-Za-z_]\w*)=(["']?)([^"'\s]*)\2\s*$/u;
+const ASSIGN = /^\s*(?:export\s+|readonly\s+|local\s+)?([A-Za-z_]\w*)=(?:"([^"$`]*)"|'([^']*)'|([^"'\s$`]*))\s*$/u;
 
-/** `$NAME` and `${NAME}` replaced by plain values assigned in the script. */
+/** `$NAME` and `${NAME}` replaced by plain values assigned in the script,
+ *  quoted values with spaces included (`APP="docker compose exec web"`). */
 function expandVariables(lines: string[]): string[] {
   const vars = new Map<string, string>();
   for (const l of lines) {
     const m = ASSIGN.exec(l);
-    if (m?.[1] !== undefined && m[3] !== undefined) vars.set(m[1], m[3]);
+    const value = m?.[2] ?? m?.[3] ?? m?.[4];
+    if (m?.[1] !== undefined && value !== undefined) vars.set(m[1], value);
   }
   return lines.map((l) => l.replaceAll(/\$\{?([A-Za-z_]\w*)\}?/gu, (all, name: string) => vars.get(name) ?? all));
 }

@@ -35,6 +35,14 @@ describe('check-script graders', () => {
     assert.equal(docker({ workdir: dir, transcript: '' }).pass, true);
   });
 
+  test('a quoted command prefix with spaces in a variable is expanded', () => {
+    const dir = workdir(
+      'APP="docker compose exec -T -w /var/www/html web"\n' +
+        '$APP vendor/bin/phpunit --filter CartProcessorTest\n$APP composer phpstan\n',
+    );
+    assert.equal(docker({ workdir: dir, transcript: '' }).pass, true);
+  });
+
   test('a helper function that passes "$@" on is inlined', () => {
     const dir = workdir(
       'exec_web() {\n  docker compose exec -T web "$@"\n}\n' +
