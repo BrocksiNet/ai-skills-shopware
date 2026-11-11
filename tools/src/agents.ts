@@ -1,4 +1,4 @@
-import { OPENCODE_FREE_MODEL, CLAUDE_DEFAULT_MODEL } from './agent-config.ts';
+import { OPENCODE_FREE_MODEL, CLAUDE_DEFAULT_MODEL, opencodeAgents } from './agent-config.ts';
 // Agent adapters for the evals (plan WP10 step 3; ported from
 // evals/runner/{opencode,claude}-{task,activation}.sh, which are now wrappers
 // and still document the environment of each adapter).
@@ -134,7 +134,7 @@ export const opencodeTask: Adapter = async (prompt, env, { out, err }) => {
     // such as prepare-plugin-for-6-8, then lost every skill-off run as an
     // agent error.
     const childEnv = opencodeEnv(baseEnv, {
-      agent: { build: { steps: Number(maxTurns) } },
+      agent: opencodeAgents(maxTurns),
       permission: { question: 'deny' },
       tools: { websearch: false },
     });
@@ -245,7 +245,7 @@ export const opencodeActivation: Adapter = async (prompt, env, { out, err }, roo
     // Edits and shell are denied, so a run cannot change anything.
     const deny = { edit: 'deny', bash: 'deny', webfetch: 'deny', websearch: 'deny', task: 'deny', question: 'deny' };
     const childEnv = opencodeEnv(isolatedHome(env, scratch).env, {
-      agent: { build: { steps: Number(maxTurns) } },
+      agent: opencodeAgents(maxTurns),
       permission: deny,
     });
     const proc = await run('opencode', opencodeArgs(model, prompt), { cwd: ws, env: childEnv, onStderr: err });

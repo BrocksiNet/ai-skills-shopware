@@ -279,7 +279,7 @@ describe('opencode-task adapter', () => {
     assert.match(r.env ?? '', /HOME=.*opencode-task\.[^/]+\/home\n/u);
     assert.match(
       r.env ?? '',
-      /CFG=\{"agent":\{"build":\{"steps":3\}\},"permission":\{"question":"deny"\},"tools":\{"websearch":false\}\}/u,
+      /CFG=\{"agent":\{"build":\{"steps":3\},"title":\{"disable":true\}\},"permission":\{"question":"deny"\},"tools":\{"websearch":false\}\}/u,
     );
     assert.equal(r.args, 'run\n--standalone\n--auto\n--format\njson\n-m\np/m\ndo it\n');
   });
