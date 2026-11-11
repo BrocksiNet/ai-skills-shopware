@@ -14,11 +14,13 @@
 // watched path (and, for a Markdown source, every Markdown file), with the
 // patch of Markdown files cut to hunk headers and the changed lines an
 // extractor can read (bullets, headings, guide IDs; every PR template line).
+// Lint config patches stay whole.
 import { mkdirSync, mkdtempSync, symlinkSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join, resolve } from 'node:path';
 import { parseArgs } from 'node:util';
 import { githubApi, type GitHubApi } from '../../../src/github.ts';
+import { LINT_CONFIG } from '../../../src/lint-config.ts';
 import { report } from '../../../src/mine-run.ts';
 import { parseState, STATE_PATH } from '../../../src/mine-trunk.ts';
 import { loadSources, type Source } from '../../../src/sources.ts';
@@ -36,7 +38,9 @@ function ref(item: unknown): Json {
 
 const watched = (source: Source, name: string): boolean =>
   source.paths.some((p) => name === p || name.startsWith(`${p}/`));
-const patchRead = (name: string): boolean => name.endsWith('.md');
+/** Markdown patches are trimmed below; lint config patches stay whole,
+ *  because a rule's level may sit on the line after its unchanged key. */
+const patchRead = (name: string): boolean => name.endsWith('.md') || LINT_CONFIG.test(name);
 const TEMPLATE = '.github/PULL_REQUEST_TEMPLATE.md';
 /** What an extractor can read on a changed line: a bullet, a heading or a
  *  guide ID entry. The PR template keeps every changed line. */
@@ -59,7 +63,8 @@ function file(source: Source, f: unknown): Json[] {
   if (!watched(source, f.filename) && !markdown) return [];
   const { filename, status, additions, deletions, patch } = f;
   const kept: Json = { filename, status, additions, deletions };
-  if (typeof patch === 'string' && patchRead(filename)) kept.patch = changedOnly(filename, patch);
+  if (typeof patch === 'string' && patchRead(filename))
+    kept.patch = LINT_CONFIG.test(filename) ? patch : changedOnly(filename, patch);
   return [kept];
 }
 

@@ -51,6 +51,17 @@ describe('mapSignal', () => {
     assert.deepEqual(cls, [{ skill: 'sw-testing', rules: ['TEST-016'], via: 'enforced_by' }]);
     assert.deepEqual(mapSignal(signal({ kind: 'guide-id', text: 'NOPE-001' }), INDEX), []);
   });
+  test('a lint rule setting maps to the rules whose enforced_by names it, with or without its plugin', () => {
+    const path = 'src/Administration/Resources/app/administration/eslint.config.ts';
+    const lint = (text: string): Signal => signal({ kind: 'lint-rule', path, text, change: '-' });
+    assert.deepEqual(mapSignal(lint('sw-core-rules/no-new-mixins: error'), INDEX), [
+      { skill: 'sw-admin-js', rules: ['ADM-007'], via: 'enforced_by' },
+    ]);
+    assert.deepEqual(mapSignal(lint('sw-deprecation-rules/no-deprecated-components: error'), INDEX), [
+      { skill: 'sw-admin-js', rules: ['ADM-003'], via: 'enforced_by' },
+    ]);
+    assert.deepEqual(mapSignal(lint('no-var: error'), INDEX), [{ skill: 'sw-admin-js', rules: [], via: 'source' }]);
+  });
   test('a heading maps through a trunk.source anchor; another heading in the same file does not', () => {
     const path = 'coding-guidelines/core/unit-tests.md';
     const hit = mapSignal(signal({ kind: 'guideline-heading', path, text: '## Observing events in tests' }), INDEX);

@@ -2,7 +2,7 @@
 // references and rule IDs it touches, using only what the repo records:
 //
 //   1. core_guide_ids   a guide ID a rule cites
-//   2. enforced_by      a rule class a rule cites
+//   2. enforced_by      a rule class or lint rule a rule cites
 //   3. trunk.source     the file (and heading) a rule was taken from on trunk
 //   4. upstream         the same, in an upstream source
 //   5. routes           a skill's routes.json on the signal's path and lines
@@ -93,9 +93,19 @@ function citeMatches(c: Cite, s: Signal): boolean {
   return s.text.startsWith('#') && slug(s.text) === c.anchor;
 }
 
+/** The rules a lint rule setting enforces. A catalog tool names the rule
+ *  with its plugin (`sw-core-rules/no-new-mixins`) or without it
+ *  (`no-deprecated-components`), so both spellings match. */
+function lintRuleTools(text: string, index: MapIndex): Rule[] {
+  const [rule = ''] = text.split(': ');
+  const bare = rule.slice(rule.lastIndexOf('/') + 1);
+  return [...new Set([...(index.tools.get(rule) ?? []), ...(rule === bare ? [] : (index.tools.get(bare) ?? []))])];
+}
+
 function ruleLevel(s: Signal, index: MapIndex): SignalMap[] {
   if (s.kind === 'guide-id') return ruleMaps(index.guideIds.get(s.text) ?? [], 'core_guide_ids');
   if (s.kind === 'rule-class') return ruleMaps(index.tools.get(s.text) ?? [], 'enforced_by');
+  if (s.kind === 'lint-rule') return ruleMaps(lintRuleTools(s.text, index), 'enforced_by');
   const cited = index.cites.filter((c) => citeMatches(c, s));
   return cited.map((c) => ({
     skill: c.rule.skill,
@@ -107,7 +117,7 @@ function ruleLevel(s: Signal, index: MapIndex): SignalMap[] {
 /** Review comments carry a code path and diff lines; a changed line in a
  *  guideline or skill file only has its text, so only anchors can match. */
 function routeLevel(s: Signal, index: MapIndex): SignalMap[] {
-  if (s.kind === 'rule-class' || s.kind === 'guide-id') return [];
+  if (s.kind === 'rule-class' || s.kind === 'guide-id' || s.kind === 'lint-rule') return [];
   const code = s.kind === 'review-comment' || s.kind === 'api-break';
   const files = [{ path: code ? s.path : '', lines: s.lines ?? [s.text] }];
   return index.routes.flatMap(({ skill, routes }) =>

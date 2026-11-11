@@ -166,6 +166,7 @@ const KINDS: [RegExp, SignalKind][] = [
   [/^(?:Added|Removed) core guide ID/u, 'guide-id'],
   [/^(?:Added|Removed) PR template line/u, 'template-line'],
   [/^Rule class/u, 'rule-class'],
+  [/^(?:Added|Removed) lint rule setting/u, 'lint-rule'],
 ];
 
 const kindOf = (text: string): SignalKind => KINDS.find(([re]) => re.test(text))?.[1] ?? 'upstream-line';

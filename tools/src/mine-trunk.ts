@@ -2,7 +2,7 @@
 // a source's watched paths, with their deltas. Sources: rules/sources.json.
 import { errorMessage } from './errors.ts';
 import { allPages, type GitHubApi } from './github.ts';
-import type { Source } from './sources.ts';
+import { ignoredPath, type Source } from './sources.ts';
 import { commitDeltas, type CommitDeltas, type TrunkCommit, type TrunkFile } from './trunk-deltas.ts';
 import { compareText } from './text.ts';
 import { inSeries } from './series.ts';
@@ -226,7 +226,8 @@ async function newCommits(
 function minedCommits(api: GitHubApi, source: Source, refs: CommitRef[]): Promise<MinedCommit[]> {
   return inSeries(refs, async (r) => {
     const commit = await commitDetail(api, source, r.sha);
-    return { commit, deltas: commitDeltas(commit, source.extractor, source.paths) };
+    const read = { ...commit, files: commit.files.filter((f) => !ignoredPath(source, f.filename)) };
+    return { commit, deltas: commitDeltas(read, source.extractor, source.paths) };
   });
 }
 

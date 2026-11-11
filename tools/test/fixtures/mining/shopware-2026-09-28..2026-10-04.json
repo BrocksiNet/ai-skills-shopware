@@ -45,6 +45,10 @@
    ]
   }
  ],
+ "repos/shopware/shopware/commits?sha=trunk&path=.agents-templates%2FAGENTS.local.template.ddev.md&since=2026-09-28T00%3A00%3A00Z&until=2026-10-04T23%3A59%3A59Z&per_page=100&page=1": [],
+ "repos/shopware/shopware/commits?sha=trunk&path=.agents-templates%2FAGENTS.local.template.docker.md&since=2026-09-28T00%3A00%3A00Z&until=2026-10-04T23%3A59%3A59Z&per_page=100&page=1": [],
+ "repos/shopware/shopware/commits?sha=trunk&path=.agents-templates%2FAGENTS.local.template.native.md&since=2026-09-28T00%3A00%3A00Z&until=2026-10-04T23%3A59%3A59Z&per_page=100&page=1": [],
+ "repos/shopware/shopware/commits?sha=trunk&path=.agents-templates%2FAGENTS.local.template.vagrant.md&since=2026-09-28T00%3A00%3A00Z&until=2026-10-04T23%3A59%3A59Z&per_page=100&page=1": [],
  "repos/shopware/shopware/commits?sha=trunk&path=coding-guidelines&since=2026-09-28T00%3A00%3A00Z&until=2026-10-04T23%3A59%3A59Z&per_page=100&page=1": [
   {
    "sha": "4ac7765542b89455deff8e9b34eada645c063668",
@@ -103,6 +107,7 @@
    ]
   }
  ],
+ "repos/shopware/shopware/commits?sha=trunk&path=adr%2F2026-06-17-shared-guidance-files-for-humans-and-agents.md&since=2026-09-28T00%3A00%3A00Z&until=2026-10-04T23%3A59%3A59Z&per_page=100&page=1": [],
  "repos/shopware/shopware/commits?sha=trunk&path=src%2FCore%2FDevOps%2FStaticAnalyze&since=2026-09-28T00%3A00%3A00Z&until=2026-10-04T23%3A59%3A59Z&per_page=100&page=1": [
   {
    "sha": "4ac7765542b89455deff8e9b34eada645c063668",
@@ -259,7 +264,64 @@
    ]
   }
  ],
+ "repos/shopware/shopware/commits?sha=trunk&path=.github%2FAGENTS.md&since=2026-09-28T00%3A00%3A00Z&until=2026-10-04T23%3A59%3A59Z&per_page=100&page=1": [],
  "repos/shopware/shopware/commits?sha=trunk&path=.github%2FPULL_REQUEST_TEMPLATE.md&since=2026-09-28T00%3A00%3A00Z&until=2026-10-04T23%3A59%3A59Z&per_page=100&page=1": [],
+ "repos/shopware/shopware/commits?sha=trunk&path=AGENTS.md&since=2026-09-28T00%3A00%3A00Z&until=2026-10-04T23%3A59%3A59Z&per_page=100&page=1": [
+  {
+   "sha": "5f5bd4969c122ba4826c2bb1f2961e6af2685576",
+   "commit": {
+    "message": "test(storefront): remove direct Twig integration tests (#21026)",
+    "committer": {
+     "date": "2026-09-30T07:09:02Z"
+    }
+   },
+   "parents": [
+    {
+     "sha": "ddb44dbc642f7459efc25072ba11dc1edab14c6e"
+    }
+   ]
+  }
+ ],
+ "repos/shopware/shopware/commits?sha=trunk&path=src%2FAdministration%2FResources%2Fapp%2Fadministration%2FAGENTS.md&since=2026-09-28T00%3A00%3A00Z&until=2026-10-04T23%3A59%3A59Z&per_page=100&page=1": [],
+ "repos/shopware/shopware/commits?sha=trunk&path=src%2FAdministration%2FResources%2Fapp%2Fadministration%2Fsrc%2Fapp%2FAGENTS.md&since=2026-09-28T00%3A00%3A00Z&until=2026-10-04T23%3A59%3A59Z&per_page=100&page=1": [
+  {
+   "sha": "691de112abfc30662c597db515e59c7f2345dffd",
+   "commit": {
+    "message": "feat(administration): expose the mixin-replacing composables as Shopware.Composables (#21060)",
+    "committer": {
+     "date": "2026-10-01T14:29:21Z"
+    }
+   },
+   "parents": [
+    {
+     "sha": "81254da08a685c7208053615ad3ac6c28ba0bf53"
+    }
+   ]
+  }
+ ],
+ "repos/shopware/shopware/commits?sha=trunk&path=src%2FAdministration%2FResources%2Fapp%2Fadministration%2Fsrc%2Fcore%2FAGENTS.md&since=2026-09-28T00%3A00%3A00Z&until=2026-10-04T23%3A59%3A59Z&per_page=100&page=1": [],
+ "repos/shopware/shopware/commits?sha=trunk&path=src%2FAdministration%2FResources%2Fapp%2Fadministration%2Fsrc%2Fmodule%2FAGENTS.md&since=2026-09-28T00%3A00%3A00Z&until=2026-10-04T23%3A59%3A59Z&per_page=100&page=1": [],
+ "repos/shopware/shopware/commits?sha=trunk&path=src%2FAdministration%2FResources%2Fapp%2Fadministration%2F.stylelintrc&since=2026-09-28T00%3A00%3A00Z&until=2026-10-04T23%3A59%3A59Z&per_page=100&page=1": [],
+ "repos/shopware/shopware/commits?sha=trunk&path=src%2FAdministration%2FResources%2Fapp%2Fadministration%2Feslint.config.ts&since=2026-09-28T00%3A00%3A00Z&until=2026-10-04T23%3A59%3A59Z&per_page=100&page=1": [
+  {
+   "sha": "8afb4ee11ce407a31a763b9d3bb62b8d81fe9d3d",
+   "commit": {
+    "message": "feat(administration): add virtual shopware:* modules for the global Shopware object (#20246)",
+    "committer": {
+     "date": "2026-09-29T11:30:19Z"
+    }
+   },
+   "parents": [
+    {
+     "sha": "3b81fc3366ac20430a3c934eb49eb572bb3403f8"
+    }
+   ]
+  }
+ ],
+ "repos/shopware/shopware/commits?sha=trunk&path=src%2FStorefront%2FResources%2Fapp%2Fadministration%2Feslint.config.ts&since=2026-09-28T00%3A00%3A00Z&until=2026-10-04T23%3A59%3A59Z&per_page=100&page=1": [],
+ "repos/shopware/shopware/commits?sha=trunk&path=src%2FStorefront%2FResources%2Fapp%2Fstorefront%2Feslint.config.js&since=2026-09-28T00%3A00%3A00Z&until=2026-10-04T23%3A59%3A59Z&per_page=100&page=1": [],
+ "repos/shopware/shopware/commits?sha=trunk&path=src%2FStorefront%2FResources%2Fapp%2Fstorefront%2Fstylelint.config.js&since=2026-09-28T00%3A00%3A00Z&until=2026-10-04T23%3A59%3A59Z&per_page=100&page=1": [],
+ "repos/shopware/shopware/commits?sha=trunk&path=src%2FStorefront%2FResources%2Fviews%2Fludtwig-config.toml&since=2026-09-28T00%3A00%3A00Z&until=2026-10-04T23%3A59%3A59Z&per_page=100&page=1": [],
  "repos/shopware/shopware/commits/61184ef84229a378d2f949e333578299c39760cd": {
   "sha": "61184ef84229a378d2f949e333578299c39760cd",
   "commit": {
@@ -417,6 +479,29 @@
    }
   ]
  },
+ "repos/shopware/shopware/commits/8afb4ee11ce407a31a763b9d3bb62b8d81fe9d3d": {
+  "sha": "8afb4ee11ce407a31a763b9d3bb62b8d81fe9d3d",
+  "commit": {
+   "message": "feat(administration): add virtual shopware:* modules for the global Shopware object (#20246)",
+   "committer": {
+    "date": "2026-09-29T11:30:19Z"
+   }
+  },
+  "parents": [
+   {
+    "sha": "3b81fc3366ac20430a3c934eb49eb572bb3403f8"
+   }
+  ],
+  "files": [
+   {
+    "filename": "src/Administration/Resources/app/administration/eslint.config.ts",
+    "status": "modified",
+    "additions": 2,
+    "deletions": 0,
+    "patch": "@@ -208,6 +208,8 @@ export default [\n             'scripts/**/*',\n             '!scripts/extensionTooling/',\n             '!scripts/extensionTooling/**/*',\n+            '!scripts/generate-shopware-modules/',\n+            '!scripts/generate-shopware-modules/**/*',\n             '!scripts/codemods/',\n             '!scripts/codemods/sfc-migration/',\n             '!scripts/codemods/sfc-migration/**/*',"
+   }
+  ]
+ },
  "repos/shopware/shopware/commits/013305a1d64c12b368490f29abd19eecc4a60957": {
   "sha": "013305a1d64c12b368490f29abd19eecc4a60957",
   "commit": {
@@ -442,6 +527,29 @@
     "status": "modified",
     "additions": 1,
     "deletions": 0
+   }
+  ]
+ },
+ "repos/shopware/shopware/commits/5f5bd4969c122ba4826c2bb1f2961e6af2685576": {
+  "sha": "5f5bd4969c122ba4826c2bb1f2961e6af2685576",
+  "commit": {
+   "message": "test(storefront): remove direct Twig integration tests (#21026)",
+   "committer": {
+    "date": "2026-09-30T07:09:02Z"
+   }
+  },
+  "parents": [
+   {
+    "sha": "ddb44dbc642f7459efc25072ba11dc1edab14c6e"
+   }
+  ],
+  "files": [
+   {
+    "filename": "AGENTS.md",
+    "status": "modified",
+    "additions": 2,
+    "deletions": 1,
+    "patch": "@@ -49,7 +49,8 @@ This repo ships Agent Skills under `.agents/skills/`, with `.claude/skills` as a\n-- **Behaviour change ⇒ tests are required.** Admin JS/TS/Vue → follow `shopware-admin-js`; PHP → `shopware-phpunit-tests`. Style-only, snippet/translation, and docs-only changes do not need tests; still add one when it is useful and follows an established pattern.\n+- **Behaviour change ⇒ tests are required.** Admin JS/TS/Vue → follow `shopware-admin-js`; PHP → `shopware-phpunit-tests`. Twig-only template changes follow the rule below. Style-only, snippet/translation, and docs-only changes do not need tests; still add one when it is useful and follows an established pattern.\n+- **Twig-only template changes ⇒ never add PHP integration tests just to render or assert Twig output.** A direct render without a Storefront request can cache empty request-dependent Twig globals in the shared test kernel and break unrelated later tests. Run the Storefront Twig lint; use browser/acceptance coverage when the rendered behaviour needs testing."
    }
   ]
  },
@@ -563,6 +671,29 @@
     "status": "modified",
     "additions": 1,
     "deletions": 0
+   }
+  ]
+ },
+ "repos/shopware/shopware/commits/691de112abfc30662c597db515e59c7f2345dffd": {
+  "sha": "691de112abfc30662c597db515e59c7f2345dffd",
+  "commit": {
+   "message": "feat(administration): expose the mixin-replacing composables as Shopware.Composables (#21060)",
+   "committer": {
+    "date": "2026-10-01T14:29:21Z"
+   }
+  },
+  "parents": [
+   {
+    "sha": "81254da08a685c7208053615ad3ac6c28ba0bf53"
+   }
+  ],
+  "files": [
+   {
+    "filename": "src/Administration/Resources/app/administration/src/app/AGENTS.md",
+    "status": "modified",
+    "additions": 1,
+    "deletions": 1,
+    "patch": "@@ -33,7 +33,7 @@ import SwProductList from './page';\n-- **`composables/`**: Vue 3 hooks (use-context, use-session, use-system)\n+- **`composables/`**: Vue 3 hooks (use-context, use-session, use-system). Mixin replacements listed in `composables/index.ts` are public as `Shopware.Composables` and `shopware:composables`"
    }
   ]
  },

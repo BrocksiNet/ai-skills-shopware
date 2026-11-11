@@ -10,6 +10,7 @@ export const SIGNAL_KINDS = [
   'guideline-heading',
   'guide-id',
   'rule-class',
+  'lint-rule',
   'template-line',
   'upstream-line',
   'review-comment',
@@ -91,6 +92,7 @@ export function commitSignals(source: Source, mined: MinedCommit): Signal[] {
     ...lines('upstream-line', deltas.guidance ?? []),
     ...lines('guide-id', deltas.guideIds),
     ...lines('template-line', deltas.template),
+    ...lines('lint-rule', deltas.lintRules ?? []),
     ...deltas.classes.map((c) =>
       make({
         id: id(c.file, `class:${c.status}`),

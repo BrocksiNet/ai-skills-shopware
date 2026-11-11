@@ -32,6 +32,8 @@ function describe(s: Signal): string {
       return `${verb} PR template line: ${code(s.text)}`;
     case 'rule-class':
       return `Rule class \`${s.text}\` (${s.path.includes('/Danger/') ? 'danger' : 'phpstan'}) ${s.status ?? 'changed'}`;
+    case 'lint-rule':
+      return `${verb} lint rule setting in \`${s.path}\`: ${code(s.text)}`;
     case 'upstream-line':
       return `${verb} line in \`${s.path}\`: ${code(s.text)}`;
     case 'review-comment':

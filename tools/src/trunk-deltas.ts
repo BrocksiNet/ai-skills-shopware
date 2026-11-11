@@ -3,6 +3,7 @@
 // headings, review guide rule IDs, the PR template and the PHPStan and Danger
 // rule classes. In an upstream skill repository (plan WP12): the bullets and
 // headings of every Markdown file.
+import { LINT_CONFIG, lintRuleLines, withoutMoves } from './lint-config.ts';
 import type { Extractor } from './sources.ts';
 
 /** A file of a commit, as the GitHub API returns it. `patch` is missing for
@@ -48,8 +49,12 @@ export interface CommitDeltas {
   /** Headings added to or removed from `coding-guidelines/**`, or from any
    *  Markdown file of an upstream source. */
   headings: LineDelta[];
-  /** Prose changes in watched AGENTS.md files, including non-bullet guidance. */
+  /** Prose changes in watched AGENTS.md files and in Markdown files watched
+   *  by their exact path, including non-bullet guidance. */
   guidance?: LineDelta[];
+  /** Rule settings added to or removed from a lint config: ESLint, Stylelint
+   *  or ludtwig. A changed severity is one removed and one added line. */
+  lintRules?: LineDelta[];
   /** Rule IDs added to or removed from review guide frontmatter. */
   guideIds: LineDelta[];
   /** Lines of `.github/PULL_REQUEST_TEMPLATE.md`. */
@@ -173,9 +178,7 @@ export function changedLines(file: string, patch: string, pattern: RegExp, markd
       lines.push({ file, change, text: match[1].trim() });
     }
   }
-  const key = (l: LineDelta): string => `${l.change}${l.text}`;
-  const keys = new Set(lines.map((l) => key(l)));
-  return lines.filter((l) => !keys.has(`${l.change === '+' ? '-' : '+'}${l.text}`));
+  return withoutMoves(lines);
 }
 
 export function ruleClass(file: TrunkFile): ClassDelta | undefined {
@@ -189,6 +192,11 @@ export function ruleClass(file: TrunkFile): ClassDelta | undefined {
 /** A file under one of the watched paths; every file without paths. */
 const under = (name: string, paths: string[] | undefined): boolean =>
   paths === undefined || paths.some((p) => name === p || name.startsWith(`${p.replace(/\/$/u, '')}/`));
+
+/** A Markdown file watched by its exact path, such as an ADR or an
+ *  environment template, is read as prose like an AGENTS.md. */
+const watchedMarkdown = (name: string, paths: string[] | undefined): boolean =>
+  name.endsWith('.md') && (paths ?? []).includes(name);
 
 /** A change log restates the commit; its bullets are release notes, not
  *  guidance. */
@@ -224,6 +232,11 @@ export function commitDeltas(
     const cls = ruleClass(file);
     if (cls !== undefined) deltas.classes.push(cls);
     const name = file.filename;
+    if (LINT_CONFIG.test(name) && under(name, paths)) {
+      if (file.patch === undefined) deltas.truncated.push(name);
+      else (deltas.lintRules ??= []).push(...lintRuleLines(name, file.patch));
+      continue;
+    }
     if (AGENT_GUIDE.test(name) && under(name, paths)) {
       if (file.patch === undefined) deltas.truncated.push(name);
       else (deltas.guidance ??= []).push(...changedLines(name, file.patch, TEXT, true));
@@ -237,7 +250,9 @@ export function commitDeltas(
           ? { list: deltas.headings, pattern: HEADING, markdown: true }
           : name === TEMPLATE_FILE
             ? { list: deltas.template, pattern: TEXT, markdown: false }
-            : undefined;
+            : watchedMarkdown(name, paths)
+              ? { list: (deltas.guidance ??= []), pattern: TEXT, markdown: true }
+              : undefined;
     if (target === undefined) continue;
     if (file.patch === undefined) deltas.truncated.push(name);
     else target.list.push(...changedLines(name, file.patch, target.pattern, target.markdown));

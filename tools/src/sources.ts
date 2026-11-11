@@ -26,6 +26,8 @@ export interface Source {
   /** A commit counts when it touches one of these paths. */
   paths: string[];
   skills: SourceSkills[];
+  /** Path prefixes whose changes the drift report leaves out on purpose. */
+  ignore?: string[];
 }
 
 type Json = Record<string, unknown>;
@@ -67,10 +69,13 @@ function checkSource(v: unknown, i: number, known: Set<string> | undefined): { v
   if (!isTextList(v.paths)) errors.push(`${label}: paths must be a non-empty list of strings`);
   const skills = sourceSkills(label, v.skills, known);
   errors.push(...skills.errors);
+  if (v.ignore !== undefined && !isTextList(v.ignore))
+    errors.push(`${label}: ignore must be a non-empty list of strings`);
   if (errors.length > 0 || !isText(v.id) || !isText(v.repo) || !isText(v.branch)) return { errors };
   if (!isExtractor(v.extractor) || !isTextList(v.paths)) return { errors };
   const value = { id: v.id, repo: v.repo, branch: v.branch, extractor: v.extractor, paths: v.paths };
-  return { value: { ...value, skills: skills.value }, errors };
+  const ignore = isTextList(v.ignore) ? { ignore: v.ignore } : {};
+  return { value: { ...value, skills: skills.value, ...ignore }, errors };
 }
 
 /** The valid sources and the errors of the others. `skills`, when given,
@@ -164,11 +169,17 @@ export function loadSources(root: string): Source[] {
   return sources;
 }
 
+const underPrefix = (path: string, prefix: string): boolean =>
+  path === prefix || path.startsWith(`${prefix.replace(/\/$/u, '')}/`);
+
 /** Our skills that learn from a file of the source, by path prefix. */
 export function skillsForPath(source: Source, path: string): string[] {
-  const under = (prefix: string): boolean => path === prefix || path.startsWith(`${prefix.replace(/\/$/u, '')}/`);
-  return [...new Set(source.skills.filter((e) => under(e.path)).flatMap((e) => e.skills))];
+  return [...new Set(source.skills.filter((e) => underPrefix(path, e.path)).flatMap((e) => e.skills))];
 }
+
+/** Whether the source ignores a file on purpose, by path prefix. */
+export const ignoredPath = (source: Source, path: string): boolean =>
+  (source.ignore ?? []).some((prefix) => underPrefix(path, prefix));
 
 /** Errors of rules/sources.json, with `skills` the skill folder names, and
  *  catalog `upstream` entries that name no source. No file, no sources. */

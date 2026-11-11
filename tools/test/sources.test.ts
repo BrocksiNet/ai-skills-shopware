@@ -4,7 +4,7 @@ import { mkdirSync, mkdtempSync, readdirSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join, resolve } from 'node:path';
 import { describe, test } from 'node:test';
-import { checkSources, loadSources, type Source, skillsForPath, sourceErrors } from '../src/sources.ts';
+import { checkSources, ignoredPath, loadSources, type Source, skillsForPath, sourceErrors } from '../src/sources.ts';
 
 const ROOT = resolve(import.meta.dirname, '../..');
 const SKILLS = readdirSync(join(ROOT, 'skills'));
@@ -64,6 +64,17 @@ describe('rules/sources.json', () => {
     assert.deepEqual(skillsForPath(source, 'skills/phpunit/SKILL.md'), ['sw-testing', 'sw-php-foundation']);
     assert.deepEqual(skillsForPath(source, 'skills/phpunit-extra/SKILL.md'), ['sw-php-foundation']);
     assert.deepEqual(skillsForPath(source, 'README.md'), []);
+  });
+  test('ignore drops paths by prefix and must be a non-empty list', () => {
+    const plain: Source = { ...valid, extractor: 'markdown' };
+    const source: Source = { ...plain, ignore: ['.agents/skills/sw-triage'] };
+    assert.equal(ignoredPath(source, '.agents/skills/sw-triage/SKILL.md'), true);
+    assert.equal(ignoredPath(source, '.agents/skills/sw-triage-extra/SKILL.md'), false);
+    assert.equal(ignoredPath(plain, '.agents/skills/sw-triage/SKILL.md'), false);
+    assert.deepEqual(checkSources({ sources: [source] }).sources[0]?.ignore, ['.agents/skills/sw-triage']);
+    assert.deepEqual(checkSources({ sources: [{ ...valid, ignore: [] }] }).errors, [
+      `${valid.id}: ignore must be a non-empty list of strings`,
+    ]);
   });
 });
 

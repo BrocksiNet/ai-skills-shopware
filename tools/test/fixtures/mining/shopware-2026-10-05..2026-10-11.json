@@ -59,6 +59,10 @@
    ]
   }
  ],
+ "repos/shopware/shopware/commits?sha=trunk&path=.agents-templates%2FAGENTS.local.template.ddev.md&since=2026-10-05T00%3A00%3A00Z&until=2026-10-11T23%3A59%3A59Z&per_page=100&page=1": [],
+ "repos/shopware/shopware/commits?sha=trunk&path=.agents-templates%2FAGENTS.local.template.docker.md&since=2026-10-05T00%3A00%3A00Z&until=2026-10-11T23%3A59%3A59Z&per_page=100&page=1": [],
+ "repos/shopware/shopware/commits?sha=trunk&path=.agents-templates%2FAGENTS.local.template.native.md&since=2026-10-05T00%3A00%3A00Z&until=2026-10-11T23%3A59%3A59Z&per_page=100&page=1": [],
+ "repos/shopware/shopware/commits?sha=trunk&path=.agents-templates%2FAGENTS.local.template.vagrant.md&since=2026-10-05T00%3A00%3A00Z&until=2026-10-11T23%3A59%3A59Z&per_page=100&page=1": [],
  "repos/shopware/shopware/commits?sha=trunk&path=coding-guidelines&since=2026-10-05T00%3A00%3A00Z&until=2026-10-11T23%3A59%3A59Z&per_page=100&page=1": [
   {
    "sha": "c81123dc43dad7e3dd33523e1377dfa8d8a05924",
@@ -103,6 +107,7 @@
    ]
   }
  ],
+ "repos/shopware/shopware/commits?sha=trunk&path=adr%2F2026-06-17-shared-guidance-files-for-humans-and-agents.md&since=2026-10-05T00%3A00%3A00Z&until=2026-10-11T23%3A59%3A59Z&per_page=100&page=1": [],
  "repos/shopware/shopware/commits?sha=trunk&path=src%2FCore%2FDevOps%2FStaticAnalyze&since=2026-10-05T00%3A00%3A00Z&until=2026-10-11T23%3A59%3A59Z&per_page=100&page=1": [
   {
    "sha": "fcd9b687d608c3f3fc38963851570d3c3e7d44bc",
@@ -147,7 +152,78 @@
    ]
   }
  ],
+ "repos/shopware/shopware/commits?sha=trunk&path=.github%2FAGENTS.md&since=2026-10-05T00%3A00%3A00Z&until=2026-10-11T23%3A59%3A59Z&per_page=100&page=1": [
+  {
+   "sha": "981fb513b7079ef0b631687c2541715423853c91",
+   "commit": {
+    "message": "ci(acceptance): automatically run major ATS for changed specs (#21114)",
+    "committer": {
+     "date": "2026-10-07T09:05:28Z"
+    }
+   },
+   "parents": [
+    {
+     "sha": "c373b9c8e1c7060618528290c7fc95c0dedece0c"
+    }
+   ]
+  },
+  {
+   "sha": "4a5a519c068b08db111d314bbdc5e795e21e09e4",
+   "commit": {
+    "message": "feat(framework): link subfeatures to major flags (#20863)",
+    "committer": {
+     "date": "2026-10-06T14:15:31Z"
+    }
+   },
+   "parents": [
+    {
+     "sha": "b2110f5be3d847d9b6030e4990e4ff070e0d9036"
+    }
+   ]
+  }
+ ],
  "repos/shopware/shopware/commits?sha=trunk&path=.github%2FPULL_REQUEST_TEMPLATE.md&since=2026-10-05T00%3A00%3A00Z&until=2026-10-11T23%3A59%3A59Z&per_page=100&page=1": [],
+ "repos/shopware/shopware/commits?sha=trunk&path=AGENTS.md&since=2026-10-05T00%3A00%3A00Z&until=2026-10-11T23%3A59%3A59Z&per_page=100&page=1": [
+  {
+   "sha": "52d5908baccbdbe4d65fb38de75a445474e04f5b",
+   "commit": {
+    "message": "feat(themes): Improve migration path of theme translations (#21166)",
+    "committer": {
+     "date": "2026-10-08T13:04:35Z"
+    }
+   },
+   "parents": [
+    {
+     "sha": "db7c8e5d7df5a3928625751c17a0db829096b161"
+    }
+   ]
+  }
+ ],
+ "repos/shopware/shopware/commits?sha=trunk&path=src%2FAdministration%2FResources%2Fapp%2Fadministration%2FAGENTS.md&since=2026-10-05T00%3A00%3A00Z&until=2026-10-11T23%3A59%3A59Z&per_page=100&page=1": [],
+ "repos/shopware/shopware/commits?sha=trunk&path=src%2FAdministration%2FResources%2Fapp%2Fadministration%2Fsrc%2Fapp%2FAGENTS.md&since=2026-10-05T00%3A00%3A00Z&until=2026-10-11T23%3A59%3A59Z&per_page=100&page=1": [],
+ "repos/shopware/shopware/commits?sha=trunk&path=src%2FAdministration%2FResources%2Fapp%2Fadministration%2Fsrc%2Fcore%2FAGENTS.md&since=2026-10-05T00%3A00%3A00Z&until=2026-10-11T23%3A59%3A59Z&per_page=100&page=1": [],
+ "repos/shopware/shopware/commits?sha=trunk&path=src%2FAdministration%2FResources%2Fapp%2Fadministration%2Fsrc%2Fmodule%2FAGENTS.md&since=2026-10-05T00%3A00%3A00Z&until=2026-10-11T23%3A59%3A59Z&per_page=100&page=1": [],
+ "repos/shopware/shopware/commits?sha=trunk&path=src%2FAdministration%2FResources%2Fapp%2Fadministration%2F.stylelintrc&since=2026-10-05T00%3A00%3A00Z&until=2026-10-11T23%3A59%3A59Z&per_page=100&page=1": [],
+ "repos/shopware/shopware/commits?sha=trunk&path=src%2FAdministration%2FResources%2Fapp%2Fadministration%2Feslint.config.ts&since=2026-10-05T00%3A00%3A00Z&until=2026-10-11T23%3A59%3A59Z&per_page=100&page=1": [],
+ "repos/shopware/shopware/commits?sha=trunk&path=src%2FStorefront%2FResources%2Fapp%2Fadministration%2Feslint.config.ts&since=2026-10-05T00%3A00%3A00Z&until=2026-10-11T23%3A59%3A59Z&per_page=100&page=1": [],
+ "repos/shopware/shopware/commits?sha=trunk&path=src%2FStorefront%2FResources%2Fapp%2Fstorefront%2Feslint.config.js&since=2026-10-05T00%3A00%3A00Z&until=2026-10-11T23%3A59%3A59Z&per_page=100&page=1": [],
+ "repos/shopware/shopware/commits?sha=trunk&path=src%2FStorefront%2FResources%2Fapp%2Fstorefront%2Fstylelint.config.js&since=2026-10-05T00%3A00%3A00Z&until=2026-10-11T23%3A59%3A59Z&per_page=100&page=1": [],
+ "repos/shopware/shopware/commits?sha=trunk&path=src%2FStorefront%2FResources%2Fviews%2Fludtwig-config.toml&since=2026-10-05T00%3A00%3A00Z&until=2026-10-11T23%3A59%3A59Z&per_page=100&page=1": [
+  {
+   "sha": "5a5214f2fe24292c738c71f45a9218f09e08d5a7",
+   "commit": {
+    "message": "feat(storefront): open the full GARAN label from the nested label (#21310)",
+    "committer": {
+     "date": "2026-10-09T05:59:21Z"
+    }
+   },
+   "parents": [
+    {
+     "sha": "a1b007d2d087326ccbafde64d6e0b877bc08c9a0"
+    }
+   ]
+  }
+ ],
  "repos/shopware/shopware/commits/4a5a519c068b08db111d314bbdc5e795e21e09e4": {
   "sha": "4a5a519c068b08db111d314bbdc5e795e21e09e4",
   "commit": {
@@ -170,11 +246,41 @@
     "patch": "@@ -50,7 +50,7 @@ Tests should read like executable examples.\n-- In integration tests, feature-flag state comes from the job configuration (the default integration job runs with flags off, integration-major once per in-flight major with `FEATURE_ALL=<major>`, e.g. `v6.8.0.0`), and the suite may run multiple times with flags on and off. `#[DisabledFeatures]` has no effect there and the test runner rejects it — a test carrying the attribute fails the run. Skip tests explicitly with `Feature::skipTestIfActive()` or `Feature::skipTestIfInActive()` when the current feature-flag value is not the one the scenario expects.\n+- In integration tests, feature-flag state comes from the job configuration (the default integration job runs with flags off, integration-major runs with the upcoming version flag enabled), and the suite may run multiple times with flags on and off. `#[DisabledFeatures]` has no effect there and the test runner rejects it — a test carrying the attribute fails the run. Skip tests explicitly with `Feature::skipTestIfActive()` or `Feature::skipTestIfInActive()` when the current feature-flag value is not the one the scenario expects."
    },
    {
+    "filename": ".github/AGENTS.md",
+    "status": "modified",
+    "additions": 7,
+    "deletions": 7,
+    "patch": "@@ -20,7 +20,7 @@ nightlies and the release gate. Change one and you change all three contexts.\n@@ -47,17 +47,17 @@ Three mechanisms decide how much runs:"
+   },
+   {
     "filename": "coding-guidelines/core/feature-flags.md",
     "status": "modified",
     "additions": 15,
     "deletions": 23,
     "patch": "@@ -2,7 +2,7 @@\n@@ -11,36 +11,28 @@ V6_5_0_0=1\n ```\n ```yaml\n ```\n-## While two majors are in flight\n+## Major CI\n@@ -224,7 +216,7 @@ PHPStan validates the attribute, runtime alias, optional service alias, and cano\n ```php"
+   }
+  ]
+ },
+ "repos/shopware/shopware/commits/981fb513b7079ef0b631687c2541715423853c91": {
+  "sha": "981fb513b7079ef0b631687c2541715423853c91",
+  "commit": {
+   "message": "ci(acceptance): automatically run major ATS for changed specs (#21114)",
+   "committer": {
+    "date": "2026-10-07T09:05:28Z"
+   }
+  },
+  "parents": [
+   {
+    "sha": "c373b9c8e1c7060618528290c7fc95c0dedece0c"
+   }
+  ],
+  "files": [
+   {
+    "filename": ".github/AGENTS.md",
+    "status": "modified",
+    "additions": 4,
+    "deletions": 2,
+    "patch": "@@ -23,7 +23,7 @@ nightlies and the release gate. Change one and you change all three contexts.\n@@ -47,7 +47,9 @@ Three mechanisms decide how much runs:"
    }
   ]
  },
@@ -222,6 +328,13 @@
     "status": "modified",
     "additions": 1,
     "deletions": 1
+   },
+   {
+    "filename": "AGENTS.md",
+    "status": "modified",
+    "additions": 3,
+    "deletions": 1,
+    "patch": "@@ -52,7 +52,7 @@ Before you commit or hand work back:\n-- **Behavioural change, feature, deprecation, or config change? → check `shopware-release-docs`** for RELEASE_INFO / UPGRADE entries.\n+- **Behavioural change, feature, deprecation, or config change? → check `shopware-release-docs`** for RELEASE_INFO / UPGRADE entries. Put a blank line before and after every heading in those files; the Markdown renderer otherwise glues the heading to the previous paragraph.\n@@ -90,6 +90,8 @@ To add a new skill (interactive or unattended), follow the checklist in [`coding"
    }
   ]
  },
@@ -298,6 +411,29 @@
     "status": "modified",
     "additions": 1,
     "deletions": 0
+   }
+  ]
+ },
+ "repos/shopware/shopware/commits/5a5214f2fe24292c738c71f45a9218f09e08d5a7": {
+  "sha": "5a5214f2fe24292c738c71f45a9218f09e08d5a7",
+  "commit": {
+   "message": "feat(storefront): open the full GARAN label from the nested label (#21310)",
+   "committer": {
+    "date": "2026-10-09T05:59:21Z"
+   }
+  },
+  "parents": [
+   {
+    "sha": "a1b007d2d087326ccbafde64d6e0b877bc08c9a0"
+   }
+  ],
+  "files": [
+   {
+    "filename": "src/Storefront/Resources/views/ludtwig-config.toml",
+    "status": "modified",
+    "additions": 1,
+    "deletions": 0,
+    "patch": "@@ -177,6 +177,7 @@ valid-filters = [\n     \"sw_garan_label_duration\",\n     \"sw_garan_label\",\n     \"sw_garan_label_nested\",\n+    \"sw_garan_label_link\",\n     \"sw_legal_guarantee_notice\",\n     \"sw_legal_guarantee_notice_link\",\n     \"sw_icon_cache\","
    }
   ]
  },
