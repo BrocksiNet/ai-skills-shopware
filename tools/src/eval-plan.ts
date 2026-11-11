@@ -1,7 +1,7 @@
 // Pick the eval tasks for a model run and split them into shards (plan WP1;
 // ported from scripts/eval-plan.sh in WP10).
 //
-// A task is a folder under evals/tasks/ with a grade.sh. Selection, in order:
+// A task is a folder under evals/tasks/ with an instruction.md. Selection, in order:
 //   - explicit names (EVAL_TASKS), in the given order; an unknown name throws
 //   - PR mode (changed files): tasks whose folder changed, whose `skills` file
 //     names a changed skill, or, without a `skills` file, any changed skill
@@ -11,6 +11,7 @@
 import { existsSync, readFileSync, readdirSync } from 'node:fs';
 import { join } from 'node:path';
 import { envInt, envOr } from './env.ts';
+import { listTasks } from './tasks.ts';
 import { compareText } from './text.ts';
 
 export interface PlanOptions {
@@ -35,13 +36,7 @@ export interface Plan {
   shards: Shard[];
 }
 
-export function allTasks(tasksRoot: string): string[] {
-  if (!existsSync(tasksRoot)) return [];
-  return readdirSync(tasksRoot, { withFileTypes: true })
-    .filter((d) => d.isDirectory() && existsSync(join(tasksRoot, d.name, 'grade.sh')))
-    .map((d) => d.name)
-    .toSorted(compareText);
-}
+export const allTasks = listTasks;
 
 /** Skill names in a task's `skills` file; empty when there is none. */
 export function taskSkills(tasksRoot: string, task: string): string[] {
@@ -63,7 +58,7 @@ export function repoSkills(root: string): string[] {
 }
 
 /** The second path segment of changed files under `prefix/`, e.g. the task
- *  of `evals/tasks/<task>/grade.sh`. Files directly in `prefix/` do not count. */
+ *  of `evals/tasks/<task>/instruction.md`. Files directly in `prefix/` do not count. */
 function changedUnder(files: string[], prefix: string): Set<string> {
   const out = new Set<string>();
   for (const f of files) {

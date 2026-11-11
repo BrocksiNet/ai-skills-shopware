@@ -3,6 +3,7 @@
 import { existsSync, symlinkSync } from 'node:fs';
 import { join } from 'node:path';
 import { type RunResult, run } from './proc.ts';
+import { isTask } from './tasks.ts';
 import { inSeries } from './series.ts';
 
 /** Runs a command; tests replace it to stub `gh`. */
@@ -101,5 +102,5 @@ export function changedTasks(files: string[], wt: string, ruleEval: string | nul
   const touched = files.flatMap((f) => /^evals\/tasks\/([^/]+)\//u.exec(f)?.[1] ?? []);
   const graders = files.flatMap((f) => /^tools\/graders\/([^/]+)\.ts$/u.exec(f)?.[1] ?? []);
   const all = [...touched, ...graders, ...(ruleEval === null || ruleEval === undefined ? [] : [ruleEval])];
-  return [...new Set(all)].filter((t) => existsSync(join(wt, 'evals/tasks', t, 'grade.sh'))).toSorted();
+  return [...new Set(all)].filter((t) => isTask(join(wt, 'evals/tasks'), t)).toSorted();
 }

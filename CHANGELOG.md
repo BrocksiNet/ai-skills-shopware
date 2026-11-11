@@ -20,6 +20,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   `shopware-api-index` npm package instead, pinned to `0.1.0-beta.0`:
   `npx -y shopware-api-index@0.1.0-beta.0 facts .`. CI checks every skill
   pins the version in `tools/api-index/npm/package.json`.
+- Eval tasks no longer carry a `grade.sh` that only called
+  `tools/bin/grade.ts` (223 files). Harbor, the smoke harness, the runner
+  and `test-graders` call `node tools/bin/grade.ts <task>` directly; a task is
+  a folder with an `instruction.md`. The 7 AST-backed tasks keep their own
+  `grade.sh`, which `grade.ts` runs.
 
 ## [0.16.0] - 2026-11-09
 

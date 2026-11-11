@@ -1,7 +1,7 @@
 # Local smoke evals
 
 Run behavioral eval tasks **with skills ON vs OFF** and compare whether the
-linked skills change the outcome. Uses deterministic `grade.sh` graders (no
+linked skills change the outcome. Uses the deterministic task graders (no
 LLM-as-judge).
 
 ## Quick start
@@ -11,7 +11,7 @@ cd /path/to/ai-skills-shopware
 
 cp evals/smoke/smoke.env.example evals/smoke/smoke.env   # optional tweaks
 
-chmod +x evals/smoke/smoke.sh evals/smoke/lib/*.sh evals/test-graders.sh evals/tasks/*/grade.sh
+chmod +x evals/smoke/smoke.sh evals/smoke/lib/*.sh evals/test-graders.sh
 
 # No model calls — check graders + agent availability
 ./evals/smoke/smoke.sh agents

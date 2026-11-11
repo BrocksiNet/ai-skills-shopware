@@ -78,7 +78,7 @@ smoke_run_task() {
     smoke_agent_run "${agent}" "${workdir}" "${prompt}" || true
 
     smoke_log "grading ${task} (${agent}, skills=${mode})"
-    if WORKDIR="${workdir}" TRANSCRIPT="${transcript}" bash "${task_dir}/grade.sh"; then
+    if WORKDIR="${workdir}" TRANSCRIPT="${transcript}" smoke_grade "${task}"; then
       smoke_log "PASS ${task} ${agent} skills=${mode}"
     else
       smoke_log "FAIL ${task} ${agent} skills=${mode}"

@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
-# Shared entry for AST-backed grade.sh wrappers. Do not call from Harbor directly.
+# Shared entry for the grade.sh of AST-backed tasks; tools/bin/grade.ts runs
+# that grade.sh. Do not call from Harbor directly.
 set -euo pipefail
 
 WORKDIR="${WORKDIR:?WORKDIR not set}"

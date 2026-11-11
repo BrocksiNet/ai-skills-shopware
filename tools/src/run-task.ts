@@ -3,7 +3,7 @@
 //
 // Copies the task fixture into a temp workdir, turns the skill set on or off
 // for that workdir, runs the agent with the task instruction on stdin, keeps
-// the transcript, removes the skill profile again, then runs grade.sh.
+// the transcript, removes the skill profile again, then grades it with tools/bin/grade.ts.
 // The environment variables are documented in evals/runner/run-task.sh.
 import {
   cpSync,
@@ -23,6 +23,7 @@ import { setTimeout as delay } from 'node:timers/promises';
 import { envInt, envOr } from './env.ts';
 import { errorMessage } from './errors.ts';
 import { run } from './proc.ts';
+import { gradeCommand } from './tasks.ts';
 
 /** run-task exit codes. */
 export const RUN = { pass: 0, fail: 1, usage: 2, noAgent: 3, agentError: 4, graderError: 5, quota: 6 } as const;
@@ -183,7 +184,7 @@ export function taskPrompt(taskDir: string, env: NodeJS.ProcessEnv): string {
 
 /** Everything after the workdir exists: profile, agent, grading. */
 async function runInWorkdir(job: Job): Promise<number> {
-  const { task, mode, env, out, err } = job;
+  const { task, mode, env, root, out, err } = job;
   freshWorkdir(job);
   if (!(await profile(job, mode))) return RUN.usage;
   const prompt = taskPrompt(job.taskDir, env);
@@ -202,9 +203,10 @@ async function runInWorkdir(job: Job): Promise<number> {
   if (cmd !== '') await forward(cmd, ['off', job.workdir, task], env, out, err);
 
   out(`----- grading (${task}, mode=${mode}) -----\n`);
+  const grader = gradeCommand(root, task);
   const graded = await forward(
-    'bash',
-    [join(job.taskDir, 'grade.sh')],
+    grader.cmd,
+    grader.args,
     { ...env, WORKDIR: job.workdir, TRANSCRIPT: job.transcript },
     out,
     err,

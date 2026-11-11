@@ -13,6 +13,10 @@ after(() => {
 /** Passes when the workdir has `done.txt` and the transcript says "ok". */
 const GRADER = '#!/usr/bin/env bash\n[ -f "$WORKDIR/done.txt" ] && grep -q ok "$TRANSCRIPT"\n';
 
+/** Stands in for tools/bin/grade.ts: passes when the workdir has `done.txt`. */
+const TS_GRADER =
+  "import { existsSync } from 'node:fs';\nprocess.exitCode = existsSync(`${process.env.WORKDIR}/done.txt`) ? 0 : 1;\n";
+
 let n = 0;
 function repo(files: Record<string, string>): string {
   const root = join(tmp, `repo-${++n}`);
@@ -62,26 +66,44 @@ describe('grader cases', () => {
 });
 
 describe('testGraders', () => {
-  test('every task with a grade.sh; the transcript comes from the fixture', async () => {
+  test('every task; its own grade.sh or grade.ts; the transcript comes from the fixture', async () => {
     const root = repo({
+      'tools/bin/grade.ts': TS_GRADER,
+      'evals/tasks/good/instruction.md': '',
       'evals/tasks/good/grade.sh': GRADER,
       'evals/tasks/good/fixture/start.txt': '',
       'evals/tasks/good/fixtures/fail/done.txt': '',
       'evals/tasks/good/fixtures/pass/done.txt': '',
       'evals/tasks/good/fixtures/pass/.transcript.txt': 'ok\n',
-      'evals/tasks/no-grader/fixture/x': '',
+      'evals/tasks/ts/instruction.md': '',
+      'evals/tasks/ts/fixture/x': '',
+      'evals/tasks/ts/fixtures/pass/done.txt': '',
+      'evals/tasks/not-a-task/fixture/x': '',
     });
     const r = await grade(root);
     assert.equal(r.rc, 0, r.err);
     assert.equal(
       r.out,
-      'task: good\n  OK: good (fixture)\n  OK: good (fixtures/fail)\n  OK: good (fixtures/pass)\n\ntest-graders: OK\n',
+      [
+        'task: good',
+        '  OK: good (fixture)',
+        '  OK: good (fixtures/fail)',
+        '  OK: good (fixtures/pass)',
+        'task: ts',
+        '  OK: ts (fixture)',
+        '  OK: ts (fixtures/pass)',
+        '',
+        'test-graders: OK',
+        '',
+      ].join('\n'),
     );
   });
   test('wrong results, a missing negative case and a missing grader fail', async () => {
     const root = repo({
+      'evals/tasks/leaky/instruction.md': '',
       'evals/tasks/leaky/grade.sh': 'exit 0\n',
       'evals/tasks/leaky/fixture/x': '',
+      'evals/tasks/only-pass/instruction.md': '',
       'evals/tasks/only-pass/grade.sh': 'exit 1\n',
       'evals/tasks/only-pass/fixtures/pass/x': '',
     });
@@ -94,7 +116,7 @@ describe('testGraders', () => {
         '  FAIL: leaky (fixture): expected fail, exit 0',
         '  FAIL: only-pass: no fixture/ or fixtures/fail/ for negative case',
         '  FAIL: only-pass (fixtures/pass): expected pass, exit 1',
-        '  FAIL: ghost: missing grade.sh',
+        '  FAIL: ghost: not a task (no instruction.md)',
         '',
         'test-graders: 4 failure(s)',
         '',
@@ -102,7 +124,10 @@ describe('testGraders', () => {
     );
   });
   test('an AST grader without its tools installed is exit 2', async () => {
-    const root = repo({ 'evals/tasks/ast/grade.sh': 'node evals/tools/ast/run.mjs\n' });
+    const root = repo({
+      'evals/tasks/ast/instruction.md': '',
+      'evals/tasks/ast/grade.sh': 'node evals/tools/ast/run.mjs\n',
+    });
     const r = await grade(root);
     assert.deepEqual([r.rc, r.err], [2, 'test-graders: AST tools missing. Run: cd evals/tools/ast && npm ci\n']);
   });

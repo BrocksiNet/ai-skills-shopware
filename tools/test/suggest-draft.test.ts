@@ -118,7 +118,11 @@ describe('suggest-rules draft', async () => {
     const r = await draft(options('2026-10-23-01', 'ok'));
     assert.equal(r.status, 'drafted');
     assert.equal(r.attempts, 1);
-    assert.deepEqual(r.files, ['DRAFT.md', `evals/tasks/${FAKE_TASK}/grade.sh`]);
+    assert.deepEqual(r.files, [
+      'DRAFT.md',
+      `evals/tasks/${FAKE_TASK}/grade.sh`,
+      `evals/tasks/${FAKE_TASK}/instruction.md`,
+    ]);
     assert.deepEqual(r.tasks, [FAKE_TASK]);
     assert.match(r.ruleId, /^REV-\d{3}$/u);
     const subject = await git(['log', '-1', '--format=%s', r.branch]);

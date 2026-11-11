@@ -71,7 +71,7 @@ function steps(s: Suggestion, catalog: Catalog): string[] {
     return [
       `Add the rule as ${nextFreeId(catalog, s.skill)} in the file of ${s.skill} that owns the topic (SKILL.md or a reference its routes.json lists), as a bullet starting with the bold ID.`,
       'Add its entry to rules/catalog.json with file, title, since (today), eval, audience and defer_on_trunk.',
-      `Add the eval: ${s.eval?.kind === 'review-pair' ? 'a review pair review-<topic>-catch and review-<topic>-ignore' : 'a task'} with grade.sh, its grader (${s.eval?.kind === 'review-pair' ? 'an entry in tools/graders/review-pairs.ts' : 'tools/graders/<task>.ts'}), fixture/, fixtures/pass/ and an almost-pass fixtures/fail/. ${copy}`,
+      `Add the eval: ${s.eval?.kind === 'review-pair' ? 'a review pair review-<topic>-catch and review-<topic>-ignore' : 'a task'} (a folder with instruction.md), its grader (${s.eval?.kind === 'review-pair' ? 'an entry in tools/graders/review-pairs.ts' : 'tools/graders/<task>.ts'}), fixture/, fixtures/pass/ and an almost-pass fixtures/fail/. ${copy}`,
       `Add one prompt to skills/${s.skill}/evals/should-trigger.md if the rule adds a new trigger.`,
     ];
   if (s.action === 'update')

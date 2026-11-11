@@ -13,12 +13,10 @@ set -euo pipefail
 
 TASK_NAME="${TASK_NAME:?TASK_NAME not set}"
 REPO_DIR="${REPO_DIR:-/skills-repo}"
-GRADER="$REPO_DIR/evals/tasks/$TASK_NAME/grade.sh"
-
-[ -f "$GRADER" ] || { echo "grader not found: $GRADER" >&2; exit 2; }
+[ -f "$REPO_DIR/evals/tasks/$TASK_NAME/instruction.md" ] || { echo "unknown task: $TASK_NAME" >&2; exit 2; }
 
 # Harbor captures the agent transcript; expose it to the grader if present.
 TRANSCRIPT="${HARBOR_TRANSCRIPT:-${PWD}/.transcript.txt}"
 [ -f "$TRANSCRIPT" ] || TRANSCRIPT=/dev/null
 
-WORKDIR="$PWD" TRANSCRIPT="$TRANSCRIPT" bash "$GRADER"
+WORKDIR="$PWD" TRANSCRIPT="$TRANSCRIPT" node "$REPO_DIR/tools/bin/grade.ts" "$TASK_NAME"

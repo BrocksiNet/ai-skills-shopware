@@ -6,11 +6,11 @@ import { describe, test } from 'node:test';
 import { allTasks, plan, selectTasks } from '../src/eval-plan.ts';
 
 // task-a names its skill, task-b has no skills file, task-c names another
-// skill, and not-a-task has no grade.sh.
+// skill, and not-a-task has no instruction.md.
 const root = mkdtempSync(join(tmpdir(), 'eval-plan-'));
 const task = (name: string, skills?: string): void => {
   mkdirSync(join(root, name));
-  writeFileSync(join(root, name, 'grade.sh'), '');
+  writeFileSync(join(root, name, 'instruction.md'), '');
   if (skills !== undefined) writeFileSync(join(root, name, 'skills'), skills);
 };
 task('task-a', '# comment\nsw-plugin-development\n\n');
@@ -21,7 +21,7 @@ mkdirSync(join(root, 'not-a-task'));
 const opts = { maxTasks: 0, shards: 4 };
 
 describe('eval plan', () => {
-  test('all tasks are folders with a grade.sh', () => {
+  test('all tasks are folders with an instruction.md', () => {
     assert.deepEqual(allTasks(root), ['task-a', 'task-b', 'task-c']);
   });
   test('explicit tasks keep their order and lose whitespace', () => {
@@ -58,7 +58,7 @@ describe('eval plan', () => {
   test('a changed task folder selects that task only', () => {
     const tasks = selectTasks(root, {
       ...opts,
-      changedFiles: ['evals/tasks/task-c/grade.sh', 'evals/tasks/README.md'],
+      changedFiles: ['evals/tasks/task-c/instruction.md', 'evals/tasks/README.md'],
     });
     assert.deepEqual(tasks, ['task-c']);
   });
