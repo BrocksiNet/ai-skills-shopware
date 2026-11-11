@@ -3,7 +3,7 @@
 // LineItem::setShippingCostAware(), which arrived in 6.6.7.0. The fix keeps
 // the call and 6.6 support, and either guards the call with method_exists or
 // starts the range at 6.6.7. The answer must name that boundary: a model
-// cannot know a patch release from memory, the bundled shopware-api.mjs
+// cannot know a patch release from memory, `npx shopware-api-index`
 // (`facts`) prints "missing in 6.6.0.0 … 6.6.6.1".
 import { existsSync } from 'node:fs';
 import { join } from 'node:path';

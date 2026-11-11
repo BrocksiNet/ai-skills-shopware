@@ -3,8 +3,8 @@
 //
 //   node tools/api-index/bin/api-facts.ts [options] <extension dir>
 //
-// --help lists the options. The skills ship the same command bundled:
-// skills/*/scripts/shopware-api.mjs facts.
+// --help lists the options. The skills run the same command from npm:
+// npx shopware-api-index facts.
 import { errorMessage } from '../../src/errors.ts';
 import { processIo } from '../src/diff-cli.ts';
 import { runFacts } from '../src/facts-cli.ts';

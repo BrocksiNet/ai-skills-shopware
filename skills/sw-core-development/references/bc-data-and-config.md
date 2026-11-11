@@ -4,12 +4,12 @@ Load when you change a DAL definition's API flags or associations, a feature
 flag registration, a configuration default or key, or a console command.
 
 None of these have a PHP signature, so no BC check notices the change.
-Operators and integrations notice after the update. This skill ships
-`scripts/shopware-api.mjs`, one file next to the `references/` folder. Run
-it with plain Node from the root of the shopware/shopware clone:
+Operators and integrations notice after the update. Run the
+`shopware-api-index` npm package with `npx` (Node 20 or newer) from the
+root of the shopware/shopware clone:
 
 ```bash
-node <this-skill-folder>/scripts/shopware-api.mjs diff --repo . --base origin/trunk --head HEAD
+npx -y shopware-api-index@0.1.0-beta.0 diff --repo . --base origin/trunk --head HEAD
 ```
 
 It lists the routes, entity fields and flags, feature flags, configuration

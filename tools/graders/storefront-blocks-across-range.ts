@@ -5,7 +5,7 @@
 // page_checkout_cart_shipping_costs_trigger_icon (cart). Twig does not fail
 // on an override of a missing block, it just never renders it, so nothing
 // tells the merchant. A model cannot know these removals from memory; the
-// bundled shopware-api.mjs (`facts`) lists both as "missing in 6.7.0.0 …".
+// `npx shopware-api-index facts` lists both as "missing in 6.7.0.0 …".
 //
 // Pass: each feature (the address hint, the truck icon) sits in a block that
 // exists in every 6.6 release and in one that exists in every 6.7 release

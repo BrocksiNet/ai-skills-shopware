@@ -8,7 +8,7 @@
 // With --repo, base and head are refs of a shopware/shopware clone, built
 // (and cached) on the spot, and each change names its line. Without it,
 // they are releases in the index. --help lists the options. The skills
-// ship the same command bundled: skills/*/scripts/shopware-api.mjs diff.
+// run the same command from npm: npx shopware-api-index diff.
 import { errorMessage } from '../../src/errors.ts';
 import { processIo, runDiff } from '../src/diff-cli.ts';
 

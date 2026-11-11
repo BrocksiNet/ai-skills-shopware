@@ -108,7 +108,7 @@ describe('record and summary', () => {
     assert.equal(ranTool(run, 'shopware-api.mjs'), true);
     assert.equal(ranTool(quoted, 'shopware-api.mjs'), true);
     assert.equal(ranTool(read, 'shopware-api.mjs'), false);
-    assert.equal(expectedTool(ROOT, 'storefront-blocks-across-range'), 'shopware-api.mjs');
+    assert.equal(expectedTool(ROOT, 'storefront-blocks-across-range'), 'shopware-api-index');
     assert.equal(expectedTool(ROOT, TASK_B), null);
   });
   test('error reason is the last three stderr lines', () => {

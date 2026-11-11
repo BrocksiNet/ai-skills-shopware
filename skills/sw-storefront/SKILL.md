@@ -59,7 +59,7 @@ Read only the reference that matches the task or the files it changes:
    finish, instead of reading core source per tag:
 
    ```bash
-   node <this-skill-folder>/scripts/shopware-api.mjs facts .
+   npx -y shopware-api-index@0.1.0-beta.0 facts .
    ```
 
    It lists each block, template and JS plugin the plugin uses that is

@@ -1,10 +1,10 @@
-// shopware-api: the entry of the bundled script the skills ship
-// (skills/*/scripts/shopware-api.mjs, written by bin/bundle.ts). One file,
+// shopware-api: the entry of the `shopware-api-index` npm package
+// (npm/shopware-api.mjs, written by bin/bundle.ts). One file,
 // no npm install, Node 20 or newer.
 //
-//   node scripts/shopware-api.mjs diff --repo . --base origin/trunk --head HEAD
-//   node scripts/shopware-api.mjs diff --base 6.6.10.4 --head 6.7.0.0
-//   node scripts/shopware-api.mjs facts <extension dir>
+//   npx shopware-api-index diff --repo . --base origin/trunk --head HEAD
+//   npx shopware-api-index diff --base 6.6.10.4 --head 6.7.0.0
+//   npx shopware-api-index facts <extension dir>
 import { errorMessage } from '../../src/errors.ts';
 import { processIo } from '../src/diff-cli.ts';
 import { run } from '../src/main-cli.ts';
