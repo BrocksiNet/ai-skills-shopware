@@ -43,23 +43,20 @@ Each `tasks/<rule>/` is a fixture task:
 tasks/<rule>/
 ├── instruction.md     # the prompt given to the agent
 ├── fixture/           # starting code copied into the agent's working dir
-├── fixtures/pass/     # golden workdir that must PASS grade.sh (CI)
-├── fixtures/fail/     # required sneak-FAIL for new graders (almost-pass)
-└── grade.sh           # entry point: runs tools/graders/<task>.ts (exit 0 = pass)
+├── fixtures/pass/     # golden workdir the grader must PASS (CI)
+└── fixtures/fail/     # required sneak-FAIL for new graders (almost-pass)
 ```
 
 ```bash
-chmod +x evals/test-graders.sh evals/tasks/*/grade.sh
 ./evals/test-graders.sh
 ```
 
-`grade.sh` contract (env provided by the runner):
+Grader contract (env provided by the runner):
 
 - `WORKDIR` — directory with the agent's resulting files (fixture + edits).
 - `TRANSCRIPT` — path to a file containing the agent's textual output.
 
-`grade.sh` is the same wrapper in every task: it runs
-`node tools/bin/grade.ts <task>`. The checks are TypeScript in
+Every caller grades a task with `node tools/bin/grade.ts <task>`. The checks are TypeScript in
 [`tools/graders/<task>.ts`](../tools/graders/), built from the helpers in
 [`tools/src/grade/kit.ts`](../tools/src/grade/kit.ts) (`findFile`, `hasLine`,
 `stripComments`, `phpMethod`, `jsCallArgs`, `verdict`). Run one by hand:
@@ -75,7 +72,8 @@ for fuzzy rules only.
 Check the **relationship** the rule cares about (this method, this mapping
 object, this Twig block), not that tokens appear somewhere in the workdir.
 PHP/JS structure graders live in [`tools/ast/`](tools/ast/) (`php-parser` +
-`@babel/parser`); their `grade.sh` calls `tools/ast/run-grade.sh` instead.
+`@babel/parser`); those tasks keep a `grade.sh` that calls `tools/ast/run-grade.sh`, and
+`grade.ts` runs it.
 Snippet tests: `cd evals/tools/ast && npm test`. A comment, leftover file,
 or unused call is not a pass.
 New graders must ship `fixtures/fail/` as an almost-correct sneak.
@@ -111,8 +109,7 @@ tasks/review-<rule>-catch/
 ├── fixture/context/            # the touched files before the change
 ├── fixtures/pass/.transcript.txt
 ├── fixtures/fail/.transcript.txt
-├── grade.sh                    # the wrapper; the pair's entry in tools/graders/review-pairs.ts
-└── skills
+└── skills                      # the grader: the pair's entry in tools/graders/review-pairs.ts
 ```
 
 The agent ends its answer with one fenced `json` block:
@@ -140,7 +137,7 @@ fails both graders without `.skip-fixture-grade`.
 
 - `runner/run-task.sh <task> <on|off>` — copy the fixture into a temp workdir,
   turn the skill set on or off for that workdir, invoke the agent, capture the
-  transcript, remove the skill profile, then run `grade.sh`. Exit `0` pass,
+  transcript, remove the skill profile, then run `tools/bin/grade.ts`. Exit `0` pass,
   `1` fail, `4` agent error (never counted as a fail), `3` no agent configured.
   An agent error, such as "Rate limit exceeded" on a free model, is retried
   `EVAL_AGENT_RETRIES` times (default 2), `EVAL_AGENT_RETRY_WAIT` seconds apart

@@ -4,7 +4,7 @@
 team) runs agents in containers with `instruction.md` + `tests/test.sh` and a
 numerical reward. It natively drives `claude-code` and `codex` agents, which fits
 our provider-independence goal, and its deterministic `test.sh` reward maps
-cleanly onto our `grade.sh` graders.
+cleanly onto our deterministic graders (`tools/bin/grade.ts`).
 
 `evals/runner/` is the lightweight, Docker-free local path; Harbor is the
 containerized, parallel, reproducible path for CI and bigger runs.
@@ -17,7 +17,7 @@ Each of our `evals/tasks/<task>/` maps to a Harbor task:
 | ----------- | ---------- |
 | `instruction.md` | `evals/tasks/<task>/instruction.md` |
 | task workspace | `evals/tasks/<task>/fixture/` |
-| `tests/test.sh` | bridge that calls `evals/tasks/<task>/grade.sh` |
+| `tests/test.sh` | bridge that calls `node tools/bin/grade.ts <task>` |
 | `task.toml` | from [`task.toml.template`](task.toml.template) |
 
 ## Generate Harbor tasks

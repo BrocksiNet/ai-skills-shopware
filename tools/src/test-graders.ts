@@ -1,23 +1,23 @@
 // Golden tests for the eval task graders (evals/test-graders.sh). No model
 // calls.
 //
-// Each task with a grade.sh is graded on copies of its golden folders:
+// Each task is graded with tools/bin/grade.ts on copies of its golden folders:
 //   - fixture/         must FAIL (the pristine start state)
 //   - fixtures/fail/   must FAIL (the almost-pass sneak)
 //   - fixtures/pass/   must PASS (when present)
 // Both negative cases run when both exist. A task may drop a
 // `.skip-fixture-grade` marker when fixture/ is only the agent start dir and
 // the grader may pass on it.
-import { cpSync, existsSync, mkdtempSync, readdirSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
+import { cpSync, existsSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { run } from './proc.ts';
 import { inSeries } from './series.ts';
-import { compareText } from './text.ts';
+import { gradeCommand, isTask, listTasks, ownGradeSh } from './tasks.ts';
 
 export interface TestGradersOptions {
   root: string;
-  /** Task names; empty = every task with a grade.sh. */
+  /** Task names; empty = every task. */
   tasks: string[];
   env: NodeJS.ProcessEnv;
   out: (text: string) => void;
@@ -42,18 +42,21 @@ export function graderCases(taskDir: string): { cases: Case[]; error?: string } 
   return error === undefined ? { cases } : { cases, error };
 }
 
-const usesAst = (grader: string): boolean =>
-  existsSync(grader) && readFileSync(grader, 'utf8').includes('evals/tools/ast');
+const usesAst = (tasksRoot: string, task: string): boolean => {
+  const own = ownGradeSh(tasksRoot, task);
+  return own !== undefined && readFileSync(own, 'utf8').includes('evals/tools/ast');
+};
 
-/** grade.sh on a copy of `source`; the copy's transcript is the fixture's
+/** grade.ts on a copy of `source`; the copy's transcript is the fixture's
  *  .transcript.txt or an empty file. Returns the exit code. */
-async function grade(taskDir: string, source: string, env: NodeJS.ProcessEnv): Promise<number> {
+async function grade(root: string, task: string, source: string, env: NodeJS.ProcessEnv): Promise<number> {
   const workdir = mkdtempSync(join(tmpdir(), 'grader-'));
   try {
     cpSync(source, workdir, { recursive: true });
     const transcript = join(workdir, TRANSCRIPT);
     if (!existsSync(transcript)) writeFileSync(transcript, '');
-    const r = await run('bash', [join(taskDir, 'grade.sh')], {
+    const { cmd, args } = gradeCommand(root, task);
+    const r = await run(cmd, args, {
       env: { ...env, WORKDIR: workdir, TRANSCRIPT: transcript },
     });
     return r.status;
@@ -66,13 +69,8 @@ async function grade(taskDir: string, source: string, env: NodeJS.ProcessEnv): P
  *  2 = the AST tools a grader needs are not installed. */
 export async function testGraders(o: TestGradersOptions): Promise<number> {
   const tasksRoot = join(o.root, 'evals/tasks');
-  const tasks =
-    o.tasks.length > 0
-      ? o.tasks
-      : readdirSync(tasksRoot)
-          .filter((t) => existsSync(join(tasksRoot, t, 'grade.sh')))
-          .toSorted(compareText);
-  const needsAst = tasks.some((t) => usesAst(join(tasksRoot, t, 'grade.sh')));
+  const tasks = o.tasks.length > 0 ? o.tasks : listTasks(tasksRoot);
+  const needsAst = tasks.some((t) => usesAst(tasksRoot, t));
   if (needsAst && !existsSync(join(o.root, 'evals/tools/ast/node_modules'))) {
     o.err('test-graders: AST tools missing. Run: cd evals/tools/ast && npm ci\n');
     return 2;
@@ -85,15 +83,15 @@ export async function testGraders(o: TestGradersOptions): Promise<number> {
   };
   await inSeries(tasks, async (task) => {
     const taskDir = join(tasksRoot, task);
-    if (!existsSync(join(taskDir, 'grade.sh'))) {
-      fail(`${task}: missing grade.sh`);
+    if (!isTask(tasksRoot, task)) {
+      fail(`${task}: not a task (no instruction.md)`);
       return;
     }
     o.out(`task: ${task}\n`);
     const { cases, error } = graderCases(taskDir);
     if (error !== undefined) fail(`${task}: ${error}`);
     await inSeries(cases, async (c) => {
-      const rc = await grade(taskDir, join(taskDir, c.label), o.env);
+      const rc = await grade(o.root, task, join(taskDir, c.label), o.env);
       if ((rc === 0) === (c.expect === 'pass')) o.out(`  OK: ${task} (${c.label})\n`);
       else fail(`${task} (${c.label}): expected ${c.expect}, exit ${rc}`);
     });

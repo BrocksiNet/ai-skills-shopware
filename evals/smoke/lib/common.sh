@@ -20,11 +20,16 @@ fi
 smoke_log() { printf '[smoke] %s\n' "$*" >&2; }
 smoke_die() { smoke_log "ERROR: $*"; exit 1; }
 
+# Grades one task on WORKDIR and TRANSCRIPT (set by the caller).
+smoke_grade() {
+  node "${REPO_ROOT}/tools/bin/grade.ts" "$1"
+}
+
 smoke_task_dir() {
   local task="$1"
   local dir="${TASKS_ROOT}/${task}"
   [[ -d "${dir}" ]] || smoke_die "unknown task: ${task}"
-  [[ -f "${dir}/instruction.md" && -f "${dir}/grade.sh" ]] || smoke_die "task incomplete: ${task}"
+  [[ -f "${dir}/instruction.md" ]] || smoke_die "task incomplete: ${task}"
   printf '%s' "${dir}"
 }
 
@@ -49,7 +54,7 @@ smoke_grader_dry_run() {
     fi
 
     smoke_log "grader dry-run: ${task}"
-    if WORKDIR="${workdir}" TRANSCRIPT=/dev/null bash "${task_dir}/grade.sh"; then
+    if WORKDIR="${workdir}" TRANSCRIPT=/dev/null smoke_grade "${task}"; then
       smoke_log "  grader expects PASS on pristine fixture (sanity) — may FAIL by design"
     else
       smoke_log "  grader FAIL on fixture-only (expected before agent edits)"

@@ -27,7 +27,7 @@ function markdown(dir: string): string[] {
 test('every blind pair exists with both halves', () => {
   for (const pair of Object.keys(BLIND)) {
     for (const half of ['catch', 'ignore']) {
-      assert.ok(existsSync(join(ROOT, 'evals/tasks', `${pair}-${half}`, 'grade.sh')), `${pair}-${half}`);
+      assert.ok(existsSync(join(ROOT, 'evals/tasks', `${pair}-${half}`, 'instruction.md')), `${pair}-${half}`);
     }
   }
 });

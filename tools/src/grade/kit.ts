@@ -1,6 +1,6 @@
 // What a task grader works with. tools/graders/<task>.ts exports `grade`, a
-// function from the agent's workdir and transcript to a verdict. The task's
-// grade.sh runs it through tools/bin/grade.ts, which prints `score=1
+// function from the agent's workdir and transcript to a verdict.
+// tools/bin/grade.ts runs it and prints `score=1
 // (detail)` or `score=0 (detail)` and exits 0 or 1.
 //
 // The helpers mirror the old shell graders: `grep -q` matched per line, so

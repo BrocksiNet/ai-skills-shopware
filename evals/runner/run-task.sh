@@ -6,7 +6,8 @@
 #
 # Copies the task fixture into a temp workdir, turns the skill set on or off
 # for that workdir, invokes the agent with the task instruction, captures the
-# transcript, removes the skill profile again, then runs the task's grade.sh.
+# transcript, removes the skill profile again, then grades it with
+# tools/bin/grade.ts.
 #
 # Required:
 #   SKILLS_AGENT_CMD    reads the prompt on stdin, works in CWD, prints the

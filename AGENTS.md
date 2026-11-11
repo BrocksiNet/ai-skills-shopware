@@ -40,16 +40,16 @@ skills/<skill-name>/
 evals/tasks/<task-name>/
   instruction.md              # prompt given to the agent
   fixture/                    # starting code (negative / pristine case)
-  fixtures/pass/              # golden workdir that must PASS grade.sh
+  fixtures/pass/              # golden workdir the grader must PASS
   fixtures/fail/              # optional golden FAIL case
-  grade.sh                    # fixed entry: runs tools/graders/<task>.ts (or an AST grader)
+  grade.sh                    # only for AST graders: calls evals/tools/ast/run-grade.sh
   skills                      # optional: extra skills for smoke A/B (one name per line)
   expect-tool                 # optional: command the A/B checks each trace for (ran_on / ran_off)
 
 evals/smoke/                  # local A/B harness (Claude, Codex, Cursor CLI)
 evals/runner/                 # shell wrappers for tools/bin (fake-agent.sh is the test double), install-agent.sh
 evals/harbor/                 # containerized Harbor wiring (optional)
-evals/test-graders.sh         # golden tests for all grade.sh scripts (wrapper for tools/bin/test-graders.ts)
+evals/test-graders.sh         # golden tests for all task graders (wrapper for tools/bin/test-graders.ts)
 evals/tools/ast/              # Node AST graders (php-parser + @babel/parser)
 evals/routing/<case>/         # diff.patch + expected.json for reference routing
 evals/routing-replay/<pr>/    # real core PRs: trimmed diff.patch + case.json (comment-mapped references, hand labels)
@@ -85,11 +85,11 @@ tools/                        # repo tooling in TypeScript (Node 24, no build st
   src/agent-ask.ts            # one prompt to an agent with no tools (suggest-rules)
   bin/draft-comment.ts        # suggest-rules.yml: proposals comment on the drift issue, /draft <ID> parsing
                               # `suggest-rules.ts draft <id>`: worktree, agent edit, free checks, A/B, draft PR (src/draft-*.ts)
-  bin/grade.ts                # runs one task's grader (what every grade.sh calls)
+  bin/grade.ts                # grades one task: what Harbor, smoke, the runner and test-graders call
   graders/<task>.ts           # one grader per eval task: workdir + transcript -> verdict
   graders/review-pairs.ts     # the review pairs' expectations, one entry per catch/ignore pair
   src/grade/                  # grader kit (file search, comment stripping, PHP method, review findings)
-  bin/test-graders.ts         # golden fixtures against every grade.sh
+  bin/test-graders.ts         # golden fixtures against every task grader
   bin/fake-agent.ts           # test double for SKILLS_AGENT_CMD
   bin/check-update.ts         # pinned version vs latest release tag
   bin/skill-context.ts        # share of input tokens our skills took in your recent Claude Code sessions
@@ -166,7 +166,7 @@ Smoke harness — graders only (no API cost):
 | ----- | ---- | ---- | -- |
 | 0 | `validate-skills.sh`, ShellCheck, golden graders, markdown lint | free | every push |
 | 1 | Activation — right skill loads for trigger phrases | agent API | dry on push; real in `evals.yml` |
-| 2 | Behavioral — `evals/tasks/<task>/` + `grade.sh` | agent API | via `evals.yml` when configured |
+| 2 | Behavioral — `evals/tasks/<task>/` + its grader | agent API | via `evals.yml` when configured |
 | 3 | A/B ablation — skill on vs off | agent API | `evals/runner/ab.sh` or `evals/smoke/smoke.sh suite` |
 
 Details: [`evals/README.md`](evals/README.md). Local A/B smoke:
@@ -179,10 +179,9 @@ Graders receive:
 - `WORKDIR` — directory with fixture + agent edits
 - `TRANSCRIPT` — path to the agent's textual output
 
-Every task keeps a `grade.sh`, because Harbor, the smoke harness and the
-runner call it. It is the same two-line wrapper everywhere: it runs
-`node tools/bin/grade.ts <task>`, which loads
-[`tools/graders/<task>.ts`](tools/graders/) and prints `score=1 (…)` or
+A task is a folder with an `instruction.md`. Harbor, the smoke harness, the
+runner and `test-graders` all grade it with `node tools/bin/grade.ts <task>`,
+which loads [`tools/graders/<task>.ts`](tools/graders/) and prints `score=1 (…)` or
 `score=0 (…)`. Write the checks there, as `export const grade: Grader`, with
 the helpers in [`tools/src/grade/kit.ts`](tools/src/grade/kit.ts):
 
@@ -199,8 +198,9 @@ export const grade: Grader = ({ workdir }) => {
 Prefer grep/AST and project tooling (PHPStan, ECS, PHPUnit via `vendor/bin/`
 when present) over LLM-as-judge. For PHP/JS **structure** (attribute on a
 named method, real `import`/`export`, not a comment or leftover file), add a
-predicate under [`evals/tools/ast/`](evals/tools/ast/) and thin-wrap `grade.sh`
-through `evals/tools/ast/run-grade.sh`. Evals-only `npm ci` there is allowed;
+predicate under [`evals/tools/ast/`](evals/tools/ast/) and give the task a
+`grade.sh` that calls `evals/tools/ast/run-grade.sh`; `grade.ts` runs a
+task's own `grade.sh` when it has one. Evals-only `npm ci` there is allowed;
 do not add Composer or a Shopware `vendor/`. Golden fixtures in
 `fixtures/pass/` and `fixtures/fail/` are tested by `evals/test-graders.sh` on
 every push. `fixture/` is also graded as FAIL unless the task has
@@ -256,9 +256,9 @@ contract: [`evals/README.md`](evals/README.md#review-tasks-review-rule-catch---i
    `## Already enforced by CI (do not repeat)` section; never edit that
    block by hand.
 6. Add activation prompts under `skills/<skill>/evals/`.
-7. Add a behavioral task under `evals/tasks/<rule>/` with the `grade.sh`
-   wrapper, its grader in `tools/graders/<task>.ts`, and golden fixtures (`fixtures/pass/` required when the rule is gradable). For PHP/JS
-   structure, add `evals/tools/ast/src/tasks/<rule>.mjs` and thin-wrap `grade.sh`.
+7. Add a behavioral task under `evals/tasks/<rule>/` with an `instruction.md`,
+   its grader in `tools/graders/<task>.ts`, and golden fixtures (`fixtures/pass/` required when the rule is gradable). For PHP/JS
+   structure, add `evals/tools/ast/src/tasks/<rule>.mjs` and a `grade.sh` that calls `evals/tools/ast/run-grade.sh`.
    Then set the rule's `eval` to the task.
 8. Re-run `validate-skills.sh` (it runs `tools/bin/validate-rules.ts`), `evals/tools/ast`
    snippet tests, and `evals/test-graders.sh`.

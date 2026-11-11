@@ -6,7 +6,7 @@
 #   ./evals/test-graders.sh              # all tasks
 #   ./evals/test-graders.sh no-empty-explicit
 #
-# Each task with grade.sh is checked:
+# Each task (a folder with instruction.md) is graded by tools/bin/grade.ts:
 #   - fixture/                    → grader must FAIL (pristine / starting state)
 #   - fixtures/fail/              → grader must FAIL (sneak / almost-pass)
 #   - fixtures/pass/              → grader must PASS (when present)

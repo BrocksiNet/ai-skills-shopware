@@ -1,4 +1,5 @@
 import { readFileSync, existsSync } from 'node:fs';
+import { isTask } from './tasks.ts';
 import { join } from 'node:path';
 
 export interface TransferCase {
@@ -40,7 +41,7 @@ export function transferCases(root: string, plan = 'evals/experiments/discovery-
       references.length === 0 ||
       references.length !== refs.length ||
       references.some((r) => !existsSync(join(root, 'skills', r))) ||
-      !existsSync(join(root, 'evals/tasks', v.task, 'grade.sh'))
+      !isTask(join(root, 'evals/tasks'), v.task)
     )
       throw new Error('transfer case has missing artifacts');
     return { task: v.task, expected_references: references, outcome_kind: v.outcome_kind };

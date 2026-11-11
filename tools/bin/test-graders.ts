@@ -1,4 +1,4 @@
-// Golden tests for every grade.sh; tools/src/test-graders.ts documents the
+// Golden tests for every task grader; tools/src/test-graders.ts documents the
 // cases. evals/test-graders.sh is a wrapper for this file.
 //
 //   node tools/bin/test-graders.ts [task ...]

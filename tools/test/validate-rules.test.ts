@@ -42,7 +42,7 @@ function fixture(edit: (files: Record<string, string>, catalog: CatalogJson) => 
   const files: Record<string, string> = {
     [SKILL]: '# Testing\n\n- **TEST-001** First rule.\n- **TEST-002** Second rule, see `TEST-001`.\n',
     [REF]: '# Shape\n\nNo rules here.\n',
-    'evals/tasks/some-task/grade.sh': '',
+    'evals/tasks/some-task/instruction.md': '',
   };
   const catalog: CatalogJson = {
     prefixes: { TEST: 'sw-testing', PLG: 'sw-plugin-development' },
