@@ -8,6 +8,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- The API index tool is no longer copied into five skills as
+  `scripts/shopware-api.mjs` (631 KB each). The skills run the
+  `shopware-api-index` npm package instead, pinned to `0.1.0-beta.0`:
+  `npx -y shopware-api-index@0.1.0-beta.0 facts .`. CI checks every skill
+  pins the version in `tools/api-index/npm/package.json`.
+
 ## [0.16.0] - 2026-11-09
 
 ### Added

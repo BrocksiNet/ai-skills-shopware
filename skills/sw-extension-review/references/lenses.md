@@ -29,12 +29,11 @@ points at a replacement the extenders can use today: `CORE-063`.
 - Does a new `class_exists` or `method_exists` guard name API that every
   release in the range already ships: `REV-015`? Does it check the class
   when only the method is new: `PLG-024`?
-- Answer the two questions above with the script this skill ships,
-  `scripts/shopware-api.mjs` next to the `references/` folder. Run it with
-  plain Node from the extension's root:
+- Answer the two questions above with the `shopware-api-index` npm
+  package. Run it with `npx` (Node 20 or newer) from the extension's root:
 
   ```bash
-  git diff origin/main...HEAD | node <this-skill-folder>/scripts/shopware-api.mjs facts --diff - .
+  git diff origin/main...HEAD | npx -y shopware-api-index@0.1.0-beta.0 facts --diff - .
   ```
 
   It lists, for every release in the `shopware/core` range, the API the

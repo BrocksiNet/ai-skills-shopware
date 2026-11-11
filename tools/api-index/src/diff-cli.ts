@@ -1,5 +1,5 @@
-// The api-diff command, shared by bin/api-diff.ts and the bundled
-// shopware-api.mjs the skills ship. Exit codes: 0 no breaking change,
+// The api-diff command, shared by bin/api-diff.ts and the
+// shopware-api-index npm package the skills run. Exit codes: 0 no breaking change,
 // 3 breaking changes found, 2 usage or unknown ref, 1 any other error.
 import { parseArgs } from 'node:util';
 import { type ApiDiff, diffSnapshots, diffText, isBreak, SURFACES, type Surface } from './api-diff.ts';

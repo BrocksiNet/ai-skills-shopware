@@ -1,4 +1,4 @@
-Ran `node .claude/skills/sw-plugin-development/scripts/shopware-api.mjs facts .`:
+Ran `npx -y shopware-api-index@0.1.0-beta.0 facts .`:
 two blocks the plugin extends are missing in 6.7.0.0 … 6.7.16.0.
 
 Risk report

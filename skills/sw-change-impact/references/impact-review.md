@@ -25,14 +25,13 @@ Ask what else this change touches, even if those files are not in the diff.
 
 If you cannot name who else is affected, you have not reviewed the change.
 
-### Public API: run the bundled script
+### Public API: run the API index tool
 
-This skill ships `scripts/shopware-api.mjs`, one file next to the
-`references/` folder. Run it with plain Node from the root of the
-shopware/shopware clone; nothing to install:
+Run the `shopware-api-index` npm package with `npx` (Node 20 or newer)
+from the root of the shopware/shopware clone; nothing else to install:
 
 ```bash
-node <this-skill-folder>/scripts/shopware-api.mjs diff --repo . --base origin/trunk --head HEAD
+npx -y shopware-api-index@0.1.0-beta.0 diff --repo . --base origin/trunk --head HEAD
 ```
 
 It names the routes, entity fields, feature flags, configuration keys,

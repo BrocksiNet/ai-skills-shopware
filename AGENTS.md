@@ -98,7 +98,7 @@ tools/                        # repo tooling in TypeScript (Node 24, no build st
                               # bin/api-diff.ts public API changes between two refs, bin/check-breaks.ts api-diff vs known-breaks.json;
                               # PHP, routes, entities, flags, config, admin, storefront, Twig and build surfaces;
                               # bin/shopware-api.ts both commands in one CLI, bin/bundle.ts bundles it into
-                              # skills/<skill>/scripts/shopware-api.mjs (CI fails on a stale copy; npm/ the package),
+                              # npm/, the `shopware-api-index` package the skills run with npx (CI checks the pinned version),
                               # bin/api-changes.ts what changed since last week's index
 
 scripts/
@@ -115,7 +115,7 @@ docs/                         # local validation, smoke evals, tooling stack
   evals.yml                   # model evals (gated: schedule, label, dispatch)
   mine-trunk.yml              # weekly drift issue for every source; /mined moves docs/.mining-state.json
   api-index.yml               # weekly public API index build, published as the `api-index` release with api-changes.md
-  publish-shopware-api.yml    # manual: the bundled shopware-api.mjs as an npm package (needs NPM_TOKEN)
+  publish-shopware-api.yml    # manual: publishes the shopware-api-index npm package the skills pin (needs NPM_TOKEN)
   collect-reviews.yml         # daily review comments of merged core PRs, published as the `review-signals` release
   suggest-rules.yml           # weekly rule proposals on the drift issue; /draft <ID> opens a draft PR
 ```

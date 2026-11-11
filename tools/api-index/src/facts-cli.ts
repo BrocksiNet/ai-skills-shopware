@@ -1,5 +1,5 @@
-// The api-facts command, shared by bin/api-facts.ts and the bundled
-// shopware-api.mjs the skills ship. Exit codes: 0 a report (facts are not
+// The api-facts command, shared by bin/api-facts.ts and the
+// shopware-api-index npm package the skills run. Exit codes: 0 a report (facts are not
 // findings, so finding some is not an error), 2 usage, 1 any other error.
 import { readFileSync, rmSync } from 'node:fs';
 import { parseArgs } from 'node:util';
