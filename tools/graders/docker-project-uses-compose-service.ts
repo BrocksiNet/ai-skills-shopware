@@ -5,7 +5,7 @@
 import { fail, type Grader, hasLine, verdict } from '../src/grade/kit.ts';
 import { checkScript, hostRun, otherWrappers, runsThrough } from '../src/grade/check-script.ts';
 
-const IN_WEB = /(^|[\s;&|(])docker[ -]compose\s.*\b(exec|run)\s+(-\S+\s+)*web\s/u;
+const IN_WEB = /(^|[\s;&|(])docker[ -]compose\s.*\b(exec|run)(\s+-\S+(\s+[^-\s]\S*)?)*\s+web\s/u;
 const TEMPLATE_NAME = /\bshopware_(app|node)\b/u;
 
 export const grade: Grader = ({ workdir }) => {
