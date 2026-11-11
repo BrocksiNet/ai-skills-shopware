@@ -83,8 +83,9 @@ describe('shopware 2026-10-13..2026-10-19, the WP8 window', () => {
   // The hand pass found five commits. #21541 adds the BC and HTTP cache
   // guidelines, #21660 a PHPStan rule, #21177 touches the rule CORE-015
   // cites, d10e3c4f the check ARCH-004 cites. Three commits change only
-  // classes nobody cites or prose.
-  test('reads the nine commits with a change and lists the other three as quiet', async () => {
+  // classes nobody cites or prose. a38e3f48 (#20794) turns ludtwig rules
+  // on and off.
+  test('reads the ten commits with a change and lists the other three as quiet', async () => {
     const { read, quiet } = commits(await text, 'shopware');
     for (const sha of ['f2bf3794', '75b0a495', '190d734b', '8dc74f24', '7ad011f1']) assert.ok(read.includes(sha), sha);
     // 0e782aa7 is #21660, 0fa3e10a #21541, f0e46ffa #21177.
@@ -95,6 +96,7 @@ describe('shopware 2026-10-13..2026-10-19, the WP8 window', () => {
       '75b0a495',
       '7ad011f1',
       '8dc74f24',
+      'a38e3f48',
       'd10e3c4f',
       'f0e46ffa',
       'f2bf3794',
@@ -169,11 +171,12 @@ describe('shopware 2026-10-05..2026-10-11', () => {
   // "two majors" section of the feature flag guideline; #20840 adds a skill
   // bullet and a Danger rule against traits in unit tests; #21227 a PHPStan
   // rule against reflection in unit tests; #20482 a guideline section on
-  // runtime guards. #20305 only touches tagged-service-contracts.php.
+  // runtime guards. #20305 only touches tagged-service-contracts.php;
+  // 5a5214f2 adds a Twig filter to the ludtwig config, which is no rule.
   test('reads five commits; #20305 touches no rule class', async () => {
     const { read, quiet } = commits(await text, 'shopware');
     assert.deepEqual(read, ['4a5a519c', '52d5908b', '0b0a7241', 'c64d7402', 'c81123dc']);
-    assert.deepEqual(quiet, ['fcd9b687']);
+    assert.deepEqual(quiet, ['5a5214f2', 'fcd9b687']);
   });
   test('new rules and guideline sections nobody cites are the backlog', async () => {
     assert.deepEqual(
@@ -209,8 +212,9 @@ describe('shopware 2026-09-28..2026-10-04', () => {
   // PHP skill; 00e31c8e changes StoreApiRouteExtensionRule, which ARCH-004
   // cites. Three commits only touch rule classes nobody cites
   // (NoCreateMockWithoutExpectationsRule, DomainExceptionRule) or no rule
-  // class at all.
-  test('reads nine commits and lists three as quiet', async () => {
+  // class at all. 8afb4ee1 only changes the ignore globs of the admin
+  // ESLint config.
+  test('reads nine commits and lists four as quiet', async () => {
     const { read, quiet } = commits(await text, 'shopware');
     assert.deepEqual(read, [
       '61184ef8',
@@ -223,7 +227,7 @@ describe('shopware 2026-09-28..2026-10-04', () => {
       '738a0642',
       '4ac77655',
     ]);
-    assert.deepEqual(quiet, ['71acb1c0', 'f5f124a5', '5e9b5c87']);
+    assert.deepEqual(quiet, ['71acb1c0', '8afb4ee1', 'f5f124a5', '5e9b5c87']);
   });
   test('changes to cited checks land under their rules', async () => {
     const t = await text;

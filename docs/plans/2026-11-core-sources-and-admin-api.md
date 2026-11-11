@@ -26,6 +26,14 @@ replaces a source.
 
 ## WP A: read more of core in the drift issue
 
+**Status: done.** Differences from the steps below: `.github/AGENTS.md`
+maps to `sw-core-development`, because it is CI workflow guidance, not PR
+text. The environment templates map to `sw-podman-dev` until
+`sw-local-dev` exists. Translation lint is not read: it has no rule config,
+only a command and an exception list, and no catalog rule cites it. The
+new paths joined the `shopware` source, whose state already starts at its
+last mined commit, so no history dump happens.
+
 Today `rules/sources.json` reads seven of core's 11 skills, the root and
 Administration `AGENTS.md`, `coding-guidelines/`, `StaticAnalyze` and the
 PR template.

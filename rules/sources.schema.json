@@ -70,6 +70,12 @@
               "skills": { "type": "array", "minItems": 1, "items": { "type": "string" } }
             }
           }
+        },
+        "ignore": {
+          "type": "array",
+          "minItems": 1,
+          "items": { "type": "string", "minLength": 1 },
+          "description": "Path prefixes under the watched paths whose changes the drift report leaves out on purpose, such as core skills we have no counterpart for. Without it, such a change lands under Unmapped every week."
         }
       }
     }

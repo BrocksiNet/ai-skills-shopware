@@ -43,7 +43,8 @@ const group = (text: string, skill: string, title: string): string =>
   section(text, skill).split(`### ${title}`)[1]?.split('\n### ')[0] ?? '';
 
 describe('the 2026-10-13..2026-10-19 window', () => {
-  // This historical recording covers the four paths watched when it was made.
+  // Without the AGENTS.md paths, so this test stays on the rule classes,
+  // guidelines and lint configs the hand pass looked at.
   const recordedSource = { ...TRUNK, paths: TRUNK.paths.filter((p) => !p.endsWith('AGENTS.md')) };
   const mined = mineSource(recorded(), recordedSource, windowOfDays('2026-10-13', '2026-10-19'));
   const text = mined.then((m) => report([m]));
@@ -53,6 +54,7 @@ describe('the 2026-10-13..2026-10-19 window', () => {
     for (const sha of HAND_MINED) assert.ok(commits.includes(sha), sha);
     assert.deepEqual(commits, [
       '7ad011f1',
+      'a38e3f48',
       'd10e3c4f',
       'f0e46ffa',
       '190d734b',
@@ -63,7 +65,7 @@ describe('the 2026-10-13..2026-10-19 window', () => {
       '0fa3e10a',
     ]);
     assert.match(await text, /^Without a delta: \[53a6cceb\].*\[00689309\].*\[36e19f9d\]/mu);
-    assert.match(await text, /^\| `shopware` \| 2026-10-13 \| 12 \| 9 \| \[21949101\]/mu);
+    assert.match(await text, /^\| `shopware` \| 2026-10-13 \| 13 \| 10 \| \[21949101\]/mu);
   });
   test('rule classes land under the rule whose enforced_by cites them', async () => {
     const t = await text;

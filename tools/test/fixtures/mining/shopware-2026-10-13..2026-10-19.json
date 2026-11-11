@@ -59,6 +59,10 @@
    ]
   }
  ],
+ "repos/shopware/shopware/commits?sha=trunk&path=.agents-templates%2FAGENTS.local.template.ddev.md&since=2026-10-13T00%3A00%3A00Z&until=2026-10-19T23%3A59%3A59Z&per_page=100&page=1": [],
+ "repos/shopware/shopware/commits?sha=trunk&path=.agents-templates%2FAGENTS.local.template.docker.md&since=2026-10-13T00%3A00%3A00Z&until=2026-10-19T23%3A59%3A59Z&per_page=100&page=1": [],
+ "repos/shopware/shopware/commits?sha=trunk&path=.agents-templates%2FAGENTS.local.template.native.md&since=2026-10-13T00%3A00%3A00Z&until=2026-10-19T23%3A59%3A59Z&per_page=100&page=1": [],
+ "repos/shopware/shopware/commits?sha=trunk&path=.agents-templates%2FAGENTS.local.template.vagrant.md&since=2026-10-13T00%3A00%3A00Z&until=2026-10-19T23%3A59%3A59Z&per_page=100&page=1": [],
  "repos/shopware/shopware/commits?sha=trunk&path=coding-guidelines&since=2026-10-13T00%3A00%3A00Z&until=2026-10-19T23%3A59%3A59Z&per_page=100&page=1": [
   {
    "sha": "0fa3e10a6d6214f479f5e6f188bce9f82b1bdea4",
@@ -145,6 +149,7 @@
    ]
   }
  ],
+ "repos/shopware/shopware/commits?sha=trunk&path=adr%2F2026-06-17-shared-guidance-files-for-humans-and-agents.md&since=2026-10-13T00%3A00%3A00Z&until=2026-10-19T23%3A59%3A59Z&per_page=100&page=1": [],
  "repos/shopware/shopware/commits?sha=trunk&path=src%2FCore%2FDevOps%2FStaticAnalyze&since=2026-10-13T00%3A00%3A00Z&until=2026-10-19T23%3A59%3A59Z&per_page=100&page=1": [
   {
    "sha": "0e782aa79e93b15cc3b832c1a7eae30c92208786",
@@ -287,6 +292,7 @@
    ]
   }
  ],
+ "repos/shopware/shopware/commits?sha=trunk&path=.github%2FAGENTS.md&since=2026-10-13T00%3A00%3A00Z&until=2026-10-19T23%3A59%3A59Z&per_page=100&page=1": [],
  "repos/shopware/shopware/commits?sha=trunk&path=.github%2FPULL_REQUEST_TEMPLATE.md&since=2026-10-13T00%3A00%3A00Z&until=2026-10-19T23%3A59%3A59Z&per_page=100&page=1": [
   {
    "sha": "0fa3e10a6d6214f479f5e6f188bce9f82b1bdea4",
@@ -299,6 +305,61 @@
    "parents": [
     {
      "sha": "96a8e5c5a226129234e8df5bf1c123cb07aaff2c"
+    }
+   ]
+  }
+ ],
+ "repos/shopware/shopware/commits?sha=trunk&path=AGENTS.md&since=2026-10-13T00%3A00%3A00Z&until=2026-10-19T23%3A59%3A59Z&per_page=100&page=1": [
+  {
+   "sha": "53a6cceb130892ed385933a3eac502f6d0b9cbfc",
+   "commit": {
+    "message": "chore: Remove last gitlab references and fix links to XSD files (#21565)",
+    "committer": {
+     "date": "2026-10-14T09:33:10Z"
+    }
+   },
+   "parents": [
+    {
+     "sha": "f0e46ffa76c8d7d315c9ca1d9d446794bbc84340"
+    }
+   ]
+  },
+  {
+   "sha": "2fbf77935e881a5c9db66e746ed9e335602e8091",
+   "commit": {
+    "message": "docs: Improve AGENTS.md file (#21605)",
+    "committer": {
+     "date": "2026-10-14T09:19:46Z"
+    }
+   },
+   "parents": [
+    {
+     "sha": "7ac174ab6c5cc499f13579ab7d0cc5c0edc5890e"
+    }
+   ]
+  }
+ ],
+ "repos/shopware/shopware/commits?sha=trunk&path=src%2FAdministration%2FResources%2Fapp%2Fadministration%2FAGENTS.md&since=2026-10-13T00%3A00%3A00Z&until=2026-10-19T23%3A59%3A59Z&per_page=100&page=1": [],
+ "repos/shopware/shopware/commits?sha=trunk&path=src%2FAdministration%2FResources%2Fapp%2Fadministration%2Fsrc%2Fapp%2FAGENTS.md&since=2026-10-13T00%3A00%3A00Z&until=2026-10-19T23%3A59%3A59Z&per_page=100&page=1": [],
+ "repos/shopware/shopware/commits?sha=trunk&path=src%2FAdministration%2FResources%2Fapp%2Fadministration%2Fsrc%2Fcore%2FAGENTS.md&since=2026-10-13T00%3A00%3A00Z&until=2026-10-19T23%3A59%3A59Z&per_page=100&page=1": [],
+ "repos/shopware/shopware/commits?sha=trunk&path=src%2FAdministration%2FResources%2Fapp%2Fadministration%2Fsrc%2Fmodule%2FAGENTS.md&since=2026-10-13T00%3A00%3A00Z&until=2026-10-19T23%3A59%3A59Z&per_page=100&page=1": [],
+ "repos/shopware/shopware/commits?sha=trunk&path=src%2FAdministration%2FResources%2Fapp%2Fadministration%2F.stylelintrc&since=2026-10-13T00%3A00%3A00Z&until=2026-10-19T23%3A59%3A59Z&per_page=100&page=1": [],
+ "repos/shopware/shopware/commits?sha=trunk&path=src%2FAdministration%2FResources%2Fapp%2Fadministration%2Feslint.config.ts&since=2026-10-13T00%3A00%3A00Z&until=2026-10-19T23%3A59%3A59Z&per_page=100&page=1": [],
+ "repos/shopware/shopware/commits?sha=trunk&path=src%2FStorefront%2FResources%2Fapp%2Fadministration%2Feslint.config.ts&since=2026-10-13T00%3A00%3A00Z&until=2026-10-19T23%3A59%3A59Z&per_page=100&page=1": [],
+ "repos/shopware/shopware/commits?sha=trunk&path=src%2FStorefront%2FResources%2Fapp%2Fstorefront%2Feslint.config.js&since=2026-10-13T00%3A00%3A00Z&until=2026-10-19T23%3A59%3A59Z&per_page=100&page=1": [],
+ "repos/shopware/shopware/commits?sha=trunk&path=src%2FStorefront%2FResources%2Fapp%2Fstorefront%2Fstylelint.config.js&since=2026-10-13T00%3A00%3A00Z&until=2026-10-19T23%3A59%3A59Z&per_page=100&page=1": [],
+ "repos/shopware/shopware/commits?sha=trunk&path=src%2FStorefront%2FResources%2Fviews%2Fludtwig-config.toml&since=2026-10-13T00%3A00%3A00Z&until=2026-10-19T23%3A59%3A59Z&per_page=100&page=1": [
+  {
+   "sha": "a38e3f480fbae070fd49fd481b85afc4a1fce73d",
+   "commit": {
+    "message": "fix(storefront): lint previously excluded Twig templates (#20794)",
+    "committer": {
+     "date": "2026-10-13T11:06:00Z"
+    }
+   },
+   "parents": [
+    {
+     "sha": "9034442ecf73277ecb6c7e040dadb46b7a73389e"
     }
    ]
   }
@@ -351,6 +412,29 @@
    }
   ]
  },
+ "repos/shopware/shopware/commits/a38e3f480fbae070fd49fd481b85afc4a1fce73d": {
+  "sha": "a38e3f480fbae070fd49fd481b85afc4a1fce73d",
+  "commit": {
+   "message": "fix(storefront): lint previously excluded Twig templates (#20794)",
+   "committer": {
+    "date": "2026-10-13T11:06:00Z"
+   }
+  },
+  "parents": [
+   {
+    "sha": "9034442ecf73277ecb6c7e040dadb46b7a73389e"
+   }
+  ],
+  "files": [
+   {
+    "filename": "src/Storefront/Resources/views/ludtwig-config.toml",
+    "status": "modified",
+    "additions": 3,
+    "deletions": 2,
+    "patch": "@@ -26,7 +26,7 @@\n \n # -------------------------------\n # Ludtwig configuration\n-version = \"0.13.0\"\n+version = \"0.14.0\"\n # -------------------------------\n [general]\n active-rules = [\n@@ -36,16 +36,17 @@ active-rules = [\n #    \"indentation\",\n     \"twig-block-line-breaks\",\n     \"twig-block-name-snake-case\",\n-    \"html-attribute-name-kebab-case\",\n     \"twig-logic-and\",\n     \"twig-logic-or\",\n+    \"twig-no-break\",\n     \"twig-string-quotation\",\n     \"html-string-quotation\",\n     \"twig-hash-key-no-quotes\",\n     \"twig-prefer-shopware-extends\",\n     \"twig-block-duplicate\",\n     \"twig-json-encode-escape-js\",\n     \"html-duplicate-id\",\n+    \"html-tag-fragments\",\n     \"twig-variable-definition-naming\",\n     \"twig-valid-filter\",\n     \"twig-valid-test\","
+   }
+  ]
+ },
  "repos/shopware/shopware/commits/d10e3c4f26ea6b7309774afb8c10bb639ba60e78": {
   "sha": "d10e3c4f26ea6b7309774afb8c10bb639ba60e78",
   "commit": {
@@ -370,6 +454,29 @@
     "status": "modified",
     "additions": 6,
     "deletions": 1
+   }
+  ]
+ },
+ "repos/shopware/shopware/commits/2fbf77935e881a5c9db66e746ed9e335602e8091": {
+  "sha": "2fbf77935e881a5c9db66e746ed9e335602e8091",
+  "commit": {
+   "message": "docs: Improve AGENTS.md file (#21605)",
+   "committer": {
+    "date": "2026-10-14T09:19:46Z"
+   }
+  },
+  "parents": [
+   {
+    "sha": "7ac174ab6c5cc499f13579ab7d0cc5c0edc5890e"
+   }
+  ],
+  "files": [
+   {
+    "filename": "AGENTS.md",
+    "status": "modified",
+    "additions": 2,
+    "deletions": 2,
+    "patch": "@@ -46,15 +46,15 @@ shopware/\n-### Definition of Done — mandatory for every change\n+### Definition of Done — mandatory for every significant change\n-- **Commit with a conventional message incl. scope**, e.g. `feat(administration): …`.\n+- **Asked to commit changes? Commit with a conventional message incl. scope**, e.g. `feat(administration): …`. Never commit without explicitly beeing told to do so."
    }
   ]
  },
@@ -439,6 +546,13 @@
    }
   ],
   "files": [
+   {
+    "filename": "AGENTS.md",
+    "status": "modified",
+    "additions": 30,
+    "deletions": 7,
+    "patch": "@@ -1,6 +1,7 @@\n@@ -44,15 +45,21 @@ shopware/\n-- **Behaviour change ⇒ tests are required.** Admin JS/TS/Vue → follow `shopware-admin-js`; PHP → `shopware-phpunit-tests`. Twig-only template changes follow the rule below. Style-only, snippet/translation, and docs-only changes do not need tests; still add one when it is useful and follows an established pattern.\n-- **Twig-only template changes ⇒ never add PHP integration tests just to render or assert Twig output.** A direct render without a Storefront request can cache empty request-dependent Twig globals in the shared test kernel and break unrelated later tests. Run the Storefront Twig lint; use browser/acceptance coverage when the rendered behaviour needs testing.\n+- **Behaviour change ⇒ tests are required.** Admin JS/TS/Vue → follow `shopware-admin-js`; PHP → `shopware-phpunit-tests`.\n+- **Twig-only template changes ⇒ never add PHP integration tests just to render or assert Twig output.**\n-- **Behavioural change, feature, deprecation, or config change? → check `shopware-release-docs`** for RELEASE_INFO / UPGRADE entries. Put a blank line before and after every heading in those files; the Markdown renderer otherwise glues the heading to the previous paragraph.\n+- **Behavioural change, feature, deprecation, or config change? → check `shopware-release-docs`** for RELEASE_INFO / UPGRADE entries.\n@@ -86,11 +93,27 @@ To add a new skill (interactive or unattended), follow the checklist in [`coding\n+### Writing Markdown\n+- Put a blank line before and after every heading\n+- Put only one sentence into one line.\n+- Indent continuation lines inside list items to align with the item's content (2 spaces for - ), instead of relying on lazy continuation lines.\n+- Do not add a line break in the middle of a sentence, without a punctuation sign before it.\n+- Add an empty line before a code example enclosed with code fences."
+   },
    {
     "filename": "coding-guidelines/core/feature-flags.md",
     "status": "modified",
