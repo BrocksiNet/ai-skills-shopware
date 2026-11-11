@@ -5,10 +5,12 @@ name: publish-shopware-api
 # pinned to the version in tools/api-index/npm/package.json, so publish that
 # version before a skill change that pins it reaches main. Manual only.
 #
-#   - Publishes the version in npm/package.json; a prerelease such as
-#     0.1.0-beta.0 goes to the `beta` dist-tag, anything else to `latest`.
-#   - Needs the NPM_TOKEN secret (an npm automation token); without it the
-#     job stops before anything is published.
+#   - Stages the version in npm/package.json with `npm stage publish`; a
+#     prerelease such as 0.1.0-beta.0 goes to the `beta` dist-tag, anything
+#     else to `latest`.
+#   - No token: npm trusts this workflow file (trusted publishing over OIDC)
+#     and allows it to stage only. A maintainer approves the staged version
+#     with 2FA on npmjs.com before it goes live.
 #   - dry_run packs and lists the files without publishing.
 
 on:
@@ -29,7 +31,7 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: read
-      id-token: write # npm provenance
+      id-token: write # npm trusted publishing (OIDC) and provenance
     steps:
       - uses: actions/checkout@v5
 
@@ -50,18 +52,18 @@ jobs:
           npm pack --dry-run
           node shopware-api.mjs --help
 
-      - name: Publish
+      # Staged publishing needs npm 11.15.0 or newer.
+      - name: Update npm
+        if: ${{ !inputs.dry_run }}
+        run: npm install -g npm@latest
+
+      - name: Stage the release
         if: ${{ !inputs.dry_run }}
         working-directory: tools/api-index/npm
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
         run: |
-          if [ -z "$NODE_AUTH_TOKEN" ]; then
-            echo "::error::NPM_TOKEN is not set; nothing published."
-            exit 1
-          fi
           case "$(node -p "require('./package.json').version")" in
             *-*) tag=beta ;;
             *) tag=latest ;;
           esac
-          npm publish --provenance --access public --tag "$tag"
+          npm stage publish --access public --tag "$tag"
+          echo "::notice::Staged. Approve it on npmjs.com (2FA) to make it live."
