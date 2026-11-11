@@ -33,7 +33,7 @@ points at a replacement the extenders can use today: `CORE-063`.
   package. Run it with `npx` (Node 20 or newer) from the extension's root:
 
   ```bash
-  git diff origin/main...HEAD | npx -y shopware-api-index@0.1.0-beta.0 facts --diff - .
+  git diff origin/main...HEAD | npx -y shopware-api-index@0.1.0-beta.1 facts --diff - .
   ```
 
   It lists, for every release in the `shopware/core` range, the API the

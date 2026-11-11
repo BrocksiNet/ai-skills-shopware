@@ -9,7 +9,7 @@ Operators and integrations notice after the update. Run the
 root of the shopware/shopware clone:
 
 ```bash
-npx -y shopware-api-index@0.1.0-beta.0 diff --repo . --base origin/trunk --head HEAD
+npx -y shopware-api-index@0.1.0-beta.1 diff --repo . --base origin/trunk --head HEAD
 ```
 
 It lists the routes, entity fields and flags, feature flags, configuration
