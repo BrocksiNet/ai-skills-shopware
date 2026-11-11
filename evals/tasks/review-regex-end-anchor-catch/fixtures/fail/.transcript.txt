@@ -1,13 +1,15 @@
+The pattern could be tightened, but this is cosmetic.
+
 ```json
 {
   "findings": [
     {
-      "rule_id": "SEC-005",
-      "severity": "major",
+      "rule_id": "SEC-009",
+      "severity": "nit",
       "file": "src/Controller/Admin/PointsExportController.php",
-      "line": 30,
-      "summary": "The fileName request parameter is user input that reaches the filesystem; validate it with a Symfony constraint instead of preg_match.",
-      "fix": "Use a DataValidationDefinition with a Regex constraint."
+      "line": 34,
+      "summary": "The pattern ends in $ without the D modifier; \\z would be stricter.",
+      "fix": "End the pattern with \\z."
     }
   ]
 }

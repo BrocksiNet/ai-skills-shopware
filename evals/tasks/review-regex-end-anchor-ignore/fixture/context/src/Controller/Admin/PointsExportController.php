@@ -4,10 +4,10 @@ namespace Swag\Loyalty\Controller\Admin;
 
 use Shopware\Core\Framework\Context;
 use Shopware\Core\Framework\Log\Package;
+use Shopware\Core\Framework\Validation\DataBag\RequestDataBag;
 use Swag\Loyalty\Export\PointsCsvExporter;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
-use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Attribute\Route;
 
 #[Route(defaults: ['_routeScope' => ['api']])]
@@ -21,10 +21,10 @@ class PointsExportController extends AbstractController
     #[Route(
         path: '/api/_action/swag-loyalty/export-points',
         name: 'api.action.swag-loyalty.export-points',
-        defaults: ['_acl' => ['swag_loyalty_points:read']],
+        defaults: ['_acl' => ['swag_loyalty.points_export']],
         methods: ['POST'],
     )]
-    public function export(Request $request, Context $context): JsonResponse
+    public function export(RequestDataBag $data, Context $context): JsonResponse
     {
         $path = $this->exporter->export('exports/points.csv', $context);
 
