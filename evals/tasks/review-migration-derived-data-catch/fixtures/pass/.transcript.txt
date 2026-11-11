@@ -1,0 +1,16 @@
+The backfill is batched, but the hash is derived data computed in SQL for every product.
+
+```json
+{
+  "findings": [
+    {
+      "rule_id": "PLG-020",
+      "severity": "major",
+      "file": "src/Migration/Migration1729900000BackfillListingHash.php",
+      "line": 35,
+      "summary": "listing_hash is derived from product fields and recomputed in SQL; the listing values belong to an indexer, so the hash drifts when the product changes outside this migration.",
+      "fix": "Register the listing indexer with registerIndexer() so it writes listing_hash from the same code path, and drop the SQL backfill."
+    }
+  ]
+}
+```

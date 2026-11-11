@@ -1,0 +1,16 @@
+Batching is fine here. The hash backfill looks like it should go to an indexer.
+
+```json
+{
+  "findings": [
+    {
+      "rule_id": "PLG-020",
+      "severity": "minor",
+      "file": "src/Migration/Migration1729900000BackfillListingHash.php",
+      "line": 35,
+      "summary": "The listing hash is computed in SQL; an indexer would be cleaner.",
+      "fix": "Register an indexer instead of the SQL backfill."
+    }
+  ]
+}
+```

@@ -1,0 +1,59 @@
+diff --git a/src/Migration/Migration1729900000BackfillListingHash.php b/src/Migration/Migration1729900000BackfillListingHash.php
+new file mode 100644
+index 0000000..3b1f0c2
+--- /dev/null
++++ b/src/Migration/Migration1729900000BackfillListingHash.php
+@@ -0,0 +1,54 @@
++<?php declare(strict_types=1);
++
++namespace Swag\Listing\Migration;
++
++use Doctrine\DBAL\ArrayParameterType;
++use Doctrine\DBAL\Connection;
++use Shopware\Core\Framework\Migration\MigrationStep;
++
++class Migration1729900000BackfillListingHash extends MigrationStep
++{
++    private const BATCH_SIZE = 1000;
++
++    public function getCreationTimestamp(): int
++    {
++        return 1729900000;
++    }
++
++    public function update(Connection $connection): void
++    {
++        if (!$this->columnExists($connection, 'swag_product_listing', 'listing_hash')) {
++            $connection->executeStatement(
++                'ALTER TABLE `swag_product_listing` ADD COLUMN `listing_hash` CHAR(32) NULL'
++            );
++        }
++
++        $lastId = '';
++        do {
++            $ids = $connection->fetchFirstColumn(
++                'SELECT `id` FROM `product`
++                WHERE `id` > :lastId AND `parent_id` IS NULL
++                ORDER BY `id`
++                LIMIT ' . self::BATCH_SIZE,
++                ['lastId' => $lastId],
++            );
++            if ($ids === []) {
++                break;
++            }
++
++            $connection->executeStatement(
++                'UPDATE `swag_product_listing` `listing`
++                INNER JOIN `product` `p` ON `p`.`id` = `listing`.`product_id`
++                INNER JOIN `product_translation` `t` ON `t`.`product_id` = `p`.`id`
++                    AND `t`.`product_version_id` = `p`.`version_id`
++                SET `listing`.`listing_hash` = MD5(CONCAT_WS("|", `t`.`name`, `p`.`product_number`, `p`.`stock`, `p`.`active`))
++                WHERE `p`.`id` IN (:ids)',
++                ['ids' => $ids],
++                ['ids' => ArrayParameterType::BINARY],
++            );
++
++            $lastId = (string) end($ids);
++        } while (\count($ids) === self::BATCH_SIZE);
++    }
++}

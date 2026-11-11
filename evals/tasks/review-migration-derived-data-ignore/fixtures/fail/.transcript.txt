@@ -1,0 +1,16 @@
+The product number copy is a derived listing value, so it should come from an indexer.
+
+```json
+{
+  "findings": [
+    {
+      "rule_id": "PLG-020",
+      "severity": "minor",
+      "file": "src/Migration/Migration1729900100BackfillListingNumber.php",
+      "line": 33,
+      "summary": "The listing copy of product_number is derived data and belongs to an indexer.",
+      "fix": "Register an indexer for product_number instead of the SQL copy."
+    }
+  ]
+}
+```

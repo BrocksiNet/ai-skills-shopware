@@ -1,0 +1,80 @@
+diff --git a/src/Migration/Migration1729900000MoveTierToTable.php b/src/Migration/Migration1729900000MoveTierToTable.php
+new file mode 100644
+index 0000000..c4d07e9
+--- /dev/null
++++ b/src/Migration/Migration1729900000MoveTierToTable.php
+@@ -0,0 +1,74 @@
++<?php declare(strict_types=1);
++
++namespace Swag\Loyalty\Migration;
++
++use Doctrine\DBAL\ArrayParameterType;
++use Doctrine\DBAL\Connection;
++use Shopware\Core\Framework\Migration\MigrationStep;
++use Shopware\Core\Framework\Uuid\Uuid;
++
++class Migration1729900000MoveTierToTable extends MigrationStep
++{
++    public function getCreationTimestamp(): int
++    {
++        return 1729900000;
++    }
++
++    public function update(Connection $connection): void
++    {
++        $connection->executeStatement('
++            CREATE TABLE IF NOT EXISTS `swag_loyalty_tier` (
++                `id` BINARY(16) NOT NULL,
++                `name` VARCHAR(32) NOT NULL,
++                PRIMARY KEY (`id`),
++                UNIQUE KEY `uniq.swag_loyalty_tier.name` (`name`)
++            ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci
++        ');
++
++        foreach (['bronze', 'silver', 'gold'] as $name) {
++            $connection->executeStatement(
++                'INSERT IGNORE INTO `swag_loyalty_tier` (`id`, `name`) VALUES (:id, :name)',
++                ['id' => Uuid::randomBytes(), 'name' => $name],
++            );
++        }
++
++        $connection->executeStatement(
++            'ALTER TABLE `swag_loyalty_account` ADD COLUMN `tier_id` BINARY(16) NULL'
++        );
++
++        $lastId = '';
++        do {
++            $ids = $connection->fetchFirstColumn(
++                'SELECT `id` FROM `swag_loyalty_account`
++                WHERE `id` > :lastId AND `tier_id` IS NULL
++                ORDER BY `id`
++                LIMIT 1000',
++                ['lastId' => $lastId],
++            );
++            if ($ids === []) {
++                break;
++            }
++
++            $connection->executeStatement(
++                'UPDATE `swag_loyalty_account` `a`
++                INNER JOIN `swag_loyalty_tier` `t` ON `t`.`name` = `a`.`tier`
++                SET `a`.`tier_id` = `t`.`id`
++                WHERE `a`.`id` IN (:ids)',
++                ['ids' => $ids],
++                ['ids' => ArrayParameterType::BINARY],
++            );
++
++            $lastId = (string) end($ids);
++        } while (\count($ids) === 1000);
++    }
++
++    public function updateDestructive(Connection $connection): void
++    {
++        $connection->executeStatement(
++            'DELETE FROM `system_config` WHERE `configuration_key` = :key',
++            ['key' => 'SwagLoyalty.config.legacyTierMode'],
++        );
++
++        $connection->executeStatement('ALTER TABLE `swag_loyalty_account` DROP COLUMN `tier`');
++    }
++}
