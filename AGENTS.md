@@ -116,7 +116,7 @@ docs/                         # local validation, smoke evals, tooling stack
   evals.yml                   # model evals (gated: schedule, label, dispatch)
   mine-trunk.yml              # weekly drift issue for every source; /mined moves docs/.mining-state.json
   api-index.yml               # weekly public API index build, published as the `api-index` release with api-changes.md
-  publish-shopware-api.yml    # manual: publishes the shopware-api-index npm package the skills pin (needs NPM_TOKEN)
+  publish-shopware-api.yml    # manual: stages the shopware-api-index npm package the skills pin (trusted publishing, approve on npmjs.com)
   collect-reviews.yml         # daily review comments of merged core PRs, published as the `review-signals` release
   suggest-rules.yml           # weekly rule proposals on the drift issue; /draft <ID> opens a draft PR
 ```
