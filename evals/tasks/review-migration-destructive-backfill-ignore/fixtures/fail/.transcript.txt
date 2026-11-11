@@ -1,0 +1,16 @@
+The change looks fine overall, one nit on the drop.
+
+```json
+{
+  "findings": [
+    {
+      "rule_id": null,
+      "severity": "minor",
+      "file": "src/Migration/Migration1729900000MoveTierToTable.php",
+      "line": 72,
+      "summary": "Dropping the legacy column in updateDestructive() is a long-running change on big shops.",
+      "fix": "Run the drop in a quieter window."
+    }
+  ]
+}
+```

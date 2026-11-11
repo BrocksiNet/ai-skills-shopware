@@ -723,6 +723,99 @@ export const PAIRS: Record<string, ReviewPair> = {
     summary:
       /customi[sz]|merchant|shop owner|edited|modified by|updated_at|overwrit|clobber|user.?made|own (template|text|changes)/iu,
   },
+  // Catch: The backfill is batched (PLG-019 is satisfied), but it recomputes a listing
+  // hash from product fields in SQL. The finding must come from the derived-data
+  // rule: a major+ finding in src/Migration/ that names PLG-020 or asks for an
+  // indexer.
+  // A finding about rows without a system-language translation or about variants
+  // that inherit the name is allowed: it is why the hash belongs to an indexer.
+  // Ignore: The same batched backfill shape, but it renames the plugin's own label
+  // column: it copies label into badge_label, updateDestructive() drops label, and
+  // nothing is computed from other tables. A minor+ finding that names PLG-020 or
+  // asks for an indexer is a false positive. A finding that labels old code writes
+  // between update() and the drop get lost is allowed: it is a real blue-green
+  // gap, and closing it (triggers) only drew more noise.
+  'migration-derived-data': {
+    rule: 'PLG-020',
+    file: 'src/Migration/**',
+    minSeverity: 'major',
+    summary: /indexer|registerIndexer|PostUpdateIndexer|derived (data|values?)|recomput/iu,
+    allowed: [
+      {
+        rule: 'PLG-020',
+        file: 'src/Migration/**',
+        minSeverity: 'minor',
+        summary: /translation|language|variant|inherit|parent/iu,
+      },
+    ],
+    ignore: {
+      rule: 'PLG-020',
+      summary: /indexer|registerIndexer|PostUpdateIndexer|derived (data|values?)|recomput/iu,
+      allowed: [
+        {
+          rule: 'PLG-017',
+          also: ['PLG-018', 'PLG-019', 'PLG-020'],
+          file: 'src/Migration/**',
+          minSeverity: 'minor',
+          summary:
+            /old(-| )(code|version|app|instance|plugin)|rolling|stale|before the new code|deploy|blue.?green|between update|after (update\(\)|the (one-time )?(backfill|copy))|written (after|meanwhile|later)|meanwhile|concurrent/iu,
+        },
+      ],
+    },
+  },
+  // Catch: updateDestructive() runs one full-table UPDATE join over swag_loyalty_account
+  // before it drops the legacy column. The backfill is long-running work in the
+  // destructive step; it belongs in update(), batched, so the destructive step
+  // stays a drop. Needs a minor+ finding in src/Migration/ that names PLG-018 or
+  // PLG-017 (a non-destructive backfill in the destructive step) or describes the
+  // heavy work in updateDestructive(). Minor, not major: the severity table in
+  // sw-extension-review rates costly or fragile work as minor. A PLG-019 finding
+  // about the same unbatched UPDATE is allowed: it is the same problem. So is a
+  // finding that the drop runs without checking every row got a tier_id: it
+  // points at the same destructive step.
+  // Ignore: The same tier move, but the tier_id backfill is batched in update() and
+  // updateDestructive() only deletes one config key and drops the column. A
+  // minor+ finding that names PLG-018 or calls the destructive step heavy is a
+  // false positive. A finding that tiers old code writes between update() and the
+  // drop get lost is allowed, as in the derived-data pair.
+  'migration-destructive-backfill': {
+    rule: 'PLG-018',
+    also: ['PLG-017'],
+    file: 'src/Migration/**',
+    minSeverity: 'minor',
+    summary:
+      /updateDestructive[^.]*(heavy|\blong|slow|time ?out|backfill|whole table|entire table|every row|all (rows|accounts)|stay small)|(heavy|long-running|backfill|time ?out)[^.]*updateDestructive/iu,
+    allowed: [
+      {
+        rule: 'PLG-019',
+        file: 'src/Migration/**',
+        minSeverity: 'minor',
+        summary: /batch|chunk|single UPDATE|one UPDATE|whole table|entire table|every row|all rows/iu,
+      },
+      {
+        rule: 'PLG-018',
+        file: 'src/Migration/**',
+        minSeverity: 'minor',
+        summary:
+          /drop[^.]*(unmatched|miss|without (check|verif)|coverage|lose|lost)|(unmatched|miss|lose|lost)[^.]*drop/iu,
+      },
+    ],
+    ignore: {
+      rule: 'PLG-018',
+      summary:
+        /updateDestructive[^.]*(heavy|\blong|slow|time ?out|backfill|whole table|entire table|every row|all (rows|accounts)|stay small)|(heavy|long-running|backfill|time ?out)[^.]*updateDestructive/iu,
+      allowed: [
+        {
+          rule: 'PLG-017',
+          also: ['PLG-018', 'PLG-019', 'PLG-020'],
+          file: 'src/Migration/**',
+          minSeverity: 'minor',
+          summary:
+            /old(-| )(code|version|app|instance|plugin)|rolling|stale|before the new code|deploy|blue.?green|between update|after (update\(\)|the (one-time )?(backfill|copy))|written (after|meanwhile|later)|meanwhile|concurrent/iu,
+        },
+      ],
+    },
+  },
   // Catch: The new migration's updateDestructive() is empty, and its test only runs it
   // and expects no error, so the test covers no behaviour. Needs a minor+
   // finding in src/Core/Migration/ that names CORE-040 or describes the test of

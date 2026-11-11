@@ -1,0 +1,16 @@
+The UPDATE over the whole account table is not batched.
+
+```json
+{
+  "findings": [
+    {
+      "rule_id": "PLG-019",
+      "severity": "major",
+      "file": "src/Migration/Migration1729900000MoveTierToTable.php",
+      "line": 42,
+      "summary": "The single UPDATE over swag_loyalty_account is not batched and will time out on big shops.",
+      "fix": "Update about 1,000 rows per statement, ordered by id."
+    }
+  ]
+}
+```

@@ -1,0 +1,16 @@
+The label copy is a derived listing value, so it should come from an indexer.
+
+```json
+{
+  "findings": [
+    {
+      "rule_id": "PLG-020",
+      "severity": "minor",
+      "file": "src/Migration/Migration1729900100RenameListingLabel.php",
+      "line": 44,
+      "summary": "The badge_label copy is derived data and belongs to an indexer.",
+      "fix": "Register an indexer for badge_label instead of the SQL copy."
+    }
+  ]
+}
+```

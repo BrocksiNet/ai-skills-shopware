@@ -1,0 +1,7 @@
+The migration renames the plugin's own label column: update() adds badge_label and copies label into it in batches of 1,000, and updateDestructive() drops label. Nothing is computed from other tables. Nothing to report.
+
+```json
+{
+  "findings": []
+}
+```

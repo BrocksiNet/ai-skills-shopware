@@ -1,0 +1,16 @@
+The tier backfill runs inside updateDestructive(), so it is a heavy UPDATE over every account before the drop.
+
+```json
+{
+  "findings": [
+    {
+      "rule_id": "PLG-018",
+      "severity": "major",
+      "file": "src/Migration/Migration1729900000MoveTierToTable.php",
+      "line": 42,
+      "summary": "The UPDATE join over every swag_loyalty_account row is a long-running backfill inside updateDestructive(), which must stay small.",
+      "fix": "Move the tier_id backfill into update() in batches and keep only the DROP COLUMN in updateDestructive()."
+    }
+  ]
+}
+```

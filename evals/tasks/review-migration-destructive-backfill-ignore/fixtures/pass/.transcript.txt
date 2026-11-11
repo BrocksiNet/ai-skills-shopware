@@ -1,0 +1,7 @@
+The tiers are created and backfilled in batches in update(). updateDestructive() only deletes one config key and drops the legacy column.
+
+```json
+{
+  "findings": []
+}
+```
