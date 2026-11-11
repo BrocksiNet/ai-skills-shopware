@@ -1,0 +1,30 @@
+diff --git a/src/Controller/Admin/PointsExportController.php b/src/Controller/Admin/PointsExportController.php
+index 040159e..b56332a 100644
+--- a/src/Controller/Admin/PointsExportController.php
++++ b/src/Controller/Admin/PointsExportController.php
+@@ -4,6 +4,7 @@
+ 
+ use Shopware\Core\Framework\Context;
+ use Shopware\Core\Framework\Log\Package;
++use Shopware\Core\Framework\Routing\RoutingException;
+ use Shopware\Core\Framework\Validation\DataBag\RequestDataBag;
+ use Swag\Loyalty\Export\PointsCsvExporter;
+ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+@@ -26,8 +27,16 @@
+     )]
+     public function export(RequestDataBag $data, Context $context): JsonResponse
+     {
+-        $path = $this->exporter->export('exports/points.csv', $context);
++        $fileName = $data->get('fileName', 'points');
+ 
++        // Letters, digits, dash and underscore only: the name becomes a path
++        // in the private filesystem and is shown in the Administration.
++        if (!\is_string($fileName) || preg_match('/^[a-z0-9][a-z0-9_-]{0,63}\z/i', $fileName) !== 1) {
++            throw RoutingException::invalidRequestParameter('fileName');
++        }
++
++        $path = $this->exporter->export('exports/' . $fileName . '.csv', $context);
++
+         return new JsonResponse(['path' => $path]);
+     }
+ }

@@ -1,0 +1,7 @@
+The file name is checked against a pattern anchored with `\z`, so nothing can follow the allowed characters.
+
+```json
+{
+  "findings": []
+}
+```

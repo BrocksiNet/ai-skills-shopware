@@ -858,6 +858,22 @@ export const PAIRS: Record<string, ReviewPair> = {
     minSeverity: 'major',
     summary: /serializ|round.trip|constructor default|lost[^.]{0,60}flag/iu,
   },
+  // Catch: An Admin route checks a user-given export file name with
+  // `/^[a-z0-9][a-z0-9_-]{0,63}$/i` and builds a path from it. `$` also matches
+  // before a trailing newline, so "points\n" passes. Needs a minor+ finding in
+  // src/ that names SEC-009 or describes the trailing newline or end anchor.
+  // Minor, not major: by the severity table in sw-extension-review a newline
+  // in a private file name, with no traversal, is fragile, not a hole.
+  // Ignore: The same export file name check, but the pattern ends in `\z`, which
+  // matches only at the very end of the string. Any finding above nit is a
+  // false positive, most of all one that asks for the `D` modifier on top.
+  'regex-end-anchor': {
+    rule: 'SEC-009',
+    file: 'src/**',
+    minSeverity: 'minor',
+    summary:
+      /newline|line break|\\n|\\z|\bD\b.{0,20}(modifier|flag)|(modifier|flag).{0,20}\bD\b|end anchor|end-of-string|\$ (also )?match/iu,
+  },
   // Catch: The RELEASE_INFO entry opens with a bold label. Needs a minor+ finding in
   // RELEASE_INFO-*.md that names CORE-049 or describes the bold label.
   // Ignore: The same RELEASE_INFO entry without the bold label. A minor+ finding that

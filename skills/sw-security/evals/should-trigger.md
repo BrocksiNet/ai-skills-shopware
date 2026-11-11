@@ -7,3 +7,4 @@
 - Verify webhook signature on this app endpoint.
 - Add a Store-API route for this custom field.
 - I want to set _loginRequired on an existing Store API route of my plugin. What breaks?
+- Is `preg_match('/^[a-z0-9-]+$/', $name)` safe for validating a file name in my plugin controller?

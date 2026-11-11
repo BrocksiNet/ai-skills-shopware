@@ -11,6 +11,14 @@
   a hash of the request body: the same key with a different body is an
   error, not a replay. A key without that scope hands whoever reuses or
   guesses it another caller's response, with its tokens, codes and data.
+- **SEC-009** **End a validation regex with `\z` or the `D` modifier, not a
+  bare `$`.** In PHP, `$` also matches before one trailing newline, so
+  `preg_match('/^[a-z0-9-]+$/', "abc\n")` returns 1 and the newline gets
+  through into a file path, a header, a cache key or a stored value. The
+  same goes for `\Z`, the Symfony `Regex` constraint and Finder filters.
+  Write `/^[a-z0-9-]+\z/` or `/^[a-z0-9-]+$/D`. A `$` under the `m`
+  modifier, which matches line ends on purpose, is fine. Core's PHPStan
+  rule `PregDollarWithoutDRule` checks only core, never an extension.
 
 ## Changing an existing route
 
@@ -42,3 +50,5 @@ on a released route.
 keyed only by the header.
 `review-route-input-catch` / `-ignore` — a Store-API route whose `limit`
 query parameter is typed but has no upper bound.
+`review-regex-end-anchor-catch` / `-ignore` — an export file name checked
+with `/^…$/`, and the same check ending in `\z`.

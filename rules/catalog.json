@@ -4545,6 +4545,35 @@
       "defer_on_trunk": false
     },
     {
+      "id": "SEC-009",
+      "skill": "sw-security",
+      "file": "skills/sw-security/references/api-acl-and-input.md",
+      "title": "End a validation regex with \\z or the D modifier, not a bare $",
+      "status": "active",
+      "since": "2026-11-09",
+      "eval": "review-regex-end-anchor-catch",
+      "core_guide_ids": [],
+      "audience": [
+        "core",
+        "plugin",
+        "app"
+      ],
+      "defer_on_trunk": false,
+      "trunk": {
+        "source": "src/Core/DevOps/StaticAnalyze/PHPStan/Rules/PregDollarWithoutDRule.php",
+        "commit": "4827f64c7b9e74772eae0ecc0cdea86848d7b1ed",
+        "enforced_by": [
+          {
+            "tool": "PregDollarWithoutDRule",
+            "kind": "phpstan",
+            "catches": "reports a `$` without the `D` modifier and any `\\Z` in `preg_*` patterns, the Symfony `Regex` constraint and the Finder regex filters, in core's enabled namespaces",
+            "misses": "patterns built at runtime, regexes in Twig or JavaScript, and every extension, because the rule ships only in core's PHPStan config",
+            "trunk_only": true
+          }
+        ]
+      }
+    },
+    {
       "id": "IMP-001",
       "skill": "sw-change-impact",
       "file": "skills/sw-change-impact/SKILL.md",
