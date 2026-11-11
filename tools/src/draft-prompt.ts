@@ -4,6 +4,7 @@
 import { existsSync, readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import type { Catalog, Rule } from './catalog.ts';
+import { pairGrader } from './grade/run.ts';
 import { tail } from './proc.ts';
 import { isSuggestion, type Suggestion } from './suggest-ask.ts';
 
@@ -55,18 +56,22 @@ function example(catalog: Catalog, skill: string, kind: string): Rule | undefine
   return pool.at(-1);
 }
 
+/** Where a task's grader lives: its own file, or the review pairs' table. */
+const graderOf = (task: string): string =>
+  pairGrader(task) === undefined ? `tools/graders/${task}.ts` : 'its entry in tools/graders/review-pairs.ts';
+
 function steps(s: Suggestion, catalog: Catalog): string[] {
   const rule = catalog.rules.find((r) => r.id === s.rule);
   const pattern = example(catalog, s.skill, s.eval?.kind ?? 'task');
   const copy =
     pattern === undefined
       ? 'Look at an existing task in evals/tasks/ of the same kind as a pattern.'
-      : `Copy the shape of ${pattern.id} (${pattern.file}, eval ${pattern.eval ?? ''}, grader tools/graders/${pattern.eval ?? ''}.ts).`;
+      : `Copy the shape of ${pattern.id} (${pattern.file}, eval ${pattern.eval ?? ''}, grader ${graderOf(pattern.eval ?? '')}).`;
   if (s.action === 'new')
     return [
       `Add the rule as ${nextFreeId(catalog, s.skill)} in the file of ${s.skill} that owns the topic (SKILL.md or a reference its routes.json lists), as a bullet starting with the bold ID.`,
       'Add its entry to rules/catalog.json with file, title, since (today), eval, audience and defer_on_trunk.',
-      `Add the eval: ${s.eval?.kind === 'review-pair' ? 'a review pair review-<topic>-catch and review-<topic>-ignore' : 'a task'} with grade.sh, its grader in tools/graders/, fixture/, fixtures/pass/ and an almost-pass fixtures/fail/. ${copy}`,
+      `Add the eval: ${s.eval?.kind === 'review-pair' ? 'a review pair review-<topic>-catch and review-<topic>-ignore' : 'a task'} with grade.sh, its grader (${s.eval?.kind === 'review-pair' ? 'an entry in tools/graders/review-pairs.ts' : 'tools/graders/<task>.ts'}), fixture/, fixtures/pass/ and an almost-pass fixtures/fail/. ${copy}`,
       `Add one prompt to skills/${s.skill}/evals/should-trigger.md if the rule adds a new trigger.`,
     ];
   if (s.action === 'update')

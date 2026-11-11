@@ -111,7 +111,7 @@ tasks/review-<rule>-catch/
 ├── fixture/context/            # the touched files before the change
 ├── fixtures/pass/.transcript.txt
 ├── fixtures/fail/.transcript.txt
-├── grade.sh                    # the wrapper; tools/graders/<task>.ts calls reviewCatch or reviewIgnore
+├── grade.sh                    # the wrapper; the pair's entry in tools/graders/review-pairs.ts
 └── skills
 ```
 
