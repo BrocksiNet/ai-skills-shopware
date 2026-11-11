@@ -1,7 +1,7 @@
 # Task: fix the check script
 
 `scripts/check.sh` should run the `CartProcessorTest` PHPUnit test and PHPStan
-for this Shopware checkout. It fails with:
+for this Shopware checkout, on the code as it is on disk now. It fails with:
 
 ```text
 Could not open input file: vendor/bin/phpunit

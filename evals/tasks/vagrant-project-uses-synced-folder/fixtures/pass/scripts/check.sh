@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
-# The Vagrantfile syncs the project to /var/www/shopware in the VM.
+# Two machines; `app` gets the code by rsync, one way, so sync edits first.
 set -euo pipefail
 
-vagrant ssh -c "cd /var/www/shopware && vendor/bin/phpunit --filter CartProcessorTest"
-vagrant ssh -c "cd /var/www/shopware && composer phpstan"
+vagrant rsync app
+vagrant ssh app -c "cd /var/www/shopware && vendor/bin/phpunit --filter CartProcessorTest"
+vagrant ssh app -c "cd /var/www/shopware && composer phpstan"

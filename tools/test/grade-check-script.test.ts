@@ -20,9 +20,9 @@ function workdir(script: string): string {
 describe('check-script graders', () => {
   test('a variable for the guest folder counts as the cd', () => {
     const dir = workdir(
-      'GUEST_DIR=/var/www/shopware\n' +
-        'vagrant ssh -c "cd ${GUEST_DIR} && vendor/bin/phpunit --filter CartProcessorTest"\n' +
-        `vagrant ssh -c "cd '$GUEST_DIR' && composer phpstan"\n`,
+      'GUEST_DIR=/var/www/shopware\nvagrant rsync app\n' +
+        'vagrant ssh app -c "cd ${GUEST_DIR} && vendor/bin/phpunit --filter CartProcessorTest"\n' +
+        `vagrant ssh app -c "cd '$GUEST_DIR' && composer phpstan"\n`,
     );
     assert.equal(vagrant({ workdir: dir, transcript: '' }).pass, true);
   });

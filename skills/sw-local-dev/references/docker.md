@@ -8,6 +8,7 @@ Vagrant or shopware-dev marker. Shopware's own `compose.yaml` uses the
 - **DEV-003** In a Docker Compose project, run PHP and Node commands in the
   service `compose.yaml` defines (`docker compose exec <service>`), not in a
   container name copied from a template that the project does not define.
+  In a script, git hook or CI step add `-T`, because there is no terminal.
 
 ## Find the service
 
