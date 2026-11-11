@@ -76,7 +76,9 @@ grade the fixed `scripts/check.sh`, not the command the agent runs
 run. Native has no file to detect, so its reference is `on_demand` and
 `SKILL.md` picks it when no other environment matches. Core's Docker
 template names containers (`shopware_app`, `shopware_node`) that core's own
-`compose.yaml` does not define; `DEV-003` and its task cover that trap.
+`compose.yaml` does not define; `DEV-003` covers that trap. It has no
+task: Claude Haiku found the service and `-T` without the skill in two
+A/B runs, so `DEV-003` is `eval: null`.
 Core also ships `devenv.nix` and `.devcontainer`; neither is covered yet.
 
 `sw-podman-dev` is one personal setup. Core ships four environment

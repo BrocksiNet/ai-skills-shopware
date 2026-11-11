@@ -7,7 +7,6 @@ import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { describe, test } from 'node:test';
 import { grade as ddev } from '../graders/ddev-project-runs-in-ddev.ts';
-import { grade as docker } from '../graders/docker-project-uses-compose-service.ts';
 import { grade as vagrant } from '../graders/vagrant-project-uses-synced-folder.ts';
 
 function workdir(script: string): string {
@@ -27,28 +26,20 @@ describe('check-script graders', () => {
     assert.equal(vagrant({ workdir: dir, transcript: '' }).pass, true);
   });
 
-  test('compose exec with a working directory option names the service', () => {
-    const dir = workdir(
-      'docker compose exec -T -w /var/www/html web vendor/bin/phpunit --filter CartProcessorTest\n' +
-        'docker compose exec -T -w /var/www/html web composer phpstan\n',
-    );
-    assert.equal(docker({ workdir: dir, transcript: '' }).pass, true);
-  });
-
   test('a quoted command prefix with spaces in a variable is expanded', () => {
     const dir = workdir(
-      'APP="docker compose exec -T -w /var/www/html web"\n' +
-        '$APP vendor/bin/phpunit --filter CartProcessorTest\n$APP composer phpstan\n',
+      'RUN="ddev exec --dir /var/www/html"\n' +
+        '$RUN vendor/bin/phpunit --filter CartProcessorTest\n$RUN composer phpstan\n',
     );
-    assert.equal(docker({ workdir: dir, transcript: '' }).pass, true);
+    assert.equal(ddev({ workdir: dir, transcript: '' }).pass, true);
   });
 
   test('a helper function that passes "$@" on is inlined', () => {
     const dir = workdir(
-      'exec_web() {\n  docker compose exec -T web "$@"\n}\n' +
-        'exec_web vendor/bin/phpunit --filter CartProcessorTest\nexec_web composer phpstan\n',
+      'in_ddev() {\n  ddev exec "$@"\n}\n' +
+        'in_ddev vendor/bin/phpunit --filter CartProcessorTest\nin_ddev composer phpstan\n',
     );
-    assert.equal(docker({ workdir: dir, transcript: '' }).pass, true);
+    assert.equal(ddev({ workdir: dir, transcript: '' }).pass, true);
   });
 
   test('a helper with a host fallback is still a host run', () => {

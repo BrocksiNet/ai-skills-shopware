@@ -1,3 +1,0 @@
-#!/usr/bin/env bash
-# Installed with: git config core.hooksPath .githooks
-exec scripts/check.sh

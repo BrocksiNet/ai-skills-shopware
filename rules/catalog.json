@@ -5195,7 +5195,8 @@
       "title": "In a Docker Compose project, run in the service compose.yaml defines, not a container name from a template, with -T in scripts and hooks",
       "status": "active",
       "since": "2026-11-11",
-      "eval": "docker-project-uses-compose-service",
+      "eval": null,
+      "eval_reason": "Claude Haiku finds the compose service and adds -T on its own (A/B 2026-11-11: 3/3 with and without the skill, also with a git-hook trap), so a task would not show the skill's effect.",
       "core_guide_ids": [],
       "audience": [
         "core",
