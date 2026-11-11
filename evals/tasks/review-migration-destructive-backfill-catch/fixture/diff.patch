@@ -1,9 +1,9 @@
 diff --git a/src/Migration/Migration1729900000MoveTierToTable.php b/src/Migration/Migration1729900000MoveTierToTable.php
 new file mode 100644
-index 0000000..5a1c7e2
+index 0000000..daae686
 --- /dev/null
 +++ b/src/Migration/Migration1729900000MoveTierToTable.php
-@@ -0,0 +1,49 @@
+@@ -0,0 +1,60 @@
 +<?php declare(strict_types=1);
 +
 +namespace Swag\Loyalty\Migration;
@@ -32,22 +32,33 @@ index 0000000..5a1c7e2
 +
 +        foreach (['bronze', 'silver', 'gold'] as $name) {
 +            $connection->executeStatement(
-+                'INSERT IGNORE INTO `swag_loyalty_tier` (`id`, `name`) VALUES (:id, :name)',
++                'INSERT INTO `swag_loyalty_tier` (`id`, `name`) VALUES (:id, :name)
++                ON DUPLICATE KEY UPDATE `name` = `name`',
 +                ['id' => Uuid::randomBytes(), 'name' => $name],
 +            );
 +        }
 +
-+        $connection->executeStatement(
-+            'ALTER TABLE `swag_loyalty_account` ADD COLUMN `tier_id` BINARY(16) NULL'
-+        );
++        if (!$this->columnExists($connection, 'swag_loyalty_account', 'tier_id')) {
++            $connection->executeStatement(
++                'ALTER TABLE `swag_loyalty_account`
++                ADD COLUMN `tier_id` BINARY(16) NULL,
++                ADD CONSTRAINT `fk.swag_loyalty_account.tier_id` FOREIGN KEY (`tier_id`)
++                    REFERENCES `swag_loyalty_tier` (`id`) ON DELETE SET NULL'
++            );
++        }
 +    }
 +
 +    public function updateDestructive(Connection $connection): void
 +    {
++        if (!$this->columnExists($connection, 'swag_loyalty_account', 'tier')) {
++            return;
++        }
++
 +        $connection->executeStatement(
 +            'UPDATE `swag_loyalty_account` `a`
-+             INNER JOIN `swag_loyalty_tier` `t` ON `t`.`name` = `a`.`tier`
-+             SET `a`.`tier_id` = `t`.`id`'
++            INNER JOIN `swag_loyalty_tier` `t` ON `t`.`name` = `a`.`tier`
++            SET `a`.`tier_id` = `t`.`id`
++            WHERE `a`.`tier_id` IS NULL'
 +        );
 +
 +        $connection->executeStatement('ALTER TABLE `swag_loyalty_account` DROP COLUMN `tier`');

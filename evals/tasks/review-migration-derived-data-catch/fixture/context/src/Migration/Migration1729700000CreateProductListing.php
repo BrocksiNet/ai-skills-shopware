@@ -18,9 +18,14 @@ class Migration1729700000CreateProductListing extends MigrationStep
             CREATE TABLE IF NOT EXISTS `swag_product_listing` (
                 `id` BINARY(16) NOT NULL,
                 `product_id` BINARY(16) NOT NULL,
+                `product_version_id` BINARY(16) NOT NULL,
+                `label` VARCHAR(255) NULL,
                 `created_at` DATETIME(3) NOT NULL,
                 `updated_at` DATETIME(3) NULL,
-                PRIMARY KEY (`id`)
+                PRIMARY KEY (`id`),
+                UNIQUE KEY `uniq.swag_product_listing.product` (`product_id`, `product_version_id`),
+                CONSTRAINT `fk.swag_product_listing.product` FOREIGN KEY (`product_id`, `product_version_id`)
+                    REFERENCES `product` (`id`, `version_id`) ON DELETE CASCADE ON UPDATE CASCADE
             ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci
         ');
     }

@@ -19,7 +19,7 @@ class Migration1700000100CreateLoyaltyAccount extends MigrationStep
                 `id` BINARY(16) NOT NULL,
                 `customer_id` BINARY(16) NOT NULL,
                 `points` INT NOT NULL DEFAULT 0,
-                `tier` VARCHAR(32) NULL,
+                `tier` ENUM(\'bronze\', \'silver\', \'gold\') NOT NULL DEFAULT \'bronze\',
                 `created_at` DATETIME(3) NOT NULL,
                 `updated_at` DATETIME(3) NULL,
                 PRIMARY KEY (`id`),

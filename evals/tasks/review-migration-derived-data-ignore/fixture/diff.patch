@@ -1,18 +1,19 @@
-diff --git a/src/Migration/Migration1729900100BackfillListingNumber.php b/src/Migration/Migration1729900100BackfillListingNumber.php
+diff --git a/src/Migration/Migration1729900100RenameListingLabel.php b/src/Migration/Migration1729900100RenameListingLabel.php
 new file mode 100644
-index 0000000..7c2d9a4
+index 0000000..3698903
 --- /dev/null
-+++ b/src/Migration/Migration1729900100BackfillListingNumber.php
-@@ -0,0 +1,50 @@
++++ b/src/Migration/Migration1729900100RenameListingLabel.php
+@@ -0,0 +1,63 @@
 +<?php declare(strict_types=1);
 +
 +namespace Swag\Listing\Migration;
 +
 +use Doctrine\DBAL\ArrayParameterType;
 +use Doctrine\DBAL\Connection;
++use Doctrine\DBAL\ParameterType;
 +use Shopware\Core\Framework\Migration\MigrationStep;
 +
-+class Migration1729900100BackfillListingNumber extends MigrationStep
++class Migration1729900100RenameListingLabel extends MigrationStep
 +{
 +    private const BATCH_SIZE = 1000;
 +
@@ -23,35 +24,46 @@ index 0000000..7c2d9a4
 +
 +    public function update(Connection $connection): void
 +    {
-+        if (!$this->columnExists($connection, 'swag_product_listing', 'product_number')) {
++        if (!$this->columnExists($connection, 'swag_product_listing', 'badge_label')) {
 +            $connection->executeStatement(
-+                'ALTER TABLE `swag_product_listing` ADD COLUMN `product_number` VARCHAR(64) NULL'
++                'ALTER TABLE `swag_product_listing` ADD COLUMN `badge_label` VARCHAR(255) NULL'
 +            );
 +        }
 +
-+        $lastId = '';
++        if (!$this->columnExists($connection, 'swag_product_listing', 'label')) {
++            return;
++        }
++
++        $lastId = str_repeat("\0", 16);
 +        do {
 +            $ids = $connection->fetchFirstColumn(
-+                'SELECT `id` FROM `product`
-+                WHERE `id` > :lastId AND `parent_id` IS NULL
++                'SELECT `id` FROM `swag_product_listing`
++                WHERE `id` > :lastId
 +                ORDER BY `id`
 +                LIMIT ' . self::BATCH_SIZE,
 +                ['lastId' => $lastId],
++                ['lastId' => ParameterType::BINARY],
 +            );
 +            if ($ids === []) {
 +                break;
 +            }
 +
 +            $connection->executeStatement(
-+                'UPDATE `swag_product_listing` `listing`
-+                INNER JOIN `product` `p` ON `p`.`id` = `listing`.`product_id`
-+                SET `listing`.`product_number` = `p`.`product_number`
-+                WHERE `p`.`id` IN (:ids)',
++                'UPDATE `swag_product_listing`
++                SET `badge_label` = `label`
++                WHERE `id` IN (:ids) AND `badge_label` IS NULL',
 +                ['ids' => $ids],
 +                ['ids' => ArrayParameterType::BINARY],
 +            );
 +
 +            $lastId = (string) end($ids);
 +        } while (\count($ids) === self::BATCH_SIZE);
++    }
++
++    public function updateDestructive(Connection $connection): void
++    {
++        if ($this->columnExists($connection, 'swag_product_listing', 'label')) {
++            $connection->executeStatement('ALTER TABLE `swag_product_listing` DROP COLUMN `label`');
++        }
 +    }
 +}
