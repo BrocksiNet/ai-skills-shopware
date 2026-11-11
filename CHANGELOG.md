@@ -10,6 +10,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- The 68 review pairs whose graders were each one `reviewCatch` or
+  `reviewIgnore` call are one table, `tools/graders/review-pairs.ts`:
+  136 grader files fewer, and the shared `summary` pattern is written once
+  per pair. `tools/src/grade/run.ts` looks a task up there when it has no
+  grader file. All 408 golden-fixture verdicts are unchanged.
 - The API index tool is no longer copied into five skills as
   `scripts/shopware-api.mjs` (631 KB each). The skills run the
   `shopware-api-index` npm package instead, pinned to `0.1.0-beta.0`:

@@ -160,6 +160,15 @@ describe('reviewReachErrors', () => {
     ]);
   });
 
+  test('a catch task without a grader file expects the rule of its review pair', () => {
+    rmSync(join(repo, 'tools/graders/review-x-catch.ts'));
+    write('evals/tasks/review-acl-system-config-catch/skills', 'sw-lender\nshopware-review\n');
+    const adm = { ...rule('ADM-043', ['plugin']), file: 'skills/sw-lender/SKILL.md' };
+    assert.deepEqual(reviewReachErrors(repo, new Map([['ADM-043', adm]])), [
+      'evals/tasks/review-acl-system-config-catch: expects ADM-043, tagged in skills/sw-lender/SKILL.md, which shopware-review does not read; tag it in a reference shopware-review borrows',
+    ]);
+  });
+
   test('a catch grader expects its rule; a near-miss grader its accept list, not the decoy', () => {
     assert.deepEqual(expectedRules("reviewCatch({ rule: 'ADM-004', file: 'a' })", 'review-a-catch'), ['ADM-004']);
     const nearMiss = "reviewNearMiss({ rule: 'SEC-005', accept: ['SEC-008', 'PLG-003'] })";

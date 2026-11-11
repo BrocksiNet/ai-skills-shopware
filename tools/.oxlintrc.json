@@ -130,6 +130,12 @@
         "eslint/max-lines-per-function": "off",
         "eslint/max-lines": "off"
       }
+    },
+    {
+      "files": ["graders/review-pairs.ts"],
+      "rules": {
+        "eslint/max-lines": "off"
+      }
     }
   ]
 }

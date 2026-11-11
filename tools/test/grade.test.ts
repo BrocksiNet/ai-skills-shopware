@@ -15,8 +15,9 @@ import {
   phpMethod,
   stripComments,
   verdict,
+  type Verdict,
 } from '../src/grade/kit.ts';
-import { gradeTask, readTranscript } from '../src/grade/run.ts';
+import { gradeTask, pairGrader, readTranscript } from '../src/grade/run.ts';
 
 const ROOT = resolve(import.meta.dirname, '../..');
 const tmp = mkdtempSync(join(tmpdir(), 'grade-test-'));
@@ -78,7 +79,34 @@ describe('kit', () => {
 
 const env = (workdir: string): NodeJS.ProcessEnv => ({ PATH: process.env.PATH, WORKDIR: workdir });
 
+/** A findings block with one major finding citing `rule`. */
+const finding = (rule: string): string =>
+  '```json\n' +
+  JSON.stringify({
+    findings: [
+      {
+        rule_id: rule,
+        severity: 'major',
+        file: 'src/Resources/app/administration/src/x.js',
+        summary: 'grants system_config:read',
+      },
+    ],
+  }) +
+  '\n```\n';
+
 describe('gradeTask and the grade bin', () => {
+  test('a review pair grades both tasks from review-pairs.ts; other names get no pair', async () => {
+    const workdir = mkdtempSync(join(tmpdir(), 'pair-'));
+    const run = (task: string, transcript: string): Promise<Verdict> => gradeTask(ROOT, task, { workdir, transcript });
+    assert.equal((await run('review-acl-system-config-catch', finding('ADM-043'))).pass, true);
+    assert.equal((await run('review-acl-system-config-catch', finding('ADM-001'))).pass, false);
+    assert.equal((await run('review-acl-system-config-ignore', finding('ADM-043'))).pass, false);
+    assert.equal((await run('review-acl-system-config-ignore', '```json\n{"findings": []}\n```\n')).pass, true);
+    assert.equal(pairGrader('review-acl-system-config-near-miss'), undefined);
+    assert.equal(pairGrader('review-no-such-topic-catch'), undefined);
+    assert.equal(pairGrader('no-empty-explicit'), undefined);
+  });
+
   test('runs a task grader; rejects unknown and odd task names', async () => {
     const workdir = tree({
       'src/CustomerEmailValidator.php':

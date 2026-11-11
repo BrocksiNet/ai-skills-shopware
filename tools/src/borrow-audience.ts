@@ -12,6 +12,7 @@
 import { existsSync, readdirSync, readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { AUDIENCES, type Audience, isActive, type Rule } from './catalog.ts';
+import { PAIRS } from '../graders/review-pairs.ts';
 import { BORROWED, ROUTES_FILE } from './route-borrow.ts';
 import { compareText } from './text.ts';
 
@@ -86,6 +87,15 @@ export function expectedRules(grader: string, task: string): string[] {
   return Array.from(accept.matchAll(ID), (m) => m[1] ?? '');
 }
 
+/** The rules a task's grader file expects, or its review pair's rule. */
+function graderRules(root: string, task: string): string[] | undefined {
+  const grader = join(root, 'tools', 'graders', `${task}.ts`);
+  if (existsSync(grader)) return expectedRules(readFileSync(grader, 'utf8'), task);
+  const pair = /^review-(.+)-catch$/u.exec(task)?.[1];
+  const rule = pair === undefined ? undefined : PAIRS[pair]?.rule;
+  return rule === undefined ? undefined : [rule];
+}
+
 const lines = (path: string): string[] =>
   existsSync(path)
     ? readFileSync(path, 'utf8')
@@ -102,12 +112,12 @@ export function reviewReachErrors(root: string, rules: Map<string, Rule>): strin
   for (const task of readdirSync(dir)
     .filter((t) => REVIEW_TASK.test(t))
     .toSorted(compareText)) {
-    const grader = join(root, 'tools', 'graders', `${task}.ts`);
-    if (!existsSync(grader)) continue;
+    const ids = graderRules(root, task);
+    if (ids === undefined) continue;
     const reviewers = lines(join(dir, task, 'skills'))
       .map((s) => borrower(root, s))
       .filter((b): b is Borrower => b !== null && typeof b !== 'string');
-    for (const id of expectedRules(readFileSync(grader, 'utf8'), task)) {
+    for (const id of ids) {
       const rule = rules.get(id);
       if (rule === undefined) continue;
       for (const b of reviewers) {
