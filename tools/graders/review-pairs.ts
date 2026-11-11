@@ -723,6 +723,35 @@ export const PAIRS: Record<string, ReviewPair> = {
     summary:
       /customi[sz]|merchant|shop owner|edited|modified by|updated_at|overwrit|clobber|user.?made|own (template|text|changes)/iu,
   },
+  // Catch: The backfill is batched (PLG-019 is satisfied), but it recomputes a listing
+  // hash from product fields in SQL. The finding must come from the derived-data
+  // rule: a major+ finding in src/Migration/ that names PLG-020 or asks for an
+  // indexer.
+  // Ignore: The same batched backfill shape, but it copies product_number, a plain
+  // column, into the listing table and computes nothing. A minor+ finding that
+  // names PLG-020 or asks for an indexer is a false positive.
+  'migration-derived-data': {
+    rule: 'PLG-020',
+    file: 'src/Migration/**',
+    minSeverity: 'major',
+    summary: /indexer|registerIndexer|PostUpdateIndexer|derived (data|values?)|recomput/iu,
+  },
+  // Catch: updateDestructive() runs one full-table UPDATE join over swag_loyalty_account
+  // before it drops the legacy column. The backfill is long-running work in the
+  // destructive step; it belongs in update(), batched, so the destructive step
+  // stays a drop. Needs a major+ finding in src/Migration/ that names PLG-018 or
+  // describes the heavy work in updateDestructive().
+  // Ignore: The same tier move, but the tier_id backfill is batched in update() and
+  // updateDestructive() only deletes one config key and drops the column. A
+  // minor+ finding that names PLG-018 or calls the destructive step heavy is a
+  // false positive.
+  'migration-destructive-backfill': {
+    rule: 'PLG-018',
+    file: 'src/Migration/**',
+    minSeverity: 'major',
+    summary:
+      /updateDestructive[^.]*(heavy|\blong|slow|time ?out|backfill|whole table|entire table|every row|all (rows|accounts)|stay small)|(heavy|long-running|backfill|time ?out)[^.]*updateDestructive/iu,
+  },
   // Catch: The new migration's updateDestructive() is empty, and its test only runs it
   // and expects no error, so the test covers no behaviour. Needs a minor+
   // finding in src/Core/Migration/ that names CORE-040 or describes the test of
