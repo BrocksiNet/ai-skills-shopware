@@ -17,9 +17,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   grader file. All 408 golden-fixture verdicts are unchanged.
 - The API index tool is no longer copied into five skills as
   `scripts/shopware-api.mjs` (631 KB each). The skills run the
-  `shopware-api-index` npm package instead, pinned to `0.1.0-beta.0`:
-  `npx -y shopware-api-index@0.1.0-beta.0 facts .`. CI checks every skill
+  `shopware-api-index` npm package instead, pinned to `0.1.0-beta.1`:
+  `npx -y shopware-api-index@0.1.0-beta.1 facts .`. CI checks every skill
   pins the version in `tools/api-index/npm/package.json`.
+- `shopware-api-index` releases are staged with npm trusted publishing
+  instead of the `NPM_TOKEN` secret: `publish-shopware-api.yml` runs
+  `npm stage publish`, and a maintainer approves the version on npmjs.com.
+  `0.1.0-beta.1` is the first release published this way.
 - Eval tasks no longer carry a `grade.sh` that only called
   `tools/bin/grade.ts` (223 files). Harbor, the smoke harness, the runner
   and `test-graders` call `node tools/bin/grade.ts <task>` directly; a task is

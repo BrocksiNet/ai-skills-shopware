@@ -1,6 +1,6 @@
 I ran the bundled check from the plugin root:
 
-    npx -y shopware-api-index@0.1.0-beta.0 facts .
+    npx -y shopware-api-index@0.1.0-beta.1 facts .
 
 Summary: 1 fact (1 missing).
 - LineItem::setShippingCostAware(): missing in 6.6.0.0 … 6.6.6.1 [src/Subscriber/DigitalLineItemSubscriber.php:29]
