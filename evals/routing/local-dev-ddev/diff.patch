@@ -1,0 +1,10 @@
+diff --git a/.ddev/config.yaml b/.ddev/config.yaml
+--- a/.ddev/config.yaml
++++ b/.ddev/config.yaml
+@@ -1,5 +1,5 @@
+ name: shop
+ type: shopware6
+ docroot: public
+-php_version: "8.2"
++php_version: "8.3"
+ webserver_type: nginx-fpm

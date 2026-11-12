@@ -1,0 +1,67 @@
+{
+  "$comment": "Which reference to read for a change (plan WP4). paths_any: globs on changed files; anchors_any: regexes on added or removed lines; always: every change; on_demand: the task decides, the diff cannot. Render the SKILL.md table with node tools/bin/render-routes.ts.",
+  "routes": [
+    {
+      "reference": "references/ddev.md",
+      "when": "The project has `.ddev/config.yaml`, or a command goes through `ddev`.",
+      "paths_any": [
+        "**/.ddev/**"
+      ],
+      "anchors_any": [
+        "\\bddev (exec|composer|npm|mysql|describe)\\b"
+      ]
+    },
+    {
+      "reference": "references/docker.md",
+      "when": "The project runs in Docker Compose, or a command goes through `docker compose exec` or `docker exec`.",
+      "paths_any": [
+        "**/compose*.y*ml",
+        "**/docker-compose*.y*ml",
+        "**/Dockerfile",
+        "**/.devcontainer/**"
+      ],
+      "anchors_any": [
+        "\\bdocker([ -]compose)? (exec|run)\\b"
+      ]
+    },
+    {
+      "reference": "references/vagrant.md",
+      "when": "The project has a `Vagrantfile`, or a command goes through `vagrant ssh`.",
+      "paths_any": [
+        "**/Vagrantfile"
+      ],
+      "anchors_any": [
+        "\\bvagrant ssh\\b"
+      ]
+    },
+    {
+      "reference": "references/podman.md",
+      "when": "The project is a linked shopware-dev lane (Podman and Mutagen), or a command goes through `podman compose` or `sw-dev`.",
+      "paths_any": [
+        "**/Containerfile",
+        "**/mutagen*.y*ml"
+      ],
+      "anchors_any": [
+        "COMPOSE_(FILE|PROFILES)=",
+        "SHOPWARE_(ADMIN_)?ES_ENABLED",
+        "podman[ -]compose",
+        "sw-dev\\b"
+      ]
+    },
+    {
+      "reference": "references/podman-hub.md",
+      "when": "You need the shopware-dev hub layout, OpenSearch per lane, or a `sw-dev` command not in `podman.md`.",
+      "on_demand": true
+    },
+    {
+      "reference": "references/native.md",
+      "when": "The user says native or WSL, or the project has none of the environment markers.",
+      "on_demand": true
+    },
+    {
+      "reference": "references/shopware-cli-routing.md",
+      "when": "Choose Shopware CLI project or standalone extension commands, validation scope, or version-specific flags.",
+      "on_demand": true
+    }
+  ]
+}

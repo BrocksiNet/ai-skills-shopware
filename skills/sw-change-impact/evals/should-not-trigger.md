@@ -8,4 +8,4 @@
 - Replace file_put_contents in this core service with Symfony Filesystem. (-> sw-core-development)
 - Prepare this plugin for Shopware 6.8 and run the suite with the major flag. (-> sw-plugin-development)
 - The cart total is wrong for a percentage discount. Fix it in CartProcessor. (-> shopware-php-code)
-- Run phpunit for CartProcessor. (-> sw-podman-dev)
+- Run phpunit for CartProcessor. (-> sw-local-dev)

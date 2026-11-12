@@ -1,0 +1,11 @@
+diff --git a/compose.yaml b/compose.yaml
+--- a/compose.yaml
++++ b/compose.yaml
+@@ -1,6 +1,6 @@
+ services:
+   web:
+-    image: ghcr.io/shopware/docker-dev:php8.3-node22-caddy
++    image: ghcr.io/shopware/docker-dev:php8.4-node24-caddy
+     volumes:
+       - .:/var/www/html
+     depends_on:

@@ -1067,6 +1067,88 @@
       ]
     },
     {
+      "name": "sw-local-dev",
+      "summary": "Run Shopware dev commands in the project's environment: DDEV, Docker Compose, Vagrant, native host PHP, or linked shopware-dev checkouts with Podman and Mutagen.",
+      "contexts": [
+        "core",
+        "plugin",
+        "app",
+        "project"
+      ],
+      "tasks": [
+        "run"
+      ],
+      "load_for": [
+        "run"
+      ],
+      "paths": [],
+      "defers_to": [],
+      "routes": [
+        {
+          "reference": "sw-local-dev/references/ddev.md",
+          "when": "The project has `.ddev/config.yaml`, or a command goes through `ddev`.",
+          "paths_any": [
+            "**/.ddev/**"
+          ],
+          "anchors_any": [
+            "\\bddev (exec|composer|npm|mysql|describe)\\b"
+          ]
+        },
+        {
+          "reference": "sw-local-dev/references/docker.md",
+          "when": "The project runs in Docker Compose, or a command goes through `docker compose exec` or `docker exec`.",
+          "paths_any": [
+            "**/compose*.y*ml",
+            "**/docker-compose*.y*ml",
+            "**/Dockerfile",
+            "**/.devcontainer/**"
+          ],
+          "anchors_any": [
+            "\\bdocker([ -]compose)? (exec|run)\\b"
+          ]
+        },
+        {
+          "reference": "sw-local-dev/references/vagrant.md",
+          "when": "The project has a `Vagrantfile`, or a command goes through `vagrant ssh`.",
+          "paths_any": [
+            "**/Vagrantfile"
+          ],
+          "anchors_any": [
+            "\\bvagrant ssh\\b"
+          ]
+        },
+        {
+          "reference": "sw-local-dev/references/podman.md",
+          "when": "The project is a linked shopware-dev lane (Podman and Mutagen), or a command goes through `podman compose` or `sw-dev`.",
+          "paths_any": [
+            "**/Containerfile",
+            "**/mutagen*.y*ml"
+          ],
+          "anchors_any": [
+            "COMPOSE_(FILE|PROFILES)=",
+            "SHOPWARE_(ADMIN_)?ES_ENABLED",
+            "podman[ -]compose",
+            "sw-dev\\b"
+          ]
+        },
+        {
+          "reference": "sw-local-dev/references/podman-hub.md",
+          "when": "You need the shopware-dev hub layout, OpenSearch per lane, or a `sw-dev` command not in `podman.md`.",
+          "on_demand": true
+        },
+        {
+          "reference": "sw-local-dev/references/native.md",
+          "when": "The user says native or WSL, or the project has none of the environment markers.",
+          "on_demand": true
+        },
+        {
+          "reference": "sw-local-dev/references/shopware-cli-routing.md",
+          "when": "Choose Shopware CLI project or standalone extension commands, validation scope, or version-specific flags.",
+          "on_demand": true
+        }
+      ]
+    },
+    {
       "name": "sw-openapi-dto",
       "summary": "Rules for the PHP request and response DTOs that shopware/shopware generates from its OpenAPI schema JSON.",
       "contexts": [
@@ -1282,7 +1364,7 @@
     },
     {
       "name": "sw-podman-dev",
-      "summary": "Run Shopware dev commands in the right environment.",
+      "summary": "Renamed to sw-local-dev, which now covers Podman and Mutagen lanes as well as DDEV, Docker Compose, Vagrant and native setups.",
       "contexts": [
         "core",
         "plugin",
@@ -1290,37 +1372,12 @@
         "project"
       ],
       "tasks": [
-        "run"
+        "answer"
       ],
-      "load_for": [
-        "run"
-      ],
+      "load_for": [],
       "paths": [],
       "defers_to": [],
-      "routes": [
-        {
-          "reference": "sw-podman-dev/references/shopware-dev-hub.md",
-          "when": "You need the hub layout or a command not listed above.",
-          "paths_any": [
-            "**/compose*.y*ml",
-            "**/docker-compose*.y*ml",
-            "**/Containerfile",
-            "**/.devcontainer/**",
-            "**/mutagen*.y*ml"
-          ],
-          "anchors_any": [
-            "COMPOSE_(FILE|PROFILES)=",
-            "SHOPWARE_(ADMIN_)?ES_ENABLED",
-            "podman compose",
-            "sw-dev\\b"
-          ]
-        },
-        {
-          "reference": "sw-podman-dev/references/shopware-cli-routing.md",
-          "when": "Choose Shopware CLI project or standalone extension commands, validation scope, or version-specific flags.",
-          "on_demand": true
-        }
-      ]
+      "routes": []
     },
     {
       "name": "sw-pr-description",

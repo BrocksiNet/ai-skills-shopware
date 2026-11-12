@@ -8,7 +8,7 @@ description: >-
   major-version guard, test attributes, or the suite a test lives in. Also
   use when a test is flaky or failing Codecov. On shopware/shopware,
   shopware-phpunit-tests owns a plain add-a-test request. Do NOT use for
-  storefront E2E, Administration Jest, or running the suite (sw-podman-dev).
+  storefront E2E, Administration Jest, or running the suite (sw-local-dev).
 license: MIT
 metadata:
   contexts: core plugin project

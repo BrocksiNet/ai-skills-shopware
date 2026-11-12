@@ -45,7 +45,7 @@ Read only the reference that matches the task or the files it changes:
 ## Further reading
 
 - [`docs/skill-resolution.md`](../../docs/skill-resolution.md) — install profiles
-- MCP local keys: `sw-podman-dev` / `docs/tooling-stack.md` (local only)
+- MCP local keys: `sw-local-dev` / `docs/tooling-stack.md` (local only)
 
 ## Already enforced by CI (do not repeat)
 

@@ -399,7 +399,7 @@ describe('ai-coding-tools 2026-09-01..2026-09-07', () => {
       group(t, 'sw-testing', 'No rule yet'),
       /- Removed line in `plugins\/test-writing\/rules\/convention\/CONV-007\.md`/u,
     );
-    assert.match(group(t, 'sw-podman-dev', 'No rule yet'), /plugins\/dev-tooling\/AGENTS\.md/u);
+    assert.match(group(t, 'sw-local-dev', 'No rule yet'), /plugins\/dev-tooling\/AGENTS\.md/u);
     assert.doesNotMatch(t, /CHANGELOG\.md/u, 'release notes restate the commit');
     assert.doesNotMatch(t, /plugins\/shopware-env\//u, 'not a watched path');
     assert.doesNotMatch(t, /line in `README\.md`/u, 'the repository README is not watched');
@@ -470,7 +470,7 @@ describe('every source over 2026-10-13..2026-10-19', () => {
     assert.match(out, /^\| `shopware-cli` \| 2026-10-13 \| 1 \| 1 \|/mu);
     assert.match(out, /^\| `php-modernization` \| 2026-10-13 \| 1 \| 0 \|/mu);
     assert.match(
-      group(out, 'sw-podman-dev', 'No rule yet'),
+      group(out, 'sw-local-dev', 'No rule yet'),
       /shopware-cli-extension-anonymize\/SKILL\.md`: `## Confirm this is an extension`/u,
     );
     assert.match(

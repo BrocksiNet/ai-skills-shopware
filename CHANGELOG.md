@@ -8,7 +8,21 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- `sw-local-dev` runs Shopware commands where the project runs: DDEV,
+  Docker Compose, Vagrant, native host tools, linked Podman lanes and
+  Shopware CLI projects, one reference each. Rules `DEV-002` to `DEV-005`
+  (one per new environment) and `DEV-006` (Podman, moved from the old skill
+  text), each with a task that fixes a `scripts/check.sh` copied from the
+  wrong setup. Core's four `.agents-templates` and shopware-cli's skills now
+  feed its drift issue.
+
 ### Changed
+
+- `sw-podman-dev` is renamed to `sw-local-dev`. The old name stays for one
+  release as a pointer; replace it in your install commands and in the
+  `skills` list of `~/shopware-dev/instances.json`.
 
 - The 68 review pairs whose graders were each one `reviewCatch` or
   `reviewIgnore` call are one table, `tools/graders/review-pairs.ts`:

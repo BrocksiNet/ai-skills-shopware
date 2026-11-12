@@ -7,7 +7,7 @@ description: >-
   use while the fix is still being written, for line-level idioms
   (sw-review-learnings), GitHub thread triage (sw-pr-review),
   implementing the change (shopware-php-code or sw-plugin-development),
-  or running the test suite (sw-podman-dev).
+  or running the test suite (sw-local-dev).
 license: MIT
 metadata:
   contexts: core plugin app project

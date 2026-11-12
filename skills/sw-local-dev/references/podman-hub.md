@@ -5,8 +5,8 @@ it via `sw-dev link` — no per-project `compose.override.yaml` or MCP JSON to
 duplicate.
 
 **Skills** live in `ai-skills-shopware/skills/` (this repo). `instances.json`
-lists which skills to symlink; `skills_source` points at that folder. Optional
-`sw-podman-dev` — omit from `"skills"` if you do not use Podman.
+lists which skills to symlink; `skills_source` points at that folder. List
+`sw-local-dev` there for the execution rules.
 
 ## What `sw-dev link` does
 

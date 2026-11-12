@@ -65,7 +65,7 @@ npx skills add BrocksiNet/ai-skills-shopware \
   --skill sw-review-learnings \
   --skill sw-change-impact \
   --skill sw-pr-review \
-  --skill sw-podman-dev \
+  --skill sw-local-dev \
   --skill sw-storefront \
   -a claude-code -a codex -a cursor
 ```
