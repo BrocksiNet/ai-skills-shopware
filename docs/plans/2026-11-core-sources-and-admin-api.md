@@ -158,8 +158,7 @@ Steps:
    computed 7/7, emit 3/3, method 11/14. The 3 misses are one return type
    added where there was none, by design. Our 4 extra findings are real: a
    removed computed member sw-impact does not report, and a new required
-   prop it annotated in one of three runs. (The computed count needs
-   `computed: 'computed'` in the cross-check's member table.)
+   prop it annotated in one of three runs.
 3. Acceptance cases in the `tools/api-index` tests, with expected findings
    we write from the real commits: core PRs 20959, 17339 and 15271, and a
    small bug fix as negative control (no finding). Two runs on the same
