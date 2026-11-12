@@ -32,7 +32,6 @@ the surface skills can all be installed together without contradicting (see
 | `sw-pr-review` | maintainer | PR review threads | Reacting to GitHub review comments, fix vs reply vs push back | Initial PR body, generic idiomatic review |
 | `sw-extension-review` | maintainer | plugin / app review (`custom/plugins`, `custom/apps`) | Reviewing a whole plugin or app diff before merge, release or Store submission; findings with rule IDs and severities | Core PRs (core `sw-review`), review thread replies, writing the code, feature blast radius |
 | `sw-local-dev` | maintainer | local environment: DDEV, Docker Compose, Vagrant, native, linked Podman checkout, or Shopware CLI project | Running php/composer/phpunit/console/npm where the project runs, or shopware-cli project/extension validate | Test structure, PR text, release notes |
-| `sw-podman-dev` | maintainer | renamed | Pointer to `sw-local-dev` for one release | Everything; load `sw-local-dev` |
 | `sw-storefront` | maintainer | storefront (Twig/theme/JS) | Storefront plugins, Twig blocks, theme SCSS, HTTP-cache-safe AJAX | Admin Vue, PHP DAL, generic CSS lectures |
 | `sw-admin-js` | maintainer | Administration JS/TS/Vue | Admin Vue/TS, Meteor `mt-*`, Jest specs, Admin ACL | Storefront Twig, PHPUnit, PHP services |
 | `sw-skill-router` | maintainer | any (the library itself) | "Which skill should I use", the start of Shopware work, a diff or a plan to route; runs `scripts/route.mjs` | Explaining the library (`sw-help`), the topics themselves |
