@@ -16,7 +16,7 @@ after(() => {
 
 const call = (module: unknown, method: string, input: unknown): unknown => {
   const fn: unknown = typeof module === 'object' && module !== null ? Reflect.get(module, method) : undefined;
-  if (typeof fn !== 'function') throw new Error(`missing ${method}`);
+  if (typeof fn !== 'function') throw new TypeError(`missing ${method}`);
   const result: unknown = Reflect.apply(fn, undefined, [input]);
   return result;
 };

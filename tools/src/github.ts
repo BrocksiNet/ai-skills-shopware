@@ -55,7 +55,7 @@ export function githubWrite(env: NodeJS.ProcessEnv): GitHubWrite {
 export async function allPages(api: GitHubApi, path: string, page = 1): Promise<unknown[]> {
   const separator = path.includes('?') ? '&' : '?';
   const body = await api(`${path}${separator}per_page=${PAGE_SIZE}&page=${page}`);
-  if (!Array.isArray(body)) throw new Error(`GitHub API ${path}: expected a list`);
+  if (!Array.isArray(body)) throw new TypeError(`GitHub API ${path}: expected a list`);
   const items: unknown[] = body;
   return items.length < PAGE_SIZE ? items : [...items, ...(await allPages(api, path, page + 1))];
 }

@@ -16,7 +16,7 @@ const mod: unknown = await import(pathToFileURL(SCRIPT).href);
 
 function call(name: string, ...args: unknown[]): unknown {
   const f: unknown = typeof mod === 'object' && mod !== null ? Reflect.get(mod, name) : undefined;
-  if (typeof f !== 'function') throw new Error(`route.mjs exports no ${name}`);
+  if (typeof f !== 'function') throw new TypeError(`route.mjs exports no ${name}`);
   const result: unknown = Reflect.apply(f, undefined, args);
   return result;
 }

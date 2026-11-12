@@ -66,7 +66,7 @@ export interface Mined {
 type Json = Record<string, unknown>;
 const isRecord = (v: unknown): v is Json => typeof v === 'object' && v !== null && !Array.isArray(v);
 const text = (v: unknown, field: string): string => {
-  if (typeof v !== 'string') throw new Error(`GitHub API: ${field} is not a string`);
+  if (typeof v !== 'string') throw new TypeError(`GitHub API: ${field} is not a string`);
   return v;
 };
 const DAY = /^[0-9]{4}-[0-9]{2}-[0-9]{2}$/u;

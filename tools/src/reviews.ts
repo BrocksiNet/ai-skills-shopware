@@ -169,7 +169,7 @@ const iso = (ms: number): string => new Date(ms).toISOString().replace(/\.[0-9]{
 export function weeks(from: string, to: string): { from: string; to: string }[] {
   const start = Date.parse(from);
   const end = Date.parse(to);
-  if (Number.isNaN(start) || Number.isNaN(end)) throw new Error(`invalid window ${from}..${to}`);
+  if (Number.isNaN(start) || Number.isNaN(end)) throw new TypeError(`invalid window ${from}..${to}`);
   const pieces: { from: string; to: string }[] = [];
   for (let t = start; t <= end; t += WEEK_MS) pieces.push({ from: iso(t), to: iso(Math.min(t + WEEK_MS, end)) });
   return pieces;
