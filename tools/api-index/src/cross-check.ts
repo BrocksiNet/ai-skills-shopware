@@ -28,7 +28,8 @@ const MEMBERS: Readonly<Record<string, string | null>> = {
   method: 'js-method',
   emit: 'emit',
   slot: 'slot',
-  computed: null,
+  computed: 'computed',
+  watch: null,
 };
 
 /** Our id for one of their symbols; null for a surface we do not record,

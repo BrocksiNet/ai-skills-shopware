@@ -1,5 +1,6 @@
 // Which surface an item belongs to, which item owns it, and how the
 // admin, storefront and build items change in a way an extension notices.
+import { memberChange } from './member-signature.ts';
 import type { Item } from './model.ts';
 
 export type Surface = 'route' | 'entity' | 'feature' | 'config' | 'admin' | 'storefront' | 'twig' | 'build' | 'php';
@@ -68,7 +69,8 @@ export function frontendChange(base: Item, head: Item): string | undefined {
   const before = base.signature ?? '';
   const after = head.signature ?? '';
   if (before === after) return undefined;
-  if (base.kind === 'prop' && after === 'required') return 'now required';
+  const member = memberChange(base.kind, before, after);
+  if (member !== undefined) return member;
   if (base.kind === 'component' && before.startsWith('extends ')) return `${before} → ${after}`;
   if (base.kind === 'js-plugin' && before !== '') return `selector ${before} → ${after === '' ? '-' : after}`;
   return undefined;

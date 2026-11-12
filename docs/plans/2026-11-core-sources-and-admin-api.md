@@ -140,6 +140,25 @@ Steps:
    `Shopware?.Feature` calls, and storefront `{% if feature() %}`.
 2. One new `ItemKind` per row above, one PR each, each with `api-diff`
    classification and a `facts` lookup.
+   *Done (2026-11-12), member signatures first, the gap the WP D
+   cross-check found:* props carry their runtime types and `PropType<…>`,
+   methods their parameters, async and return type, and the new kind
+   `computed` its return type and setter (`src/member-signature.ts`,
+   `src/admin-shapes.ts`). `api-diff` reports a new required parameter,
+   a removed parameter, a parameter or return type change, a prop that
+   becomes required or accepts fewer types, a new required prop on an
+   existing component, and a removed computed member. A type where there
+   was none (JavaScript to TypeScript) is no change. Facts add one
+   `signature` line per change for an overridden member. On trunk 82ee14c:
+   2018 of 2066 props with a type, 6241 of 6275 methods with a signature
+   (the rest are `debounce()` values), 518 of 4398 computed members with a
+   return type. Trunk 2026-10-15..82ee14c: 5 member changes, all real
+   (4 methods now async, 1 new required parameter). Cross-check on the
+   same 37 commits: 30 of 33 sw-impact findings (was 6): prop 9/9,
+   computed 7/7, emit 3/3, method 11/14. The 3 misses are one return type
+   added where there was none, by design. Our 4 extra findings are real: a
+   removed computed member sw-impact does not report, and a new required
+   prop it annotated in one of three runs.
 3. Acceptance cases in the `tools/api-index` tests, with expected findings
    we write from the real commits: core PRs 20959, 17339 and 15271, and a
    small bug fix as negative control (no finding). Two runs on the same

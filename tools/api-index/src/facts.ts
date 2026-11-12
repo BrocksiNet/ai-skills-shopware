@@ -3,6 +3,7 @@
 // what holds in which releases. No dependencies, so a tool that reads the
 // index can use it as is.
 import { Lookup } from './lookup.ts';
+import { memberChange } from './member-signature.ts';
 import { runs } from './runs.ts';
 import { memberOwner } from './surfaces.ts';
 import type { TimelineItem, Tracked } from './timeline.ts';
@@ -23,6 +24,9 @@ export type FactKind =
   | 'flag-off'
   /** A template block whose body differs from the release before it in the range. */
   | 'changed'
+  /** Admin: a prop, method or computed member whose signature changed against
+   *  the release before it in the range (`value`: what changed). */
+  | 'signature'
   /** The previous name of a moved class: a runtime alias of the canonical class, until `until`. */
   | 'moved'
   /** A `class_exists` or `method_exists` guard on a symbol every release of the range has. */
@@ -143,6 +147,24 @@ function changedFacts(lookup: Lookup, target: string, resolved: Resolved[]): Fac
   return changes.length === 0 ? [] : [{ target, kind: 'changed', releases: changes }];
 }
 
+/** The releases of the range in which a prop, method or computed member
+ *  changes its signature in a way an extension notices, one fact each. */
+function signatureFacts(lookup: Lookup, target: string, resolved: Resolved[]): Fact[] {
+  const kind = /\.(prop|js-method|computed)\.[^.#]+$/u.exec(target)?.[1];
+  if (kind === undefined) return [];
+  const facts: Fact[] = [];
+  let previous: string | undefined;
+  for (const { index, item } of resolved) {
+    if (item === undefined || !lookup.present(item, index)) continue;
+    const signature = lookup.value(item, 'signature', index) ?? '';
+    const detail = previous === undefined ? undefined : memberChange(kind, previous, signature);
+    const name = lookup.names[index] ?? '';
+    if (detail !== undefined) facts.push({ target, kind: 'signature', releases: [[name, name]], value: detail });
+    previous = signature;
+  }
+  return facts;
+}
+
 /** Facts about one target over the releases of a range. A member inherits
  *  `internal`, `deprecated` and `experimental` from its class. A name that
  *  is a runtime alias of a moved class resolves to the canonical class,
@@ -182,6 +204,7 @@ export function factsFor(lookup: Lookup, target: string, how: string, range: str
     });
   }
   if (frontend !== undefined && target.includes('#')) facts.push(...changedFacts(lookup, target, resolved));
+  if (frontend !== undefined) facts.push(...signatureFacts(lookup, target, resolved));
   facts.push(...flagFacts(lookup, target, member !== undefined || frontend !== undefined, resolved, indexes));
   if (member === undefined && frontend === undefined) facts.push(...movedFacts(lookup, target, indexes));
   if (how === 'extends') {

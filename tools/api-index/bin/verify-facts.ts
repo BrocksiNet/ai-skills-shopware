@@ -116,6 +116,8 @@ function movedHolds(repo: string, tag: string, fact: Fact, short: string): Probe
 function holds(repo: string, tag: string, fact: Fact): Probe {
   // A block body change is a hash in the index; the text cannot tell it here.
   if (fact.kind === 'changed') return undefined;
+  // A signature change compares admin script text; this probe reads PHP.
+  if (fact.kind === 'signature') return undefined;
   // Flag states are admin template and script facts; this probe reads PHP.
   if (fact.kind === 'flag-on' || fact.kind === 'flag-off') return undefined;
   const [owner = '', member] = fact.target.replace(/^php:/u, '').split('::');

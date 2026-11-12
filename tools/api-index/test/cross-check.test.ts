@@ -47,8 +47,9 @@ const OURS: Change[] = [
 test('their element names map to our ids through the table only', () => {
   assert.equal(ourIdOf('vue.sw-vector-field.method.onChange'), 'admin:sw-vector-field.js-method.onChange');
   assert.equal(ourIdOf('vue.sw-vector-field.prop.value'), 'admin:sw-vector-field.prop.value');
-  assert.equal(ourIdOf('vue.sw-vector-field.computed.classes'), null);
-  assert.equal(ourIdOf('vue.sw-vector-field.watch.value'), undefined);
+  assert.equal(ourIdOf('vue.sw-vector-field.computed.classes'), 'admin:sw-vector-field.computed.classes');
+  assert.equal(ourIdOf('vue.sw-vector-field.watch.value'), null);
+  assert.equal(ourIdOf('vue.sw-vector-field.inject.value'), undefined);
   assert.equal(ourIdOf('php.Shopware\\Core\\Foo'), undefined);
 });
 
@@ -72,12 +73,7 @@ test('findings split into both, only theirs with a reason, and only our breaks',
   );
   assert.deepEqual(
     result.onlyTheirs.map((miss) => `${miss.reason}: ${miss.needs}`),
-    [
-      'no-detail: prop types',
-      'no-detail: method parameters',
-      'no-surface: computed members',
-      'unmapped: vue.sw-order-address-modal.watch.customerId',
-    ],
+    ['no-detail: prop types', 'no-detail: method parameters', 'miss: api:removed', 'no-surface: watch members'],
   );
   // A body change is no break, so it is not "only ours".
   assert.deepEqual(

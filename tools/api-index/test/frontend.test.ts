@@ -124,8 +124,8 @@ function adminItems(): Item[] {
 test('admin: components, members and blocks, from lazy, direct and inline registrations', () => {
   const items = adminItems();
   assert.deepEqual(byId(items, 'admin:sw-card')?.flags, { deprecated: 'v6.8.0' });
-  assert.equal(byId(items, 'admin:sw-card.prop.title')?.signature, 'required');
-  assert.equal(byId(items, 'admin:sw-card.prop.hero')?.signature, 'optional');
+  assert.equal(byId(items, 'admin:sw-card.prop.title')?.signature, 'required String');
+  assert.equal(byId(items, 'admin:sw-card.prop.hero')?.signature, 'optional Boolean');
   assert.ok(byId(items, 'admin:sw-card.emit.close'));
   assert.deepEqual(byId(items, 'admin:sw-card.js-method.helper')?.flags, { internal: true });
   assert.equal(byId(items, 'admin:sw-card#sw_card_title')?.signature, 'sw_card');
@@ -248,6 +248,7 @@ test('api-diff: admin, storefront, Twig and build changes', () => {
     'changed admin:sw-card.prop.title now required',
     'changed js-plugin:ScrollUp selector [data-scroll-up] → [data-scroll-top]',
     'deprecated admin:sw-card deprecated for v6.8.0',
+    'removed admin:sw-card.computed.label removed',
     'removed build:admin.webpack removed',
     'removed* twig:function:sw_csrf removed',
   ]);

@@ -14,6 +14,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   flag on or off only carry `from` / `until` (`v6.8.0`). `api-diff` reports
   a block moved behind the flag as announced, and facts name the flag
   state. Generator `api-index/0.7.0`.
+- API index: admin props, methods and computed members carry their
+  signature (prop types, parameters, return types). `api-diff` reports a
+  new required parameter or prop, a removed parameter, a narrowed type and
+  a removed computed member; facts name the release a signature changed.
+  Generator `api-index/0.8.0`.
 
 ### Removed
 
