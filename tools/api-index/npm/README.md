@@ -2,7 +2,7 @@
 
 The `shopware-api` command of
 [ai-skills-shopware](https://github.com/BrocksiNet/ai-skills-shopware), for use
-without the skills. One bundled file, no dependencies, Node 20 or newer.
+without the skills. One bundled file, no dependencies, Node 26 or newer.
 
 ```bash
 # What a branch of a shopware/shopware clone breaks against trunk

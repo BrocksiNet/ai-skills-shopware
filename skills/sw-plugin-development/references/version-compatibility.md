@@ -22,11 +22,11 @@ you must consciously narrow the range and call it out.
 Check when an API arrived from the source of each release, not from
 memory. A class and its methods can arrive in different releases, and a
 patch release can add a method. Run the `shopware-api-index`
-npm package with `npx` (Node 20 or newer) from the plugin's root, the
+npm package with `npx` (Node 26 or newer) from the plugin's root, the
 folder with `composer.json`:
 
 ```bash
-npx -y shopware-api-index@0.1.0-beta.1 facts .
+npx -y shopware-api-index@0.1.0-beta.2 facts .
 ```
 
 It lists, for every release the `shopware/core` range allows, the Shopware
@@ -54,13 +54,13 @@ command again after the edit; a guarded call is no longer listed.
 
 - **For one change**, pipe the diff in, and the script reports only what
   the change adds:
-  `git diff | npx -y shopware-api-index@0.1.0-beta.1 facts --diff - .` `--range '~6.6.0 || ~6.7.0'` checks a
+  `git diff | npx -y shopware-api-index@0.1.0-beta.2 facts --diff - .` `--range '~6.6.0 || ~6.7.0'` checks a
   range other than the one in `composer.json`.
 - **Release mode** is what `facts` does: it reads each release from a
   weekly index it downloads once. To compare two refs of a
   shopware/shopware clone, such as a release tag and trunk, use
   `diff --repo <clone> --base v6.6.0.0 --head origin/trunk`.
-- **No Node 20 or newer** (`node --version`): the script refuses to run.
+- **No Node 26 or newer** (`node --version`): the script refuses to run.
   Read the oldest supported tag by hand, `git show v6.6.0.0:src/…` in a
   shopware/shopware clone, and say that the check was manual.
 

@@ -19,7 +19,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Repo tooling and CI now run on Node 26 (was 24): `tools/` and
   `tools/api-index` need Node 26 or newer, and `@types/node` follows on 26.x.
-  The published `shopware-api-index` package still runs on Node 20 and newer.
+  The `shopware-api-index` package follows: `0.1.0-beta.2` needs Node 26
+  or newer, and the skills pin it.
 
 ### Removed
 
