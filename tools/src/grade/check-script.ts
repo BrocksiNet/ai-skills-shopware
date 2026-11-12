@@ -65,12 +65,52 @@ function inlineFunctions(lines: string[]): string[] {
   });
 }
 
+type Side = 'inside' | 'outside' | undefined;
+
+/** Which branch of an `if` on `inside` runs inside the environment:
+ *  `[ "$IS_DDEV_PROJECT" = true ]` and `-n` test for inside, `!=`, `-z`
+ *  and a leading `!` for outside. Undefined when the line does not test it. */
+function sideOf(line: string, inside: RegExp): Side {
+  if (!inside.test(line)) return undefined;
+  const negated = /!=|-z\s|\b(?:el)?if\s+!\s/u.test(line);
+  return negated ? 'outside' : 'inside';
+}
+
+/** Lines in the branch of an `if` that runs inside the environment dropped:
+ *  a plain command there is not a host run. Other `if`s are kept as they
+ *  are, so a `command -v` fallback still counts. */
+function dropInsideBranches(lines: string[], inside: RegExp): string[] {
+  const stack: { side: Side; inElse: boolean }[] = [];
+  const isInside = (): boolean =>
+    stack.some((f) => (f.side === 'inside' && !f.inElse) || (f.side === 'outside' && f.inElse));
+  const kept: string[] = [];
+  for (const line of lines) {
+    const top = stack.at(-1);
+    if (/^\s*if\s/u.test(line)) {
+      if (!isInside()) kept.push(line);
+      stack.push({ side: sideOf(line, inside), inElse: false });
+    } else if (top !== undefined && /^\s*elif\s/u.test(line)) {
+      stack.pop();
+      if (!isInside()) kept.push(line);
+      stack.push({ side: sideOf(line, inside), inElse: false });
+    } else if (top !== undefined && /^\s*else\b/u.test(line)) {
+      top.inElse = true;
+    } else if (top !== undefined && /^\s*fi\b/u.test(line)) {
+      stack.pop();
+    } else if (!isInside()) {
+      kept.push(line);
+    }
+  }
+  return kept;
+}
+
 /** The commands of `scripts/check.sh`: comments and blank lines dropped,
  *  continued lines (`\` at the end) joined, shell variables set in the
  *  script expanded, and calls to helper functions replaced by the commands
- *  that pass the arguments on (`"$@"`). Undefined when the file is missing
- *  or empty. */
-export function checkScript(workdir: string): string | undefined {
+ *  that pass the arguments on (`"$@"`). With `inside`, a test for being
+ *  inside the environment (`IS_DDEV_PROJECT`), the branch that runs there
+ *  is dropped. Undefined when the file is missing or empty. */
+export function checkScript(workdir: string, inside?: RegExp): string | undefined {
   const file = join(workdir, 'scripts/check.sh');
   if (!existsSync(file)) return undefined;
   const lines = read(file)
@@ -78,7 +118,8 @@ export function checkScript(workdir: string): string | undefined {
     .split('\n')
     .map((l) => l.replace(/(^|\s)#.*$/u, ''))
     .filter((l) => !/^\s*$/u.test(l));
-  const code = inlineFunctions(expandVariables(lines)).join('\n');
+  const branches = inside === undefined ? lines : dropInsideBranches(lines, inside);
+  const code = inlineFunctions(expandVariables(branches)).join('\n');
   return code === '' ? undefined : code;
 }
 
