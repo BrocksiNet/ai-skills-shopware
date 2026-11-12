@@ -60,7 +60,7 @@ rules/
   sources.json                # repositories drift mining reads, our skills per path, and the review sources
   sources.schema.json         # field reference for sources.json
 
-tools/                        # repo tooling in TypeScript (Node 24, no build step)
+tools/                        # repo tooling in TypeScript (Node 26, no build step)
   src/                        # typed modules (catalog, rule validator, renderers)
   bin/validate-rules.ts       # inline rule IDs vs rules/catalog.json
   bin/render-enforced.ts      # "Already enforced by CI" sections from the catalog
@@ -105,7 +105,7 @@ tools/                        # repo tooling in TypeScript (Node 24, no build st
 
 scripts/
   validate-skills.sh          # structure, budgets, REGISTRY conflicts, rule IDs (wrapper for tools/bin/validate-skills.ts)
-  eval-{plan,gate,diff}.sh    # wrappers for tools/bin/eval-*.ts (Node 24)
+  eval-{plan,gate,diff}.sh    # wrappers for tools/bin/eval-*.ts (Node 26)
   run-activation-evals.sh     # Layer 1 activation checks (wrapper for tools/bin/activation.ts)
   eval-local.sh               # local model evals (wrapper for tools/bin/eval-local.ts)
   check-update.sh             # compare pinned version vs latest release tag (wrapper for tools/bin/check-update.ts)
@@ -340,7 +340,7 @@ review never reads that, and cites the nearest ID it did read instead.
 
 ## Repo tooling
 
-New tooling is TypeScript in [`tools/`](tools/): Node 24 runs the `.ts` files
+New tooling is TypeScript in [`tools/`](tools/): Node 26 runs the `.ts` files
 directly (type stripping, so only erasable syntax: no `enum`, no parameter
 properties, no namespaces). `npm run typecheck` runs `tsc` with `strict`;
 `npm test` runs `node --test`. Coverage and targeted Stryker checks keep that runner; see

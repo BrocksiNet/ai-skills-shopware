@@ -22,7 +22,7 @@ this repo's skills, with read-only tools, and print the invoked skills:
 - [`runner/claude-activation.sh`](runner/claude-activation.sh) uses Claude Code.
 
 The adapters, `skills-profile.sh`, `run-task.sh` and `ab.sh` are wrappers for
-TypeScript in `tools/` and need Node 24. Event parsers are tested on recorded
+TypeScript in `tools/` and need Node 26. Event parsers are tested on recorded
 sessions in `tools/test/fixtures/agents/`.
 
 ```bash
@@ -454,7 +454,7 @@ wrong rule in `sw-plugin-development`, which turned the gate red.
   skill-on pass rate changed.
 - `scripts/eval-plan.sh` picks tasks (`EVAL_TASKS`, `EVAL_CHANGED_FILES`,
   `EVAL_MAX_TASKS`) and splits them into `EVAL_SHARDS` shards for CI.
-- The three scripts are wrappers for `tools/bin/eval-*.ts` and need Node 24.
+- The three scripts are wrappers for `tools/bin/eval-*.ts` and need Node 26.
   The logic and its unit tests live in `tools/src/` and `tools/test/`.
 - The unit tests in `tools/test/` drive all of the above, and the shell
   wrappers, with [`runner/fake-agent.sh`](runner/fake-agent.sh) instead of a

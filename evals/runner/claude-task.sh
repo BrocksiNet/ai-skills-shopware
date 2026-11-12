@@ -29,7 +29,7 @@
 # fixture. Do not point this adapter at a real checkout.
 #
 # The adapter is TypeScript in tools/ (plan WP10); this wrapper keeps the
-# path that evals.yml, the scripts and the docs use. Needs Node 24.
+# path that evals.yml, the scripts and the docs use. Needs Node 26.
 set -euo pipefail
 ROOT="$(cd "$(dirname "$0")/../.." && pwd)"
 exec node "$ROOT/tools/bin/adapter.ts" claude-task "$@"

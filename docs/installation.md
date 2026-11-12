@@ -74,7 +74,7 @@ npx skills update                 # update installed skills to the latest releas
 ./scripts/check-update.sh         # is a newer tag out? prints the command to run
 ```
 
-`check-update.sh` needs Node 24 and uses `GH_TOKEN` or `GITHUB_TOKEN` when
+`check-update.sh` needs Node 26 and uses `GH_TOKEN` or `GITHUB_TOKEN` when
 set.
 
 ## The `sw-` rename

@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 #
 # Static validation of every skill. Cheap, deterministic, runs on every PR.
-# Wrapper for tools/bin/validate-skills.ts (Node 24+).
+# Wrapper for tools/bin/validate-skills.ts (Node 26+).
 #
 # Checks:
 #   - frontmatter `name` == folder name

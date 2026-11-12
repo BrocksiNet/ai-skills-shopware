@@ -19,7 +19,7 @@ jobs:
 
       - uses: actions/setup-node@v5
         with:
-          node-version: '24'
+          node-version: '26'
 
       - name: Validate skill structure, budgets and conflicts
         run: bash scripts/validate-skills.sh
@@ -49,7 +49,7 @@ jobs:
 
       - uses: actions/setup-node@v5
         with:
-          node-version: '24'
+          node-version: '26'
           cache: npm
           cache-dependency-path: evals/tools/ast/package-lock.json
 
@@ -71,7 +71,7 @@ jobs:
 
       - uses: actions/setup-node@v5
         with:
-          node-version: '24'
+          node-version: '26'
           cache: npm
           cache-dependency-path: |
             tools/package-lock.json

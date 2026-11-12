@@ -49,7 +49,7 @@ jobs:
 
       - uses: actions/setup-node@v5
         with:
-          node-version: '24'
+          node-version: '26'
 
       - name: Download the current assets
         # A failed download must stop the run: uploading a store that is

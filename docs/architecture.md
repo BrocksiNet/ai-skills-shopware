@@ -114,7 +114,7 @@ rules/catalog.json     every rule ID
 evals/tasks/<task>/    instruction, fixture, golden fixtures
 evals/routing/<case>/  a diff and the references it must select
 evals/routing-replay/  real PRs, their review comments' references, and a recall floor
-tools/                 TypeScript tooling run by Node 24: validators, renderers, eval runner, graders
+tools/                 TypeScript tooling run by Node 26: validators, renderers, eval runner, graders
 tools/api-index/       the public API index generator
 use-cases/             install one-liners per kind of work
 docs/                  this documentation

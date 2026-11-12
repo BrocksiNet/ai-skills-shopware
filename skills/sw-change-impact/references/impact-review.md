@@ -27,11 +27,11 @@ If you cannot name who else is affected, you have not reviewed the change.
 
 ### Public API: run the API index tool
 
-Run the `shopware-api-index` npm package with `npx` (Node 20 or newer)
+Run the `shopware-api-index` npm package with `npx` (Node 26 or newer)
 from the root of the shopware/shopware clone; nothing else to install:
 
 ```bash
-npx -y shopware-api-index@0.1.0-beta.1 diff --repo . --base origin/trunk --head HEAD
+npx -y shopware-api-index@0.1.0-beta.2 diff --repo . --base origin/trunk --head HEAD
 ```
 
 It names the routes, entity fields, feature flags, configuration keys,
@@ -51,7 +51,7 @@ not as a break: overrides of it still render.
   `--base 6.6.10.4 --head 6.7.0.0`, or `trunk`. The script downloads the
   weekly index once a week. Use it for "what did this update change" when
   no clone is at hand. It has files, not lines.
-- **No Node 20 or newer** (`node --version`): the script refuses to run. Do
+- **No Node 26 or newer** (`node --version`): the script refuses to run. Do
   the check by hand with `git diff origin/trunk...HEAD` on routes,
   definitions, `feature.yaml` and config files, and say in the review that
   the API diff did not run.

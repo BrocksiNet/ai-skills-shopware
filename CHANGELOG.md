@@ -20,6 +20,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   a removed computed member; facts name the release a signature changed.
   Generator `api-index/0.8.0`.
 
+### Changed
+
+- Repo tooling and CI now run on Node 26 (was 24): `tools/` and
+  `tools/api-index` need Node 26 or newer, and `@types/node` follows on 26.x.
+  The `shopware-api-index` package follows: `0.1.0-beta.2` needs Node 26
+  or newer, and the skills pin it.
+
 ### Removed
 
 - The `sw-podman-dev` pointer skill, kept for one release after its rename

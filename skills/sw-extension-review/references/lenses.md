@@ -30,10 +30,10 @@ points at a replacement the extenders can use today: `CORE-063`.
   release in the range already ships: `REV-015`? Does it check the class
   when only the method is new: `PLG-024`?
 - Answer the two questions above with the `shopware-api-index` npm
-  package. Run it with `npx` (Node 20 or newer) from the extension's root:
+  package. Run it with `npx` (Node 26 or newer) from the extension's root:
 
   ```bash
-  git diff origin/main...HEAD | npx -y shopware-api-index@0.1.0-beta.1 facts --diff - .
+  git diff origin/main...HEAD | npx -y shopware-api-index@0.1.0-beta.2 facts --diff - .
   ```
 
   It lists, for every release in the `shopware/core` range, the API the
@@ -52,7 +52,7 @@ points at a replacement the extenders can use today: `CORE-063`.
 - The `facts` command reads releases from a weekly index it downloads
   once. To compare two refs of a shopware/shopware clone instead, use
   `diff --repo <clone> --base <ref> --head <ref>` (`--help` lists the
-  options). Without Node 20 or newer the script refuses to run: check the
+  options). Without Node 26 or newer the script refuses to run: check the
   oldest tag of the range by hand (`git show v6.6.0.0:src/...` in a clone)
   and say that the facts did not run.
 - Does code that loads on every request use a package that `composer.json`

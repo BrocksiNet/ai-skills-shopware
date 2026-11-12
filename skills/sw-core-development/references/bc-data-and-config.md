@@ -5,11 +5,11 @@ flag registration, a configuration default or key, or a console command.
 
 None of these have a PHP signature, so no BC check notices the change.
 Operators and integrations notice after the update. Run the
-`shopware-api-index` npm package with `npx` (Node 20 or newer) from the
+`shopware-api-index` npm package with `npx` (Node 26 or newer) from the
 root of the shopware/shopware clone:
 
 ```bash
-npx -y shopware-api-index@0.1.0-beta.1 diff --repo . --base origin/trunk --head HEAD
+npx -y shopware-api-index@0.1.0-beta.2 diff --repo . --base origin/trunk --head HEAD
 ```
 
 It lists the routes, entity fields and flags, feature flags, configuration
@@ -27,7 +27,7 @@ break: check that extensions overriding it with copied markup still fit.
 - **Release mode** (no `--repo`): base and head are releases such as
   `6.6.10.4` and `6.7.0.0`, or `trunk`, from the weekly index the script
   downloads. Use it to see what an earlier release already removed.
-- **No Node 20 or newer** (`node --version`): the script refuses to run.
+- **No Node 26 or newer** (`node --version`): the script refuses to run.
   Read `git diff origin/trunk...HEAD` for the files below by hand, and say
   that the API diff did not run.
 

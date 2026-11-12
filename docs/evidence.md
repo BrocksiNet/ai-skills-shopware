@@ -90,7 +90,7 @@ runtimes and replay limits; `node_modules` is omitted.
 
 ### Historical release archive
 
-Run from the repository root. Verification uses Node 24 and standard archive
+Run from the repository root. Verification uses Node 26 and standard archive
 tools; no additional package or evidence runner is required. The hash in the
 committed manifest is checked before extraction, then every original record
 is checked against the archive's file manifest.

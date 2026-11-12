@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 #
 # Golden tests for eval task graders (no model calls). Wrapper for
-# tools/bin/test-graders.ts (Node 24+).
+# tools/bin/test-graders.ts (Node 26+).
 #
 #   ./evals/test-graders.sh              # all tasks
 #   ./evals/test-graders.sh no-empty-explicit

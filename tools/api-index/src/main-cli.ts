@@ -15,7 +15,7 @@ export const USAGE = `usage: shopware-api.mjs <command> [options]
 shopware/shopware: https://github.com/BrocksiNet/ai-skills-shopware
 `;
 
-export const MIN_NODE = 20;
+export const MIN_NODE = 26;
 
 export function run(argv: string[], io: Io, nodeVersion: string): Promise<number> {
   const major = Number(nodeVersion.split('.')[0]);
