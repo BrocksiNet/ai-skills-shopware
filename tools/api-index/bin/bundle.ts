@@ -50,7 +50,7 @@ export async function bundle(): Promise<string> {
 export function packageVersion(): string {
   const json: unknown = JSON.parse(readFileSync(join(root, 'tools/api-index/npm/package.json'), 'utf8'));
   const version = typeof json === 'object' && json !== null && 'version' in json ? json.version : undefined;
-  if (typeof version !== 'string') throw new Error('npm/package.json has no version');
+  if (typeof version !== 'string') throw new TypeError('npm/package.json has no version');
   return version;
 }
 

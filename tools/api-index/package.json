@@ -11,8 +11,8 @@
     "test:coverage": "c8 node --test \"test/**/*.test.ts\""
   },
   "dependencies": {
-    "@babel/parser": "8.1.0",
-    "@babel/types": "8.1.0",
+    "@babel/parser": "8.1.2",
+    "@babel/types": "8.1.2",
     "php-parser": "3.7.0",
     "yaml": "2.9.1"
   },
