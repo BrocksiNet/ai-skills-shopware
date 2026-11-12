@@ -1,4 +1,0 @@
-interface:
-  display_name: "Shopware Podman Dev (renamed)"
-  short_description: "Renamed to sw-local-dev; points there."
-  default_prompt: "Use $sw-podman-dev to find the skill that replaced it."

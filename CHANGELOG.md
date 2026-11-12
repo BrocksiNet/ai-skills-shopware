@@ -8,6 +8,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Removed
+
+- The `sw-podman-dev` pointer skill, kept for one release after its rename
+  to `sw-local-dev`. List `sw-local-dev` instead.
+
 ## [0.17.0] - 2026-11-12
 
 ### Added

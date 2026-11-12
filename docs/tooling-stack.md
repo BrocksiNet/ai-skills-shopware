@@ -36,7 +36,7 @@ npx skills add BrocksiNet/ai-skills-shopware \
 If you use the `~/shopware-dev` hub, you do **not** need `npx skills add` per
 project — `sw-dev link` symlinks skills from **this repo's** `skills/` into
 `.cursor/`, `.claude/`, `.codex/`, and `.agents/`. List `sw-local-dev`
-in `instances.json` (it replaced `sw-podman-dev`).
+in `instances.json`.
 
 Install the CLI's own skills next to ours (do not copy them into this repo):
 

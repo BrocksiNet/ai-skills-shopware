@@ -69,9 +69,6 @@ shows which skills are installed here.
 | Research instead of guessing, and escalate when stuck | `sw-research-and-escalation` | "Does this service exist in 6.6?" |
 | Write short, plain answers and support replies | `sw-assistant-style` | "Draft a reply to this customer ticket" |
 
-`sw-podman-dev` was renamed to `sw-local-dev`; the old name only points to
-the new one for one release.
-
 ## About the library
 
 | You want to | Skill | Try |

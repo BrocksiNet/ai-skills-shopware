@@ -1363,23 +1363,6 @@
       ]
     },
     {
-      "name": "sw-podman-dev",
-      "summary": "Renamed to sw-local-dev, which now covers Podman and Mutagen lanes as well as DDEV, Docker Compose, Vagrant and native setups.",
-      "contexts": [
-        "core",
-        "plugin",
-        "app",
-        "project"
-      ],
-      "tasks": [
-        "answer"
-      ],
-      "load_for": [],
-      "paths": [],
-      "defers_to": [],
-      "routes": []
-    },
-    {
       "name": "sw-pr-description",
       "summary": "Fill the shopware/shopware pull request section skeleton.",
       "contexts": [
