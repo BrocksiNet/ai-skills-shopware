@@ -8,15 +8,35 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.17.0] - 2026-11-12
+
 ### Added
 
 - `sw-local-dev` runs Shopware commands where the project runs: DDEV,
   Docker Compose, Vagrant, native host tools, linked Podman lanes and
   Shopware CLI projects, one reference each. Rules `DEV-002` to `DEV-005`
   (one per new environment) and `DEV-006` (Podman, moved from the old skill
-  text), each with a task that fixes a `scripts/check.sh` copied from the
-  wrong setup. Core's four `.agents-templates` and shopware-cli's skills now
-  feed its drift issue.
+  text). Each has a task that fixes a `scripts/check.sh` copied from the
+  wrong setup, except `DEV-003` (Docker): Haiku found the compose service
+  and `-T` without the skill, so it has `eval: null`. Core's four
+  `.agents-templates` and shopware-cli's skills now feed its drift issue.
+- `SEC-009` in `sw-security`: end a validation regex with `\z` or the `D`
+  modifier, because a bare `$` also matches before a trailing newline.
+  Core's PHPStan rule only runs in core, so extension reviews need it.
+  Review pair `review-regex-end-anchor`.
+- Review pairs for `PLG-018` (no heavy work in `updateDestructive()`) and
+  `PLG-020` (derived data comes from an indexer, not migration SQL):
+  `review-migration-destructive-backfill` and
+  `review-migration-derived-data`.
+- The weekly drift issue reads more of core: the nested Administration and
+  `.github` `AGENTS.md` files, the shared-guidance ADR, the agent-skills
+  policy, the four environment templates, and the rule settings in the
+  Admin and Storefront ESLint, Stylelint and ludtwig configs (a new
+  `lint-rule` signal, mapped to the rule a config enforces). Core's
+  `sw-bugfixer` and `shopware-knowledge-capture` skills map to our skills;
+  the triage skills are ignored with a new per-source `ignore` list.
+- `docs/plans/2026-11-core-sources-and-admin-api.md`: the plan for core
+  sources, local environments, MCP and the admin API index.
 
 ### Changed
 
@@ -43,6 +63,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   and `test-graders` call `node tools/bin/grade.ts <task>` directly; a task is
   a folder with an `instruction.md`. The 7 AST-backed tasks keep their own
   `grade.sh`, which `grade.ts` runs.
+
+### Fixed
+
+- OpenCode eval runs no longer ask the model for a session title. Ollama
+  answers one request at a time, so tasks waited behind the title, and
+  hosted models paid tokens for it.
 
 ## [0.16.0] - 2026-11-09
 
@@ -1052,7 +1078,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   (`actions/checkout@v5`, `markdownlint-cli2-action@v23`).
 - `docs/local-validation.md` and GitHub issue templates for feedback.
 
-[Unreleased]: https://github.com/BrocksiNet/ai-skills-shopware/compare/v0.16.0...main
+[Unreleased]: https://github.com/BrocksiNet/ai-skills-shopware/compare/v0.17.0...main
+[0.17.0]: https://github.com/BrocksiNet/ai-skills-shopware/compare/v0.16.0...v0.17.0
 [0.16.0]: https://github.com/BrocksiNet/ai-skills-shopware/compare/v0.15.0...v0.16.0
 [0.15.0]: https://github.com/BrocksiNet/ai-skills-shopware/compare/v0.14.0...v0.15.0
 [0.14.0]: https://github.com/BrocksiNet/ai-skills-shopware/compare/v0.13.0...v0.14.0
