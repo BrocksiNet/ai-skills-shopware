@@ -49,7 +49,10 @@ build skills load before small edits, merges the thin-controller rules into
 `PLG-006`, tags `PHP-001`/`PHP-002` and ships `STY-001`, `TEST-036` and
 `ADM-041` with the weekly rule proposals (`suggest-rules`). v0.16.0
 (2026-11-09) adds `sw-openapi-dto`, `TEST-037` and `DEV-001` and bundles
-the API index tools as `scripts/shopware-api.mjs` in four skills.
+the API index tools as `scripts/shopware-api.mjs` in four skills. v0.17.0
+(2026-11-12) renames `sw-podman-dev` to `sw-local-dev` with DDEV, Docker,
+Vagrant and native references, adds `SEC-009`, runs the API index from the
+`shopware-api-index` npm package and reads more of core in the drift issue.
 
 Suggested milestones, as planned:
 
