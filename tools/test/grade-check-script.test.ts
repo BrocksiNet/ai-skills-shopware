@@ -51,4 +51,30 @@ describe('check-script graders', () => {
     assert.equal(result.pass, false);
     assert.match(result.detail, /host_run=1/u);
   });
+
+  test('a direct run guarded by IS_DDEV_PROJECT runs inside the container', () => {
+    const dir = workdir(
+      'run() {\n  if [ "${IS_DDEV_PROJECT:-}" = "true" ]; then\n    "$@"\n  else\n    ddev exec "$@"\n  fi\n}\n' +
+        'run vendor/bin/phpunit --filter CartProcessorTest\nrun composer phpstan\n',
+    );
+    assert.equal(ddev({ workdir: dir, transcript: '' }).pass, true);
+  });
+
+  test('a negated IS_DDEV_PROJECT guard keeps the else branch inside', () => {
+    const dir = workdir(
+      'if [ -z "${IS_DDEV_PROJECT:-}" ]; then\n  ddev exec vendor/bin/phpunit --filter CartProcessorTest\n  ddev composer phpstan\n' +
+        'else\n  vendor/bin/phpunit --filter CartProcessorTest\n  composer phpstan\nfi\n',
+    );
+    assert.equal(ddev({ workdir: dir, transcript: '' }).pass, true);
+  });
+
+  test('a host run on the outside branch of the guard still fails', () => {
+    const dir = workdir(
+      'if [ "${IS_DDEV_PROJECT:-}" != "true" ]; then\n  vendor/bin/phpunit --filter CartProcessorTest\nelse\n' +
+        '  ddev exec vendor/bin/phpunit --filter CartProcessorTest\nfi\nddev composer phpstan\n',
+    );
+    const result = ddev({ workdir: dir, transcript: '' });
+    assert.equal(result.pass, false);
+    assert.match(result.detail, /host_run=1/u);
+  });
 });
