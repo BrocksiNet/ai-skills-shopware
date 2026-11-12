@@ -97,6 +97,7 @@ tools/                        # repo tooling in TypeScript (Node 24, no build st
   api-index/                  # public API index of shopware/shopware per release (own package: php-parser):
                               # bin/build.ts one ref, bin/timeline.ts all tags, bin/api-facts.ts an extension's facts,
                               # bin/api-diff.ts public API changes between two refs, bin/check-breaks.ts api-diff vs known-breaks.json;
+                              # bin/cross-check.ts api-diff vs the sw-impact annotations on core PRs (by hand, git-ignored output);
                               # PHP, routes, entities, flags, config, admin, storefront, Twig and build surfaces;
                               # bin/shopware-api.ts both commands in one CLI, bin/bundle.ts bundles it into
                               # npm/, the `shopware-api-index` package the skills run with npx (CI checks the pinned version),

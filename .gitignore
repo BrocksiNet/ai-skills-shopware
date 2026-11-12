@@ -42,3 +42,6 @@ tools/api-index/coverage/
 # Written by publish-shopware-api.yml before npm publish
 tools/api-index/npm/shopware-api.mjs
 tools/api-index/npm/LICENSE
+
+# api-diff vs sw-impact cross-check output (tools/api-index/bin/cross-check.ts)
+tools/api-index/.cross-check/
