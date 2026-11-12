@@ -51,7 +51,7 @@ jobs:
 
       - uses: actions/setup-node@v5
         with:
-          node-version: '24'
+          node-version: '26'
 
       - name: Download the review signals
         # Written daily by collect-reviews.yml. Without the release yet, the
@@ -107,7 +107,7 @@ jobs:
 
       - uses: actions/setup-node@v5
         with:
-          node-version: '24'
+          node-version: '26'
 
       - name: Open the state PR and close the issue
         env:

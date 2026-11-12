@@ -29,7 +29,7 @@
 # Exit code: the gate's (0 pass, 1 fail), or 2 when nothing could run.
 #
 # Wrapper: the logic is TypeScript in tools/src/eval-local.ts (plan WP10 step
-# 4). Needs Node 24 or newer.
+# 4). Needs Node 26 or newer.
 set -euo pipefail
 ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 exec node "$ROOT/tools/bin/eval-local.ts" "$@"

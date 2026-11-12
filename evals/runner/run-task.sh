@@ -49,6 +49,6 @@
 #   6  the agent's quota is used up; not a task result, not retried
 set -euo pipefail
 # The runner is TypeScript in tools/bin/run-task.ts (plan WP10); this wrapper
-# keeps the path that evals.yml, eval-local.sh and the docs call. Needs Node 24.
+# keeps the path that evals.yml, eval-local.sh and the docs call. Needs Node 26.
 ROOT="$(cd "$(dirname "$0")/../.." && pwd)"
 exec node "$ROOT/tools/bin/run-task.ts" "$@"

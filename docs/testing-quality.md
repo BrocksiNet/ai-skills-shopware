@@ -1,6 +1,6 @@
 # Tooling quality checks
 
-Run these checks from the repository root with Node 24. No model calls, PHP
+Run these checks from the repository root with Node 26. No model calls, PHP
 runtime, Composer installation, or test-framework migration is involved.
 
 ```bash

@@ -28,7 +28,7 @@
 # reads as "no activation".
 #
 # Wrapper: the logic is TypeScript in tools/src/activation.ts (plan WP10 step
-# 4). Needs Node 24 or newer.
+# 4). Needs Node 26 or newer.
 
 set -euo pipefail
 ROOT="$(cd "$(dirname "$0")/.." && pwd)"

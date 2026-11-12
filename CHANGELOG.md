@@ -15,6 +15,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   a block moved behind the flag as announced, and facts name the flag
   state. Generator `api-index/0.7.0`.
 
+### Changed
+
+- Repo tooling and CI now run on Node 26 (was 24): `tools/` and
+  `tools/api-index` need Node 26 or newer, and `@types/node` follows on 26.x.
+  The published `shopware-api-index` package still runs on Node 20 and newer.
+
 ### Removed
 
 - The `sw-podman-dev` pointer skill, kept for one release after its rename

@@ -43,7 +43,7 @@ export function cliResult(bin: string, args: string[], input?: string): SpawnSyn
 }
 export function cli(bin: string, args: string[], expected = 0): string {
   const result = cliResult(bin, args);
-  assert.equal(result.error, undefined, result.error?.message);
+  assert.ifError(result.error);
   assert.equal(result.status, expected, result.stderr + result.stdout);
   return result.stdout;
 }

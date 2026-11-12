@@ -47,6 +47,6 @@
 # reported, {"input":N,"output":N,"runs":N}, or null when none did.
 set -euo pipefail
 # The runner is TypeScript in tools/bin/ab.ts (plan WP10); this wrapper
-# keeps the path that evals.yml, eval-local.sh and the docs call. Needs Node 24.
+# keeps the path that evals.yml, eval-local.sh and the docs call. Needs Node 26.
 ROOT="$(cd "$(dirname "$0")/../.." && pwd)"
 exec node "$ROOT/tools/bin/ab.ts" "$@"

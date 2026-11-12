@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 #
 # Report whether a newer release of this skills repo is available, and print
-# the exact command to update. Wrapper for tools/bin/check-update.ts (Node 24+).
+# the exact command to update. Wrapper for tools/bin/check-update.ts (Node 26+).
 #
 # Resolves the locally pinned version from (in order):
 #   1. $SKILLS_PINNED_VERSION env var
