@@ -73,12 +73,7 @@ test('findings split into both, only theirs with a reason, and only our breaks',
   );
   assert.deepEqual(
     result.onlyTheirs.map((miss) => `${miss.reason}: ${miss.needs}`),
-    [
-      'no-detail: prop types',
-      'no-detail: method parameters',
-      'miss: api:removed',
-      'no-surface: watch members',
-    ],
+    ['no-detail: prop types', 'no-detail: method parameters', 'miss: api:removed', 'no-surface: watch members'],
   );
   // A body change is no break, so it is not "only ours".
   assert.deepEqual(
