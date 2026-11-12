@@ -3,7 +3,8 @@
 // blocks; literal `position-identifier`s; and the `Shopware` global. A
 // component marked `@private` is not public API. Deprecations come from the
 // comment above the export, a member or a block, and from a template whose
-// first content is a `@deprecated` comment.
+// first content is a `@deprecated` comment. Items behind a feature flag
+// check carry a `from` / `until` marker (flag-state.ts).
 import type { CallExpression, ClassBody, Comment, Node, ObjectExpression } from '@babel/types';
 import {
   defaultExport,
@@ -20,6 +21,7 @@ import {
   stringOf,
   walkJs,
 } from './js.ts';
+import { applyState, type FlagState, scriptCondition, templateStates } from './flag-state.ts';
 import type { Flags, Item, ItemKind } from './model.ts';
 import { scanTwig, type TwigFile } from './twig.ts';
 
@@ -44,6 +46,8 @@ export interface Registration {
   config?: ObjectExpression;
   /** The comments above an inline registration. */
   comments?: Comment[];
+  /** Registered only with a feature flag on or off. */
+  state?: FlagState;
   file: string;
 }
 
@@ -81,15 +85,26 @@ export function registrations(code: string, file: string, files: ReadonlySet<str
   const ast = parseJs(code, file);
   const context: Context = { file, files, imports: importsOf(ast.program.body) };
   const out: Registration[] = [];
-  for (const statement of ast.program.body) {
-    const comments = [...(statement.leadingComments ?? [])];
-    walkJs(statement, (node) => {
+  const visit = (root: Node, comments: Comment[], state: FlagState): void => {
+    walkJs(root, (node) => {
+      if (node.type === 'IfStatement') {
+        const condition = scriptCondition(node.test);
+        visit(node.test, comments, state);
+        visit(node.consequent, comments, { ...condition.whenTrue, ...state });
+        if (node.alternate !== null && node.alternate !== undefined)
+          visit(node.alternate, comments, { ...condition.whenFalse, ...state });
+        return true;
+      }
       if (node.type !== 'CallExpression') return false;
       const registration = registrationOf(node, context, comments);
-      if (registration !== undefined) out.push(registration);
+      if (registration !== undefined) {
+        if (state.from !== undefined || state.until !== undefined) registration.state = state;
+        out.push(registration);
+      }
       return false;
     });
-  }
+  };
+  for (const statement of ast.program.body) visit(statement, [...(statement.leadingComments ?? [])], {});
   return out;
 }
 
@@ -153,16 +168,20 @@ function members(config: ObjectExpression, id: string, file: string): Item[] {
 }
 
 /** The blocks and slots of a component's template. */
-function templateItems(scanned: TwigFile, id: string, file: string): Item[] {
+function templateItems(scanned: TwigFile, twig: string, id: string, file: string): Item[] {
+  const states = templateStates(twig);
   const items: Item[] = scanned.blocks.map((block) => {
     const flags: Flags = {};
     if (block.deprecated !== undefined) flags.deprecated = block.deprecated;
+    applyState(flags, states.blocks.get(block.name));
     const item: Item = { id: `${id}#${block.name}`, kind: 'block', file, signature: block.parent ?? '', flags };
     if (block.body !== undefined) item.body = block.body;
     return item;
   });
   for (const slot of scanned.slots) {
-    items.push({ id: `${id}.slot.${slot}`, kind: 'slot', file, signature: '', flags: {} });
+    const flags: Flags = {};
+    applyState(flags, states.slots.get(slot));
+    items.push({ id: `${id}.slot.${slot}`, kind: 'slot', file, signature: '', flags });
   }
   return items;
 }
@@ -178,6 +197,7 @@ export function componentItems(registration: Registration, read: (path: string) 
     signature: registration.base === undefined ? 'register' : `extends ${registration.base}`,
     flags: {},
   };
+  applyState(head.flags, registration.state);
   const items: Item[] = [head];
   const seen = new Set<string>();
   const push = (item: Item): void => {
@@ -205,7 +225,7 @@ export function componentItems(registration: Registration, read: (path: string) 
   const scanned = scanTwig(twig);
   if (scanned.deprecated !== undefined && head.flags.deprecated === undefined)
     head.flags.deprecated = scanned.deprecated;
-  for (const item of templateItems(scanned, id, templateFile)) push(item);
+  for (const item of templateItems(scanned, twig, id, templateFile)) push(item);
   return items;
 }
 

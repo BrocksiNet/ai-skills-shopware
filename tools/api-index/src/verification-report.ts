@@ -10,6 +10,8 @@ const FACT_KINDS: Record<Fact['kind'], true> = {
   experimental: true,
   'final-extended': true,
   'bc-change': true,
+  'flag-on': true,
+  'flag-off': true,
   moved: true,
   'guarded-everywhere': true,
 };
