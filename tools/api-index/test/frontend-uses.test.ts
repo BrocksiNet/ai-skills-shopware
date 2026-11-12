@@ -21,6 +21,7 @@ const EXTENSION: Record<string, string> = {
     "Shopware.Component.override('sw-card', {",
     '    template,',
     '    methods: { open() { this.$super("open"); } },',
+    '    computed: { label() { return this.$super("label"); }, ownLabel() { return 1; } },',
     '});',
   ].join('\n'),
   [`${ADMIN}/override/sw-card.html.twig`]: '{% block sw_card_title %}<sw-button />{% endblock %}',
@@ -49,6 +50,8 @@ test('frontend uses: overrides, blocks, tags, Twig calls, plugins and the webpac
   for (const expected of [
     'override admin:sw-card index.js:2',
     'override admin:sw-card.js-method.open index.js:4',
+    'override admin:sw-card.computed.label index.js:5',
+    'override admin:sw-card.computed.ownLabel index.js:5',
     'block admin:sw-card#sw_card_title sw-card.html.twig:1',
     'tag admin:sw-button sw-card.html.twig:1',
     'extends admin:sw-text-field main.js:2',
@@ -89,9 +92,12 @@ test('api-facts: a block resolves through the template chain, a member through i
       'deprecated admin:sw-card#sw_card_title via admin:sw-card',
       'deprecated admin:sw-card.js-method.open via admin:sw-card',
       'deprecated twig:function:sw_csrf',
+      'missing admin:sw-card.computed.label',
       'missing build:admin.webpack',
       'missing twig:function:sw_csrf',
     ]);
+    // A computed member core never had is the extension's own, not a missing one.
+    assert.ok(!report.symbols.includes('admin:sw-card.computed.ownLabel'));
     // The checkout block is found in base.html.twig; sw-button and trans are not Shopware's.
     assert.ok(report.symbols.includes(`${CHECKOUT}#base_content`));
     assert.ok(!report.symbols.some((symbol) => symbol.includes('sw-button') || symbol.includes('trans')));

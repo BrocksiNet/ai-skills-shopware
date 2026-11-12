@@ -7,10 +7,13 @@
 // member a parent, trait or interface took over, and a class that moved
 // and keeps its old name as a runtime alias, are moves, not removals. A
 // template block whose body changed is listed, but not as a break: an
-// override of it still renders.
+// override of it still renders. Admin props, methods and computed members
+// are compared by signature (member-signature.ts), and a new required prop
+// on an existing component is a change.
 import { Lookup } from './facts.ts';
+import { addedChange, changeOf } from './item-change.ts';
 import type { Item, Snapshot } from './model.ts';
-import { frontendChange, ownerOf, type Surface, SURFACES, surfaceOf } from './surfaces.ts';
+import { ownerOf, type Surface, SURFACES, surfaceOf } from './surfaces.ts';
 import { movedClass, movedMember } from './moves.ts';
 import { mergeSnapshots } from './timeline.ts';
 
@@ -42,56 +45,6 @@ export interface ApiDiff {
   changes: Change[];
   /** Items skipped because the base marks them internal or experimental. */
   skipped: number;
-}
-
-/** The flags that matter for a field, from its signature `Class →Ref autoload Flag…`. */
-function fieldParts(signature: string): { type: string; reference?: string; flags: Set<string> } {
-  const [type = '', ...rest] = signature.split(' ');
-  const reference = rest.find((part) => part.startsWith('→'))?.slice(1);
-  const flags = new Set(rest.filter((part) => !part.startsWith('→')));
-  return reference === undefined ? { type, flags } : { type, reference, flags };
-}
-
-/** Flags whose loss or gain breaks a client or an extension. */
-const LOST = ['ApiAware'];
-const GAINED = ['Required', 'WriteProtected', 'Runtime', 'Computed', 'Immutable'];
-
-function fieldChange(base: string, head: string): string | undefined {
-  const before = fieldParts(base);
-  const after = fieldParts(head);
-  const notes: string[] = [];
-  if (before.type !== after.type) notes.push(`type ${before.type} → ${after.type}`);
-  if (before.reference !== after.reference)
-    notes.push(`reference ${before.reference ?? '-'} → ${after.reference ?? '-'}`);
-  for (const flag of LOST) if (before.flags.has(flag) && !after.flags.has(flag)) notes.push(`no longer ${flag}`);
-  for (const flag of GAINED) if (!before.flags.has(flag) && after.flags.has(flag)) notes.push(`now ${flag}`);
-  if (before.flags.has('autoload') && !after.flags.has('autoload')) notes.push('no longer autoloaded');
-  return notes.length === 0 ? undefined : notes.join(', ');
-}
-
-function routeChange(base: Item, head: Item): string | undefined {
-  const [beforeMethods = '', beforePath = ''] = (base.signature ?? '').split(' ');
-  const [afterMethods = '', afterPath = ''] = (head.signature ?? '').split(' ');
-  const notes: string[] = [];
-  if (beforePath !== afterPath) notes.push(`path ${beforePath} → ${afterPath}`);
-  const kept = new Set(afterMethods.split('|'));
-  const lost = beforeMethods.split('|').filter((method) => afterMethods !== 'ANY' && !kept.has(method));
-  if (lost.length > 0) notes.push(`no longer ${lost.join(', ')}`);
-  if (base.scope !== head.scope) notes.push(`scope ${base.scope ?? '-'} → ${head.scope ?? '-'}`);
-  return notes.length === 0 ? undefined : notes.join(', ');
-}
-
-function configChange(base: Item, head: Item): string | undefined {
-  const before = (base.signature ?? '').split(' = ')[0];
-  const after = (head.signature ?? '').split(' = ')[0];
-  return before === after ? undefined : `type ${before} → ${after}`;
-}
-
-function changeOf(base: Item, head: Item): string | undefined {
-  if (base.kind === 'route') return routeChange(base, head);
-  if (base.kind === 'field') return fieldChange(base.signature ?? '', head.signature ?? '');
-  if (base.kind === 'config') return configChange(base, head);
-  return frontendChange(base, head);
 }
 
 /** Deprecated in the snapshot, by its own flag or its owner's. An item
@@ -234,6 +187,13 @@ export function diffSnapshots(
       continue;
     }
     changes.push(...keptChanges(item, after, surface, baseById, bodies));
+  }
+  if (wanted.has('admin')) {
+    for (const item of added) {
+      const detail = addedChange(item, baseById);
+      if (detail !== undefined)
+        changes.push({ surface: 'admin', kind: 'changed', id: item.id, detail, file: item.file });
+    }
   }
   return { base: base.ref, head: head.ref, changes, skipped };
 }

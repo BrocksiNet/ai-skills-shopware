@@ -44,11 +44,11 @@ export function patternsFor(id: string): RegExp[] {
   const last = rest.split('.').at(-1) ?? rest;
   if (prefix === 'storefront' && rest.endsWith('.twig')) return [];
   const name = escape(last);
-  // A method's definition, not the first call to it.
-  if (rest.includes('.js-method.'))
+  // A method's or computed member's definition, not the first use of it.
+  if (rest.includes('.js-method.') || rest.includes('.computed.'))
     return [
-      new RegExp(`^\\s*(static\\s+)?(async\\s+)?\\*?${name}\\s*\\([^)]*\\)\\s*\\{`, 'u'),
-      new RegExp(`\\b${name}\\s*[:=]\\s*(async\\s*)?(function\\b|\\()`, 'u'),
+      new RegExp(`^\\s*(static\\s+)?(async\\s+)?\\*?${name}\\s*\\([^)]*\\)[^{]*\\{`, 'u'),
+      new RegExp(`\\b${name}\\s*[:=]\\s*(async\\s*)?(function\\b|\\(|\\{)`, 'u'),
       word(last),
     ];
   // A prop or option is a key of an object literal.

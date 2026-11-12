@@ -78,11 +78,17 @@ function narrowTo(diff: DiffLines | undefined): ((use: Use) => boolean) | undefi
   return (use) => diff.added.get(use.file)?.has(use.line) === true;
 }
 
-/** PHP targets always; a frontend target when the index has it or its owner. */
+/** PHP targets always; a frontend target when the index has it or its owner.
+ *  A method or computed member an override defines is the extension's own
+ *  when no release has it, on the component or a parent it extends: core
+ *  never had it, so it cannot go missing. */
 function fromShopware(lookup: Lookup, target: string): boolean {
   if (target.startsWith('php:')) return true;
+  if (lookup.get(target) !== undefined) return true;
   const owner = memberOwner(target);
-  return lookup.get(target) !== undefined || (owner !== undefined && lookup.get(owner) !== undefined);
+  if (owner === undefined || lookup.get(owner) === undefined) return false;
+  if (!/\.(?:js-method|computed)\./u.test(target)) return true;
+  return lookup.names.some((_, index) => lookup.inherited(target, index) !== undefined);
 }
 
 interface Chains {
@@ -113,6 +119,7 @@ function resolveChains(lookup: Lookup, byTarget: Map<string, Use[]>, releases: s
 export const KIND_ORDER = [
   'missing',
   'changed',
+  'signature',
   'final-extended',
   'internal',
   'deprecated',
@@ -171,6 +178,8 @@ export function describe(fact: Fact): string {
       return `missing in ${where}`;
     case 'changed':
       return `body changed in ${where}`;
+    case 'signature':
+      return `${fact.value ?? 'signature changed'} in ${where}`;
     case 'deprecated':
       return `@deprecated${fact.value === '' || fact.value === undefined ? '' : ` ${fact.value}`} in ${where}${via}`;
     case 'experimental':

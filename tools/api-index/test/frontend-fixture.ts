@@ -13,13 +13,15 @@ const BASE_TWIG = 'storefront:@Storefront/storefront/base.html.twig';
 export const CHECKOUT = 'storefront:@Storefront/storefront/page/checkout/index.html.twig';
 
 // 6.6: the block lives in base.html.twig, which the checkout page extends;
-// sw_csrf and the webpack build are gone in 6.7, sw-card is deprecated there.
+// sw_csrf, the webpack build and sw-card's `label` are gone in 6.7, sw-card
+// is deprecated there.
 export const V66 = [
   item(BASE_TWIG, 'template'),
   item(`${BASE_TWIG}#base_content`, 'block'),
   item(CHECKOUT, 'template', '@Storefront/storefront/base.html.twig'),
   item('admin:sw-card', 'component', 'register'),
   item('admin:sw-card.js-method.open', 'js-method'),
+  item('admin:sw-card.computed.label', 'computed', 'returns string'),
   item('admin:sw-card#sw_card_title', 'block', 'sw_card'),
   item('admin:sw-text-field', 'component', 'register'),
   item('admin:sw-card.prop.title', 'prop', 'optional'),

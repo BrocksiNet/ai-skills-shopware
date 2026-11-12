@@ -2,7 +2,7 @@
 // symbol. docs/plans/2026-10-wp11-public-api-index.md explains the surfaces.
 
 export const SCHEMA = 1;
-export const GENERATOR = 'api-index/0.7.0';
+export const GENERATOR = 'api-index/0.8.0';
 
 export type ItemKind =
   | 'class'
@@ -21,6 +21,7 @@ export type ItemKind =
   | 'component'
   | 'prop'
   | 'js-method'
+  | 'computed'
   | 'emit'
   | 'slot'
   | 'block'
@@ -55,7 +56,7 @@ export interface Item {
   /** `php:Fqcn`, `php:Fqcn::method()`, `php:Fqcn::$property`, `php:Fqcn::CONSTANT`;
    *  `route:name`, `entity:name`, `field:entity.property`, `feature:NAME`,
    *  `config:shopware.key.path`; `admin:sw-name`, `admin:sw-name.prop.x`
-   *  (also `js-method`, `emit`, `slot`), `admin:sw-name#block`,
+   *  (also `js-method`, `computed`, `emit`, `slot`), `admin:sw-name#block`,
    *  `position:id`, `global:Shopware.X`; `storefront:@Storefront/…twig`,
    *  `storefront:@Storefront/…twig#block`, `js-plugin:Name`,
    *  `js-plugin:Name.option.x`, `js-plugin:Name.js-method.x`;
@@ -68,6 +69,7 @@ export interface Item {
   static?: true;
   abstract?: true;
   /** Methods: `(Type $a, ?Type $b = …): Return`. Properties and constants: their type.
+   *  Admin props, methods and computed members: see member-signature.ts.
    *  Routes: `GET|POST /path`. Fields: the field class and its API flags.
    *  Feature flags: `default=… major=… toggleable=…`. Config: the default as JSON. */
   signature?: string;

@@ -5,6 +5,7 @@ const FACT_KINDS: Record<Fact['kind'], true> = {
   unknown: true,
   missing: true,
   changed: true,
+  signature: true,
   internal: true,
   deprecated: true,
   experimental: true,

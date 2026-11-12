@@ -64,7 +64,7 @@ function lineOf(node: Node): number {
 }
 
 /** The blocks of a component template the extension replaces, and the
- *  methods its config redefines, as members of `target`. */
+ *  methods and computed members its config redefines, as members of `target`. */
 function configUses(
   config: ObjectExpression,
   file: string,
@@ -72,11 +72,15 @@ function configUses(
   target: string,
   out: Collector,
 ): void {
-  const methods = propertyOf(config, 'methods');
-  if (methods?.type === 'ObjectExpression') {
-    for (const method of methods.properties) {
-      const name = keyOf(method);
-      if (name !== undefined) out.add(`${target}.js-method.${name}`, 'override', file, lineOf(method));
+  for (const [key, kind] of [
+    ['methods', 'js-method'],
+    ['computed', 'computed'],
+  ] as const) {
+    const object = propertyOf(config, key);
+    if (object?.type !== 'ObjectExpression') continue;
+    for (const member of object.properties) {
+      const name = keyOf(member);
+      if (name !== undefined) out.add(`${target}.${kind}.${name}`, 'override', file, lineOf(member));
     }
   }
   const template = propertyOf(config, 'template');

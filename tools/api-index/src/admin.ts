@@ -1,7 +1,8 @@
 // The admin surface: components registered with `Component.register()` and
-// `Component.extend()`, with their props, methods, emits, slots and twig
-// blocks; literal `position-identifier`s; and the `Shopware` global. A
-// component marked `@private` is not public API. Deprecations come from the
+// `Component.extend()`, with their props, methods, computed members, emits,
+// slots and twig blocks; literal `position-identifier`s; and the `Shopware`
+// global. Props, methods and computed members carry their signature
+// (admin-shapes.ts). A component marked `@private` is not public API. Deprecations come from the
 // comment above the export, a member or a block, and from a template whose
 // first content is a `@deprecated` comment. Items behind a feature flag
 // check carry a `from` / `until` marker (flag-state.ts).
@@ -21,6 +22,7 @@ import {
   stringOf,
   walkJs,
 } from './js.ts';
+import { computedSignature, methodSignature, propSignature } from './admin-shapes.ts';
 import { applyState, type FlagState, scriptCondition, templateStates } from './flag-state.ts';
 import type { Flags, Item, ItemKind } from './model.ts';
 import { scanTwig, type TwigFile } from './twig.ts';
@@ -128,8 +130,9 @@ function memberFlags(member: Node): Flags {
   return flags;
 }
 
-/** Props, methods and emits of a component config, as items under `id`. */
-function members(config: ObjectExpression, id: string, file: string): Item[] {
+/** Props, methods, computed members and emits of a component config, as
+ *  items under `id`. `code` is the text of the file that holds `config`. */
+function members(config: ObjectExpression, id: string, file: string, code: string): Item[] {
   const items: Item[] = [];
   const add = (kind: ItemKind, name: string, signature: string, node: Node): void => {
     items.push({ id: `${id}.${kind}.${name}`, kind, file, signature, flags: memberFlags(node) });
@@ -140,9 +143,7 @@ function members(config: ObjectExpression, id: string, file: string): Item[] {
       const name = keyOf(prop);
       if (name === undefined) continue;
       const value = prop.type === 'ObjectProperty' ? prop.value : undefined;
-      const flag = value?.type === 'ObjectExpression' ? propertyOf(value, 'required') : undefined;
-      const required = flag?.type === 'BooleanLiteral' && flag.value;
-      add('prop', name, required ? 'required' : 'optional', prop);
+      add('prop', name, value?.type === 'ObjectExpression' ? propSignature(value, code) : 'optional', prop);
     }
   } else if (props?.type === 'ArrayExpression') {
     for (const entry of props.elements) {
@@ -150,11 +151,16 @@ function members(config: ObjectExpression, id: string, file: string): Item[] {
       if (name !== undefined && entry !== null) add('prop', name, 'optional', entry);
     }
   }
-  const methods = propertyOf(config, 'methods');
-  if (methods?.type === 'ObjectExpression') {
-    for (const method of methods.properties) {
-      const name = keyOf(method);
-      if (name !== undefined) add('js-method', name, '', method);
+  for (const [key, kind] of [
+    ['methods', 'js-method'],
+    ['computed', 'computed'],
+  ] as const) {
+    const object = propertyOf(config, key);
+    if (object?.type !== 'ObjectExpression') continue;
+    for (const member of object.properties) {
+      const name = keyOf(member);
+      if (name === undefined) continue;
+      add(kind, name, kind === 'js-method' ? methodSignature(member, code) : computedSignature(member, code), member);
     }
   }
   const emits = propertyOf(config, 'emits');
@@ -215,7 +221,7 @@ export function componentItems(registration: Registration, read: (path: string) 
   if (privateIn(comments) || privateIn(ast.program.body[0]?.leadingComments)) head.flags.internal = true;
   const config = registration.config ?? configOf(exported.value);
   if (config === undefined) return items;
-  for (const item of members(config, id, registration.source)) push(item);
+  for (const item of members(config, id, registration.source, code)) push(item);
   const template = propertyOf(config, 'template');
   const imports = importsOf(ast.program.body);
   const specifier = template?.type === 'Identifier' ? imports.get(template.name) : undefined;
