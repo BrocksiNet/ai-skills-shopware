@@ -161,6 +161,40 @@ need more.
 Done when: one cross-check run is written up here with the miss lists, and
 each miss is an issue or an accepted difference.
 
+### First run (2026-11-12)
+
+Steps 1 to 4 are in `tools/api-index/bin/cross-check.ts`; step 5 is open.
+sw-impact runs only on core PRs labelled `sw-impact` and reports as check
+annotations (`--format github`), no artifact. The cross-check reads those
+annotations with `gh`, so there was nothing to install. Two
+`workflow_dispatch` runs are left out: the API does not return their
+`change_ref` input.
+
+37 commits from 12 PRs, among them core PR 17800, a seeded demonstration
+of ten admin breaks that was never meant to merge. sw-impact reported 33
+findings, all in the admin.
+
+| Member | Found by both | sw-impact | Recall |
+| ------ | ------------- | --------- | ------ |
+| emit | 3 | 3 | 100% |
+| prop | 3 | 9 | 33% |
+| method | 0 | 14 | 0% |
+| computed | 0 | 7 | 0% |
+
+Every miss is a surface or a detail our admin items do not record, none is
+a bug in the diff: method parameters (8), `computed` members (7), prop
+types (5), method return types (3), method parameter types (3), a new
+required prop (1). We reported no break that sw-impact did not. On the
+other 31 commits, both sides found nothing, apart from our deprecation and
+block-body notes, which are not breaks.
+
+What this means for WP C: before the rows in the gap table, record method
+signatures (parameters, required or not, TypeScript types, return type),
+`computed` members, prop types (`type:`) and new required props. These
+are small changes in `admin.ts` and would cover all 27 misses. The corpus
+is small and leans on PR 17800; rerun with `--refresh` once more core PRs
+carry the label.
+
 ## WP E: admin rules for plugin authors and reviewers
 
 Candidates for `sw-admin-js` (author side) and `sw-extension-review`
