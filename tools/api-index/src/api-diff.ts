@@ -94,11 +94,12 @@ function changeOf(base: Item, head: Item): string | undefined {
   return frontendChange(base, head);
 }
 
-/** Deprecated in the snapshot, by its own flag or its owner's. */
+/** Deprecated in the snapshot, by its own flag or its owner's. An item
+ *  that exists only with a feature flag off counts: the flag announces it. */
 function deprecatedIn(item: Item, byId: Map<string, Item>): boolean {
   let current: Item | undefined = item;
   for (let depth = 0; current !== undefined && depth < 12; depth += 1) {
-    if (current.flags.deprecated !== undefined) return true;
+    if (current.flags.deprecated !== undefined || current.flags.until !== undefined) return true;
     const owner = ownerOf(current);
     current = owner === undefined ? undefined : byId.get(owner);
   }
@@ -191,6 +192,10 @@ function keptChanges(
     const version = after.flags.deprecated;
     const text = version === '' ? 'deprecated' : `deprecated for ${version}`;
     changes.push({ surface, kind: 'deprecated', id: item.id, detail: text, file: after.file });
+  }
+  if (after.flags.until !== undefined && item.flags.until === undefined) {
+    const gone = `gone with the ${after.flags.until} flag on`;
+    changes.push({ surface, kind: 'deprecated', id: item.id, detail: gone, file: after.file });
   }
   return changes;
 }

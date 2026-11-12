@@ -116,7 +116,9 @@ export const KIND_ORDER = [
   'final-extended',
   'internal',
   'deprecated',
+  'flag-off',
   'experimental',
+  'flag-on',
   'bc-change',
   'moved',
   'guarded-everywhere',
@@ -175,6 +177,10 @@ export function describe(fact: Fact): string {
       return `@experimental in ${where}${via}`;
     case 'internal':
       return `@internal in ${where}${via}`;
+    case 'flag-off':
+      return `only with the ${fact.value ?? ''} flag off in ${where}${via}`;
+    case 'flag-on':
+      return `only with the ${fact.value ?? ''} flag on in ${where}${via}`;
     case 'final-extended':
       return `extended, but final in ${where}`;
     case 'bc-change':

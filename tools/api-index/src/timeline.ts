@@ -21,6 +21,8 @@ export const TRACKED = [
   'experimental',
   'final',
   'bcChanges',
+  'from',
+  'until',
   'visibility',
   'static',
   'abstract',
@@ -102,6 +104,8 @@ export function fieldValue(item: Item, field: Tracked): string | undefined {
     case 'deprecated':
     case 'experimental':
     case 'final':
+    case 'from':
+    case 'until':
       return item.flags[field];
     case 'bcChanges':
       return item.flags.bcChanges?.join(', ');
@@ -264,6 +268,8 @@ export function snapshotAt(timeline: Timeline, ref: string): Snapshot | undefine
     if (values.experimental !== undefined) rebuilt.flags.experimental = values.experimental;
     if (values.final === 'keyword' || values.final === 'doc') rebuilt.flags.final = values.final;
     if (values.bcChanges !== undefined) rebuilt.flags.bcChanges = values.bcChanges.split(', ');
+    if (values.from !== undefined) rebuilt.flags.from = values.from;
+    if (values.until !== undefined) rebuilt.flags.until = values.until;
     if (values.visibility === 'public' || values.visibility === 'protected') rebuilt.visibility = values.visibility;
     if (values.static === 'true') rebuilt.static = true;
     if (values.abstract === 'true') rebuilt.abstract = true;

@@ -17,6 +17,10 @@ export type FactKind =
   | 'experimental'
   | 'final-extended'
   | 'bc-change'
+  /** Admin: exists only with a feature flag on (`value`: its version or name). */
+  | 'flag-on'
+  /** Admin: exists only with a feature flag off; gone once it is on. */
+  | 'flag-off'
   /** A template block whose body differs from the release before it in the range. */
   | 'changed'
   /** The previous name of a moved class: a runtime alias of the canonical class, until `until`. */
@@ -42,6 +46,8 @@ const FLAGS: { field: Tracked; kind: FactKind }[] = [
   { field: 'deprecated', kind: 'deprecated' },
   { field: 'experimental', kind: 'experimental' },
   { field: 'bcChanges', kind: 'bc-change' },
+  { field: 'until', kind: 'flag-off' },
+  { field: 'from', kind: 'flag-on' },
 ];
 
 interface Resolved {

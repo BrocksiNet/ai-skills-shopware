@@ -8,6 +8,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- API index: admin blocks, slots and components that exist with a feature
+  flag on or off only carry `from` / `until` (`v6.8.0`). `api-diff` reports
+  a block moved behind the flag as announced, and facts name the flag
+  state. Generator `api-index/0.7.0`.
+
 ### Removed
 
 - The `sw-podman-dev` pointer skill, kept for one release after its rename

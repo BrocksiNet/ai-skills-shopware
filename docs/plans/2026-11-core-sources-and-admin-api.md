@@ -127,6 +127,17 @@ Steps:
    templates twice; an item that exists in only one state carries a version
    marker (`until v6.8.0`, `from v6.8.0`) rather than "current" / "major",
    which lose their meaning in an old index.
+   *Done (2026-11-12):* `src/flag-state.ts` follows `v-if` / `v-else-if` /
+   `v-else` chains in admin templates and `if (Feature.isActive())` around
+   `Component.register()`. Blocks, slots and components get `flags.from` or
+   `flags.until` (`v6.8.0` for a major flag, else the flag name). `api-diff`
+   reports an item that gains `until` as announced ("gone with the v6.8.0
+   flag on"), and its later removal is not a break. Facts say `only with the
+   … flag off/on`. On trunk 82ee14c: 595 gated items (593 blocks, 1 slot,
+   1 component). On core PR 17339: 325 blocks announced where api-diff
+   reported nothing before. The 2 real removals are unchanged. Not covered
+   yet: props, methods and emits behind a flag, `position-identifier`s,
+   `Shopware?.Feature` calls, and storefront `{% if feature() %}`.
 2. One new `ItemKind` per row above, one PR each, each with `api-diff`
    classification and a `facts` lookup.
 3. Acceptance cases in the `tools/api-index` tests, with expected findings
