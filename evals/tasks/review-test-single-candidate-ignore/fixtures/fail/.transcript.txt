@@ -1,0 +1,14 @@
+```json
+{
+  "findings": [
+    {
+      "rule_id": "TEST-035",
+      "severity": "minor",
+      "file": "tests/unit/RewardSelectorTest.php",
+      "line": 20,
+      "summary": "The fixture is too small to prove the selection: add more rewards so a first() shortcut would fail.",
+      "fix": "Add more rewards to the list."
+    }
+  ]
+}
+```

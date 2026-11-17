@@ -1,0 +1,17 @@
+The test gives the selector a single reward, so it cannot tell a correct
+sales channel match from returning the first element.
+
+```json
+{
+  "findings": [
+    {
+      "rule_id": "TEST-035",
+      "severity": "major",
+      "file": "tests/unit/RewardSelectorTest.php",
+      "line": 20,
+      "summary": "With only one reward in the list, the test still passes if forSalesChannel() regresses to returning the first reward.",
+      "fix": "Put a reward of another sales channel first and assert that the German one is returned."
+    }
+  ]
+}
+```

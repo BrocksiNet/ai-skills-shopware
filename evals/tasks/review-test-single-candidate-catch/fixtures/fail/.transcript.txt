@@ -1,0 +1,14 @@
+```json
+{
+  "findings": [
+    {
+      "rule_id": "TEST-035",
+      "severity": "major",
+      "file": "tests/unit/RewardSelectorTest.php",
+      "line": 22,
+      "summary": "assertSame compares object identity; use assertEquals for value objects.",
+      "fix": "Replace assertSame with assertEquals."
+    }
+  ]
+}
+```

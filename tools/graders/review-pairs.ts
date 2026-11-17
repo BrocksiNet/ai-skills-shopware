@@ -1195,6 +1195,19 @@ export const PAIRS: Record<string, ReviewPair> = {
     summary:
       /cannot fail|can.t fail|never fails?|passes (even )?(when|if)|silently pass|vacuous|assertNotNull|assertInstanceOf|if \(\$\w+ !== null\)|(hook|event) (was )?(never )?(fired|dispatched)/iu,
   },
+  // Catch: RewardSelectorTest hands forSalesChannel() a list with one reward, the
+  // one it expects back, so the test still passes if the selector regresses to
+  // returning the first reward. Needs a minor+ finding in tests/ that names
+  // TEST-035 or describes the one-candidate fixture.
+  // Ignore: The list puts another sales channel's reward first, so a first()
+  // regression fails the assertion. A minor+ finding is a false positive.
+  'test-single-candidate': {
+    rule: 'TEST-035',
+    file: 'tests/**',
+    minSeverity: 'minor',
+    summary:
+      /\b(one|single|1|a lone) (reward|item|element|entry|candidate)\b|only (one|a single)\b|first\(\)|\b(the |returns? (the )?)first (element|item|reward|entry|one)|\$rewards\[0\]|\b(two|several|multiple|more|other|another|second) (rewards?|items|candidates|entries|sales channels?)\b|cannot (fail|tell|distinguish)|can.t (fail|tell|distinguish)|would still pass|passes (even )?(when|if)/iu,
+  },
   // Catch: The PR adds LoyaltyCalculator and a test for it under tests/integration/.
   // The test uses plain PHPUnit assertions and never boots the kernel, so it
   // belongs in tests/unit/. Needs a minor+ finding that cites TEST-034 on a file

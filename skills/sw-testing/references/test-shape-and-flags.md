@@ -40,11 +40,11 @@ behavior.
   exists (`assertNotNull`, `assertInstanceOf`, or a fired-count) before you
   check its fields; never guard assertions with `if ($captured !== null)`. A
   mocked `transactional()` or callback must run the closure it receives, or
-  the code under test never executes and the test passes on nothing. For tests
-  that verify selection logic (e.g., retrieving one item from many, finding a
-  delivery by ID, or picking a changed sales channel from a collection),
-  include multiple items in the fixture so that shortcuts like `first()` or
-  ID-based lookups fail visibly when the selection code regresses.
+  the code under test never executes and the test passes on nothing. When the
+  code picks one item out of many (a delivery by ID, the changed sales
+  channel in a collection), give the fixture at least two candidates and put
+  the wanted one after another; with one item, a regression to `first()`
+  still passes.
 - **TEST-036** **Keep an existing expectation unless the PR says the
   behavior changes.** When a PR changes production code, check the test
   files that existed before it. A removed or rewritten assertion, expected

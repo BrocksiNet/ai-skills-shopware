@@ -1,0 +1,31 @@
+diff --git a/tests/unit/RewardSelectorTest.php b/tests/unit/RewardSelectorTest.php
+new file mode 100644
+index 0000000..60fd96e
+--- /dev/null
++++ b/tests/unit/RewardSelectorTest.php
+@@ -0,0 +1,25 @@
++<?php declare(strict_types=1);
++
++namespace Swag\Loyalty\Tests\Unit;
++
++use PHPUnit\Framework\Attributes\CoversClass;
++use PHPUnit\Framework\TestCase;
++use Swag\Loyalty\Reward\Reward;
++use Swag\Loyalty\Reward\RewardSelector;
++
++/**
++ * @internal
++ */
++#[CoversClass(RewardSelector::class)]
++class RewardSelectorTest extends TestCase
++{
++    public function testPicksTheRewardOfTheSalesChannel(): void
++    {
++        $austria = new Reward('reward-at', 'sales-channel-at', 300);
++        $germany = new Reward('reward-de', 'sales-channel-de', 500);
++
++        $selected = (new RewardSelector())->forSalesChannel([$austria, $germany], 'sales-channel-de');
++
++        static::assertSame($germany, $selected);
++    }
++}

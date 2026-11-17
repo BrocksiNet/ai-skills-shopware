@@ -1,0 +1,8 @@
+The list puts the Austrian reward before the German one, so a selector that
+returns the first reward fails the assertion. Nothing to report.
+
+```json
+{
+  "findings": []
+}
+```
