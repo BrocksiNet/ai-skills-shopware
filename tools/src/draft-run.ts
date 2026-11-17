@@ -2,7 +2,7 @@
 // branch in its own worktree. The agent makes the change, the free checks
 // run (one retry with their output), the A/B runs for the changed tasks,
 // and a draft PR opens unless --no-pr.
-import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
+import { existsSync, mkdirSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
 import { join, relative, resolve } from 'node:path';
 import { loadCatalog } from './catalog.ts';
 import type { Edit } from './draft-agent.ts';
@@ -82,7 +82,10 @@ async function abRun(o: DraftOptions, wt: string, tasks: string[]): Promise<AbSe
   const section: AbSection = { results: [], agent: o.agent, model: o.model };
   if (tasks.length === 0) return section;
   const file = resolve(o.dir, `${o.id}-ab.jsonl`);
-  writeFileSync(file, '');
+  // eval-local refuses a results file that exists; drop one from an earlier
+  // draft of the same proposal, and do not create it here.
+  rmSync(file, { force: true });
+  rmSync(`${file}.manifest.json`, { force: true });
   const agent = o.agent === 'opencode' || o.agent === 'copilot' ? o.agent : 'claude';
   const env = {
     ...o.env,
