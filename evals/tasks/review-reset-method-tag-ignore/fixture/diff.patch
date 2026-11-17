@@ -23,7 +23,7 @@ index 3efc7e6..0ccf021 100644
      public function pointsPerEuro(string $salesChannelId): float
      {
 -        return $this->systemConfig->getFloat('SwagLoyalty.config.pointsPerEuro', $salesChannelId);
-+        // Called once per line item on every cart calculation; read the config once.
++        // Called on every cart calculation; read the config once per request.
 +        return $this->rates[$salesChannelId] ??= $this->systemConfig->getFloat('SwagLoyalty.config.pointsPerEuro', $salesChannelId);
      }
  
