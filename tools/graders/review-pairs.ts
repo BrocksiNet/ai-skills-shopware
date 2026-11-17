@@ -1228,6 +1228,21 @@ export const PAIRS: Record<string, ReviewPair> = {
     summary:
       /renam|remov|no longer exist|deprecat|breaks? (themes?|overrides?|extensions?)|themes?\b[^.]{0,60}(break|overrid|extend)|backward.?compat|\bBC\b|breaking/iu,
   },
+  // Catch: A new delivery status report loads OrderDelivery entities but does not
+  // load positions and stateMachineState associations. The code accesses both
+  // without checking if they are null, so accessing unloaded associations silently
+  // returns null or throws. Needs a major+ finding in src/ that names PLG-033
+  // or describes missing association loads and their use in the code.
+  // Ignore: The statusReport method adds $criteria->addAssociation() calls for
+  // positions and stateMachineState before searching, so the associations are
+  // loaded. A minor+ finding that names PLG-033 or calls the association loading
+  // out is a false positive.
+  'entity-associations': {
+    rule: 'PLG-033',
+    file: 'src/**',
+    minSeverity: 'major',
+    summary: /association|hydrat|load|position|stateMachineState|unload|null.*access|null.*return|not (load|hydrat)/iu,
+  },
   // Catch: SwagMediaCdn supports ~6.6.0 || ~6.7.0 and registers a subscriber for
   // UpdateMediaPathEvent behind class_exists(). The event exists in every
   // release since 6.5.7.0, so the guard is always true. Needs a minor+ finding

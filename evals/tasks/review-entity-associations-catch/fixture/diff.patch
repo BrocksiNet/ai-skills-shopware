@@ -1,0 +1,46 @@
+diff --git a/src/DeliveryProcessor.php b/src/DeliveryProcessor.php
+index 1234567..abcdefg 100644
+--- a/src/DeliveryProcessor.php
++++ b/src/DeliveryProcessor.php
+@@ -1,32 +1,41 @@
+ <?php declare(strict_types=1);
+ 
+ namespace Acme\OrderProcessor;
+ 
+ use Shopware\Core\Checkout\Order\OrderDeliveryEntity;
+ use Shopware\Core\Framework\Context;
+ use Shopware\Core\Checkout\Order\OrderDeliveryCollection;
+ use Shopware\Core\Framework\DataAbstractionLayer\Search\Criteria;
++use Shopware\Core\Framework\DataAbstractionLayer\Search\Filter\EqualsFilter;
+ 
+ class DeliveryProcessor
+ {
+     public function __construct(
+         private readonly \Shopware\Core\Checkout\Order\OrderDeliveryRepository $deliveryRepository,
+     ) {
+     }
+ 
++    public function statusReport(string $orderId, Context $context): array
++    {
++        $criteria = new Criteria();
++        $criteria->addFilter(new EqualsFilter('orderId', $orderId));
++        
++        $deliveries = $this->deliveryRepository->search($criteria, $context)->getEntities();
++        $report = [];
++        foreach ($deliveries as $delivery) {
++            $report[] = [
++                'positions_count' => \count($delivery->getPositions() ?? []),
++                'state' => $delivery->getStateMachineState()?->getName() ?? 'unknown',
++            ];
++        }
++        return $report;
++    }
++
+     public function processDeliveries(string $orderId, Context $context): void
+     {
+         $criteria = new Criteria();
+-        $criteria->addFilter(new \Shopware\Core\Framework\DataAbstractionLayer\Search\Filter\EqualsFilter('orderId', $orderId));
++        $criteria->addFilter(new EqualsFilter('orderId', $orderId));
+         
+         $deliveries = $this->deliveryRepository->search($criteria, $context)->getEntities();
+         

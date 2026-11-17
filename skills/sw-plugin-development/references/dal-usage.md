@@ -25,6 +25,12 @@ $products = $this->productRepository->search($criteria, $context)->getEntities()
   per row.
 - **PLG-016** Use the **sales-channel** repository/context (`SalesChannelContext`) for
   storefront/store-API reads so rules, availability, and pricing apply.
+- **PLG-033** **Load all associations at fetch time that the downstream code needs.**
+  When an entity is fetched through different paths (DAL Criteria, event listeners,
+  context factories), different associations may be populated. Code that accesses
+  an unloaded association silently returns null or throws. Document what each path
+  hydrates, and load all required associations where the entity is retrieved, not
+  later in the call chain. Tests with stubbed contexts may hide missing data.
 
 ## Writes
 

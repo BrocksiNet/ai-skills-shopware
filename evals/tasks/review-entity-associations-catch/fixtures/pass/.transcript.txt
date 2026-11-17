@@ -1,0 +1,16 @@
+The OrderDelivery is loaded without its associations, but the code accesses positions and stateMachineState.
+
+```json
+{
+  "findings": [
+    {
+      "rule_id": "PLG-033",
+      "severity": "major",
+      "file": "src/DeliveryProcessor.php",
+      "line": 23,
+      "summary": "The OrderDelivery criteria does not load positions and stateMachineState associations, but statusReport accesses both without checking if they are null.",
+      "fix": "Add $criteria->addAssociation('positions') and $criteria->addAssociation('stateMachineState') before searching, or handle null returns when these associations are not guaranteed to be loaded."
+    }
+  ]
+}
+```

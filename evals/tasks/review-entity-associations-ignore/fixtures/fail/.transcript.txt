@@ -1,0 +1,16 @@
+The code loads associations which is best practice.
+
+```json
+{
+  "findings": [
+    {
+      "rule_id": "PLG-033",
+      "severity": "minor",
+      "file": "src/DeliveryProcessor.php",
+      "line": 23,
+      "summary": "The statusReport method loads associations, which is good practice.",
+      "fix": "No fix needed, this is compliant code."
+    }
+  ]
+}
+```

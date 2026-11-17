@@ -1314,6 +1314,20 @@
       "defer_on_trunk": false
     },
     {
+      "id": "PLG-033",
+      "skill": "sw-plugin-development",
+      "file": "skills/sw-plugin-development/references/dal-usage.md",
+      "title": "Required entity associations are loaded at fetch time",
+      "status": "active",
+      "since": "2026-11-17",
+      "eval": "review-entity-associations-catch",
+      "core_guide_ids": [],
+      "audience": [
+        "plugin"
+      ],
+      "defer_on_trunk": false
+    },
+    {
       "id": "REV-001",
       "skill": "sw-review-learnings",
       "file": "skills/sw-review-learnings/SKILL.md",

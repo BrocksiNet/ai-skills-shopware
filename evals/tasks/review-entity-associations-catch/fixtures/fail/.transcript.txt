@@ -1,0 +1,16 @@
+The code is accessing entity fields that might not be loaded, but only minor style issues.
+
+```json
+{
+  "findings": [
+    {
+      "rule_id": null,
+      "severity": "minor",
+      "file": "src/DeliveryProcessor.php",
+      "line": 23,
+      "summary": "The statusReport method is missing type hints on the array elements.",
+      "fix": "Add proper typed return value with array<array{positions_count: int, state: string}>."
+    }
+  ]
+}
+```

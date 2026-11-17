@@ -1,0 +1,7 @@
+The code properly loads all required associations before accessing them.
+
+```json
+{
+  "findings": []
+}
+```

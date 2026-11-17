@@ -15,3 +15,4 @@
 - Review my plugin migration that updates the shipped order confirmation mail template.
 - Can I make the note parameter required on my plugin's existing Store API route?
 - Before we tag 2.1.0, check that this plugin's PHP still works on every Shopware release its composer range allows, and fix what does not.
+- Review this change that fetches order deliveries and accesses their positions and state machine state without loading them first.
