@@ -37,10 +37,11 @@ behavior.
 ## A test must be able to fail
 
 - **TEST-035** **A test must be able to fail.** Assert that a captured value
-  exists (`assertNotNull`, `assertInstanceOf`, or a fired-count) before you
-  check its fields; never guard assertions with `if ($captured !== null)`. A
-  mocked `transactional()` or callback must run the closure it receives, or
-  the code under test never executes and the test passes on nothing.
+  exists before checking its fields; never guard assertions with `if`. A
+  mocked callback must run the closure it receives. For tests that verify
+  selection logic (e.g., retrieving a changed delivery from many), include
+  multiple items in the fixture so shortcuts like `first()` or ID-based
+  lookups fail visibly when the selection code regresses.
 - **TEST-036** **Keep an existing expectation unless the PR says the
   behavior changes.** When a PR changes production code, check the test
   files that existed before it. A removed or rewritten assertion, expected

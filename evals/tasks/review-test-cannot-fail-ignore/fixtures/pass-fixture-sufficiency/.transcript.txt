@@ -1,0 +1,7 @@
+The test verifies that code picks the correct delivery from a collection. The fixture includes multiple deliveries where only the second transitions, and assertions verify the transition updated the second delivery specifically.
+
+```json
+{
+  "findings": []
+}
+```

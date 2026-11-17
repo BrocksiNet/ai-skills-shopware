@@ -1,0 +1,16 @@
+The test verifies that code picks the correct delivery from a collection, but the fixture contains only one delivery, so a regression to `getDeliveries()->first()` still passes.
+
+```json
+{
+  "findings": [
+    {
+      "rule_id": "TEST-035",
+      "severity": "major",
+      "file": "tests/integration/Delivery/DeliveryAssignmentTest.php",
+      "line": 42,
+      "summary": "The test checks that only the second delivery transitions, but the fixture has only one delivery, so a shortcut like first() still passes.",
+      "fix": "Include multiple deliveries in the fixture so regressions to shortcuts like first() or ID-based lookups fail visibly."
+    }
+  ]
+}
+```

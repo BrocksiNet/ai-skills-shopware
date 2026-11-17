@@ -1183,17 +1183,21 @@ export const PAIRS: Record<string, ReviewPair> = {
   },
   // Catch: The assertions on the captured event sit inside if ($changed !== null), so
   // the test passes when the event is never dispatched. Capturing in the hook
-  // is fine (TEST-016). Needs a major+ finding in tests/ that names TEST-035
-  // or describes the test that cannot fail.
+  // is fine (TEST-016). Also, a test verifies selection logic (e.g., retrieving
+  // the right item from many) but includes only one item in the fixture, so
+  // regressions to shortcuts like first() or ID-based lookups pass silently.
+  // Needs a major+ finding in tests/ that names TEST-035 or describes the test
+  // that cannot fail.
   // Ignore: The test asserts the captured event with assertInstanceOf before reading
-  // its fields. A minor+ finding that names TEST-035 or says the test passes
-  // without the event is a false positive.
+  // its fields. The fixture includes multiple items to verify selection logic,
+  // and assertions check the correct item was selected. A minor+ finding that
+  // names TEST-035 or says the test passes without the event is a false positive.
   'test-cannot-fail': {
     rule: 'TEST-035',
     file: 'tests/**',
     minSeverity: 'major',
     summary:
-      /cannot fail|can.t fail|never fails?|passes (even )?(when|if)|silently pass|vacuous|assertNotNull|assertInstanceOf|if \(\$\w+ !== null\)|(hook|event) (was )?(never )?(fired|dispatched)/iu,
+      /cannot fail|can.t fail|never fails?|passes (even )?(when|if)|silently pass|vacuous|assertNotNull|assertInstanceOf|if \(\$\w+ !== null\)|(hook|event) (was )?(never )?(fired|dispatched)|first\(\)|single item|only one|fixture.{0,50}(small|minimal|insufficient|single|one item|only one)/iu,
   },
   // Catch: The PR adds LoyaltyCalculator and a test for it under tests/integration/.
   // The test uses plain PHPUnit assertions and never boots the kernel, so it
