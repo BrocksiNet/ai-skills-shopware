@@ -726,7 +726,7 @@
       "id": "TEST-035",
       "skill": "sw-testing",
       "file": "skills/sw-testing/references/test-shape-and-flags.md",
-      "title": "A test must be able to fail",
+      "title": "A test must be able to fail: include fixture sufficiency",
       "status": "active",
       "since": "2026-10-21",
       "eval": "review-test-cannot-fail-catch",
