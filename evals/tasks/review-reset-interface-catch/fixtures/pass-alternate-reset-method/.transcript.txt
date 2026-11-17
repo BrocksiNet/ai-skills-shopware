@@ -1,7 +1,0 @@
-The service has a differently-named reset() method from a base class and correctly uses kernel.reset tag with method attribute.
-
-```json
-{
-  "findings": []
-}
-```

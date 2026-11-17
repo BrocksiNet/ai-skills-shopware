@@ -4083,7 +4083,7 @@
       "id": "ARCH-001",
       "skill": "sw-architecture",
       "file": "skills/sw-architecture/references/symfony-in-shopware.md",
-      "title": "Services that memoize reset it via ResetInterface and kernel.reset tag, except when already having a different reset method",
+      "title": "Services that memoize in a property reset it",
       "status": "active",
       "since": "2026-10-21",
       "eval": "review-reset-interface-catch",

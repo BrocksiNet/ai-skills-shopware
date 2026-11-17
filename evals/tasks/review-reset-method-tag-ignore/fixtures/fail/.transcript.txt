@@ -1,0 +1,14 @@
+```json
+{
+  "findings": [
+    {
+      "rule_id": "ARCH-001",
+      "severity": "major",
+      "file": "src/Loyalty/LoyaltyConfigReader.php",
+      "line": 12,
+      "summary": "LoyaltyConfigReader memoizes config but does not implement ResetInterface, so workers keep stale rates across requests.",
+      "fix": "Implement ResetInterface and clear both arrays in reset()."
+    }
+  ]
+}
+```

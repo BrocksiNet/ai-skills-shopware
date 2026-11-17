@@ -1,0 +1,65 @@
+diff --git a/src/Loyalty/LoyaltyConfigReader.php b/src/Loyalty/LoyaltyConfigReader.php
+index 3efc7e6..0ccf021 100644
+--- a/src/Loyalty/LoyaltyConfigReader.php
++++ b/src/Loyalty/LoyaltyConfigReader.php
+@@ -8,18 +8,29 @@ class LoyaltyConfigReader
+ {
+     private const KEYS = ['SwagLoyalty.config.pointsPerEuro', 'SwagLoyalty.config.tierThresholds'];
+ 
++    /**
++     * @var array<string, float> sales channel id => points per euro
++     */
++    private array $rates = [];
++
++    /**
++     * @var array<string, array<string, int>> sales channel id => tier thresholds
++     */
++    private array $thresholds = [];
++
+     public function __construct(private readonly SystemConfigService $systemConfig)
+     {
+     }
+ 
+     public function pointsPerEuro(string $salesChannelId): float
+     {
+-        return $this->systemConfig->getFloat('SwagLoyalty.config.pointsPerEuro', $salesChannelId);
++        // Called once per line item on every cart calculation; read the config once.
++        return $this->rates[$salesChannelId] ??= $this->systemConfig->getFloat('SwagLoyalty.config.pointsPerEuro', $salesChannelId);
+     }
+ 
+     public function tierThresholds(string $salesChannelId): array
+     {
+-        return (array) $this->systemConfig->get('SwagLoyalty.config.tierThresholds', $salesChannelId);
++        return $this->thresholds[$salesChannelId] ??= (array) $this->systemConfig->get('SwagLoyalty.config.tierThresholds', $salesChannelId);
+     }
+ 
+     /**
+@@ -31,5 +42,16 @@ class LoyaltyConfigReader
+         foreach (self::KEYS as $key) {
+             $this->systemConfig->delete($key, $salesChannelId);
+         }
++
++        unset($this->rates[$salesChannelId], $this->thresholds[$salesChannelId]);
++    }
++
++    /**
++     * Clears the memoized config between requests and messages.
++     */
++    public function resetAll(): void
++    {
++        $this->rates = [];
++        $this->thresholds = [];
+     }
+ }
+diff --git a/src/Resources/config/services.xml b/src/Resources/config/services.xml
+index bb54639..da6e3fc 100644
+--- a/src/Resources/config/services.xml
++++ b/src/Resources/config/services.xml
+@@ -4,6 +4,7 @@
+            xsi:schemaLocation="http://symfony.com/schema/dic/services http://symfony.com/schema/dic/services/services-1.0.xsd">
+     <services>
+         <service id="Swag\Loyalty\Loyalty\LoyaltyConfigReader">
++            <tag name="kernel.reset" method="resetAll"/>
+             <argument type="service" id="Shopware\Core\System\SystemConfig\SystemConfigService"/>
+         </service>
+ 
