@@ -97,8 +97,11 @@ function options(id: string, mode: string, noPr = true): DraftOptions {
     checks: [{ name: 'draft fixed', cmd: 'grep', args: ['-q', 'fixed', 'DRAFT.md'] }],
     repeats: 1,
     evalLocal: (o) => {
+      // Like freezeManifest: eval-local refuses a results file that exists.
+      const results = o.env.EVAL_RESULTS ?? '';
+      if (existsSync(results) || existsSync(`${results}.manifest.json`)) return Promise.resolve(1);
       writeFileSync(
-        o.env.EVAL_RESULTS ?? '',
+        results,
         (o.env.EVAL_TASKS ?? '')
           .split(',')
           .map((t) => result(t))
@@ -147,8 +150,15 @@ describe('suggest-rules draft', async () => {
     assert.equal(await git(['log', '-1', '--format=%s', r.branch]), 'init\n');
   });
   test('opens a draft PR with the run-evals label and removes the worktree', async () => {
+    // Left over from an earlier draft of the same proposal.
+    writeFileSync(join(dir, '2026-10-23-04-ab.jsonl'), '');
+    writeFileSync(join(dir, '2026-10-23-04-ab.jsonl.manifest.json'), '{}');
     const r = await draft(options('2026-10-23-04', 'ok', false));
     assert.equal(r.status, 'pr-opened');
+    assert.deepEqual(
+      r.ab?.results.map((x) => x.task),
+      [FAKE_TASK],
+    );
     assert.equal(r.pr, 'https://github.com/o/r/pull/7');
     assert.deepEqual(calls[0], ['git', 'push', '-u', 'origin', r.branch]);
     const gh = calls[1] ?? [];
