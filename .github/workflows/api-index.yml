@@ -11,7 +11,8 @@ name: api-index
 #     (about four minutes).
 #   - Before the upload, the previous index is downloaded and compared:
 #     api-changes.md (run summary and release asset) lists what trunk and
-#     each new tag changed in the public API.
+#     each new tag changed in the public API. After a generator change,
+#     last week's trunk commit is rebuilt with the new generator first.
 #   - The release is a prerelease and never marked latest, so the skills'
 #     version check (tools/bin/check-update.ts) keeps reading the real
 #     release tags.
@@ -81,10 +82,15 @@ jobs:
       - name: Report what changed since the previous index
         # Trunk against last week's trunk, each new tag against the tag
         # before it. Into the run summary, and as the api-changes.md asset
-        # the weekly drift issue (mine-trunk.yml) adds as a section.
+        # the weekly drift issue (mine-trunk.yml) adds as a section. When
+        # last week's index has another generator version, --repo rebuilds
+        # its trunk commit with this one, so the generator's own changes do
+        # not read as trunk changes.
         run: |
           node tools/api-index/bin/api-changes.ts \
             --previous "$RUNNER_TEMP/previous/api-index.json.gz" \
+            --repo "$RUNNER_TEMP/shopware" \
+            --cache "$RUNNER_TEMP/api-index-cache" \
             --current "$RUNNER_TEMP/dist/api-index.json.gz" \
             --out "$RUNNER_TEMP/dist/api-changes.md"
           cat "$RUNNER_TEMP/dist/api-changes.md" >> "$GITHUB_STEP_SUMMARY"

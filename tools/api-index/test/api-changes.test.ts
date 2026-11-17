@@ -53,3 +53,31 @@ test('api-changes: nothing moved, no previous index, a new generator', () => {
   const old = { ...same, generator: 'api-index/0.0.0' };
   assert.match(changesMarkdown(old, same), /The generator changed from api-index\/0\.0\.0 to api-index\//u);
 });
+
+test('api-changes: a rebuilt previous trunk hides what only the generator added', () => {
+  // Last week's index had no deprecation flags; the new generator reads
+  // them, and trunk did not change the route.
+  const previous = {
+    ...timeline([V1, snapshot('trunk', [route('a'), route('b')], 'aaaaaaaa1')]),
+    generator: 'api-index/0.0.0',
+  };
+  const flagged = route('a', { deprecated: 'v6.8.0' });
+  const current = timeline([V1, snapshot('trunk', [flagged], 'bbbbbbbb2')]);
+  const noisy = changesMarkdown(previous, current);
+  assert.match(noisy, /Some trunk changes below can come from the generator/u);
+  assert.match(noisy, /\| trunk \| [^|]+ \| 1 \| 0 \| 1 \|/u);
+
+  const rebuilt = snapshot('trunk', [flagged, route('b')], 'aaaaaaaa1');
+  const [trunk] = comparisons(previous, current, rebuilt);
+  assert.deepEqual(
+    trunk?.diff.changes.map((change) => [change.kind, change.id]),
+    [['removed', 'route:b']],
+  );
+  assert.equal(trunk.diff.base, 'trunk aaaaaaaa (2026-10-26)');
+  const text = changesMarkdown(previous, current, rebuilt);
+  assert.match(
+    text,
+    /The previous trunk was rebuilt with api-index\/[\d.]+, so the trunk changes below come from Shopware\./u,
+  );
+  assert.match(text, /\| trunk \| [^|]+ \| 1 \| 0 \| 0 \|/u);
+});
