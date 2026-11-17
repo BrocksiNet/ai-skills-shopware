@@ -1,0 +1,7 @@
+The service extends a base class with a different reset() signature and cannot implement ResetInterface.
+
+```json
+{
+  "findings": []
+}
+```

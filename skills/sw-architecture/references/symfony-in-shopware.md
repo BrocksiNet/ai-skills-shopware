@@ -29,12 +29,19 @@ Symfony lives **inside** services — it does not replace the DAL or extension m
 Workers, `messenger:consume` and runtimes like RoadRunner or FrankenPHP keep
 the container alive across requests and messages.
 
-- **ARCH-001** **A service that memoizes in a property resets it.** Implement
-  Symfony's `ResetInterface` and clear the property in `reset()`, or tag the
-  service `kernel.reset`. Without it, the next request or message sees the
-  previous customer's, sales channel's or language's data. Key the memo by
-  every input it depends on as well; a reset does not fix a memo keyed by
-  product ID alone when the price depends on the sales channel.
+- **ARCH-001** **A service that memoizes in a property resets it via
+  ResetInterface and kernel.reset tag, except when already having a different
+  reset method.** Implement Symfony's `ResetInterface`, clear the property in
+  `reset()`, and tag the service `kernel.reset`. Without it, the next request
+  or message sees the previous customer's, sales channel's or language's data.
+  Key the memo by every input it depends on as well; a reset does not fix a
+  memo keyed by product ID alone when the price depends on the sales channel.
+
+  If the service already has a differently-named `reset(...)` method with
+  parameters (from an abstract class or mixin), you cannot implement
+  `ResetInterface` without breaking the contract. Instead, tag the service
+  `kernel.reset` with a method attribute, e.g. `['method' => 'resetAll']`, to
+  route the lifecycle reset to the alternate method.
 
   Registration is only half the contract: the runtime must invoke the reset.
   Trunk's [service-reset change](https://github.com/shopware/shopware/pull/19121)
