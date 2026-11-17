@@ -4,6 +4,7 @@
 // and the `api-changes.md` asset the weekly drift issue reads. Block body
 // changes are left out: every release has many, and none breaks.
 import { type ApiDiff, diffSnapshots, diffSummary, diffText, isBreak, SURFACES } from './api-diff.ts';
+import type { Snapshot } from './model.ts';
 import { compareReleases, snapshotAt, type Timeline, versionParts } from './timeline.ts';
 
 /** The surfaces the report covers: all but PHP, which core's bc-check covers. */
@@ -23,11 +24,16 @@ const tags = (timeline: Timeline): string[] =>
     .filter((name) => versionParts(name) !== undefined)
     .toSorted(compareReleases);
 
-function trunkComparison(previous: Timeline, current: Timeline): Comparison | undefined {
+/** The commit trunk was at in the previous index, if it has trunk. */
+export function previousTrunkSha(previous: Timeline): string | undefined {
+  return previous.releases.find((release) => release.release === 'trunk')?.sha;
+}
+
+function trunkComparison(previous: Timeline, current: Timeline, trunkBase?: Snapshot): Comparison | undefined {
   const before = previous.releases.find((release) => release.release === 'trunk');
   const after = current.releases.find((release) => release.release === 'trunk');
   if (before === undefined || after === undefined || before.sha === after.sha) return undefined;
-  const base = snapshotAt(previous, 'trunk');
+  const base = trunkBase ?? snapshotAt(previous, 'trunk');
   const head = snapshotAt(current, 'trunk');
   if (base === undefined || head === undefined) return undefined;
   const diff = diffSnapshots(base, head, REPORTED, { bodies: false });
@@ -42,11 +48,13 @@ function trunkComparison(previous: Timeline, current: Timeline): Comparison | un
 }
 
 /** Trunk since the previous index, then every tag the previous index did
- *  not have, each against the tag before it in the new index. */
-export function comparisons(previous: Timeline | undefined, current: Timeline): Comparison[] {
+ *  not have, each against the tag before it in the new index. `trunkBase`
+ *  replaces the previous trunk: the same commit, rebuilt with the current
+ *  generator, so a generator change does not show up as a trunk change. */
+export function comparisons(previous: Timeline | undefined, current: Timeline, trunkBase?: Snapshot): Comparison[] {
   if (previous === undefined) return [];
   const out: Comparison[] = [];
-  const trunk = trunkComparison(previous, current);
+  const trunk = trunkComparison(previous, current, trunkBase);
   if (trunk !== undefined) out.push(trunk);
   const known = new Set(tags(previous));
   const all = tags(current);
@@ -65,7 +73,7 @@ const count = (diff: ApiDiff, test: (kind: string, announced: boolean) => boolea
   diff.changes.filter((change) => test(change.kind, change.announced === true)).length;
 
 /** The report as Markdown: a table with the counts, then each diff. */
-export function changesMarkdown(previous: Timeline | undefined, current: Timeline): string {
+export function changesMarkdown(previous: Timeline | undefined, current: Timeline, trunkBase?: Snapshot): string {
   const lines = ['## Public API changes', ''];
   if (previous === undefined) {
     lines.push('No previous index to compare with, so nothing to report this week.');
@@ -74,10 +82,12 @@ export function changesMarkdown(previous: Timeline | undefined, current: Timelin
   if (previous.generator !== current.generator)
     lines.push(
       `The generator changed from ${previous.generator} to ${current.generator}. ` +
-        'Some trunk changes below can come from the generator, not from Shopware.',
+        (trunkBase === undefined
+          ? 'Some trunk changes below can come from the generator, not from Shopware.'
+          : `The previous trunk was rebuilt with ${current.generator}, so the trunk changes below come from Shopware.`),
       '',
     );
-  const found = comparisons(previous, current);
+  const found = comparisons(previous, current, trunkBase);
   if (found.length === 0) {
     lines.push('Trunk did not move and there is no new release tag since the previous index.');
     return `${lines.join('\n')}\n`;
