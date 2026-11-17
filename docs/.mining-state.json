@@ -1,34 +1,34 @@
 {
   "shopware": {
-    "last_sha": "2f1b2c57ac96f501c728b5e09db3ad75614b8b1d",
-    "last_date": "2026-11-09T12:50:13Z"
+    "last_sha": "4f9a7b08d59b7d9844fcc87be0415cdbf56325c8",
+    "last_date": "2026-11-16T12:42:02Z"
   },
   "ai-coding-tools": {
     "last_sha": "a276558d12d0e09696fb9d1a7b4cd1925c44baf6",
     "last_date": "2026-10-27T21:24:02Z"
   },
   "php-modernization": {
-    "last_sha": "a8a36594d4c2f5e4a9bddda39b9bfd7023fd24e1",
-    "last_date": "2026-11-09T10:51:39Z"
+    "last_sha": "49bf7ce8f19fdb4e7bc4490b6abaa96b18a8fe5f",
+    "last_date": "2026-11-16T12:25:02Z"
   },
   "shopware-cli": {
-    "last_sha": "69bb26b97389aef6c683bba13cd1fdb4ef124a1d",
-    "last_date": "2026-11-09T13:26:14Z"
+    "last_sha": "089ed229faba46564c6775e5a164fe6f78c33d9c",
+    "last_date": "2026-11-16T11:29:34Z"
   },
   "fos-agent-skills": {
     "last_sha": "eb7bc0c0cf08b7d36a03d0f0d725a44d9dd9214c",
     "last_date": "2026-10-30T08:07:38Z"
   },
   "humanizer": {
-    "last_sha": "0ef9fe5bc3572734fd3ae6c448fe00a30cd5dcf0",
-    "last_date": "2026-10-28T07:17:33Z"
+    "last_sha": "b48c832f0f809c1b5658edbb838c2521b72f2413",
+    "last_date": "2026-11-10T01:34:24Z"
   },
   "shopware-dto-contract": {
-    "last_sha": "2f1b2c57ac96f501c728b5e09db3ad75614b8b1d",
-    "last_date": "2026-11-09T12:50:13Z"
+    "last_sha": "4f9a7b08d59b7d9844fcc87be0415cdbf56325c8",
+    "last_date": "2026-11-16T12:42:02Z"
   },
   "shopware-rector": {
-    "last_sha": "c4437da73e911ceeeffa81543dd2b3e2265d9a63",
-    "last_date": "2026-11-09T08:41:49Z"
+    "last_sha": "1a4e784c7298eea2ce9572bcf5784fc6cf6b56b9",
+    "last_date": "2026-11-14T23:12:03Z"
   }
 }
