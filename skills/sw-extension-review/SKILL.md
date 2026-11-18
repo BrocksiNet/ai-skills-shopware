@@ -108,7 +108,7 @@ Read the references the change selects:
 | Severity | Meaning |
 | -------- | ------- |
 | blocking | Data loss, a security hole, or a removal without deprecation in an API other extensions use |
-| major | Breaks shops behind the HTTP cache, with workers, or with other extensions; overwrites merchant edits |
+| major | Breaks shops behind the HTTP cache, with workers, or with other extensions; overwrites merchant edits; a test that passes without the behaviour it claims to cover, so the bug ships unnoticed |
 | minor | Correct, but costly or fragile |
 | nit | Style; only when asked |
 
