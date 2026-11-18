@@ -1,0 +1,9 @@
+The memoized config is cleared by resetAll(), which the service's kernel.reset
+tag names as its method, so workers start each request with an empty memo.
+reset(string) keeps its meaning and also drops the channel's memo. Nothing to report.
+
+```json
+{
+  "findings": []
+}
+```

@@ -36,6 +36,15 @@ the container alive across requests and messages.
   every input it depends on as well; a reset does not fix a memo keyed by
   product ID alone when the price depends on the sales channel.
 
+  Autoconfiguration tags a `ResetInterface` service `kernel.reset` with
+  `method: reset`; a service registered by hand needs that tag, and the tag
+  needs its `method` attribute, or the container does not compile. When the
+  class already has a `reset()` that does something else, such as
+  `reset(string $salesChannelId)` restoring default settings, it cannot
+  implement `ResetInterface`. Add a method like `resetAll()` that clears the
+  memo and point the tag at it: `<tag name="kernel.reset" method="resetAll"/>`.
+  That is a complete reset; do not ask for `ResetInterface` on top.
+
   Registration is only half the contract: the runtime must invoke the reset.
   Trunk's [service-reset change](https://github.com/shopware/shopware/pull/19121)
   adds the `LONGRUNNING_ENVIRONMENT` flag, off by default on its 6.7 path and
