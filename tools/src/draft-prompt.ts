@@ -77,7 +77,8 @@ function steps(s: Suggestion, catalog: Catalog): string[] {
   if (s.action === 'update')
     return [
       `Change the text of ${s.rule} in ${rule?.file ?? 'its file'} to say what the draft says. Keep the ID and the bold tag.`,
-      `Update the title in rules/catalog.json if it no longer fits. Change the eval ${rule?.eval ?? ''} only if the rule now covers a case it does not test; then add a fixture or a pass/fail golden case for it. ${copy}`,
+      'Keep the title in rules/catalog.json. Change it only when the subject of the rule changes, not to restate the new wording.',
+      `If the new text adds a case (an exception, a condition, a second way to break it) that ${rule?.eval ?? 'its eval'} does not test, add a task for that case with its own instruction.md and fixture; for a review rule, a new review-<topic>-catch or -ignore task graded by the same pair entry. Golden fixtures alone do not test the model. ${copy}`,
     ];
   if (s.action === 'retire')
     return [
@@ -122,6 +123,10 @@ export function draftPrompt({ suggestion: s, catalog }: DraftPromptInput): strin
     '- Write the rule in your own words. Do not quote review comments; the PR links are added later.',
     '- Change only what the rule needs. Do not commit, push, or touch .github/.',
     '- Do not edit the "Already enforced by CI" sections by hand.',
+    '- Golden transcripts go in fixtures/pass/.transcript.txt and fixtures/fail/.transcript.txt only; evals/test-graders.sh reads nothing else.',
+    '- An -ignore fixture must be free of the problem everywhere a reviewer looks: the whole diff and the context/ files, not only the new code. Comments in fixtures must be true.',
+    '- Use real Shopware class names and namespaces in fixtures; a reviewer flags made-up ones.',
+    '- A review pair summary regex names the specific problem; generic words (load, null, missing) match any finding about the file.',
     '',
     'End with a short summary: the files you changed and the rule ID.',
   ].join('\n');
