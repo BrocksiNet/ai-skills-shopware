@@ -3,7 +3,7 @@ new file mode 100644
 index 0000000..4f58772
 --- /dev/null
 +++ b/tests/integration/LoyaltyTierUpdaterTest.php
-@@ -0,0 +1,44 @@
+@@ -0,0 +1,53 @@
 +<?php declare(strict_types=1);
 +
 +namespace Swag\Loyalty\Tests\Integration;
@@ -11,7 +11,9 @@ index 0000000..4f58772
 +use PHPUnit\Framework\Attributes\CoversClass;
 +use PHPUnit\Framework\TestCase;
 +use Shopware\Core\Framework\Context;
-+use Shopware\Core\Framework\Test\TestCaseBase\IntegrationTestBehaviour;
++use Shopware\Core\Framework\Test\TestCaseBase\DatabaseTransactionBehaviour;
++use Shopware\Core\Framework\Test\TestCaseBase\KernelTestBehaviour;
++use Shopware\Core\Framework\Uuid\Uuid;
 +use Shopware\Core\Test\Integration\EventDispatcher\EventHookDispatcher;
 +use Swag\Loyalty\LoyaltyLedger;
 +use Swag\Loyalty\LoyaltyTierChangedEvent;
@@ -23,14 +25,21 @@ index 0000000..4f58772
 +#[CoversClass(LoyaltyTierUpdater::class)]
 +class LoyaltyTierUpdaterTest extends TestCase
 +{
-+    use IntegrationTestBehaviour;
++    use DatabaseTransactionBehaviour;
++    use KernelTestBehaviour;
 +
 +    public function testCrossingTheGoldThresholdDispatchesTierChanged(): void
 +    {
 +        $context = Context::createDefaultContext();
 +        $ledger = static::getContainer()->get(LoyaltyLedger::class);
-+        $customerId = $this->createCustomer();
-+        $ledger->book($customerId, 5000, $context);
++        $updater = static::getContainer()->get(LoyaltyTierUpdater::class);
++        $customerId = Uuid::randomHex();
++
++        $ledger->book($customerId, 1000, $context);
++        $updater->update($customerId, $context);
++        static::assertSame('silver', $ledger->tier($customerId, $context));
++
++        $ledger->book($customerId, 4000, $context);
 +
 +        $changed = null;
 +        EventHookDispatcher::fromContainer(static::getContainer())->on(
@@ -40,7 +49,7 @@ index 0000000..4f58772
 +            },
 +        );
 +
-+        static::getContainer()->get(LoyaltyTierUpdater::class)->update($customerId, $context);
++        $updater->update($customerId, $context);
 +
 +        static::assertInstanceOf(LoyaltyTierChangedEvent::class, $changed);
 +        static::assertSame($customerId, $changed->customerId);
