@@ -109,6 +109,6 @@ export function changedTasks(files: string[], wt: string, ruleEval: string | nul
   const touched = files.flatMap((f) => /^evals\/tasks\/([^/]+)\//u.exec(f)?.[1] ?? []);
   const graders = files.flatMap((f) => /^tools\/graders\/([^/]+)\.ts$/u.exec(f)?.[1] ?? []);
   const own = [...touched, ...graders, ...(ruleEval === null || ruleEval === undefined ? [] : [ruleEval])];
-  const all = [...own, ...own.flatMap(partner)];
+  const all = [...own, ...own.flatMap((t) => partner(t))];
   return [...new Set(all)].filter((t) => isTask(join(wt, 'evals/tasks'), t)).toSorted();
 }

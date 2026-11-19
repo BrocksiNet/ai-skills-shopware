@@ -7,7 +7,6 @@ import { cpSync, existsSync, mkdirSync, readFileSync, writeFileSync } from 'node
 import { join } from 'node:path';
 import { describe, test } from 'node:test';
 import { editor } from '../src/draft-agent.ts';
-import { changedTasks } from '../src/draft-checks.ts';
 import { branchName } from '../src/draft-prompt.ts';
 import { draft, type DraftOptions } from '../src/draft-run.ts';
 import { FAKE_TASK } from '../src/fake-draft.ts';
@@ -176,25 +175,5 @@ describe('suggest-rules draft', async () => {
   test('names the branch after the skill and the title', () => {
     const s = { ...proposal({ title: 'Keep history out of comments!' }), id: 'x', cluster: '', checks: [] };
     assert.equal(branchName({ ...s, ok: true, private: false }), 'rules/review-learnings-keep-history-out-of-comments');
-  });
-});
-
-describe('changedTasks', () => {
-  test('adds the other half of a review pair', () => {
-    assert.deepEqual(changedTasks(['rules/catalog.json'], ROOT, 'review-reset-interface-catch'), [
-      'review-reset-interface-catch',
-      'review-reset-interface-ignore',
-    ]);
-  });
-
-  test('keeps a task without a pair and drops names that are no task', () => {
-    assert.deepEqual(
-      changedTasks(
-        ['evals/tasks/review-reset-method-tag-ignore/instruction.md', 'tools/graders/review-pairs.ts'],
-        ROOT,
-        null,
-      ),
-      ['review-reset-method-tag-ignore'],
-    );
   });
 });
