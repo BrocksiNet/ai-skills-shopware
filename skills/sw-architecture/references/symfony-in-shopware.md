@@ -61,5 +61,8 @@ choices (HttpClient vs curl, etc.).
 
 ## Core modernization
 
-Dual path required: new Symfony path behind major flag; legacy until major.
-See `progressive-enhancement.md` and eval `core-http-client-behind-flag`.
+Classify observable behavior and extension contracts first. A behavior-preserving
+internal swap can replace the implementation directly. An incompatible swap or
+deliberate staged rollout needs a flag and the required legacy path.
+See `progressive-enhancement.md`; `core-http-client-behind-flag` covers a swap
+whose failure behavior changes.

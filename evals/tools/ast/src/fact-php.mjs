@@ -17,6 +17,22 @@ export function phpClass(workdir, file, name) {
   return { klass, imports };
 }
 const full = (name, s) => s.imports.get(name.replace(/^\\/u, "")) ?? name.replace(/^\\/u, "");
+// Fixture doubles declare PHP parameter names so named arguments can be reordered.
+export function phpCallable(parameters, fn) {
+  fn.phpParameters = parameters;
+  return fn;
+}
+function invoke(fn, nodes, s, receiver = undefined) {
+  const args = [];
+  for (const node of nodes ?? []) {
+    const named = node.kind === "namedargument";
+    const index = named ? fn.phpParameters?.indexOf(nodeName(node.name)) : args.length;
+    if (index === undefined || index < 0)
+      throw new UnsupportedPhp(`unsupported named argument ${nodeName(node.name)}`);
+    args[index] = expression(named ? node.value : node, s);
+  }
+  return fn.apply(receiver, args);
+}
 function arrayValue(n, s) {
   const entries = n.items.map((item) => [
     item.key ? expression(item.key, s) : null,
@@ -27,21 +43,31 @@ function arrayValue(n, s) {
     : entries.map(([, value]) => value);
 }
 function call(n, s) {
-  const args = (n.arguments ?? []).map((a) =>
-    expression(a.kind === "namedargument" ? a.value : a, s),
-  );
   if (n.what.kind === "propertylookup") {
     const receiver = expression(n.what.what, s);
     const method = nodeName(n.what.offset);
-    if (receiver === s.self && findMethod(s.klass, method)) return methodValue(s, method, args);
+    const own = receiver === s.self ? findMethod(s.klass, method) : null;
+    if (own) return invoke(phpCallable(own.arguments.map((a) => nodeName(a.name)),
+      (...args) => methodValue(s, method, args)), n.arguments, s);
     assert.equal(
       typeof receiver?.[method],
       "function",
       `unavailable method ${method} on ${s.version ?? "fixture"}`,
     );
-    return receiver[method](...args);
+    return invoke(receiver[method], n.arguments, s, receiver);
+  }
+  if (n.what.kind === "staticlookup") {
+    const type = full(nodeName(n.what.what), s);
+    const method = nodeName(n.what.offset);
+    const fn = s.statics?.[type]?.[method];
+    if (!fn) throw new UnsupportedPhp(`unsupported static call ${type}::${method}`);
+    return invoke(fn, n.arguments, s);
   }
   const name = nodeName(n.what).replace(/^\\/u, "");
+  if (s.functions?.[name]) return invoke(s.functions[name], n.arguments, s);
+  const args = (n.arguments ?? []).map((a) =>
+    expression(a.kind === "namedargument" ? a.value : a, s),
+  );
   if (name === "method_exists")
     return (
       args[1] === "addTag" &&
@@ -58,6 +84,7 @@ function call(n, s) {
 }
 export function expression(n, s) {
   if (n === null || n === undefined) return null;
+  if (n.kind === "nullkeyword") return null;
   if (n.kind === "string" || n.kind === "boolean") return n.value;
   if (n.kind === "number") return Number(n.value);
   if (n.kind === "variable") return n.name === "this" ? s.self : s.vars.get(n.name);
@@ -79,6 +106,7 @@ export function expression(n, s) {
   }
   if (n.kind === "new") {
     const name = full(nodeName(n.what), s);
+    if (s.constructors?.[name]) return invoke(s.constructors[name], n.arguments, s);
     if (name === "Shopware\\Core\\Framework\\Adapter\\Cache\\Event\\AddCacheTagEvent")
       return {
         tags: n.arguments.flatMap((a) => (a.unpack ? expression(a, s) : [expression(a, s)])),
@@ -86,6 +114,7 @@ export function expression(n, s) {
     throw new UnsupportedPhp(`unsupported constructor ${name}`);
   }
   if (n.kind === "call") return call(n, s);
+  if (n.kind === "silent") return expression(n.expr, s);
   if (n.kind === "unary" && n.type === "!") return !expression(n.what, s);
   if (n.kind === "bin") {
     const left = expression(n.left, s);
@@ -95,6 +124,12 @@ export function expression(n, s) {
     if (n.type === ".") return String(left) + String(right);
     if (n.type === "===" || n.type === "==") return left === right;
     if (n.type === "!==") return left !== right;
+    if (n.type === "+") return left + right;
+    if (n.type === "-") return left - right;
+    if (n.type === ">=") return left >= right;
+    if (n.type === ">") return left > right;
+    if (n.type === "<=") return left <= right;
+    if (n.type === "<") return left < right;
   }
   if (n.kind === "retif")
     return expression(n.test, s) ? expression(n.trueExpr, s) : expression(n.falseExpr, s);
@@ -114,6 +149,7 @@ function statements(body, s) {
   const children = body?.kind === "block" ? body.children : Array.isArray(body) ? body : [body];
   for (const n of children.filter(Boolean)) {
     if (n.kind === "return") return { value: expression(n.expr, s) };
+    if (n.kind === "throw") throw expression(n.what, s);
     if (n.kind === "if") {
       const result = statements(expression(n.test, s) ? n.body : n.alternate, s);
       if (result) return result;

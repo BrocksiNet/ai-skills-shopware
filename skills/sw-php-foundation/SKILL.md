@@ -21,19 +21,19 @@ metadata:
 The shared PHP baseline every Shopware use-case inherits. It encodes only what
 models get wrong *in practice* for Shopware codebases — not a generic PHP
 tutorial. The surface skills (`sw-core-development`,
-`sw-plugin-development`) add stricter deltas on top; they never contradict
-this base.
+`sw-plugin-development`) define framework contracts and surface-specific choices,
+including when DTOs and events must stay mutable.
 
 ## Non-negotiable baseline
 
-- **`declare(strict_types=1);`** at the top of every PHP file, after the opening tag.
-- **Full type coverage.** Every parameter, return, and property is typed. No
+- **PHP-003** Put `declare(strict_types=1);` at the top of every PHP file, after
+  the opening tag. Every parameter, return, and property is typed. No
   untyped `array` where a shape is known — type it or model it (see below).
-- **`#[\Override]`** on every method that overrides a parent or implements an
+- **PHP-004** Put `#[\Override]` on every method that overrides a parent or implements an
   interface (PHP 8.3+).
-- **Imports, not FQCN inline.** Reference classes via `use` imports, never
+- **PHP-005** Reference classes via `use` imports, not
   inline `\Vendor\Namespace\Class` in the body.
-- **PER Coding Style** (the successor to PSR-12). Shopware enforces this via
+- **PHP-006** Follow PER Coding Style (the successor to PSR-12). Shopware enforces this via
   EasyCodingStandard (`ecs.php`); run it, do not hand-format.
 
 ## Shopware trunk habits (review-backed)
@@ -44,31 +44,38 @@ PRs. They are required on trunk and worth following in plugins and projects:
 - **PHP-001** **No `empty()`.** Use explicit checks (`=== null`, `=== ''`, `=== []`, typed
   `count()`). In tests, prefer PHPUnit `assertEmpty()` / `assertNotEmpty()` over
   `empty()` in assertions.
-- **Inject interfaces**, not concrete services or repositories, when an interface
-  exists (`FooRepositoryInterface`, `ClockInterface`, …). Concrete types only
-  when the implementation is intentional.
-- **Time via PSR-20 clock.** Inject `Psr\Clock\ClockInterface`; do not call
+- **PHP-007** Inject an existing supported interface when the service provides
+  one, such as `Psr\Log\LoggerInterface` or `ClockInterface`. Modern Shopware DAL
+  intentionally injects `EntityRepository` (for example `product.repository`):
+  `EntityRepositoryInterface` was removed in 6.5, and there is no built-in
+  `ProductRepositoryInterface`. Do not invent an interface to satisfy this
+  preference. See the [6.5 migration guide](https://github.com/shopware/shopware/blob/trunk/UPGRADE-6.5.md#entityrepositoryinterface-removal).
+- **PHP-008** Inject `Psr\Clock\ClockInterface` for time; do not call
   `time()`, `microtime()`, or `new \DateTimeImmutable()` in domain/services for
   “now”. Tests mock the clock — no fuzzy `time()` comparisons.
-- **No `@var` on properties** when a native property type or method-level
+- **PHP-009** No `@var` on properties when a native property type or method-level
   `@return`/`@param` generic suffices. PHPDoc is for shapes PHP cannot express,
   not a shortcut around typing.
-- **Name the arguments** when a call passes several values that do not describe
+- **PHP-010** Name the arguments when a call passes several values that do not describe
   themselves — `true`, `false`, `0`, `1`, `[]`, `null` — or when naming lets you
   skip defaults you only passed in order to reach a later argument. Leave a
   short, self-explaining call positional.
 
 ## Use the right shape for data
 
-Raw associative arrays are the most common Shopware-context mistake. They defeat
-PHPStan, IDEs, and refactoring.
+- **PHP-011** Use a DTO or Value Object for a meaningful domain concept, a real
+  boundary, or a simpler public contract. Keep simple internal handoffs as
+  scalars or arrays with PHPDoc shapes; known keys alone do not justify a new
+  class. Core's `CORE-057` in `sw-core-development` owns its stricter design
+  guidance, and `sw-openapi-dto` owns generated API DTO contracts.
 
 | Instead of | Use |
 | ---------- | --- |
-| `array $payload` with known keys | a `readonly` DTO / Value Object |
+| untyped internal array with known keys | an `array{...}` PHPDoc shape |
+| array carrying a meaningful boundary contract | a DTO / Value Object |
 | `const STATE_OPEN = 'open'` + sibling constants | a backed `enum` |
 | `['open', 'closed', 'paid']` | `enum`-typed values / `Enum::cases()` |
-| returning `['success' => true, 'data' => …]` | a typed result object |
+| complex result crossing a public boundary | a typed result object when it simplifies the contract |
 
 ```php
 <?php declare(strict_types=1);
@@ -96,38 +103,44 @@ final readonly class PriceResult
   in new code. You get exhaustive `match()`, autocompletion, and compile-time
   checks. Turning existing public constants of core into an enum is a break;
   deprecate them first (`sw-core-development`).
-- **`readonly` for DTOs / Value Objects / events** — data that should not mutate
-  after construction. Use constructor property promotion.
-- Do *not* slap `readonly` on Doctrine entities or DAL entity classes — that is a
-  framework concern handled in the surface skills; ask before doing it.
+- **PHP-012** Use `readonly` and constructor property promotion for values whose
+  contract is immutable. Preserve framework and extension mutability: generated
+  API DTOs stay mutable (`sw-openapi-dto`), and listeners may mutate an event's
+  public properties (`sw-architecture` → extension mechanisms). Keep Doctrine
+  and DAL entity mutability under the surface skill's contract.
 
 ## Static-analysis-friendly typing (Shopware convention)
 
 Shopware leans hard on PHPStan. Write code it can understand:
 
-- **Prefer `list<T>` over `array<int, T>`** for sequential value collections — it
+- **PHP-013** Prefer `list<T>` over `array<int, T>` for sequential value collections — it
   communicates the shape precisely and unlocks stricter checks.
-- **Narrow types in this order** (most to least preferred):
-  1. Ensure the type at runtime with an explicit check (and throw).
-  2. Use `assert()` for development/test-time narrowing.
-  3. Only as a last resort, a `@var` / `@param` / `@return` PHPDoc annotation.
-- `@var`/`@param`/`@return` annotations are for cases language features cannot
-  express. They give no runtime safety — do not reach for them first.
-- Generic collections get `@return Collection<int, ThingEntity>`-style PHPDoc so
-  callers and PHPStan know the element type.
+
+For type narrowing (`PHP-009`), prefer:
+
+1. Ensure the type at runtime with an explicit check (and throw).
+2. Use `assert()` for development/test-time narrowing.
+3. Only as a last resort, a `@var` / `@param` / `@return` PHPDoc annotation.
+
+`@var`/`@param`/`@return` annotations are for cases language features cannot
+express. They give no runtime safety — do not reach for them first.
+Generic collections get `@return Collection<int, ThingEntity>`-style PHPDoc so
+callers and PHPStan know the element type.
 
 ## PHP 8.x features to reach for
 
-`enum` (8.1), `readonly` properties (8.1) and classes (8.2), constructor
-property promotion (8.0), `#[\Override]` (8.3), typed class constants (8.3),
-first-class callable syntax, `match` over `switch`. Adopt them when they make
-intent clearer — not for their own sake.
+- **PHP-014** Check the supported PHP range in `composer.json` and any
+  `config.platform.php` before adopting newer syntax. The installed runtime
+  alone does not establish compatibility. Examples: `enum` and readonly
+  properties (8.1), readonly classes (8.2), `#[\Override]` and typed class
+  constants (8.3). Use features only when the supported minimum permits them
+  and they clarify the code.
 
 ## Definition of done
 
 - [ ] `declare(strict_types=1);` present; all params/returns/properties typed.
-- [ ] No known-shape `array` that should be a DTO/VO; no constant-set that should be an enum.
-- [ ] `#[\Override]` on overrides/implementations; classes referenced via `use`.
+- [ ] Data shapes match their purpose: typed internal arrays, DTOs for meaningful boundaries, and preserved framework mutability.
+- [ ] New syntax fits the supported PHP minimum; `#[\Override]` on overrides/implementations where supported; classes referenced via `use`.
 - [ ] `list<T>` used for sequential collections; PHPDoc only where language types cannot express the shape.
 - [ ] No `empty()`; interfaces injected where available; `ClockInterface` for time; no redundant `@var` on properties.
 - [ ] Named arguments used for bare literals or skipped defaults; short self-explaining calls stay positional.

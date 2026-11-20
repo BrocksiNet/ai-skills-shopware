@@ -43,7 +43,7 @@ Read only the reference that matches the task or the files it changes:
 | [`deprecations.md`](references/deprecations.md) | You deprecate or break a public API. | `@deprecated tag:v`, … |
 | [`service-architecture.md`](references/service-architecture.md) | You add a service or change what is public. | `src/**/DependencyInjection/*.{xml,php}`, `src/**/Resources/config/services*.{xml,php}`, `* @(internal\|final)$`, … |
 | [`api-schema.md`](references/api-schema.md) | You add or change an Admin or Store API route. | `src/Core/Framework/Api/ApiDefinition/Generator/Schema/**`, `#[Route(` |
-| [`modernization-and-flags.md`](references/modernization-and-flags.md) | You modernize code behind a feature flag. | `src/Core/Framework/Resources/config/packages/feature.yaml`, `Feature::isActive(`, … |
+| [`modernization-and-flags.md`](references/modernization-and-flags.md) | You modernize an implementation and choose whether compatibility needs a feature flag. | `src/Core/Framework/Resources/config/packages/feature.yaml`, `Feature::isActive(`, … |
 | [`release-notes-and-adr.md`](references/release-notes-and-adr.md) | The change needs RELEASE_INFO, UPGRADE or an ADR. | `RELEASE_INFO-*.md`, `UPGRADE-*.md`, … |
 | [`static-analysis-baseline.md`](references/static-analysis-baseline.md) | You touch the PHPStan baseline or suppress a PHPStan error. | `phpstan-baseline.neon`, `phpstan*.neon`, `@phpstan-ignore`, … |
 | [`platform-architecture.md`](references/platform-architecture.md) | You cross a bundle boundary or add a listener or migration. | `src/Core/Migration/**/Migration*.php`, `use Shopware\(Storefront\|Administration)\`, … |
@@ -109,7 +109,7 @@ Read only the reference that matches the task or the files it changes:
 - [ ] PHPStan passes with no new baseline entries; if the level changed, the baseline was regenerated and committed.
 - [ ] Unit/integration tests added and green; ECS clean; conventional commit message.
 - [ ] Services registered in owning bundle; no cross-bundle boundary violations; listeners/controllers follow platform-architecture reference.
-- [ ] Internal modernization uses Symfony/platform building blocks behind feature flags when replacing historic workarounds (both paths tested).
+- [ ] Internal modernization uses Symfony/platform building blocks; equivalent swaps replace code directly, while incompatible changes or staged rollouts retain and test the required legacy path.
 
 ## Further reading (optional, non-load-bearing)
 

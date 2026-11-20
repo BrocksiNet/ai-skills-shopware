@@ -40,7 +40,7 @@
     },
     {
       "reference": "references/modernization-and-flags.md",
-      "when": "You modernize code behind a feature flag.",
+      "when": "You modernize an implementation and choose whether compatibility needs a feature flag.",
       "paths_any": [
         "src/Core/Framework/Resources/config/packages/feature.yaml"
       ],

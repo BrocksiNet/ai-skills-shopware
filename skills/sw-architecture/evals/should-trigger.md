@@ -15,3 +15,4 @@
 - This price resolver caches per sales channel in a property. Is that safe in a messenger worker?
 - My extension event now passes the whole Request instead of the sales channel ID. Any problem?
 - Review a long-running Shopware 6.7 HTTP worker whose resettable services retain state between requests.
+- Replace an internal time() call with an injected clock while preserving behavior. Does it need a feature flag?
