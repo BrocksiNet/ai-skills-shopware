@@ -52,7 +52,9 @@ build skills load before small edits, merges the thin-controller rules into
 the API index tools as `scripts/shopware-api.mjs` in four skills. v0.17.0
 (2026-11-12) renames `sw-podman-dev` to `sw-local-dev` with DDEV, Docker,
 Vagrant and native references, adds `SEC-009`, runs the API index from the
-`shopware-api-index` npm package and reads more of core in the drift issue.
+`shopware-api-index` npm package and reads more of core in the drift issue. v0.18.0
+(2026-11-20) removes the `sw-podman-dev` pointer, adds admin signatures and
+flag states to the API index, moves tooling to Node 26 and widens `ARCH-001`.
 
 Suggested milestones, as planned:
 

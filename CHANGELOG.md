@@ -8,6 +8,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.18.0] - 2026-11-20
+
 ### Added
 
 - API index: admin blocks, slots and components that exist with a feature
@@ -19,6 +21,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   new required parameter or prop, a removed parameter, a narrowed type and
   a removed computed member; facts name the release a signature changed.
   Generator `api-index/0.8.0`.
+- `tools/api-index/bin/cross-check.ts` compares `api-diff` with the
+  `sw-impact` annotations on core PRs and gives each miss a reason. The
+  first run found 6 of 33 admin findings; most misses were signatures,
+  which the index now records (above).
 
 ### Changed
 
@@ -26,11 +32,31 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   `tools/api-index` need Node 26 or newer, and `@types/node` follows on 26.x.
   The `shopware-api-index` package follows: `0.1.0-beta.2` needs Node 26
   or newer, and the skills pin it.
+- `ARCH-001` in `sw-architecture` covers a service whose `reset()` method
+  already does something else: the `kernel.reset` tag then names another
+  method. New task `review-reset-method-tag-ignore`.
+- `sw-extension-review` rates a test that cannot fail as major, not minor,
+  and holds back core-only test conventions (untagged `#[Package]`,
+  `@internal`, `#[CoversClass]` on integration tests) on plugin diffs.
+- `suggest-rules draft`: the drafter prompt keeps the catalog title of an
+  updated rule and asks for a task for each new case, and the draft A/B
+  runs both halves of a review pair.
 
 ### Removed
 
 - The `sw-podman-dev` pointer skill, kept for one release after its rename
   to `sw-local-dev`. List `sw-local-dev` instead.
+
+### Fixed
+
+- The `DEV-002` grader accepts a DDEV check script that runs tools directly
+  when `IS_DDEV_PROJECT=true` (inside the container) and uses `ddev exec`
+  otherwise.
+- `api-changes` rebuilds last week's trunk with the current generator when
+  the generator version changed, instead of reporting hundreds of
+  deprecations that only the generator change produced.
+- `suggest-rules draft` no longer creates an empty A/B results file before
+  the A/B, which made eval-local refuse to run.
 
 ## [0.17.0] - 2026-11-12
 
@@ -1102,7 +1128,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   (`actions/checkout@v5`, `markdownlint-cli2-action@v23`).
 - `docs/local-validation.md` and GitHub issue templates for feedback.
 
-[Unreleased]: https://github.com/BrocksiNet/ai-skills-shopware/compare/v0.17.0...main
+[Unreleased]: https://github.com/BrocksiNet/ai-skills-shopware/compare/v0.18.0...main
+[0.18.0]: https://github.com/BrocksiNet/ai-skills-shopware/compare/v0.17.0...v0.18.0
 [0.17.0]: https://github.com/BrocksiNet/ai-skills-shopware/compare/v0.16.0...v0.17.0
 [0.16.0]: https://github.com/BrocksiNet/ai-skills-shopware/compare/v0.15.0...v0.16.0
 [0.15.0]: https://github.com/BrocksiNet/ai-skills-shopware/compare/v0.14.0...v0.15.0
