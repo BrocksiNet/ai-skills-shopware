@@ -52,8 +52,9 @@ Read only the reference that matches the task or the files it changes:
    prefer internal swap behind a narrow interface.
 3. **Extension mechanism** — event vs decoration vs entity extension vs new route
    (see reference).
-4. **Progressive enhancement** — new path behind `Feature::isActive()`; keep
-   legacy path until major; test both (see reference).
+4. **Rollout** — replace a behavior-preserving internal implementation directly.
+   An incompatible change or deliberate staged rollout uses a feature flag;
+   keep the required legacy path and test both (see reference).
 5. **Scope** — smallest root-cause change; grep callers before shared behaviour
    edits (`sw-review-learnings` → change-scope when present).
 
@@ -76,7 +77,7 @@ Read only the reference that matches the task or the files it changes:
 - [ ] Correct extension mechanism chosen; dependencies flow inward (Core ← bundles).
 - [ ] DAL reads bounded; repositories used for entity data.
 - [ ] Services that memoize in a property reset between requests (`ARCH-001`).
-- [ ] Refactors that change behaviour use progressive enhancement (flag + legacy path) on core.
+- [ ] Behavior-preserving internal swaps replace the implementation directly; incompatible changes or staged rollouts retain and test the required legacy path.
 - [ ] Large decoupling split into phased PRs when needed; ADR for architectural forks.
 
 ## Further reading

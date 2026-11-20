@@ -17,7 +17,7 @@ Recurring mistakes — see owning references for fixes.
 
 ## Modernization
 
-- Removing legacy path in the same PR as the new implementation (core).
+- Removing legacy behavior that an incompatible core change still needs for BC.
 - Silent behaviour change on decorated services or public routes.
 - `Feature::fake()` in unit tests only to activate the current major flag.
 

@@ -5,7 +5,7 @@ about to hand-roll something Symfony already provides on the **pinned** stack.
 
 Core/platform changes that must preserve BC use
 [`sw-core-development/references/modernization-and-flags.md`](../../sw-core-development/references/modernization-and-flags.md)
-(feature flags + dual paths). **Plugins** adopt the modern API when the supported
+(classify contracts before choosing a rollout). **Plugins** adopt the modern API when the supported
 `shopware/core` range allows it — gate with `class_exists` / version checks only
 when you still support an older minor ([`version-compatibility.md`](version-compatibility.md)).
 

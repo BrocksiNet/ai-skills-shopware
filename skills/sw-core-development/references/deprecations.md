@@ -63,6 +63,10 @@ PHPStan rejects attributes that do not describe a structurally possible change.
 
 ## Deprecating code that already has a replacement
 
+Feature methods take the registered four-part flag ID, such as `v6.8.0.0`.
+Deprecation tags and `BCChange(version: ...)` keep the three-part release label,
+such as `v6.8.0`; do not substitute it into a feature check.
+
 ```php
 /**
  * @deprecated tag:v6.8.0 - Will be removed, use NewService::handle() instead.
@@ -70,14 +74,14 @@ PHPStan rejects attributes that do not describe a structurally possible change.
 public function oldHandle(Context $context): void
 {
     Feature::triggerDeprecationOrThrow(
-        'v6.8.0',
-        Feature::deprecatedMethodMessage(self::class, __METHOD__, 'v6.8.0', 'NewService::handle()')
+        'v6.8.0.0',
+        Feature::deprecatedMethodMessage(self::class, __METHOD__, 'v6.8.0.0', 'NewService::handle()')
     );
     // old behavior
 }
 ```
 
-- **CORE-018** Wrap removed-in-major behavior changes in `if (Feature::isActive('v6.x.0')) { … }`
+- **CORE-018** Wrap removed-in-major behavior changes in `if (Feature::isActive('v6.8.0.0')) { … }`
   so both paths exist until the major.
 - **CORE-019** Deprecate the whole surface: class, method, parameter, constant, public
   property, service id (only once core no longer uses it, `CORE-025`), event,

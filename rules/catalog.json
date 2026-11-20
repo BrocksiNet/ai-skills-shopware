@@ -1996,7 +1996,7 @@
       "file": "skills/sw-core-development/SKILL.md",
       "title": "Modernize behind Feature::isActive() and keep the legacy path until the major",
       "status": "retired",
-      "retired_reason": "No measured effect (2026-10-23): with the skill off, `core-http-client-behind-flag` passed every repeat on claude/haiku (3/3, local) and on opencode/mimo-v2.6-flash-free (3/3, evals.yml run 39960913122). Models already do this without the rule. The task stays as a canary: a model that fails it with the skill off brings the rule back.",
+      "retired_reason": "No measured effect (2026-10-23): with the skill off, `core-http-client-behind-flag` passed every repeat on claude/haiku (3/3, local) and on opencode/mimo-v2.6-flash-free (3/3, evals.yml run 39960913122). Models already do this without the rule. The task stays as a canary: a model that fails it with the skill off brings the rule back. The task and grader were repaired on 2026-11-20; those historical scores describe the earlier contract and must not be treated as evidence from the repaired canary.",
       "since": "2026-10-20",
       "eval": "core-http-client-behind-flag",
       "core_guide_ids": [],
@@ -2377,7 +2377,7 @@
       "id": "CORE-028",
       "skill": "sw-core-development",
       "file": "skills/sw-core-development/references/modernization-and-flags.md",
-      "title": "Do not copy legacy workarounds into new core code",
+      "title": "Replace legacy workarounds with a rollout appropriate to the affected contract",
       "status": "active",
       "since": "2026-10-20",
       "eval": null,
@@ -5264,6 +5264,196 @@
         "app"
       ],
       "defer_on_trunk": false
+    },
+    {
+      "id": "PHP-003",
+      "skill": "sw-php-foundation",
+      "file": "skills/sw-php-foundation/SKILL.md",
+      "title": "Strict types and typed parameters, returns and properties",
+      "status": "active",
+      "since": "2026-11-20",
+      "eval": null,
+      "core_guide_ids": [],
+      "audience": [
+        "core",
+        "plugin"
+      ],
+      "defer_on_trunk": false,
+      "eval_reason": "Existing PHP baseline assigned an ID during the review fixes; no independent behavioral eval. Surface and project tooling remain authoritative."
+    },
+    {
+      "id": "PHP-004",
+      "skill": "sw-php-foundation",
+      "file": "skills/sw-php-foundation/SKILL.md",
+      "title": "Override attributes where the supported PHP minimum permits",
+      "status": "active",
+      "since": "2026-11-20",
+      "eval": null,
+      "core_guide_ids": [],
+      "audience": [
+        "core",
+        "plugin"
+      ],
+      "defer_on_trunk": false,
+      "eval_reason": "Existing PHP baseline assigned an ID during the review fixes; no independent behavioral eval. Surface and project tooling remain authoritative."
+    },
+    {
+      "id": "PHP-005",
+      "skill": "sw-php-foundation",
+      "file": "skills/sw-php-foundation/SKILL.md",
+      "title": "Import class names rather than inline fully qualified names",
+      "status": "active",
+      "since": "2026-11-20",
+      "eval": null,
+      "core_guide_ids": [],
+      "audience": [
+        "core",
+        "plugin"
+      ],
+      "defer_on_trunk": false,
+      "eval_reason": "Existing PHP baseline assigned an ID during the review fixes; no independent behavioral eval. Surface and project tooling remain authoritative."
+    },
+    {
+      "id": "PHP-006",
+      "skill": "sw-php-foundation",
+      "file": "skills/sw-php-foundation/SKILL.md",
+      "title": "Follow the configured PER coding style checks",
+      "status": "active",
+      "since": "2026-11-20",
+      "eval": null,
+      "core_guide_ids": [],
+      "audience": [
+        "core",
+        "plugin"
+      ],
+      "defer_on_trunk": false,
+      "eval_reason": "Existing PHP baseline assigned an ID during the review fixes; no independent behavioral eval. Surface and project tooling remain authoritative."
+    },
+    {
+      "id": "PHP-007",
+      "skill": "sw-php-foundation",
+      "file": "skills/sw-php-foundation/SKILL.md",
+      "title": "Inject existing service interfaces; retain the supported concrete DAL repository",
+      "status": "active",
+      "since": "2026-11-20",
+      "eval": "interface-di-repository",
+      "core_guide_ids": [],
+      "audience": [
+        "core",
+        "plugin"
+      ],
+      "defer_on_trunk": false
+    },
+    {
+      "id": "PHP-008",
+      "skill": "sw-php-foundation",
+      "file": "skills/sw-php-foundation/SKILL.md",
+      "title": "Use the injected PSR-20 clock for current time",
+      "status": "active",
+      "since": "2026-11-20",
+      "eval": "clock-interface-injection",
+      "core_guide_ids": [],
+      "audience": [
+        "core",
+        "plugin"
+      ],
+      "defer_on_trunk": false
+    },
+    {
+      "id": "PHP-009",
+      "skill": "sw-php-foundation",
+      "file": "skills/sw-php-foundation/SKILL.md",
+      "title": "Use native types and runtime narrowing before redundant PHPDoc",
+      "status": "active",
+      "since": "2026-11-20",
+      "eval": null,
+      "core_guide_ids": [],
+      "audience": [
+        "core",
+        "plugin"
+      ],
+      "defer_on_trunk": false,
+      "eval_reason": "Existing PHP baseline assigned an ID during the review fixes; no independent behavioral eval. Surface and project tooling remain authoritative."
+    },
+    {
+      "id": "PHP-010",
+      "skill": "sw-php-foundation",
+      "file": "skills/sw-php-foundation/SKILL.md",
+      "title": "Name non-descriptive arguments and skipped defaults",
+      "status": "active",
+      "since": "2026-11-20",
+      "eval": null,
+      "core_guide_ids": [],
+      "audience": [
+        "core",
+        "plugin"
+      ],
+      "defer_on_trunk": false,
+      "eval_reason": "Existing PHP baseline assigned an ID during the review fixes; no independent behavioral eval. Surface and project tooling remain authoritative."
+    },
+    {
+      "id": "PHP-011",
+      "skill": "sw-php-foundation",
+      "file": "skills/sw-php-foundation/SKILL.md",
+      "title": "Choose data shapes by domain boundaries; keep typed internal arrays",
+      "status": "active",
+      "since": "2026-11-20",
+      "eval": null,
+      "core_guide_ids": [],
+      "audience": [
+        "core",
+        "plugin"
+      ],
+      "defer_on_trunk": false,
+      "eval_reason": "Existing PHP baseline assigned an ID during the review fixes; no independent behavioral eval. Surface and project tooling remain authoritative."
+    },
+    {
+      "id": "PHP-012",
+      "skill": "sw-php-foundation",
+      "file": "skills/sw-php-foundation/SKILL.md",
+      "title": "Use readonly only when the framework or extension contract is immutable",
+      "status": "active",
+      "since": "2026-11-20",
+      "eval": null,
+      "core_guide_ids": [],
+      "audience": [
+        "core",
+        "plugin"
+      ],
+      "defer_on_trunk": false,
+      "eval_reason": "Existing PHP baseline assigned an ID during the review fixes; no independent behavioral eval. Surface and project tooling remain authoritative."
+    },
+    {
+      "id": "PHP-013",
+      "skill": "sw-php-foundation",
+      "file": "skills/sw-php-foundation/SKILL.md",
+      "title": "Use list types for sequential collections",
+      "status": "active",
+      "since": "2026-11-20",
+      "eval": null,
+      "core_guide_ids": [],
+      "audience": [
+        "core",
+        "plugin"
+      ],
+      "defer_on_trunk": false,
+      "eval_reason": "Existing PHP baseline assigned an ID during the review fixes; no independent behavioral eval. Surface and project tooling remain authoritative."
+    },
+    {
+      "id": "PHP-014",
+      "skill": "sw-php-foundation",
+      "file": "skills/sw-php-foundation/SKILL.md",
+      "title": "Keep newer PHP syntax within the supported Composer range",
+      "status": "active",
+      "since": "2026-11-20",
+      "eval": null,
+      "core_guide_ids": [],
+      "audience": [
+        "core",
+        "plugin"
+      ],
+      "defer_on_trunk": false,
+      "eval_reason": "Existing PHP baseline assigned an ID during the review fixes; no independent behavioral eval. Surface and project tooling remain authoritative."
     }
   ]
 }

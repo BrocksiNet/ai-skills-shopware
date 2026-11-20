@@ -9,8 +9,8 @@ reviews into here.
 | ------- | ------------ | ------------ |
 | Bounded Criteria reads | Unlimited search | `dal-search-without-limit` |
 | Repository for entity data | Connection CRUD | `no-dal-connection-for-entity-read` |
-| Dual path behind feature flag | Delete legacy immediately | `core-http-client-behind-flag` |
-| Interface injection | Concrete repository in constructor | `interface-di-repository` |
+| Dual path for an incompatible swap | Delete required legacy behavior immediately | `core-http-client-behind-flag` |
+| Inject existing service interfaces; keep concrete DAL repositories | Invent a repository interface | `interface-di-repository` |
 | Clock injection | `time()` in domain | `clock-interface-injection` |
 | CacheTagCollector (6.7+) | Deprecated `*CacheTagsEvent` | `cache-tag-no-deprecated-event` |
 | Thin controller | DAL in controller | `business-logic-in-controller` |

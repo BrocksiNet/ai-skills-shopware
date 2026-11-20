@@ -2,6 +2,7 @@
 import { existsSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { UnsupportedPhp } from '../src/fact-php.mjs';
 
 const task = process.argv[2];
 const workdir = process.env.WORKDIR;
@@ -36,7 +37,11 @@ try {
     workdir,
     transcript: process.env.TRANSCRIPT ?? '',
   });
-} catch {
+} catch (error) {
+  if (error instanceof UnsupportedPhp) {
+    console.error(`ungradable: ${error.message}`);
+    process.exit(2);
+  }
   console.log('score=0 (grader_error)');
   process.exit(1);
 }

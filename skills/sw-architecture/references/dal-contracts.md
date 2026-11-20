@@ -34,7 +34,8 @@ On **core**, if independence requires a new read path, add a **narrow port**
 
 ## Progressive enhancement
 
-Replacing a raw SQL report with DAL: ship DAL path behind flag; keep SQL branch
-until verified equivalent; remove in major.
+Replacing a raw SQL report with DAL: verify results, context, ordering and error
+behavior. An equivalent internal swap can replace the SQL directly; an
+incompatible change retains the required legacy behavior behind a major flag.
 
 See eval: `dal-search-without-limit`, `no-dal-connection-for-entity-read`.
