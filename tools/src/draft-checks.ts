@@ -97,10 +97,18 @@ export async function stagedFiles(x: Exec, wt: string, env: NodeJS.ProcessEnv): 
   return out.split('\n').filter((l) => l !== '');
 }
 
-/** Eval tasks a change adds or edits, plus the rule's own task. */
+/** The other half of a review pair: `-catch` for `-ignore` and back. */
+const partner = (task: string): string[] => {
+  const m = /^(review-.+)-(catch|ignore)$/u.exec(task);
+  return m === null ? [] : [`${m[1] ?? ''}-${m[2] === 'catch' ? 'ignore' : 'catch'}`];
+};
+
+/** Eval tasks a change adds or edits, plus the rule's own task, each with
+ *  the other half of its review pair: a rule change can break either. */
 export function changedTasks(files: string[], wt: string, ruleEval: string | null | undefined): string[] {
   const touched = files.flatMap((f) => /^evals\/tasks\/([^/]+)\//u.exec(f)?.[1] ?? []);
   const graders = files.flatMap((f) => /^tools\/graders\/([^/]+)\.ts$/u.exec(f)?.[1] ?? []);
-  const all = [...touched, ...graders, ...(ruleEval === null || ruleEval === undefined ? [] : [ruleEval])];
+  const own = [...touched, ...graders, ...(ruleEval === null || ruleEval === undefined ? [] : [ruleEval])];
+  const all = [...own, ...own.flatMap((t) => partner(t))];
   return [...new Set(all)].filter((t) => isTask(join(wt, 'evals/tasks'), t)).toSorted();
 }
