@@ -1,0 +1,14 @@
+```json
+{
+  "findings": [
+    {
+      "rule_id": "CORE-052",
+      "severity": "blocking",
+      "file": "adr/2024-11-01-event-flow.md",
+      "line": 1,
+      "summary": "The ADR shipped in 6.7 is modified to change its decision for 6.8 without a new superseding ADR.",
+      "fix": "Write a new ADR that documents the new decision and move this ADR to adr/_superseded."
+    }
+  ]
+}
+```

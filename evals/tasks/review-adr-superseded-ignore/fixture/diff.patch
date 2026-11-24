@@ -1,0 +1,14 @@
+diff --git a/adr/2024-12-10-caching-strategy.md b/adr/2024-12-10-caching-strategy.md
+index xyz1234..uvw5678 100644
+--- a/adr/2024-12-10-caching-strategy.md
++++ b/adr/2024-12-10-caching-strategy.md
+@@ -1,8 +1,8 @@
+ # 2024-12-10 Caching Strategy
+ 
+ ## Context
+ 
+-We need a consistent caching approch for core operations.
++We need a consistent caching approach for core operations.
+ 
+ ## Decision
+ 

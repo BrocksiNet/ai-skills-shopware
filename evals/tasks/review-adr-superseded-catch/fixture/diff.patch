@@ -1,0 +1,18 @@
+diff --git a/adr/2024-11-01-event-flow.md b/adr/2024-11-01-event-flow.md
+index abc1234..def5678 100644
+--- a/adr/2024-11-01-event-flow.md
++++ b/adr/2024-11-01-event-flow.md
+@@ -1,8 +1,8 @@
+ # 2024-11-01 Event Flow Pattern
+ 
+-## Decision
++## Context
+ 
+-We use synchronous event dispatching for all core events to maintain order and simplicity.
++Events are dispatched synchronously for all core operations to maintain order and ensure sequential consistency.
+ 
+-## Consequences
++## Rationale
+ 
+-Sequential behavior is easier to test but limits concurrency options.
++Synchronous dispatch simplifies testing and debugging but prevents parallel processing.

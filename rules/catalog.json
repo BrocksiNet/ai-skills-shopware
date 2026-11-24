@@ -2780,8 +2780,7 @@
       "title": "Add an ADR for architectural decisions",
       "status": "active",
       "since": "2026-10-20",
-      "eval": null,
-      "eval_reason": "Process rule; not gradable from a diff.",
+      "eval": "review-adr-superseded-catch",
       "core_guide_ids": [],
       "audience": [
         "core"

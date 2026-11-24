@@ -1,0 +1,14 @@
+```json
+{
+  "findings": [
+    {
+      "rule_id": "CORE-052",
+      "severity": "blocking",
+      "file": "adr/2024-12-10-caching-strategy.md",
+      "line": 1,
+      "summary": "The ADR shipped in 6.8 is modified to change its decision for future versions without a new superseding ADR.",
+      "fix": "Write a new ADR that documents the new decision and move this ADR to adr/_superseded."
+    }
+  ]
+}
+```

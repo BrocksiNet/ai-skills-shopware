@@ -967,6 +967,25 @@ export const PAIRS: Record<string, ReviewPair> = {
     summary:
       /newline|line break|\\n|\\z|\bD\b.{0,20}(modifier|flag)|(modifier|flag).{0,20}\bD\b|end anchor|end-of-string|\$ (also )?match/iu,
   },
+  // Catch: An ADR that shipped in 6.7 is modified to change its decision for 6.8
+  // without a new superseding ADR. The diff modifies a file under adr/ that is
+  // already in a released version. Needs a blocking+ finding in adr/ that names
+  // CORE-052 or describes modifying a shipped ADR without superseding.
+  // Ignore: Typo fixes or clarifications in an accepted ADR before it ships in any
+  // release. The change is in adr/ but only grammar, spelling, or wording
+  // improvements are present. A blocking+ finding that names CORE-052 or calls
+  // the change a decision modification is a false positive.
+  'adr-superseded': {
+    rule: 'CORE-052',
+    file: 'adr/**',
+    minSeverity: 'blocking',
+    summary:
+      /supersed|shipped|released|6\.\d|decision|choice|option|change|modify|update|edit|revise|not (new|another|added)/iu,
+    ignore: {
+      rule: 'CORE-052',
+      summary: /typo|spelling|grammar|wording|clarif|fix|correct|improv|format|readab|style|rewording|reword|polish/iu,
+    },
+  },
   // Catch: The RELEASE_INFO entry opens with a bold label. Needs a minor+ finding in
   // RELEASE_INFO-*.md that names CORE-049 or describes the bold label.
   // Ignore: The same RELEASE_INFO entry without the bold label. A minor+ finding that
