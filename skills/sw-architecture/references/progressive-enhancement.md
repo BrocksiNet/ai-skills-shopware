@@ -11,33 +11,42 @@ Load when modernizing or decoupling without breaking extensions.
 
 ## Steps
 
-1. **Classify the change**
-   - *Internal only* — same public method signatures; swap implementation.
-   - *Public contract* — new symbol + deprecate old, or major-only break.
+1. **Classify observable behavior and extension contracts**
+   - *Equivalent internal swap* — preserve results, errors, side effects,
+     ordering, configuration and supported extension points; replace directly.
+     Matching method signatures alone does not prove equivalence.
+   - *Incompatible change* — retain current behavior until the deprecation cycle
+     completes; introduce the new behavior behind the relevant major flag.
+   - *Deliberate staged rollout* — keep both paths only for the rollout that
+     needs them, with an explicit condition for removing the old path.
 
-2. **Internal swap pattern**
+2. **Implement the chosen path**
    - Inject the new dependency (e.g. `HttpClientInterface`, `ClockInterface`).
-   - Gate the new path with `Feature::isActive('v6.x.0')` (major flag from the
-     deprecation doc).
-   - **Keep the legacy branch** until the major removes the flag.
+   - For an incompatible change, use the registered four-part flag ID, such as
+     `Feature::isActive('v6.8.0.0')`, and keep the required legacy branch until
+     the major. Release labels such as `v6.8.0` are for deprecation tags and
+     `BCChange` attributes, not feature checks.
    - Register services in the **owning bundle** only.
 
-3. **Test both paths** until the flag is default — unit for branches; integration
-   when container wiring matters.
+3. **Verify the contract** — characterization tests for a direct swap; both paths
+   for a flagged change; integration when container wiring matters.
 
 4. **Document**
-   - Silent internal swap: usually no release note.
-   - Observable change: `RELEASE_INFO` + `@deprecated tag:` per
+   - Equivalent internal swap: usually no release note.
+   - Public removal or replacement: `RELEASE_INFO` + deprecation cycle per
      `sw-core-development` → deprecations reference.
 
 5. **Phasing**
-   - One PR: extract interface + dual path for the code you touch.
-   - Follow-up PRs: migrate callers, delete legacy when flag goes default.
-   - Subsystem-wide rewrites: propose an **ADR** + multiple flagged steps.
+   - Keep equivalent cleanups local; introduce an interface only when it models
+     a useful boundary.
+   - For incompatible changes, migrate callers and delete legacy after the BC
+     period; record the removal condition for staged rollouts.
+   - Subsystem-wide rewrites: propose an **ADR** + phased changes.
 
 ## Anti-patterns
 
-- Deleting the old path in the same PR as the new path (on core).
+- Keeping dual implementations for a proven equivalent internal cleanup.
+- Deleting a legacy path still required for compatibility.
 - Changing behaviour without flag when extensions decorate or subscribe to the old flow.
 - Copying the legacy workaround into new code “because it is easier.”
 

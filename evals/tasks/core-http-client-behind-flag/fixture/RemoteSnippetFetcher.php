@@ -4,7 +4,7 @@ namespace Shopware\Core\System\Snippet;
 
 /**
  * Historic workaround: synchronous fetch without Symfony HttpClient.
- * Platform modernization should replace this internally, not delete it in one step.
+ * The task stages an observable change in failure behavior at the next major.
  */
 final class RemoteSnippetFetcher
 {

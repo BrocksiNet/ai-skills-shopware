@@ -1,5 +1,8 @@
 # sw-core-development — should trigger
 
+- Modernize an internal core helper without changing its behavior. Should this be a direct replacement or a flagged rollout?
+- Stage a changed HTTP exception contract behind the registered v6.8.0.0 major flag.
+
 - I'm contributing to shopware/shopware and need to deprecate this public method.
 - Plan a parameter type narrowing for the next major with a BC-change attribute.
 - Change behavior in src/Core/Checkout without breaking backward compatibility.

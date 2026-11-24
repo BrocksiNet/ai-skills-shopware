@@ -14,7 +14,7 @@ final class RemoteSnippetFetcher
 
     public function fetch(string $url): string
     {
-        if (Feature::isActive('v6.8.0')) {
+        if (Feature::isActive('v6.8.0.0')) {
             return $this->httpClient->request('GET', $url)->getContent();
         }
 

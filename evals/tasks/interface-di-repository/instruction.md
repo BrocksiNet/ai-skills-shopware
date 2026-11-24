@@ -1,10 +1,11 @@
-# Task: inject repository interface (DAL)
+# Task: inject an existing interface, preserve the DAL repository
 
-`ProductReader.php` currently type-hints the concrete `EntityRepository` in its
-constructor. That violates Shopware DI practice.
+`ProductReader.php` injects a concrete Monolog `Logger` alongside Shopware's
+`EntityRepository`. Refactor the logger dependency to `Psr\Log\LoggerInterface`.
 
-Refactor the constructor to inject the **entity-specific repository interface**
-for products (`ProductRepositoryInterface` or equivalent DAL repository
-interface). Do not inject the generic `EntityRepository` concrete class.
+Keep injecting the concrete `EntityRepository` for `product.repository`: modern
+Shopware has no `EntityRepositoryInterface` or product-specific repository
+interface to substitute. Do not invent one.
 
-Keep `findById()` behaviour unchanged. Do not add tests.
+Keep `findById()` behavior unchanged, including logging, found and missing
+products, Criteria and context. Do not add tests.

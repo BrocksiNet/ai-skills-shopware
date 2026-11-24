@@ -72,10 +72,21 @@ Tasks without a `skills` file use the default `SMOKE_SKILLS` only.
 | `unit-test-passes` | `sw-testing` — unit test shape |
 | `clock-interface-injection` | `sw-php-foundation` — PSR-20 clock, no `time()` |
 | `unit-test-exception-object` | `sw-testing` — `expectExceptionObject`, no message matcher |
-| `interface-di-repository` | `sw-php-foundation` + core — repository interface, not concrete DAL |
+| `interface-di-repository` | `sw-php-foundation` + core — inject the existing logger interface and keep the supported concrete DAL repository |
 | `cache-tag-no-deprecated-event` | plugin dev — `CacheTagCollector`, not `*CacheTagsEvent` |
 | `phpstan-baseline-guardrail` | core dev — level + baseline regenerated together |
-| `core-http-client-behind-flag` | core dev — Symfony HttpClient behind `Feature::isActive`, legacy path kept |
+| `core-http-client-behind-flag` | core dev — stage a changed HTTP exception contract behind the registered major flag; keep legacy behavior |
+
+The PHP service tasks `interface-di-repository`, `clock-interface-injection`
+and `core-http-client-behind-flag` were repaired on November 20, 2026. They now
+parse the subject PHP file and evaluate its contract with fixture doubles:
+logger/repository usage, expiry boundaries, and HTTP flag selection, bodies
+and errors. The repository task uses the real PSR logger interface and retains
+Shopware's concrete DAL repository. Almost-pass negative fixtures and AST
+regressions reject comment-only tokens, unused dependencies and leftover files.
+Earlier task scores are not comparable to these repaired contracts.
+This is a bounded AST evaluator, not a PHP or Shopware runtime; unsupported
+rewrites exit 2 as ungradable infrastructure rather than a model failure.
 
 Other eval tasks (not in default suite): `no-contradiction-full-profile`.
 

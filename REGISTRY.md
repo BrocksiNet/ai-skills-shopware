@@ -58,7 +58,7 @@ the surface skills can all be installed together without contradicting (see
 | Core Admin/Store API OpenAPI schemas | `sw-core-development` |
 | Core OpenAPI-generated request and response DTOs (`x-dto-*` keys, `open-api:generate-dtos`, DTO contract, generator fixtures) | `sw-openapi-dto` |
 | Deprecation policy (`BCChange` attributes vs `@deprecated tag:`, `Feature::silent`, no DI `<deprecated>` while core still uses the id) | `sw-core-development` |
-| Core modernization (Symfony behind feature flags, dual paths until major) | `sw-core-development` |
+| Core modernization (equivalent internal swaps; flags and legacy paths for incompatible changes or staged rollouts) | `sw-core-development` |
 | Local filesystem in core PHP (Symfony `Filesystem`, not raw file functions) | `sw-core-development` |
 | Static-analysis baseline discipline (PHPStan level, shrink-not-delete) | `sw-core-development` |
 | Public-API / `@internal` boundaries | `sw-core-development` |
