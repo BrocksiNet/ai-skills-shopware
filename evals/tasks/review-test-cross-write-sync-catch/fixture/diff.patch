@@ -2,7 +2,7 @@ diff --git a/src/Core/Checkout/Promotion/Validator/PromotionDateValidator.php b/
 index 79f8ab8..21f611a 100644
 --- a/src/Core/Checkout/Promotion/Validator/PromotionDateValidator.php
 +++ b/src/Core/Checkout/Promotion/Validator/PromotionDateValidator.php
-@@ -43,17 +43,20 @@ class PromotionDateValidator implements EventSubscriberInterface
+@@ -43,17 +43,25 @@ class PromotionDateValidator implements EventSubscriberInterface
                  continue;
              }
  
@@ -10,7 +10,12 @@ index 79f8ab8..21f611a 100644
 +            // Several operations of one sync request can write the same promotion;
 +            // the dates they set have to be checked together.
 +            $id = $command->getPrimaryKey()['id'];
-+            $writes[$id] = [$command->getPath(), $payload + ($writes[$id][1] ?? [])];
++            [$path, $dates] = $writes[$id] ?? [$command->getPath(), []];
++            if (\array_key_exists('valid_until', $payload)) {
++                // The violation names validUntil, so it points at the write that sets it.
++                $path = $command->getPath();
++            }
++            $writes[$id] = [$path, $payload + $dates];
          }
  
          if ($writes === []) {
