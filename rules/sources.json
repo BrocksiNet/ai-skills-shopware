@@ -14,7 +14,7 @@
         ".agents-templates/AGENTS.local.template.vagrant.md",
         "coding-guidelines",
         "adr/2026-06-17-shared-guidance-files-for-humans-and-agents.md",
-   "adr/2026-11-19-remove-claude-md-bridge-files.md",
+        "adr/2026-11-19-remove-claude-md-bridge-files.md",
         "src/Core/DevOps/StaticAnalyze",
         ".github/AGENTS.md",
         ".github/PULL_REQUEST_TEMPLATE.md",
