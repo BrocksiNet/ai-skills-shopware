@@ -967,6 +967,32 @@ export const PAIRS: Record<string, ReviewPair> = {
     summary:
       /newline|line break|\\n|\\z|\bD\b.{0,20}(modifier|flag)|(modifier|flag).{0,20}\bD\b|end anchor|end-of-string|\$ (also )?match/iu,
   },
+  // Catch: The Stock plugin's supplier feed importer now reads an XML feed fetched from
+  // the supplier and parses it with XmlUtils::parse(), which loads the DTD and entities
+  // of the document before rejecting it (XXE). Needs a major+ finding in src/ that names
+  // SEC-010 or describes the XmlUtils/DTD problem.
+  // Ignore: The same importer parses the feed with XmlParser::parse() and the composer
+  // constraint is raised to 6.7.16.1, the first 6.7 release that has it. A minor+
+  // finding that names SEC-010 or claims the parse is open to XXE is a false positive.
+  'untrusted-xml': {
+    rule: 'SEC-010',
+    file: 'src/**',
+    minSeverity: 'major',
+    summary: /XmlUtils|XXE|external entit|\bDTD\b|document type|doctype/iu,
+  },
+  // Catch: A new plugin MCP tool lists swag_loyalty_points:read with #[McpToolRequires] and
+  // reads the points history through a DBAL Connection, with no requirePrivilegeResult()
+  // call, so the attribute documents a check that never runs. Needs a major+ finding in
+  // src/ that names SEC-011 or describes the missing privilege check.
+  // Ignore: The same tool calls requirePrivilegeResult() before the query. A minor+
+  // finding that names SEC-011 or claims the privilege is not enforced is a false positive.
+  'mcp-tool-privilege': {
+    rule: 'SEC-011',
+    file: 'src/**',
+    minSeverity: 'major',
+    summary:
+      /requirePrivilege|privilege check|McpToolRequires|informational|not (enforce|check)|never (check|enforce|call)|allowlist/iu,
+  },
   // Catch: The RELEASE_INFO entry opens with a bold label. Needs a minor+ finding in
   // RELEASE_INFO-*.md that names CORE-049 or describes the bold label.
   // Ignore: The same RELEASE_INFO entry without the bold label. A minor+ finding that

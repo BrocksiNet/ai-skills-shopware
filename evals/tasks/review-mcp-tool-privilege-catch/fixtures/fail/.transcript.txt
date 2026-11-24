@@ -1,0 +1,16 @@
+The tool could check the privilege, but it is documented.
+
+```json
+{
+  "findings": [
+    {
+      "rule_id": "SEC-011",
+      "severity": "nit",
+      "file": "src/Mcp/Tool/PointsHistoryTool.php",
+      "line": 34,
+      "summary": "Calling requirePrivilegeResult() would be more consistent with PointsBalanceTool.",
+      "fix": "Add the privilege check."
+    }
+  ]
+}
+```

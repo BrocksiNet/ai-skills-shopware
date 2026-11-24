@@ -49,6 +49,12 @@
       "reference": "../sw-security/references/apps-and-webhooks.md"
     },
     {
+      "reference": "../sw-security/references/untrusted-xml.md"
+    },
+    {
+      "reference": "../sw-security/references/mcp-tool-acl.md"
+    },
+    {
       "reference": "../sw-storefront/references/js-plugins.md"
     },
     {

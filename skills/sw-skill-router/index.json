@@ -716,6 +716,35 @@
           ]
         },
         {
+          "reference": "sw-security/references/untrusted-xml.md",
+          "when": "Code parses XML that comes from an upload, a feed, an API response or another extension.",
+          "anchors_any": [
+            "XmlUtils::(parse|loadFile)\\(",
+            "XmlParser::(parse|loadFile)\\(",
+            "simplexml_load_(string|file)\\(",
+            "->loadXML\\("
+          ],
+          "exclude_paths": [
+            "**/tests/**",
+            "**/Test/**",
+            "**/*.md"
+          ]
+        },
+        {
+          "reference": "sw-security/references/mcp-tool-acl.md",
+          "when": "A plugin adds or changes an MCP tool or the privileges it declares.",
+          "anchors_any": [
+            "#\\[McpTool(Requires|RequiresNoPrivilege)?\\(",
+            "shopware\\.mcp\\.tool",
+            "requirePrivilege(Result)?\\("
+          ],
+          "exclude_paths": [
+            "**/tests/**",
+            "**/Test/**",
+            "**/*.md"
+          ]
+        },
+        {
           "reference": "sw-storefront/references/js-plugins.md",
           "when": "You write or register a storefront JS plugin.",
           "paths_any": [
@@ -1641,6 +1670,35 @@
             "shopware-(shop|app)-signature",
             "<webhook\\b",
             "hash_hmac\\("
+          ],
+          "exclude_paths": [
+            "**/tests/**",
+            "**/Test/**",
+            "**/*.md"
+          ]
+        },
+        {
+          "reference": "sw-security/references/untrusted-xml.md",
+          "when": "Code parses XML that comes from an upload, a feed, an API response or another extension.",
+          "anchors_any": [
+            "XmlUtils::(parse|loadFile)\\(",
+            "XmlParser::(parse|loadFile)\\(",
+            "simplexml_load_(string|file)\\(",
+            "->loadXML\\("
+          ],
+          "exclude_paths": [
+            "**/tests/**",
+            "**/Test/**",
+            "**/*.md"
+          ]
+        },
+        {
+          "reference": "sw-security/references/mcp-tool-acl.md",
+          "when": "A plugin adds or changes an MCP tool or the privileges it declares.",
+          "anchors_any": [
+            "#\\[McpTool(Requires|RequiresNoPrivilege)?\\(",
+            "shopware\\.mcp\\.tool",
+            "requirePrivilege(Result)?\\("
           ],
           "exclude_paths": [
             "**/tests/**",

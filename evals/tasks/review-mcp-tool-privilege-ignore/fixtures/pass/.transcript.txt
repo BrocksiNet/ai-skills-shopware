@@ -1,0 +1,7 @@
+The history tool checks `swag_loyalty_points:read` with `requirePrivilegeResult()` before the DBAL query, like the balance tool.
+
+```json
+{
+  "findings": []
+}
+```

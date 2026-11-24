@@ -42,6 +42,8 @@ Read the references the change selects:
 | [`security: secrets-and-config.md`](../sw-security/references/secrets-and-config.md) | Code reads a secret, an access key or a config value. | `.env`, `.env.*`, `sw-access-key\|SW_ACCESS_KEY`, … |
 | [`security: api-acl-and-input.md`](../sw-security/references/api-acl-and-input.md) | You add or change a route, an ACL privilege or user input handling. | `#[Route(`, … |
 | [`security: apps-and-webhooks.md`](../sw-security/references/apps-and-webhooks.md) | An app or webhook sends or receives data. | `manifest.xml`, `shopware-(shop\|app)-signature`, … |
+| [`security: untrusted-xml.md`](../sw-security/references/untrusted-xml.md) | Code parses XML that comes from an upload, a feed, an API response or another extension. | `XmlUtils::(parse\|loadFile)(`, … |
+| [`security: mcp-tool-acl.md`](../sw-security/references/mcp-tool-acl.md) | A plugin adds or changes an MCP tool or the privileges it declares. | `#[McpTool(Requires\|RequiresNoPrivilege)?(`, … |
 | [`storefront: js-plugins.md`](../sw-storefront/references/js-plugins.md) | You write or register a storefront JS plugin. | `Resources/app/storefront/src/**/*.{js,ts}`, `PluginManager.register(`, … |
 | [`storefront: twig-and-theme.md`](../sw-storefront/references/twig-and-theme.md) | You edit Twig blocks, the theme, snippets or assets. | `Resources/views/storefront/**/*.twig`, `Resources/app/storefront/src/scss/**`, `{% sw_extends`, … |
 | [`storefront: cache-and-modern-web.md`](../sw-storefront/references/cache-and-modern-web.md) | Content depends on the user or cache, or you need a modern web API. | `CacheTagCollector`, … |

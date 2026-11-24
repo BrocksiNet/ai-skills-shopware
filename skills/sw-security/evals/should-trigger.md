@@ -8,3 +8,5 @@
 - Add a Store-API route for this custom field.
 - I want to set _loginRequired on an existing Store API route of my plugin. What breaks?
 - Is `preg_match('/^[a-z0-9-]+$/', $name)` safe for validating a file name in my plugin controller?
+- My plugin imports a supplier XML feed with `XmlUtils::parse()`. Is that safe?
+- I am adding an MCP tool to my plugin that reads one of its tables. How do I restrict who can call it?

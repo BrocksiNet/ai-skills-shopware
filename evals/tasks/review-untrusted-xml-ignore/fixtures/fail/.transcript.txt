@@ -1,0 +1,16 @@
+No finding applies.
+
+```json
+{
+  "findings": [
+    {
+      "rule_id": "SEC-010",
+      "severity": "major",
+      "file": "src/Import/SupplierStockImporter.php",
+      "line": 26,
+      "summary": "The feed XML is parsed without protection against DTD and external entity loading (XXE).",
+      "fix": "Reject document types before parsing."
+    }
+  ]
+}
+```

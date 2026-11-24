@@ -1,0 +1,7 @@
+{
+    "name": "swag/stock-sync",
+    "type": "shopware-platform-plugin",
+    "require": {
+        "shopware/core": "^6.7"
+    }
+}
