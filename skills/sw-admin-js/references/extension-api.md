@@ -8,6 +8,13 @@ blocks, call methods through `$super`, and render into position identifiers.
 None of that shows up in a TypeScript signature, so nothing warns when it
 breaks.
 
+Core tracks these blocks in a snapshot. Up to 6.7 the list was
+`blocks-list.json`. Trunk (6.8) replaces it with `public-api/`: the block
+names sit in `public-api/index.json`, and each component has an `.api.md`
+report with its blocks and their nesting. Core contributors regenerate it with
+`composer admin:generate-public-api`. A diff that touches either file changes
+a block, so read it as an extension API change.
+
 ## Rules
 
 - **ADM-039** **A shipped component's props, slots, events, Twig blocks, `methods`,
