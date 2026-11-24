@@ -126,6 +126,19 @@
       "extractor": "markdown",
       "paths": ["SKILL.md"],
       "skills": [{ "path": "SKILL.md", "skills": ["sw-assistant-style"] }]
+    },
+    {
+      "id": "modern-web-guidance",
+      "repo": "GoogleChrome/modern-web-guidance",
+      "branch": "main",
+      "extractor": "markdown",
+      "paths": ["skills/modern-web-guidance/SKILL.md"],
+      "skills": [
+        {
+          "path": "skills/modern-web-guidance/SKILL.md",
+          "skills": ["sw-research-and-escalation", "sw-storefront", "sw-admin-js"]
+        }
+      ]
     }
   ],
   "reviews": [

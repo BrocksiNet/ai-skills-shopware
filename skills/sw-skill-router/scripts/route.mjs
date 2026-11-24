@@ -314,6 +314,26 @@ export function route({ files, kind, task }) {
   return { contexts, load, other, skipped };
 }
 
+// ---- companion skills ----------------------------------------------------------
+
+// A skill from another repository that helps frontend work. It is not in
+// index.json (we do not own it), so it is checked on the installed skills.
+const COMPANION = {
+  name: 'modern-web-guidance',
+  install: 'npx skills add GoogleChrome/modern-web-guidance --skill modern-web-guidance',
+  for: ['sw-storefront', 'sw-admin-js'],
+  reminder:
+    'Shopware first: Bootstrap components in the Storefront, Meteor mt-* and sw-* components in the Administration. ' +
+    'Use it for generic CSS, HTML, JS, Core Web Vitals and a11y that Shopware does not own.',
+};
+
+/** The frontend companion for a routing result: only when a frontend skill loads. */
+export function companions(load, installed) {
+  if (!load.some((s) => COMPANION.for.includes(s.name))) return [];
+  const dir = installed.get(COMPANION.name);
+  return [{ name: COMPANION.name, installed: dir !== undefined, path: dir === undefined ? null : join(dir, 'SKILL.md'), install: COMPANION.install, reminder: COMPANION.reminder }];
+}
+
 // ---- output --------------------------------------------------------------------
 
 /** A reference relative to the skill it is printed under: `references/a.md`
@@ -358,6 +378,12 @@ function markdown(r, installed) {
     out.push('## Recommended but not installed', '', '```bash');
     out.push(`npx skills add ${INDEX.repo} ${r.missing.map((m) => `--skill ${m}`).join(' ')}`, '```', '');
   }
+  for (const c of r.companions.filter((x) => x.installed)) {
+    out.push('## Companion skill for frontend work', '', `- **${c.name}**: ${c.path}`, `  - ${c.reminder}`, '');
+  }
+  for (const c of r.companions.filter((x) => !x.installed)) {
+    out.push('## Recommended companion (not installed)', '', c.reminder, '', '```bash', c.install, '```', '');
+  }
   for (const n of r.notes) out.push(`Note: ${n}`);
   return `${out.join('\n').trimEnd()}\n`;
 }
@@ -400,6 +426,7 @@ export function main(argv) {
   if (o.task === 'any') notes.push('no --task given. Pass build, review, ship, answer or run to load the skills of that task too.');
   const report = { context, task: o.task, source, base: base ?? null, changes: files.length, core: context.kind === 'core' ? core : [], ...result, notes };
   report.missing = result.load.map((s) => s.name).filter((n) => !installed.has(n));
+  report.companions = companions(result.load, installed);
   process.stdout.write(o.json ? `${JSON.stringify(report, null, 2)}\n` : markdown(report, installed));
   return 0;
 }

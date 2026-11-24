@@ -418,6 +418,8 @@ describe('every source over 2026-10-13..2026-10-19', () => {
     'fos-agent-skills-2026-10-13..2026-10-19.json',
     'humanizer-2026-10-13..2026-10-19.json',
     'shopware-dto-contract-2026-10-13..2026-10-19.json',
+    // Registered after this historical window: synthetic no-change coverage only.
+    'modern-web-guidance-synthetic-no-changes.json',
   ];
   const repo = 'acme/skills-library';
   // Last week's issue, read up to 2026-10-12 in two sources: covered.
@@ -464,6 +466,7 @@ describe('every source over 2026-10-13..2026-10-19', () => {
       'fos-agent-skills',
       'humanizer',
       'shopware-dto-contract',
+      'modern-web-guidance',
     ]) {
       assert.match(out, new RegExp(`^\\| \`${id}\` \\| 2026-10-13 \\|`, 'mu'), id);
     }

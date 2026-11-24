@@ -87,3 +87,12 @@ npx skills add BrocksiNet/ai-skills-shopware --skill sw-skill-router --skill sw-
 
 In a shopware/shopware checkout that has its own `.agents/skills`, the core
 skills lead for platform work and these skills are an overlay.
+
+For Storefront and Administration work, also install the default frontend
+companion, Google Chrome's `modern-web-guidance`, for generic CSS, HTML, JS,
+Core Web Vitals and a11y. Shopware components (Bootstrap, Meteor `mt-*`) win
+when both apply:
+
+```bash
+npx skills add GoogleChrome/modern-web-guidance --skill modern-web-guidance
+```

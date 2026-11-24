@@ -104,7 +104,7 @@ over porting their MCP servers into this repo.
 | `test-writing` auto-review loop | Only if you want that generator; needs MCP |
 | Skills-only plugins (contributor-writing, code-migration) | Optional; mine rules here instead of copying |
 | chunkhound | Skip when ripgrep + LSP is enough |
-| [Modern Web Guidance](https://github.com/GoogleChrome/modern-web-guidance) CLI | Generic CSS/HTML/JS after Shopware primitives. Do **not** install their `SKILL.md` next to ours. `DISABLE_TELEMETRY=1`. |
+| [Modern Web Guidance](https://github.com/GoogleChrome/modern-web-guidance) skill + CLI | Default frontend companion: generic CSS/HTML/JS/CWV/a11y after Shopware primitives. Install `--skill modern-web-guidance` next to ours; Shopware components win. `DISABLE_TELEMETRY=1`. |
 
 Do **not** reimplement php-tooling MCP here. Core already has HTTP MCP;
 `shopware-cli` is the planned connector; Podman/`project console` already run

@@ -112,6 +112,12 @@ skills lead for platform work and ours are an overlay. See
 
 - Shopware CLI skills for project and extension workflows:
   `npx skills add shopware/shopware-cli`.
+- Google Chrome's Modern Web Guidance, the default companion for frontend
+  work (generic CSS, HTML, JS, Core Web Vitals, a11y). Install only this
+  skill, not `chrome-extensions`:
+  `npx skills add GoogleChrome/modern-web-guidance --skill modern-web-guidance`.
+  Shopware components win when both apply; see
+  [`storefront-development.md`](../use-cases/storefront-development.md#default-companion-modern-web-guidance).
 - How this library fits next to the shopware-ai-coding-tools MCP servers:
   [`tooling-stack.md`](tooling-stack.md).
 - Trying the skills on a real local shop: [`local-validation.md`](local-validation.md).

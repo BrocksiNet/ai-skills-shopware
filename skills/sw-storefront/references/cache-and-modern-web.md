@@ -32,9 +32,11 @@ to apply a generic modern CSS/JS pattern.
 - Replacing Bootstrap modal / offcanvas / collapse / dropdown with native
   `<dialog>`, Popover, or custom `<select>`.
 
-## After Shopware primitives are exhausted
+## After Shopware primitives are checked
 
-For a leftover platform API (LCP on the existing product image, INP in a
-custom widget, container queries in custom SCSS), look up
-[`modern-web-guidance.md`](../../sw-research-and-escalation/references/modern-web-guidance.md)
-and adapt the guide. The Shopware primitive still wins if both apply.
+Use the companion `modern-web-guidance` skill for the rest: LCP on the
+existing product image, INP in a custom widget, container queries or
+`:has()` in custom SCSS, focus and a11y. Install and CLI steps are in
+[`modern-web-guidance.md`](../../sw-research-and-escalation/references/modern-web-guidance.md).
+Adapt the guide. `SF-002`, `SF-003`, `SF-004` and `SF-005` stay hard
+guardrails: the Shopware primitive wins if both apply.

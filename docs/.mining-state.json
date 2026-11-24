@@ -30,5 +30,9 @@
   "shopware-rector": {
     "last_sha": "1a4e784c7298eea2ce9572bcf5784fc6cf6b56b9",
     "last_date": "2026-11-14T23:12:03Z"
+  },
+  "modern-web-guidance": {
+    "last_sha": "2b4aa13a72dd47cd135b06ce5abfccd92e19b24f",
+    "last_date": "2026-11-23T14:54:22Z"
   }
 }

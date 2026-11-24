@@ -76,6 +76,10 @@ pages:
 [core](use-cases/core-development.md),
 [Storefront and Administration](use-cases/storefront-development.md), or
 [extension review](use-cases/extension-review.md).
+For Storefront and Administration work, also install Google Chrome's
+`modern-web-guidance` skill as a companion for generic CSS, HTML, JS and
+Core Web Vitals questions. Shopware components still win; see the
+[storefront page](use-cases/storefront-development.md#default-companion-modern-web-guidance).
 Pinning, updating and tool folders are covered in
 [`docs/installation.md`](docs/installation.md).
 
@@ -113,10 +117,11 @@ and its rule cannot drift apart. Diagrams and the eval layers are in
 ## Staying current
 
 A weekly job reads Shopware trunk (agent skills, guidelines, PHPStan rules)
-and five upstream skill sets: `shopwareLabs/ai-coding-tools`,
+and seven upstream skill sets: `shopwareLabs/ai-coding-tools`,
 `netresearch/php-modernization-skill`, `shopware/shopware-cli`,
-`FriendsOfShopware/agent-skills` and `blader/humanizer`. It opens one issue that maps each change to
-the skill and rule it touches. A daily job collects review comments from
+`FriendsOfShopware/shopware-rector`, `FriendsOfShopware/agent-skills`,
+`blader/humanizer` and `GoogleChrome/modern-web-guidance`. It opens one
+issue that maps each change to the skill and rule it touches. A daily job collects review comments from
 merged core PRs into the `review-signals` release. The API index rebuilds
 weekly, and model evals run monthly and before releases. See
 [`docs/maintenance.md`](docs/maintenance.md).

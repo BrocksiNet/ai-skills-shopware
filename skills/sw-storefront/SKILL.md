@@ -106,9 +106,13 @@ Read only the reference that matches the task or the files it changes:
 
 ## When to consult Modern Web Guidance
 
-Only after the lists above have no primitive: LCP/`fetchpriority` on the
-**existing** product image, INP on a custom widget, `:has()` / container
-queries in **custom** SCSS. Then
+`modern-web-guidance` is the default companion for generic CSS, HTML, JS,
+Core Web Vitals and a11y questions. Check the lists above first: if
+Shopware has a primitive, `SF-002`, `SF-003`, `SF-004` and `SF-005` stay hard
+guardrails and the primitive wins. For what is left (LCP/`fetchpriority` on
+the **existing** product image, INP on a custom widget, `:has()` / container
+queries in **custom** SCSS, focus and a11y), run its `search` and `retrieve`
+as in
 [`sw-research-and-escalation/references/modern-web-guidance.md`](../sw-research-and-escalation/references/modern-web-guidance.md).
 Adapt the guide. Do not paste a framework-agnostic demo into Twig.
 
