@@ -1226,7 +1226,7 @@ export const PAIRS: Record<string, ReviewPair> = {
     file: 'tests/integration/**',
     minSeverity: 'major',
     summary:
-      /sync|(one|single|same) request|separate (requests?|update|calls?|writes?)|(passes|green|succeeds?) (also |even )?(without|before|on the base)|(does not|doesn't|never|cannot) (cover|exercise|reach|test) the (fix|merg)/iu,
+      /sync|(one|single|same)[ -]request|separate (\w+ )?(requests?|updates?|calls?|writes?)|(passes|green|succeeds?) (also |even )?(without|before|on the base)|(does not|doesn't|never|cannot) (cover|exercise|reach|test) the (fix|merg)/iu,
   },
   // Catch: The plugin template renames block swag_loyalty_badge_label to
   // swag_loyalty_badge_text and drops the old name, so theme overrides of the
