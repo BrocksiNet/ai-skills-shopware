@@ -216,18 +216,6 @@ Eval: `event-hook-capture-then-assert`.
 
 Details: `core-platform-patterns.md`.
 
-## DAL validators and cross-write interactions
-
-- **TEST-038** **Test cross-write DAL behavior via Sync API, not sequential single
-  writes.** When a DAL validator or subscriber must react to state built from
-  multiple writes in one Sync request—such as a file extension and private flag
-  across two operations, or language and sales channel across operations—test
-  that scenario through `/api/_action/sync` with two write operations in sequence.
-  The validator sees the merged final state only during Sync processing, not in
-  isolation. Use separate single-write calls only to test the validator's behavior
-  when state is not merged (the original scenario alone), or when writes are
-  unrelated. See `integration-repository.md`.
-
 ## Coverage annotations
 
 - **Production class** covered only by integration tests: `@codeCoverageIgnore` plus

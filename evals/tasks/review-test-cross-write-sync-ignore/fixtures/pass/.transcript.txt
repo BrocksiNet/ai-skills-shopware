@@ -1,4 +1,4 @@
-The test updates media with private=true and fileExtension=zip through /api/_action/sync with two upsert operations. This allows the validator to see the merged state of both writes in a single Sync request, which is the correct way to test DAL validators that react to cross-write interactions.
+The fix merges the dates of several commands for one promotion, and the test sends both writes in one sync request.
 
 ```json
 {

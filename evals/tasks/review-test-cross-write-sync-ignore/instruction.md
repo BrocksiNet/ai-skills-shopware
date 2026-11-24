@@ -1,6 +1,6 @@
 # Task: review my change
 
-`diff.patch` is a change to my Shopware extension. `context/` holds the files
+`diff.patch` is a change to Shopware core. `context/` holds the files
 the diff touches or calls, as they are before the change.
 
 Review the diff. Do not edit any file. End your answer with exactly one fenced

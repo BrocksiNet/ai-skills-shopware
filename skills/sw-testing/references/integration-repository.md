@@ -13,6 +13,12 @@ Inspired by [FriendsOfShopware shopware-phpunit](https://github.com/FriendsOfSho
 - Use `Context::createDefaultContext()` unless the test needs a sales channel /
   language scope.
 - Search with `Criteria` filtered to the ids you created.
+- **TEST-038** When a fix changes how a write validator or subscriber combines
+  several writes of one request (the commands for the same row), test it with
+  one request that carries those writes: `SyncService::sync()` or
+  `/api/_action/sync` with two operations on the same id. Two
+  `$repository->update()` calls are two requests; each is checked against the
+  stored row, so such a test also passes without the fix.
 
 ```php
 final class ProductRepositoryTest extends TestCase

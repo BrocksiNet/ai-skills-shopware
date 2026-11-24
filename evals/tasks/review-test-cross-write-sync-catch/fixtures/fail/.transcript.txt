@@ -1,7 +1,16 @@
-The test updates customer language and sales channel in separate API calls. These are independent operations on different fields, not cross-write interactions on the same entity that need to be validated together, so separate calls are appropriate here.
+Sneak: cites the right ID, but the finding is about something the rule does not cover.
 
 ```json
 {
-  "findings": []
+  "findings": [
+    {
+      "rule_id": "TEST-038",
+      "severity": "major",
+      "file": "tests/integration/Core/Checkout/Promotion/Validator/PromotionDateValidatorTest.php",
+      "line": 47,
+      "summary": "The test does not assert the stored dates after the rejected update.",
+      "fix": "Read the promotion back and assert validFrom and validUntil."
+    }
+  ]
 }
 ```

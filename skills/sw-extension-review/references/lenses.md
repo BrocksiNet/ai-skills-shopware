@@ -132,6 +132,8 @@ itself. Do not report them on a plugin or app diff:
 
 - `ARCH-004`: new core Store API routes publish a typed extension event.
 - `TEST-031`: tests for major feature flag behavior.
+- `TEST-038`: one Sync request in the test of a core write validator fix
+  that merges several writes of one request.
 - `TEST-007` and the untagged "Package attribute and `@internal`" and
   "Coverage annotations" sections of `test-shape-and-flags.md`: the
   `#[Package]` attribute, `@internal`, and no `#[CoversClass]` on

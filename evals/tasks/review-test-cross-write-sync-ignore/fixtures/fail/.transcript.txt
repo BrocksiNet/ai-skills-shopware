@@ -1,15 +1,13 @@
-The test updates media with separate single-write calls instead of Sync API. The validator should see both private and fileExtension together.
-
 ```json
 {
   "findings": [
     {
       "rule_id": "TEST-038",
       "severity": "major",
-      "file": "tests/integration/MediaValidatorTest.php",
-      "line": 23,
-      "summary": "Test uses separate single-write calls instead of Sync API, so validator sees each write in isolation.",
-      "fix": "Use /api/_action/sync with both writes in one Sync request."
+      "file": "tests/integration/Core/Checkout/Promotion/Validator/PromotionDateValidatorTest.php",
+      "line": 45,
+      "summary": "The test calls SyncService directly instead of two repository writes.",
+      "fix": "Write the dates with two promotion.repository update calls."
     }
   ]
 }

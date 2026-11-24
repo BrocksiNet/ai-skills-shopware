@@ -1,50 +1,59 @@
-diff --git a/tests/integration/MediaValidatorTest.php b/tests/integration/MediaValidatorTest.php
-index 0000000..1111111 100644
---- a/tests/integration/MediaValidatorTest.php
-+++ b/tests/integration/MediaValidatorTest.php
-@@ -3,6 +3,7 @@ namespace Swag\Media\Tests\Integration;
+diff --git a/src/Core/Checkout/Promotion/Validator/PromotionDateValidator.php b/src/Core/Checkout/Promotion/Validator/PromotionDateValidator.php
+index 79f8ab8..21f611a 100644
+--- a/src/Core/Checkout/Promotion/Validator/PromotionDateValidator.php
++++ b/src/Core/Checkout/Promotion/Validator/PromotionDateValidator.php
+@@ -43,17 +43,20 @@ class PromotionDateValidator implements EventSubscriberInterface
+                 continue;
+             }
  
- use Shopware\Core\Content\Media\MediaCollection;
- use Shopware\Core\Framework\Context;
-+use Shopware\Core\Framework\Test\TestCaseBase\IntegrationTestBehaviour;
- use Shopware\Core\Test\TestDefaults;
+-            $writes[] = [$command->getPrimaryKey()['id'], $command->getPath(), $payload];
++            // Several operations of one sync request can write the same promotion;
++            // the dates they set have to be checked together.
++            $id = $command->getPrimaryKey()['id'];
++            $writes[$id] = [$command->getPath(), $payload + ($writes[$id][1] ?? [])];
+         }
+ 
+         if ($writes === []) {
+             return;
+         }
+ 
+-        $stored = $this->storedDates(array_unique(array_column($writes, 0)));
++        $stored = $this->storedDates(array_map('strval', array_keys($writes)));
+         $violations = new ConstraintViolationList();
+ 
+-        foreach ($writes as [$id, $path, $payload]) {
++        foreach ($writes as $id => [$path, $payload]) {
+             $dates = $payload + ($stored[$id] ?? []);
+             if ($this->endsBeforeStart($dates)) {
+                 $violations->add($this->violation($path));
+diff --git a/tests/integration/Core/Checkout/Promotion/Validator/PromotionDateValidatorTest.php b/tests/integration/Core/Checkout/Promotion/Validator/PromotionDateValidatorTest.php
+index 0958010..a1c604f 100644
+--- a/tests/integration/Core/Checkout/Promotion/Validator/PromotionDateValidatorTest.php
++++ b/tests/integration/Core/Checkout/Promotion/Validator/PromotionDateValidatorTest.php
+@@ -4,6 +4,9 @@ namespace Shopware\Tests\Integration\Core\Checkout\Promotion\Validator;
+ 
  use PHPUnit\Framework\TestCase;
- 
-@@ -10,6 +11,7 @@ use PHPUnit\Framework\TestCase;
-  */
- class MediaValidatorTest extends TestCase
- {
-+    use IntegrationTestBehaviour;
- 
-     public function testMediaWithPrivateAndFileExtension(): void
-     {
-@@ -17,15 +19,18 @@ class MediaValidatorTest extends TestCase
-         $this->mediaRepository->sync([
-             [
-                 'action' => 'upsert',
--                'entity' => 'media',
-+                'entity' => 'media',
-                 'payload' => [
-                     'id' => $mediaId,
-                     'private' => true,
-                 ],
-             ],
-             [
-                 'action' => 'upsert',
-                 'entity' => 'media',
-                 'payload' => [
-                     'id' => $mediaId,
-                     'fileExtension' => 'zip',
-                 ],
-             ],
-         ], Context::createDefaultContext());
- 
-         $media = $this->mediaRepository->search(
-             new Criteria([$mediaId]),
-             Context::createDefaultContext()
-         )->first();
- 
-         static::assertTrue($media->isPrivate());
-         static::assertEquals('zip', $media->getFileExtension());
+ use Shopware\Core\Checkout\Promotion\Validator\PromotionDateValidator;
++use Shopware\Core\Framework\Api\Sync\SyncBehavior;
++use Shopware\Core\Framework\Api\Sync\SyncOperation;
++use Shopware\Core\Framework\Api\Sync\SyncService;
+ use Shopware\Core\Framework\Context;
+ use Shopware\Core\Framework\Log\Package;
+ use Shopware\Core\Framework\Test\TestCaseBase\DatabaseTransactionBehaviour;
+@@ -35,6 +38,16 @@ class PromotionDateValidatorTest extends TestCase
+         ]));
      }
- }
+ 
++    public function testDatesSetByTwoWritesOfOneRequestAreCheckedTogether(): void
++    {
++        $this->createPromotion(['validFrom' => '2030-01-01 00:00:00', 'validUntil' => '2030-12-31 00:00:00']);
++
++        WriteViolations::assertRejected([PromotionDateValidator::VIOLATION_VALID_UNTIL], fn () => static::getContainer()->get(SyncService::class)->sync([
++            new SyncOperation('from', 'promotion', SyncOperation::ACTION_UPSERT, [['id' => $this->ids->get('promotion'), 'validFrom' => '2030-06-01 00:00:00']]),
++            new SyncOperation('until', 'promotion', SyncOperation::ACTION_UPSERT, [['id' => $this->ids->get('promotion'), 'validUntil' => '2030-03-01 00:00:00']]),
++        ], Context::createDefaultContext(), new SyncBehavior()));
++    }
++
+     /**
+      * @param array<string, mixed> $data
+      */

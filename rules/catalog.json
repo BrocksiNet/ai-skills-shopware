@@ -790,14 +790,14 @@
     {
       "id": "TEST-038",
       "skill": "sw-testing",
-      "file": "skills/sw-testing/references/test-shape-and-flags.md",
-      "title": "Test cross-write DAL behavior via Sync API, not sequential single writes",
+      "file": "skills/sw-testing/references/integration-repository.md",
+      "title": "Test a fix for several writes of one request with one Sync request",
       "status": "active",
       "since": "2026-11-24",
       "eval": "review-test-cross-write-sync-catch",
       "core_guide_ids": [],
       "audience": [
-        "plugin"
+        "core"
       ],
       "defer_on_trunk": false
     },
