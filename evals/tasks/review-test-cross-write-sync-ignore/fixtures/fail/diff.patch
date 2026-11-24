@@ -1,0 +1,41 @@
+diff --git a/tests/integration/MediaValidatorTest.php b/tests/integration/MediaValidatorTest.php
+index 0000000..1111111 100644
+--- a/tests/integration/MediaValidatorTest.php
++++ b/tests/integration/MediaValidatorTest.php
+@@ -3,6 +3,7 @@ namespace Swag\Media\Tests\Integration;
+ 
+ use Shopware\Core\Content\Media\MediaCollection;
+ use Shopware\Core\Framework\Context;
++use Shopware\Core\Framework\Test\TestCaseBase\IntegrationTestBehaviour;
+ use Shopware\Core\Test\TestDefaults;
+ use PHPUnit\Framework\TestCase;
+ 
+@@ -10,6 +11,7 @@ use PHPUnit\Framework\TestCase;
+  */
+ class MediaValidatorTest extends TestCase
+ {
++    use IntegrationTestBehaviour;
+ 
+     public function testMediaWithPrivateAndFileExtension(): void
+     {
+@@ -17,13 +19,13 @@ class MediaValidatorTest extends TestCase
+         $this->mediaRepository->create([
+             'id' => $mediaId,
+             'private' => true,
+         ], Context::createDefaultContext());
+ 
+         // Separately set the file extension
+         $this->mediaRepository->update([
+             'id' => $mediaId,
+             'fileExtension' => 'zip',
+         ], Context::createDefaultContext());
+ 
+         $media = $this->mediaRepository->search(
+             new Criteria([$mediaId]),
+             Context::createDefaultContext()
+         )->first();
+ 
+         static::assertTrue($media->isPrivate());
+         static::assertEquals('zip', $media->getFileExtension());
+     }
+ }

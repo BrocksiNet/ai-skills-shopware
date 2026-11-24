@@ -1,0 +1,7 @@
+The test updates customer language and sales channel in separate API calls. These are independent operations on different fields, not cross-write interactions on the same entity that need to be validated together, so separate calls are appropriate here.
+
+```json
+{
+  "findings": []
+}
+```

@@ -1214,6 +1214,24 @@ export const PAIRS: Record<string, ReviewPair> = {
         /tests\/unit|unit (suite|tests?|folder)|(belongs?|move[sd]?|should (be|live|go)).{0,40}unit|needs? no (kernel|container)|no kernel/iu,
     },
   },
+  // Catch: A test adds media with private:true and fileExtension:zip in two
+  // sequential Sync operations, expecting the validator to reject the combo. The
+  // test adds them together in one request and correctly asserts rejection, so
+  // the validator sees the merged state. Needs a major+ finding in tests/
+  // that cites TEST-038 or describes running multiple writes as separate API
+  // calls instead of a Sync request.
+  // Ignore: An integration test updates media once with a single PUT call. A
+  // migration test loops insertCustomer() without a Sync request. These
+  // scenarios have no cross-write interactions, so single writes are correct.
+  // A major+ finding that names TEST-038 or says the test should use Sync is a
+  // false positive.
+  'test-cross-write-sync': {
+    rule: 'TEST-038',
+    file: 'tests/**',
+    minSeverity: 'major',
+    summary:
+      /separate (single.?)?writes?|single.?write (call|update|create|api)|independent writes?|sequent[a-z]* (api )?calls?|(multiple )?write (in |of )?(isolation|separate)|(not|never) (via |through )?(sync|api.*sync)|cross.?write|merged state|sync (api|request)/iu,
+  },
   // Catch: The plugin template renames block swag_loyalty_badge_label to
   // swag_loyalty_badge_text and drops the old name, so theme overrides of the
   // old block silently stop rendering. Needs a major+ finding in the views

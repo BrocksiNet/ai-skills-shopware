@@ -18,7 +18,8 @@
         "Feature::(fake|skipTestIf(In)?Active)\\(",
         "#\\[Covers(Class|Function|Nothing)[(\\]]",
         "new \\\\?Reflection(Class|Property|Method)\\(",
-        "StaticEntityRepository"
+        "StaticEntityRepository",
+        "->sync\\("
       ]
     },
     {

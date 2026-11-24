@@ -788,6 +788,20 @@
       }
     },
     {
+      "id": "TEST-038",
+      "skill": "sw-testing",
+      "file": "skills/sw-testing/references/test-shape-and-flags.md",
+      "title": "Test cross-write DAL behavior via Sync API, not sequential single writes",
+      "status": "active",
+      "since": "2026-11-24",
+      "eval": "review-test-cross-write-sync-catch",
+      "core_guide_ids": [],
+      "audience": [
+        "plugin"
+      ],
+      "defer_on_trunk": false
+    },
+    {
       "id": "PLG-001",
       "skill": "sw-plugin-development",
       "file": "skills/sw-plugin-development/references/version-compatibility.md",

@@ -1,0 +1,16 @@
+The test updates the media entity with private=true in one call, then updates it again with fileExtension=zip in a separate PUT call. The validator that checks for MEDIA_ILLEGAL_FILE_EXTENSION will only see the fileExtension when it validates that second write, not the merged state where both private and fileExtension are set together. This should be tested through /api/_action/sync with both writes in one Sync request.
+
+```json
+{
+  "findings": [
+    {
+      "rule_id": "TEST-038",
+      "severity": "major",
+      "file": "tests/integration/MediaValidatorTest.php",
+      "line": 23,
+      "summary": "Test updates media with separate single-write calls instead of Sync API, so the validator sees each write in isolation, not the merged state from both writes together.",
+      "fix": "Use /api/_action/sync with two write operations in sequence to test that the validator sees the merged state of private:true and fileExtension:zip together."
+    }
+  ]
+}
+```
