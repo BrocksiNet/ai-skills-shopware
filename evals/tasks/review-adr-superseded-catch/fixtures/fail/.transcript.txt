@@ -1,5 +1,16 @@
+Sneak: cites the right ID, but the finding is about the ADR template, not the in-place decision change.
+
 ```json
 {
-  "findings": []
+  "findings": [
+    {
+      "rule_id": "CORE-078",
+      "severity": "major",
+      "file": "adr/2025-04-08-retry-failed-flow-actions.md",
+      "line": 1,
+      "summary": "The ADR has no Status section and no options considered.",
+      "fix": "Add a Status section and list the options."
+    }
+  ]
 }
 ```

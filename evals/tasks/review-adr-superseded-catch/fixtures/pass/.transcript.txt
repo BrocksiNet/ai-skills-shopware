@@ -1,13 +1,15 @@
+The diff rewrites the Decision of an accepted ADR in place: retries become "stop the flow".
+
 ```json
 {
   "findings": [
     {
-      "rule_id": "CORE-052",
-      "severity": "blocking",
-      "file": "adr/2024-11-01-event-flow.md",
-      "line": 1,
-      "summary": "The ADR shipped in 6.7 is modified to change its decision for 6.8 without a new superseding ADR.",
-      "fix": "Write a new ADR that documents the new decision and move this ADR to adr/_superseded."
+      "rule_id": "CORE-078",
+      "severity": "major",
+      "file": "adr/2025-04-08-retry-failed-flow-actions.md",
+      "line": 15,
+      "summary": "The accepted ADR's decision is changed in place, so readers of the versions that shipped it no longer find the retry decision.",
+      "fix": "Write a new ADR for the stop-on-failure decision and move this one to adr/_superseded/ with a link to the new ADR."
     }
   ]
 }

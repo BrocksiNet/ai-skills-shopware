@@ -1,18 +1,22 @@
-diff --git a/adr/2024-11-01-event-flow.md b/adr/2024-11-01-event-flow.md
-index abc1234..def5678 100644
---- a/adr/2024-11-01-event-flow.md
-+++ b/adr/2024-11-01-event-flow.md
-@@ -1,8 +1,8 @@
- # 2024-11-01 Event Flow Pattern
+diff --git a/adr/2025-04-08-retry-failed-flow-actions.md b/adr/2025-04-08-retry-failed-flow-actions.md
+index 3c1f0a2..8d42e71 100644
+--- a/adr/2025-04-08-retry-failed-flow-actions.md
++++ b/adr/2025-04-08-retry-failed-flow-actions.md
+@@ -12,11 +12,12 @@ them made the whole flow fail, and merchants had to replay orders by hand.
  
--## Decision
-+## Context
+ ## Decision
  
--We use synchronous event dispatching for all core events to maintain order and simplicity.
-+Events are dispatched synchronously for all core operations to maintain order and ensure sequential consistency.
+-A flow action that throws is dispatched again through the message queue. It is
+-retried three times with an exponential delay, starting at 10 seconds. After the
+-third failure, the error is logged and the flow continues with the next action.
++A flow action that throws is not retried. The error is logged and the flow
++stops, so later actions never run on a half-processed order. Merchants replay
++the flow from the flow log in the Administration.
  
--## Consequences
-+## Rationale
+ ## Consequences
  
--Sequential behavior is easier to test but limits concurrency options.
-+Synchronous dispatch simplifies testing and debugging but prevents parallel processing.
+-* Flow actions must be idempotent, because they can run more than once.
+-* Apps that receive webhooks from flow actions can see the same event twice.
++* Flow actions run at most once, so they no longer need to be idempotent.
++* A short outage of a mail server or webhook target stops the flow until a
++  merchant replays it.

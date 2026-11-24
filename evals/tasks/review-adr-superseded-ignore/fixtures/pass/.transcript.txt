@@ -1,3 +1,5 @@
+The new decision lives in a new ADR, and the old one moved to adr/_superseded/ with a link to it.
+
 ```json
 {
   "findings": []

@@ -2780,7 +2780,8 @@
       "title": "Add an ADR for architectural decisions",
       "status": "active",
       "since": "2026-10-20",
-      "eval": "review-adr-superseded-catch",
+      "eval": null,
+      "eval_reason": "Process rule; not gradable from a diff.",
       "core_guide_ids": [],
       "audience": [
         "core"
@@ -3275,6 +3276,23 @@
       "defer_on_trunk": true,
       "trunk": {
         "source": "coding-guidelines/core/http-cache-and-assets.md#cleanup-stays-asynchronous"
+      }
+    },
+    {
+      "id": "CORE-078",
+      "skill": "sw-core-development",
+      "file": "skills/sw-core-development/references/release-notes-and-adr.md",
+      "title": "Supersede an accepted ADR instead of changing it",
+      "status": "active",
+      "since": "2026-11-24",
+      "eval": "review-adr-superseded-catch",
+      "core_guide_ids": [],
+      "audience": [
+        "core"
+      ],
+      "defer_on_trunk": false,
+      "trunk": {
+        "source": "adr/2020-06-25-implement-architecture-decision-records.md"
       }
     },
     {

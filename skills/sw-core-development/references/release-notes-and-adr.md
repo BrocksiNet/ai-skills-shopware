@@ -127,7 +127,16 @@ in RELEASE_INFO. When the break lands (major), document migration in UPGRADE.
 
 ## ADRs
 
-**CORE-052** When an accepted ADR's decision changes, do not edit it. Write a new ADR that documents the new decision and supersedes the previous one. Move the outdated ADR into `adr/_superseded`. This ensures readers of a 6.x release see the decision that was current in that version.
+**CORE-052** Add an Architecture Decision Record under `adr/` for decisions future maintainers
+should understand: a new pattern, a trade-off, or a deviation from convention.
+State context, options, decision, consequences. Mechanical changes do not need
+an ADR.
+
+**CORE-078** Never change the decision of an accepted ADR in place. Every ADR in
+`adr/` is accepted once merged, and a released version ships it, so readers of
+that version must keep finding the decision it had. When the decision changes,
+write a new ADR with the new decision, move the old file to `adr/_superseded/`,
+and add a line to it that links the new ADR.
 
 ## Commits
 

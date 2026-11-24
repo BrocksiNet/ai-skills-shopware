@@ -21,3 +21,4 @@
 - Replace file_put_contents in this core service with Symfony Filesystem.
 - Modernize this core service to use Messenger instead of a custom queue.
 - Is it fine to switch off autoload on an existing core association in a minor?
+- Our accepted ADR on flow retries is outdated. Can I just update its Decision section in this core PR?
