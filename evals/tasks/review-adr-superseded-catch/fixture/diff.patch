@@ -1,9 +1,14 @@
 diff --git a/adr/2025-04-08-retry-failed-flow-actions.md b/adr/2025-04-08-retry-failed-flow-actions.md
-index 3c1f0a2..8d42e71 100644
+index 3393b0b..b08c31b 100644
 --- a/adr/2025-04-08-retry-failed-flow-actions.md
 +++ b/adr/2025-04-08-retry-failed-flow-actions.md
-@@ -12,11 +12,12 @@ them made the whole flow fail, and merchants had to replay orders by hand.
+@@ -10,13 +10,18 @@ tags: [flow, message-queue, retry]
+ Flow actions call mail servers, webhooks and apps. A short outage of one of
+ them made the whole flow fail, and merchants had to replay orders by hand.
  
++Continuing after the third failure ran later actions, such as the shipping mail,
++on orders whose payment action had failed.
++
  ## Decision
  
 -A flow action that throws is dispatched again through the message queue. It is
@@ -17,6 +22,7 @@ index 3c1f0a2..8d42e71 100644
  
 -* Flow actions must be idempotent, because they can run more than once.
 -* Apps that receive webhooks from flow actions can see the same event twice.
-+* Flow actions run at most once, so they no longer need to be idempotent.
++* Flow actions must stay idempotent, because the message queue can still
++  deliver the same message twice.
 +* A short outage of a mail server or webhook target stops the flow until a
 +  merchant replays it.

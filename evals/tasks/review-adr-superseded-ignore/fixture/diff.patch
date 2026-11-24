@@ -1,9 +1,9 @@
 diff --git a/adr/2026-11-20-stop-flow-on-failed-action.md b/adr/2026-11-20-stop-flow-on-failed-action.md
 new file mode 100644
-index 0000000..8d42e71
+index 0000000..cb7b3af
 --- /dev/null
 +++ b/adr/2026-11-20-stop-flow-on-failed-action.md
-@@ -0,0 +1,25 @@
+@@ -0,0 +1,26 @@
 +---
 +title: Stop a flow when an action fails
 +date: 2026-11-20
@@ -26,18 +26,18 @@ index 0000000..8d42e71
 +
 +## Consequences
 +
-+* Flow actions run at most once, so they no longer need to be idempotent.
++* Flow actions must stay idempotent, because the message queue can still
++  deliver the same message twice.
 +* A short outage of a mail server or webhook target stops the flow until a
 +  merchant replays it.
 diff --git a/adr/2025-04-08-retry-failed-flow-actions.md b/adr/_superseded/2025-04-08-retry-failed-flow-actions.md
-similarity index 94%
+similarity index 87%
 rename from adr/2025-04-08-retry-failed-flow-actions.md
 rename to adr/_superseded/2025-04-08-retry-failed-flow-actions.md
-index 3c1f0a2..5e9b7d4 100644
+index 3393b0b..b724d85 100644
 --- a/adr/2025-04-08-retry-failed-flow-actions.md
 +++ b/adr/_superseded/2025-04-08-retry-failed-flow-actions.md
-@@ -4,6 +4,8 @@ date: 2025-04-08
- area: business-ops
+@@ -5,6 +5,8 @@ area: business-ops
  tags: [flow, message-queue, retry]
  ---
  
@@ -45,3 +45,4 @@ index 3c1f0a2..5e9b7d4 100644
 +
  ## Context
  
+ Flow actions call mail servers, webhooks and apps. A short outage of one of
