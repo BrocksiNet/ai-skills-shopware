@@ -1,15 +1,22 @@
 # Slim skill context plan (2026-10)
 
-Status: **proposed** · Author: BrocksiNet · Created: 2026-10-30
+Status: **proposed** (re-verified 2026-11-25) · Author: BrocksiNet · Created: 2026-10-30
 
 Token usage went up, and the question was whether our skills cause it. They
 do not: in two weeks of real sessions our skills were well under 1% of all
-input tokens. The listing of our skill descriptions costs more than the
+input tokens. The listing of our skill descriptions costs far more than the
 skills we actually load, because it rides along on every request.
+
+A re-check on 2026-11-25 sharpened the real problem: **only 8 of 332 sessions
+in the previous 14 days loaded any of our skills** (0.30% listing vs 0.01%
+bodies/files — a 22× ratio). Automatic hook-driven routing (**Phase 3**) is
+therefore the highest-value step, primarily to fix silent non-activation rather
+than to save 0.3% of input tokens, and must land before recommending
+`"name-only"` overrides in Phase 2.
 
 The goal still holds: keep only the router in context all the time and
 load the rest when a change or a review needs it. This plan measures first,
-then slims the listing, then makes routing automatic, so no step trades
+then makes routing automatic and slims the listing, so no step trades
 fewer tokens for skills the agent forgets to load.
 
 ## What we measured
@@ -56,11 +63,11 @@ rate limits.
 
 ## How skills reach the context today
 
-| Piece | When it loads | How long it stays | Size today |
+| Piece | When it loads | How long it stays | Size (2026-11-25) |
 | --- | --- | --- | --- |
-| Description in the listing | Every request, from the start | Whole session | ~2,600 tokens for all 19 skills, ~1,500 for a core install |
-| `SKILL.md` body | When the agent invokes the skill | Until compaction; afterwards re-attached, max 5K per skill, 25K in total | 600 to 3,000 tokens |
-| Reference | When the agent reads it | Until compaction | 100 to 3,000 tokens |
+| Description in the listing | Every request, from the start | Whole session | ~2,966 tokens for all 20 skills (292 to 1,005 chars each) |
+| `SKILL.md` body | When the agent invokes the skill | Until compaction; afterwards re-attached, max 5K per skill, 25K in total | 600 to 3,100 tokens (`sw-extension-review` is ~3,088 tokens, 68% routes table) |
+| Reference | When the agent reads it | Until compaction | 100 to 3,300 tokens |
 | Router output | When the agent runs `route.mjs` | Until compaction | ~550 tokens |
 
 Claude Code caps the whole listing at 1% of the context window. When more
@@ -111,14 +118,17 @@ flowchart LR
 `tools/bin/skill-context.ts` with tests. Run it before and after each phase;
 the A/B eval transcripts give the same numbers per task.
 
-### Phase 2: slim the listing
+### Phase 2: slim the listing (pair `"name-only"` with Phase 3)
 
 - Shorten every description to the trigger words that decide activation,
-  about 300 characters, and move the rest into the body. Today they are
-  290 to 930 characters.
+  about 300 to 450 characters, and move the rest into the body. Today they are
+  292 to 1,005 characters (`sw-plugin-development` sits 19 characters below the
+  1,024-character CI limit).
 - Add an install profile where only `sw-skill-router` (and `sw-help`) keep
   a full description and the other skills are `"name-only"` through
-  `skillOverrides`, documented in `use-cases/`.
+  `skillOverrides`, documented in `use-cases/` **alongside the Phase 3 hook**
+  (do not recommend `"name-only"` without the hook, because baseline real-world
+  activation is already low at 8/332 sessions).
 - Gate: the activation evals and the A/B suite must not lose activations.
   Earlier Haiku runs skipped skills until descriptions said "load before any
   edit", so this is the step most likely to regress.
@@ -126,7 +136,7 @@ the A/B eval transcripts give the same numbers per task.
 Saves 1,500 to 2,600 tokens on every request and frees the shared listing
 budget for other skills.
 
-### Phase 3: route without a decision
+### Phase 3: route without a decision (highest priority)
 
 - `route.mjs --brief`: the matched skills, the references with their rule
   IDs and one-line titles, and why each matched. No skill bodies. The index
@@ -145,19 +155,25 @@ that arrives without the agent choosing to look.
 ### Phase 4: load the full rules at review time
 
 - The "check this change against the skills" step runs as a subagent:
-  `sw-extension-review` and `sw-pr-review` get a forked variant, and the
-  router can print a ready subagent prompt for a build task.
+  `sw-extension-review` and `sw-pr-review` get a forked variant (`context: fork`),
+  and the router can print a ready subagent prompt for a build task. Because a
+  `context: fork` subagent does not see conversation history, keep it strictly
+  for self-contained review skills that read `git diff` or `gh`, not interactive
+  build skills.
 - The build loop keeps only the brief index and the references it read on
   purpose. The full skill text lives in the subagent and is gone after it
   returns.
 - Risk: code written without the rules needs more fixes afterwards. The
   rule IDs from phase 3 are the guard; the A/B suite decides.
 
-### Phase 5: smaller bodies
+### Phase 5: smaller bodies (low priority / deferred)
 
-`sw-core-development`, `sw-extension-review` and `sw-podman-dev` are near
-3,000 tokens each. Move detail into references behind routes and lower the
-`SKILL.md` budget in `validate-skills.ts` from 500 lines to a token budget.
+`sw-extension-review` (~3,088 tokens; 68% is the 38-row generated routes table)
+and `sw-core-development` (~2,388 tokens) are the largest `SKILL.md` files
+(`sw-podman-dev` was replaced by `sw-local-dev` and removed in v0.18.0). Bodies
+and files were only 0.01% of input tokens in the 2026-11-25 check, so focus on
+capping long raw regexes in rendered route tables and splitting noisy
+references rather than enforcing a strict token-budget gate on `SKILL.md`.
 
 ## Not part of this plan
 

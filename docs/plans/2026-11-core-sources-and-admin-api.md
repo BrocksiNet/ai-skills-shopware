@@ -1,7 +1,6 @@
 # Core sources, local environments, MCP and the admin API index
 
-Status: **accepted 2026-11-11.** WP A and WP B are done. Decisions are at
-the end.
+Status: **accepted 2026-11-11** (re-verified 2026-11-25). WP A, WP B, WP C steps 1–2, and WP D steps 1–4 are done. **WP C is descoped** after core shipped its own Administration `public-api/` snapshot and break check ([shopware/shopware#22591](https://github.com/shopware/shopware/issues/22591)). Decisions are at the end.
 
 ## Summary
 
@@ -103,6 +102,25 @@ Done when: activation picks the right reference for each of the five
 environments, and the existing Podman tasks still pass.
 
 ## WP C: admin API index, the missing surfaces
+
+> **2026-11-25 scope update:** Shopware core accepted
+> [`adr/2026-11-10-administration-public-api-snapshot.md`](https://github.com/shopware/shopware/blob/trunk/adr/2026-11-10-administration-public-api-snapshot.md)
+> and has already merged 7 of 11 PRs in
+> [shopware/shopware#22591](https://github.com/shopware/shopware/issues/22591)
+> (blocks, extend chains, crossings, `v-if` chains, scope variables, break
+> check, and component slices; services/stores in #23370; snippets/routes/
+> registries and `admin:check-extensions --target=<major>` next).
+>
+> Do **not** rebuild those 6.8+ Administration surfaces in `tools/api-index/`.
+> Keep `tools/api-index/` focused on what core's snapshot does **not** cover:
+>
+> - Historical **6.5–6.7 cross-minor `api-facts`** where plugins actually break
+>   (SCSS variables/mixins, snippet placeholders), plus Storefront
+>   `{% if feature() %}`.
+> - Track `adr/2026-11-10-administration-public-api-snapshot.md` and the
+>   `valid-api-markers` ESLint rule in `rules/sources.json`, and point 6.8+
+>   Admin checks in `sw-admin-js` / `sw-core-development` to core's committed
+>   `public-api/` snapshot and `admin:check-extensions`.
 
 Our admin surface (`tools/api-index/src/admin.ts`) records components,
 props, methods, emits, slots, blocks with their parent, position
@@ -227,6 +245,11 @@ carry the label.
 
 ## WP E: admin rules for plugin authors and reviewers
 
+> **2026-11-25 alignment note:** Core now ships `valid-api-markers` (`#22785`)
+> for `@bc-change <Kind> version:vX` and a block break check (`#23163`). Align
+> core-side rules with `@bc-change` and wire newly CI-enforced checks into
+> `trunk.enforced_by` rather than repeating them.
+
 Candidates for `sw-admin-js` (author side) and `sw-extension-review`
 (review side), each with the usual catch/ignore review pair:
 
@@ -249,16 +272,27 @@ instead of guessing.
 
 ## WP F: `sw-mcp-development`
 
+> **2026-11-25 trunk check:** Core `trunk` now has **8** MCP `AGENTS.md` files
+> (`src/Core/Framework/Mcp/{,Command/,Context/,Loader/,Prompt/,Resource/,Tool/}AGENTS.md`
+> and `src/Storefront/Mcp/AGENTS.md`) and **5** MCP PHPStan rules
+> (`McpAdminToolRequiresPrivilegeRule`, `McpStoreApiToolAdminAclRule`,
+> `McpToolLegacyStringResultRule`, `McpReservedToolGroupRule`,
+> `McpToolResponseRule`). Permissions and ACL are now owned by `sw-security`
+> (`SEC-011`, shipped in PR #202); `sw-mcp-development` links to `` `SEC-011` ``
+> instead of duplicating it.
+
 Plugins already add tools to Shopware's MCP server, and the API still moves,
 so this skill needs frequent updates. Built so the drift issue tells us
 when.
 
-1. Sources: core's `Framework/Mcp/**/AGENTS.md` (Tool, Loader, Prompt,
+1. Sources: core's `Framework/Mcp/**/AGENTS.md` (root, Tool, Loader, Prompt,
    Command, Context, Resource) and `Storefront/Mcp/AGENTS.md`, mapped to the
    skill in `sources.json` (WP A step 2). Every change there lands in the
    weekly drift issue under this skill.
-2. Scope: a plugin that registers MCP tools, prompts or resources;
-   permissions and ACL of a tool; input and output schemas; testing a tool.
+2. Scope: a plugin that registers MCP tools, prompts or resources; input and
+   output schemas, structured responses (`McpToolResponseRule`,
+   `McpToolLegacyStringResultRule`), tool groups (`McpReservedToolGroupRule`),
+   and testing a tool. Defer tool ACL/privileges to `sw-security` (`SEC-011`).
    Not: running or configuring the server for a shop (that is a runtime
    question, not code).
 3. Mark it experimental in the description and `REGISTRY.md`, like

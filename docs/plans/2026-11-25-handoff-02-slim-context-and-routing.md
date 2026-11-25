@@ -2,18 +2,18 @@
 
 - **Base branch:** `origin/main` (at or after `a21660c0`, post-v0.19.0)
 - **Suggested branch:** `feat/slim-context-and-routing`
-- **Related plan:** [`2026-10-slim-skill-context.md`](2026-10-slim-skill-context.md) (Phases 2, 3, and 5)
+- **Related plan:** [`2026-10-slim-skill-context.md`](2026-10-slim-skill-context.md) (Phases 3, 2, and 4 — in that priority order; Phase 5 token-budget gate deferred)
 - **Parallelizable with:** Handoffs 01, 03, 04, 05, and 06 (rebase and re-run `render-routes`, `render-router-index`, and `validate-skills` if another handoff updates `skills/` or `rules/catalog.json` first)
 - **Prerequisite:** Read [`AGENTS.md`](../../AGENTS.md) and [`2026-10-slim-skill-context.md`](2026-10-slim-skill-context.md) before editing.
 
 ## Goal
 
-Reduce always-on context cost and wasted reference reads without losing activation or recall:
+Fix silent non-activation (2026-11-25 telemetry: only **8 of 332 sessions** loaded our skills; listing cost **22×** more tokens than loaded bodies/files) and cut wasted reference reads without losing recall:
 
-1. Slim all 20 frontmatter `description` fields from `~2,966` tokens combined to `~1,500–1,800` tokens (keeping every skill well below 500 chars; `sw-plugin-development` is currently at `1,005 / 1,024` chars).
-2. Cut router noise in `evals/routing-replay/` (currently **2.26 noisy references per PR** out of 4.38 selected) by narrowing overly broad anchors and splitting oversized references.
-3. Shrink rendered route tables inside `SKILL.md` (currently **19%** of all `SKILL.md` bytes, and **68% / 8.4 KB** in `sw-extension-review/SKILL.md`).
-4. Implement `route.mjs --brief` and `route.mjs --hook` (Phase 3 of the slim-context plan) plus `use-cases/` documentation for `skillOverrides` (`name-only`) and hook-driven routing.
+1. **First (highest priority):** Implement `route.mjs --brief` and `route.mjs --hook` (Phase 3 of the slim-context plan) plus `use-cases/` wiring for hook-driven activation and Claude Code `skillOverrides` (`"name-only"` — only recommended alongside the hook, never standalone).
+2. Slim all 20 frontmatter `description` fields from `~2,966` tokens combined to `~1,500–1,800` tokens (keeping every skill well below 500 chars; `sw-plugin-development` is currently at `1,005 / 1,024` chars).
+3. Cut router noise in `evals/routing-replay/` (currently **2.26 noisy references per PR** out of 4.38 selected) by narrowing overly broad anchors and splitting oversized references.
+4. Shrink rendered route tables inside `SKILL.md` (currently **19%** of all `SKILL.md` bytes, and **68% / 8.4 KB** in `sw-extension-review/SKILL.md`), and evaluate `context: fork` for self-contained review skills (`sw-extension-review`, `sw-pr-review` — remember a forked subagent has no conversation history).
 
 ## Scope of Changes
 
@@ -58,7 +58,8 @@ Measured from `node tools/bin/replay-routes.ts --corpus evals/routing-replay`:
 - Add `--brief` to `skills/sw-skill-router/scripts/route.mjs`: prints a compact pointer list (2–10 lines: matched skill, reference path, rule IDs + one-line titles, and why it matched) with no verbose prose.
 - Add `--hook` to `skills/sw-skill-router/scripts/route.mjs`: computes the `--brief` output, compares a hash of the matched set against a small state file under the repository's `.git/` dir (safe for worktrees via `git rev-parse --git-dir`), and prints nothing when the routed set did not change since the last call.
 - Add unit tests in `tools/test/skill-router.test.ts` covering `--brief`, `--hook` repeat suppression, worktree git dirs, and JSON output compatibility.
-- Document the optional hook snippet and Claude Code `skillOverrides` (`name-only`) profile in `use-cases/` and `docs/installation.md`.
+- Document the optional hook snippet and Claude Code `skillOverrides` (`name-only`) profile in `use-cases/` and `docs/installation.md` (explicitly pairing `"name-only"` with the hook so activation does not regress).
+- Optionally add a `context: fork` note or variant for `sw-extension-review` and `sw-pr-review` (self-contained diff/PR skills; do not use `context: fork` on build skills that rely on conversation history).
 
 ### 5. Re-render generated files
 

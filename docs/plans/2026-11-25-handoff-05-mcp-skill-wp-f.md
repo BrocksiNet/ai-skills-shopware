@@ -12,16 +12,28 @@ Ship WP F from the accepted November plan: a new **experimental** skill `skills/
 
 ## Upstream Sources to Inspect First
 
-Inspect current `shopware/shopware` `trunk` via `gh api` before authoring any rule:
+Inspect current `shopware/shopware` `trunk` via `gh api` before authoring any rule. Verified present on `trunk` as of 2026-11-25:
 
-- `src/Core/Framework/Mcp/**/AGENTS.md` (Tool, Loader, Prompt, Command, Context, Resource)
-- `src/Storefront/Mcp/AGENTS.md`
-- `src/Core/DevOps/StaticAnalyze/PHPStan/Rules/` — specifically `McpToolLegacyStringResultRule` (added in commit `3f723573` / core PR #22078) and any newer MCP PHPStan rules added since `60c8f1c1`.
+- **8 MCP `AGENTS.md` files:**
+  - `src/Core/Framework/Mcp/AGENTS.md`
+  - `src/Core/Framework/Mcp/Command/AGENTS.md`
+  - `src/Core/Framework/Mcp/Context/AGENTS.md`
+  - `src/Core/Framework/Mcp/Loader/AGENTS.md`
+  - `src/Core/Framework/Mcp/Prompt/AGENTS.md`
+  - `src/Core/Framework/Mcp/Resource/AGENTS.md`
+  - `src/Core/Framework/Mcp/Tool/AGENTS.md`
+  - `src/Storefront/Mcp/AGENTS.md`
+- **5 MCP PHPStan rules** under `src/Core/DevOps/StaticAnalyze/PHPStan/Rules/`:
+  - `McpToolLegacyStringResultRule.php` (no hand-built legacy string results)
+  - `McpToolResponseRule.php` (structured tool responses)
+  - `McpReservedToolGroupRule.php` (reserved tool group names)
+  - `McpAdminToolRequiresPrivilegeRule.php` (already under `SEC-011` in `sw-security`)
+  - `McpStoreApiToolAdminAclRule.php` (check whether `SEC-011` in `skills/sw-security/references/mcp-tool-acl.md` should also cite this rule and document Store API MCP privilege behavior)
 
 ## Ownership Boundary (Critical)
 
-- **`sw-security` (`SEC-011`)** already owns **MCP tool ACL and privilege checks** (`#[McpToolRequires]`, `#[McpToolRequiresNoPrivilege]`, `requirePrivilegeResult()`, Store API vs Admin API privilege rules). Do **not** restate `SEC-011` in `sw-mcp-development` — link to `sw-security` and cite `` `SEC-011` `` as a code span.
-- **`sw-mcp-development`** owns: registering MCP tools, prompts, and resources in a plugin or core; structured input/output schemas and result objects (no hand-built legacy string results); service tags/attributes/loaders; and testing MCP tools.
+- **`sw-security` (`SEC-011`)** already owns **MCP tool ACL and privilege checks** (`#[McpToolRequires]`, `#[McpToolRequiresNoPrivilege]`, `requirePrivilegeResult()`, Store API vs Admin API privilege rules). Do **not** restate `SEC-011` in `sw-mcp-development` — link to `sw-security` and cite `` `SEC-011` `` as a code span. (If `McpStoreApiToolAdminAclRule` is missing from `SEC-011`, add it in `sw-security` in a clean commit rather than duplicating ACL in `sw-mcp-development`.)
+- **`sw-mcp-development`** owns: registering MCP tools, prompts, and resources in a plugin or core; tool group naming (`McpReservedToolGroupRule`); structured input/output schemas and result objects (`McpToolResponseRule`, `McpToolLegacyStringResultRule`); service tags/attributes/loaders; and testing MCP tools.
 - **Out of scope:** running or configuring an MCP server for a shop (runtime question, not code).
 
 ## Scope of Changes
@@ -35,7 +47,7 @@ Inspect current `shopware/shopware` `trunk` via `gh api` before authoring any ru
 
 ### 2. Catalog, registry, sources, and help
 
-- Add prefix `MCP` to `rules/catalog.json` and tag every rule (`MCP-001..`) with `trunk.source`, `trunk.enforced_by` (e.g. `McpToolLegacyStringResultRule` verified from upstream PHPStan rule source), `audience`, and `eval`.
+- Add prefix `MCP` to `rules/catalog.json` and tag every rule (`MCP-001..`) with `trunk.source`, `trunk.enforced_by` (verified from the upstream source of `McpToolLegacyStringResultRule`, `McpToolResponseRule`, and `McpReservedToolGroupRule`), `audience`, and `eval`.
 - Register `sw-mcp-development` in `REGISTRY.md` (catalog table + coverage matrix) and mention it in `skills/sw-help/SKILL.md` (and relevant `use-cases/` docs).
 - Map `src/Core/Framework/Mcp/**/AGENTS.md` and `src/Storefront/Mcp/AGENTS.md` (plus any MCP sub-paths found) to `sw-mcp-development` in `rules/sources.json` so weekly drift issues file MCP changes directly under this skill.
 
