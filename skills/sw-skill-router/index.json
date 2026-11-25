@@ -736,7 +736,7 @@
           "when": "A plugin adds or changes an MCP tool or the privileges it declares.",
           "anchors_any": [
             "#\\[McpTool(Requires|RequiresNoPrivilege)?\\(",
-            "shopware\\.mcp\\.tool",
+            "shopware\\.(store_api_)?mcp\\.tool",
             "requirePrivilege(Result)?\\("
           ],
           "exclude_paths": [
@@ -1699,7 +1699,7 @@
           "when": "A plugin adds or changes an MCP tool or the privileges it declares.",
           "anchors_any": [
             "#\\[McpTool(Requires|RequiresNoPrivilege)?\\(",
-            "shopware\\.mcp\\.tool",
+            "shopware\\.(store_api_)?mcp\\.tool",
             "requirePrivilege(Result)?\\("
           ],
           "exclude_paths": [

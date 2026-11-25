@@ -4644,6 +4644,13 @@
             "catches": "reports an Admin API MCP tool with neither `#[McpToolRequires]` nor `#[McpToolRequiresNoPrivilege]`, with both, or with the opt-out and a `requirePrivilege()` or `requirePrivilegeResult()` call in its own class",
             "misses": "whether a `#[McpToolRequires]` tool really calls a privilege check, tools the compiled container does not know, and every extension, because the rule ships only in core's PHPStan config",
             "trunk_only": true
+          },
+          {
+            "tool": "McpStoreApiToolAdminAclRule",
+            "kind": "phpstan",
+            "catches": "reports a Store API MCP tool (`shopware.store_api_mcp.tool`) that declares `#[McpToolRequires]` or calls `requirePrivilege()` or `requirePrivilegeResult()` in its own class",
+            "misses": "inherited `requirePrivilege*()` calls from parent classes or traits, tools the compiled container does not know, and every extension, because the rule ships only in core's PHPStan config",
+            "trunk_only": true
           }
         ]
       }
