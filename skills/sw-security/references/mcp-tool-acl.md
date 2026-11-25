@@ -3,9 +3,11 @@
 Scope: who may call a tool and what it checks. Writing tools, schemas and
 results is not this reference's topic.
 
-A plugin registers a tool by tagging its service `shopware.mcp.tool`;
+A plugin registers an Admin API tool by tagging its service `shopware.mcp.tool`;
 Shopware assigns it to the Admin API MCP server, so the Admin ACL applies.
-MCP is experimental until 6.8.0.
+Store API tools are tagged `shopware.store_api_mcp.tool` and run in a sales
+channel context, where Admin ACL privileges do not exist. MCP is experimental
+until 6.8.0.
 
 ## Rule
 
@@ -22,14 +24,20 @@ MCP is experimental until 6.8.0.
   tool in its MCP allowlist can use it. Declare the privileges it checks
   with `#[McpToolRequires]`. A tool that needs none declares
   `#[McpToolRequiresNoPrivilege(reason: '...')]`, and never together with
-  `#[McpToolRequires]` or a `requirePrivilege*()` call.
+  `#[McpToolRequires]` or a `requirePrivilege*()` call. On a Store API tool,
+  never declare `#[McpToolRequires]` or call `requirePrivilege*()` — Admin
+  ACL privileges always pass outside an Admin API context, so protect Store
+  API tools through the sales channel context and Store API routes instead;
+  a tool registered on both servers can only declare
+  `#[McpToolRequiresNoPrivilege]`.
 
 ## Which cores have what
 
 `#[McpToolRequires]` and `requirePrivilege()` are in 6.7.15.1 and 6.7.16.1.
-`#[McpToolRequiresNoPrivilege]`, `requirePrivilegeResult()` and the PHPStan
-rule `McpAdminToolRequiresPrivilegeRule` are not in 6.7.16.1; they are on
-the 6.7.17.x branch and trunk. `requirePrivilege()` is deprecated for 6.8.
+`#[McpToolRequiresNoPrivilege]`, `requirePrivilegeResult()`,
+`McpAdminToolRequiresPrivilegeRule` and `McpStoreApiToolAdminAclRule` are
+not in 6.7.16.1; they are on the 6.7.17.x branch and trunk.
+`requirePrivilege()` is deprecated for 6.8.
 
 ## Common review failures
 
@@ -37,15 +45,24 @@ the 6.7.17.x branch and trunk. `requirePrivilege()` is deprecated for 6.8.
   but no privilege check in `__invoke()`.
 - A tool that declares `#[McpToolRequiresNoPrivilege]` and still checks a
   privilege.
+- A Store API tool (`shopware.store_api_mcp.tool`) that declares
+  `#[McpToolRequires]` or calls `requirePrivilegeResult()`, giving a false
+  sense of Admin ACL protection.
 - A hand-built "missing privilege" error: return the result of
   `requirePrivilegeResult()` instead, so clients see one message shape.
 
 ## Enforced where
 
-Core's PHPStan rule `McpAdminToolRequiresPrivilegeRule` reports an Admin API
-tool with neither attribute or with both, and an opt-out tool that calls
-`requirePrivilege()` or `requirePrivilegeResult()`. It never checks that a
-`#[McpToolRequires]` tool really calls a check.
+Core's PHPStan rules `McpAdminToolRequiresPrivilegeRule` and
+`McpStoreApiToolAdminAclRule` report:
+
+- an Admin API tool with neither attribute or with both, and an opt-out
+  tool that calls `requirePrivilege()` or `requirePrivilegeResult()`,
+- a Store API tool that declares `#[McpToolRequires]` or calls
+  `requirePrivilege()` or `requirePrivilegeResult()` in its own class.
+
+Neither rule checks that a `#[McpToolRequires]` Admin API tool really calls
+a privilege check.
 
 ## Eval
 

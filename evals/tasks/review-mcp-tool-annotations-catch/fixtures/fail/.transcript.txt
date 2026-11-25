@@ -1,0 +1,16 @@
+Just a nit about comments.
+
+```json
+{
+  "findings": [
+    {
+      "rule_id": "MCP-005",
+      "severity": "nit",
+      "file": "src/Mcp/Tool/ResetPointsTool.php",
+      "line": 18,
+      "summary": "ToolAnnotations could be reviewed.",
+      "fix": "Double check hints."
+    }
+  ]
+}
+```

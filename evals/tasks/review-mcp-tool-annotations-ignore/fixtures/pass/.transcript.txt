@@ -1,0 +1,7 @@
+The write tool declares `readOnlyHint: false`, `destructiveHint: true`, `idempotentHint: true`, `openWorldHint: false`, uses `#[Schema]` on parameters, defaults to `$dryRun = true`, and runs through `executeWithDryRunResult()`. No issues found.
+
+```json
+{
+  "findings": []
+}
+```

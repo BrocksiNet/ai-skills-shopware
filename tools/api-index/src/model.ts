@@ -2,7 +2,7 @@
 // symbol. docs/plans/done/2026-10-wp11-public-api-index.md explains the surfaces.
 
 export const SCHEMA = 1;
-export const GENERATOR = 'api-index/0.8.0';
+export const GENERATOR = 'api-index/0.9.0';
 
 export type ItemKind =
   | 'class'
@@ -31,7 +31,8 @@ export type ItemKind =
   | 'js-plugin'
   | 'option'
   | 'twig'
-  | 'build';
+  | 'build'
+  | 'mcp';
 
 /** Status that decides whether an item is covered by the BC promise. */
 export interface Flags {
@@ -60,7 +61,9 @@ export interface Item {
    *  `position:id`, `global:Shopware.X`; `storefront:@Storefront/…twig`,
    *  `storefront:@Storefront/…twig#block`, `js-plugin:Name`,
    *  `js-plugin:Name.option.x`, `js-plugin:Name.js-method.x`;
-   *  `twig:function:name` (also `filter`, `tag`); `build:admin`. */
+   *  `twig:function:name` (also `filter`, `tag`); `build:admin`;
+   *  `mcp:tag:name`, `mcp:attribute:Fqcn`, `mcp:interface:Fqcn`,
+   *  `mcp:base:Fqcn`, `mcp:trait:Fqcn`. */
   id: string;
   kind: ItemKind;
   /** Path in the repository. */

@@ -1,0 +1,16 @@
+The tool searches with caller-supplied criteria JSON without running `AclCriteriaValidator` on the built `Criteria`, and serializes entities with `jsonSerialize()` instead of `McpEntityIncludes` and `JsonEntityEncoder`.
+
+```json
+{
+  "findings": [
+    {
+      "rule_id": "MCP-006",
+      "severity": "major",
+      "file": "src/Mcp/Tool/ProductCriteriaTool.php",
+      "line": 61,
+      "summary": "ProductCriteriaTool executes caller criteria without AclCriteriaValidator (leaving association reads unchecked by requirePrivilegeResult) and serializes entities with raw jsonSerialize() instead of McpEntityIncludes and JsonEntityEncoder.",
+      "fix": "Validate $criteriaObj with AclCriteriaValidator before searching, apply $this->applyDefaultIncludes($definition, $criteriaObj) via McpEntityIncludes, and serialize through JsonEntityEncoder."
+    }
+  ]
+}
+```

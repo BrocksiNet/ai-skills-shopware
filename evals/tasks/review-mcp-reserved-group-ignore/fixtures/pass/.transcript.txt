@@ -1,0 +1,7 @@
+The tool extends `McpToolResponse`, returns `McpToolResult`, enforces its privilege, uses `shopware.mcp.tool`, and declares its own `swag-loyalty` tool group. No problems found.
+
+```json
+{
+  "findings": []
+}
+```

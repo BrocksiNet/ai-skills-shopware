@@ -17,7 +17,8 @@
     "DEV": "sw-local-dev",
     "XR": "sw-extension-review",
     "STY": "sw-assistant-style",
-    "DTO": "sw-openapi-dto"
+    "DTO": "sw-openapi-dto",
+    "MCP": "sw-mcp-development"
   },
   "rules": [
     {
@@ -4644,6 +4645,13 @@
             "catches": "reports an Admin API MCP tool with neither `#[McpToolRequires]` nor `#[McpToolRequiresNoPrivilege]`, with both, or with the opt-out and a `requirePrivilege()` or `requirePrivilegeResult()` call in its own class",
             "misses": "whether a `#[McpToolRequires]` tool really calls a privilege check, tools the compiled container does not know, and every extension, because the rule ships only in core's PHPStan config",
             "trunk_only": true
+          },
+          {
+            "tool": "McpStoreApiToolAdminAclRule",
+            "kind": "phpstan",
+            "catches": "reports a Store API MCP tool (`shopware.store_api_mcp.tool`) that declares `#[McpToolRequires]` or calls `requirePrivilege()` or `requirePrivilegeResult()` in its own class",
+            "misses": "inherited `requirePrivilege*()` calls from parent classes or traits, tools the compiled container does not know, and every extension, because the rule ships only in core's PHPStan config",
+            "trunk_only": true
           }
         ]
       }
@@ -5531,6 +5539,207 @@
       ],
       "defer_on_trunk": false,
       "eval_reason": "Existing PHP baseline assigned an ID during the review fixes; no independent behavioral eval. Surface and project tooling remain authoritative."
+    },
+    {
+      "id": "MCP-001",
+      "skill": "sw-mcp-development",
+      "file": "skills/sw-mcp-development/references/tool-contract.md",
+      "title": "Extend McpToolResponse and return McpToolResult, never a legacy JSON string",
+      "status": "active",
+      "since": "2026-11-25",
+      "eval": "mcp-tool-structured-result",
+      "core_guide_ids": [],
+      "audience": [
+        "core",
+        "plugin"
+      ],
+      "defer_on_trunk": false,
+      "trunk": {
+        "source": "src/Core/Framework/Mcp/Tool/AGENTS.md#response-format-convention",
+        "commit": "7f3aee0f263cd84742b9b90330a2df4be5aeb1b2",
+        "enforced_by": [
+          {
+            "tool": "McpToolResponseRule",
+            "kind": "phpstan",
+            "catches": "reports a class carrying `#[McpTool]` that does not extend `McpToolResponse`",
+            "misses": "method-level `#[McpTool]` attributes, hand-built error envelopes, and every extension, because the rule ships only in core's PHPStan config",
+            "trunk_only": true
+          },
+          {
+            "tool": "McpToolLegacyStringResultRule",
+            "kind": "phpstan",
+            "catches": "reports an MCP tool method whose native return type is `string`, `?string`, a union containing `string`, `mixed`, or missing (including an inherited `__invoke()`)",
+            "misses": "deprecated string helper calls converted inside the method body, and every extension, because the rule ships in `core-rules.neon` only until 6.8.0",
+            "trunk_only": true
+          }
+        ]
+      }
+    },
+    {
+      "id": "MCP-002",
+      "skill": "sw-mcp-development",
+      "file": "skills/sw-mcp-development/references/tool-contract.md",
+      "title": "Never claim the reserved discovery tool group or the shopware- name prefix in an extension",
+      "status": "active",
+      "since": "2026-11-25",
+      "eval": "review-mcp-reserved-group-catch",
+      "core_guide_ids": [],
+      "audience": [
+        "core",
+        "plugin",
+        "app"
+      ],
+      "defer_on_trunk": false,
+      "trunk": {
+        "source": "src/Core/Framework/Mcp/AGENTS.md#tool-discovery-three-routes-one-of-them-universal",
+        "commit": "7f3aee0f263cd84742b9b90330a2df4be5aeb1b2",
+        "enforced_by": [
+          {
+            "tool": "McpReservedToolGroupRule",
+            "kind": "phpstan",
+            "catches": "reports any non-core MCP tool declaring `#[McpToolGroup('discovery')]` outside unit tests",
+            "misses": "non-constant group expressions, `shopware-` name prefix collisions in plugins, missing tool groups falling back to `other`, and every extension, because the rule ships only in core's PHPStan config",
+            "trunk_only": true
+          }
+        ]
+      }
+    },
+    {
+      "id": "MCP-003",
+      "skill": "sw-mcp-development",
+      "file": "skills/sw-mcp-development/references/tool-contract.md",
+      "title": "Tag plugin and third-party bundle tools with shopware.mcp.tool and place #[McpTool] on the class",
+      "status": "active",
+      "since": "2026-11-25",
+      "eval": "review-mcp-plugin-registration-catch",
+      "core_guide_ids": [],
+      "audience": [
+        "core",
+        "plugin"
+      ],
+      "defer_on_trunk": false,
+      "trunk": {
+        "source": "src/Core/Framework/Mcp/AGENTS.md#validating-capabilities-are-loaded",
+        "commit": "7f3aee0f263cd84742b9b90330a2df4be5aeb1b2"
+      }
+    },
+    {
+      "id": "MCP-004",
+      "skill": "sw-mcp-development",
+      "file": "skills/sw-mcp-development/references/tool-contract.md",
+      "title": "Write tools default to bool $dryRun = true and execute previews through executeWithDryRunResult()",
+      "status": "active",
+      "since": "2026-11-25",
+      "eval": "mcp-write-tool-dry-run",
+      "core_guide_ids": [],
+      "audience": [
+        "core",
+        "plugin"
+      ],
+      "defer_on_trunk": false,
+      "trunk": {
+        "source": "src/Core/Framework/Mcp/Tool/AGENTS.md#patterns",
+        "commit": "7f3aee0f263cd84742b9b90330a2df4be5aeb1b2"
+      }
+    },
+    {
+      "id": "MCP-005",
+      "skill": "sw-mcp-development",
+      "file": "skills/sw-mcp-development/references/tool-contract.md",
+      "title": "Declare ToolAnnotations and #[Schema] parameter descriptions on #[McpTool], and use #[McpToolDependsOn] only for true prerequisites",
+      "status": "active",
+      "since": "2026-11-25",
+      "eval": "review-mcp-tool-annotations-catch",
+      "core_guide_ids": [],
+      "audience": [
+        "core",
+        "plugin"
+      ],
+      "defer_on_trunk": false,
+      "trunk": {
+        "source": "src/Core/Framework/Mcp/Tool/AGENTS.md#tool-annotations-readonlyhint-destructivehint-",
+        "commit": "7f3aee0f263cd84742b9b90330a2df4be5aeb1b2",
+        "enforced_by": [
+          {
+            "tool": "McpToolRegistrationTest::testEveryCoreToolDeclaresAnnotations",
+            "kind": "phpunit",
+            "catches": "fails when any core MCP tool omits required `ToolAnnotations` hints",
+            "misses": "plugin tools, incorrect hint values on mutating dry-run tools, missing `#[Schema]` parameter descriptions, and unnecessary `#[McpToolDependsOn]` edges",
+            "trunk_only": true
+          }
+        ]
+      }
+    },
+    {
+      "id": "MCP-006",
+      "skill": "sw-mcp-development",
+      "file": "skills/sw-mcp-development/references/tool-contract.md",
+      "title": "Entity MCP tools validate criteria with AclCriteriaValidator and bound responses with McpEntityIncludes and JsonEntityEncoder",
+      "status": "active",
+      "since": "2026-11-25",
+      "eval": "review-mcp-entity-criteria-catch",
+      "core_guide_ids": [],
+      "audience": [
+        "core",
+        "plugin"
+      ],
+      "defer_on_trunk": false,
+      "see": [
+        "SEC-011"
+      ],
+      "trunk": {
+        "source": "src/Core/Framework/Mcp/Tool/AGENTS.md#smart-default-includes-mcpentityincludes-trait",
+        "commit": "7f3aee0f263cd84742b9b90330a2df4be5aeb1b2"
+      }
+    },
+    {
+      "id": "MCP-007",
+      "skill": "sw-mcp-development",
+      "file": "skills/sw-mcp-development/references/apps-prompts-resources.md",
+      "title": "Serverless app MCP tools target /api/script/{path}, read POST form arguments, and never serve HTTP-cached responses",
+      "status": "active",
+      "since": "2026-11-25",
+      "eval": "review-mcp-app-script-catch",
+      "core_guide_ids": [],
+      "audience": [
+        "app"
+      ],
+      "defer_on_trunk": false,
+      "see": [
+        "SEC-011"
+      ],
+      "trunk": {
+        "source": "src/Core/Framework/Mcp/AGENTS.md#serverless-app-tools-app-scripts",
+        "commit": "7f3aee0f263cd84742b9b90330a2df4be5aeb1b2"
+      }
+    },
+    {
+      "id": "MCP-008",
+      "skill": "sw-mcp-development",
+      "file": "skills/sw-mcp-development/references/apps-prompts-resources.md",
+      "title": "Keep MCP resource and prompt cache hints private, and register resource templates with mcp.resource_template",
+      "status": "active",
+      "since": "2026-11-25",
+      "eval": "review-mcp-resource-template-catch",
+      "core_guide_ids": [],
+      "audience": [
+        "core",
+        "plugin"
+      ],
+      "defer_on_trunk": false,
+      "trunk": {
+        "source": "src/Core/Framework/Mcp/Resource/AGENTS.md#adding-a-resource",
+        "commit": "7f3aee0f263cd84742b9b90330a2df4be5aeb1b2",
+        "enforced_by": [
+          {
+            "tool": "McpCachePolicyConfigTest",
+            "kind": "phpunit",
+            "catches": "fails when any core MCP server cache policy sets a `public` scope",
+            "misses": "plugin resources setting public cache hints or headers, and resource templates registered with `mcp.resource` instead of `mcp.resource_template`",
+            "trunk_only": true
+          }
+        ]
+      }
     }
   ]
 }

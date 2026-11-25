@@ -19,7 +19,7 @@ deprecated.
                     (branches, tags, commits), built on the spot and cached.
                     Without it, base and head are releases from the index
                     (6.6.10.4, 6.7.0.0, trunk), downloaded once a week.
-  --surface <list>  route,entity,feature,config,admin,storefront,twig,build,php
+  --surface <list>  route,entity,feature,config,admin,storefront,twig,build,mcp,php
                     (default: all but php; core's bc-check covers PHP)
   --index <file>    api-index.json.gz; else $API_INDEX or the cached download
   --cache <dir>     where built snapshots are cached

@@ -1,0 +1,16 @@
+The new tool claims the reserved `discovery` tool group, so it is silently demoted to `other` at container compile time.
+
+```json
+{
+  "findings": [
+    {
+      "rule_id": "MCP-002",
+      "severity": "major",
+      "file": "src/Mcp/Tool/PointsSummaryTool.php",
+      "line": 21,
+      "summary": "PointsSummaryTool declares #[McpToolGroup('discovery')], which is reserved for Shopware's three core discovery meta-tools and causes the tool to be demoted to the `other` group and lose its group description.",
+      "fix": "Assign a plugin-specific toolset such as #[McpToolGroup('swag-loyalty', description: '...')] and use ?toolsets=swag-loyalty when connect-time advertisement is needed."
+    }
+  ]
+}
+```

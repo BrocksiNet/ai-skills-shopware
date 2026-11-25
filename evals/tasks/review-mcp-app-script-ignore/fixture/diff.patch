@@ -1,0 +1,30 @@
+diff --git a/Resources/mcp.xml b/Resources/mcp.xml
+new file mode 100644
+--- /dev/null
++++ b/Resources/mcp.xml
+@@ -0,0 +1,14 @@
++<?xml version="1.0" encoding="UTF-8"?>
++<mcp xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
++    <mcp-tools>
++        <mcp-tool name="inventory-check" url="/api/script/swag-inventory-check">
++            <label>Check Inventory</label>
++            <input-schema>
++                <property name="sku" type="string" description="Product number" required="true"/>
++            </input-schema>
++            <required-privileges>
++                <privilege>product:read</privilege>
++            </required-privileges>
++        </mcp-tool>
++    </mcp-tools>
++</mcp>
+diff --git a/Resources/scripts/api-swag-inventory-check/script.twig b/Resources/scripts/api-swag-inventory-check/script.twig
+new file mode 100644
+--- /dev/null
++++ b/Resources/scripts/api-swag-inventory-check/script.twig
+@@ -0,0 +1,7 @@
++{% block response %}
++    {% set args = hook.request.request.all('arguments') ?? {} %}
++    {% set products = services.repository.search('product', { filter: [{ type: 'equals', field: 'productNumber', value: args.sku ?? '' }] }) %}
++    {% set response = services.response.json({ success: true, data: { count: products.total } }) %}
++    {% do hook.setResponse(response) %}
++{% endblock %}

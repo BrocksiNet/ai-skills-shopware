@@ -25,7 +25,9 @@ export type UseKind =
   /** A Twig function, filter or tag core adds. */
   | 'twig'
   /** A build config core reads, such as the admin's `webpack.config.js`. */
-  | 'build';
+  | 'build'
+  /** An MCP DI service tag in an extension's services configuration. */
+  | 'mcp-tag';
 
 export interface Use {
   /** `php:Fqcn` or `php:Fqcn::member()` / `php:Fqcn::CONSTANT`, as in the index. */

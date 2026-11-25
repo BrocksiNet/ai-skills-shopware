@@ -34,6 +34,13 @@ export function patternsFor(id: string): RegExp[] {
     const name = rest.slice(rest.indexOf(':') + 1);
     return [quoted(name), word(name)];
   }
+  if (prefix === 'mcp') {
+    const kind = rest.slice(0, rest.indexOf(':'));
+    const name = rest.slice(rest.indexOf(':') + 1);
+    if (kind === 'tag') return [quoted(name), word(name)];
+    const short = name.split('\\').at(-1) ?? name;
+    return [new RegExp(`\\b(class|interface|trait)\\s+${escape(short)}\\b`, 'u'), word(short)];
+  }
   const hash = rest.lastIndexOf('#');
   if (hash !== -1) {
     const block = rest.slice(hash + 1);

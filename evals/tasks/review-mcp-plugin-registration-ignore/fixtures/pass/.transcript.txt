@@ -1,0 +1,7 @@
+The plugin tool places `#[McpTool]` on the class and tags the service with `shopware.mcp.tool`. No problems found.
+
+```json
+{
+  "findings": []
+}
+```

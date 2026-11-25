@@ -1,0 +1,16 @@
+Falsely flagging mcp.resource_template as invalid.
+
+```json
+{
+  "findings": [
+    {
+      "rule_id": "MCP-008",
+      "severity": "major",
+      "file": "src/Resources/config/services.xml",
+      "line": 17,
+      "summary": "Tagging with mcp.resource_template is wrong; use mcp.resource instead.",
+      "fix": "Replace with mcp.resource."
+    }
+  ]
+}
+```

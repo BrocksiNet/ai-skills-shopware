@@ -736,8 +736,51 @@
           "when": "A plugin adds or changes an MCP tool or the privileges it declares.",
           "anchors_any": [
             "#\\[McpTool(Requires|RequiresNoPrivilege)?\\(",
-            "shopware\\.mcp\\.tool",
+            "shopware\\.(store_api_)?mcp\\.tool",
             "requirePrivilege(Result)?\\("
+          ],
+          "exclude_paths": [
+            "**/tests/**",
+            "**/Test/**",
+            "**/*.md"
+          ]
+        },
+        {
+          "reference": "sw-mcp-development/references/tool-contract.md",
+          "when": "You add or change a PHP MCP tool class, its DI service tag, tool group, annotations, dry-run behavior, or DAL criteria handling.",
+          "paths_any": [
+            "**/Mcp/Tool/**/*.php",
+            "**/Mcp/**/*Tool.php"
+          ],
+          "anchors_any": [
+            "#\\[McpTool(Group|DependsOn)?\\(",
+            "extends\\s+McpToolResponse\\b",
+            "McpToolResult\\b",
+            "McpEntityIncludes\\b",
+            "invalidCriteria(Result|Error)\\(",
+            "shopware\\.(store_api_)?mcp\\.tool",
+            "['\"]mcp\\.tool['\"]"
+          ],
+          "exclude_paths": [
+            "**/tests/**",
+            "**/Test/**",
+            "**/*.md"
+          ]
+        },
+        {
+          "reference": "sw-mcp-development/references/apps-prompts-resources.md",
+          "when": "An app declares MCP capabilities in Resources/mcp.xml or app scripts, or you add an MCP resource, resource template, or prompt.",
+          "paths_any": [
+            "**/Resources/mcp.xml",
+            "**/Mcp/Resource/**/*.php",
+            "**/Mcp/Prompt/**/*.php"
+          ],
+          "anchors_any": [
+            "<mcp-(tool|prompt|resource)\\b",
+            "#\\[Mcp(Prompt|Resource|ResourceTemplate)\\(",
+            "shopware\\.(store_api_)?mcp\\.(prompt|resource)",
+            "['\"]mcp\\.(prompt|resource|resource_template)['\"]",
+            "McpResourceCacheHint\\b"
           ],
           "exclude_paths": [
             "**/tests/**",
@@ -1176,6 +1219,80 @@
           "reference": "sw-local-dev/references/shopware-cli-routing.md",
           "when": "Choose Shopware CLI project or standalone extension commands, validation scope, or version-specific flags.",
           "on_demand": true
+        }
+      ]
+    },
+    {
+      "name": "sw-mcp-development",
+      "summary": "Authoring and reviewing Shopware 6 MCP tools, prompts, and resources in plugins, apps, and core (experimental, targets 6.7.15+ / 6.8.0).",
+      "contexts": [
+        "core",
+        "plugin",
+        "app",
+        "project"
+      ],
+      "tasks": [
+        "build",
+        "review"
+      ],
+      "load_for": [],
+      "paths": [],
+      "defers_to": [],
+      "routes": [
+        {
+          "reference": "sw-mcp-development/references/tool-contract.md",
+          "when": "You add or change a PHP MCP tool class, its DI service tag, tool group, annotations, dry-run behavior, or DAL criteria handling.",
+          "paths_any": [
+            "**/Mcp/Tool/**/*.php",
+            "**/Mcp/**/*Tool.php"
+          ],
+          "anchors_any": [
+            "#\\[McpTool(Group|DependsOn)?\\(",
+            "extends\\s+McpToolResponse\\b",
+            "McpToolResult\\b",
+            "McpEntityIncludes\\b",
+            "invalidCriteria(Result|Error)\\(",
+            "shopware\\.(store_api_)?mcp\\.tool",
+            "['\"]mcp\\.tool['\"]"
+          ],
+          "exclude_paths": [
+            "**/tests/**",
+            "**/Test/**",
+            "**/*.md"
+          ]
+        },
+        {
+          "reference": "sw-mcp-development/references/apps-prompts-resources.md",
+          "when": "An app declares MCP capabilities in Resources/mcp.xml or app scripts, or you add an MCP resource, resource template, or prompt.",
+          "paths_any": [
+            "**/Resources/mcp.xml",
+            "**/Mcp/Resource/**/*.php",
+            "**/Mcp/Prompt/**/*.php"
+          ],
+          "anchors_any": [
+            "<mcp-(tool|prompt|resource)\\b",
+            "#\\[Mcp(Prompt|Resource|ResourceTemplate)\\(",
+            "shopware\\.(store_api_)?mcp\\.(prompt|resource)",
+            "['\"]mcp\\.(prompt|resource|resource_template)['\"]",
+            "McpResourceCacheHint\\b"
+          ],
+          "exclude_paths": [
+            "**/tests/**",
+            "**/Test/**",
+            "**/*.md"
+          ]
+        },
+        {
+          "reference": "sw-mcp-development/references/testing-and-debugging.md",
+          "when": "You write tests for MCP tools or debug capability discovery and registration.",
+          "paths_any": [
+            "**/tests/**/Mcp/**/*Test.php",
+            "**/Test/**/Mcp/**/*Test.php"
+          ],
+          "anchors_any": [
+            "debug:mcp",
+            "McpCapabilityDiscoveryTest"
+          ]
         }
       ]
     },
@@ -1699,7 +1816,7 @@
           "when": "A plugin adds or changes an MCP tool or the privileges it declares.",
           "anchors_any": [
             "#\\[McpTool(Requires|RequiresNoPrivilege)?\\(",
-            "shopware\\.mcp\\.tool",
+            "shopware\\.(store_api_)?mcp\\.tool",
             "requirePrivilege(Result)?\\("
           ],
           "exclude_paths": [

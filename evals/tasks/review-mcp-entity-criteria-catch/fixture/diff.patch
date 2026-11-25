@@ -1,0 +1,88 @@
+diff --git a/src/Mcp/Tool/ProductCriteriaTool.php b/src/Mcp/Tool/ProductCriteriaTool.php
+new file mode 100644
+--- /dev/null
++++ b/src/Mcp/Tool/ProductCriteriaTool.php
+@@ -0,0 +1,66 @@
++<?php declare(strict_types=1);
++
++namespace Swag\Catalog\Mcp\Tool;
++
++use Mcp\Capability\Attribute\McpTool;
++use Mcp\Capability\Attribute\Schema;
++use Mcp\Schema\ToolAnnotations;
++use Shopware\Core\Framework\DataAbstractionLayer\DefinitionInstanceRegistry;
++use Shopware\Core\Framework\DataAbstractionLayer\Search\Criteria;
++use Shopware\Core\Framework\DataAbstractionLayer\Search\RequestCriteriaBuilder;
++use Shopware\Core\Framework\Mcp\Attribute\McpToolGroup;
++use Shopware\Core\Framework\Mcp\Attribute\McpToolRequires;
++use Shopware\Core\Framework\Mcp\Context\McpContextProvider;
++use Shopware\Core\Framework\Mcp\Result\McpToolError;
++use Shopware\Core\Framework\Mcp\Result\McpToolResult;
++use Shopware\Core\Framework\Mcp\Tool\McpToolResponse;
++use Shopware\Core\Framework\ShopwareHttpException;
++
++#[McpTool(
++    name: 'swag-catalog-product-search',
++    title: 'Catalog Product Search',
++    annotations: new ToolAnnotations(readOnlyHint: true, openWorldHint: false),
++    description: 'Search catalog products using criteria JSON.',
++)]
++#[McpToolGroup('swag-catalog', description: 'Search and inspect catalog products.')]
++#[McpToolRequires('product:read')]
++class ProductCriteriaTool extends McpToolResponse
++{
++    public function __construct(
++        private readonly DefinitionInstanceRegistry $registry,
++        private readonly RequestCriteriaBuilder $criteriaBuilder,
++        private readonly McpContextProvider $contextProvider,
++    ) {
++    }
++
++    public function __invoke(
++        #[Schema(description: 'Admin API criteria JSON object.')]
++        string $criteria = '{}',
++        #[Schema(description: 'Maximum rows to return.')]
++        int $limit = 25,
++    ): McpToolResult {
++        $context = $this->contextProvider->getContext();
++        $privilegeError = $this->requirePrivilegeResult($context, 'product:read');
++        if ($privilegeError !== null) {
++            return $privilegeError;
++        }
++
++        $decoded = $this->decodeJsonOrErrorResult($criteria, 'criteria');
++        if ($decoded instanceof McpToolResult) {
++            return $decoded;
++        }
++        $decoded['limit'] ??= $limit;
++
++        $definition = $this->registry->getByEntityName('product');
++        try {
++            $criteriaObj = $this->criteriaBuilder->fromArray($decoded, new Criteria(), $definition, $context);
++        } catch (ShopwareHttpException $e) {
++            return $this->invalidCriteriaResult($e);
++        }
++
++        $result = $this->registry->getRepository('product')->search($criteriaObj, $context);
++        $rows = array_values(array_map(static fn ($entity) => $entity->jsonSerialize(), $result->getElements()));
++
++        return $this->successResult($rows, ['total' => $result->getTotal()]);
++    }
++}
+diff --git a/src/Resources/config/services.xml b/src/Resources/config/services.xml
+--- a/src/Resources/config/services.xml
++++ b/src/Resources/config/services.xml
+@@ -10,5 +10,13 @@
+ 
+             <tag name="shopware.mcp.tool"/>
+         </service>
++
++        <service id="Swag\Catalog\Mcp\Tool\ProductCriteriaTool">
++            <argument type="service" id="Shopware\Core\Framework\DataAbstractionLayer\DefinitionInstanceRegistry"/>
++            <argument type="service" id="Shopware\Core\Framework\DataAbstractionLayer\Search\RequestCriteriaBuilder"/>
++            <argument type="service" id="Shopware\Core\Framework\Mcp\Context\McpContextProvider"/>
++
++            <tag name="shopware.mcp.tool"/>
++        </service>
+     </services>
+ </container>

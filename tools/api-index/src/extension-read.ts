@@ -4,6 +4,7 @@
 import { existsSync, readdirSync, readFileSync, statSync } from 'node:fs';
 import { join, relative } from 'node:path';
 import { frontendUses, isFrontendFile } from './frontend-uses.ts';
+import { isMcpConfigFile, mcpUses } from './mcp.ts';
 import { isNode } from './node.ts';
 import { phpUses, type Use } from './uses.ts';
 
@@ -16,7 +17,10 @@ function sourceFiles(dir: string, root: string): string[] {
     const path = join(dir, name);
     if (statSync(path).isDirectory()) {
       if (!SKIP_DIRS.has(name)) out.push(...sourceFiles(path, root));
-    } else if (name.endsWith('.php') || isFrontendFile(relative(root, path))) out.push(path);
+    } else {
+      const rel = relative(root, path);
+      if (name.endsWith('.php') || isFrontendFile(rel) || isMcpConfigFile(rel)) out.push(path);
+    }
   }
   return out;
 }
@@ -44,16 +48,21 @@ export function readExtension(dir: string): Read {
   const out: Read = { files: sourceFiles(root, dir), failed: [], uses: [], unresolved: 0 };
   const frontend = new Map<string, string>();
   for (const file of out.files) {
+    const rel = relative(dir, file);
     if (!file.endsWith('.php')) {
-      frontend.set(relative(dir, file), readFileSync(file, 'utf8'));
+      const content = readFileSync(file, 'utf8');
+      if (isMcpConfigFile(rel)) out.uses.push(...mcpUses(rel, content));
+      else frontend.set(rel, content);
       continue;
     }
+    const content = readFileSync(file, 'utf8');
+    if (isMcpConfigFile(rel)) out.uses.push(...mcpUses(rel, content));
     try {
-      const result = phpUses(readFileSync(file, 'utf8'), relative(dir, file));
+      const result = phpUses(content, rel);
       out.uses.push(...result.uses);
       out.unresolved += result.unresolved;
     } catch {
-      out.failed.push(relative(dir, file));
+      out.failed.push(rel);
     }
   }
   const result = frontendUses(frontend);

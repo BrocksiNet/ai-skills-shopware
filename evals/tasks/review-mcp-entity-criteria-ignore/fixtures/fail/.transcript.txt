@@ -1,0 +1,16 @@
+Falsely flagging AclCriteriaValidator usage.
+
+```json
+{
+  "findings": [
+    {
+      "rule_id": "MCP-006",
+      "severity": "major",
+      "file": "src/Mcp/Tool/ProductCriteriaTool.php",
+      "line": 67,
+      "summary": "AclCriteriaValidator is redundant when requirePrivilegeResult() already checked product:read.",
+      "fix": "Remove AclCriteriaValidator."
+    }
+  ]
+}
+```

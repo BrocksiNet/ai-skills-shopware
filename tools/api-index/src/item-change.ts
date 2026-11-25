@@ -2,6 +2,7 @@
 // extension notices, by kind: routes, entity fields, config keys, and the
 // admin and storefront members (surfaces.ts). Also the one addition that
 // breaks: a new required prop on a component the base already has.
+import { mcpChange } from './mcp.ts';
 import { parseProp } from './member-signature.ts';
 import type { Item } from './model.ts';
 import { frontendChange, ownerOf } from './surfaces.ts';
@@ -53,6 +54,7 @@ export function changeOf(base: Item, head: Item): string | undefined {
   if (base.kind === 'route') return routeChange(base, head);
   if (base.kind === 'field') return fieldChange(base.signature ?? '', head.signature ?? '');
   if (base.kind === 'config') return configChange(base, head);
+  if (base.kind === 'mcp') return mcpChange(base, head);
   return frontendChange(base, head);
 }
 

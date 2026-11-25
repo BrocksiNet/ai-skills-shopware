@@ -1,0 +1,16 @@
+Flagging shopware.mcp.tool as wrong.
+
+```json
+{
+  "findings": [
+    {
+      "rule_id": "MCP-003",
+      "severity": "major",
+      "file": "src/Resources/config/services.xml",
+      "line": 18,
+      "summary": "Tagging with shopware.mcp.tool is wrong; use mcp.tool directly.",
+      "fix": "Change the tag to mcp.tool."
+    }
+  ]
+}
+```

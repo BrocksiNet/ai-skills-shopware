@@ -1,0 +1,23 @@
+{
+  "sw-architecture": [
+    "references/extension-mechanisms.md"
+  ],
+  "sw-core-development": [
+    "references/service-architecture.md"
+  ],
+  "sw-extension-review": [
+    "../sw-plugin-development/references/version-compatibility.md",
+    "../sw-security/references/mcp-tool-acl.md",
+    "../sw-mcp-development/references/tool-contract.md",
+    "../sw-architecture/references/extension-mechanisms.md"
+  ],
+  "sw-mcp-development": [
+    "references/tool-contract.md"
+  ],
+  "sw-plugin-development": [
+    "references/version-compatibility.md"
+  ],
+  "sw-security": [
+    "references/mcp-tool-acl.md"
+  ]
+}

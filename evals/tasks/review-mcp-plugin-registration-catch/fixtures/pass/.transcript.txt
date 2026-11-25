@@ -1,0 +1,16 @@
+The plugin tool uses the SDK tag `mcp.tool` instead of `shopware.mcp.tool` and puts `#[McpTool]` on `__invoke()` instead of the class.
+
+```json
+{
+  "findings": [
+    {
+      "rule_id": "MCP-003",
+      "severity": "major",
+      "file": "src/Resources/config/services.xml",
+      "line": 18,
+      "summary": "TierListTool is tagged with `mcp.tool` instead of `shopware.mcp.tool` and places #[McpTool] on __invoke() rather than the class, so McpToolDiscoveryCompilerPass skips it and leaves it unassigned to the Admin API server.",
+      "fix": "Change the DI tag to `shopware.mcp.tool` and move the #[McpTool] attribute onto the TierListTool class declaration."
+    }
+  ]
+}
+```

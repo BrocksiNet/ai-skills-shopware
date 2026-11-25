@@ -12,6 +12,7 @@ and customer-project code. In-repo core skills are usually **absent** — use th
 | `sw-architecture` | DAL boundaries, extension mechanisms, thin controllers. |
 | `sw-security` | Access keys, ACL, safe API exposure. |
 | `sw-plugin-development` | DAL, cache tags, migrations, decoration, 6.6/6.7 compat, OpenAPI. |
+| `sw-mcp-development` | MCP tools, prompts, and resources in plugins (experimental, 6.7.15+ / 6.8.0). |
 | `sw-testing` | PHPUnit unit/integration standards. |
 | `sw-research-and-escalation` | Verify against installed source. |
 | `sw-review-learnings` | Recurring real-world findings. |
@@ -29,6 +30,7 @@ npx skills add BrocksiNet/ai-skills-shopware \
   --skill sw-architecture \
   --skill sw-security \
   --skill sw-plugin-development \
+  --skill sw-mcp-development \
   --skill sw-testing \
   --skill sw-research-and-escalation \
   --skill sw-review-learnings \

@@ -3,7 +3,17 @@
 import { memberChange } from './member-signature.ts';
 import type { Item } from './model.ts';
 
-export type Surface = 'route' | 'entity' | 'feature' | 'config' | 'admin' | 'storefront' | 'twig' | 'build' | 'php';
+export type Surface =
+  | 'route'
+  | 'entity'
+  | 'feature'
+  | 'config'
+  | 'admin'
+  | 'storefront'
+  | 'twig'
+  | 'build'
+  | 'mcp'
+  | 'php';
 
 export const SURFACES: Surface[] = [
   'route',
@@ -14,12 +24,21 @@ export const SURFACES: Surface[] = [
   'storefront',
   'twig',
   'build',
+  'mcp',
   'php',
 ];
 
 export function surfaceOf(item: Item): Surface {
   const { kind, id } = item;
-  if (kind === 'route' || kind === 'feature' || kind === 'config' || kind === 'twig' || kind === 'build') return kind;
+  if (
+    kind === 'route' ||
+    kind === 'feature' ||
+    kind === 'config' ||
+    kind === 'twig' ||
+    kind === 'build' ||
+    kind === 'mcp'
+  )
+    return kind;
   if (kind === 'entity' || kind === 'field') return 'entity';
   if (id.startsWith('admin:') || id.startsWith('position:') || id.startsWith('global:')) return 'admin';
   if (id.startsWith('storefront:') || id.startsWith('js-plugin:')) return 'storefront';

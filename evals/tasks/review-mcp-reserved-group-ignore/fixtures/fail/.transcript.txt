@@ -1,0 +1,16 @@
+Flagging the tool group attribute as invalid.
+
+```json
+{
+  "findings": [
+    {
+      "rule_id": "MCP-002",
+      "severity": "major",
+      "file": "src/Mcp/Tool/PointsSummaryTool.php",
+      "line": 21,
+      "summary": "Custom #[McpToolGroup] values are reserved for core tools.",
+      "fix": "Remove #[McpToolGroup]."
+    }
+  ]
+}
+```

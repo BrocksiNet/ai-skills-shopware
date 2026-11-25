@@ -1,0 +1,63 @@
+diff --git a/src/Mcp/Tool/TierListTool.php b/src/Mcp/Tool/TierListTool.php
+new file mode 100644
+--- /dev/null
++++ b/src/Mcp/Tool/TierListTool.php
+@@ -0,0 +1,39 @@
++<?php declare(strict_types=1);
++
++namespace Swag\Loyalty\Mcp\Tool;
++
++use Doctrine\DBAL\Connection;
++use Mcp\Capability\Attribute\McpTool;
++use Mcp\Schema\ToolAnnotations;
++use Shopware\Core\Framework\Mcp\Attribute\McpToolGroup;
++use Shopware\Core\Framework\Mcp\Attribute\McpToolRequires;
++use Shopware\Core\Framework\Mcp\Context\McpContextProvider;
++use Shopware\Core\Framework\Mcp\Result\McpToolResult;
++use Shopware\Core\Framework\Mcp\Tool\McpToolResponse;
++
++#[McpTool(
++    name: 'swag-loyalty-tier-list',
++    title: 'Loyalty Tier List',
++    annotations: new ToolAnnotations(readOnlyHint: true, openWorldHint: false),
++    description: 'List configured loyalty tiers and point thresholds.',
++)]
++#[McpToolGroup('swag-loyalty', description: 'Inspect customer loyalty tiers and balances.')]
++#[McpToolRequires('swag_loyalty_tier:read')]
++class TierListTool extends McpToolResponse
++{
++    public function __construct(
++        private readonly Connection $connection,
++        private readonly McpContextProvider $contextProvider,
++    ) {
++    }
++
++    public function __invoke(): McpToolResult
++    {
++        $context = $this->contextProvider->getContext();
++        $privilegeError = $this->requirePrivilegeResult($context, 'swag_loyalty_tier:read');
++        if ($privilegeError !== null) {
++            return $privilegeError;
++        }
++
++        $rows = $this->connection->fetchAllAssociative('SELECT name, min_points AS minPoints FROM swag_loyalty_tier ORDER BY min_points ASC');
++
++        return $this->successResult($rows);
++    }
++}
+diff --git a/src/Resources/config/services.xml b/src/Resources/config/services.xml
+--- a/src/Resources/config/services.xml
++++ b/src/Resources/config/services.xml
+@@ -10,5 +10,12 @@
+ 
+             <tag name="shopware.mcp.tool"/>
+         </service>
++
++        <service id="Swag\Loyalty\Mcp\Tool\TierListTool">
++            <argument type="service" id="Doctrine\DBAL\Connection"/>
++            <argument type="service" id="Shopware\Core\Framework\Mcp\Context\McpContextProvider"/>
++
++            <tag name="shopware.mcp.tool"/>
++        </service>
+     </services>
+ </container>

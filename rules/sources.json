@@ -28,7 +28,15 @@
         "src/Storefront/Resources/app/administration/eslint.config.ts",
         "src/Storefront/Resources/app/storefront/eslint.config.js",
         "src/Storefront/Resources/app/storefront/stylelint.config.js",
-        "src/Storefront/Resources/views/ludtwig-config.toml"
+        "src/Storefront/Resources/views/ludtwig-config.toml",
+        "src/Core/Framework/Mcp/AGENTS.md",
+        "src/Core/Framework/Mcp/Command/AGENTS.md",
+        "src/Core/Framework/Mcp/Context/AGENTS.md",
+        "src/Core/Framework/Mcp/Loader/AGENTS.md",
+        "src/Core/Framework/Mcp/Prompt/AGENTS.md",
+        "src/Core/Framework/Mcp/Resource/AGENTS.md",
+        "src/Core/Framework/Mcp/Tool/AGENTS.md",
+        "src/Storefront/Mcp/AGENTS.md"
       ],
       "skills": [
         { "path": ".agents/skills/shopware-admin-js", "skills": ["sw-admin-js"] },
@@ -53,7 +61,9 @@
         { "path": "src/Administration/Resources/app/administration/eslint.config.ts", "skills": ["sw-admin-js"] },
         { "path": "src/Storefront/Resources/app/administration/eslint.config.ts", "skills": ["sw-admin-js"] },
         { "path": "src/Storefront/Resources/app/storefront", "skills": ["sw-storefront"] },
-        { "path": "src/Storefront/Resources/views/ludtwig-config.toml", "skills": ["sw-storefront"] }
+        { "path": "src/Storefront/Resources/views/ludtwig-config.toml", "skills": ["sw-storefront"] },
+        { "path": "src/Core/Framework/Mcp", "skills": ["sw-mcp-development"] },
+        { "path": "src/Storefront/Mcp", "skills": ["sw-mcp-development"] }
       ],
       "ignore": [".agents/skills/nightly-triage", ".agents/skills/sw-triage"]
     },

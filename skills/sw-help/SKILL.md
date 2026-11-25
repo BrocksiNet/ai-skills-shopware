@@ -39,6 +39,7 @@ shows which skills are installed here.
 | Build an app (manifest, app scripts, webhooks) | `sw-app-development` | "Should this be an app or a plugin?" |
 | Change shopware/shopware without breaking extensions | `sw-core-development` | "Deprecate this public method properly" |
 | Generate core API request and response DTOs from OpenAPI schemas (experimental) | `sw-openapi-dto` | "Add an optional field to this generated request DTO" |
+| Build or review MCP tools, prompts, and resources in plugins, apps, or core (experimental, 6.7.15+ / 6.8.0) | `sw-mcp-development` | "Add an MCP tool to my plugin with McpToolResult and dryRun" |
 | Change the Administration (Vue, Meteor, Pinia) | `sw-admin-js` | "Override this sw-product-detail component" |
 | Change the Storefront (Twig, SCSS, JS plugins) | `sw-storefront` | "Extend the product box template" |
 | Write modern, strict PHP | `sw-php-foundation` | "Turn these constants into a backed enum" |
