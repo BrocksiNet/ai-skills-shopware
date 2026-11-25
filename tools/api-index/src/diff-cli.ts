@@ -42,10 +42,10 @@ export interface Io {
 /** The Io of a bin: stdout, stderr and the process environment. */
 export function processIo(): Io {
   return {
-    out: (text) => {
+    out: (text): void => {
       process.stdout.write(text);
     },
-    err: (text) => {
+    err: (text): void => {
       process.stderr.write(text);
     },
     env: process.env,

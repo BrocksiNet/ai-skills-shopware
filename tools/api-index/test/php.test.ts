@@ -10,7 +10,7 @@ function byId(items: Item[]): { ids: string[]; get: (id: string) => Item } {
   const map = new Map(items.map((item) => [item.id, item]));
   return {
     ids: [...map.keys()],
-    get: (id) => {
+    get: (id): Item => {
       const item = map.get(id);
       assert.ok(item, `no item ${id}`);
       return item;

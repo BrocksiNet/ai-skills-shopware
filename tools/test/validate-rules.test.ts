@@ -88,28 +88,28 @@ describe('validateRules', () => {
   const cases: [string, Parameters<typeof fixture>[0], string][] = [
     [
       'missing eval task',
-      (_, c) => {
+      (_, c): void => {
         ruleAt(c, 0).eval = 'no-such-task';
       },
       'TEST-001: eval task no-such-task not found',
     ],
     [
       'no eval and no reason',
-      (_, c) => {
+      (_, c): void => {
         ruleAt(c, 1).eval_reason = '';
       },
       'TEST-002: active rule needs eval or eval_reason',
     ],
     [
       'prefix of another skill',
-      (_, c) => {
+      (_, c): void => {
         ruleAt(c, 0).skill = 'sw-plugin-development';
       },
       'TEST-001: prefix belongs to sw-testing, not sw-plugin-development',
     ],
     [
       'unknown prefix',
-      (f, c) => {
+      (f, c): void => {
         f[SKILL] += '- **ZZZ-001** Odd.\n';
         c.rules.push(rule('ZZZ-001'));
       },
@@ -117,7 +117,7 @@ describe('validateRules', () => {
     ],
     [
       'malformed ID',
-      (f, c) => {
+      (f, c): void => {
         f[SKILL] += '- **TEST-1** Short.\n';
         c.rules.push(rule('TEST-1'));
       },
@@ -125,14 +125,14 @@ describe('validateRules', () => {
     ],
     [
       'duplicate catalog entry',
-      (_, c) => {
+      (_, c): void => {
         c.rules.push(rule('TEST-001'));
       },
       'TEST-001: duplicated in the catalog',
     ],
     [
       'retired but inline',
-      (_, c) => {
+      (_, c): void => {
         ruleAt(c, 0).status = 'retired';
         ruleAt(c, 0).retired_reason = 'no measured effect';
       },
@@ -140,21 +140,21 @@ describe('validateRules', () => {
     ],
     [
       'retired without a reason',
-      (_, c) => {
+      (_, c): void => {
         c.rules.push(rule('TEST-002', { status: 'retired' }));
       },
       'TEST-002: a retired rule needs retired_reason',
     ],
     [
       'bad status',
-      (_, c) => {
+      (_, c): void => {
         ruleAt(c, 0).status = 'gone';
       },
       'TEST-001: bad status gone',
     ],
     [
       'superseded by an unknown rule',
-      (_, c) => {
+      (_, c): void => {
         ruleAt(c, 0).status = 'superseded:TEST-404';
         ruleAt(c, 0).retired_reason = 'replaced';
       },
@@ -162,77 +162,77 @@ describe('validateRules', () => {
     ],
     [
       'dangling see',
-      (_, c) => {
+      (_, c): void => {
         ruleAt(c, 0).see = ['TEST-404'];
       },
       'TEST-001: see TEST-404 is unknown or inactive',
     ],
     [
       'wrong file',
-      (_, c) => {
+      (_, c): void => {
         ruleAt(c, 0).file = REF;
       },
       `TEST-001: inline in ${SKILL}, catalog says ${REF}`,
     ],
     [
       'missing file',
-      (_, c) => {
+      (_, c): void => {
         ruleAt(c, 0).file = 'skills/sw-testing/nope.md';
       },
       'TEST-001: file skills/sw-testing/nope.md not found',
     ],
     [
       'unknown audience',
-      (_, c) => {
+      (_, c): void => {
         ruleAt(c, 0).audience = ['robots'];
       },
       'TEST-001: unknown audience robots',
     ],
     [
       'bad date',
-      (_, c) => {
+      (_, c): void => {
         ruleAt(c, 0).since = 'today';
       },
       'TEST-001: since must be YYYY-MM-DD',
     ],
     [
       'not inline',
-      (f) => {
+      (f): void => {
         f[SKILL] = (f[SKILL] ?? '').replace('**TEST-001** ', '');
       },
       'TEST-001: active rule not found inline in skills/',
     ],
     [
       'defined twice',
-      (f) => {
+      (f): void => {
         f[REF] += '- **TEST-001** Again.\n';
       },
       `TEST-001: defined inline 2 times (${SKILL}:3, ${REF}:4)`,
     ],
     [
       'orphan inline ID',
-      (f) => {
+      (f): void => {
         f[REF] += '- **TEST-999** Orphan.\n';
       },
       `${REF}:4: TEST-999 has no catalog entry`,
     ],
     [
       'dangling reference',
-      (f) => {
+      (f): void => {
         f[REF] += 'See `PLG-404`.\n';
       },
       `${REF}:4: reference to unknown or inactive PLG-404`,
     ],
     [
       'incomplete enforcement',
-      (_, c) => {
+      (_, c): void => {
         ruleAt(c, 0).trunk = { enforced_by: [{ tool: 'X', kind: 'grep', catches: '', misses: 'y', trunk_only: true }] };
       },
       'TEST-001: trunk.enforced_by[0].catches must be a non-empty string',
     ],
     [
       'stale enforced section',
-      (_, c) => {
+      (_, c): void => {
         ruleAt(c, 0).trunk = {
           enforced_by: [{ tool: 'X', kind: 'phpstan', catches: 'catches x', misses: 'y', trunk_only: true }],
         };
@@ -241,7 +241,7 @@ describe('validateRules', () => {
     ],
     [
       'wrong field type',
-      (_, c) => {
+      (_, c): void => {
         ruleAt(c, 0).defer_on_trunk = 'no';
       },
       'TEST-001: defer_on_trunk must be true or false',

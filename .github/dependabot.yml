@@ -1,0 +1,54 @@
+version: 2
+updates:
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: weekly
+      day: monday
+    groups:
+      github-actions:
+        patterns:
+          - "*"
+    commit-message:
+      prefix: chore(deps)
+
+  - package-ecosystem: npm
+    directory: /tools
+    schedule:
+      interval: weekly
+      day: monday
+    groups:
+      tools-deps:
+        patterns:
+          - "*"
+    commit-message:
+      prefix: chore(deps)
+
+  - package-ecosystem: npm
+    directory: /tools/api-index
+    schedule:
+      interval: weekly
+      day: monday
+    groups:
+      api-index-deps:
+        patterns:
+          - "*"
+    commit-message:
+      prefix: chore(deps)
+
+  - package-ecosystem: npm
+    directory: /evals/tools/ast
+    schedule:
+      interval: weekly
+      day: monday
+    groups:
+      ast-graders-deps:
+        patterns:
+          - "*"
+    ignore:
+      # Vue 2.7 is intentionally retained alongside Vue 3 to test legacy Admin template compilation.
+      - dependency-name: vue-template-compiler
+        update-types:
+          - version-update:semver-major
+    commit-message:
+      prefix: chore(deps)

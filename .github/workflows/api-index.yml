@@ -35,9 +35,9 @@ jobs:
     permissions:
       contents: write
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v7
 
-      - uses: actions/setup-node@v5
+      - uses: actions/setup-node@v7
         with:
           node-version: '26'
 
@@ -53,7 +53,7 @@ jobs:
         id: generator
         run: echo "version=$(node -e "import('./tools/api-index/src/model.ts').then((m) => console.log(m.GENERATOR))")" >> "$GITHUB_OUTPUT"
 
-      - uses: actions/cache@v4
+      - uses: actions/cache@v6
         with:
           path: ${{ runner.temp }}/api-index-cache
           key: api-index-${{ steps.generator.outputs.version }}-${{ github.run_id }}

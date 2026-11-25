@@ -2,9 +2,9 @@
 #
 # Install a pinned agent CLI on a CI runner.
 #
-#   evals/runner/install-agent.sh opencode   # OPENCODE_VERSION (default 2.0.27)
-#   evals/runner/install-agent.sh claude     # CLAUDE_CODE_VERSION (default 2.1.301)
-#   evals/runner/install-agent.sh copilot    # COPILOT_VERSION (default 1.0.103)
+#   evals/runner/install-agent.sh opencode   # OPENCODE_VERSION (default 2.4.1)
+#   evals/runner/install-agent.sh claude     # CLAUDE_CODE_VERSION (default 2.1.332)
+#   evals/runner/install-agent.sh copilot    # COPILOT_VERSION (default 1.0.115)
 #
 # Adds the install folder to GITHUB_PATH when it runs inside GitHub Actions.
 set -euo pipefail
@@ -12,7 +12,7 @@ set -euo pipefail
 agent="${1:-}"
 case "$agent" in
   opencode)
-    version="${OPENCODE_VERSION:-2.0.27}"
+    version="${OPENCODE_VERSION:-2.4.1}"
     installer="$(mktemp)"
     trap 'rm -f "$installer"' EXIT
     curl -fsSL https://opencode.ai/v2/install -o "$installer"
@@ -22,11 +22,11 @@ case "$agent" in
     "$bin/opencode" --version
     ;;
   claude)
-    npm install -g "@anthropic-ai/claude-code@${CLAUDE_CODE_VERSION:-2.1.301}"
+    npm install -g "@anthropic-ai/claude-code@${CLAUDE_CODE_VERSION:-2.1.332}"
     claude --version
     ;;
   copilot)
-    npm install -g "@github/copilot@${COPILOT_VERSION:-1.0.103}"
+    npm install -g "@github/copilot@${COPILOT_VERSION:-1.0.115}"
     copilot --version
     ;;
   *)

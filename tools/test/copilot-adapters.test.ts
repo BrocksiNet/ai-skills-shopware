@@ -37,10 +37,10 @@ function fake(out: string): { env: NodeJS.ProcessEnv; args: () => string; seen: 
 function capture(): { out: (t: string) => void; err: (t: string) => void; text: { out: string; err: string } } {
   const text = { out: '', err: '' };
   return {
-    out: (t) => {
+    out: (t): void => {
       text.out += t;
     },
-    err: (t) => {
+    err: (t): void => {
       text.err += t;
     },
     text,

@@ -44,7 +44,7 @@ describe('suggest with the fake agent', () => {
       signalsFile: file,
       offline: true,
       repo: 'o/r',
-      ask: (prompt) => {
+      ask: (prompt): ReturnType<typeof ask> => {
         calls += 1;
         return ask(prompt);
       },
@@ -54,7 +54,7 @@ describe('suggest with the fake agent', () => {
       maxSignals: 25,
       supportedFrom: '6.6.0.0',
       skill: 'sw-none',
-      log: () => {},
+      log: (): void => {},
     };
   };
 
