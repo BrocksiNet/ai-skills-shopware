@@ -9,11 +9,33 @@
 //      skills (claude-task passes --setting-sources project, opencode-task
 //      runs with a throwaway HOME), otherwise machine-wide skills leak into
 //      the "off" run.
-import { existsSync, mkdirSync, readdirSync, rmSync, statSync, symlinkSync } from 'node:fs';
+import { existsSync, mkdirSync, readdirSync, readFileSync, rmSync, statSync, symlinkSync } from 'node:fs';
 import { join, resolve } from 'node:path';
 import { repoSkills, taskSkills } from './eval-plan.ts';
+import { referenceReads } from './reference-reads.ts';
 
 export const PROFILE_DIRS = ['.claude/skills', '.agents/skills'] as const;
+
+/** Markdown reference files under `<skillsDir>/<skill>/references/*.md`, keyed by `<skill>/references/<file>.md`. */
+export function skillReferences(skillsDir: string, skills: string[]): Map<string, string> {
+  const refs = new Map<string, string>();
+  for (const skill of skills) {
+    const dir = join(skillsDir, skill, 'references');
+    if (!existsSync(dir)) continue;
+    for (const entry of readdirSync(dir, { withFileTypes: true })) {
+      if (!entry.isFile() || !entry.name.endsWith('.md')) continue;
+      refs.set(`${skill}/references/${entry.name}`, readFileSync(join(dir, entry.name), 'utf8'));
+    }
+  }
+  return refs;
+}
+
+/** Whether a run's trace read at least one reference from `refs`, or null when unobservable / empty. */
+export function observeReferenceRead(trace: string | null, refs: Map<string, string>): boolean | null {
+  if (refs.size === 0 || trace === null) return null;
+  const observed = referenceReads(trace, refs);
+  return observed.observable ? observed.reads.length > 0 : null;
+}
 
 /** The skills a task runs with: every skill in a custom EVAL_SKILLS_ROOT
  *  package (used by discovery/transfer variant experiments), else the task's

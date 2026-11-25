@@ -1,5 +1,5 @@
 import assert from 'node:assert/strict';
-import { mkdtempSync, readFileSync } from 'node:fs';
+import { mkdtempSync, readFileSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join, resolve } from 'node:path';
 import { describe, test } from 'node:test';
@@ -15,7 +15,7 @@ import {
   sumUsage,
   tokensAverage,
 } from '../src/ab.ts';
-import { expectedTool, ranTool, runModes } from '../src/ab-run.ts';
+import { expectedTool, ranTool, runModes, skillReferences } from '../src/ab-run.ts';
 import { RUN, errorReason, runTask } from '../src/run-task.ts';
 
 const ROOT = resolve(import.meta.dirname, '../..');
@@ -86,12 +86,22 @@ describe('record and summary', () => {
     const r = abRecord('t', 2, on, off, decide(2, on, off, 50), { agent: 'a', model: 'm', sha: 's', ts: 'x' });
     assert.equal(
       JSON.stringify(r),
-      '{"task":"t","repeats":2,"on":2,"off":0,"on_done":2,"off_done":2,"errors":0,"delta":2,"verdict":"improved","loaded_on":2,"loaded_off":null,"tokens_on":{"input":1200,"output":200,"runs":2},"tokens_off":null,"agent":"a","model":"m","sha":"s","ts":"x"}',
+      '{"task":"t","repeats":2,"on":2,"off":0,"on_done":2,"off_done":2,"errors":0,"delta":2,"verdict":"improved","loaded_on":2,"loaded_off":null,"refs_read_on":null,"refs_read_off":null,"tokens_on":{"input":1200,"output":200,"runs":2},"tokens_off":null,"agent":"a","model":"m","sha":"s","ts":"x"}',
     );
     assert.match(
       abSummary(r, on, off),
-      /skill loaded: on 2\/2, off null\/2\n {2}tokens per run \(input\/output\): on 1200\/200, off n\/a\n {2}=> skill IMPROVES/u,
+      /skill loaded: on 2\/2, off null\/2\n {2}refs read: on n\/a, off n\/a\n {2}tokens per run \(input\/output\): on 1200\/200, off n\/a\n {2}=> skill IMPROVES/u,
     );
+  });
+  test('reference-read counts serialize and format in abSummary', () => {
+    const on = counts({ pass: 2, refsRead: 1, refsReported: 2 });
+    const off = counts({ refsRead: 0, refsReported: 2 });
+    const r = abRecord('t', 2, on, off, decide(2, on, off, 50), { agent: 'a', model: 'm', sha: 's', ts: 'x' });
+    assert.equal(r.refs_read_on, 1);
+    assert.equal(r.refs_read_off, 0);
+    assert.match(abSummary(r, on, off), /\n {2}refs read: on 1\/2, off 0\/2\n/u);
+    const { refs_read_on: _on, refs_read_off: _off, ...legacy } = r;
+    assert.match(abSummary(legacy, on, off), /\n {2}refs read: on n\/a, off n\/a\n/u);
   });
   test('a task with expect-tool records and prints how often the tool ran', () => {
     const on = counts({ pass: 1, ran: 2 });
@@ -315,5 +325,122 @@ describe('runModes with the fake agent', () => {
       FAKE_AGENT_USAGE: 'none',
     });
     assert.deepEqual([unsupported.on.reported, unsupported.on.tokenRuns], [0, 0]);
+    assert.deepEqual([unsupported.on.refsReported, unsupported.off.refsReported], [0, 0]);
+  });
+  test('reference reads count Claude traces, report null for 0-reference skills and unobservable traces', async () => {
+    const skillsDir = join(ROOT, 'skills');
+    assert.equal(skillReferences(skillsDir, ['sw-php-foundation']).size, 0);
+    const pluginRefs = skillReferences(skillsDir, ['sw-plugin-development']);
+    const refPath = 'sw-plugin-development/references/dal-usage.md';
+    const refContent = pluginRefs.get(refPath);
+    assert.ok(refContent !== undefined);
+    const claudeTrace = (readRef: boolean): string =>
+      [
+        { type: 'system', subtype: 'init' },
+        ...(readRef
+          ? [
+              {
+                type: 'assistant',
+                message: {
+                  content: [
+                    { type: 'tool_use', id: 'r1', name: 'Read', input: { file_path: `/w/.claude/skills/${refPath}` } },
+                  ],
+                },
+              },
+              {
+                type: 'user',
+                message: { content: [{ type: 'tool_result', tool_use_id: 'r1', content: refContent }] },
+              },
+            ]
+          : []),
+      ]
+        .map((e) => JSON.stringify(e))
+        .join('\n');
+
+    // TASK_A uses sw-architecture + sw-plugin-development (has references).
+    const observed = await runModes({
+      root: ROOT,
+      task: TASK_A,
+      repeats: 2,
+      env: baseEnv(),
+      err: () => {},
+      random: () => 0,
+      run: async (o) => {
+        const traceLog = o.env.EVAL_TRACE_LOG;
+        if (traceLog !== undefined) writeFileSync(traceLog, claudeTrace(o.mode === 'on'));
+        await Promise.resolve();
+        return RUN.pass;
+      },
+    });
+    const rec = abRecord(TASK_A, 2, observed.on, observed.off, decide(2, observed.on, observed.off, 50), {
+      agent: 'claude',
+      model: 'm',
+      sha: 's',
+      ts: 'x',
+    });
+    assert.equal(rec.refs_read_on, 2);
+    assert.equal(rec.refs_read_off, 0);
+
+    // A task whose skill profile has 0 references (sw-assistant-style) reports null even on Claude traces.
+    const noRefs = await runModes({
+      root: ROOT,
+      task: 'support-reply-single-block',
+      repeats: 1,
+      env: baseEnv(),
+      err: () => {},
+      random: () => 0,
+      run: async (o) => {
+        const traceLog = o.env.EVAL_TRACE_LOG;
+        if (traceLog !== undefined) writeFileSync(traceLog, claudeTrace(true));
+        await Promise.resolve();
+        return RUN.pass;
+      },
+    });
+    const noRefsRec = abRecord(
+      'support-reply-single-block',
+      1,
+      noRefs.on,
+      noRefs.off,
+      decide(1, noRefs.on, noRefs.off, 50),
+      {
+        agent: 'claude',
+        model: 'm',
+        sha: 's',
+        ts: 'x',
+      },
+    );
+    assert.equal(noRefsRec.refs_read_on, null);
+    assert.equal(noRefsRec.refs_read_off, null);
+
+    // Unsupported trace format (non-Claude) reports null rather than 0.
+    const unobservable = await runModes({
+      root: ROOT,
+      task: TASK_A,
+      repeats: 1,
+      env: baseEnv(),
+      err: () => {},
+      random: () => 0,
+      run: async (o) => {
+        const traceLog = o.env.EVAL_TRACE_LOG;
+        if (traceLog !== undefined) writeFileSync(traceLog, '{"type":"tool.execution_start"}\n');
+        await Promise.resolve();
+        return RUN.pass;
+      },
+    });
+    const unobsRec = abRecord(
+      TASK_A,
+      1,
+      unobservable.on,
+      unobservable.off,
+      decide(1, unobservable.on, unobservable.off, 50),
+      {
+        agent: 'copilot',
+        model: 'm',
+        sha: 's',
+        ts: 'x',
+      },
+    );
+    assert.equal(unobsRec.refs_read_on, null);
+    assert.equal(unobsRec.refs_read_off, null);
   });
 });

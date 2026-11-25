@@ -65,8 +65,15 @@ interface Stats {
   loadedRuns: number;
   /** -1 when no graded record reports skill loads. */
   loadPct: number;
+  refsRuns: number;
+  refsReadRuns: number;
+  /** -1 when no graded record reports reference reads. */
+  refsReadPct: number;
   leaked: AbResult[];
 }
+
+const hasRefs = (r: AbResult): r is AbResult & { refs_read_on: number } =>
+  r.verdict !== 'error' && isNumber(r.refs_read_on);
 
 function stats(results: AbResult[]): Stats {
   const count = { improved: 0, held: 0, no_difference: 0, worse: 0, error: 0 };
@@ -77,6 +84,10 @@ function stats(results: AbResult[]): Stats {
   const reporting = results.filter((r) => r.verdict !== 'error' && isNumber(r.loaded_on));
   const loadRuns = reporting.reduce((n, r) => n + onDone(r), 0);
   const loadedRuns = reporting.reduce((n, r) => n + (r.loaded_on ?? 0), 0);
+  // Reference reads over graded tasks whose profile has references and whose trace was observable.
+  const refsReporting = results.filter((r) => hasRefs(r));
+  const refsRuns = refsReporting.reduce((n, r) => n + onDone(r), 0);
+  const refsReadRuns = refsReporting.reduce((n, r) => n + r.refs_read_on, 0);
   return {
     results,
     count,
@@ -87,6 +98,9 @@ function stats(results: AbResult[]): Stats {
     loadRuns,
     loadedRuns,
     loadPct: loadRuns > 0 ? pct(loadedRuns, loadRuns) : -1,
+    refsRuns,
+    refsReadRuns,
+    refsReadPct: refsRuns > 0 ? pct(refsReadRuns, refsRuns) : -1,
     leaked: results.filter((r) => isNumber(r.loaded_off) && r.loaded_off > 0),
   };
 }
@@ -109,6 +123,12 @@ function summary(s: Stats, first: AbResult, opts: GateOptions): string[] {
       `Skill-on runs that loaded a task skill: **${s.loadedRuns} / ${s.loadRuns}** (${s.loadPct} %, gate ${opts.minLoadPct} %).`,
     );
   }
+  if (s.refsReadPct >= 0) {
+    out.push(
+      '',
+      `Skill-on runs that read a skill reference: **${s.refsReadRuns} / ${s.refsRuns}** (${s.refsReadPct} %, diagnostic).`,
+    );
+  }
   return out;
 }
 
@@ -117,8 +137,9 @@ function perTask(results: AbResult[]): string[] {
     .toSorted((a, b) => rank(a) - rank(b) || compareText(a.task, b.task))
     .map((r) => {
       const loaded = isNumber(r.loaded_on) ? `${r.loaded_on}/${r.repeats}` : 'n/a';
+      const refs = isNumber(r.refs_read_on) ? `${r.refs_read_on}/${r.repeats}` : 'n/a';
       const tokens = hasTokens(r.tokens_on) ? `${r.tokens_on.input}/${r.tokens_on.output}` : 'n/a';
-      return `| \`${r.task}\` | ${r.on}/${onDone(r)} | ${r.off}/${offDone(r)} | ${loaded} | ${tokens} | ${r.verdict} |`;
+      return `| \`${r.task}\` | ${r.on}/${onDone(r)} | ${r.off}/${offDone(r)} | ${loaded} | ${refs} | ${tokens} | ${r.verdict} |`;
     });
   return [
     '',
@@ -126,8 +147,8 @@ function perTask(results: AbResult[]): string[] {
     '',
     'On and Off count passed / completed runs.',
     '',
-    '| Task | On | Off | Skill loaded (on) | Tokens on (in/out) | Verdict |',
-    '| ---- | -- | --- | ----------------- | ------------------ | ------- |',
+    '| Task | On | Off | Skill loaded (on) | Refs read (on) | Tokens on (in/out) | Verdict |',
+    '| ---- | -- | --- | ----------------- | -------------- | ------------------ | ------- |',
     ...rows,
     '',
     '</details>',

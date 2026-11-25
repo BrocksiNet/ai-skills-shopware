@@ -29,6 +29,10 @@ export interface ModeCounts {
   loaded: number;
   /** Runs whose adapter wrote a skills log at all. */
   reported: number;
+  /** Runs whose trace returned content from at least one skill reference file. */
+  refsRead: number;
+  /** Runs whose trace was observable for reference reads. */
+  refsReported: number;
   /** Runs that ran the task's `expect-tool` command; null when the task names none. */
   ran: number | null;
   tokensIn: number;
@@ -42,6 +46,8 @@ export const emptyCounts = (): ModeCounts => ({
   err: 0,
   loaded: 0,
   reported: 0,
+  refsRead: 0,
+  refsReported: 0,
   ran: null,
   tokensIn: 0,
   tokensOut: 0,
@@ -131,6 +137,8 @@ export function abRecord(
     verdict: d.verdict,
     loaded_on: on.reported > 0 ? on.loaded : null,
     loaded_off: off.reported > 0 ? off.loaded : null,
+    refs_read_on: on.refsReported > 0 ? on.refsRead : null,
+    refs_read_off: off.refsReported > 0 ? off.refsRead : null,
     ...(on.ran === null ? {} : { ran_on: on.ran, ran_off: off.ran }),
     tokens_on: tokensAverage(on),
     tokens_off: tokensAverage(off),
@@ -150,6 +158,8 @@ const VERDICT_TEXT: Record<Verdict, string> = {
 };
 
 const tokenText = (t: Tokens | null | undefined): string => (t ? `${t.input}/${t.output}` : 'n/a');
+const countText = (n: number | null | undefined, repeats: number): string =>
+  typeof n === 'number' ? `${n}/${repeats}` : 'n/a';
 
 export function abSummary(r: AbResult, on: ModeCounts, off: ModeCounts): string {
   const last =
@@ -161,6 +171,7 @@ export function abSummary(r: AbResult, on: ModeCounts, off: ModeCounts): string 
     `  skill ON : ${r.on}/${r.on_done} completed runs passed (${on.err} agent error(s))`,
     `  skill OFF: ${r.off}/${r.off_done} completed runs passed (${off.err} agent error(s))`,
     `  skill loaded: on ${r.loaded_on ?? 'null'}/${r.repeats}, off ${r.loaded_off ?? 'null'}/${r.repeats}`,
+    `  refs read: on ${countText(r.refs_read_on, r.repeats)}, off ${countText(r.refs_read_off, r.repeats)}`,
     ...(r.ran_on === undefined || r.ran_on === null
       ? []
       : [`  ran the tool: on ${r.ran_on}/${r.repeats}, off ${r.ran_off ?? 'null'}/${r.repeats}`]),

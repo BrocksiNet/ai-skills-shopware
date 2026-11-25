@@ -27,12 +27,13 @@ import {
 } from './ab.ts';
 import { envInt, envOr, envSet } from './env.ts';
 import { errorMessage } from './errors.ts';
-import { repoSkills, taskSkills } from './eval-plan.ts';
 import { shortSha, startEvidence } from './eval-provenance.ts';
 import { type Mode, RUN, type RunTaskOptions, runTask } from './run-task.ts';
 import { inSeries } from './series.ts';
+import { observeReferenceRead, profileSkills, skillReferences } from './skills-profile.ts';
 
 export { shortSha } from './eval-provenance.ts';
+export { skillReferences } from './skills-profile.ts';
 
 /** Where the A/B appends its record: EVAL_RESULTS, else evals/.results/ab.jsonl. */
 export const resultsPath = (root: string, env: NodeJS.ProcessEnv): string =>
@@ -117,7 +118,13 @@ async function runOnce(o: AbOptions, mode: Mode, logs: string, i: number): Promi
   return { rc, usage, skillsLog: readIfAny(skillsLog), trace: readIfAny(`${skillsLog}.trace.jsonl`) };
 }
 
-function addOutcome(c: ModeCounts, run: RunOutcome, match: string[], tool: string | null): void {
+function addOutcome(
+  c: ModeCounts,
+  run: RunOutcome,
+  match: string[],
+  refs: Map<string, string>,
+  tool: string | null,
+): void {
   if (run.rc === RUN.pass) c.pass++;
   else if (run.rc !== RUN.fail) c.err++;
   // Tokens of completed runs only; an agent error says nothing about the skill.
@@ -129,6 +136,11 @@ function addOutcome(c: ModeCounts, run: RunOutcome, match: string[], tool: strin
   if (run.skillsLog !== null) {
     c.reported++;
     if (loadedOneOf(run.skillsLog, match)) c.loaded++;
+  }
+  const refRead = observeReferenceRead(run.trace, refs);
+  if (refRead !== null) {
+    c.refsReported++;
+    if (refRead) c.refsRead++;
   }
   if (tool !== null) c.ran = (c.ran ?? 0) + (run.trace !== null && ranTool(run.trace, tool) ? 1 : 0);
 }
@@ -161,10 +173,11 @@ function saveTrial(o: AbOptions, logs: string, trials: AbTrial[], trial: AbTrial
  *  file, else all); a skill-off run when it loaded any repo skill, which means
  *  skills leaked into the baseline. */
 export async function runModes(o: AbOptions): Promise<{ on: ModeCounts; off: ModeCounts; trials: AbTrial[] }> {
-  const all = repoSkills(o.root);
-  const own = existsSync(join(o.root, 'evals/tasks', o.task, 'skills'))
-    ? taskSkills(join(o.root, 'evals/tasks'), o.task)
-    : all;
+  const skillsDir = envOr(o.env, 'EVAL_SKILLS_ROOT', join(o.root, 'skills'));
+  const all = profileSkills(o.root, '', skillsDir);
+  const own = profileSkills(o.root, o.task, skillsDir);
+  const ownRefs = skillReferences(skillsDir, own);
+  const allRefs = ownRefs.size > 0 ? skillReferences(skillsDir, all) : new Map<string, string>();
   const tool = expectedTool(o.root, o.task);
   const logs = o.artifacts ?? mkdtempSync(join(envOr(o.env, 'TMPDIR', tmpdir()), 'ab-skills.'));
   mkdirSync(logs, { recursive: true });
@@ -191,7 +204,7 @@ export async function runModes(o: AbOptions): Promise<{ on: ModeCounts; off: Mod
       }
       const started = Date.now();
       const outcome = await runOnce(o, mode, logs, i);
-      addOutcome(counts[mode], outcome, mode === 'on' ? own : all, tool);
+      addOutcome(counts[mode], outcome, mode === 'on' ? own : all, mode === 'on' ? ownRefs : allRefs, tool);
       saveTrial(o, logs, trials, trialOutcome(mode, i, outcome, started));
       if (outcome.rc !== RUN.quota) return;
       quota = true;
