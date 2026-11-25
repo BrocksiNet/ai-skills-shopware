@@ -1,0 +1,16 @@
+Falsely claiming /api/script/ is wrong for serverless MCP tools.
+
+```json
+{
+  "findings": [
+    {
+      "rule_id": "MCP-007",
+      "severity": "major",
+      "file": "Resources/mcp.xml",
+      "line": 4,
+      "summary": "App MCP tools must use an external HTTPS webhook instead of /api/script/.",
+      "fix": "Replace with an HTTPS URL."
+    }
+  ]
+}
+```

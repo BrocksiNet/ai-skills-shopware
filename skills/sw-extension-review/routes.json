@@ -55,6 +55,12 @@
       "reference": "../sw-security/references/mcp-tool-acl.md"
     },
     {
+      "reference": "../sw-mcp-development/references/tool-contract.md"
+    },
+    {
+      "reference": "../sw-mcp-development/references/apps-prompts-resources.md"
+    },
+    {
       "reference": "../sw-storefront/references/js-plugins.md"
     },
     {

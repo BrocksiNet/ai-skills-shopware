@@ -21,6 +21,7 @@ etc. Install **delta overlay** from this repo:
 | `sw-pr-review` | GitHub review thread triage |
 | `sw-local-dev` | Runs commands in your local environment (DDEV, Docker, Vagrant, native, Podman) |
 | `sw-openapi-dto` | Generated OpenAPI request/response DTOs (experimental, core PR 17858) |
+| `sw-mcp-development` | MCP tools, prompts, and resources (experimental, targets 6.7.15+ / 6.8.0) |
 | `sw-skill-router` | Lists the skills and references a diff or plan needs (`/sw-skill-router`). |
 | `sw-help` | What every skill is for, with example prompts (`/sw-help`). |
 
@@ -38,6 +39,7 @@ npx skills add BrocksiNet/ai-skills-shopware \
   --skill sw-pr-review \
   --skill sw-local-dev \
   --skill sw-openapi-dto \
+  --skill sw-mcp-development \
   -a claude-code -a codex -a cursor
 ```
 

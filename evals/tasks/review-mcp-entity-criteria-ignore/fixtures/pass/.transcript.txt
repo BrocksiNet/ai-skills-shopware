@@ -1,0 +1,7 @@
+The tool wraps only `fromArray()` in `try/catch`, validates the `Criteria` with `AclCriteriaValidator`, applies `McpEntityIncludes::applyDefaultIncludes()`, and serializes through `JsonEntityEncoder`. No issues found.
+
+```json
+{
+  "findings": []
+}
+```

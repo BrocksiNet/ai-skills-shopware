@@ -1,0 +1,16 @@
+The app MCP tool targets a cached Store API script instead of `/api/script/` and reads raw request content instead of POST form `arguments`.
+
+```json
+{
+  "findings": [
+    {
+      "rule_id": "MCP-007",
+      "severity": "major",
+      "file": "Resources/mcp.xml",
+      "line": 4,
+      "summary": "The serverless app MCP tool points to `/store-api/script/swag-inventory-check` (which goes through Shopware's HTTP cache without disabling caching) and the Twig script reads raw request content instead of the POST form `arguments` parameter.",
+      "fix": "Use `url=\"/api/script/swag-inventory-check\"` under `Resources/scripts/api-swag-inventory-check/script.twig` and read `hook.request.request.all('arguments') ?? {}`."
+    }
+  ]
+}
+```

@@ -17,6 +17,7 @@ reviews those on trunk.
 | `sw-plugin-development` | DAL, API contracts, cache tags, migrations, version compatibility. |
 | `sw-app-development` | Manifest, permissions, app scripts. |
 | `sw-security` | Secrets, route ACL and input, webhooks. |
+| `sw-mcp-development` | MCP tool contracts, groups, dry-run writes, and serverless app tools (experimental). |
 | `sw-storefront` | Twig, theme and JS plugin public API, HTTP cache. |
 | `sw-admin-js` | Admin architecture and extension API. |
 | `sw-architecture` | Workers and services, extension mechanisms, DAL contracts. |
@@ -36,6 +37,7 @@ npx skills add BrocksiNet/ai-skills-shopware \
   --skill sw-plugin-development \
   --skill sw-app-development \
   --skill sw-security \
+  --skill sw-mcp-development \
   --skill sw-storefront \
   --skill sw-admin-js \
   --skill sw-architecture \

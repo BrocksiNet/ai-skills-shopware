@@ -1,0 +1,16 @@
+Claiming ToolAnnotations is wrong because dryRun defaults to true.
+
+```json
+{
+  "findings": [
+    {
+      "rule_id": "MCP-005",
+      "severity": "minor",
+      "file": "src/Mcp/Tool/ResetPointsTool.php",
+      "line": 19,
+      "summary": "Because dryRun defaults to true, ToolAnnotations should set readOnlyHint: true.",
+      "fix": "Change readOnlyHint to true."
+    }
+  ]
+}
+```

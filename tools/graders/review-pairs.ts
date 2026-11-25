@@ -993,6 +993,78 @@ export const PAIRS: Record<string, ReviewPair> = {
     summary:
       /requirePrivilege|privilege check|McpToolRequires|informational|not (enforce|check)|never (check|enforce|call)|allowlist/iu,
   },
+  // Catch: A plugin MCP tool claims #[McpToolGroup('discovery')] to appear on the first
+  // tools/list. The discovery group is reserved for Shopware's three meta-tools, so
+  // the tool is silently demoted to `other` at compile time. Needs a major+ finding in
+  // src/ that names MCP-002 or describes the reserved discovery group.
+  // Ignore: The same tool declares its own group #[McpToolGroup('swag-loyalty', description: '...')].
+  // A minor+ finding that names MCP-002 or calls the group reserved is a false positive.
+  'mcp-reserved-group': {
+    rule: 'MCP-002',
+    file: 'src/**',
+    minSeverity: 'major',
+    summary: /discovery|reserved (group|toolset|prefix)|McpToolGroup|demot(ed|ion)|shopware-/iu,
+  },
+  // Catch: A plugin MCP tool tags its service with `mcp.tool` instead of `shopware.mcp.tool`
+  // and places #[McpTool] on __invoke() instead of the class, so McpToolDiscoveryCompilerPass
+  // skips it and never assigns it to the Admin API server. Needs a major+ finding in src/
+  // that names MCP-003 or describes the wrong DI tag or attribute placement.
+  // Ignore: The same plugin tool uses `shopware.mcp.tool` and places #[McpTool] on the class.
+  // A minor+ finding that names MCP-003 or calls the registration broken is a false positive.
+  'mcp-plugin-registration': {
+    rule: 'MCP-003',
+    file: 'src/**',
+    minSeverity: 'major',
+    summary:
+      /shopware\.mcp\.tool|\bmcp\.tool\b|McpToolDiscoveryCompilerPass|unassigned|not assigned|class(-level| attribute)|on the class|on __invoke/iu,
+  },
+  // Catch: A mutating plugin MCP tool (with bool $dryRun = true) declares ToolAnnotations
+  // with readOnlyHint: true, hiding its write capability from clients. Needs a minor+
+  // finding in src/ that names MCP-005 or describes the wrong ToolAnnotations hints.
+  // Ignore: The same write tool declares readOnlyHint: false, destructiveHint: true,
+  // idempotentHint: false, openWorldHint: false and #[Schema] on its parameters.
+  'mcp-tool-annotations': {
+    rule: 'MCP-005',
+    file: 'src/**',
+    minSeverity: 'minor',
+    summary: /ToolAnnotations|readOnlyHint|destructiveHint|annotations|\bSchema\b|McpToolDependsOn/iu,
+  },
+  // Catch: A plugin entity-search MCP tool builds Criteria from JSON and calls the
+  // repository without AclCriteriaValidator, and returns raw jsonSerialize() instead of
+  // McpEntityIncludes + JsonEntityEncoder. Needs a major+ finding in src/ that names
+  // MCP-006 or describes the missing criteria ACL validation or unbounded serialization.
+  // Ignore: The same tool checks registry->has(), validates with AclCriteriaValidator,
+  // calls applyDefaultIncludes(), and serializes via JsonEntityEncoder.
+  'mcp-entity-criteria': {
+    rule: 'MCP-006',
+    file: 'src/**',
+    minSeverity: 'major',
+    summary:
+      /AclCriteriaValidator|McpEntityIncludes|applyDefaultIncludes|JsonEntityEncoder|jsonSerialize|association (ACL|read|privilege)/iu,
+  },
+  // Catch: A serverless app MCP tool in Resources/mcp.xml points at /store-api/script/...
+  // (HTTP-cached) and its Twig script reads raw request content instead of POST form
+  // arguments. Needs a major+ finding that names MCP-007 or describes /api/script/ or
+  // hook.request.request.all('arguments').
+  // Ignore: The app tool targets /api/script/... and reads hook.request.request.all('arguments').
+  'mcp-app-script': {
+    rule: 'MCP-007',
+    file: '**',
+    minSeverity: 'major',
+    summary:
+      /\/api\/script\/|\/store-api\/script\/|HTTP cache|cache\.disable|request\.all\(['"]arguments['"]\)|form param|subrequest/iu,
+  },
+  // Catch: A dynamic #[McpResourceTemplate] class is tagged `mcp.resource` instead of
+  // `mcp.resource_template` and uses CacheScope::Public on its ReadResourceResult. Needs
+  // a major+ finding in src/ that names MCP-008 or describes the wrong tag or public cache.
+  // Ignore: The same template uses `mcp.resource_template` and CacheScope::Private.
+  'mcp-resource-template': {
+    rule: 'MCP-008',
+    file: 'src/**',
+    minSeverity: 'major',
+    summary:
+      /mcp\.resource_template|\bmcp\.resource\b|CacheScope::Public|public cache|private|ResourceNotFoundException|McpResourceTemplate/iu,
+  },
   // Catch: The RELEASE_INFO entry opens with a bold label. Needs a minor+ finding in
   // RELEASE_INFO-*.md that names CORE-049 or describes the bold label.
   // Ignore: The same RELEASE_INFO entry without the bold label. A minor+ finding that

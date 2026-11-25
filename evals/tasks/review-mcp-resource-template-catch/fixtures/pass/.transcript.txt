@@ -1,0 +1,16 @@
+The resource template is registered with `mcp.resource` instead of `mcp.resource_template` and uses `CacheScope::Public` instead of `CacheScope::Private`.
+
+```json
+{
+  "findings": [
+    {
+      "rule_id": "MCP-008",
+      "severity": "major",
+      "file": "src/Mcp/Resource/LoyaltyReportResource.php",
+      "line": 35,
+      "summary": "LoyaltyReportResource sets CacheScope::Public on a caller-scoped MCP resource and is tagged `mcp.resource` instead of `mcp.resource_template` in services.xml.",
+      "fix": "Use CacheScope::Private (or McpResourceCacheHint::read()) and change the DI tag in services.xml to `mcp.resource_template`."
+    }
+  ]
+}
+```

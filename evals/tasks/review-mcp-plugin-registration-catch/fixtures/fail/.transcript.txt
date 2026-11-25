@@ -1,0 +1,16 @@
+Minor style note on attribute ordering.
+
+```json
+{
+  "findings": [
+    {
+      "rule_id": "MCP-003",
+      "severity": "nit",
+      "file": "src/Mcp/Tool/TierListTool.php",
+      "line": 24,
+      "summary": "Putting #[McpTool] on the class is cleaner.",
+      "fix": "Move the attribute."
+    }
+  ]
+}
+```

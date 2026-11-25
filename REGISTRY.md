@@ -19,6 +19,7 @@ the surface skills can all be installed together without contradicting (see
 | `sw-php-foundation` | maintainer | any PHP | Writing/refactoring PHP for Shopware: types, enums, DTOs, coding style | Non-PHP, generic JS/Vue/Twig-only work |
 | `sw-core-development` | maintainer (platform-controlled) | platform (`shopware/shopware`, `src/`) | Public API, deprecation, PHPStan baseline, RELEASE_INFO. A private bugfix stays with shopware-php-code | Plugins, apps, a private CartProcessor fix |
 | `sw-openapi-dto` | maintainer (platform-controlled) | platform (`src/Core/Framework/Api`, schema JSON with `x-dto-namespace`) | Generated request and response DTOs: schema-first changes, `open-api:generate-dtos`, field presence and defaults, returning a response DTO, generator fixtures. Experimental, core PR 17858 | Core routes without DTOs, plugin Store API schemas, hand-written DTOs |
+| `sw-mcp-development` | maintainer | plugin / app / platform (`**/Mcp/**`, `Resources/mcp.xml`) | Authoring and reviewing Shopware MCP tools, prompts, and resources: `McpToolResponse`, `McpToolResult`, `#[McpToolGroup]`, `ToolAnnotations`, dry-run writes, DAL criteria/includes, serverless app scripts, resource templates. Experimental, targets 6.7.15+ / 6.8.0 | MCP tool ACL privileges (`sw-security`), running or configuring an MCP server, plain Store-API routes |
 | `sw-plugin-development` | maintainer | plugin / project (`custom/plugins`, project `src/`) | PHP extensions on top of Shopware: DAL, services, cache, migrations, decoration, 6.6–6.8 compat, XML DI → PHP | Platform code, declarative apps, generic PHP libraries |
 | `sw-app-development` | maintainer | app (`custom/apps`, `manifest.xml`) | Declarative apps: manifest, permissions, app scripts, webhooks, Admin API | Plugin PHP (DI/DAL/decoration), platform code |
 | `sw-architecture` | maintainer | any PHP refactor / design | Introducing a new structure, or breaking an existing one without the diff saying so. Event vs decoration, silent second path, layer boundary, repository search with no limit | Writing the ADR or RELEASE_INFO, secrets, a private bugfix |
@@ -54,7 +55,8 @@ the surface skills can all be installed together without contradicting (see
 | Access and cache defaults of existing routes (`_routeScope`, `_loginRequired`, `_httpCache`, `_acl`) | `sw-security` |
 | Idempotency keys and replayed responses scoped to their caller | `sw-security` |
 | Parsing XML from outside the extension (`XmlParser` over `XmlUtils`) | `sw-security` |
-| MCP tool ACL and privilege checks (`#[McpToolRequires]`, `requirePrivilegeResult()`); tool authoring itself is not covered | `sw-security` |
+| MCP tool ACL and privilege checks (`#[McpToolRequires]`, `requirePrivilegeResult()`, Store API vs Admin API ACL); tool authoring belongs to `sw-mcp-development` | `sw-security` |
+| MCP capability authoring (PHP tools, prompts, resources, resource templates, `McpToolResponse`/`McpToolResult`, tool groups, `ToolAnnotations`, dry-run writes, DAL criteria/includes, serverless `mcp.xml` app tools) | `sw-mcp-development` |
 | Plugin/extension Store-API & Admin OpenAPI contracts | `sw-plugin-development` |
 | Plugin/extension Store-API & Admin request and response compatibility (field types, required parameters, status codes, validation) | `sw-plugin-development` |
 | Core Admin/Store API OpenAPI schemas | `sw-core-development` |

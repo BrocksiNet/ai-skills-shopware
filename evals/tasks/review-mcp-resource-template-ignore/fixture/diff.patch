@@ -1,0 +1,58 @@
+diff --git a/src/Mcp/Resource/LoyaltyReportResource.php b/src/Mcp/Resource/LoyaltyReportResource.php
+new file mode 100644
+--- /dev/null
++++ b/src/Mcp/Resource/LoyaltyReportResource.php
+@@ -0,0 +1,38 @@
++<?php declare(strict_types=1);
++
++namespace Swag\Loyalty\Mcp\Resource;
++
++use Mcp\Capability\Attribute\McpResourceTemplate;
++use Mcp\Exception\ResourceNotFoundException;
++use Mcp\Schema\Content\TextResourceContents;
++use Mcp\Schema\Enum\CacheScope;
++use Mcp\Schema\Result\ReadResourceResult;
++use Swag\Loyalty\Report\ReportStorage;
++
++#[McpResourceTemplate(
++    uriTemplate: 'swag://loyalty/report/{id}',
++    name: 'swag-loyalty-report',
++    description: 'Read a generated loyalty report by ID.',
++    mimeType: 'application/json',
++)]
++class LoyaltyReportResource
++{
++    public function __construct(
++        private readonly ReportStorage $storage,
++    ) {
++    }
++
++    public function __invoke(string $id): ReadResourceResult
++    {
++        $report = $this->storage->find($id);
++        if ($report === null) {
++            throw new ResourceNotFoundException(\sprintf('Report "%s" not found.', $id));
++        }
++
++        return new ReadResourceResult(
++            [new TextResourceContents('swag://loyalty/report/' . $id, 'application/json', $report)],
++            60_000,
++            CacheScope::Private,
++        );
++    }
++}
+diff --git a/src/Resources/config/services.xml b/src/Resources/config/services.xml
+--- a/src/Resources/config/services.xml
++++ b/src/Resources/config/services.xml
+@@ -10,5 +10,11 @@
+ 
+             <tag name="shopware.mcp.tool"/>
+         </service>
++
++        <service id="Swag\Loyalty\Mcp\Resource\LoyaltyReportResource">
++            <argument type="service" id="Swag\Loyalty\Report\ReportStorage"/>
++
++            <tag name="mcp.resource_template"/>
++        </service>
+     </services>
+ </container>

@@ -1,0 +1,16 @@
+Small nit about serialization style.
+
+```json
+{
+  "findings": [
+    {
+      "rule_id": "MCP-006",
+      "severity": "nit",
+      "file": "src/Mcp/Tool/ProductCriteriaTool.php",
+      "line": 62,
+      "summary": "Consider using JsonEntityEncoder.",
+      "fix": "Use JsonEntityEncoder."
+    }
+  ]
+}
+```

@@ -1,0 +1,16 @@
+Minor style note on resource template.
+
+```json
+{
+  "findings": [
+    {
+      "rule_id": "MCP-008",
+      "severity": "nit",
+      "file": "src/Mcp/Resource/LoyaltyReportResource.php",
+      "line": 35,
+      "summary": "Consider double-checking the cache scope.",
+      "fix": "Review CacheScope."
+    }
+  ]
+}
+```

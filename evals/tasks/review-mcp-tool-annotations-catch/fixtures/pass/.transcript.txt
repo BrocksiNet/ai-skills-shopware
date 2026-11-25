@@ -1,0 +1,16 @@
+The write tool marks itself `readOnlyHint: true` because `$dryRun` defaults to `true`, and documents its parameters only in PHPDoc `@param` instead of `#[Schema]`.
+
+```json
+{
+  "findings": [
+    {
+      "rule_id": "MCP-005",
+      "severity": "major",
+      "file": "src/Mcp/Tool/ResetPointsTool.php",
+      "line": 18,
+      "summary": "ResetPointsTool mutates shop data when dryRun=false yet sets ToolAnnotations(readOnlyHint: true), which hides its destructive capability from clients, and puts parameter descriptions only in PHPDoc @param instead of #[Schema].",
+      "fix": "Set ToolAnnotations(readOnlyHint: false, destructiveHint: true, idempotentHint: true, openWorldHint: false) and move parameter descriptions onto #[Schema(description: '...')] attributes on __invoke()."
+    }
+  ]
+}
+```

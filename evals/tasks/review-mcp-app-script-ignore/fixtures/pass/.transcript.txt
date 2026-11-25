@@ -1,0 +1,7 @@
+The serverless app MCP tool targets `/api/script/swag-inventory-check`, reads `hook.request.request.all('arguments')`, and returns the `{ success: true, data: ... }` JSON envelope. No issues found.
+
+```json
+{
+  "findings": []
+}
+```

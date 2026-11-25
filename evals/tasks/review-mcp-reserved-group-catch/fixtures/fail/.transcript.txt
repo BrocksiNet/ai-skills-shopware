@@ -1,0 +1,16 @@
+Minor naming suggestion on the tool group.
+
+```json
+{
+  "findings": [
+    {
+      "rule_id": "MCP-002",
+      "severity": "nit",
+      "file": "src/Mcp/Tool/PointsSummaryTool.php",
+      "line": 21,
+      "summary": "A more descriptive group name than discovery might be clearer.",
+      "fix": "Consider renaming the group."
+    }
+  ]
+}
+```

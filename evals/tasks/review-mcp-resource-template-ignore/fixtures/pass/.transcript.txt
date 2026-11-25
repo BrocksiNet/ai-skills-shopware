@@ -1,0 +1,7 @@
+The resource template uses `mcp.resource_template`, throws `ResourceNotFoundException` on missing reports, and sets `CacheScope::Private`. No issues found.
+
+```json
+{
+  "findings": []
+}
+```
