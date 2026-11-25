@@ -85,11 +85,8 @@ export function collectImportSources(ast) {
         sources.push(source);
       }
     },
-    CallExpression(path) {
-      if (path.node.callee.type !== 'Import') {
-        return;
-      }
-      const source = stringLiteralValue(path.node.arguments[0]);
+    ImportExpression(path) {
+      const source = stringLiteralValue(path.node.source);
       if (source) {
         sources.push(source);
       }

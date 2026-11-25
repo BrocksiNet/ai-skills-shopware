@@ -96,7 +96,7 @@ function options(id: string, mode: string, noPr = true): DraftOptions {
     prepare: [],
     checks: [{ name: 'draft fixed', cmd: 'grep', args: ['-q', 'fixed', 'DRAFT.md'] }],
     repeats: 1,
-    evalLocal: (o) => {
+    evalLocal: (o): Promise<number> => {
       // Like freezeManifest: eval-local refuses a results file that exists.
       const results = o.env.EVAL_RESULTS ?? '';
       if (existsSync(results) || existsSync(`${results}.manifest.json`)) return Promise.resolve(1);
@@ -110,7 +110,7 @@ function options(id: string, mode: string, noPr = true): DraftOptions {
       return Promise.resolve(0);
     },
     worktree: join(tmp, `wt-${id}`),
-    log: () => {},
+    log: (): void => {},
   };
 }
 

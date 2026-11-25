@@ -73,9 +73,9 @@ concurrency:
   cancel-in-progress: false
 
 env:
-  OPENCODE_VERSION: "2.0.27"
-  CLAUDE_CODE_VERSION: "2.1.301"
-  COPILOT_VERSION: "1.0.103"
+  OPENCODE_VERSION: "2.4.1"
+  CLAUDE_CODE_VERSION: "2.1.332"
+  COPILOT_VERSION: "1.0.115"
   TASK_MAX_BUDGET_USD: "0.50"
   REPEATS: ${{ inputs.repeats || '3' }}
 
@@ -93,11 +93,11 @@ jobs:
       shards: ${{ steps.plan.outputs.shards }}
       tasks: ${{ steps.plan.outputs.tasks }}
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v7
         with:
           fetch-depth: 0
 
-      - uses: actions/setup-node@v5
+      - uses: actions/setup-node@v7
         with:
           node-version: '26'
 
@@ -218,9 +218,9 @@ jobs:
       ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
       COPILOT_GITHUB_TOKEN: ${{ secrets.COPILOT_GITHUB_TOKEN }}
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v7
 
-      - uses: actions/setup-node@v5
+      - uses: actions/setup-node@v7
         with:
           node-version: '26'
 
@@ -257,9 +257,9 @@ jobs:
       EVAL_EXPERIMENT_ID: ${{ github.run_id }}-${{ github.run_attempt }}-${{ matrix.profile.id }}
       EVAL_TASKS: ${{ needs.plan.outputs.tasks }}
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v7
 
-      - uses: actions/setup-node@v5
+      - uses: actions/setup-node@v7
         with:
           node-version: '26'
           cache: npm
@@ -286,7 +286,7 @@ jobs:
             echo "::endgroup::"
           done
 
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         if: always()
         with:
           name: eval-ab-${{ matrix.profile.id }}-${{ matrix.shard.id }}
@@ -304,13 +304,13 @@ jobs:
       matrix:
         profile: ${{ fromJSON(needs.plan.outputs.profiles) }}
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v7
 
-      - uses: actions/setup-node@v5
+      - uses: actions/setup-node@v7
         with:
           node-version: '26'
 
-      - uses: actions/download-artifact@v4
+      - uses: actions/download-artifact@v8
         with:
           pattern: eval-ab-${{ matrix.profile.id }}-*
           path: ${{ runner.temp }}/ab
@@ -349,7 +349,7 @@ jobs:
           set -o pipefail
           bash scripts/eval-gate.sh evals/.results/ab.jsonl | tee -a "$GITHUB_STEP_SUMMARY"
 
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         if: always()
         with:
           name: eval-results-${{ matrix.profile.id }}
@@ -372,13 +372,13 @@ jobs:
       contents: write
       pull-requests: write
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v7
 
-      - uses: actions/setup-node@v5
+      - uses: actions/setup-node@v7
         with:
           node-version: '26'
 
-      - uses: actions/download-artifact@v4
+      - uses: actions/download-artifact@v8
         with:
           name: eval-results-${{ matrix.profile.id }}
           path: ${{ runner.temp }}/results
