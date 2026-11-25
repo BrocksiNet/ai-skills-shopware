@@ -83,7 +83,7 @@ function narrowTo(diff: DiffLines | undefined): ((use: Use) => boolean) | undefi
  *  when no release has it, on the component or a parent it extends: core
  *  never had it, so it cannot go missing. */
 function fromShopware(lookup: Lookup, target: string): boolean {
-  if (target.startsWith('php:')) return true;
+  if (target.startsWith('php:') || target.startsWith('mcp:')) return true;
   if (lookup.get(target) !== undefined) return true;
   const owner = memberOwner(target);
   if (owner === undefined || lookup.get(owner) === undefined) return false;
