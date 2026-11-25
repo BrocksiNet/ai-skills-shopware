@@ -59,6 +59,8 @@ rules/
   catalog.schema.json         # field reference for catalog.json
   sources.json                # repositories drift mining reads, our skills per path, and the review sources
   sources.schema.json         # field reference for sources.json
+  rejected.json               # rule proposals a maintainer dropped, with the reason; suggest-rules checks it
+  rejected.schema.json        # field reference for rejected.json
 
 tools/                        # repo tooling in TypeScript (Node 26, no build step)
   src/                        # typed modules (catalog, rule validator, renderers)

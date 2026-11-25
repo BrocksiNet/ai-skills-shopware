@@ -1,19 +1,20 @@
 // One cluster, one agent question (plan WP12 step 4): build the prompt,
 // parse the answer against the schema and run the checks on each proposal.
-import { readFileSync } from 'node:fs';
-import { join } from 'node:path';
 import type { Catalog } from './catalog.ts';
 import type { Signal } from './signals.ts';
-import { type Check, checkProposal, currentRuleText, inclusionCriteria, registryTopics } from './suggest-checks.ts';
+import { type Check, checkProposal, currentRuleText, repoGuides } from './suggest-checks.ts';
 import type { Cluster } from './suggest-cluster.ts';
 import { buildPrompt } from './suggest-prompt.ts';
 import type { Rank } from './suggest-rank.ts';
 import { catalogIndex, relatedRules, type RuleIndex } from './suggest-related.ts';
+import { droppedIndex, loadRejected, type Rejected, repeatsRejected } from './suggest-rejected.ts';
 import { isProposal, parseAnswer, type Proposal } from './suggest-schema.ts';
 
 export const MAX_PROPOSALS = 3;
 /** Rules found by keyword match, on top of the cluster's mapped rules. */
 export const MAX_RELATED = 8;
+/** Dropped proposals and retired rules shown, found the same way. */
+export const MAX_DROPPED = 5;
 
 export type { Ask } from './agent-ask.ts';
 
@@ -51,6 +52,10 @@ export interface AskContext {
   maxSignals: number;
   /** Every active rule, for the keyword match of unmapped signals. */
   index: RuleIndex;
+  /** rules/rejected.json: proposals a maintainer dropped. */
+  rejected: Rejected[];
+  /** Rejected proposals and retired rules, for the same keyword match. */
+  dropped: RuleIndex;
 }
 
 export function askContext(
@@ -58,12 +63,14 @@ export function askContext(
   catalog: Catalog,
   rest: Pick<AskContext, 'privateSources' | 'trustOf' | 'maxSignals'>,
 ): AskContext {
+  const rejected = loadRejected(root);
   return {
     root,
     catalog,
-    topics: registryTopics(readFileSync(join(root, 'REGISTRY.md'), 'utf8')),
-    criteria: inclusionCriteria(readFileSync(join(root, 'README.md'), 'utf8')),
+    ...repoGuides(root),
     index: catalogIndex(root, catalog),
+    rejected,
+    dropped: droppedIndex(catalog, rejected),
     ...rest,
   };
 }
@@ -82,6 +89,7 @@ export function clusterPrompt(c: Cluster, x: AskContext, retirement?: string): s
       text: currentRuleText(x.root, x.catalog, id),
     })),
     related: retirement === undefined ? relatedRules(x.index, shown, c.rules, MAX_RELATED) : [],
+    dropped: retirement === undefined ? relatedRules(x.dropped, shown, [], MAX_DROPPED) : [],
     signals: retirement === undefined ? shown.map((signal) => ({ signal, trust: x.trustOf(signal) })) : [],
     ...(retirement === undefined ? {} : { retirement: `${retirement} (evidence ID ${shown[0]?.url ?? ''})` }),
     maxProposals: retirement === undefined ? MAX_PROPOSALS : 1,
@@ -101,6 +109,13 @@ export function checkAnswer(c: Cluster, x: AskContext, text: string): Answered {
   const parsed = parseAnswer(text, MAX_PROPOSALS);
   const suggestions = parsed.proposals.map((p) => {
     const checks = checkProposal(p, { catalog: x.catalog, topics: x.topics, shown });
+    const repeated = repeatsRejected(p, x.rejected);
+    if (repeated !== undefined)
+      checks.push({
+        name: 'not rejected before',
+        ok: false,
+        detail: `repeats "${repeated.title}", dropped ${repeated.date}${repeated.pr === undefined ? '' : ` in ${repeated.pr}`}: ${repeated.reason}`,
+      });
     return {
       ...p,
       cluster: c.key,
