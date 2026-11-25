@@ -21,6 +21,7 @@ import {
 } from './skill-checks.ts';
 import { routerErrors } from './router-index.ts';
 import { sourceErrors } from './sources.ts';
+import { rejectedErrors } from './suggest-rejected.ts';
 import { compareText } from './text.ts';
 
 const MAX_DESCRIPTION = 1024;
@@ -92,6 +93,7 @@ export function validateSkills(o: ValidateSkillsOptions): number {
   if (checkRoutes(o.root, o.out) !== 0) report('reference routing check failed (see above)');
   o.out('\nChecking drift sources\n');
   for (const e of sourceErrors(o.root, skills)) report(e);
+  for (const e of rejectedErrors(o.root, skills)) report(e);
   o.out('\nChecking sw-skill-router index and sw-help\n');
   for (const e of routerErrors(o.root)) report(e);
 

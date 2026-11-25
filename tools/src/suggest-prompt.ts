@@ -23,6 +23,9 @@ export interface PromptInput {
   rules: PromptRule[];
   /** Other rules the signals share words with (suggest-related.ts). */
   related?: PromptRule[];
+  /** Rejected proposals and retired rules the signals share words with
+   *  (suggest-rejected.ts); each text ends with why it was dropped. */
+  dropped?: PromptRule[];
   signals: { signal: Signal; trust: number }[];
   /** Deterministic retirement evidence, for a retirement candidate. */
   retirement?: string;
@@ -70,6 +73,18 @@ function rulesBlock(rules: PromptRule[], none = 'None: no catalog rule is mapped
 const topicsBlock = (topics: Map<string, string[]>): string[] =>
   [...topics].map(([skill, list]) => `- ${skill}: ${list.join('; ')}`);
 
+/** The mapped, related and dropped rules, each under its heading. */
+const rulesSection = (p: PromptInput): string[] => [
+  'Current rules mapped to this cluster:',
+  ...rulesBlock(p.rules),
+  '',
+  'Other current rules the signals share words with (one may already cover a signal; then answer `none` or `update` with its ID):',
+  ...rulesBlock(p.related ?? [], 'None.'),
+  '',
+  'Rules dropped before, with the reason (do not propose one of them again unless the signals show something the reason does not cover; then say so in `criteria.delta`):',
+  ...rulesBlock(p.dropped ?? [], 'None.'),
+];
+
 export function buildPrompt(p: PromptInput): string {
   const retire = p.retirement !== undefined;
   return [
@@ -101,11 +116,7 @@ export function buildPrompt(p: PromptInput): string {
     'Topics per owning skill (REGISTRY.md):',
     ...topicsBlock(p.topics),
     '',
-    'Current rules mapped to this cluster:',
-    ...rulesBlock(p.rules),
-    '',
-    'Other current rules the signals share words with (one may already cover a signal; then answer `none` or `update` with its ID):',
-    ...rulesBlock(p.related ?? [], 'None.'),
+    ...rulesSection(p),
     ...(retire ? ['', `Retirement evidence: ${p.retirement ?? ''}`] : []),
     '',
     'Answer schema:',

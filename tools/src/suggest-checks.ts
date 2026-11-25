@@ -38,6 +38,12 @@ export function inclusionCriteria(readme: string): string {
   return items.slice(0, 5).join('\n');
 }
 
+/** The topics per skill and the inclusion criteria, read from the repo. */
+export const repoGuides = (root: string): { topics: Map<string, string[]>; criteria: string } => ({
+  topics: registryTopics(readFileSync(join(root, 'REGISTRY.md'), 'utf8')),
+  criteria: inclusionCriteria(readFileSync(join(root, 'README.md'), 'utf8')),
+});
+
 const ITEM = /^(\s*)(?:[-*]|[0-9]+\.)\s/u;
 
 /** The bullet that states a rule, `**ID**` up to the next item, blank line
