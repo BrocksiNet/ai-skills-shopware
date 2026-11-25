@@ -93,6 +93,7 @@
     {
       "reference": "../sw-change-impact/references/impact-review.md",
       "when": "The extension caches a computed value under its own key.",
+      "hint": "`CacheInterface` / `CacheItemPoolInterface`",
       "anchors_any": [
         "Contracts\\\\Cache\\\\(CacheInterface|TagAwareCacheInterface)",
         "CacheItemPoolInterface"
@@ -126,7 +127,10 @@
       "reference": "../sw-review-learnings/references/change-scope.md"
     },
     {
-      "reference": "../sw-testing/references/test-shape-and-flags.md"
+      "reference": "../sw-testing/references/test-assertions-and-shape.md"
+    },
+    {
+      "reference": "../sw-testing/references/flags-stubs-and-reflection.md"
     },
     {
       "reference": "../sw-testing/references/integration-repository.md"

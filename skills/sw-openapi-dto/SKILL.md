@@ -1,18 +1,12 @@
 ---
 name: sw-openapi-dto
 description: >-
-  Rules for the PHP request and response DTOs that shopware/shopware generates
-  from its OpenAPI schema JSON. Load it before any edit that touches an
-  operation with x-dto-namespace, x-dto-package or x-dto-inline, a generated
-  DTO ("This file is auto-generated"), AbstractDto, AbstractRequest,
-  AbstractResponse, DTOResponseListener, a core controller with
-  MapRequestPayload that returns a response DTO, the open-api:generate-dtos
-  command, or the generator fixtures under tests/unit/Core/Framework/Api/OpenApi.
-  Covers schema-first changes, field presence and null, DEFAULT_ constants,
-  extensions, status codes and headers. Do NOT use for a core route without
-  DTOs (sw-core-development), a plugin Store API route or schema
-  (sw-plugin-development), or a hand-written PHP DTO or value object
-  (sw-php-foundation).
+  Rules for PHP DTOs generated from shopware/shopware OpenAPI JSON. Load before
+  editing x-dto-* schemas, auto-generated DTOs, AbstractDto, AbstractRequest,
+  AbstractResponse, DTOResponseListener, MapRequestPayload DTO controllers,
+  open-api:generate-dtos, or OpenApi generator tests. Do NOT use for non-DTO
+  core routes (sw-core-development), plugins (sw-plugin-development), or
+  hand-written DTOs (sw-php-foundation).
 license: MIT
 metadata:
   contexts: core
@@ -56,7 +50,7 @@ Read only the reference that matches the task or the files it changes:
 <!-- routes:start: generated from routes.json by `node tools/bin/render-routes.ts`; do not edit -->
 | Read | When | Or the change touches |
 | ---- | ---- | --------------------- |
-| [`schema-and-generation.md`](references/schema-and-generation.md) | You add or change an operation that generates DTOs, or touch a generated DTO. | `src/Core/Framework/Api/OpenApi/**`, `src/Core/Framework/Api/Command/OpenApiDtoGenerationCommand.php`, `"x-dto-(namespace\|package\|inline)"`, … |
+| [`schema-and-generation.md`](references/schema-and-generation.md) | You add or change an operation that generates DTOs, or touch a generated DTO. | `Api/OpenApi/**`, `OpenApiDtoGenerationCommand.php`, `x-dto-*` |
 | [`dto-contract.md`](references/dto-contract.md) | Code reads or fills a generated DTO, or you change the DTO base classes. | `src/Core/Framework/Api/AbstractDto.php`, `src/Core/Framework/Api/Request/**`, `extends Abstract(Dto\|Request\|Response)\b`, … |
 | [`route-wiring.md`](references/route-wiring.md) | A controller takes a generated request DTO or returns a generated response DTO. | `#[MapRequestPayload]`, … |
 | [`generator-tests.md`](references/generator-tests.md) | You change the generator or its tests and fixtures. | `src/Core/Framework/Api/OpenApi/OpenApiDto*.php`, `tests/unit/Core/Framework/Api/OpenApi/**`, … |

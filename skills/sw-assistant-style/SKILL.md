@@ -1,12 +1,10 @@
 ---
 name: sw-assistant-style
 description: >-
-  Answer Shopware questions in plain, concise, human language, and write
-  support-ticket replies as one copy-ready block. Use when drafting a customer
-  or support answer, when the user asks for a short or simple explanation, or
-  whenever Shopware help should read direct, with honest uncertainty, no AI
-  filler, and no em dashes. Do NOT use for code rules, PR templates, or
-  release-note content; those belong to the surface and workflow skills.
+  Answer Shopware questions in plain, concise language and write copy-ready
+  support replies. Use for customer/support answers or short, direct
+  explanations with honest uncertainty and no AI filler or em dashes. Do NOT
+  use for code rules, PR templates, or release notes.
 license: MIT
 metadata:
   contexts: core plugin app project

@@ -108,6 +108,79 @@ In a `shopware/shopware` checkout that ships its own `.agents/skills/`, core's
 skills lead for platform work and ours are an overlay. See
 [`skill-resolution.md`](skill-resolution.md).
 
+## Automatic routing hook (Claude Code)
+
+Agents often forget to invoke skills on their own. In Claude Code, wire
+`route.mjs --hook` as a `UserPromptSubmit` hook (and optionally `PostToolUse`
+on `Edit|Write`) so the matched skills, references, and active rule IDs arrive
+automatically whenever the diff changes — and print nothing when the matched
+set has not changed (state is stored in `git rev-parse --git-dir`, so worktrees
+stay isolated):
+
+```json
+{
+  "hooks": {
+    "UserPromptSubmit": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node .claude/skills/sw-skill-router/scripts/route.mjs --hook --task build"
+          }
+        ]
+      }
+    ],
+    "PostToolUse": [
+      {
+        "matcher": "Edit|Write",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node .claude/skills/sw-skill-router/scripts/route.mjs --hook --task build"
+          }
+        ]
+      }
+    ]
+  }
+}
+```
+
+### Slimming the skill listing with `skillOverrides`
+
+**Only pair `"name-only"` with the routing hook above — never enable it
+standalone.** Without the hook, hiding descriptions makes models skip skills
+silently. With the hook active, `sw-skill-router` and `sw-help` keep full
+descriptions while the remaining `sw-*` skills drop to name-only in the
+always-on listing:
+
+```json
+{
+  "skillOverrides": {
+    "sw-php-foundation": { "visibility": "name-only" },
+    "sw-architecture": { "visibility": "name-only" },
+    "sw-security": { "visibility": "name-only" },
+    "sw-plugin-development": { "visibility": "name-only" },
+    "sw-testing": { "visibility": "name-only" },
+    "sw-research-and-escalation": { "visibility": "name-only" },
+    "sw-review-learnings": { "visibility": "name-only" },
+    "sw-change-impact": { "visibility": "name-only" }
+  }
+}
+```
+
+Use `route.mjs --brief --task build` to preview the exact compact pointer list
+the hook injects. Codex and Cursor do not share this hook/override format yet,
+so keep full descriptions there.
+
+### Isolating review skills (`context: fork`)
+
+In Claude Code, self-contained review skills that read `git diff` or `gh`
+directly (`sw-extension-review` and `sw-pr-review`) can run in a forked
+subagent (`context: fork`) so their full borrowed references never bloat the
+main build conversation. Never enable `context: fork` on interactive build
+skills or when the diff exists only in chat history, because a forked subagent
+does not see prior conversation messages.
+
 ## Related tools
 
 - Shopware CLI skills for project and extension workflows:

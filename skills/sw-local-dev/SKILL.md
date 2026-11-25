@@ -1,19 +1,12 @@
 ---
 name: sw-local-dev
 description: >-
-  Run Shopware dev commands in the project's environment: DDEV, Docker
-  Compose, Vagrant, native host PHP, or linked shopware-dev checkouts with
-  Podman and Mutagen. Use when running or scripting php, composer,
-  phpunit, bin/console, phpstan, ecs, npm or database commands, when a
-  check script or hook fails with a missing vendor/autoload.php or a
-  container that does not exist, when choosing between ddev exec, docker
-  compose exec, vagrant ssh and podman compose exec, for shopware-dev lanes
-  (trunk.localhost, Mutagen sync, lane create/update/remove, Podman disk
-  cleanup, OpenSearch on a lane), and for Shopware CLI projects with
-  .shopware-project.yml (project console, project validate, extension
-  validate). Do NOT use for CI log interpretation, PR descriptions, PHPUnit
-  test structure rules (sw-testing), or unrelated PHP, Node, Nuxt or Astro
-  projects.
+  Run Shopware commands in the project's environment: DDEV, Docker Compose,
+  Vagrant, native PHP, shopware-dev Podman/Mutagen lanes, or Shopware CLI
+  (.shopware-project.yml). Use for php, composer, phpunit, bin/console,
+  phpstan, ecs, npm, DB commands, lane management, or missing vendor/container
+  errors. Do NOT use for CI logs, PR descriptions, PHPUnit authoring rules
+  (sw-testing), or non-Shopware repos.
 license: MIT
 metadata:
   contexts: core plugin app project

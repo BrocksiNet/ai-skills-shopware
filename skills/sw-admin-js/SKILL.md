@@ -1,17 +1,11 @@
 ---
 name: sw-admin-js
 description: >-
-  Shopware 6 Administration rules for JS, TypeScript, Vue, and Jest. Load it
-  before editing any Admin code under src/Administration or a plugin's
-  Resources/app/administration, even a small review fix: Vue modules and
-  imports between them, single file component overrides, Meteor mt-*
-  components such as mt-modal, Pinia stores, Admin ACL privileges, Admin
-  TypeScript, Jest specs next to the component, or Admin changes for 6.8.
-  Also use when asked whether Shopware 6.8 requires rewriting a Twig/Options
-  API Administration override as a single file component with
-  swDefineOverride. Do NOT use for storefront Twig/PluginManager
-  (sw-storefront), PHPUnit (sw-testing), or PHP DAL/services (surface PHP
-  skills).
+  Shopware 6 Administration rules for JS, TypeScript, Vue, and Jest. Load
+  before editing src/Administration or Resources/app/administration: Vue
+  modules, SFC or Twig/Options API overrides (swDefineOverride), Meteor mt-*
+  components, Pinia stores, Admin ACL, Jest specs, or 6.8 upgrades. Do NOT use
+  for storefront (sw-storefront), PHPUnit (sw-testing), or PHP backend.
 license: MIT
 metadata:
   contexts: core plugin app project
@@ -36,7 +30,7 @@ Read only the reference that matches the task or the files it changes:
 <!-- routes:start: generated from routes.json by `node tools/bin/render-routes.ts`; do not edit -->
 | Read | When | Or the change touches |
 | ---- | ---- | --------------------- |
-| [`architecture.md`](references/architecture.md) | You add a module, component override or ACL privilege. | `Resources/app/administration/src/module/**`, `Resources/app/administration/src/**/acl/index.{js,ts}`, `Shopware.Module.register(`, … |
+| [`architecture.md`](references/architecture.md) | You add a module, component override or ACL privilege. | `administration/src/module/**`, `acl/index.*`, `Shopware.Module.register(` |
 | [`extension-api.md`](references/extension-api.md) | You change a shipped component, template block or position identifier. | `blocks-list.json`, `administration/public-api/**`, `positionIdentifier`, … |
 | [`testing.md`](references/testing.md) | You write or fix a Jest spec or the shared Jest setup. | `Resources/app/administration/**/*.spec.{js,ts}`, `Resources/app/administration/test/_setup/**`, `shallowMount(`, … |
 | [`flags-and-modern-web.md`](references/flags-and-modern-web.md) | A change needs a feature flag, a deprecation or a modern web API. | `Shopware.Feature.isActive(`, … |

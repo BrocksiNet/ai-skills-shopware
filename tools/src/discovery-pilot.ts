@@ -61,7 +61,7 @@ function mergeDiscovery(root: string, packageRoot: string): void {
   const resolved = loadRoutes(router);
   if (resolved === null) throw new Error('pilot router has no reference routes');
   writeFileSync(join(router, 'SKILL.md'), applyTable(candidate, resolved));
-  writeFileSync(join(router, 'index.json'), renderIndex(buildIndex(packageRoot)));
+  writeFileSync(join(router, 'index.json'), renderIndex(buildIndex(packageRoot, root)));
 }
 
 export function prepareDiscovery(root: string, destination: string): void {

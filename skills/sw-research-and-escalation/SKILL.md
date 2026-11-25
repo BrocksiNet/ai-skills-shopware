@@ -1,13 +1,10 @@
 ---
 name: sw-research-and-escalation
 description: >-
-  Research Shopware behavior instead of guessing, know where to look, and
-  escalate when stuck. Use when unsure how Shopware or Symfony does something,
-  whether a class, method, or service exists or behaves as assumed, which
-  version applies, when a change should be verified first, or when an approach
-  keeps failing. Do NOT use for topics you are confident about, or as a
-  substitute for the surface-skill rules (DAL, cache, testing): it tells you
-  when and how to verify, not the rules themselves.
+  Verify Shopware/Symfony behavior against installed source and docs instead of
+  guessing, and escalate when stuck. Use when unsure if a class, method, or
+  service exists, which version applies, or when an approach keeps failing. Do
+  NOT use when confident or as a substitute for surface-skill rules.
 license: MIT
 metadata:
   contexts: core plugin app project

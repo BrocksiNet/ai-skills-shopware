@@ -1,11 +1,10 @@
 ---
 name: sw-security
 description: >-
-  Use when adding or changing a controller, Store-API route, Admin route,
-  ACL privilege, webhook, or anything that reads a secret or an access key.
-  Do NOT use for generic OWASP lectures, PHPUnit structure
-  (sw-testing), or OpenAPI shape without a privilege or credential
-  (sw-plugin-development).
+  Shopware security rules for controllers, Store/Admin API routes, ACL
+  privileges, webhooks, and secrets or access keys. Load before changing route
+  auth, ACL, or secret handling. Do NOT use for generic OWASP lectures, PHPUnit
+  (sw-testing), or non-auth OpenAPI shape (sw-plugin-development).
 license: MIT
 metadata:
   contexts: core plugin app project

@@ -5,6 +5,7 @@ import { join } from 'node:path';
 import { describe, test } from 'node:test';
 import {
   END,
+  MAX_TRIGGER_LEN,
   START,
   applyTable,
   fixedReferences,
@@ -256,6 +257,8 @@ describe('routing input and rendering contracts', () => {
     const cases = [
       { fields: { reference: '' }, error: /reference must be a string/u },
       { fields: { when: '' }, error: /when must be a non-empty string/u },
+      { fields: { hint: '' }, error: /hint must be a non-empty string/u },
+      { fields: { hint: 42 }, error: /hint must be a non-empty string/u },
       { fields: { paths_any: ['**/*.php', 4] }, error: /paths_any must be a list/u },
       { fields: { anchors_any: ['valid', null] }, error: /anchors_any must be a list/u },
       { fields: { always: 'yes' }, error: /always must be true or false/u },
@@ -333,6 +336,16 @@ describe('routing decision and documentation workflows', () => {
     assert.match(table(['a', 'b', 'c'], []), /\| A \| `a`, `b`, … \|/u);
     assert.match(table(['a'], ['x', 'y']), /\| A \| `a`, `x`, … \|/u);
     assert.match(table(['**/**/a', 'src/**/b'], []), /\| A \| `a`, `src\/\*\*\/b` \|/u);
+  });
+  test('long trigger tokens are capped at MAX_TRIGGER_LEN and hint overrides raw triggers in tables', () => {
+    const exact = 'a'.repeat(MAX_TRIGGER_LEN);
+    const over = 'b'.repeat(MAX_TRIGGER_LEN + 1);
+    assert.match(table([], [exact]), new RegExp(`\\| A \\| \`${exact}\` \\|`, 'u'));
+    assert.match(table([], [over]), new RegExp(`\\| A \\| \`${'b'.repeat(MAX_TRIGGER_LEN - 1)}…\` \\|`, 'u'));
+    const hinted = renderTable({
+      routes: [{ reference: 'references/a.md', when: 'A', hint: 'a | b comments', anchors_any: [over] }],
+    });
+    assert.match(hinted, /\| A \| a \\\| b comments \|/u);
   });
   test('load errors keep independent problems separated and malformed JSON keeps its parse diagnostic', () => {
     const dir = skill({ routes: [{ reference: 'references/a.md', when: 'A', always: true }] });

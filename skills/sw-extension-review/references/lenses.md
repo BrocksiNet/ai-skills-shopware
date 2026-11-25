@@ -136,11 +136,9 @@ itself. Do not report them on a plugin or app diff:
 
 - `ARCH-004`: new core Store API routes publish a typed extension event.
 - `TEST-031`: tests for major feature flag behavior.
-- `TEST-007` and the untagged "Package attribute and `@internal`" and
-  "Coverage annotations" sections of `test-shape-and-flags.md`: the
-  `#[Package]` attribute, `@internal`, and no `#[CoversClass]` on
-  integration tests are core's PHPStan conventions. A plugin test needs
-  none of them.
+- `TEST-007`, `TEST-008`, `TEST-010`, `TEST-015`: core's `#[Package]`,
+  `@internal`, cross-test `@see`, and `#[CoversClass]` conventions live in
+  `core-platform-patterns.md`; a plugin test needs none of them.
 - `CORE-064` and `CORE-065`: shims for core removals and gating code that
   ends at the major.
 - `CORE-011`, `CORE-012`, `CORE-013`, `CORE-014`, `CORE-015`, `CORE-017`,

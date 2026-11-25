@@ -198,7 +198,7 @@ describe('shopware 2026-10-05..2026-10-11', () => {
   test('the feature flag bullet lands on the sw-testing reference that holds the flag rules', async () => {
     const t = await text;
     assert.match(
-      group(t, 'sw-testing', '`references/test-shape-and-flags.md`'),
+      group(t, 'sw-testing', '`references/flags-stubs-and-reflection.md`'),
       /- Removed agent skill bullet .*feature-flag state.*\[4a5a519c\][^]*- Added agent skill bullet .*feature-flag state.*\[4a5a519c\]/u,
     );
     assert.match(group(t, 'sw-testing', 'No rule yet'), /- Added agent skill bullet .*through a trait.*\[0b0a7241\]/u);

@@ -1,9 +1,9 @@
 {
   "sw-extension-review": [
-    "../sw-testing/references/test-shape-and-flags.md"
+    "../sw-testing/references/test-assertions-and-shape.md"
   ],
   "sw-testing": [
-    "references/test-shape-and-flags.md",
+    "references/test-assertions-and-shape.md",
     "references/core-platform-patterns.md"
   ]
 }

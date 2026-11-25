@@ -55,3 +55,13 @@ hands off to `shopware-cli-extension-store` when it is there):
 ```bash
 npx skills add shopware/shopware-cli
 ```
+
+## Optional: isolate reviews with `context: fork` (Claude Code)
+
+`sw-extension-review` loads borrowed references across multiple topic skills.
+When reviewing a branch or PR from `git diff` / `gh pr diff`, running the
+review in a forked Claude Code subagent (`context: fork`) keeps those
+references out of your main build conversation so only the findings come back.
+Reserve `context: fork` strictly for self-contained review skills
+(`sw-extension-review`, `sw-pr-review`) — never for interactive build skills
+that rely on conversation history.

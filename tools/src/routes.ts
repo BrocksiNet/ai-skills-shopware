@@ -35,6 +35,9 @@ export interface Route {
   reference: string;
   /** The task in words; the "When" column of the table. */
   when: string;
+  /** Optional short trigger summary shown in the rendered Markdown table
+   *  instead of raw globs/regexes. Full triggers stay in routes.json and index.json. */
+  hint?: string;
   paths_any?: string[];
   anchors_any?: string[];
   /** Loaded whenever the skill is active; not a diff signal. */
@@ -89,6 +92,7 @@ function routeShapeErrors(r: unknown, here: string, skillDir: string | null): st
     errors.push(`${here}: ${r.reference} not found`);
   }
   if (!isText(r.when)) errors.push(`${here}.when must be a non-empty string`);
+  if (r.hint !== undefined && !isText(r.hint)) errors.push(`${here}.hint must be a non-empty string`);
   if (r.paths_any !== undefined && !isTextList(r.paths_any)) errors.push(`${here}.paths_any must be a list of globs`);
   if (r.anchors_any !== undefined && !isTextList(r.anchors_any)) {
     errors.push(`${here}.anchors_any must be a list of regexes`);
@@ -209,13 +213,20 @@ const showAnchor = (a: string): string => a.replaceAll(/\\([^A-Za-z0-9])/gu, '$1
  *  lists stay in routes.json for the router and CI. */
 export const SHOWN_GLOBS = 2;
 export const SHOWN_ANCHORS = 1;
+/** Cap displayed trigger tokens so long regexes do not bloat SKILL.md tables. */
+export const MAX_TRIGGER_LEN = 48;
+
+const trimToken = (s: string): string => (s.length > MAX_TRIGGER_LEN ? `${s.slice(0, MAX_TRIGGER_LEN - 1)}…` : s);
 
 function triggers(route: Route): string {
   if (route.always === true) return 'any change';
   if (route.on_demand === true) return 'on demand';
+  if (route.hint !== undefined) return cell(route.hint);
   const globs = unique((route.paths_any ?? []).map((g) => showGlob(g)));
   const anchors = unique((route.anchors_any ?? []).map((a) => showAnchor(a)));
-  const shown = [...globs.slice(0, SHOWN_GLOBS), ...anchors.slice(0, SHOWN_ANCHORS)].map((s) => `\`${cell(s)}\``);
+  const shown = [...globs.slice(0, SHOWN_GLOBS), ...anchors.slice(0, SHOWN_ANCHORS)].map(
+    (s) => `\`${cell(trimToken(s))}\``,
+  );
   if (globs.length > SHOWN_GLOBS || anchors.length > SHOWN_ANCHORS) shown.push('…');
   return shown.join(', ');
 }
@@ -280,9 +291,8 @@ export function routeErrors(skillDir: string, label: string): string[] {
 
   const text = readFileSync(join(skillDir, 'SKILL.md'), 'utf8');
   try {
-    if (applyTable(text, value) !== text) {
+    if (applyTable(text, value) !== text)
       errors.push(`${label}/SKILL.md: routes table is out of date; run node tools/bin/render-routes.ts`);
-    }
   } catch (error) {
     errors.push(`${label}/SKILL.md: ${errorMessage(error)}`);
   }

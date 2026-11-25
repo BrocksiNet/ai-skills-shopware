@@ -1,13 +1,11 @@
 ---
 name: sw-help
 description: >-
-  Explain what the Shopware skills library can do and how to start. Use when
+  Explain what the Shopware skills library offers and how to start. Use when
   the user asks "what can the Shopware skills do", "sw help", "which Shopware
-  skills are there" or "how do I use these skills", or is new to the library
-  and does not know which skill to ask for. Answers with the skills grouped by
-  what the user wants to do, example prompts, and how to install more. Do NOT
-  use to pick the skills for a concrete diff or plan (sw-skill-router) or for
-  Shopware questions themselves.
+  skills are there", or "how do I use these skills". Lists skills by goal,
+  example prompts, and install commands. Do NOT use to route a diff/plan
+  (sw-skill-router).
 license: MIT
 metadata:
   contexts: core plugin app project

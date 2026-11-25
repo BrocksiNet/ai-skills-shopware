@@ -1,15 +1,12 @@
 ---
 name: sw-app-development
 description: >-
-  Build Shopware apps: declarative extensions defined by a manifest.xml, not
-  PHP services. Use when the target is an app: custom/apps, a manifest.xml,
-  app scripts (Resources/scripts/<hook>/*.twig), webhooks, app permissions,
-  Admin API access from an app backend, app registration, Meteor Admin SDK
-  modules, or deciding app vs plugin. Apps run sandboxed: no plugin DI
-  container and no direct DAL / EntityRepository in the shop process. Do NOT
-  use for PHP plugins (custom/plugins -> sw-plugin-development), for the
-  platform itself (sw-core-development), or for generic PHP style
-  (sw-php-foundation).
+  Build Shopware apps: declarative extensions defined by manifest.xml, not PHP
+  services. Load before editing custom/apps, manifest.xml, app scripts
+  (Resources/scripts/<hook>/*.twig), webhooks, app permissions, Admin API
+  access, Meteor Admin SDK modules, or deciding app vs plugin. Do NOT use for
+  PHP plugins (sw-plugin-development), core (sw-core-development), or generic
+  PHP (sw-php-foundation).
 license: MIT
 metadata:
   contexts: app project

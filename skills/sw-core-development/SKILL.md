@@ -1,15 +1,11 @@
 ---
 name: sw-core-development
 description: >-
-  Rules for changing shopware/shopware itself that only core review knows.
-  Load it before any edit on Shopware core trunk (src/Core, src/Storefront,
-  src/Administration, src/Elasticsearch), even a small one: a migration, a
-  new or changed Store API route, a public method or service, a deprecation
-  or call to deprecated code, a feature flag, the PHPStan baseline, or
-  RELEASE_INFO. The question is whether the change breaks extensions or
-  fails core review. A private bugfix in src/Core stays with
-  shopware-php-code when that skill is installed. Do NOT use for a plugin
-  (sw-plugin-development), an app (sw-app-development), or generic PHP style
+  Rules for changing shopware/shopware core that only core review knows. Load
+  before any edit on core trunk (src/Core, src/Storefront, src/Administration,
+  src/Elasticsearch): migrations, Store API routes, public APIs, deprecations,
+  feature flags, PHPStan baseline, or RELEASE_INFO. Do NOT use for plugins
+  (sw-plugin-development), apps (sw-app-development), or generic PHP
   (sw-php-foundation).
 license: MIT
 metadata:
@@ -42,8 +38,8 @@ Read only the reference that matches the task or the files it changes:
 | ---- | ---- | --------------------- |
 | [`deprecations.md`](references/deprecations.md) | You deprecate or break a public API. | `@deprecated tag:v`, … |
 | [`service-architecture.md`](references/service-architecture.md) | You add a service or change what is public. | `src/**/DependencyInjection/*.{xml,php}`, `src/**/Resources/config/services*.{xml,php}`, `* @(internal\|final)$`, … |
-| [`api-schema.md`](references/api-schema.md) | You add or change an Admin or Store API route. | `src/Core/Framework/Api/ApiDefinition/Generator/Schema/**`, `#[Route(` |
-| [`modernization-and-flags.md`](references/modernization-and-flags.md) | You modernize an implementation and choose whether compatibility needs a feature flag. | `src/Core/Framework/Resources/config/packages/feature.yaml`, `Feature::isActive(`, … |
+| [`api-schema.md`](references/api-schema.md) | You add or change an Admin or Store API route. | `ApiDefinition/Generator/Schema/**`, `#[Route(` |
+| [`modernization-and-flags.md`](references/modernization-and-flags.md) | You modernize an implementation and choose whether compatibility needs a feature flag. | `feature.yaml`, `Feature::isActive(`, `HttpClientInterface` |
 | [`release-notes-and-adr.md`](references/release-notes-and-adr.md) | The change needs RELEASE_INFO, UPGRADE or an ADR. | `RELEASE_INFO-*.md`, `UPGRADE-*.md`, … |
 | [`static-analysis-baseline.md`](references/static-analysis-baseline.md) | You touch the PHPStan baseline or suppress a PHPStan error. | `phpstan-baseline.neon`, `phpstan*.neon`, `@phpstan-ignore`, … |
 | [`platform-architecture.md`](references/platform-architecture.md) | You cross a bundle boundary or add a listener or migration. | `src/Core/Migration/**/Migration*.php`, `use Shopware\(Storefront\|Administration)\`, … |

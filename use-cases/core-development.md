@@ -88,3 +88,11 @@ Install at **project level** (the default). Pin with `BrocksiNet/ai-skills-shopw
 Surface skills route by path. Add [`plugin-development.md`](plugin-development.md)
 when you also build extensions;
 [`storefront-development.md`](storefront-development.md) for Twig/theme/Admin JS.
+
+## Optional: hook-driven activation (Claude Code)
+
+Wire `route.mjs --hook --task build` in `.claude/settings.json` so matched
+skills, references, and rule IDs arrive automatically when the diff changes.
+Only alongside that hook, optionally trim the listing with `skillOverrides`
+(`"name-only"` on non-router `sw-*` skills — never standalone). See
+[`docs/installation.md#automatic-routing-hook-claude-code`](../docs/installation.md#automatic-routing-hook-claude-code).

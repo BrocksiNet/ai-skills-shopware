@@ -1,17 +1,11 @@
 ---
 name: sw-architecture
 description: >-
-  Shopware design decisions a plain edit gets wrong: where logic lives
-  (route or controller versus service), how data is read (repository with a
-  limit, not raw SQL on an entity table), and how code is extended (event,
-  decoration, or a core edit). Load it before adding or changing a route,
-  controller, service, repository or Criteria read, event, or extension
-  point in Shopware PHP, even when the task looks like one obvious edit.
-  Also use when a change can break an existing design without the diff
-  saying so: a new extension structure, a boundary between Core and
-  Storefront or Administration, or a second path that fails silently for
-  callers on the old one. Do NOT use to write the ADR or RELEASE_INFO
-  (sw-core-development) or for route privileges (sw-security).
+  Shopware design decisions: where logic lives, repository reads with limits,
+  and extension points (events, decoration, core edits). Load before adding or
+  changing routes, controllers, services, DAL/Criteria reads, events, or
+  Core/Storefront/Admin boundaries in Shopware PHP. Do NOT use for
+  ADRs/RELEASE_INFO (sw-core-development) or route privileges (sw-security).
 license: MIT
 metadata:
   contexts: core plugin app project
@@ -36,8 +30,8 @@ Read only the reference that matches the task or the files it changes:
 | Read | When | Or the change touches |
 | ---- | ---- | --------------------- |
 | [`progressive-enhancement.md`](references/progressive-enhancement.md) | A change must roll out without breaking existing callers. | `Feature::isActive(`, … |
-| [`component-independence.md`](references/component-independence.md) | A change couples two components or bundles. | `use Shopware\(Storefront\|Administration\|Elasticsearch)\` |
-| [`dal-contracts.md`](references/dal-contracts.md) | You touch a DAL definition, entity or repository contract. | `*Definition.php`, `*EntityExtension.php`, `extends (Entity\|EntityTranslation\|MappingEntity)Definition`, … |
+| [`component-independence.md`](references/component-independence.md) | A change couples two components or bundles. | cross-bundle `use Shopware\...` |
+| [`dal-contracts.md`](references/dal-contracts.md) | You touch a DAL definition, entity or repository contract. | `*Definition.php`, `*EntityExtension.php` |
 | [`symfony-in-shopware.md`](references/symfony-in-shopware.md) | You reach for a Symfony component or container feature, or rely on service resets. | `HttpClientInterface`, … |
 | [`extension-mechanisms.md`](references/extension-mechanisms.md) | You choose between an event, a decoration and a core edit, or change an event. | `*Event.php`, `Resources/config/services.{xml,php}`, `decorates`, … |
 | [`anti-patterns.md`](references/anti-patterns.md) | You check a design against known mistakes. | `vendor/shopware/**`, `Doctrine\DBAL\Connection`, … |

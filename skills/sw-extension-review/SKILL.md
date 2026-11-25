@@ -1,15 +1,12 @@
 ---
 name: sw-extension-review
 description: >-
-  Review a Shopware plugin or app diff as a whole before it merges or ships.
-  Use for "review my plugin PR", "review this diff" in custom/plugins or
-  custom/apps, "is this plugin safe to release", "check this before the
-  Store submission", or a findings list with rule IDs and severities for an
-  extension change. It picks the rules by changed path and reports what
-  breaks a real shop. Do NOT use for shopware/shopware core PRs (core
-  sw-review owns those), for answering review threads (sw-pr-review),
-  for writing or fixing the code, or for the blast radius of a finished
-  feature (sw-change-impact).
+  Review a Shopware plugin or app diff before merge or Store release. Use for
+  "review my plugin PR", "review this diff" in custom/plugins or custom/apps,
+  "is this plugin safe to release", or "check this before the Store submission"
+  to get findings with rule IDs and severities. Do NOT use for core PRs (core
+  sw-review), PR threads (sw-pr-review), writing fixes, or blast radius
+  (sw-change-impact).
 license: MIT
 metadata:
   contexts: plugin app project
@@ -49,24 +46,25 @@ Read the references the change selects:
 | [`storefront: js-plugins.md`](../sw-storefront/references/js-plugins.md) | You write or register a storefront JS plugin. | `Resources/app/storefront/src/**/*.{js,ts}`, `PluginManager.register(`, … |
 | [`storefront: twig-and-theme.md`](../sw-storefront/references/twig-and-theme.md) | You edit Twig blocks, the theme, snippets or assets. | `Resources/views/storefront/**/*.twig`, `Resources/app/storefront/src/scss/**`, `{% sw_extends`, … |
 | [`storefront: cache-and-modern-web.md`](../sw-storefront/references/cache-and-modern-web.md) | Content depends on the user or cache, or you need a modern web API. | `CacheTagCollector`, … |
-| [`admin-js: architecture.md`](../sw-admin-js/references/architecture.md) | You add a module, component override or ACL privilege. | `Resources/app/administration/src/module/**`, `Resources/app/administration/src/**/acl/index.{js,ts}`, `Shopware.Module.register(`, … |
+| [`admin-js: architecture.md`](../sw-admin-js/references/architecture.md) | You add a module, component override or ACL privilege. | `administration/src/module/**`, `acl/index.*`, `Shopware.Module.register(` |
 | [`admin-js: extension-api.md`](../sw-admin-js/references/extension-api.md) | You change a shipped component, template block or position identifier. | `blocks-list.json`, `administration/public-api/**`, `positionIdentifier`, … |
 | [`architecture: symfony-in-shopware.md`](../sw-architecture/references/symfony-in-shopware.md) | You reach for a Symfony component or container feature, or rely on service resets. | `HttpClientInterface`, … |
 | [`core-development: deprecations.md`](../sw-core-development/references/deprecations.md) | You deprecate or break a public API. | `@deprecated tag:v`, … |
 | [`core-development: removals-and-shims.md`](../sw-core-development/references/removals-and-shims.md) | You deprecate or remove an API, or add code that only lives until the next major. | `@deprecated tag:v`, … |
 | [`core-development: static-analysis-baseline.md`](../sw-core-development/references/static-analysis-baseline.md) | You touch the PHPStan baseline or suppress a PHPStan error. | `phpstan-baseline.neon`, `phpstan*.neon`, `@phpstan-ignore`, … |
 | [`core-development: asset-lifetime.md`](../sw-core-development/references/asset-lifetime.md) | Code deletes, moves or overwrites theme files, media or thumbnails, or schedules their cleanup. | `UnusedThemeDirectoryDeleter`, … |
-| [`change-impact: impact-review.md`](../sw-change-impact/references/impact-review.md) | The extension caches a computed value under its own key. | `Contracts\Cache\(CacheInterface\|TagAwareCacheInterface)`, … |
+| [`change-impact: impact-review.md`](../sw-change-impact/references/impact-review.md) | The extension caches a computed value under its own key. | `CacheInterface` / `CacheItemPoolInterface` |
 | [`architecture: extension-mechanisms.md`](../sw-architecture/references/extension-mechanisms.md) | You choose between an event, a decoration and a core edit, or change an event. | `*Event.php`, `Resources/config/services.{xml,php}`, `decorates`, … |
-| [`architecture: dal-contracts.md`](../sw-architecture/references/dal-contracts.md) | You touch a DAL definition, entity or repository contract. | `*Definition.php`, `*EntityExtension.php`, `extends (Entity\|EntityTranslation\|MappingEntity)Definition`, … |
+| [`architecture: dal-contracts.md`](../sw-architecture/references/dal-contracts.md) | You touch a DAL definition, entity or repository contract. | `*Definition.php`, `*EntityExtension.php` |
 | [`review-learnings: api-aware.md`](../sw-review-learnings/references/api-aware.md) | The code serves Store-API or headless clients. | `StoreApi/**/*.php`, `SalesChannel/**/*Route.php`, `store-api`, … |
 | [`review-learnings: dal-and-performance.md`](../sw-review-learnings/references/dal-and-performance.md) | The code queries the DAL, checks what a customer can see, runs on a hot path, or dispatches queued work. | `new Criteria(`, … |
 | [`review-learnings: pr-size.md`](../sw-review-learnings/references/pr-size.md) | Any review of a change: the changed-line count and whether it bundles separate concerns. | any change |
-| [`review-learnings: version-guards.md`](../sw-review-learnings/references/version-guards.md) | The change adds or keeps a class_exists or method_exists check for Shopware API. | `(class\|method\|interface)_exists((\?Shopware\b\|[A-Z][A-Za-z]+::class)` |
+| [`review-learnings: version-guards.md`](../sw-review-learnings/references/version-guards.md) | The change adds or keeps a class_exists or method_exists check for Shopware API. | `class_exists` / `method_exists` for Shopware |
 | [`review-learnings: feature-flags.md`](../sw-review-learnings/references/feature-flags.md) | The change reads a Shopware feature flag, or an environment variable that may be one. | `getenv(`, … |
-| [`review-learnings: code-comments.md`](../sw-review-learnings/references/code-comments.md) | The change adds or edits comments or docblocks that talk about earlier versions, removed code or the issue. | `^\s*(//\|#\|*\|/*).*\b([Pp]reviously\|[Oo]riginally\|used to\|no longer (used\|needed\|necessary\|required\|called\|supported\|exists?\|works?\|applies)\|[Ee]arlier (version\|revision\|approach)\|[Bb]efore this (change\|PR\|fix)\|this (PR\|pull request)\|was (changed\|replaced\|removed) (to\|in\|with)\|instead of the old)\b`, … |
+| [`review-learnings: code-comments.md`](../sw-review-learnings/references/code-comments.md) | The change adds or edits comments or docblocks that talk about earlier versions, removed code or the issue. | history, PR or issue-number comments |
 | [`review-learnings: change-scope.md`](../sw-review-learnings/references/change-scope.md) | A fix grows beyond the bug. | on demand |
-| [`testing: test-shape-and-flags.md`](../sw-testing/references/test-shape-and-flags.md) | You need data providers, feature flags or coverage attributes, or a change edits an assertion. | `#[DataProvider(`, … |
+| [`testing: test-assertions-and-shape.md`](../sw-testing/references/test-assertions-and-shape.md) | A test uses assertEquals, skips a test, mocks DBAL or callbacks, observes events, or adds/edits data providers. | `assertEquals`, `EventHookDispatcher`, `#[DataProvider]` |
+| [`testing: flags-stubs-and-reflection.md`](../sw-testing/references/flags-stubs-and-reflection.md) | A test toggles feature flags, stubs DAL repositories, or uses reflection. | `#[DisabledFeatures]`, `Feature::skip*`, `Reflection*`, `EntityRepository` stub |
 | [`testing: integration-repository.md`](../sw-testing/references/integration-repository.md) | An integration test reads or writes through a repository. | `tests/integration/**/*Test.php`, `IntegrationTestBehaviour` |
 | [`testing: exception-assertions.md`](../sw-testing/references/exception-assertions.md) | A test asserts an exception. | `->expectException(Object\|Message\|Code)?(` |
 <!-- routes:end -->
@@ -124,3 +122,11 @@ released extension and `minor` in code nobody else extends.
 End with the findings block from [`output.md`](references/output.md). An
 empty list is a valid review; say what you checked instead of inventing a
 finding.
+
+## Forked subagent (`context: fork`)
+
+This skill reads `git diff` / `gh pr diff` directly, so Claude Code can run
+it with `context: fork` to keep borrowed references out of the main build
+context. Use `context: fork` only for self-contained review skills
+(`sw-extension-review`, `sw-pr-review`), never for build skills or chat-only
+diffs.

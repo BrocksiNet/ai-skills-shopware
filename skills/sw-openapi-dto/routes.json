@@ -9,6 +9,7 @@
     {
       "reference": "references/schema-and-generation.md",
       "when": "You add or change an operation that generates DTOs, or touch a generated DTO.",
+      "hint": "`Api/OpenApi/**`, `OpenApiDtoGenerationCommand.php`, `x-dto-*`",
       "paths_any": [
         "src/Core/Framework/Api/OpenApi/**",
         "src/Core/Framework/Api/Command/OpenApiDtoGenerationCommand.php"

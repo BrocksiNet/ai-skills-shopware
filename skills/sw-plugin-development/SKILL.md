@@ -1,21 +1,13 @@
 ---
 name: sw-plugin-development
 description: >-
-  Shopware 6 plugin and shop project backend rules that the code alone does
-  not show. Load it before writing or changing PHP in a Shopware plugin or
-  project, even a small, fully specified edit: a service, a controller, a
-  Store API or storefront route, a repository read or Criteria, an event
-  subscriber, a decorator, a migration, cache tags, an HTTP client, or DI
-  config. Targets custom/plugins, custom/static-plugins,
-  vendor/store.shopware.com, a plugin repo (a class extending
-  Plugin\Plugin), or project src/. Covers services and DI (PHP on 6.8, XML
-  on 6.6/6.7, migrating services.xml to PHP), DAL queries, HTTP cache tags,
-  migrations, decorating core services, Symfony HttpClient, 6.6 to 6.8
-  compatibility, and the check before a release that the plugin works on
-  every Shopware release its composer range allows. Do NOT use for the
-  platform itself (sw-core-development), for declarative apps with a
-  manifest.xml (sw-app-development), generic PHP style (sw-php-foundation),
-  or test authoring (sw-testing).
+  Shopware 6 plugin and project backend rules. Load before editing PHP or DI
+  config in custom/plugins, custom/static-plugins, vendor/store.shopware.com,
+  a plugin repo, or project src/: services/DI (XML or PHP on 6.8),
+  DAL/Criteria, HTTP cache tags, migrations, decorators, HttpClient, 6.6–6.8
+  compatibility, or pre-release range checks. Do NOT use for core
+  (sw-core-development), apps (sw-app-development), PHP style
+  (sw-php-foundation), or tests (sw-testing).
 license: MIT
 metadata:
   contexts: plugin project
@@ -46,6 +38,7 @@ Read only the reference that matches the task or the files it changes:
 | [`cache-tags.md`](references/cache-tags.md) | A change affects cached pages or needs cache tags (6.7+). | `CacheTagCollector`, … |
 | [`migrations.md`](references/migrations.md) | You add or change a database migration. | `Migration/Migration*.php`, `extends MigrationStep`, … |
 | [`version-compatibility.md`](references/version-compatibility.md) | The plugin must support more than one Shopware minor, or runs without a package it only suggests. | `composer.json`, `Resources/config/services.xml`, `"shopware/core"`, … |
+| [`upgrade-6-8-and-rector.md`](references/upgrade-6-8-and-rector.md) | You prepare a plugin for Shopware 6.8 (V6_8_0_0=1, CACHE_REWORK, documents, flows) or run Rector/codemod upgrades. | on demand |
 | [`symfony-first.md`](references/symfony-first.md) | You are about to write code a Symfony component already provides. | `file_put_contents(`, … |
 <!-- routes:end -->
 
@@ -89,13 +82,13 @@ Inherits all **`sw-php-foundation` trunk habits** (`empty()`, interface injectio
   stack allows ([`references/symfony-first.md`](references/symfony-first.md)).
   For cross-version migrations and modernization, reach for **Rector**
   (`frosh/shopware-rector` set) and review the dry-run — do not hand-edit blindly
-  (see the compatibility reference).
+  (see [`upgrade-6-8-and-rector.md`](references/upgrade-6-8-and-rector.md)).
 - **PLG-010** **Preparing for 6.8 is not a rewrite onto 6.8-only APIs.** Keep the
   `composer.json` range unless the user asked to drop a minor. Run the suite
   as it is, and again with `V6_8_0_0=1`. `FEATURE_ALL` is not that run. Code
   that still compiles can still be wrong (cache, cart cents, documents, flows).
   The separate container behind that flag is a test switch, not a design to
-  ship. Details are in the compatibility reference.
+  ship. Details are in [`upgrade-6-8-and-rector.md`](references/upgrade-6-8-and-rector.md).
 
 ## Definition of done
 

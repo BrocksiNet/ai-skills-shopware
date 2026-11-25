@@ -1,8 +1,8 @@
-# Test shape, providers, and feature flags
+# Test assertions, shape, and event hooks
 
 Maintainer-backed patterns from shopware/shopware (aligned with core PR #17657).
-Load when restructuring tests, adding data providers, or testing feature-flagged
-behavior.
+Load when structuring tests, writing data providers, observing events, or
+changing assertions.
 
 ## Test shape
 
@@ -32,7 +32,7 @@ behavior.
 ## Scalar assertions
 
 - **TEST-018** **`assertSame` over `assertEquals`** for scalars; **`expectExceptionObject`**
-  over split exception assertions (see reference).
+  over split exception assertions (see [`exception-assertions.md`](exception-assertions.md)).
 
 ## A test must be able to fail
 
@@ -141,97 +141,11 @@ Rules for both shapes, on trunk and in plugins:
 
 Eval: `event-hook-capture-then-assert`.
 
-## No reflection into Shopware internals
-
-- Do not invoke private or protected methods of Shopware classes via
-  `ReflectionMethod::invoke()` / `invokeArgs()` / `setAccessible()`. Test the
-  public API, or extract the logic so it is testable. Fix legacy usages when
-  you touch such a test.
-- Reflecting into a **third-party** class is acceptable when the vendor API
-  leaves no other option. Reading metadata (declaring class, signature,
-  attribute) is always fine. PHPStan rule: `shopware.reflectionOnNonPublicMethod`.
-
-## Stubbing DAL repositories
-
-- Stub DAL repositories with
-  `Shopware\Core\Test\Stub\DataAbstractionLayer\StaticEntityRepository`, not a
-  mock of `EntityRepository`.
-- Do not add `/** @var StaticEntityRepository<FooCollection> */` above the
-  construction. The generic is inferred when searches contain a typed
-  collection or `EntitySearchResult`.
-- When no search carries the type (empty searches, id lists, callables), bind
-  it with the factory: `StaticEntityRepository::of(FooCollection::class, $searches)`.
-- Build search results with the **concrete** collection the consumer expects
-  (`new AppCollection([...])`, not `new EntityCollection([...])`).
-- Class properties holding the stub keep their `@var StaticEntityRepository<FooCollection>`
-  docblock — that is the property type, not an inference crutch.
-
-## Feature flags
-
-### Unit tests
-
-- The **current major feature flag is active by default** in unit tests.
-- To test **legacy/off** behavior, disable flags with PHPUnit
-  `#[DisabledFeatures(['FLAG_NAME'])]`.
-- Do **not** use `Feature::fake()` only to activate the current major flag.
-- While **two majors are in flight**, the unit bootstrap activates both. A test
-  that asserts the older major's behaviour must disable the newer one, e.g.
-  `#[DisabledFeatures(['v6.9.0.0'])]` ([#20117](https://github.com/shopware/shopware/pull/20117)).
-
-### Integration tests
-
-- Feature-flag state comes from the job configuration (`FEATURE_ALL`,
-  integration-major, etc.).
-- While more than one major is in flight, `integration-major` runs **one lane
-  per major** with `FEATURE_ALL=<major>` (for example `v6.8.0.0`), not
-  `FEATURE_ALL=major`. Reproducing a failing job with `major` would mix the
-  next major in.
-- **`#[DisabledFeatures]` is rejected at runtime** in the integration suite — the attribute has no effect there and the test runner **fails the run** if a test carries it ([#18350](https://github.com/shopware/shopware/pull/18350)).
-- Skip tests explicitly with `Feature::skipTestIfActive('FLAG')` or
-  `Feature::skipTestIfInActive('FLAG')` when the current flag value is not what
-  the scenario expects. Pin against the extra in-flight major with
-  `Feature::skipTestIfActive('v6.9.0.0', $this)` rather than `#[DisabledFeatures]`.
-- **TEST-031** Keep **legacy flag behavior** in dedicated tests that are easy to delete when
-  the flag is removed.
-
 ## Data providers (unit tests)
 
 - Use **named `yield` cases** instead of returning arrays — even for small
-  providers.
+  providers (`TEST-005`).
 - Do **not** use `yield from` with an inline array; prefer explicit
   `yield 'human readable case' => [...]` per scenario.
 - **TEST-029** Case names should explain the **rule being proven** (priority, normalization,
   boundary), not mechanically restate raw input values.
-
-## Package attribute and `@internal`
-
-- Every test class needs `#[Package('…')]` (import `Shopware\Core\Framework\Log\Package`).
-- Unit/migration: copy from the `#[CoversClass]` target's package.
-  `fundamentals@<area>` counts as equal to `<area>`. A PHPStan rule
-  (`TestPackageMatchRule`) fails on mismatches.
-- Integration: use a package value that occurs in the mirrored `src/` tree.
-  The same rule fails when the value matches none of the packages found there.
-- Update the test's package when the covered class moves packages.
-- Every test class is marked `@internal` in its class docblock.
-
-Details: `core-platform-patterns.md`.
-
-## Coverage annotations
-
-- **Production class** covered only by integration tests: `@codeCoverageIgnore` plus
-  `@see \Fully\Qualified\IntegrationTest` (leading `\` FQCN — do not import the
-  test class solely for this annotation). On trunk, defer to core's
-  `shopware-phpunit-tests` skill.
-- **Cross-test pointers** in **test class** docblocks: `@see OtherTestClass` with
-  a `use` import — never a leading-backslash FQCN in prose (see
-  `core-platform-patterns.md`).
-- **Safeguard / config tests** with `#[CoversNothing]` belong in **`tests/devops/`**
-  on core — not `tests/unit/` (keep the unit suite for coverage). See
-  `core-platform-patterns.md`.
-- **Simple struct-style classes** with only public properties do not need unit
-  tests — use `@codeCoverageIgnore` instead.
-- Every new class should have focused unit coverage **or** explicit
-  `@codeCoverageIgnore` + integration `@see` when unit tests do not make sense.
-- **Do not add** `#[CoversClass]`, `#[CoversFunction]`, or `#[CoversNothing]` to
-  **integration** tests — Shopware’s PHPStan rule allows those attributes only on
-  unit and migration tests.

@@ -1,12 +1,10 @@
 ---
 name: sw-pr-description
 description: >-
-  Fill the shopware/shopware pull request section skeleton. Use when the PR
-  body must follow the GitHub template sections, or when shopware-pr-hygiene
-  is not installed. On trunk, shopware-pr-hygiene owns the decision to write
-  the PR. Do NOT use for a plugin PR, for RELEASE_INFO file content
-  (sw-core-development), or when the request is only that the tests are
-  green and the PR should be opened.
+  Fill the shopware/shopware PR template sections when required or when
+  shopware-pr-hygiene is absent. On trunk, shopware-pr-hygiene decides when to
+  write the PR. Do NOT use for plugin PRs, RELEASE_INFO files
+  (sw-core-development), or just opening a PR after green tests.
 license: MIT
 metadata:
   contexts: core
