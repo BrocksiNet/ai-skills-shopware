@@ -1287,6 +1287,32 @@
             "**/tests/**",
             "**/Test/**",
             "**/*.md"
+          ],
+          "rules": [
+            {
+              "id": "MCP-001",
+              "title": "Extend McpToolResponse and return McpToolResult, never a legacy JSON string"
+            },
+            {
+              "id": "MCP-002",
+              "title": "Never claim the reserved discovery tool group or the shopware- name prefix in an extension"
+            },
+            {
+              "id": "MCP-003",
+              "title": "Tag plugin and third-party bundle tools with shopware.mcp.tool and place #[McpTool] on the class"
+            },
+            {
+              "id": "MCP-004",
+              "title": "Write tools default to bool $dryRun = true and execute previews through executeWithDryRunResult()"
+            },
+            {
+              "id": "MCP-005",
+              "title": "Declare ToolAnnotations and #[Schema] parameter descriptions on #[McpTool], and use #[McpToolDependsOn] only for true prerequisites"
+            },
+            {
+              "id": "MCP-006",
+              "title": "Entity MCP tools validate criteria with AclCriteriaValidator and bound responses with McpEntityIncludes and JsonEntityEncoder"
+            }
           ]
         },
         {
@@ -1308,6 +1334,16 @@
             "**/tests/**",
             "**/Test/**",
             "**/*.md"
+          ],
+          "rules": [
+            {
+              "id": "MCP-007",
+              "title": "Serverless app MCP tools target /api/script/{path}, read POST form arguments, and never serve HTTP-cached responses"
+            },
+            {
+              "id": "MCP-008",
+              "title": "Keep MCP resource and prompt cache hints private, and register resource templates with mcp.resource_template"
+            }
           ]
         },
         {
@@ -2187,6 +2223,32 @@
             "**/tests/**",
             "**/Test/**",
             "**/*.md"
+          ],
+          "rules": [
+            {
+              "id": "MCP-001",
+              "title": "Extend McpToolResponse and return McpToolResult, never a legacy JSON string"
+            },
+            {
+              "id": "MCP-002",
+              "title": "Never claim the reserved discovery tool group or the shopware- name prefix in an extension"
+            },
+            {
+              "id": "MCP-003",
+              "title": "Tag plugin and third-party bundle tools with shopware.mcp.tool and place #[McpTool] on the class"
+            },
+            {
+              "id": "MCP-004",
+              "title": "Write tools default to bool $dryRun = true and execute previews through executeWithDryRunResult()"
+            },
+            {
+              "id": "MCP-005",
+              "title": "Declare ToolAnnotations and #[Schema] parameter descriptions on #[McpTool], and use #[McpToolDependsOn] only for true prerequisites"
+            },
+            {
+              "id": "MCP-006",
+              "title": "Entity MCP tools validate criteria with AclCriteriaValidator and bound responses with McpEntityIncludes and JsonEntityEncoder"
+            }
           ]
         },
         {
@@ -2208,6 +2270,16 @@
             "**/tests/**",
             "**/Test/**",
             "**/*.md"
+          ],
+          "rules": [
+            {
+              "id": "MCP-007",
+              "title": "Serverless app MCP tools target /api/script/{path}, read POST form arguments, and never serve HTTP-cached responses"
+            },
+            {
+              "id": "MCP-008",
+              "title": "Keep MCP resource and prompt cache hints private, and register resource templates with mcp.resource_template"
+            }
           ]
         },
         {
