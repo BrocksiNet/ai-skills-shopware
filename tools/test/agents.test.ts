@@ -16,7 +16,7 @@ import {
 import { tmpdir } from 'node:os';
 import { join, resolve } from 'node:path';
 import { describe, test } from 'node:test';
-import { parseClaude, parseCopilot, parseOpencode, skillName } from '../src/agent-events.ts';
+import { parseClaude, parseCopilot, parseOpencode, skillName, skillsReadByTool } from '../src/agent-events.ts';
 import { copilotActivation, copilotTask, skillDirGrants } from '../src/agents-copilot.ts';
 import { type Adapter, claudeActivation, claudeTask, opencodeActivation, opencodeTask } from '../src/agents.ts';
 import { onPath, run, tail } from '../src/proc.ts';
@@ -89,6 +89,8 @@ const claudeSkillUse = (id: string, skill: string): string =>
     type: 'assistant',
     message: { content: [{ type: 'tool_use', id, name: 'Skill', input: { skill } }] },
   });
+const claudeToolUse = (id: string, name: string, input: Record<string, string>): string =>
+  JSON.stringify({ type: 'assistant', message: { content: [{ type: 'tool_use', id, name, input }] } });
 const claudeToolResult = (id: string, isError: boolean): string =>
   JSON.stringify({
     type: 'user',
@@ -140,6 +142,38 @@ describe('event parsing edge cases', () => {
     );
     // t3 has no result (the session was cut off): the call still counts.
     assert.deepEqual(s.skills, ['sw-testing', 'sw-plugin-development']);
+  });
+  test('a Claude Read or Bash print of a SKILL.md loads that skill', () => {
+    const s = parseClaude(
+      [
+        // From a haiku review run: list first, then cat the skill.
+        claudeToolUse('b1', 'Bash', {
+          command: 'find .agents .claude -type f | head && cat .claude/skills/sw-testing/SKILL.md',
+        }),
+        claudeToolUse('r1', 'Read', { file_path: '/tmp/ws/.claude/skills/sw-core-development/SKILL.md' }),
+        claudeToolUse('r2', 'Read', { file_path: '/tmp/ws/.claude/skills/sw-security/SKILL.md' }),
+        claudeToolResult('r2', true),
+      ].join('\n'),
+    );
+    assert.deepEqual(s.skills, ['sw-testing', 'sw-core-development']);
+  });
+  test('listing a SKILL.md or reading a reference loads nothing', () => {
+    assert.deepEqual(skillsReadByTool('Bash', { command: 'ls .claude/skills/sw-testing/SKILL.md' }), []);
+    assert.deepEqual(skillsReadByTool('Bash', { command: 'find .claude -name SKILL.md | head' }), []);
+    assert.deepEqual(skillsReadByTool('Bash', { command: 'grep -n TEST .claude/skills/sw-testing/SKILL.md' }), []);
+    assert.deepEqual(skillsReadByTool('Read', { file_path: '.claude/skills/sw-testing/references/unit.md' }), []);
+    assert.deepEqual(skillsReadByTool('Glob', { pattern: '.claude/skills/sw-testing/SKILL.md' }), []);
+    // Both from haiku review runs: cd into the skill, or a glob over it.
+    assert.deepEqual(skillsReadByTool('Bash', { command: 'cd /repo/skills/sw-testing && cat SKILL.md | head -150' }), [
+      'sw-testing',
+    ]);
+    assert.deepEqual(skillsReadByTool('Bash', { command: 'cat .agents/skills/sw-testing/*.md 2>/dev/null | head' }), [
+      'sw-testing',
+    ]);
+    assert.deepEqual(skillsReadByTool('Bash', { command: 'cd /repo/skills/sw-testing && cat references/unit.md' }), []);
+    assert.deepEqual(skillsReadByTool('Bash', { command: "sed -n '1,80p' '.claude/skills/sw-admin-js/SKILL.md'" }), [
+      'sw-admin-js',
+    ]);
   });
   test('a Claude session without a result', () => {
     const s = parseClaude('{"type":"assistant","message":{"content":[{"type":"text","text":"A"}]}}\n');

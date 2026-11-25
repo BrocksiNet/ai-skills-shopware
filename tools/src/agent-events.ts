@@ -53,6 +53,38 @@ const addOnce = (list: string[], name: string): void => {
   if (name !== '' && !list.includes(name)) list.push(name);
 };
 
+// A path ending in `skills/<name>/SKILL.md`, or a glob over the skill folder
+// that takes it in (`skills/<name>/*.md`).
+const SKILL_MD = /(?:^|\/)skills\/([\w.-]+)\/(?:SKILL|\*)\.md$/u;
+// A shell command that prints a file: the first word of a pipeline segment.
+const PRINTS = /^(?:cat|head|tail|sed|less|more|bat|nl|awk)$/u;
+
+/** The skill whose `SKILL.md` a path names, or ''. */
+const skillOfPath = (path: string): string => SKILL_MD.exec(path)?.[1] ?? '';
+
+/** Skills whose `SKILL.md` a Claude Code `Read` or `Bash` call reads. Models
+ *  without a habit of calling the Skill tool (haiku on review tasks) often
+ *  `cat` the file instead, which loads the same text. A `find`, `ls` or
+ *  `grep` that only lists or searches the file does not count. A `cd` earlier
+ *  in the same command resolves a relative `cat SKILL.md`. */
+export function skillsReadByTool(tool: string, input: unknown): string[] {
+  const args = obj(input);
+  const names: string[] = [];
+  if (tool === 'Read') addOnce(names, skillOfPath(str(args.file_path)));
+  if (tool !== 'Bash') return names;
+  let cwd = '';
+  for (const segment of str(args.command).split(/&&|\|\||[;|\n]/u)) {
+    const [cmd = '', ...rest] = segment
+      .trim()
+      .split(/\s+/u)
+      .map((w) => w.replaceAll(/^['"]|['"]$/gu, ''));
+    if (cmd === 'cd') cwd = rest[0] ?? '';
+    if (!PRINTS.test(cmd)) continue;
+    for (const arg of rest) addOnce(names, skillOfPath(arg.startsWith('/') || cwd === '' ? arg : `${cwd}/${arg}`));
+  }
+  return names;
+}
+
 export interface Usage {
   /** Input tokens including cache reads and writes. */
   input: number;
@@ -162,8 +194,9 @@ export function parseClaude(text: string): ClaudeSession {
     for (const block of Array.isArray(content) ? content : []) {
       const b = obj(block);
       if (b.type === 'text' && str(b.text).trim() !== '') s.texts.push(str(b.text));
-      if (b.type === 'tool_use' && b.name === 'Skill')
-        calls.push({ id: str(b.id), name: skillName(b.input, ['skill', 'command']) });
+      if (b.type !== 'tool_use') continue;
+      if (b.name === 'Skill') calls.push({ id: str(b.id), name: skillName(b.input, ['skill', 'command']) });
+      for (const name of skillsReadByTool(str(b.name), b.input)) calls.push({ id: str(b.id), name });
     }
   }
   for (const call of calls) if (call.id === '' || !failed.has(call.id)) addOnce(s.skills, call.name);
