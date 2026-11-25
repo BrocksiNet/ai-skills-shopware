@@ -164,7 +164,7 @@ not tagged yet.
 
 Trunk commits after the 2026-10-13 pass that changed `.agents/`,
 `coding-guidelines/` or enforcement. Work package WP0 of
-[`plans/2026-10-skills-evolution.md`](plans/2026-10-skills-evolution.md).
+[`plans/done/2026-10-skills-evolution.md`](plans/done/2026-10-skills-evolution.md).
 
 | Core PR | Rule | Our target | Status |
 | ------- | ---- | ---------- | ------ |
