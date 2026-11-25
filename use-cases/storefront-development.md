@@ -13,7 +13,7 @@ paths and would be noise on a DAL-only change.
 | ----- | --- |
 | `sw-storefront` | Twig/theme, PluginManager, Bootstrap SCSS, cache-safe AJAX. |
 | `sw-admin-js` | Admin TypeScript, Meteor `mt-*`, Jest, Admin ACL. |
-| `sw-research-and-escalation` | Versioned docs + Modern Web Guidance CLI after primitives. |
+| `sw-research-and-escalation` | Versioned docs; `modern-web-guidance` is the companion after primitives. |
 | `sw-review-learnings` | Recurring frontend findings (uncached listing AJAX, …). |
 | `sw-change-impact` | After a feature works: shared cache and checkout cost, not only the new UI. |
 | `sw-skill-router` | Lists the skills and references a diff or plan needs (`/sw-skill-router`). |
@@ -38,19 +38,29 @@ npx skills add BrocksiNet/ai-skills-shopware \
 
 Install at **project level**. Pin with `BrocksiNet/ai-skills-shopware@vX.Y.Z`.
 
-## Optional: Modern Web Guidance CLI
+## Default companion: Modern Web Guidance
 
-For leftover generic CSS/HTML/JS APIs (LCP on an existing product image,
-container queries in custom SCSS), call the CLI — do **not** install
-Google's `modern-web-guidance` skill next to ours:
+Install Google's `modern-web-guidance` skill next to ours for generic CSS,
+HTML, JS, Core Web Vitals and a11y questions that Shopware does not own
+(LCP on an existing product image, container queries in custom SCSS, focus
+handling). Take only this skill, not `chrome-extensions`:
+
+```bash
+npx skills add GoogleChrome/modern-web-guidance --skill modern-web-guidance
+```
+
+Shopware components win when both apply: Bootstrap in the Storefront,
+Meteor `mt-*` and `sw-*` in the Administration, and no speculation rules on
+cart, checkout, account or wishlist. The skill's CLI searches guides and
+retrieves one; adapt the result to Twig, SCSS or Vue.
 
 ```bash
 npx -y modern-web-guidance@latest search "optimize product image LCP"
 ```
 
-See [`docs/tooling-stack.md`](../docs/tooling-stack.md) and
+Set `DISABLE_TELEMETRY=1` to stop anonymous usage data going to Google. More
+in [`docs/tooling-stack.md`](../docs/tooling-stack.md) and
 `skills/sw-research-and-escalation/references/modern-web-guidance.md`.
-Set `DISABLE_TELEMETRY=1` to opt out of Google search-string telemetry.
 
 ## Mixing use-cases
 

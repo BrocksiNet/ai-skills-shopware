@@ -277,6 +277,64 @@ describe('route.mjs routing', () => {
   });
 });
 
+const loadFor = (...paths: string[]): unknown =>
+  field(route({ files: files(...paths), kind: 'core', task: 'build' }), 'load');
+const one = (v: unknown): unknown => list(v)[0];
+
+describe('route.mjs frontend companion', () => {
+  const MWG = 'modern-web-guidance';
+  const INSTALL = 'npx skills add GoogleChrome/modern-web-guidance --skill modern-web-guidance';
+  const storefront = 'src/Storefront/Resources/views/storefront/base.html.twig';
+  const admin = 'src/Administration/Resources/app/administration/src/module/sw-foo/index.js';
+
+  test('a storefront or Administration change without the skill recommends the install command', () => {
+    for (const path of [storefront, admin]) {
+      const got = list(call('companions', loadFor(path), new Map()));
+      assert.equal(got.length, 1, path);
+      assert.equal(text(field(one(got), 'name')), MWG);
+      assert.equal(field(one(got), 'installed'), false);
+      assert.equal(text(field(one(got), 'install')), INSTALL);
+      assert.match(text(field(one(got), 'reminder')), /Bootstrap.*Meteor/u);
+    }
+  });
+
+  test('an installed skill is reported with its path and no install command is needed', () => {
+    const got = list(call('companions', loadFor(storefront), new Map([[MWG, '/skills/modern-web-guidance']])));
+    assert.equal(field(one(got), 'installed'), true);
+    assert.equal(text(field(one(got), 'path')), '/skills/modern-web-guidance/SKILL.md');
+  });
+
+  test('a backend change stays quiet', () => {
+    assert.deepEqual(call('companions', loadFor('src/Core/Checkout/Cart/Cart.php'), new Map()), []);
+    assert.deepEqual(call('companions', [], new Map()), []);
+  });
+
+  const cli = (extra: string[]): { out: string; json: unknown } => {
+    const base = [SCRIPT, '--root', tmpdir(), '--context', 'core', '--paths', storefront, '--task', 'build'];
+    const text0 = spawnSync(process.execPath, [...base, ...extra], { encoding: 'utf8' });
+    assert.equal(text0.status, 0, text0.stderr);
+    const json = spawnSync(process.execPath, [...base, ...extra, '--json'], { encoding: 'utf8' });
+    return { out: text0.stdout, json: JSON.parse(json.stdout) };
+  };
+
+  test('the command line prints the companion section when the skill is installed', () => {
+    const dir = mkdtempSync(join(tmpdir(), 'router-mwg-'));
+    mkdirSync(join(dir, MWG));
+    writeFileSync(join(dir, MWG, 'SKILL.md'), '---\nname: modern-web-guidance\n---\n');
+    const { out, json } = cli(['--skills-dir', dir]);
+    assert.match(out, /## Companion skill for frontend work/u);
+    assert.match(out, /Shopware first/u);
+    assert.doesNotMatch(out, /Recommended companion/u);
+    assert.equal(field(one(field(json, 'companions')), 'installed'), true);
+  });
+
+  test('the command line keeps the missing list for our own skills separate from the companion', () => {
+    const { json } = cli([]);
+    assert.ok(!list(field(json, 'missing')).includes(MWG));
+    assert.equal(text(field(one(field(json, 'companions')), 'name')), MWG);
+  });
+});
+
 const kind = (dir: string): string => text(field(call('detectContext', dir), 'kind'));
 
 describe('route.mjs context detection', () => {

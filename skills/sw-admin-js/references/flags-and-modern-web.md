@@ -18,7 +18,8 @@ in the file are the primitive. Raw `<dialog>`, Popover API, custom
 `<select>`, or a third-party overlay is a miss unless the user asked to
 replace the design system.
 
-If a leftover platform API remains (container queries in custom Admin CSS,
-INP in a custom widget), look up
-[`modern-web-guidance.md`](../../sw-research-and-escalation/references/modern-web-guidance.md)
-and adapt it. The Meteor component still wins if both apply.
+For what Meteor does not own (container queries in custom Admin CSS, INP in
+a custom widget, a11y), use the companion `modern-web-guidance` skill; steps
+are in
+[`modern-web-guidance.md`](../../sw-research-and-escalation/references/modern-web-guidance.md).
+Adapt the guide. The Meteor component still wins if both apply.

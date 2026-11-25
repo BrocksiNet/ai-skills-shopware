@@ -102,7 +102,7 @@ npx skills add BrocksiNet/ai-skills-shopware \
 | `shopware-pr-hygiene` | PR template, follow-up commits | `sw-pr-description` (copy-paste template) |
 | `shopware-change-scope` | boyscouting, root cause | `sw-review-learnings` (delta findings) |
 | `shopware-release-docs` | RELEASE_INFO / UPGRADE | `sw-core-development` (baseline guardrails) |
-| `shopware-admin-js` | Admin JS (trunk only) | `sw-admin-js` (plugin/project + Meteor / MWG gate) |
+| `shopware-admin-js` | Admin JS (trunk only) | `sw-admin-js` (plugin/project + Meteor gate, `modern-web-guidance` companion) |
 | `sw-review` (+ `guides/`) | Core PR review: BC per surface, platform scope, cache, queue, migrations, tests, release docs | `sw-review-learnings` (delta findings), `sw-extension-review` (plugin/app diffs) |
 
 **Always ours (no core equivalent):** `sw-security`, `sw-architecture`

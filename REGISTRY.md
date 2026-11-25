@@ -109,7 +109,7 @@ the surface skills can all be installed together without contradicting (see
 | Storefront public API for themes (Twig blocks and variables, JS plugin options and events, SCSS variables, `theme.json` fields, snippet keys) | `sw-storefront` |
 | Administration Vue/TS, Meteor `mt-*`, Jest next to code, Admin ACL + privilege migrations (no `system_config` grants in plugin roles), component overrides with `$super`, form field binding across 6.5 and 6.6+; experimental SFC is not the 6.8 upgrade | `sw-admin-js` |
 | Administration extension API (component props, blocks, `swDefinePublic`, the `public-api/` snapshot (`blocks-list.json` before 6.8), position identifiers) | `sw-admin-js` |
-| Generic modern CSS/HTML/JS lookup (Modern Web Guidance CLI) after Shopware primitives | `sw-research-and-escalation` |
+| Generic modern CSS/HTML/JS lookup (`modern-web-guidance` companion skill and CLI) after Shopware primitives | `sw-research-and-escalation` |
 | Picking skills and references for a change, plan or task (context and task filters, `index.json`) | `sw-skill-router` |
 | Overview of the library: what each skill is for, example prompts, install | `sw-help` |
 
@@ -156,7 +156,7 @@ the right one activates. There is no project-level "core vs plugin" choice.
 | FriendsOfShopware/agent-skills `shopware-phpunit` | Plugin/integration patterns, fixtures, mocks | link in `sw-testing/references/external-inspiration.md` |
 | brocksi.net blog (API-aware guidelines, PHPStan+ECS) | Review learnings + Shopware static analysis | own content |
 | Shopware `coding-guidelines/administration/` + Admin `AGENTS.md` | Admin JS/TS/Vue/Jest deltas | rewrite |
-| [GoogleChrome/modern-web-guidance](https://github.com/GoogleChrome/modern-web-guidance) | Optional CLI lookup for generic web-platform APIs | link (do not vendor; Apache-2.0) |
+| [GoogleChrome/modern-web-guidance](https://github.com/GoogleChrome/modern-web-guidance) | Default companion skill and CLI for generic web-platform APIs | install as companion, do not vendor (Apache-2.0 code, CC-BY-4.0 guides) |
 
 ## Adding a skill or rule
 

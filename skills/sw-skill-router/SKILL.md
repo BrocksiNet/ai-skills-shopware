@@ -67,7 +67,13 @@ Pick `--task` from what the user asked for:
    request is about its topic.
 5. **Recommended but not installed** prints the install command. Tell the
    user; do not install skills without asking.
-6. Tell the user in one line which skills you loaded and why, then do the
+6. **Companion skill for frontend work** appears when `sw-storefront` or
+   `sw-admin-js` loads and `modern-web-guidance` (Google Chrome's skill) is
+   installed. Use it for generic CSS, HTML, JS, Core Web Vitals and a11y;
+   Bootstrap and Meteor `mt-*` components still win. When it is missing, the
+   output prints its install command under **Recommended companion**; tell
+   the user, do not install it without asking.
+7. Tell the user in one line which skills you loaded and why, then do the
    work.
 
 The header names the base branch, the merge base and how many commits the
