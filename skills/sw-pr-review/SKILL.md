@@ -1,12 +1,11 @@
 ---
 name: sw-pr-review
 description: >-
-  Triage and answer GitHub pull request review comments on shopware/shopware
-  (or your forks). Use when reacting to a review, replying to a reviewer,
-  addressing PR comments, deciding fix vs reply vs push back, drafting what to
-  answer, or turning a review finding into a lasting rule. Do NOT use for
-  writing the initial PR body (sw-pr-description) or idiomatic code
-  review without GitHub threads (sw-review-learnings).
+  Triage and reply to GitHub PR review comments on shopware/shopware or forks.
+  Use when reacting to a review, deciding fix vs reply vs push back, drafting
+  responses, or turning findings into rules. Do NOT use for PR descriptions
+  (sw-pr-description) or code review without GitHub threads
+  (sw-review-learnings).
 license: MIT
 metadata:
   contexts: core
@@ -56,3 +55,11 @@ When drafting a **GitHub review reply** for the user to paste:
 - [ ] Confidence stated per thread when recommending an action.
 - [ ] Replies are single copy-paste blocks without nested fences.
 - [ ] Recurring findings proposed as `coding-guidelines` or skill updates.
+
+## Running in a forked subagent (`context: fork`)
+
+When triaging a PR purely from GitHub threads (`gh pr view` / `gh api`), this
+skill is self-contained and safe to run with `context: fork` in Claude Code
+so review context stays out of the main session. Do not fork when the triage
+depends on earlier conversation history, and never apply `context: fork` to
+interactive build skills.

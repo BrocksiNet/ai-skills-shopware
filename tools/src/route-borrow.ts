@@ -42,7 +42,7 @@ export function resolveBorrowed(skillDir: string, value: unknown): { value: unkn
       return r;
     }
     const borrowed: Json = { when: source.when };
-    for (const k of [...OWN_KINDS, 'exclude_paths']) if (source[k] !== undefined) borrowed[k] = source[k];
+    for (const k of [...OWN_KINDS, 'exclude_paths', 'hint']) if (source[k] !== undefined) borrowed[k] = source[k];
     return Object.assign(borrowed, r);
   });
   return { value: { ...value, routes }, errors };

@@ -43,12 +43,20 @@ describe('resolveBorrowed', () => {
   });
 
   test('a borrowed route takes the lender exclusions, its own or the lender file default', () => {
-    skill('sw-excluder', { exclude_paths: ['**/tests/**'], routes: [lender] }, ['dal.md']);
+    skill('sw-excluder', { exclude_paths: ['**/tests/**'], routes: [{ ...lender, hint: 'Criteria reads' }] }, [
+      'dal.md',
+    ]);
     const borrowed = '../sw-excluder/references/dal.md';
     const { value } = resolveBorrowed(dir, { routes: [{ reference: borrowed }] });
     assert.deepEqual(value, {
       routes: [
-        { when: 'DAL reads.', anchors_any: ['new Criteria\\('], exclude_paths: ['**/tests/**'], reference: borrowed },
+        {
+          when: 'DAL reads.',
+          anchors_any: ['new Criteria\\('],
+          exclude_paths: ['**/tests/**'],
+          hint: 'Criteria reads',
+          reference: borrowed,
+        },
       ],
     });
   });

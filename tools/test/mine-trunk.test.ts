@@ -99,11 +99,11 @@ describe('the 2026-10-13..2026-10-19 window', () => {
   test('skill bullets map through routes or the source skill list; template lines through PRD-001', async () => {
     const t = await text;
     assert.match(
-      group(t, 'sw-testing', '`references/test-shape-and-flags.md`'),
-      /Matched by its route\. Rules there: TEST-016.*\n\n- Removed agent skill bullet .*#\[CoversClass\]/su,
+      group(t, 'sw-testing', '`references/core-platform-patterns.md`'),
+      /Matched by its route\. Rules there: TEST-007.*\n\n- Removed agent skill bullet .*#\[CoversClass\]/su,
     );
     assert.match(
-      group(t, 'sw-testing', 'No rule yet'),
+      group(t, 'sw-testing', '`references/test-assertions-and-shape.md`'),
       /- Added agent skill bullet .*Never add listeners to the shared `event_dispatcher`/u,
     );
     const template = group(t, 'sw-pr-description', 'PRD-001');

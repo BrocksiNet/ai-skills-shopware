@@ -9,16 +9,38 @@
       ]
     },
     {
-      "reference": "references/test-shape-and-flags.md",
-      "when": "You need data providers, feature flags or coverage attributes, or a change edits an assertion.",
+      "reference": "references/test-assertions-and-shape.md",
+      "when": "A test uses assertEquals, skips a test, mocks DBAL or callbacks, observes events, or adds/edits data providers.",
+      "hint": "`assertEquals`, `EventHookDispatcher`, `#[DataProvider]`",
       "anchors_any": [
+        "(::|->)(assertEquals|markTest(Skipped|Incomplete))\\(",
+        "EventHookDispatcher|CollectingEventDispatcher|event_dispatcher",
+        "createMock\\(Connection::class\\)",
+        "->transactional\\(",
+        "if\\s*\\(\\$\\w+\\s*!==\\s*null\\)",
         "#\\[DataProvider\\(",
-        "(::|->)(assert[A-Z]\\w*|markTest(Skipped|Incomplete))\\(",
-        "^\\s*yield\\s+(['\"]).*\\1\\s*=>",
+        "^\\s*yield\\s+(['\"]).*\\1\\s*=>"
+      ],
+      "exclude_paths": [
+        "src/**",
+        "custom/plugins/*/src/**",
+        "custom/static-plugins/*/src/**"
+      ]
+    },
+    {
+      "reference": "references/flags-stubs-and-reflection.md",
+      "when": "A test toggles feature flags, stubs DAL repositories, or uses reflection.",
+      "hint": "`#[DisabledFeatures]`, `Feature::skip*`, `Reflection*`, `EntityRepository` stub",
+      "anchors_any": [
         "Feature::(fake|skipTestIf(In)?Active)\\(",
-        "#\\[Covers(Class|Function|Nothing)[(\\]]",
+        "#\\[DisabledFeatures\\(",
         "new \\\\?Reflection(Class|Property|Method)\\(",
-        "StaticEntityRepository"
+        "@var\\s+StaticEntityRepository<|create(Mock|Stub)\\(EntityRepository::class\\)"
+      ],
+      "exclude_paths": [
+        "src/**",
+        "custom/plugins/*/src/**",
+        "custom/static-plugins/*/src/**"
       ]
     },
     {
@@ -40,7 +62,12 @@
         "tests/{unit,integration}/{Core,Storefront,Administration,Elasticsearch}/**"
       ],
       "anchors_any": [
-        "@codeCoverageIgnore"
+        "@codeCoverageIgnore",
+        "#\\[Covers(Class|Function|Nothing)[(\\]]"
+      ],
+      "exclude_paths": [
+        "custom/plugins/**",
+        "custom/static-plugins/**"
       ]
     },
     {

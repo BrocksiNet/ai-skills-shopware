@@ -29,9 +29,6 @@
     ],
     "sw-testing/references/integration-repository.md": [
       "https://github.com/shopware/shopware/pull/19261#discussion_r3775026520"
-    ],
-    "sw-testing/references/test-shape-and-flags.md": [
-      "https://github.com/shopware/shopware/pull/19261#discussion_r3781650767"
     ]
   }
 }

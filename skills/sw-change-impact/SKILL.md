@@ -1,13 +1,11 @@
 ---
 name: sw-change-impact
 description: >-
-  Use when a Shopware change works and the next step is a commit or a pull
-  request. Check shared HTTP cache, who pays when the feature is off, asset
-  loading tested only on local disk, and a Symfony container split. Do NOT
-  use while the fix is still being written, for line-level idioms
-  (sw-review-learnings), GitHub thread triage (sw-pr-review),
-  implementing the change (shopware-php-code or sw-plugin-development),
-  or running the test suite (sw-local-dev).
+  Blast-radius check once a Shopware change works, before commit or PR. Check
+  shared HTTP cache, cost when off, asset loading beyond local disk, and
+  Symfony container splits. Do NOT use while writing code, for line idioms
+  (sw-review-learnings), PR threads (sw-pr-review), or running tests
+  (sw-local-dev).
 license: MIT
 metadata:
   contexts: core plugin app project

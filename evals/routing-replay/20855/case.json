@@ -20,7 +20,7 @@
     "sw-testing/references/exception-assertions.md": [
       "https://github.com/shopware/shopware/pull/20855#discussion_r4195309136"
     ],
-    "sw-testing/references/test-shape-and-flags.md": [
+    "sw-testing/references/test-assertions-and-shape.md": [
       "https://github.com/shopware/shopware/pull/20855#discussion_r4154603948",
       "https://github.com/shopware/shopware/pull/20855#discussion_r4195330321",
       "https://github.com/shopware/shopware/pull/20855#discussion_r4195344567"

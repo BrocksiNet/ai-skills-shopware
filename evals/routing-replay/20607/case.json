@@ -15,9 +15,6 @@
     ],
     "sw-testing/references/core-platform-patterns.md": [
       "https://github.com/shopware/shopware/pull/20607#discussion_r4048594626"
-    ],
-    "sw-testing/references/test-shape-and-flags.md": [
-      "https://github.com/shopware/shopware/pull/20607#discussion_r4048594626"
     ]
   }
 }

@@ -50,3 +50,13 @@ npx skills add shopware/shopware-cli
 Surface skills route by what you edit. Add [`core-development.md`](core-development.md)
 for platform work; [`app-development.md`](app-development.md) for declarative apps;
 [`storefront-development.md`](storefront-development.md) for Twig/theme/Admin JS.
+
+## Optional: hook-driven activation (Claude Code)
+
+To inject matched skills, references, and active rule IDs automatically as the
+diff changes (and stay silent when the matched set is unchanged), add a
+`UserPromptSubmit` hook running `route.mjs --hook --task build` in
+`.claude/settings.json`. Only once that hook is wired, optionally set the
+non-router `sw-*` skills to `"name-only"` via `skillOverrides` — never enable
+`"name-only"` without the hook. Full JSON snippets:
+[`docs/installation.md#automatic-routing-hook-claude-code`](../docs/installation.md#automatic-routing-hook-claude-code).

@@ -1,14 +1,12 @@
 ---
 name: sw-testing
 description: >-
-  Shopware PHPUnit rules that generic PHPUnit knowledge misses. Load it
-  before writing, fixing or changing any PHPUnit test of Shopware code in a
-  plugin, project or core, even a small edit: a test method, a data
-  provider, a repository stub or mock, an event assertion, a feature flag or
-  major-version guard, test attributes, or the suite a test lives in. Also
-  use when a test is flaky or failing Codecov. On shopware/shopware,
-  shopware-phpunit-tests owns a plain add-a-test request. Do NOT use for
-  storefront E2E, Administration Jest, or running the suite (sw-local-dev).
+  Shopware PHPUnit rules beyond generic PHPUnit. Load before writing or editing
+  any PHPUnit test in a plugin, project, or core: test methods, data providers,
+  stubs/mocks, event/exception assertions, feature flags, attributes, suites,
+  flaky tests, or Codecov failures. On trunk, shopware-phpunit-tests leads
+  plain requests. Do NOT use for E2E, Admin Jest, or running tests
+  (sw-local-dev).
 license: MIT
 metadata:
   contexts: core plugin project
@@ -33,7 +31,8 @@ Read only the reference that matches the task or the files it changes:
 | Read | When | Or the change touches |
 | ---- | ---- | --------------------- |
 | [`exception-assertions.md`](references/exception-assertions.md) | A test asserts an exception. | `->expectException(Object\|Message\|Code)?(` |
-| [`test-shape-and-flags.md`](references/test-shape-and-flags.md) | You need data providers, feature flags or coverage attributes, or a change edits an assertion. | `#[DataProvider(`, … |
+| [`test-assertions-and-shape.md`](references/test-assertions-and-shape.md) | A test uses assertEquals, skips a test, mocks DBAL or callbacks, observes events, or adds/edits data providers. | `assertEquals`, `EventHookDispatcher`, `#[DataProvider]` |
+| [`flags-stubs-and-reflection.md`](references/flags-stubs-and-reflection.md) | A test toggles feature flags, stubs DAL repositories, or uses reflection. | `#[DisabledFeatures]`, `Feature::skip*`, `Reflection*`, `EntityRepository` stub |
 | [`integration-repository.md`](references/integration-repository.md) | An integration test reads or writes through a repository. | `tests/integration/**/*Test.php`, `IntegrationTestBehaviour` |
 | [`core-platform-patterns.md`](references/core-platform-patterns.md) | The test lives in shopware/shopware (migrations, Codecov, `#[CoversClass]`). | `tests/migration/**`, `tests/devops/**`, `@codeCoverageIgnore`, … |
 | [`external-inspiration.md`](references/external-inspiration.md) | You want plugin test patterns from FriendsOfShopware. | `custom/plugins/*/tests/**`, `custom/static-plugins/*/tests/**` |
@@ -66,7 +65,7 @@ assert columns, data transforms, idempotency.
 
 If the test **does not need** the kernel, container, DAL, or HTTP: it belongs in
 `tests/unit/`, not `tests/integration/`. Reviewers routinely request moving pure
-logic tests out of the integration suite. See `test-shape-and-flags.md`.
+logic tests out of the integration suite. See `test-assertions-and-shape.md`.
 
 Exception: shopware/shopware sometimes places DB-touching tests under `tests/unit/`
 for **Codecov patch coverage** — document why in the class docblock (see
@@ -76,24 +75,24 @@ for **Codecov patch coverage** — document why in the class docblock (see
 
 These match PHPStan rules and reviewer expectations on core PRs:
 
-- **TEST-001** **`expectExceptionObject` only** — not `expectExceptionMessage()`,
-  `expectExceptionCode()`, or string matching on exception text.
+- **`expectExceptionObject` only** (`TEST-001`) — not `expectExceptionMessage()`,
+  `expectExceptionCode()`, or string matching on exception text. See `exception-assertions.md`.
 - **TEST-002** **No `#[Depends]`** on integration tests; never combine `#[Depends]` with
   `#[DataProvider]` (shuffle-unsafe).
 - **TEST-005** **Data providers** — use named **`yield`** cases in unit tests (not `return []`);
-  case names describe the scenario; see `test-shape-and-flags.md`.
-- **TEST-006** **Feature flags** — unit: `#[DisabledFeatures]` for legacy/off paths (while two
+  case names describe the scenario; see `test-assertions-and-shape.md`.
+- **Feature flags** (`TEST-006`) — unit: `#[DisabledFeatures]` for legacy/off paths (while two
   majors are in flight, disable the **newer** major to assert the older one);
   integration: `Feature::skipTestIfActive()` / `skipTestIfInActive()` —
   **`#[DisabledFeatures]` is rejected at runtime** in the integration suite.
-  See reference.
-- **TEST-007** **Coverage attrs** — no `#[CoversClass]` on integration tests. See reference.
-- **TEST-008** **Cross-test docblocks** (test → test) — `@see OtherTest` with `use` import; no FQCN in prose.
-- **TEST-010** **`@internal`** on every test class docblock.
+  See `flags-stubs-and-reflection.md`.
+- **Coverage attrs** (`TEST-007`) — no `#[CoversClass]` on integration tests. See `core-platform-patterns.md`.
+- **Cross-test docblocks** (`TEST-008`, test → test) — `@see OtherTest` with `use` import; no FQCN in prose.
+- **`@internal`** (`TEST-010`) on every test class docblock.
 - **TEST-013** **Never `exit()` / `die()`** in a test path; `setAutoExit(false)` on
   `Application::run()`.
-- **TEST-014** **Stub DAL with `StaticEntityRepository`**, infer the generic (or `::of()`).
-- **TEST-015** **`#[CoversNothing]` safeguard tests** — `tests/devops/` on core, not `tests/unit/`.
+- **Stub DAL with `StaticEntityRepository`** (`TEST-014`), infer the generic (or `::of()`). See `flags-stubs-and-reflection.md`.
+- **`#[CoversNothing]` safeguard tests** (`TEST-015`) — `tests/devops/` on core, not `tests/unit/`.
 - **TEST-037** **No separate process** — unit and devops tests never use
   `#[RunInSeparateProcess]`, `#[RunTestsInSeparateProcesses]`,
   `#[RunClassInSeparateProcess]`, the `@run…InSeparateProcess` annotations or
@@ -103,7 +102,7 @@ These match PHPStan rules and reviewer expectations on core PRs:
 - **Events** — no runtime listeners on the shared `event_dispatcher`; observe
   through `CollectingEventDispatcher` (unit) or `EventHookDispatcher::on()`
   (integration), capture in the hook and assert afterwards, never inside it.
-  See `test-shape-and-flags.md`.
+  See `test-assertions-and-shape.md`.
 
 ## Rules
 
@@ -117,10 +116,10 @@ These match PHPStan rules and reviewer expectations on core PRs:
   never depend on pre-existing DB rows in integration tests.
 - **TEST-021** **One behavior per test**; arrange-act-assert; cover the public contract.
 - **A test must be able to fail**: no assertions behind a null guard, and a
-  mocked callback runs its closure. See `test-shape-and-flags.md`.
+  mocked callback runs its closure. See `test-assertions-and-shape.md`.
 - **Keep existing expectations**: a PR that changes code does not flip,
   loosen or skip an old assertion unless it announces the behavior change.
-  See `test-shape-and-flags.md`.
+  See `test-assertions-and-shape.md`.
 
 ## Platform core extras
 

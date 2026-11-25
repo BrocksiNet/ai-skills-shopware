@@ -23,7 +23,7 @@
     {
       "id": "TEST-001",
       "skill": "sw-testing",
-      "file": "skills/sw-testing/SKILL.md",
+      "file": "skills/sw-testing/references/exception-assertions.md",
       "title": "Assert exceptions with expectExceptionObject",
       "status": "active",
       "since": "2026-10-20",
@@ -136,7 +136,7 @@
     {
       "id": "TEST-006",
       "skill": "sw-testing",
-      "file": "skills/sw-testing/SKILL.md",
+      "file": "skills/sw-testing/references/flags-stubs-and-reflection.md",
       "title": "Unit tests disable flags with #[DisabledFeatures]; integration tests skip with Feature::skipTestIf*",
       "status": "active",
       "since": "2026-10-20",
@@ -169,7 +169,7 @@
     {
       "id": "TEST-007",
       "skill": "sw-testing",
-      "file": "skills/sw-testing/SKILL.md",
+      "file": "skills/sw-testing/references/core-platform-patterns.md",
       "title": "No #[CoversClass] on integration tests",
       "status": "active",
       "since": "2026-10-20",
@@ -194,7 +194,7 @@
     {
       "id": "TEST-008",
       "skill": "sw-testing",
-      "file": "skills/sw-testing/SKILL.md",
+      "file": "skills/sw-testing/references/core-platform-patterns.md",
       "title": "Cross-test docblocks use @see with a use import",
       "status": "active",
       "since": "2026-10-20",
@@ -241,7 +241,7 @@
     {
       "id": "TEST-010",
       "skill": "sw-testing",
-      "file": "skills/sw-testing/SKILL.md",
+      "file": "skills/sw-testing/references/core-platform-patterns.md",
       "title": "Every test class is @internal",
       "status": "active",
       "since": "2026-10-20",
@@ -352,7 +352,7 @@
     {
       "id": "TEST-014",
       "skill": "sw-testing",
-      "file": "skills/sw-testing/SKILL.md",
+      "file": "skills/sw-testing/references/flags-stubs-and-reflection.md",
       "title": "Stub DAL repositories with StaticEntityRepository",
       "status": "active",
       "keep_reason": "Held on a second model (2026-11-03): claude/haiku passed without the rule, but opencode/mimo-v2.6-flash-free passed only 2/3 with the skill off. Not a retirement candidate until a second model passes 3/3.",
@@ -381,7 +381,7 @@
     {
       "id": "TEST-015",
       "skill": "sw-testing",
-      "file": "skills/sw-testing/SKILL.md",
+      "file": "skills/sw-testing/references/core-platform-patterns.md",
       "title": "#[CoversNothing] safeguard tests live in tests/devops/",
       "status": "active",
       "since": "2026-10-20",
@@ -395,7 +395,7 @@
     {
       "id": "TEST-016",
       "skill": "sw-testing",
-      "file": "skills/sw-testing/references/test-shape-and-flags.md",
+      "file": "skills/sw-testing/references/test-assertions-and-shape.md",
       "title": "Observe events through a hook or an owned dispatcher; assert afterwards",
       "status": "active",
       "since": "2026-10-20",
@@ -446,7 +446,7 @@
     {
       "id": "TEST-018",
       "skill": "sw-testing",
-      "file": "skills/sw-testing/references/test-shape-and-flags.md",
+      "file": "skills/sw-testing/references/test-assertions-and-shape.md",
       "title": "assertSame over assertEquals for scalars",
       "status": "active",
       "since": "2026-10-20",
@@ -542,7 +542,7 @@
     {
       "id": "TEST-024",
       "skill": "sw-testing",
-      "file": "skills/sw-testing/references/test-shape-and-flags.md",
+      "file": "skills/sw-testing/references/flags-stubs-and-reflection.md",
       "title": "A test asserting a flag-active throw is @deprecated on the method",
       "status": "retired",
       "retired_reason": "No measured effect (2026-10-23): with the skill off, `flag-active-throw-is-deprecated` passed every repeat on claude/haiku (3/3, local) and on opencode/mimo-v2.6-flash-free (3/3, evals.yml run 39960913122). Models already do this without the rule. The task stays as a canary: a model that fails it with the skill off brings the rule back.",
@@ -557,7 +557,7 @@
     {
       "id": "TEST-025",
       "skill": "sw-testing",
-      "file": "skills/sw-testing/references/test-shape-and-flags.md",
+      "file": "skills/sw-testing/references/test-assertions-and-shape.md",
       "title": "Tests read as executable examples",
       "status": "active",
       "since": "2026-10-20",
@@ -573,7 +573,7 @@
     {
       "id": "TEST-026",
       "skill": "sw-testing",
-      "file": "skills/sw-testing/references/test-shape-and-flags.md",
+      "file": "skills/sw-testing/references/test-assertions-and-shape.md",
       "title": "Stable boilerplate goes to setUp() and tearDown()",
       "status": "active",
       "since": "2026-10-20",
@@ -589,7 +589,7 @@
     {
       "id": "TEST-027",
       "skill": "sw-testing",
-      "file": "skills/sw-testing/references/test-shape-and-flags.md",
+      "file": "skills/sw-testing/references/test-assertions-and-shape.md",
       "title": "Name bare literal arguments in test helpers",
       "status": "active",
       "since": "2026-10-20",
@@ -605,7 +605,7 @@
     {
       "id": "TEST-028",
       "skill": "sw-testing",
-      "file": "skills/sw-testing/references/test-shape-and-flags.md",
+      "file": "skills/sw-testing/references/test-assertions-and-shape.md",
       "title": "Unit filesystem access goes through an injected Symfony Filesystem",
       "status": "retired",
       "retired_reason": "No measured effect (2026-10-24): `suggest-rules draft-eval` wrote an eval for the rule, and with the skill off claude/haiku passed every repeat (`review-test-unit-filesystem-catch` off 3/3, on 3/3; `review-test-unit-filesystem-ignore` off 3/3, on 3/3). Models already do this without the rule. The drafted tasks were not kept.",
@@ -622,7 +622,7 @@
     {
       "id": "TEST-029",
       "skill": "sw-testing",
-      "file": "skills/sw-testing/references/test-shape-and-flags.md",
+      "file": "skills/sw-testing/references/test-assertions-and-shape.md",
       "title": "Provider case names describe the scenario",
       "status": "active",
       "since": "2026-10-20",
@@ -638,7 +638,7 @@
     {
       "id": "TEST-030",
       "skill": "sw-testing",
-      "file": "skills/sw-testing/references/test-shape-and-flags.md",
+      "file": "skills/sw-testing/references/test-assertions-and-shape.md",
       "title": "Keep distinct edge cases when deduplicating providers",
       "status": "retired",
       "retired_reason": "No measured effect (2026-10-24): `suggest-rules draft-eval` wrote an eval for the rule, and with the skill off claude/haiku passed every repeat (`review-test-provider-dedupe-catch` off 3/3, on 0/3; `review-test-provider-dedupe-ignore` off 3/3, on 3/3). Models already do this without the rule. The drafted tasks were not kept.",
@@ -655,7 +655,7 @@
     {
       "id": "TEST-031",
       "skill": "sw-testing",
-      "file": "skills/sw-testing/references/test-shape-and-flags.md",
+      "file": "skills/sw-testing/references/flags-stubs-and-reflection.md",
       "title": "Legacy flag tests are easy to delete with the flag",
       "status": "active",
       "since": "2026-10-20",
@@ -710,7 +710,7 @@
     {
       "id": "TEST-034",
       "skill": "sw-testing",
-      "file": "skills/sw-testing/references/test-shape-and-flags.md",
+      "file": "skills/sw-testing/references/test-assertions-and-shape.md",
       "title": "Tests that need no kernel live in tests/unit/",
       "status": "active",
       "since": "2026-10-20",
@@ -725,7 +725,7 @@
     {
       "id": "TEST-035",
       "skill": "sw-testing",
-      "file": "skills/sw-testing/references/test-shape-and-flags.md",
+      "file": "skills/sw-testing/references/test-assertions-and-shape.md",
       "title": "A test must be able to fail",
       "status": "active",
       "since": "2026-10-21",
@@ -742,7 +742,7 @@
     {
       "id": "TEST-036",
       "skill": "sw-testing",
-      "file": "skills/sw-testing/references/test-shape-and-flags.md",
+      "file": "skills/sw-testing/references/test-assertions-and-shape.md",
       "title": "Keep an existing test expectation unless the PR announces the behavior change",
       "status": "active",
       "since": "2026-10-23",
@@ -5439,7 +5439,7 @@
     {
       "id": "PHP-009",
       "skill": "sw-php-foundation",
-      "file": "skills/sw-php-foundation/SKILL.md",
+      "file": "skills/sw-php-foundation/references/data-shapes-and-types.md",
       "title": "Use native types and runtime narrowing before redundant PHPDoc",
       "status": "active",
       "since": "2026-11-20",
@@ -5471,7 +5471,7 @@
     {
       "id": "PHP-011",
       "skill": "sw-php-foundation",
-      "file": "skills/sw-php-foundation/SKILL.md",
+      "file": "skills/sw-php-foundation/references/data-shapes-and-types.md",
       "title": "Choose data shapes by domain boundaries; keep typed internal arrays",
       "status": "active",
       "since": "2026-11-20",
@@ -5487,7 +5487,7 @@
     {
       "id": "PHP-012",
       "skill": "sw-php-foundation",
-      "file": "skills/sw-php-foundation/SKILL.md",
+      "file": "skills/sw-php-foundation/references/data-shapes-and-types.md",
       "title": "Use readonly only when the framework or extension contract is immutable",
       "status": "active",
       "since": "2026-11-20",
@@ -5503,7 +5503,7 @@
     {
       "id": "PHP-013",
       "skill": "sw-php-foundation",
-      "file": "skills/sw-php-foundation/SKILL.md",
+      "file": "skills/sw-php-foundation/references/data-shapes-and-types.md",
       "title": "Use list types for sequential collections",
       "status": "active",
       "since": "2026-11-20",
@@ -5519,7 +5519,7 @@
     {
       "id": "PHP-014",
       "skill": "sw-php-foundation",
-      "file": "skills/sw-php-foundation/SKILL.md",
+      "file": "skills/sw-php-foundation/references/data-shapes-and-types.md",
       "title": "Keep newer PHP syntax within the supported Composer range",
       "status": "active",
       "since": "2026-11-20",

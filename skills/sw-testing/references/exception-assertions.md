@@ -3,9 +3,9 @@
 Inspired by [FriendsOfShopware shopware-phpunit](https://github.com/FriendsOfShopware/agent-skills/tree/main/skills/shopware-phpunit)
 (`setup-prefer-expect-exception-object`); rewritten for this repo.
 
-Prefer `expectExceptionObject()` over separate `expectException()` +
-`expectExceptionMessage()` when the code throws a Shopware domain exception with
-a stable constructor.
+- **TEST-001** Prefer `expectExceptionObject()` over separate `expectException()` +
+  `expectExceptionMessage()` / `expectExceptionCode()` when the code throws a
+  Shopware domain exception with a stable constructor.
 
 ```php
 // Prefer — one assertion, stays in sync with the exception class

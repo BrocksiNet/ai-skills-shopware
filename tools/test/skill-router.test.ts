@@ -107,7 +107,80 @@ describe('router index', () => {
     assert.ok(!skills.has('sw-skill-router') && !skills.has('sw-help'));
     const review = index.skills.find((s) => s.name === 'sw-extension-review');
     const dal = review?.routes.find((r) => r.reference === 'sw-plugin-development/references/dal-usage.md');
-    assert.ok(dal?.anchors_any !== undefined, 'borrowed route keeps the lender triggers');
+    assert.ok(dal !== undefined, 'borrowed route is present');
+    assert.ok(dal.anchors_any !== undefined, 'borrowed route keeps the lender triggers');
+    assert.ok(dal.rules !== undefined && dal.rules.length > 0, 'route includes active rules from rules/catalog.json');
+    assert.ok(
+      dal.rules.every((r) => typeof r.id === 'string' && typeof r.title === 'string' && r.title.length > 0),
+      'each rule carries id and non-empty title',
+    );
+  });
+
+  test('the index includes only active rules for a reference and tolerates a repo without a catalog', () => {
+    const root = mkdtempSync(join(tmpdir(), 'sw-router-rules-'));
+    const dir = join(root, 'skills/sw-alpha');
+    mkdirSync(join(dir, 'references'), { recursive: true });
+    writeFileSync(
+      join(dir, 'SKILL.md'),
+      '---\nname: sw-alpha\ndescription: Alpha.\nmetadata:\n  contexts: core\n  tasks: build\n---\n',
+    );
+    writeFileSync(join(dir, 'references/a.md'), '# A\n');
+    writeFileSync(
+      join(dir, 'routes.json'),
+      JSON.stringify({ routes: [{ reference: 'references/a.md', when: 'A.', paths_any: ['**/*.php'] }] }),
+    );
+    assert.equal(buildIndex(root).skills[0]?.routes[0]?.rules, undefined);
+
+    mkdirSync(join(root, 'rules'), { recursive: true });
+    writeFileSync(
+      join(root, 'rules/catalog.json'),
+      JSON.stringify({
+        prefixes: { ALP: 'sw-alpha' },
+        rules: [
+          {
+            id: 'ALP-002',
+            skill: 'sw-alpha',
+            file: 'skills/sw-alpha/references/a.md',
+            title: 'Second active rule',
+            status: 'active',
+            since: '2026-10-20',
+            eval: null,
+            core_guide_ids: [],
+            audience: ['core'],
+            defer_on_trunk: false,
+          },
+          {
+            id: 'ALP-001',
+            skill: 'sw-alpha',
+            file: 'skills/sw-alpha/references/a.md',
+            title: 'First active rule',
+            status: 'active',
+            since: '2026-10-20',
+            eval: null,
+            core_guide_ids: [],
+            audience: ['core'],
+            defer_on_trunk: false,
+          },
+          {
+            id: 'ALP-003',
+            skill: 'sw-alpha',
+            file: 'skills/sw-alpha/references/a.md',
+            title: 'Retired rule',
+            status: 'retired',
+            retired_reason: 'Replaced.',
+            since: '2026-10-20',
+            eval: null,
+            core_guide_ids: [],
+            audience: ['core'],
+            defer_on_trunk: false,
+          },
+        ],
+      }),
+    );
+    assert.deepEqual(buildIndex(root).skills[0]?.routes[0]?.rules, [
+      { id: 'ALP-001', title: 'First active rule' },
+      { id: 'ALP-002', title: 'Second active rule' },
+    ]);
   });
 });
 
@@ -406,5 +479,133 @@ describe('route.mjs context detection', () => {
     const run = spawnSync(process.execPath, [SCRIPT, '--list'], { encoding: 'utf8' });
     assert.equal(run.status, 0, run.stderr);
     for (const s of buildIndex(ROOT).skills) assert.match(run.stdout, new RegExp(`\\| ${s.name} \\|`, 'u'));
+  });
+});
+
+function gitInit(dir: string): void {
+  const run = (args: string[]): void => {
+    const r = spawnSync('git', args, { cwd: dir, encoding: 'utf8' });
+    assert.equal(r.status, 0, `${args.join(' ')}: ${r.stderr}`);
+  };
+  run(['init', '-b', 'main']);
+  run(['config', 'user.email', 'test@example.com']);
+  run(['config', 'user.name', 'Test']);
+  writeFileSync(join(dir, 'composer.json'), '{"type":"shopware-platform-plugin"}\n');
+  run(['add', 'composer.json']);
+  run(['commit', '-m', 'init']);
+}
+
+describe('route.mjs --brief and --hook', () => {
+  test('--brief prints compact pointers with rule IDs and titles, and stays quiet when nothing matches', () => {
+    const dir = mkdtempSync(join(tmpdir(), 'router-brief-'));
+    writeFileSync(join(dir, 'composer.json'), '{"type":"shopware-platform-plugin"}\n');
+    const hit = spawnSync(
+      process.execPath,
+      [SCRIPT, '--root', dir, '--task', 'build', '--paths', 'src/Migration/Migration1700000000Foo.php', '--brief'],
+      { encoding: 'utf8' },
+    );
+    assert.equal(hit.status, 0, hit.stderr);
+    assert.match(hit.stdout, /^Shopware skills \(plugin, task=build, 1 file\(s\)\):/u);
+    assert.match(hit.stdout, /sw-plugin-development\/references\/migrations\.md/u);
+    assert.match(hit.stdout, /PLG-017:/u);
+    assert.doesNotMatch(hit.stdout, /## Load these skills/u);
+
+    const miss = spawnSync(
+      process.execPath,
+      [SCRIPT, '--root', dir, '--task', 'build', '--paths', 'README.txt', '--brief'],
+      { encoding: 'utf8' },
+    );
+    assert.equal(miss.status, 0, miss.stderr);
+    assert.equal(miss.stdout, '');
+  });
+
+  test('--json keeps compatibility and includes rule metadata on matched references', () => {
+    const dir = mkdtempSync(join(tmpdir(), 'router-json-'));
+    writeFileSync(join(dir, 'composer.json'), '{"type":"shopware-platform-plugin"}\n');
+    const run = spawnSync(
+      process.execPath,
+      [SCRIPT, '--root', dir, '--task', 'build', '--paths', 'src/Migration/Migration1700000000Foo.php', '--json'],
+      { encoding: 'utf8' },
+    );
+    assert.equal(run.status, 0, run.stderr);
+    const out: unknown = JSON.parse(run.stdout);
+    const plg = list(field(out, 'load')).find((s) => text(field(s, 'name')) === 'sw-plugin-development');
+    const mig = list(field(plg, 'references')).find(
+      (r) => text(field(r, 'reference')) === 'sw-plugin-development/references/migrations.md',
+    );
+    const rules = list(field(mig, 'rules'));
+    assert.ok(rules.some((r) => text(field(r, 'id')) === 'PLG-017'));
+  });
+
+  test('--hook suppresses repeated identical sets and fires again when the matched set changes', () => {
+    const dir = mkdtempSync(join(tmpdir(), 'router-hook-'));
+    gitInit(dir);
+    const runHook = (paths: string[], extra: string[] = []): string => {
+      const r = spawnSync(
+        process.execPath,
+        [SCRIPT, '--root', dir, '--task', 'build', '--paths', ...paths, '--hook', ...extra],
+        { encoding: 'utf8' },
+      );
+      assert.equal(r.status, 0, r.stderr);
+      return r.stdout;
+    };
+
+    const first = runHook(['src/Migration/Migration1700000000Foo.php']);
+    assert.match(first, /PLG-017:/u);
+    assert.equal(runHook(['src/Migration/Migration1700000000Foo.php']), '');
+    // Another migration file keeps the exact same matched skill/reference set -> still silent.
+    assert.equal(runHook(['src/Migration/Migration1700000001Bar.php']), '');
+
+    // Adding a new matched reference changes the set -> prints again.
+    const changed = runHook(['src/Migration/Migration1700000000Foo.php', 'src/Resources/config/services.xml']);
+    assert.match(changed, /sw-architecture\/references\/extension-mechanisms\.md/u);
+    assert.equal(runHook(['src/Migration/Migration1700000000Foo.php', 'src/Resources/config/services.xml']), '');
+
+    // Returning to no matches stays silent and resets state so a later match fires again.
+    assert.equal(runHook(['README.txt']), '');
+    assert.match(runHook(['src/Migration/Migration1700000000Foo.php']), /PLG-017:/u);
+  });
+
+  test('--hook keeps independent state per git worktree via git rev-parse --git-dir', () => {
+    const mainDir = mkdtempSync(join(tmpdir(), 'router-wt-main-'));
+    const wtDir = join(mkdtempSync(join(tmpdir(), 'router-wt-branch-')), 'wt');
+    gitInit(mainDir);
+    const addWt = spawnSync('git', ['worktree', 'add', '-b', 'feature', wtDir], { cwd: mainDir, encoding: 'utf8' });
+    assert.equal(addWt.status, 0, addWt.stderr);
+
+    const mainState = text(call('hookStateFile', mainDir));
+    const wtState = text(call('hookStateFile', wtDir));
+    assert.ok(mainState.endsWith('sw-skill-router-hook.state'));
+    assert.ok(wtState.endsWith('sw-skill-router-hook.state'));
+    assert.notEqual(mainState, wtState);
+    assert.match(wtState, /worktrees/u);
+
+    const args = ['--task', 'build', '--paths', 'src/Migration/Migration1700000000Foo.php', '--hook'];
+    const rMain = spawnSync(process.execPath, [SCRIPT, '--root', mainDir, ...args], { encoding: 'utf8' });
+    assert.equal(rMain.status, 0, rMain.stderr);
+    assert.match(rMain.stdout, /PLG-017:/u);
+
+    // Worktree has its own state, so the first hook call there still fires.
+    const rWt1 = spawnSync(process.execPath, [SCRIPT, '--root', wtDir, ...args], { encoding: 'utf8' });
+    assert.equal(rWt1.status, 0, rWt1.stderr);
+    assert.match(rWt1.stdout, /PLG-017:/u);
+
+    // Second call in the worktree is suppressed.
+    const rWt2 = spawnSync(process.execPath, [SCRIPT, '--root', wtDir, ...args], { encoding: 'utf8' });
+    assert.equal(rWt2.status, 0, rWt2.stderr);
+    assert.equal(rWt2.stdout, '');
+  });
+
+  test('--hook outside a git repository prints without failing', () => {
+    const dir = mkdtempSync(join(tmpdir(), 'router-nogit-'));
+    writeFileSync(join(dir, 'composer.json'), '{"type":"shopware-platform-plugin"}\n');
+    assert.equal(call('hookStateFile', dir), null);
+    const r = spawnSync(
+      process.execPath,
+      [SCRIPT, '--root', dir, '--task', 'build', '--paths', 'src/Migration/Migration1700000000Foo.php', '--hook'],
+      { encoding: 'utf8' },
+    );
+    assert.equal(r.status, 0, r.stderr);
+    assert.match(r.stdout, /PLG-017:/u);
   });
 });

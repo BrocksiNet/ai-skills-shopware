@@ -9,6 +9,7 @@
     {
       "reference": "references/architecture.md",
       "when": "You add a module, component override or ACL privilege.",
+      "hint": "`administration/src/module/**`, `acl/index.*`, `Shopware.Module.register(`",
       "paths_any": [
         "**/Resources/app/administration/src/module/**",
         "**/Resources/app/administration/src/**/acl/index.{js,ts}"

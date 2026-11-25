@@ -35,6 +35,7 @@
     {
       "reference": "references/version-guards.md",
       "when": "The change adds or keeps a class_exists or method_exists check for Shopware API.",
+      "hint": "`class_exists` / `method_exists` for Shopware",
       "anchors_any": [
         "(class|method|interface)_exists\\((\\\\?Shopware\\b|[A-Z][A-Za-z]+::class)"
       ]
@@ -51,6 +52,7 @@
     {
       "reference": "references/code-comments.md",
       "when": "The change adds or edits comments or docblocks that talk about earlier versions, removed code or the issue.",
+      "hint": "history, PR or issue-number comments",
       "anchors_any": [
         "^\\s*(//|#|\\*|/\\*).*\\b([Pp]reviously|[Oo]riginally|used to|no longer (used|needed|necessary|required|called|supported|exists?|works?|applies)|[Ee]arlier (version|revision|approach)|[Bb]efore this (change|PR|fix)|this (PR|pull request)|was (changed|replaced|removed) (to|in|with)|instead of the old)\\b",
         "^\\s*(//|#|\\*|/\\*).*(^|[\\s(])#\\d{5}\\b",

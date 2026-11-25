@@ -10,13 +10,16 @@
 //   --task build|review|ship|answer|run  what the user is doing (default: any)
 //   --context core|plugin|app|project    override the detected repository kind
 //   --skills-dir <dir>                   another folder with installed skills
+//   --brief                              compact pointer list with rule IDs and titles
+//   --hook                               like --brief, silent when the matched set did not change
 //   --json                               machine-readable output
 //
 // Plain Node, no dependencies: it runs wherever the skill is installed. The
 // data comes from index.json next to this folder, which the skills library
-// generates from every skill's metadata and routes.json.
+// generates from every skill's metadata, routes.json and rules/catalog.json.
 import { execFileSync } from 'node:child_process';
-import { existsSync, readFileSync, readdirSync, realpathSync, statSync } from 'node:fs';
+import { createHash } from 'node:crypto';
+import { existsSync, readFileSync, readdirSync, realpathSync, statSync, writeFileSync } from 'node:fs';
 import { homedir } from 'node:os';
 import { dirname, join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -29,7 +32,7 @@ const BASES = ['origin/trunk', 'origin/main', 'origin/master', 'trunk', 'main', 
 // ---- arguments -----------------------------------------------------------------
 
 export function parseArgs(argv) {
-  const o = { task: 'any', context: 'auto', paths: null, diff: null, base: null, root: null, json: false, list: false, skillsDirs: [] };
+  const o = { task: 'any', context: 'auto', paths: null, diff: null, base: null, root: null, json: false, list: false, brief: false, hook: false, skillsDirs: [] };
   for (let i = 0; i < argv.length; i += 1) {
     const a = argv[i];
     const next = () => {
@@ -45,6 +48,8 @@ export function parseArgs(argv) {
     else if (a === '--skills-dir') o.skillsDirs.push(next());
     else if (a === '--json') o.json = true;
     else if (a === '--list') o.list = true;
+    else if (a === '--brief') o.brief = true;
+    else if (a === '--hook') o.hook = true;
     else if (a === '--paths') {
       o.paths = [];
       while (argv[i + 1] !== undefined && !argv[i + 1].startsWith('--')) o.paths.push(argv[(i += 1)]);
@@ -285,7 +290,7 @@ export function route({ files, kind, task }) {
     const references = [];
     for (const r of skill.routes) {
       const hit = routeHit(r, inContext);
-      if (hit !== null) references.push({ reference: r.reference, ...hit });
+      if (hit !== null) references.push({ reference: r.reference, ...hit, rules: r.rules ?? [] });
     }
     references.sort((a, b) => b.hits - a.hits);
     const why = [];
@@ -388,6 +393,88 @@ function markdown(r, installed) {
   return `${out.join('\n').trimEnd()}\n`;
 }
 
+const RULES_BY_REF = new Map(
+  INDEX.skills.flatMap((s) => s.routes.filter((r) => Array.isArray(r.rules) && r.rules.length > 0).map((r) => [r.reference, r.rules])),
+);
+
+/** Compact pointer output for `--brief` and `--hook`: matched skills,
+ *  references, active rule IDs + titles, and why each matched. Empty string
+ *  when no skill loaded. */
+export function formatBrief(r, installed) {
+  if (r.load.length === 0) return '';
+  const out = [];
+  const contexts = r.contexts.length > 0 ? r.contexts.join(', ') : r.context.kind;
+  out.push(`Shopware skills (${contexts}, task=${r.task}, ${r.changes} file(s)):`);
+  for (const s of r.load) {
+    const dir = installed.get(s.name);
+    const loc = dir === undefined ? 'not installed' : join(dir, 'SKILL.md');
+    const why = s.why.filter((x) => !x.endsWith('matched'));
+    const lead = s.defers_to.filter((n) => r.core.includes(n));
+    if (lead.length > 0) why.push(`core leads: ${lead.map((n) => `.agents/skills/${n}`).join(', ')}`);
+    out.push(`- ${s.name} (${loc})${why.length > 0 ? ` — ${why.join('; ')}` : ''}`);
+    for (const ref of s.references) {
+      out.push(`  - ${ref.reference} — ${ref.why}`);
+      const rules = ref.rules ?? RULES_BY_REF.get(ref.reference) ?? [];
+      if (rules.length > 0) out.push(`    ${rules.map((x) => `${x.id}: ${x.title}`).join('; ')}`);
+    }
+    for (const ref of s.always) {
+      out.push(`  - ${ref} — always`);
+      const rules = RULES_BY_REF.get(ref) ?? [];
+      if (rules.length > 0) out.push(`    ${rules.map((x) => `${x.id}: ${x.title}`).join('; ')}`);
+    }
+  }
+  if (r.missing.length > 0) {
+    out.push(`Install missing: npx skills add ${INDEX.repo} ${r.missing.map((m) => `--skill ${m}`).join(' ')}`);
+  }
+  for (const c of r.companions) {
+    out.push(c.installed ? `Companion: ${c.name} (${c.path}) — Shopware components first.` : `Companion (not installed): ${c.install}`);
+  }
+  return `${out.join('\n')}\n`;
+}
+
+/** Stable hash of the routed set so `--hook` stays silent until skills or
+ *  references actually change. */
+export function matchedSetHash(r) {
+  const payload = {
+    context: r.context.kind,
+    task: r.task,
+    load: r.load
+      .map((s) => ({
+        name: s.name,
+        references: s.references.map((ref) => ref.reference).sort(),
+        always: [...s.always].sort(),
+      }))
+      .sort((a, b) => a.name.localeCompare(b.name)),
+    missing: [...r.missing].sort(),
+  };
+  return createHash('sha256').update(JSON.stringify(payload)).digest('hex');
+}
+
+/** Worktree-safe hook state file inside the repository's git dir, or null
+ *  outside git. `git rev-parse --git-dir` points at `.git/worktrees/<name>`
+ *  in a worktree, keeping each worktree's state separate. */
+export function hookStateFile(root) {
+  const gitDir = git(root, ['rev-parse', '--git-dir'])?.trim();
+  if (!gitDir) return null;
+  return join(resolve(root, gitDir), 'sw-skill-router-hook.state');
+}
+
+function readState(path) {
+  try {
+    return readFileSync(path, 'utf8').trim();
+  } catch {
+    return null;
+  }
+}
+
+function writeState(path, hash) {
+  try {
+    writeFileSync(path, `${hash}\n`);
+  } catch {
+    // Read-only git dir or sandboxed environment: degrade to stateless output.
+  }
+}
+
 function list(installed) {
   const out = ['# Shopware skills', '', '| Skill | Installed | Contexts | Tasks | What it is for |', '| ----- | --------- | -------- | ----- | -------------- |'];
   for (const s of INDEX.skills) {
@@ -399,7 +486,9 @@ function list(installed) {
 export function main(argv) {
   const o = parseArgs(argv);
   if (o.help) {
-    process.stdout.write(readFileSync(fileURLToPath(import.meta.url), 'utf8').split('\n').slice(1, 17).map((l) => l.replace(/^\/\/ ?/u, '')).join('\n') + '\n');
+    const lines = readFileSync(fileURLToPath(import.meta.url), 'utf8').split('\n').slice(1);
+    const stop = lines.findIndex((l) => !l.startsWith('//'));
+    process.stdout.write(`${(stop === -1 ? lines : lines.slice(0, stop)).map((l) => l.replace(/^\/\/ ?/u, '')).join('\n')}\n`);
     return 0;
   }
   const root = resolve(o.root ?? git(process.cwd(), ['rev-parse', '--show-toplevel'])?.trim() ?? process.cwd());
@@ -427,6 +516,20 @@ export function main(argv) {
   const report = { context, task: o.task, source, base: base ?? null, changes: files.length, core: context.kind === 'core' ? core : [], ...result, notes };
   report.missing = result.load.map((s) => s.name).filter((n) => !installed.has(n));
   report.companions = companions(result.load, installed);
+  if (o.hook) {
+    const hash = matchedSetHash(report);
+    const statePath = hookStateFile(root);
+    if (statePath !== null) {
+      if (readState(statePath) === hash) return 0;
+      writeState(statePath, hash);
+    }
+    process.stdout.write(o.json ? `${JSON.stringify(report, null, 2)}\n` : formatBrief(report, installed));
+    return 0;
+  }
+  if (o.brief) {
+    process.stdout.write(o.json ? `${JSON.stringify(report, null, 2)}\n` : formatBrief(report, installed));
+    return 0;
+  }
   process.stdout.write(o.json ? `${JSON.stringify(report, null, 2)}\n` : markdown(report, installed));
   return 0;
 }

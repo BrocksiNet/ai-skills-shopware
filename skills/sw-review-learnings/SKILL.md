@@ -1,14 +1,11 @@
 ---
 name: sw-review-learnings
 description: >-
-  Review Shopware code for the findings that keep coming back in plugin, app,
-  and PR reviews. Use when reviewing Shopware code, asking whether it is
-  idiomatic or what a reviewer would flag, checking that it is
-  headless/API-aware, looking for common Shopware mistakes, or hardening a
-  change before submission. Do NOT use as a generic PHP linter (use
-  sw-php-foundation), for test rules (use sw-testing), or to re-define
-  topics already owned by the surface skills; this skill records findings and
-  points at the owning skill.
+  Recurring findings from Shopware plugin, app, and PR reviews. Use when
+  reviewing Shopware code, checking idiomatic patterns or
+  headless/API-awareness, or hardening a change before submission. Do NOT use
+  as a PHP linter (sw-php-foundation), for test rules (sw-testing), or to
+  replace surface skills.
 license: MIT
 metadata:
   contexts: core plugin app project
@@ -39,9 +36,9 @@ Detailed, growing lists live in references. Read only the one that matches the c
 | ---- | ---- | --------------------- |
 | [`api-aware.md`](references/api-aware.md) | The code serves Store-API or headless clients. | `StoreApi/**/*.php`, `SalesChannel/**/*Route.php`, `store-api`, … |
 | [`dal-and-performance.md`](references/dal-and-performance.md) | The code queries the DAL, checks what a customer can see, runs on a hot path, or dispatches queued work. | `new Criteria(`, … |
-| [`version-guards.md`](references/version-guards.md) | The change adds or keeps a class_exists or method_exists check for Shopware API. | `(class\|method\|interface)_exists((\?Shopware\b\|[A-Z][A-Za-z]+::class)` |
+| [`version-guards.md`](references/version-guards.md) | The change adds or keeps a class_exists or method_exists check for Shopware API. | `class_exists` / `method_exists` for Shopware |
 | [`feature-flags.md`](references/feature-flags.md) | The change reads a Shopware feature flag, or an environment variable that may be one. | `getenv(`, … |
-| [`code-comments.md`](references/code-comments.md) | The change adds or edits comments or docblocks that talk about earlier versions, removed code or the issue. | `^\s*(//\|#\|*\|/*).*\b([Pp]reviously\|[Oo]riginally\|used to\|no longer (used\|needed\|necessary\|required\|called\|supported\|exists?\|works?\|applies)\|[Ee]arlier (version\|revision\|approach)\|[Bb]efore this (change\|PR\|fix)\|this (PR\|pull request)\|was (changed\|replaced\|removed) (to\|in\|with)\|instead of the old)\b`, … |
+| [`code-comments.md`](references/code-comments.md) | The change adds or edits comments or docblocks that talk about earlier versions, removed code or the issue. | history, PR or issue-number comments |
 | [`pr-size.md`](references/pr-size.md) | Any review of a change: the changed-line count and whether it bundles separate concerns. | any change |
 | [`change-scope.md`](references/change-scope.md) | A fix grows beyond the bug. | on demand |
 <!-- routes:end -->

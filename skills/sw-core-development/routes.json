@@ -31,6 +31,7 @@
     {
       "reference": "references/api-schema.md",
       "when": "You add or change an Admin or Store API route.",
+      "hint": "`ApiDefinition/Generator/Schema/**`, `#[Route(`",
       "paths_any": [
         "src/Core/Framework/Api/ApiDefinition/Generator/Schema/**"
       ],
@@ -41,6 +42,7 @@
     {
       "reference": "references/modernization-and-flags.md",
       "when": "You modernize an implementation and choose whether compatibility needs a feature flag.",
+      "hint": "`feature.yaml`, `Feature::isActive(`, `HttpClientInterface`",
       "paths_any": [
         "src/Core/Framework/Resources/config/packages/feature.yaml"
       ],

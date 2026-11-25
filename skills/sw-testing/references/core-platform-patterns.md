@@ -35,7 +35,7 @@ Rules:
   test. A second class needs a second test file. Danger fails every added or
   modified test file that covers more than one class, so touching a legacy
   multi-covers file means splitting it first.
-- **Do not** add `#[CoversClass]`, `#[CoversFunction]`, or `#[CoversNothing]` to
+- **TEST-007** **Do not** add `#[CoversClass]`, `#[CoversFunction]`, or `#[CoversNothing]` to
   **integration** tests — Shopware PHPStan allows those attributes only on unit and
   migration tests.
 - Migration-job Cobertura may **exclude** non-migration `src/` paths — do not
@@ -67,9 +67,9 @@ Simple struct-style classes with only public properties may use
 
 ## Cross-test references in **test** docblocks
 
-When one **test class** documents that another test covers related behaviour,
-use **`@see`** with a **short imported class name** — not a leading-backslash FQCN
-in prose.
+- **TEST-008** When one **test class** documents that another test covers related behaviour,
+  use **`@see`** with a **short imported class name** — not a leading-backslash FQCN
+  in prose.
 
 ```php
 use Shopware\Tests\Unit\Core\Framework\Mcp\McpDiscoveryScanDirsConfigTest;
@@ -113,16 +113,16 @@ change. `fundamentals@<area>` counts as equal to `<area>`. PHPStan
 `TestPackageMatchRule` fails mismatches (unit/migration) and integration values
 that occur in none of the mirrored `src/` packages.
 
-Every test class also needs an `@internal` class docblock.
+- **TEST-010** Every test class also needs an `@internal` class docblock.
 
 Eval: `test-class-has-package-attribute`, `test-class-marked-internal`.
 
 ## Safeguard tests — not in `tests/unit/`
 
 The **unit suite** should contribute to **Codecov patch coverage** when possible.
-**Safeguard / config / wiring checks** that intentionally do not cover production
-code belong elsewhere — on core, typically **`tests/devops/`** (DevOps PHPUnit
-config), not `tests/unit/`.
+- **TEST-015** **Safeguard / config / wiring checks** that intentionally do not cover production
+  code belong elsewhere — on core, typically **`tests/devops/`** (DevOps PHPUnit
+  config), not `tests/unit/`.
 
 | Test kind | Placement | Coverage attribute |
 | --------- | --------- | ------------------ |

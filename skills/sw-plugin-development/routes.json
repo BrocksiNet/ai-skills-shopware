@@ -71,6 +71,11 @@
       ]
     },
     {
+      "reference": "references/upgrade-6-8-and-rector.md",
+      "when": "You prepare a plugin for Shopware 6.8 (V6_8_0_0=1, CACHE_REWORK, documents, flows) or run Rector/codemod upgrades.",
+      "on_demand": true
+    },
+    {
       "reference": "references/symfony-first.md",
       "when": "You are about to write code a Symfony component already provides.",
       "anchors_any": [

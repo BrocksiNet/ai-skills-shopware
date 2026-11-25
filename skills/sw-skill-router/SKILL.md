@@ -1,14 +1,11 @@
 ---
 name: sw-skill-router
 description: >-
-  Pick the Shopware skills and references a change or a task needs, instead of
-  guessing. Use at the start of Shopware work, before reviewing a Shopware
-  pull request or diff, when a plan lists the files it will touch, or when the
-  user asks "which skill should I use", "which skills apply to this PR" or
-  "route this change". Runs a script that reads the git diff or planned paths,
-  detects core, plugin, app or project, and lists what to load and why. Do NOT
-  use to explain what the library offers (sw-help) or as a replacement for
-  reading the skills it names.
+  Pick the Shopware skills and references a change or task needs. Use at the
+  start of Shopware work, before reviewing a PR/diff, when a plan lists target
+  files, or when asked "which skill should I use", "which skills apply to this
+  PR", or "route this change". Runs route.mjs on the diff or planned paths. Do
+  NOT use to explain the library (sw-help) or replace reading the named skills.
 license: MIT
 metadata:
   contexts: core plugin app project
@@ -40,6 +37,8 @@ Pick the input:
 | A saved pull request diff | `gh pr diff 123 \| node route.mjs --diff - --task review` |
 | Nothing written yet | write the plan first, then `route.mjs --paths <every file the plan touches> --task build` |
 | A question with no files | `route.mjs --task answer` lists the skills that fit |
+| Compact pointers with rule IDs | `route.mjs --brief --task build` (short list: skill, reference, rule IDs + titles, why) |
+| Automatic hook (silent when unchanged) | `route.mjs --hook --task build` (stores state in `git rev-parse --git-dir`, safe for worktrees) |
 | See every skill | `route.mjs --list` |
 
 Pick `--task` from what the user asked for:

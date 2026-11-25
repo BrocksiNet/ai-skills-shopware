@@ -24,6 +24,7 @@
     {
       "reference": "references/component-independence.md",
       "when": "A change couples two components or bundles.",
+      "hint": "cross-bundle `use Shopware\\...`",
       "anchors_any": [
         "use Shopware\\\\(Storefront|Administration|Elasticsearch)\\\\"
       ],
@@ -39,6 +40,7 @@
     {
       "reference": "references/dal-contracts.md",
       "when": "You touch a DAL definition, entity or repository contract.",
+      "hint": "`*Definition.php`, `*EntityExtension.php`",
       "paths_any": [
         "**/*Definition.php",
         "**/*EntityExtension.php"
