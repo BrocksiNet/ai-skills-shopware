@@ -855,7 +855,7 @@ deltas.
 ## WP9: Upstream watchlist
 
 Status: **table done 2026-10-20** in
-[`core-pr-17657-alignment.md`](../core-pr-17657-alignment.md#watchlist).
+[`core-pr-17657-alignment.md`](../../core-pr-17657-alignment.md#watchlist).
 Changes since this plan was written: #21541 merged on 2026-10-19, so WP7
 phase B is unblocked. #21722 was closed; its Administration agent docs are
 now part of #21730, and #21725 is the lint-baseline PR #21730 builds on.

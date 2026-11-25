@@ -1,6 +1,6 @@
 # Skill update automation plan (2026-10)
 
-Status: **done** (2026-10-23), all phases; how it works today is in [`docs/maintenance.md`](../maintenance.md) · Author: BrocksiNet · Created: 2026-10-23
+Status: **done** (2026-10-23), all phases; how it works today is in [`docs/maintenance.md`](../../maintenance.md) · Author: BrocksiNet · Created: 2026-10-23
 
 Rules go stale because Shopware changes every week. Half of the upkeep is
 automated already: the weekly trunk mining issue and the weekly API index.
@@ -461,7 +461,7 @@ agent only explains them:
 
 `tools/bin/suggest-rules.ts` with the logic in `tools/src/suggest-*.ts` and
 the ask adapters in `tools/src/agent-ask.ts`; the user guide is
-[`docs/maintenance.md`](../maintenance.md#suggesting-rule-changes).
+[`docs/maintenance.md`](../../maintenance.md#suggesting-rule-changes).
 Differences from the plan above:
 
 - Clusters are keyed by the rule a signal maps to (a rule-level match),
@@ -516,7 +516,7 @@ skill does not win stays a draft.
 
 **Later** (built 2026-10-26): the same command in a workflow, started by a
 `/draft <id>` comment on the drift issue. See
-[Suggesting rules in CI](../maintenance.md#suggesting-rules-in-ci).
+[Suggesting rules in CI](../../maintenance.md#suggesting-rules-in-ci).
 
 **Acceptance**:
 
@@ -528,7 +528,7 @@ skill does not win stays a draft.
 
 `node tools/bin/suggest-rules.ts draft <id>` with the logic in
 `tools/src/draft-*.ts`; the user guide is
-[`docs/maintenance.md`](../maintenance.md#drafting-a-proposal).
+[`docs/maintenance.md`](../../maintenance.md#drafting-a-proposal).
 Differences from the plan above:
 
 - The worktree goes to `.cache/drafts/<branch>` and starts from

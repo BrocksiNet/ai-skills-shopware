@@ -1,5 +1,5 @@
 // The shape of the public API index: one snapshot per ref, one item per
-// symbol. docs/plans/2026-10-wp11-public-api-index.md explains the surfaces.
+// symbol. docs/plans/done/2026-10-wp11-public-api-index.md explains the surfaces.
 
 export const SCHEMA = 1;
 export const GENERATOR = 'api-index/0.8.0';

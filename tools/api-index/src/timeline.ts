@@ -1,6 +1,6 @@
 // Many snapshots merged into one timeline: each item once, with the releases
 // it exists in as ranges, and every flag and detail as the value it had over
-// which releases. docs/plans/2026-10-wp11-public-api-index.md explains why.
+// which releases. docs/plans/done/2026-10-wp11-public-api-index.md explains why.
 import { GENERATOR, type Item, type ItemKind, SCHEMA, type Snapshot } from './model.ts';
 
 /** First and last release of a run of consecutive releases; `null` as the
