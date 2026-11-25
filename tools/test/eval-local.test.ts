@@ -1,18 +1,22 @@
 // scripts/eval-local.sh: agent setup, task plan, one A/B per task, the gate.
 import assert from 'node:assert/strict';
-import { chmodSync, existsSync, mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
+import { appendFileSync, chmodSync, mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join, relative, resolve } from 'node:path';
 import { after, describe, test } from 'node:test';
+import { setTimeout as delay } from 'node:timers/promises';
 import type { RunAbOptions } from '../src/ab-run.ts';
 import { parseManifest } from '../src/eval-manifest.ts';
 import { evalLocal, stamp } from '../src/eval-local.ts';
 import { inSeries } from '../src/series.ts';
 
+const cmp = (a: string, b: string): number => (a < b ? -1 : a > b ? 1 : 0);
+
 const ROOT = resolve(import.meta.dirname, '../..');
 const RUNNER = join(ROOT, 'evals/runner');
 const TASK_A = 'dal-search-without-limit';
 const TASK_B = 'no-empty-explicit';
+const TASK_C = 'unit-test-passes';
 const tmp = mkdtempSync(join(tmpdir(), 'eval-local-test-'));
 after(() => {
   rmSync(tmp, { recursive: true, force: true });
@@ -90,7 +94,7 @@ async function local(env: NodeJS.ProcessEnv, verdict = 'improved'): Promise<Loca
         sha: expected.sha,
       };
       const file = o.env.EVAL_RESULTS ?? '';
-      writeFileSync(file, `${existsSync(file) ? readFileSync(file, 'utf8') : ''}${JSON.stringify(record)}\n`);
+      appendFileSync(file, `${JSON.stringify(record)}\n`);
       await Promise.resolve();
       return 0;
     },
@@ -152,6 +156,8 @@ describe('eval-local', () => {
     const cases: [NodeJS.ProcessEnv, RegExp][] = [
       [{ EVAL_LOCAL_AGENT: 'cursor' }, /EVAL_LOCAL_AGENT must be claude, opencode or copilot/u],
       [{ PATH: '/usr/bin:/bin' }, /claude CLI not found/u],
+      [{ EVAL_CONCURRENCY: '0' }, /EVAL_CONCURRENCY must be >= 1/u],
+      [{ EVAL_CONCURRENCY: 'abc' }, /EVAL_CONCURRENCY must be >= 1/u],
       [{ EVAL_TASKS: 'does-not-exist' }, /eval-plan: unknown task 'does-not-exist'/u],
       [{ EVAL_CHANGED_FILES: docsOnly }, /No tasks selected/u],
     ];
@@ -161,6 +167,85 @@ describe('eval-local', () => {
       assert.match(r.err, message);
       assert.equal(r.calls.length, 0);
     });
+  });
+  test('EVAL_CONCURRENCY runs up to N tasks concurrently with prefixed stderr and atomic JSONL lines', async () => {
+    const results = fresh('concurrent.jsonl');
+    let active = 0;
+    let maxActive = 0;
+    let out = '';
+    let err = '';
+    const rc = await evalLocal({
+      root: ROOT,
+      env: {
+        PATH: `${fakeBin}:/usr/bin:/bin`,
+        HOME: '/home/u',
+        EVAL_RESULTS: results,
+        EVAL_TASKS: `${TASK_A},${TASK_B},${TASK_C}`,
+        REPEATS: '1',
+        EVAL_CONCURRENCY: '2',
+      },
+      out: (t) => {
+        out += t;
+      },
+      err: (t) => {
+        err += t;
+      },
+      now: new Date('2026-10-21T07:03:31.123Z'),
+      ab: async (o) => {
+        active += 1;
+        maxActive = Math.max(maxActive, active);
+        o.out(`running `);
+        await delay(20);
+        o.out(`done\n`);
+        o.err('trailing-no-newline');
+        const repeats = Number(o.repeats);
+        const expected = parseManifest(readFileSync(`${o.env.EVAL_RESULTS ?? ''}.manifest.json`, 'utf8'));
+        const record = {
+          task: o.task,
+          repeats,
+          on: repeats,
+          off: 0,
+          on_done: repeats,
+          off_done: repeats,
+          verdict: 'improved',
+          loaded_on: null,
+          loaded_off: null,
+          trials: [
+            { mode: 'on', repeat: 1, status: 'pass', exit_code: 0, duration_ms: 1, skills: null, tokens: null },
+            { mode: 'off', repeat: 1, status: 'fail', exit_code: 1, duration_ms: 1, skills: null, tokens: null },
+          ],
+          experiment_id: o.env.EVAL_EXPERIMENT_ID,
+          agent: o.env.EVAL_AGENT,
+          model: o.env.TASK_MODEL ?? 'default',
+          sha: expected.sha,
+        };
+        appendFileSync(o.env.EVAL_RESULTS ?? '', `${JSON.stringify(record)}\n`);
+        active -= 1;
+        return 0;
+      },
+    });
+    assert.equal(rc, 0, err);
+    assert.equal(maxActive, 2);
+    assert.match(err, /^Concurrency: 2$/mu);
+    for (const task of [TASK_A, TASK_B, TASK_C]) {
+      assert.ok(err.includes(`[${task}] == ${task}\n`), `missing start prefix for ${task}`);
+      assert.ok(err.includes(`[${task}] running done\n`), `missing output prefix for ${task}`);
+      assert.ok(err.includes(`[${task}] trailing-no-newline\n`), `missing flushed prefix for ${task}`);
+    }
+    const lines = readFileSync(results, 'utf8').trim().split('\n');
+    assert.equal(lines.length, 3);
+    assert.deepEqual(
+      lines
+        .map((line) => {
+          const parsed: unknown = JSON.parse(line);
+          return typeof parsed === 'object' && parsed !== null && 'task' in parsed && typeof parsed.task === 'string'
+            ? parsed.task
+            : '';
+        })
+        .toSorted(cmp),
+      [TASK_A, TASK_B, TASK_C].toSorted(cmp),
+    );
+    assert.match(out, /- Gate: \*\*PASS\*\*/u);
   });
   test('the stamp matches date -u +%Y%m%dT%H%M%SZ', () => {
     assert.equal(stamp(new Date('2026-01-02T03:04:05.678Z')), '20260102T030405Z');

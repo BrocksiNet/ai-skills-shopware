@@ -18,6 +18,7 @@
 #   EVAL_MAX_TASKS    cap on the task count (default 0 = no cap)
 #   EVAL_CHANGED_FILES  select tasks for changed files, as in eval-plan.sh
 #   REPEATS           runs per task and mode (default 3)
+#   EVAL_CONCURRENCY  max tasks to run concurrently (default 1)
 #   EVAL_RESULTS      JSONL output (default evals/.results/local-<ts>.jsonl)
 #
 # opencode and copilot runs keep a throwaway HOME, so no global skills leak

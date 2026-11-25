@@ -10,21 +10,24 @@
 //      runs with a throwaway HOME), otherwise machine-wide skills leak into
 //      the "off" run.
 import { existsSync, mkdirSync, readdirSync, rmSync, statSync, symlinkSync } from 'node:fs';
-import { join } from 'node:path';
+import { join, resolve } from 'node:path';
 import { repoSkills, taskSkills } from './eval-plan.ts';
 
 export const PROFILE_DIRS = ['.claude/skills', '.agents/skills'] as const;
 
-/** The skills a task runs with: its `skills` file, else every repo skill. */
+/** The skills a task runs with: every skill in a custom EVAL_SKILLS_ROOT
+ *  package (used by discovery/transfer variant experiments), else the task's
+ *  `skills` file, else every repo skill. */
 export function profileSkills(root: string, task: string, skillsDir = join(root, 'skills')): string[] {
+  if (resolve(skillsDir) !== resolve(root, 'skills')) {
+    return readdirSync(skillsDir, { withFileTypes: true })
+      .filter((d) => d.isDirectory())
+      .map((d) => d.name)
+      .toSorted();
+  }
   const tasksRoot = join(root, 'evals/tasks');
   if (task !== '' && existsSync(join(tasksRoot, task, 'skills'))) return taskSkills(tasksRoot, task);
-  return skillsDir === join(root, 'skills')
-    ? repoSkills(root)
-    : readdirSync(skillsDir, { withFileTypes: true })
-        .filter((d) => d.isDirectory())
-        .map((d) => d.name)
-        .toSorted();
+  return repoSkills(root);
 }
 
 /** Applies the profile; returns an error message, or null on success. */
