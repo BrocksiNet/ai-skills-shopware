@@ -582,11 +582,19 @@ describe('skills profile', () => {
       lstatSync(join(ROOT, 'skills', s)).isDirectory(),
     ).length;
     const dir = wd();
-    skillsProfile(ROOT, 'on', dir, 'unit-test-passes');
+    skillsProfile(ROOT, 'on', dir, 'no-contradiction-full-profile');
     assert.equal(readdirSync(join(dir, '.claude/skills')).length, all);
     const bare = wd();
     skillsProfile(ROOT, 'on', bare, '');
     assert.equal(readdirSync(join(bare, '.agents/skills')).length, all);
+  });
+  test('a custom skillsDir links every skill in that package regardless of the task skills file', () => {
+    const customSkills = wd();
+    mkdirSync(join(customSkills, 'sw-alpha'));
+    mkdirSync(join(customSkills, 'sw-beta'));
+    const dir = wd();
+    assert.equal(skillsProfile(ROOT, 'on', dir, 'discovery-overview', customSkills), null);
+    assert.deepEqual(readdirSync(join(dir, '.claude/skills')).toSorted(), ['sw-alpha', 'sw-beta']);
   });
   test('off removes both folders; a bad mode is an error', () => {
     const dir = wd();

@@ -6,9 +6,11 @@ import { after, test } from 'node:test';
 import { runTransfer } from '../src/transfer-eval.ts';
 import { transferCases } from '../src/transfer-plan.ts';
 import { transferOutcome } from '../src/grade/transfer.ts';
+import { createSyntheticDiscoveryRepo } from './discovery-fixture.ts';
 
 const ROOT = resolve(import.meta.dirname, '../..');
 const tmp = mkdtempSync(join(tmpdir(), 'transfer-tests-'));
+const SYNTHETIC = createSyntheticDiscoveryRepo(join(tmp, 'repo'));
 after(() => {
   rmSync(tmp, { recursive: true, force: true });
 });
@@ -32,9 +34,9 @@ test('transfer outcome goldens reject pristine and almost-pass code and execute 
 test('the frozen schedule covers every task/arm/repeat and measures returned reference content', async () => {
   const destination = join(tmp, 'healthy');
   const seen: string[] = [];
-  const specs = transferCases(ROOT);
+  const specs = transferCases(SYNTHETIC);
   const result = await runTransfer({
-    root: ROOT,
+    root: SYNTHETIC,
     destination,
     repeats: 2,
     env: {},
@@ -47,7 +49,7 @@ test('the frozen schedule covers every task/arm/repeat and measures returned ref
       const reference = spec.expected_references[0];
       assert.ok(reference !== undefined);
       const skillsRoot = o.env.EVAL_SKILLS_ROOT ?? '';
-      assert.ok(!skillsRoot.startsWith(ROOT));
+      assert.ok(!skillsRoot.startsWith(SYNTHETIC));
       const content = readFileSync(join(skillsRoot, reference), 'utf8');
       const trace = [
         { type: 'system', subtype: 'init' },
@@ -74,7 +76,7 @@ test('the frozen schedule covers every task/arm/repeat and measures returned ref
 test('an infrastructure error stops later sessions and records skipped rather than failed outcomes', async () => {
   let calls = 0;
   const result = await runTransfer({
-    root: ROOT,
+    root: SYNTHETIC,
     destination: join(tmp, 'error'),
     repeats: 1,
     env: {},
@@ -95,7 +97,7 @@ test('a trial cannot silently alter the skill package seen by subsequent trials'
   let calls = 0;
   await assert.rejects(
     runTransfer({
-      root: ROOT,
+      root: SYNTHETIC,
       destination: join(tmp, 'tampered'),
       repeats: 1,
       env: {},

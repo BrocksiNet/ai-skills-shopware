@@ -13,9 +13,16 @@ after(() => {
 /** Passes when the workdir has `done.txt` and the transcript says "ok". */
 const GRADER = '#!/usr/bin/env bash\n[ -f "$WORKDIR/done.txt" ] && grep -q ok "$TRANSCRIPT"\n';
 
-/** Stands in for tools/bin/grade.ts: passes when the workdir has `done.txt`. */
-const TS_GRADER =
-  "import { existsSync } from 'node:fs';\nprocess.exitCode = existsSync(`${process.env.WORKDIR}/done.txt`) ? 0 : 1;\n";
+/** In-process TS grader: passes when the workdir has `done.txt` and transcript contains "ok" (or is empty). */
+const TS_GRADER = [
+  "import { existsSync } from 'node:fs';",
+  "import { join } from 'node:path';",
+  'export const grade = ({ workdir, transcript }) => ({',
+  "  pass: existsSync(join(workdir, 'done.txt')) && (transcript === '' || transcript.includes('ok')),",
+  "  detail: '',",
+  '});',
+  '',
+].join('\n');
 
 let n = 0;
 function repo(files: Record<string, string>): string {
@@ -27,19 +34,24 @@ function repo(files: Record<string, string>): string {
   return root;
 }
 
-async function grade(root: string, tasks: string[] = []): Promise<{ rc: number; out: string; err: string }> {
+async function grade(
+  root: string,
+  tasks: string[] = [],
+  opts: { concurrency?: number; env?: NodeJS.ProcessEnv } = {},
+): Promise<{ rc: number; out: string; err: string }> {
   let out = '';
   let err = '';
   const rc = await testGraders({
     root,
     tasks,
-    env: { PATH: process.env.PATH },
+    env: { PATH: process.env.PATH, ...opts.env },
     out: (t) => {
       out += t;
     },
     err: (t) => {
       err += t;
     },
+    ...(opts.concurrency === undefined ? {} : { concurrency: opts.concurrency }),
   });
   return { rc, out, err };
 }
@@ -66,9 +78,9 @@ describe('grader cases', () => {
 });
 
 describe('testGraders', () => {
-  test('every task; its own grade.sh or grade.ts; the transcript comes from the fixture', async () => {
+  test('every task; its own grade.sh or in-process TS grader; the transcript comes from the fixture', async () => {
     const root = repo({
-      'tools/bin/grade.ts': TS_GRADER,
+      'tools/graders/ts.ts': TS_GRADER,
       'evals/tasks/good/instruction.md': '',
       'evals/tasks/good/grade.sh': GRADER,
       'evals/tasks/good/fixture/start.txt': '',
@@ -77,10 +89,13 @@ describe('testGraders', () => {
       'evals/tasks/good/fixtures/pass/.transcript.txt': 'ok\n',
       'evals/tasks/ts/instruction.md': '',
       'evals/tasks/ts/fixture/x': '',
+      'evals/tasks/ts/fixtures/fail/done.txt': '',
+      'evals/tasks/ts/fixtures/fail/.transcript.txt': 'nope\n',
       'evals/tasks/ts/fixtures/pass/done.txt': '',
+      'evals/tasks/ts/fixtures/pass/.transcript.txt': 'ok\n',
       'evals/tasks/not-a-task/fixture/x': '',
     });
-    const r = await grade(root);
+    const r = await grade(root, [], { concurrency: 2 });
     assert.equal(r.rc, 0, r.err);
     assert.equal(
       r.out,
@@ -91,9 +106,30 @@ describe('testGraders', () => {
         '  OK: good (fixtures/pass)',
         'task: ts',
         '  OK: ts (fixture)',
+        '  OK: ts (fixtures/fail)',
         '  OK: ts (fixtures/pass)',
         '',
         'test-graders: OK',
+        '',
+      ].join('\n'),
+    );
+  });
+  test('a throwing in-process TS grader is reported as exit 2 on both negative and positive cases', async () => {
+    const root = repo({
+      'tools/graders/boom.ts': "export const grade = () => { throw new Error('broken grader'); };\n",
+      'evals/tasks/boom/instruction.md': '',
+      'evals/tasks/boom/fixture/x': '',
+      'evals/tasks/boom/fixtures/pass/x': '',
+    });
+    const r = await grade(root);
+    assert.equal(r.rc, 1);
+    assert.equal(
+      r.err,
+      [
+        '  FAIL: boom (fixture): expected fail, exit 2',
+        '  FAIL: boom (fixtures/pass): expected pass, exit 2',
+        '',
+        'test-graders: 2 failure(s)',
         '',
       ].join('\n'),
     );
@@ -130,5 +166,11 @@ describe('testGraders', () => {
     });
     const r = await grade(root);
     assert.deepEqual([r.rc, r.err], [2, 'test-graders: AST tools missing. Run: cd evals/tools/ast && npm ci\n']);
+  });
+  test('invalid concurrency returns exit 2', async () => {
+    const root = repo({});
+    const r = await grade(root, [], { env: { TEST_GRADERS_CONCURRENCY: '0' } });
+    assert.equal(r.rc, 2);
+    assert.match(r.err, /TEST_GRADERS_CONCURRENCY must be >= 1/u);
   });
 });

@@ -3,14 +3,14 @@
 // a wrapper and documents the environment).
 import { join, resolve } from 'node:path';
 import { type RunAbOptions, runAb } from './ab-run.ts';
-import { envOr } from './env.ts';
+import { envInt, envOr } from './env.ts';
 import { errorMessage } from './errors.ts';
 import { gate, gateOptionsFromEnv } from './eval-gate.ts';
 import { plan, planOptionsFromEnv } from './eval-plan.ts';
 import { readResults } from './eval-result-file.ts';
 import { type EvalManifest, freezeManifest } from './eval-experiment.ts';
 import { ghToken, onPath } from './proc.ts';
-import { inSeries } from './series.ts';
+import { inPool, inSeries } from './series.ts';
 
 export interface EvalLocalOptions {
   root: string;
@@ -61,13 +61,70 @@ function agentEnv(root: string, env: NodeJS.ProcessEnv): NodeJS.ProcessEnv | str
   return out;
 }
 
-/** Plans the tasks, runs an A/B for each and returns the gate's exit code:
- *  0 pass, 1 fail, 2 when nothing could run. */
-export async function evalLocal(o: EvalLocalOptions): Promise<number> {
+function prefixedWriter(
+  prefix: string,
+  write: (text: string) => void,
+): { write: (text: string) => void; flush: () => void } {
+  let buffer = '';
+  return {
+    write(text: string): void {
+      buffer += text;
+      const lines = buffer.split('\n');
+      buffer = lines.pop() ?? '';
+      for (const line of lines) write(`${prefix}${line}\n`);
+    },
+    flush(): void {
+      if (buffer !== '') {
+        write(`${prefix}${buffer}\n`);
+        buffer = '';
+      }
+    },
+  };
+}
+
+async function runTasks(
+  o: EvalLocalOptions,
+  tasks: string[],
+  repeats: string,
+  env: NodeJS.ProcessEnv,
+  concurrency: number,
+): Promise<void> {
+  const ab = o.ab ?? runAb;
+  if (concurrency === 1) {
+    await inSeries(tasks, async (task) => {
+      o.err(`== ${task}\n`);
+      await ab({ root: o.root, task, repeats, env, out: o.err, err: o.err });
+    });
+    return;
+  }
+  await inPool(tasks, concurrency, async (task) => {
+    const prefixed = prefixedWriter(`[${task}] `, o.err);
+    prefixed.write(`== ${task}\n`);
+    try {
+      await ab({ root: o.root, task, repeats, env: { ...env }, out: prefixed.write, err: prefixed.write });
+    } finally {
+      prefixed.flush();
+    }
+  });
+}
+
+interface LocalSetup {
+  env: NodeJS.ProcessEnv;
+  concurrency: number;
+  repeats: string;
+  results: string;
+  tasks: string[];
+  expected: EvalManifest;
+}
+
+function setupLocal(o: EvalLocalOptions): LocalSetup | string {
   const env = agentEnv(o.root, o.env);
-  if (typeof env === 'string') {
-    o.err(`${env}\n`);
-    return 2;
+  if (typeof env === 'string') return env;
+  let concurrency: number;
+  try {
+    concurrency = envInt(env, 'EVAL_CONCURRENCY', 1, 1);
+  } catch (error) {
+    return `eval-local: ${errorMessage(error)}`;
   }
   const repeats = envOr(env, 'REPEATS', '3');
   // Absolute: the agent runs in a scratch workdir, where a relative trace or
@@ -80,31 +137,34 @@ export async function evalLocal(o: EvalLocalOptions): Promise<number> {
   try {
     tasks = plan(join(o.root, 'evals/tasks'), { ...planOptionsFromEnv(env), shards: 1 }).tasks;
   } catch (error) {
-    o.err(`eval-plan: ${errorMessage(error)}\n`);
-    return 2;
+    return `eval-plan: ${errorMessage(error)}`;
   }
-  if (tasks.length === 0) {
-    o.err('No tasks selected.\n');
-    return 2;
-  }
-  let expected: EvalManifest;
+  if (tasks.length === 0) return 'No tasks selected.';
   try {
-    expected = freezeManifest(o.root, results, tasks, Number(repeats), env);
+    const expected = freezeManifest(o.root, results, tasks, Number(repeats), env);
     env.EVAL_EXPERIMENT_ID = expected.id;
     env.TASK_MODEL = expected.model;
+    return { env, concurrency, repeats, results, tasks, expected };
   } catch (error) {
-    o.err(`eval-manifest: ${errorMessage(error)}\n`);
+    return `eval-manifest: ${errorMessage(error)}`;
+  }
+}
+
+/** Plans the tasks, runs an A/B for each and returns the gate's exit code:
+ *  0 pass, 1 fail, 2 when nothing could run. */
+export async function evalLocal(o: EvalLocalOptions): Promise<number> {
+  const setup = setupLocal(o);
+  if (typeof setup === 'string') {
+    o.err(`${setup}\n`);
     return 2;
   }
+  const { env, concurrency, repeats, results, tasks, expected } = setup;
 
   o.err(`Agent ${envOr(env, 'EVAL_AGENT', '')}, model ${envOr(env, 'TASK_MODEL', 'default')}, `);
   o.err(`${tasks.length} task(s), ${repeats} repeat(s)\nResults: ${results}\n`);
-  const ab = o.ab ?? runAb;
+  if (concurrency > 1) o.err(`Concurrency: ${concurrency}\n`);
   // ab's exit code encodes the verdict; the gate decides.
-  await inSeries(tasks, async (task) => {
-    o.err(`== ${task}\n`);
-    await ab({ root: o.root, task, repeats, env, out: o.err, err: o.err });
-  });
+  await runTasks(o, tasks, repeats, env, concurrency);
 
   try {
     const records = readResults(results);

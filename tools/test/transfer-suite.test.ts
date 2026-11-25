@@ -1,13 +1,14 @@
 import assert from 'node:assert/strict';
 import { existsSync, mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
-import { join, resolve } from 'node:path';
+import { join } from 'node:path';
 import { after, test } from 'node:test';
 import { freezeInputs } from '../src/transfer-freeze.ts';
 import { prepareTransferSuite, runTransferSuite } from '../src/transfer-suite.ts';
+import { createSyntheticDiscoveryRepo } from './discovery-fixture.ts';
 
-const ROOT = resolve(import.meta.dirname, '../..');
 const tmp = mkdtempSync(join(tmpdir(), 'transfer-suite-'));
+const SYNTHETIC = createSyntheticDiscoveryRepo(join(tmp, 'repo'));
 after(() => {
   rmSync(tmp, { recursive: true, force: true });
 });
@@ -35,7 +36,7 @@ test('all model schedules exist before the first trial; runs remain serial and c
   let active = 0;
   let calls = 0;
   const options = {
-    root: ROOT,
+    root: SYNTHETIC,
     destination,
     repeats: 2,
     env: {},

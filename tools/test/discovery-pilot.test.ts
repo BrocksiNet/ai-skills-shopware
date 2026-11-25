@@ -7,9 +7,11 @@ import { after, describe, test } from 'node:test';
 import { prepareDiscovery, runDiscovery } from '../src/discovery-pilot.ts';
 import { profileSkills } from '../src/skills-profile.ts';
 import { checkRoutes } from '../src/check-reports.ts';
+import { createSyntheticDiscoveryRepo } from './discovery-fixture.ts';
 
 const ROOT = resolve(import.meta.dirname, '../..');
 const tmp = mkdtempSync(join(tmpdir(), 'discovery-pilot-'));
+const SYNTHETIC = createSyntheticDiscoveryRepo(join(tmp, 'repo'));
 after(() => {
   rmSync(tmp, { recursive: true, force: true });
 });
@@ -24,8 +26,8 @@ const call = (module: unknown, method: string, input: unknown): unknown => {
 describe('discovery consolidation pilot', () => {
   test('packages a self-contained merged entry point and an actual removal arm', () => {
     const destination = join(tmp, 'packages');
-    prepareDiscovery(ROOT, destination);
-    const inventory = (variant: string): string[] => profileSkills(ROOT, '', join(destination, variant, 'skills'));
+    prepareDiscovery(SYNTHETIC, destination);
+    const inventory = (variant: string): string[] => profileSkills(SYNTHETIC, '', join(destination, variant, 'skills'));
     assert.equal(inventory('merged').length, inventory('current').length - 1);
     assert.equal(inventory('removed').length, inventory('current').length - 2);
     assert.ok(!inventory('merged').includes('sw-help'));
@@ -38,7 +40,7 @@ describe('discovery consolidation pilot', () => {
       0,
     );
     assert.throws(() => {
-      prepareDiscovery(ROOT, destination);
+      prepareDiscovery(SYNTHETIC, destination);
     }, /already exists/u);
   });
   test('the merged router preserves every recorded routing selection', async () => {
@@ -61,7 +63,7 @@ describe('discovery consolidation pilot', () => {
     const seen: string[] = [];
     const destination = join(tmp, 'run');
     const rc = await runDiscovery({
-      root: ROOT,
+      root: SYNTHETIC,
       destination,
       repeats: 1,
       env: {},
@@ -81,7 +83,7 @@ describe('discovery consolidation pilot', () => {
   test('a healthy provider runs all task/variant combinations', async () => {
     const seen: string[] = [];
     const rc = await runDiscovery({
-      root: ROOT,
+      root: SYNTHETIC,
       destination: join(tmp, 'healthy'),
       repeats: 1,
       env: {},
