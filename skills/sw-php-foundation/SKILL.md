@@ -27,7 +27,7 @@ Read the reference when the task needs data-shape or typing details:
 <!-- routes:start: generated from routes.json by `node tools/bin/render-routes.ts`; do not edit -->
 | Read | When | Or the change touches |
 | ---- | ---- | --------------------- |
-| [`data-shapes-and-types.md`](references/data-shapes-and-types.md) | You model a DTO or value object, choose readonly mutability, narrow PHPStan types (list<T>, @var), or check PHP 8.x minimum version syntax. | on demand |
+| [`data-shapes-and-types.md`](references/data-shapes-and-types.md) | You model a DTO or value object, choose readonly mutability, narrow PHPStan types (`list<T>`, `@var`), or check PHP 8.x minimum version syntax. | on demand |
 <!-- routes:end -->
 
 ## Non-negotiable baseline

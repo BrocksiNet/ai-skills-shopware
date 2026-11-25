@@ -120,6 +120,7 @@ Eval: `test-class-has-package-attribute`, `test-class-marked-internal`.
 ## Safeguard tests — not in `tests/unit/`
 
 The **unit suite** should contribute to **Codecov patch coverage** when possible.
+
 - **TEST-015** **Safeguard / config / wiring checks** that intentionally do not cover production
   code belong elsewhere — on core, typically **`tests/devops/`** (DevOps PHPUnit
   config), not `tests/unit/`.

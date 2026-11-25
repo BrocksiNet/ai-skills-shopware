@@ -3,7 +3,7 @@
   "routes": [
     {
       "reference": "references/data-shapes-and-types.md",
-      "when": "You model a DTO or value object, choose readonly mutability, narrow PHPStan types (list<T>, @var), or check PHP 8.x minimum version syntax.",
+      "when": "You model a DTO or value object, choose readonly mutability, narrow PHPStan types (`list<T>`, `@var`), or check PHP 8.x minimum version syntax.",
       "on_demand": true
     }
   ]
