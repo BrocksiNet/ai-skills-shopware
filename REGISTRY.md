@@ -53,6 +53,8 @@ the surface skills can all be installed together without contradicting (see
 | Secrets, access keys, API ACL, app least privilege | `sw-security` |
 | Access and cache defaults of existing routes (`_routeScope`, `_loginRequired`, `_httpCache`, `_acl`) | `sw-security` |
 | Idempotency keys and replayed responses scoped to their caller | `sw-security` |
+| Parsing XML from outside the extension (`XmlParser` over `XmlUtils`) | `sw-security` |
+| MCP tool ACL and privilege checks (`#[McpToolRequires]`, `requirePrivilegeResult()`); tool authoring itself is not covered | `sw-security` |
 | Plugin/extension Store-API & Admin OpenAPI contracts | `sw-plugin-development` |
 | Plugin/extension Store-API & Admin request and response compatibility (field types, required parameters, status codes, validation) | `sw-plugin-development` |
 | Core Admin/Store API OpenAPI schemas | `sw-core-development` |

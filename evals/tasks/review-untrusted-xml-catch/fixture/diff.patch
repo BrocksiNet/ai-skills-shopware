@@ -1,0 +1,26 @@
+diff --git a/src/Import/SupplierStockImporter.php b/src/Import/SupplierStockImporter.php
+--- a/src/Import/SupplierStockImporter.php
++++ b/src/Import/SupplierStockImporter.php
+@@ -3,6 +3,7 @@
+ namespace Swag\Stock\Import;
+ 
+ use Shopware\Core\Framework\Log\Package;
++use Symfony\Component\Config\Util\XmlUtils;
+ 
+ #[Package('inventory')]
+ class SupplierStockImporter
+@@ -18,11 +19,11 @@
+      */
+     public function import(): int
+     {
+-        $feed = json_decode($this->client->fetch(), true, 512, \JSON_THROW_ON_ERROR);
++        $document = XmlUtils::parse($this->client->fetch());
+ 
+         $stock = [];
+-        foreach ($feed['items'] as $item) {
+-            $stock[(string) $item['sku']] = (int) $item['quantity'];
++        foreach ($document->getElementsByTagName('item') as $item) {
++            $stock[$item->getAttribute('sku')] = (int) $item->getAttribute('quantity');
+         }
+ 
+         return $this->updater->update($stock);

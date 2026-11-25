@@ -23,7 +23,13 @@ import { loadSources, type Source } from '../src/sources.ts';
 
 const ROOT = resolve(import.meta.dirname, '../..');
 const SOURCES = loadSources(ROOT);
-const TRUNK: Source = SOURCES.find((s) => s.id === 'shopware') ?? SOURCES[0] ?? assert.fail('no shopware source');
+const TRUNK_SOURCE: Source =
+  SOURCES.find((s) => s.id === 'shopware') ?? SOURCES[0] ?? assert.fail('no shopware source');
+// The recorded windows end before the ADR below existed, so the recordings hold no request for its path.
+const TRUNK: Source = {
+  ...TRUNK_SOURCE,
+  paths: TRUNK_SOURCE.paths.filter((p) => p !== 'adr/2026-11-19-remove-claude-md-bridge-files.md'),
+};
 const report = (mined: Mined[], catalog: Catalog = loadCatalog(ROOT)): string =>
   renderReport(mined, catalog, mapIndex(ROOT, catalog, SOURCES));
 const FIXTURE = join(import.meta.dirname, 'fixtures/mining/shopware-2026-10-13..2026-10-19.json');

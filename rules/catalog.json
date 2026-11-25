@@ -4593,6 +4593,62 @@
       }
     },
     {
+      "id": "SEC-010",
+      "skill": "sw-security",
+      "file": "skills/sw-security/references/untrusted-xml.md",
+      "title": "Parse XML your code did not ship with XmlParser, not XmlUtils::parse() or loadFile()",
+      "status": "active",
+      "since": "2026-11-24",
+      "eval": "review-untrusted-xml-catch",
+      "core_guide_ids": [],
+      "audience": [
+        "core",
+        "plugin"
+      ],
+      "defer_on_trunk": false,
+      "trunk": {
+        "source": "src/Core/DevOps/StaticAnalyze/PHPStan/Rules/NoXmlUtilsParsingRule.php",
+        "commit": "941803997206650eba993edff6a8cd37e2019469",
+        "enforced_by": [
+          {
+            "tool": "NoXmlUtilsParsingRule",
+            "kind": "phpstan",
+            "catches": "reports a static `XmlUtils::parse()` or `XmlUtils::loadFile()` call outside `XmlParser` and test classes",
+            "misses": "other XML parsers (`DOMDocument::loadXML()`, `simplexml_load_*`), and every extension, because the rule ships only in core's PHPStan config",
+            "trunk_only": true
+          }
+        ]
+      }
+    },
+    {
+      "id": "SEC-011",
+      "skill": "sw-security",
+      "file": "skills/sw-security/references/mcp-tool-acl.md",
+      "title": "A plugin's MCP tool checks its own privileges; #[McpToolRequires] only documents them",
+      "status": "active",
+      "since": "2026-11-24",
+      "eval": "review-mcp-tool-privilege-catch",
+      "core_guide_ids": [],
+      "audience": [
+        "core",
+        "plugin"
+      ],
+      "defer_on_trunk": false,
+      "trunk": {
+        "source": "src/Core/Framework/Mcp/AGENTS.md#declaring-privileges",
+        "commit": "9139f95b0a054605b60db68d3c23cc199dc5731a",
+        "enforced_by": [
+          {
+            "tool": "McpAdminToolRequiresPrivilegeRule",
+            "kind": "phpstan",
+            "catches": "reports an Admin API MCP tool with neither `#[McpToolRequires]` nor `#[McpToolRequiresNoPrivilege]`, with both, or with the opt-out and a `requirePrivilege()` or `requirePrivilegeResult()` call in its own class",
+            "misses": "whether a `#[McpToolRequires]` tool really calls a privilege check, tools the compiled container does not know, and every extension, because the rule ships only in core's PHPStan config",
+            "trunk_only": true
+          }
+        ]
+      }
+    },
+    {
       "id": "IMP-001",
       "skill": "sw-change-impact",
       "file": "skills/sw-change-impact/SKILL.md",

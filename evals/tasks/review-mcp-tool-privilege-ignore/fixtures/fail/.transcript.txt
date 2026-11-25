@@ -1,0 +1,16 @@
+No finding applies.
+
+```json
+{
+  "findings": [
+    {
+      "rule_id": "SEC-011",
+      "severity": "major",
+      "file": "src/Mcp/Tool/PointsHistoryTool.php",
+      "line": 34,
+      "summary": "The tool does not enforce its privilege, #[McpToolRequires] is only informational.",
+      "fix": "Call requirePrivilegeResult()."
+    }
+  ]
+}
+```

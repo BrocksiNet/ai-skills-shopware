@@ -1,0 +1,7 @@
+The feed is parsed with `XmlParser`, which rejects document types, and the core constraint now requires a release that has it.
+
+```json
+{
+  "findings": []
+}
+```

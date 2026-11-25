@@ -97,6 +97,10 @@ points at a replacement the extenders can use today: `CORE-063`.
 - Does a stored idempotent response replay only to its own caller:
   `SEC-008`?
 - Does an app verify webhook signatures: `SEC-006`?
+- Is XML from an upload, feed or response parsed with `XmlParser`, not
+  `XmlUtils`: `SEC-010`?
+- Does a new MCP tool call its own privilege check, not only declare
+  `#[McpToolRequires]`: `SEC-011`?
 - Are secrets read from configuration, not committed (see the security
   `secrets-and-config.md` reference)?
 

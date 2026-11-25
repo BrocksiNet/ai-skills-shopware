@@ -1,0 +1,16 @@
+The supplier feed is remote content, and `XmlUtils::parse()` resolves its DTD before rejecting the document type.
+
+```json
+{
+  "findings": [
+    {
+      "rule_id": "SEC-010",
+      "severity": "major",
+      "file": "src/Import/SupplierStockImporter.php",
+      "line": 26,
+      "summary": "The supplier feed is parsed with XmlUtils::parse(), which loads the document's DTD and entities, so a crafted feed can read local files (XXE).",
+      "fix": "Parse it with Shopware\\Core\\Framework\\Util\\XmlParser::parse(), which rejects document types."
+    }
+  ]
+}
+```

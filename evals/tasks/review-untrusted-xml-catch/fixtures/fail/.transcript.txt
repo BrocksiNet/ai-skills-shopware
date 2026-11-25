@@ -1,0 +1,16 @@
+The parser could be swapped, but this is cosmetic.
+
+```json
+{
+  "findings": [
+    {
+      "rule_id": "SEC-010",
+      "severity": "nit",
+      "file": "src/Import/SupplierStockImporter.php",
+      "line": 26,
+      "summary": "XmlParser::parse() would be stricter than XmlUtils::parse().",
+      "fix": "Use XmlParser."
+    }
+  ]
+}
+```
