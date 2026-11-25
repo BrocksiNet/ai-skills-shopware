@@ -8,6 +8,47 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.19.0] - 2026-11-25
+
+### Added
+
+- `sw-security`: `SEC-010` parses XML the code did not ship with
+  `XmlParser`, not `XmlUtils::parse()` or `loadFile()`, and `SEC-011` has a
+  plugin's MCP tool check its own privileges (`#[McpToolRequires]` only
+  documents them). Both come with review pairs and borrowed review routes.
+- `sw-php-foundation` tags its remaining rules as `PHP-003` to `PHP-014`
+  (strict types, imports, PER style, injected interfaces, PSR-20 clock,
+  named arguments, data shapes, readonly, list types, supported PHP range).
+- `rules/rejected.json` lists rule proposals a maintainer dropped, with the
+  reason. `suggest-rules` shows dropped rules the signals share words with
+  and fails a proposal that repeats a rejected title in the same skill.
+
+### Changed
+
+- Google Chrome's `modern-web-guidance` is now the default companion for
+  Storefront and Administration work (was: do not install). Shopware
+  components (Bootstrap, Meteor `mt-*`) still win. `sw-skill-router`
+  reminds you of it on frontend changes, or prints its install command
+  when it is missing.
+- PHP and Symfony guidance: keep the concrete DAL `EntityRepository` (there
+  is no repository interface to inject), use four-part major feature-flag
+  IDs and three-part release labels, keep simple typed internal arrays,
+  and use readonly only where the contract is immutable. `CORE-028` lets an
+  equivalent internal swap replace code directly and keeps dual paths for
+  incompatible changes or staged rollouts.
+- The Administration `public-api/` snapshot is routed like
+  `blocks-list.json`, the 6.8 extension Jest harness is documented, and the
+  Administration and Storefront deprecation-guard ESLint rules are recorded
+  as trunk-only checks of `CORE-022`.
+
+### Fixed
+
+- The repository-injection, HTTP client and clock graders check the
+  contract in the AST instead of tokens, so a nonexistent DAL interface or
+  an unused injected dependency no longer passes.
+- Model evals count a Claude read of a `SKILL.md` (Read or `cat`, `head`,
+  `sed`) as a loaded skill; listing or grepping it does not.
+
 ## [0.18.0] - 2026-11-20
 
 ### Added
@@ -1128,7 +1169,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   (`actions/checkout@v5`, `markdownlint-cli2-action@v23`).
 - `docs/local-validation.md` and GitHub issue templates for feedback.
 
-[Unreleased]: https://github.com/BrocksiNet/ai-skills-shopware/compare/v0.18.0...main
+[Unreleased]: https://github.com/BrocksiNet/ai-skills-shopware/compare/v0.19.0...main
+[0.19.0]: https://github.com/BrocksiNet/ai-skills-shopware/compare/v0.18.0...v0.19.0
 [0.18.0]: https://github.com/BrocksiNet/ai-skills-shopware/compare/v0.17.0...v0.18.0
 [0.17.0]: https://github.com/BrocksiNet/ai-skills-shopware/compare/v0.16.0...v0.17.0
 [0.16.0]: https://github.com/BrocksiNet/ai-skills-shopware/compare/v0.15.0...v0.16.0
