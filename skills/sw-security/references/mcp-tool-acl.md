@@ -55,6 +55,7 @@ not in 6.7.16.1; they are on the 6.7.17.x branch and trunk.
 
 Core's PHPStan rules `McpAdminToolRequiresPrivilegeRule` and
 `McpStoreApiToolAdminAclRule` report:
+
 - an Admin API tool with neither attribute or with both, and an opt-out
   tool that calls `requirePrivilege()` or `requirePrivilegeResult()`,
 - a Store API tool that declares `#[McpToolRequires]` or calls
