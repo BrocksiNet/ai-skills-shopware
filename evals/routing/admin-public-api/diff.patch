@@ -1,0 +1,11 @@
+diff --git a/src/Administration/Resources/app/administration/public-api/index.json b/src/Administration/Resources/app/administration/public-api/index.json
+--- a/src/Administration/Resources/app/administration/public-api/index.json
++++ b/src/Administration/Resources/app/administration/public-api/index.json
+@@ -10,6 +10,7 @@
+     "sw-app-actions": {
+       "blocks": [
+         "sw_app_actions_button",
++        "sw_app_actions_menu",
+         "sw_app_actions_list"
+       ]
+     },

@@ -124,17 +124,7 @@ Read only the reference that matches the task or the files it changes:
 ## Already enforced by CI (do not repeat)
 
 <!-- enforced:start: generated from rules/catalog.json by `node tools/bin/render-enforced.ts`; do not edit -->
-CI already fails the build on these, so do not repeat them in reviews or
-checklists. Flag only what each check misses.
-Checks marked *trunk only* are not active in plugin or app projects by
-default; there the rule still needs a reviewer.
-
-- `CORE-008` `ApiRoutesHaveASchemaTest` (test, trunk only) fails when a core Store API route has no path in the generated OpenAPI schema, or a schema path has no route. It misses routes of Storefront or plugin controllers, routes marked `openapi: false`, request and response shapes that do not match the code, and Admin API gaps already in its snapshot; flag those.
-- `CORE-012` `DeprecatedMethodsThrowDeprecationRule` (PHPStan, trunk only) reports discovery methods such as `getSubscribedEvents()` of a deprecated class that do not return a literal `[]` or `null` when the removal flag is active. It misses discovery methods it does not know, and values computed in other methods; flag those.
-- `CORE-013` `NoBCPlanningDeprecationRule` (PHPStan, trunk only) reports `@deprecated` docblocks on classes, methods, properties and constants that contain a `reason:*` planning token. It misses free-text planning notes without those tokens, and docblocks on functions or enum cases; flag those.
-- `CORE-015` `BCChangeAttributeUsageRule` (PHPStan, trunk only) reports `BCChange` attributes with a bad version, or that describe a change that is already true or not structurally possible. It misses an attribute that is valid but does not describe the change that is actually planned; flag those.
-- `CORE-017` `AnnotationTagTest` (test, trunk only) fails when an `@deprecated` in `src/` or `tests/` lacks a valid `tag:` or `manifest:` version, or names a future version. It misses a missing reason or replacement, and whitelisted paths such as `DevOps/StaticAnalyze`; flag those.
-- `CORE-022` `DeprecatedMethodsThrowDeprecationRule` (PHPStan, trunk only) reports public and protected methods of `@deprecated` classes, and `@deprecated` methods, whose body lacks `Feature::triggerDeprecationOrThrow(`. It misses private methods, a wrong flag argument, a call that is commented out, and entity or collection classes; flag those.
-- `CORE-054` `NoFileExistsRule` (PHPStan, trunk only) reports direct `file_exists()` calls. It misses every other raw filesystem function, such as `file_put_contents()`, `unlink()` and `mkdir()`; it does not ask for Symfony `Filesystem`; flag those.
-- `CORE-061` `IgnoredPhpstanErrorsInTouchedFiles` (Danger, trunk only) fails a PR that touches a file listed in the PHPStan baseline. It misses inline `@phpstan-ignore` in touched files, and PRs labeled `skip-danger-phpstan-baseline`; flag those.
+CI already fails the build on 11 checks for this skill's rules. Before you
+flag a finding or write a checklist, read [`references/enforced-by-ci.md`](references/enforced-by-ci.md)
+and flag only what each check misses.
 <!-- enforced:end -->

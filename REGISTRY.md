@@ -106,7 +106,7 @@ the surface skills can all be installed together without contradicting (see
 | Storefront HTTP cache vs AJAX; no speculation/prerender on cart/checkout/account | `sw-storefront` |
 | Storefront public API for themes (Twig blocks and variables, JS plugin options and events, SCSS variables, `theme.json` fields, snippet keys) | `sw-storefront` |
 | Administration Vue/TS, Meteor `mt-*`, Jest next to code, Admin ACL + privilege migrations (no `system_config` grants in plugin roles), component overrides with `$super`, form field binding across 6.5 and 6.6+; experimental SFC is not the 6.8 upgrade | `sw-admin-js` |
-| Administration extension API (component props, blocks, `swDefinePublic`, `blocks-list.json`, position identifiers) | `sw-admin-js` |
+| Administration extension API (component props, blocks, `swDefinePublic`, the `public-api/` snapshot (`blocks-list.json` before 6.8), position identifiers) | `sw-admin-js` |
 | Generic modern CSS/HTML/JS lookup (Modern Web Guidance CLI) after Shopware primitives | `sw-research-and-escalation` |
 | Picking skills and references for a change, plan or task (context and task filters, `index.json`) | `sw-skill-router` |
 | Overview of the library: what each skill is for, example prompts, install | `sw-help` |
