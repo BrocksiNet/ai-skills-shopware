@@ -14,17 +14,19 @@ Skill-on full pass: **2 / 4** (50 %, gate 70 %).
 
 Skill-on runs that loaded a task skill: **3 / 6** (50 %, gate 75 %).
 
+Skill-on runs that read a skill reference: **3 / 6** (50 %, diagnostic).
+
 <details><summary>Per task</summary>
 
 On and Off count passed / completed runs.
 
-| Task | On | Off | Skill loaded (on) | Tokens on (in/out) | Verdict |
-| ---- | -- | --- | ----------------- | ------------------ | ------- |
-| `e-worse` | 0/2 | 2/2 | 1/2 | n/a | worse |
-| `d-error` | 0/0 | 0/0 | n/a | n/a | error |
-| `c-quiet` | 1/2 | 1/2 | 0/2 | 1200/200 | no_difference |
-| `b-held` | 2/2 | 2/2 | n/a | n/a | held |
-| `a-improved` | 2/2 | 1/2 | 2/2 | 1200/200 | improved |
+| Task | On | Off | Skill loaded (on) | Refs read (on) | Tokens on (in/out) | Verdict |
+| ---- | -- | --- | ----------------- | -------------- | ------------------ | ------- |
+| `e-worse` | 0/2 | 2/2 | 1/2 | 1/2 | n/a | worse |
+| `d-error` | 0/0 | 0/0 | n/a | n/a | n/a | error |
+| `c-quiet` | 1/2 | 1/2 | 0/2 | 0/2 | 1200/200 | no_difference |
+| `b-held` | 2/2 | 2/2 | n/a | n/a | n/a | held |
+| `a-improved` | 2/2 | 1/2 | 2/2 | 2/2 | 1200/200 | improved |
 
 </details>
 

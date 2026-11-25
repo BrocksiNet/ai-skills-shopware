@@ -78,7 +78,19 @@ describe('parseResults', () => {
     assert.throws(() => parseResults(line({ verdict: 'better' })), /field 'verdict'/u);
     assert.throws(() => parseResults(line({ on: '2' })), /field 'on'/u);
     assert.throws(() => parseResults(line({ tokens_on: { input: 1 } })), /field 'tokens_on'/u);
+    assert.throws(() => parseResults(line({ refs_read_on: -1 })), /field 'refs_read_on'/u);
+    assert.throws(() => parseResults(line({ refs_read_on: '1' })), /field 'refs_read_on'/u);
+    assert.throws(() => parseResults(line({ refs_read_off: 1.5 })), /field 'refs_read_off'/u);
     assert.equal(parseResults(line({ loaded_on: null, tokens_on: null, agent: undefined })).length, 1);
+    assert.equal(parseResults(line({ refs_read_on: null, refs_read_off: null })).length, 1);
+    assert.equal(parseResults(line({ refs_read_on: 2, refs_read_off: 0 })).length, 1);
+  });
+  test('parses older JSONL baselines without refs_read fields', () => {
+    const baseline = readFileSync(new URL('../../evals/baselines/2026-10-28-claude.jsonl', import.meta.url), 'utf8');
+    const parsed = parseResults(baseline);
+    assert.ok(parsed.length > 0);
+    assert.equal(parsed[0]?.refs_read_on, undefined);
+    assert.equal(parsed[0]?.refs_read_off, undefined);
   });
 });
 
@@ -96,7 +108,8 @@ describe('gate', () => {
   test('improved + held passes and shows skill-on tokens', () => {
     const r = gate([improved, held]);
     assert.equal(r.failed, false);
-    assert.match(r.markdown, /\| 2\/2 \| 1200\/200 \| improved \|/u);
+    assert.match(r.markdown, /\| 2\/2 \| n\/a \| 1200\/200 \| improved \|/u);
+    assert.doesNotMatch(r.markdown, /read a skill reference:/u);
     assert.match(r.markdown, /- Gate: \*\*PASS\*\*/u);
     assert.match(r.markdown, /^fake \/ m @ abc, 2 repeat\(s\)$/mu);
   });
@@ -223,8 +236,8 @@ test('gate environment options preserve defaults and accept explicit zero', () =
 
 describe('gate workflow boundaries', () => {
   test('partial error runs do not inflate pass counts or skill-load rates', () => {
-    const partial = { ...error, on: 1, on_done: 1, loaded_on: 1 };
-    const result = gate([rec('healthy', { loaded_on: 0 }), partial], {
+    const partial = { ...error, on: 1, on_done: 1, loaded_on: 1, refs_read_on: 1 };
+    const result = gate([rec('healthy', { loaded_on: 0, refs_read_on: 0 }), partial], {
       minPassPct: 70,
       maxErrorPct: 50,
       minLoadPct: 0,
@@ -232,6 +245,33 @@ describe('gate workflow boundaries', () => {
     assert.equal(result.failed, false, result.markdown);
     assert.match(result.markdown, /full pass: \*\*1 \/ 1\*\* \(100 %/u);
     assert.match(result.markdown, /loaded a task skill: \*\*0 \/ 2\*\* \(0 %/u);
+    assert.match(result.markdown, /read a skill reference: \*\*0 \/ 2\*\* \(0 %, diagnostic\)\./u);
+  });
+  test('reference-read rates are diagnostic, exclude null/unmeasured tasks, and never fail the gate', () => {
+    const zero = gate([
+      rec('a', { refs_read_on: 0, refs_read_off: 1 }),
+      rec('b', { refs_read_on: null, refs_read_off: null }),
+    ]);
+    assert.equal(zero.failed, false, zero.markdown);
+    assert.match(zero.markdown, /read a skill reference: \*\*0 \/ 2\*\* \(0 %, diagnostic\)\./u);
+    assert.match(zero.markdown, /\| `a` \| 2\/2 \| 1\/2 \| 2\/2 \| 0\/2 \| 1200\/200 \| improved \|/u);
+    assert.match(zero.markdown, /\| `b` \| 2\/2 \| 1\/2 \| 2\/2 \| n\/a \| 1200\/200 \| improved \|/u);
+    const mixed = gate([
+      rec('a', { refs_read_on: 2, on_done: 2 }),
+      rec('b', { refs_read_on: 1, on_done: 2 }),
+      rec('c', { refs_read_on: null }),
+    ]);
+    assert.equal(mixed.failed, false);
+    assert.match(mixed.markdown, /read a skill reference: \*\*3 \/ 4\*\* \(75 %, diagnostic\)\./u);
+    const allNull = gate([rec('a', { refs_read_on: null, refs_read_off: null })]);
+    assert.equal(allNull.failed, false);
+    assert.doesNotMatch(allNull.markdown, /read a skill reference:/u);
+    const zeroDone = gate([rec('a', { on: 0, off: 0, on_done: 0, off_done: 0, refs_read_on: 0 })], {
+      minPassPct: 0,
+      maxErrorPct: 100,
+      minLoadPct: 0,
+    });
+    assert.doesNotMatch(zeroDone.markdown, /NaN|read a skill reference:/u);
   });
   test('load rates use run counts and include the exact passing boundary', () => {
     const half = [rec('a', { loaded_on: 0 }), rec('b', { loaded_on: 2 })];
@@ -286,11 +326,19 @@ describe('gate workflow boundaries', () => {
 test('the failing GitHub summary preserves totals, evidence, gate reasons and readable Markdown', () => {
   const report = gate(
     [
-      rec('a-improved'),
-      rec('b-held', { off: 2, verdict: 'held', loaded_on: null, tokens_on: null }),
-      rec('c-quiet', { on: 1, off: 1, verdict: 'no_difference', loaded_on: 0 }),
+      rec('a-improved', { refs_read_on: 2, refs_read_off: 0 }),
+      rec('b-held', { off: 2, verdict: 'held', loaded_on: null, refs_read_on: null, tokens_on: null }),
+      rec('c-quiet', { on: 1, off: 1, verdict: 'no_difference', loaded_on: 0, refs_read_on: 0 }),
       { ...error, task: 'd-error' },
-      rec('e-worse', { on: 0, off: 2, verdict: 'worse', loaded_on: 1, loaded_off: 1, tokens_on: null }),
+      rec('e-worse', {
+        on: 0,
+        off: 2,
+        verdict: 'worse',
+        loaded_on: 1,
+        loaded_off: 1,
+        refs_read_on: 1,
+        tokens_on: null,
+      }),
     ],
     { minPassPct: 70, maxErrorPct: 10, minLoadPct: 75 },
   );

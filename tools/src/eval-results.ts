@@ -38,6 +38,9 @@ export interface AbResult {
   /** null when the adapter does not report skill loads. */
   loaded_on?: number | null;
   loaded_off?: number | null;
+  /** Runs whose trace returned content from at least one skill `references/*.md`; null when unobservable or the skill profile has no references. */
+  refs_read_on?: number | null;
+  refs_read_off?: number | null;
   /** Runs whose trace shows the task's `expect-tool` command; missing when the task names none. */
   ran_on?: number | null;
   ran_off?: number | null;
@@ -110,6 +113,8 @@ const FIELDS = {
   verdict: isVerdict,
   loaded_on: nullable(isCount),
   loaded_off: nullable(isCount),
+  refs_read_on: nullable(isCount),
+  refs_read_off: nullable(isCount),
   ran_on: nullable(isCount),
   ran_off: nullable(isCount),
   tokens_on: nullable(hasTokens),
