@@ -329,7 +329,7 @@ describe('runModes with the fake agent', () => {
   });
   test('reference reads count Claude traces, report null for 0-reference skills and unobservable traces', async () => {
     const skillsDir = join(ROOT, 'skills');
-    assert.equal(skillReferences(skillsDir, ['sw-php-foundation']).size, 0);
+    assert.equal(skillReferences(skillsDir, ['sw-assistant-style']).size, 0);
     const pluginRefs = skillReferences(skillsDir, ['sw-plugin-development']);
     const refPath = 'sw-plugin-development/references/dal-usage.md';
     const refContent = pluginRefs.get(refPath);
