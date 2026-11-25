@@ -1,0 +1,33 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Rejected rule proposals",
+  "description": "Rule proposals from suggest-rules that a maintainer dropped, with the reason. suggest-rules shows the matching ones to the agent and fails a proposal that repeats one (tools/src/suggest-rejected.ts). Checked by validate-skills.",
+  "type": "object",
+  "required": ["rejected"],
+  "additionalProperties": false,
+  "properties": {
+    "$schema": { "type": "string" },
+    "rejected": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/entry" }
+    }
+  },
+  "$defs": {
+    "entry": {
+      "type": "object",
+      "required": ["date", "action", "skill", "title", "text", "reason"],
+      "additionalProperties": false,
+      "properties": {
+        "proposal": { "type": "string", "description": "suggest-rules proposal ID, e.g. 2026-11-23-06" },
+        "date": { "type": "string", "pattern": "^\\d{4}-\\d{2}-\\d{2}$", "description": "When it was dropped" },
+        "action": { "enum": ["new", "update"], "description": "What the proposal wanted" },
+        "rule": { "type": "string", "pattern": "^([A-Z]+-[0-9]{3})?$", "description": "The rule ID it added or changed" },
+        "skill": { "type": "string", "pattern": "^sw-[a-z0-9-]+$" },
+        "title": { "type": "string", "minLength": 1 },
+        "text": { "type": "string", "minLength": 1, "description": "The proposed rule text" },
+        "reason": { "type": "string", "minLength": 1, "description": "Why it was dropped, with the evidence" },
+        "pr": { "type": "string", "pattern": "^https://github\\.com/", "description": "The draft PR, when there was one" }
+      }
+    }
+  }
+}

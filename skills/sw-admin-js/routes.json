@@ -25,7 +25,8 @@
       "reference": "references/extension-api.md",
       "when": "You change a shipped component, template block or position identifier.",
       "paths_any": [
-        "**/blocks-list.json"
+        "**/blocks-list.json",
+        "**/administration/public-api/**"
       ],
       "anchors_any": [
         "positionIdentifier",

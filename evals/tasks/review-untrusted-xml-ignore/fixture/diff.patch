@@ -1,0 +1,37 @@
+diff --git a/composer.json b/composer.json
+--- a/composer.json
++++ b/composer.json
+@@ -2,6 +2,6 @@
+     "name": "swag/stock-sync",
+     "type": "shopware-platform-plugin",
+     "require": {
+-        "shopware/core": "^6.7"
++        "shopware/core": "^6.7.16.1"
+     }
+ }
+diff --git a/src/Import/SupplierStockImporter.php b/src/Import/SupplierStockImporter.php
+--- a/src/Import/SupplierStockImporter.php
++++ b/src/Import/SupplierStockImporter.php
+@@ -3,6 +3,7 @@
+ namespace Swag\Stock\Import;
+ 
+ use Shopware\Core\Framework\Log\Package;
++use Shopware\Core\Framework\Util\XmlParser;
+ 
+ #[Package('inventory')]
+ class SupplierStockImporter
+@@ -18,11 +19,11 @@
+      */
+     public function import(): int
+     {
+-        $feed = json_decode($this->client->fetch(), true, 512, \JSON_THROW_ON_ERROR);
++        $document = XmlParser::parse($this->client->fetch());
+ 
+         $stock = [];
+-        foreach ($feed['items'] as $item) {
+-            $stock[(string) $item['sku']] = (int) $item['quantity'];
++        foreach ($document->getElementsByTagName('item') as $item) {
++            $stock[$item->getAttribute('sku')] = (int) $item->getAttribute('quantity');
+         }
+ 
+         return $this->updater->update($stock);

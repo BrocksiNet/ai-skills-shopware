@@ -304,16 +304,19 @@ On the same day the result replaces the earlier file, which it contains.
 4. The agent gets one prompt per cluster: the signals as quoted data it must
    not follow, the current text of the rules the cluster maps to, up to
    eight more rules the signals share words with (a keyword match, so an
-   unmapped comment on a history comment still meets `REV-034`), the topics each
-   skill owns, and the inclusion criteria from the README. The claude
+   unmapped comment on a history comment still meets `REV-034`), up to five
+   dropped rules the signals share words with (see
+   [Rejected proposals](#rejected-proposals)), each with why it was dropped,
+   the topics each skill owns, and the inclusion criteria from the README. The claude
    adapter runs with no tools, no MCP servers and no tokens in its
    environment.
 5. The answer must match the JSON schema in the plan, at most three
    proposals per cluster. Then each proposal goes through checks that need
    no model: every evidence URL was in the prompt, the skill owns a topic in
    [`REGISTRY.md`](../REGISTRY.md), an update or retirement names an active
-   rule of that skill (`none` may name one of any skill), and a new rule has
-   comments from at least two PRs or a review that requested changes.
+   rule of that skill (`none` may name one of any skill), a new rule has
+   comments from at least two PRs or a review that requested changes, and
+   the proposal does not repeat an entry of `rules/rejected.json`.
 6. The proposals that passed are ranked, without a model. A proposal
    scores its evidence once per PR, at the heaviest signal of that PR, so
    several PRs and trusted reviewers beat one long thread. The score
@@ -346,6 +349,25 @@ runs for extensions, the release the class left, or the A/B row. Retiring
 moves the rule to `retired` in the catalog, with the evidence in
 `retired_reason`, and removes it from the skill text. To have the agent write the change, see
 [Drafting a proposal](#drafting-a-proposal).
+
+### Rejected proposals
+
+[`rules/rejected.json`](../rules/rejected.json) lists proposals a
+maintainer dropped: the proposal ID, the date, the action (`new` or
+`update`), the rule ID it took, the skill, the title, the rule text, the
+reason with its evidence, and the draft PR. When you close a draft PR
+without merging it, add an entry; the A/B rows that showed no effect are
+the usual reason. Rules that left the catalog (`retired`, `superseded:<ID>`)
+count as dropped too, with their `retired_reason`.
+
+suggest-rules uses the list twice. The prompt shows the dropped rules the
+signals share words with, and the agent proposes one again only when the
+signals show something its reason does not cover. Then the check `not
+rejected before` fails a `new` or `update` proposal of the same skill (and,
+for an update, the same rule) whose title or draft repeats at least 60% of a
+rejected title's words. To bring a rejected rule back on purpose, remove its
+entry in the same PR. `validate-skills.sh` checks the file's shape and that
+each skill exists.
 
 ## Drafting a proposal
 

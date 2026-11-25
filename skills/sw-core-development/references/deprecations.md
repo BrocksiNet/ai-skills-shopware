@@ -93,7 +93,11 @@ public function oldHandle(Context $context): void
   callers to the replacement API and keep legacy behavior only in focused BC tests.
 - **CORE-022** When adding `@deprecated` on executable PHP, add matching
   `Feature::triggerDeprecationOrThrow()` unless the deprecation uses an explicit
-  exception reason allowed by the PHPStan deprecation rule.
+  exception reason allowed by the PHPStan deprecation rule. Administration and
+  Storefront JavaScript follow the same pairing: a `@deprecated tag:` function
+  calls `Shopware.Feature.triggerDeprecationOrThrow()` (Administration, as its
+  first statement) or `window.Feature.triggerDeprecationOrThrow()` (Storefront),
+  and a hand-written `console.warn` deprecation notice is no replacement.
 - **CORE-023** For **private implementation cleanup** (not a public deprecation cycle), use a
   short inline comment: `// @deprecated tag:vX.Y.Z - …` near the branch to remove
   later — not a method-level `@deprecated` annotation.

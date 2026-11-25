@@ -1,0 +1,71 @@
+diff --git a/src/Mcp/Tool/PointsHistoryTool.php b/src/Mcp/Tool/PointsHistoryTool.php
+new file mode 100644
+--- /dev/null
++++ b/src/Mcp/Tool/PointsHistoryTool.php
+@@ -0,0 +1,50 @@
++<?php declare(strict_types=1);
++
++namespace Swag\Loyalty\Mcp\Tool;
++
++use Doctrine\DBAL\Connection;
++use Mcp\Capability\Attribute\McpTool;
++use Shopware\Core\Framework\Log\Package;
++use Shopware\Core\Framework\Mcp\Attribute\McpToolRequires;
++use Shopware\Core\Framework\Mcp\Context\McpContextProvider;
++use Shopware\Core\Framework\Mcp\Result\McpToolResult;
++use Shopware\Core\Framework\Mcp\Tool\McpToolResponse;
++use Shopware\Core\Framework\Uuid\Uuid;
++
++#[Package('checkout')]
++#[McpTool(
++    name: 'swag-loyalty-points-history',
++    description: 'List the latest loyalty point movements of one customer.'
++)]
++#[McpToolRequires('swag_loyalty_points:read')]
++class PointsHistoryTool extends McpToolResponse
++{
++    /**
++     * @internal
++     */
++    public function __construct(
++        private readonly Connection $connection,
++        private readonly McpContextProvider $contextProvider,
++    ) {
++    }
++
++    public function __invoke(string $customerId): McpToolResult
++    {
++        $context = $this->contextProvider->getContext();
++
++        if ($error = $this->requirePrivilegeResult($context, 'swag_loyalty_points:read')) {
++            return $error;
++        }
++
++        $rows = $this->connection->fetchAllAssociative(
++            'SELECT points, reason, created_at AS createdAt
++             FROM swag_loyalty_points_history
++             WHERE customer_id = :customerId
++             ORDER BY created_at DESC
++             LIMIT 50',
++            ['customerId' => Uuid::fromHexToBytes($customerId)],
++        );
++
++        return $this->successResult(['customerId' => $customerId, 'movements' => $rows]);
++    }
++}
+diff --git a/src/Resources/config/services.xml b/src/Resources/config/services.xml
+--- a/src/Resources/config/services.xml
++++ b/src/Resources/config/services.xml
+@@ -10,5 +10,12 @@
+ 
+             <tag name="shopware.mcp.tool"/>
+         </service>
++
++        <service id="Swag\Loyalty\Mcp\Tool\PointsHistoryTool">
++            <argument type="service" id="Doctrine\DBAL\Connection"/>
++            <argument type="service" id="Shopware\Core\Framework\Mcp\Context\McpContextProvider"/>
++
++            <tag name="shopware.mcp.tool"/>
++        </service>
+     </services>
+ </container>

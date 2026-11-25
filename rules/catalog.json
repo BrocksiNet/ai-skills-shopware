@@ -2295,6 +2295,27 @@
             "catches": "reports public and protected methods of `@deprecated` classes, and `@deprecated` methods, whose body lacks `Feature::triggerDeprecationOrThrow(`",
             "misses": "private methods, a wrong flag argument, a call that is commented out, and entity or collection classes",
             "trunk_only": true
+          },
+          {
+            "tool": "sw-deprecation-rules/require-deprecation-guard",
+            "kind": "eslint",
+            "catches": "reports a function, method, computed accessor or class under the Administration `src/` that carries `@deprecated tag:` and does not call `Shopware.Feature.triggerDeprecationOrThrow()` as its first statement with the major flag the marker announces, a deprecated component or prop without the `deprecated` option, and a guard call with no `@deprecated tag:` marker on an enclosing declaration",
+            "misses": "`@private` and `_`-prefixed identifiers, values, types, lifecycle hooks, and `data`, `watch`, `provide`, `inject`, store `state` and `getters`; spec files; and anything outside Administration `src/`, such as plugins and the Storefront; flag those",
+            "trunk_only": true
+          },
+          {
+            "tool": "sw-deprecation-rules/no-manual-deprecation-notices",
+            "kind": "eslint",
+            "catches": "reports any `warn(...)`, `error(...)` or `.warn(...)` / `.error(...)` call (`console`, `Shopware.Utils.debug`) in Administration code whose message text known at lint time contains `deprecat`, also through concatenation, a template literal, an array or a `const`",
+            "misses": "a notice without the word `deprecat` in its static text, one built from a parameter or a function result, one logged with `log`, `info` or `debug`, and spec files; flag those",
+            "trunk_only": true
+          },
+          {
+            "tool": "sw-core-rules/require-deprecation-guard",
+            "kind": "eslint",
+            "catches": "reports a Storefront JavaScript or TypeScript function or method with a `@deprecated tag:vX.Y.Z` docblock (and the `init` of a class marked that way) that has no `triggerDeprecationOrThrow(flag, message)` call with the same literal flag, a flag missing from `feature.yaml`, and a guard called at module level",
+            "misses": "`@private` symbols, a deprecation that uses `this._deprecateOption()` instead of `triggerDeprecationOrThrow()`, deprecated classes without `init`, and deprecated properties and values; flag those",
+            "trunk_only": true
           }
         ]
       }
@@ -4566,6 +4587,62 @@
             "kind": "phpstan",
             "catches": "reports a `$` without the `D` modifier and any `\\Z` in `preg_*` patterns, the Symfony `Regex` constraint and the Finder regex filters, in core's enabled namespaces",
             "misses": "patterns built at runtime, regexes in Twig or JavaScript, and every extension, because the rule ships only in core's PHPStan config",
+            "trunk_only": true
+          }
+        ]
+      }
+    },
+    {
+      "id": "SEC-010",
+      "skill": "sw-security",
+      "file": "skills/sw-security/references/untrusted-xml.md",
+      "title": "Parse XML your code did not ship with XmlParser, not XmlUtils::parse() or loadFile()",
+      "status": "active",
+      "since": "2026-11-24",
+      "eval": "review-untrusted-xml-catch",
+      "core_guide_ids": [],
+      "audience": [
+        "core",
+        "plugin"
+      ],
+      "defer_on_trunk": false,
+      "trunk": {
+        "source": "src/Core/DevOps/StaticAnalyze/PHPStan/Rules/NoXmlUtilsParsingRule.php",
+        "commit": "941803997206650eba993edff6a8cd37e2019469",
+        "enforced_by": [
+          {
+            "tool": "NoXmlUtilsParsingRule",
+            "kind": "phpstan",
+            "catches": "reports a static `XmlUtils::parse()` or `XmlUtils::loadFile()` call outside `XmlParser` and test classes",
+            "misses": "other XML parsers (`DOMDocument::loadXML()`, `simplexml_load_*`), and every extension, because the rule ships only in core's PHPStan config",
+            "trunk_only": true
+          }
+        ]
+      }
+    },
+    {
+      "id": "SEC-011",
+      "skill": "sw-security",
+      "file": "skills/sw-security/references/mcp-tool-acl.md",
+      "title": "A plugin's MCP tool checks its own privileges; #[McpToolRequires] only documents them",
+      "status": "active",
+      "since": "2026-11-24",
+      "eval": "review-mcp-tool-privilege-catch",
+      "core_guide_ids": [],
+      "audience": [
+        "core",
+        "plugin"
+      ],
+      "defer_on_trunk": false,
+      "trunk": {
+        "source": "src/Core/Framework/Mcp/AGENTS.md#declaring-privileges",
+        "commit": "9139f95b0a054605b60db68d3c23cc199dc5731a",
+        "enforced_by": [
+          {
+            "tool": "McpAdminToolRequiresPrivilegeRule",
+            "kind": "phpstan",
+            "catches": "reports an Admin API MCP tool with neither `#[McpToolRequires]` nor `#[McpToolRequiresNoPrivilege]`, with both, or with the opt-out and a `requirePrivilege()` or `requirePrivilegeResult()` call in its own class",
+            "misses": "whether a `#[McpToolRequires]` tool really calls a privilege check, tools the compiled container does not know, and every extension, because the rule ships only in core's PHPStan config",
             "trunk_only": true
           }
         ]

@@ -368,6 +368,10 @@ ignore available skills unless the prompt names them; then "on" and "off" are
 the same run and every task comes out `held`. Both adapters therefore report
 the skills they loaded (`EVAL_SKILLS_LOG`), `ab.sh` records `loaded_on` and
 `loaded_off`, and the gate fails when too few skill-on runs load a task skill.
+For Claude Code, a `Read` of a skill's `SKILL.md`, or a shell `cat`, `head`
+or `sed` of it, counts as loading that skill: haiku often reads the file that
+way on review tasks instead of calling the Skill tool. Listing or grepping
+the file does not count.
 
 ### Token use
 

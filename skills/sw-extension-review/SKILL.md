@@ -42,11 +42,13 @@ Read the references the change selects:
 | [`security: secrets-and-config.md`](../sw-security/references/secrets-and-config.md) | Code reads a secret, an access key or a config value. | `.env`, `.env.*`, `sw-access-key\|SW_ACCESS_KEY`, … |
 | [`security: api-acl-and-input.md`](../sw-security/references/api-acl-and-input.md) | You add or change a route, an ACL privilege or user input handling. | `#[Route(`, … |
 | [`security: apps-and-webhooks.md`](../sw-security/references/apps-and-webhooks.md) | An app or webhook sends or receives data. | `manifest.xml`, `shopware-(shop\|app)-signature`, … |
+| [`security: untrusted-xml.md`](../sw-security/references/untrusted-xml.md) | Code parses XML that comes from an upload, a feed, an API response or another extension. | `XmlUtils::(parse\|loadFile)(`, … |
+| [`security: mcp-tool-acl.md`](../sw-security/references/mcp-tool-acl.md) | A plugin adds or changes an MCP tool or the privileges it declares. | `#[McpTool(Requires\|RequiresNoPrivilege)?(`, … |
 | [`storefront: js-plugins.md`](../sw-storefront/references/js-plugins.md) | You write or register a storefront JS plugin. | `Resources/app/storefront/src/**/*.{js,ts}`, `PluginManager.register(`, … |
 | [`storefront: twig-and-theme.md`](../sw-storefront/references/twig-and-theme.md) | You edit Twig blocks, the theme, snippets or assets. | `Resources/views/storefront/**/*.twig`, `Resources/app/storefront/src/scss/**`, `{% sw_extends`, … |
 | [`storefront: cache-and-modern-web.md`](../sw-storefront/references/cache-and-modern-web.md) | Content depends on the user or cache, or you need a modern web API. | `CacheTagCollector`, … |
 | [`admin-js: architecture.md`](../sw-admin-js/references/architecture.md) | You add a module, component override or ACL privilege. | `Resources/app/administration/src/module/**`, `Resources/app/administration/src/**/acl/index.{js,ts}`, `Shopware.Module.register(`, … |
-| [`admin-js: extension-api.md`](../sw-admin-js/references/extension-api.md) | You change a shipped component, template block or position identifier. | `blocks-list.json`, `positionIdentifier`, … |
+| [`admin-js: extension-api.md`](../sw-admin-js/references/extension-api.md) | You change a shipped component, template block or position identifier. | `blocks-list.json`, `administration/public-api/**`, `positionIdentifier`, … |
 | [`architecture: symfony-in-shopware.md`](../sw-architecture/references/symfony-in-shopware.md) | You reach for a Symfony component or container feature, or rely on service resets. | `HttpClientInterface`, … |
 | [`core-development: deprecations.md`](../sw-core-development/references/deprecations.md) | You deprecate or break a public API. | `@deprecated tag:v`, … |
 | [`core-development: removals-and-shims.md`](../sw-core-development/references/removals-and-shims.md) | You deprecate or remove an API, or add code that only lives until the next major. | `@deprecated tag:v`, … |

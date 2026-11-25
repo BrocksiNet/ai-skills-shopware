@@ -1,0 +1,16 @@
+The history tool declares the privilege but never checks it, and it reads through DBAL, so the DAL does not check either.
+
+```json
+{
+  "findings": [
+    {
+      "rule_id": "SEC-011",
+      "severity": "major",
+      "file": "src/Mcp/Tool/PointsHistoryTool.php",
+      "line": 34,
+      "summary": "The tool declares #[McpToolRequires] but never calls requirePrivilegeResult(), and the raw DBAL query bypasses the DAL ACL check, so any principal with the tool allowlisted can read every customer's history.",
+      "fix": "Call $this->requirePrivilegeResult($context, 'swag_loyalty_points:read') before the query."
+    }
+  ]
+}
+```

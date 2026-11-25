@@ -1,0 +1,27 @@
+{
+  "$schema": "./rejected.schema.json",
+  "rejected": [
+    {
+      "proposal": "2026-11-23-06",
+      "date": "2026-11-24",
+      "action": "new",
+      "rule": "TEST-038",
+      "skill": "sw-testing",
+      "title": "Test cross-write DAL behavior via Sync API, not sequential single writes",
+      "text": "When a DAL validator or subscriber must react to state built from multiple writes in one Sync request, such as merging fileExtension and private across operations, or language and sales channel across operations, test that scenario through /api/_action/sync with two write operations in sequence, not through two separate single-write calls. The validator sees the merged final state only during Sync processing.",
+      "reason": "No measured effect: local A/B with Claude haiku, 3 runs each, catch 3/3 with the skill and 3/3 without, ignore 3/3 and 3/3. The model already reviews this without the rule.",
+      "pr": "https://github.com/BrocksiNet/ai-skills-shopware/pull/203"
+    },
+    {
+      "proposal": "2026-11-23-02",
+      "date": "2026-11-24",
+      "action": "update",
+      "rule": "CORE-052",
+      "skill": "sw-core-development",
+      "title": "Accepted ADRs are superseded by new ADRs, not modified in place",
+      "text": "When an accepted ADR's decision changes, do not edit it. Write a new ADR that documents the new decision and supersedes the previous one. Move the outdated ADR into adr/_superseded. This ensures readers of a 6.x release see the decision that was current in that version.",
+      "reason": "No measured effect: local A/B with Claude haiku, 3 runs each, catch 2/3 with the skill and 2/3 without, ignore 3/3 and 3/3. CORE-052 as it stands already gives the same result.",
+      "pr": "https://github.com/BrocksiNet/ai-skills-shopware/pull/204"
+    }
+  ]
+}
