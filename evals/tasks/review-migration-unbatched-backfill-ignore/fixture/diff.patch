@@ -50,7 +50,7 @@ new file mode 100644
 +                'UPDATE `swag_review` r
 +                INNER JOIN `swag_review_author` a ON a.`review_id` = r.`id`
 +                SET r.`author_name` = a.`name`
-+                WHERE r.`id` IN (:ids)',
++                WHERE r.`id` IN (:ids) AND r.`author_name` IS NULL',
 +                ['ids' => $ids],
 +                ['ids' => ArrayParameterType::BINARY],
 +            );

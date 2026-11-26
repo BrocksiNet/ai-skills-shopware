@@ -2,7 +2,7 @@ diff --git a/src/Migration/Migration1729800000MoveReviewAuthorName.php b/src/Mig
 new file mode 100644
 --- /dev/null
 +++ b/src/Migration/Migration1729800000MoveReviewAuthorName.php
-@@ -0,0 +1,34 @@
+@@ -0,0 +1,35 @@
 +<?php declare(strict_types=1);
 +
 +namespace Swag\Review\Migration;
@@ -33,7 +33,8 @@ new file mode 100644
 +        $connection->executeStatement(
 +            'UPDATE `swag_review` r
 +            INNER JOIN `swag_review_author` a ON a.`review_id` = r.`id`
-+            SET r.`author_name` = a.`name`'
++            SET r.`author_name` = a.`name`
++            WHERE r.`author_name` IS NULL'
 +        );
 +    }
 +}

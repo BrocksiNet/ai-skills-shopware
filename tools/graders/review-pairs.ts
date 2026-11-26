@@ -433,6 +433,18 @@ export const PAIRS: Record<string, ReviewPair> = {
     minSeverity: 'major',
     summary:
       /shopware-app-signature|registration[^.]{0,80}(signature|unverified|verif|hmac|authenticat)|(missing|without|skip\w*|no)[^.]{0,60}(signature|hmac) (check|verif)|unauthenticated|forge/iu,
+    // The catch keeps the timestamp window and replay claim, but with no
+    // signature check the timestamp is unsigned, so calling those guards
+    // bypassable is the planted bug seen from another side.
+    allowed: [
+      {
+        rule: 'APP-006',
+        file: 'src/**',
+        minSeverity: 'minor',
+        summary:
+          /timestamp[^.]{0,80}(attacker|caller|client)[- ]?(controlled|chosen|supplied)|(chang|alter|forg|pick)\w*[^.]{0,30}timestamp/iu,
+      },
+    ],
   },
   // Catch: custom/apps/SwagBadgeApp/ places an app script directly at
   // Resources/scripts/product-page-loaded.twig instead of inside the hook directory
