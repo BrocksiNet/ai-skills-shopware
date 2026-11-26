@@ -44,7 +44,9 @@ Rules:
 ## `@codeCoverageIgnore` on production classes
 
 When a **production class** is intentionally covered only by integration tests,
-mark it on the class docblock:
+mark it on the class docblock. Integration tests carry no `#[CoversClass]`
+(`TEST-007`) and do not count toward `phpunit-unit` patch coverage, so without
+the marker the class shows as uncovered:
 
 ```php
 /**

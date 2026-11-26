@@ -26,7 +26,7 @@ const KEPT: [string, string][] = [
   [S1, 'cannot be decorated by plugins today'],
   [S2, 'Make CartProcessor extensible so plugins can decorate cart calculation'],
   [S2, '#### Impact'],
-  [S3, 'The decoration is ignored'],
+  [S3, 'the plugin decoration runs during cart calculation'],
   [S4, 'Follow-up: move the existing decorators'],
   [S5, '[x] Tests added, and they fail without this change'],
 ];

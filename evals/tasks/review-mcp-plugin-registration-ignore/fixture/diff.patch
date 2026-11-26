@@ -2,7 +2,7 @@ diff --git a/src/Mcp/Tool/TierListTool.php b/src/Mcp/Tool/TierListTool.php
 new file mode 100644
 --- /dev/null
 +++ b/src/Mcp/Tool/TierListTool.php
-@@ -0,0 +1,39 @@
+@@ -0,0 +1,42 @@
 +<?php declare(strict_types=1);
 +
 +namespace Swag\Loyalty\Mcp\Tool;

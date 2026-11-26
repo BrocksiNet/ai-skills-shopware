@@ -1,6 +1,8 @@
 # Core sources, local environments, MCP and the admin API index
 
-Status: **accepted 2026-11-11** (re-verified 2026-11-25). WP A, WP B, WP C steps 1–2, and WP D steps 1–4 are done. **WP C is descoped** after core shipped its own Administration `public-api/` snapshot and break check ([shopware/shopware#22591](https://github.com/shopware/shopware/issues/22591)). Decisions are at the end.
+Status: **completed 2026-11-26**. WP A–D shipped by 2026-11-25; WP D step 5 (`BCChange` caller vs extender), the descoped WP C (6.5–6.7 surfaces) and WP E shipped in PR [#217](https://github.com/BrocksiNet/ai-skills-shopware/pull/217), WP F (`sw-mcp-development`) in PR [#214](https://github.com/BrocksiNet/ai-skills-shopware/pull/214). The original acceptance note follows.
+
+Accepted 2026-11-11 (re-verified 2026-11-25). WP A, WP B, WP C steps 1–2, and WP D steps 1–4 are done. **WP C is descoped** after core shipped its own Administration `public-api/` snapshot and break check ([shopware/shopware#22591](https://github.com/shopware/shopware/issues/22591)). Decisions are at the end.
 
 ## Summary
 

@@ -7,14 +7,14 @@ index 3c1a9e2..9b0f4d6 100644
      {
          $newHash = hash('xxh3', $css);
 +        $previousHash = $this->hashStore->current($themeId, $salesChannelId);
-
+ 
          $this->themeFilesystem->write(sprintf('theme/%s/css/all.css', $newHash), $css);
          $this->hashStore->store($themeId, $salesChannelId, $newHash);
 +
 +        if ($previousHash !== null && $previousHash !== $newHash) {
 +            $this->hashStore->retire($previousHash);
 +        }
-
+ 
          return $newHash;
      }
 diff --git a/src/Storefront/Theme/Message/DeleteRetiredThemeDirectoriesMessage.php b/src/Storefront/Theme/Message/DeleteRetiredThemeDirectoriesMessage.php
@@ -38,7 +38,7 @@ new file mode 100644
 index 0000000..c4d8e21
 --- /dev/null
 +++ b/src/Storefront/Theme/Message/DeleteRetiredThemeDirectoriesHandler.php
-@@ -0,0 +1,31 @@
+@@ -0,0 +1,29 @@
 +<?php declare(strict_types=1);
 +
 +namespace Shopware\Storefront\Theme\Message;

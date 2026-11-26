@@ -21,7 +21,7 @@ diff --git a/Resources/scripts/store-api-swag-inventory-check/script.twig b/Reso
 new file mode 100644
 --- /dev/null
 +++ b/Resources/scripts/store-api-swag-inventory-check/script.twig
-@@ -0,0 +1,15 @@
+@@ -0,0 +1,14 @@
 +{% block response %}
 +    {% set payload = hook.request.getContent() %}
 +    {% if payload.sku is not defined or payload.sku is empty %}

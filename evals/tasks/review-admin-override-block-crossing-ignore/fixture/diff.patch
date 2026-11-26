@@ -17,5 +17,5 @@ index 0000000..3333333
 @@ -0,0 +1,4 @@
 +{% block sw_order_card_header %}
 +{% parent %}
-+<span class="swag-loyalty-order-card__badge">{{ $tc('swag-loyalty.orderCard.vipBadge') }}</span>
++<span class="swag-loyalty-order-card__badge">{{ $tc('swag-loyalty.orderCard.programLabel') }}</span>
 +{% endblock %}

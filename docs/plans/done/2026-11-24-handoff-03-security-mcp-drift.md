@@ -3,9 +3,9 @@
 - **Base branch:** `origin/main` (at or after `2e48485f`, post-[#198](https://github.com/BrocksiNet/ai-skills-shopware/pull/198))
 - **Suggested branch:** `feat/adopt-shopware-security-mcp-drift`
 - **Source issue:** [#199](https://github.com/BrocksiNet/ai-skills-shopware/issues/199) (`Drift: week of 2026-11-23`)
-- **Related plan:** [`2026-11-core-sources-and-admin-api.md`](../2026-11-core-sources-and-admin-api.md) (see WP A and WP F: `sw-mcp-development`)
+- **Related plan:** [`2026-11-core-sources-and-admin-api.md`](2026-11-core-sources-and-admin-api.md) (see WP A and WP F: `sw-mcp-development`)
 - **Parallelizable with:** Handoffs 01 and 02 (rebase and re-run renderers if `REGISTRY.md`, `rules/sources.json`, `rules/catalog.json`, or `skills/sw-skill-router/index.json` change on `main` first)
-- **Prerequisite:** Read [`AGENTS.md`](../../../AGENTS.md) and [`2026-11-core-sources-and-admin-api.md`](../2026-11-core-sources-and-admin-api.md) (WP F) before editing.
+- **Prerequisite:** Read [`AGENTS.md`](../../../AGENTS.md) and [`2026-11-core-sources-and-admin-api.md`](2026-11-core-sources-and-admin-api.md) (WP F) before editing.
 
 ## Goal
 
@@ -33,7 +33,7 @@ Inspect these commits via `gh api repos/shopware/shopware/commits/<sha>`:
 ### 1. `rules/sources.json`
 
 - Add `adr/2026-11-19-remove-claude-md-bridge-files.md` under the `shopware` source mapped to `["sw-core-development"]`.
-- **Check WP F alignment for MCP paths:** [`2026-11-core-sources-and-admin-api.md`](../2026-11-core-sources-and-admin-api.md) (WP A step 2 & WP F) planned to map `src/Core/Framework/Mcp/**/AGENTS.md` and `src/Storefront/Mcp/AGENTS.md` to `sw-mcp-development` once that skill is built.
+- **Check WP F alignment for MCP paths:** [`2026-11-core-sources-and-admin-api.md`](2026-11-core-sources-and-admin-api.md) (WP A step 2 & WP F) planned to map `src/Core/Framework/Mcp/**/AGENTS.md` and `src/Storefront/Mcp/AGENTS.md` to `sw-mcp-development` once that skill is built.
   - Do **not** build the full `sw-mcp-development` skill in this handoff (that is WP F).
   - If you add MCP ACL security rules to `sw-security` now, keep the topic strictly scoped to **MCP tool ACL / privilege boundaries** (which belongs to `sw-security` per `REGISTRY.md`), and note the handoff to WP F for general MCP tool authoring (`McpToolLegacyStringResultRule`, schemas, tags, API index).
 

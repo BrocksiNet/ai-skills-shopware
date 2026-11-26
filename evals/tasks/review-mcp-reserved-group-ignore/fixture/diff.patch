@@ -2,7 +2,7 @@ diff --git a/src/Mcp/Tool/PointsSummaryTool.php b/src/Mcp/Tool/PointsSummaryTool
 new file mode 100644
 --- /dev/null
 +++ b/src/Mcp/Tool/PointsSummaryTool.php
-@@ -0,0 +1,42 @@
+@@ -0,0 +1,48 @@
 +<?php declare(strict_types=1);
 +
 +namespace Swag\Loyalty\Mcp\Tool;

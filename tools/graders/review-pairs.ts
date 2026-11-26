@@ -10,6 +10,24 @@ export interface ReviewPair extends Expectation {
   ignore?: IgnoreExpectation;
 }
 
+// What the admin-bc-change-marker catch must say about the marker.
+const ADMIN_BC_CHANGE_SUMMARY =
+  /@bc-change|ParameterRemoval|@deprecated(?:[^.]|\.(?=\d)){0,140}(stays?|remain|not removed|extension|eslint|preset|bc-change)|stays?[^.]{0,80}@deprecated|element[^.]{0,40}stays/iu;
+
+// The public-api/ snapshot of sw-order-line-items-grid is not regenerated in
+// either admin-bc-change-marker half; a reviewer may say so.
+const ADMIN_BC_CHANGE_SNAPSHOT: Expectation = {
+  rule: 'ADM-039',
+  // ADM-049 itself says to regenerate public-api/, so a reviewer who misses
+  // the snapshot in the diff rightly cites it. The summary must be about the
+  // snapshot, so a marker false positive is still not excused.
+  also: ['ADM-049'],
+  file: 'src/Administration/**',
+  minSeverity: 'minor',
+  summary:
+    /(public[- ]api|snapshot)[^.]{0,80}(regenerat|stale|not (updated|included)|missing|out of date)|(regenerat|generate-public-api)[^.]{0,80}(public[- ]api|snapshot)/iu,
+};
+
 export const PAIRS: Record<string, ReviewPair> = {
   // Catch: A new Loyalty settings card loads and saves through systemConfigApiService,
   // so the plugin's role mapping now grants system_config:read and
@@ -94,15 +112,20 @@ export const PAIRS: Record<string, ReviewPair> = {
   // that helper truncates toward zero, so refunds (negative amounts) earn other
   // points with the flag off. Needs a major+ finding in the Administration
   // sources that names ADM-025 or describes the changed flag-off path.
-  // Ignore: The flag branch uses the new rounding and the flag-off branch keeps
-  // Math.floor, so nothing changes without the flag. A minor+ finding that names
-  // ADM-025 or calls the flag-off path changed is a false positive.
+  // Ignore: The flag branch rounds to the nearest point and the flag-off branch
+  // goes through roundPoints(…, 'down'), which is Math.floor, so nothing changes
+  // without the flag. A minor+ finding that names ADM-025 or calls the flag-off
+  // path changed is a false positive.
+  // Both halves add the helper in TypeScript and a Jest spec for both flag
+  // states (positive amounts only, so the catch's spec still passes), and the
+  // flag branch uses a fixed 'nearest' mode, so no half has an untested
+  // helper, plain-JS file or unreachable setting to report.
   'admin-flag-old-branch': {
     rule: 'ADM-025',
     file: 'src/Resources/app/administration/**',
     minSeverity: 'major',
     summary:
-      /legacy|\bold (branch|behaviou?r|path|code)\b|\belse (branch|path)\b|flag[- ]?(off|disabled)|(flag|feature) (is )?(off|disabled)|keep the old/iu,
+      /legacy|\bold (branch|behaviou?r|path|code)\b|\belse (branch|path)\b|flag[- ]?(off|disabled)|(flag|feature) (is )?(off|disabled)|non-?flag(ged)? (branch|path)|keep the old|Math\.trunc/iu,
   },
   // Catch: The change registers the real sw-block in config.global.components while
   // the same key stays in config.global.stubs. Vue Test Utils skips
@@ -164,13 +187,24 @@ export const PAIRS: Record<string, ReviewPair> = {
   // @bc-change ParameterRemoval version:v6.8.0 parameter:itemIndex instead.
   // Ignore: The same planned parameter removal annotated with
   // @bc-change ParameterRemoval version:v6.8.0 parameter:itemIndex while keeping
-  // the old behavior when v6.8.0.0 is off.
+  // the old behavior when v6.8.0.0 is off. Both halves ship a TS Jest spec for
+  // both flag states and a changelog, so neither half has a second problem to
+  // report. Neither half touches the generated public-api/ snapshot: a
+  // hand-edited snapshot hunk drew "generated file, do not edit" findings. A
+  // note that the snapshot still has to be regenerated
+  // (composer admin:generate-public-api, ADM-039) is true for both halves and
+  // allowed, in the pair and in the ignore.
   'admin-bc-change-marker': {
     rule: 'ADM-049',
     file: 'src/Administration/**',
     minSeverity: 'major',
-    summary:
-      /@bc-change|ParameterRemoval|@deprecated[^.]{0,80}(stays?|remain|not removed|extension|eslint|preset|bc-change)|element[^.]{0,40}stays/iu,
+    summary: ADMIN_BC_CHANGE_SUMMARY,
+    allowed: [ADMIN_BC_CHANGE_SNAPSHOT],
+    ignore: {
+      rule: 'ADM-049',
+      summary: ADMIN_BC_CHANGE_SUMMARY,
+      allowed: [ADMIN_BC_CHANGE_SNAPSHOT],
+    },
   },
   // Catch: The plugin overrides sw_order_card_header without {% parent %}, while
   // core's sw-order-card opens <div class="sw-order-card__grid"> in
@@ -390,14 +424,27 @@ export const PAIRS: Record<string, ReviewPair> = {
   // Catch: The app backend's GET /app/register endpoint computes and returns the
   // HMAC proof and secret without verifying the incoming shopware-app-signature
   // header against the query string and app secret.
-  // Ignore: GET /app/register verifies shopware-app-signature with hash_equals()
-  // before returning proof, per-shop random secret, and confirmation_url.
+  // Ignore: GET /app/register verifies shopware-app-signature over the raw
+  // QUERY_STRING with hash_equals(), rejects a timestamp outside a 5-minute window
+  // and a replayed (shop-id, timestamp) pair, and then returns proof, per-shop random secret, and confirmation_url.
   'app-registration-handshake': {
     rule: 'APP-006',
     file: 'src/**',
     minSeverity: 'major',
     summary:
       /shopware-app-signature|registration[^.]{0,80}(signature|unverified|verif|hmac|authenticat)|(missing|without|skip\w*|no)[^.]{0,60}(signature|hmac) (check|verif)|unauthenticated|forge/iu,
+    // The catch keeps the timestamp window and replay claim, but with no
+    // signature check the timestamp is unsigned, so calling those guards
+    // bypassable is the planted bug seen from another side.
+    allowed: [
+      {
+        rule: 'APP-006',
+        file: 'src/**',
+        minSeverity: 'minor',
+        summary:
+          /timestamp[^.]{0,80}(attacker|caller|client)[- ]?(controlled|chosen|supplied)|(chang|alter|forg|pick)\w*[^.]{0,30}timestamp/iu,
+      },
+    ],
   },
   // Catch: custom/apps/SwagBadgeApp/ places an app script directly at
   // Resources/scripts/product-page-loaded.twig instead of inside the hook directory
@@ -543,12 +590,16 @@ export const PAIRS: Record<string, ReviewPair> = {
   // Ignore: The same class and test, but @see names the test by its leading-backslash
   // FQCN and no import is added. A minor+ finding that cites TEST-033 or objects
   // to the FQCN or the import is a false positive.
+  // In both halves CartNormalizer reads the product table with SQL, the
+  // docblock says so, and the dedicated integration test has no #[CoversClass]
+  // (TEST-007), so the marker documents an integration-only class instead of
+  // hiding a trivially unit-testable one that a CoversClass test "already covers".
   'codecoverage-ignore-see': {
     rule: 'TEST-033',
     file: 'src/**',
     minSeverity: 'minor',
     summary:
-      /leading.backslash|fully.qualified|\bFQCN\b|\buse\b.{0,60}(import|statement|annotation|docblock)|(import|\buse\b).{0,60}@see|@see.{0,60}(import|short)|short (class )?name/iu,
+      /leading.backslash|fully.qualified|\bFQCN\b|\buse\b.{0,60}(import|statement|annotation|docblock)|(import|\buse\b).{0,60}@see|@see.{0,60}(import|short)|short (class )?name|import\w*[^.]{0,80}(tests? namespace|test class|Shopware\\?Tests|docblock)|(tests? namespace|test class)[^.]{0,40}import/iu,
   },
   // Catch: SwagProductFeed supports ~6.6.0 || ~6.7.0 and registers a new subscriber
   // behind class_exists(CacheInvalidator::class), with a comment that the class
@@ -575,6 +626,9 @@ export const PAIRS: Record<string, ReviewPair> = {
   // Ignore: The same deprecated subscriber, with getSubscribedEvents() returning [] once
   // the removal flag is active. A minor+ finding that names CORE-012 or calls the
   // neutral return a throw is a false positive.
+  // Both halves announce the deprecation in RELEASE_INFO-6.7.md (CORE-003), and
+  // start onProductWritten() with Feature::throwIfActive(), which trunk PHPStan
+  // requires for subscriber callbacks (triggerDeprecationOrThrow drew findings).
   'deprecation-discovery-neutral': {
     rule: 'CORE-012',
     file: 'src/Core/**',
@@ -612,6 +666,10 @@ export const PAIRS: Record<string, ReviewPair> = {
   // Ignore: The same deprecation, with a public replacement class shipped in the
   // same change. A minor+ finding that names CORE-063 or calls the replacement
   // internal or unusable is a false positive.
+  // Both halves give V2 what a usable replacement needs besides visibility: it
+  // extends AbstractProductPriceCalculator, is registered as a service, has a
+  // unit test and a RELEASE_INFO entry, and visibly calculates the same prices
+  // (V1 matches the rules per product, V2 once per batch).
   'deprecation-internal-replacement': {
     rule: 'CORE-063',
     file: 'src/Core/**',
@@ -997,11 +1055,15 @@ export const PAIRS: Record<string, ReviewPair> = {
     summary:
       /narrow|shrink|shorten|truncat|NOT NULL|without (a )?default|no default|updateDestructive|destructive|data loss|lose data|existing (rows|values|data)|longer than 64/iu,
   },
-  // Catch: The backfill updates every swag_review row in one statement with a
-  // correlated subquery over order_line_item. Needs a major+ finding in
-  // src/Migration/ that names PLG-019 or asks for batches.
-  // Ignore: The same backfill in batches of 1,000 ordered by id with a cursor. A
-  // minor+ finding that names PLG-019 or asks for batching is a false positive.
+  // Catch: The migration moves the author name from swag_review_author onto
+  // swag_review with one UPDATE join over the whole table. Needs a major+
+  // finding in src/Migration/ that names PLG-019 or asks for batches.
+  // Ignore: The same move in batches of 1,000 ordered by review_id with a binary
+  // cursor. A minor+ finding that names PLG-019 or asks for batching is a false
+  // positive. Both halves copy stored data, not derived data (an earlier
+  // verified-purchase backfill drew PLG-020 and order-version findings), and
+  // keep the old table (dropping it drew findings about names the previous
+  // version writes during a rolling update).
   'migration-unbatched-backfill': {
     rule: 'PLG-019',
     file: 'src/Migration/**',
@@ -1174,7 +1236,8 @@ export const PAIRS: Record<string, ReviewPair> = {
   // Catch: A plugin entity-search MCP tool builds Criteria from JSON and calls the
   // repository without AclCriteriaValidator, and returns raw jsonSerialize() instead of
   // McpEntityIncludes + JsonEntityEncoder. Needs a major+ finding in src/ that names
-  // MCP-006 or describes the missing criteria ACL validation or unbounded serialization.
+  // MCP-006 or describes the missing criteria ACL validation or unbounded serialization;
+  // a second, minor finding on the raw jsonSerialize() output is the same rule, not extra.
   // Ignore: The same tool checks registry->has(), validates with AclCriteriaValidator,
   // calls applyDefaultIncludes(), and serializes via JsonEntityEncoder.
   'mcp-entity-criteria': {
@@ -1183,18 +1246,37 @@ export const PAIRS: Record<string, ReviewPair> = {
     minSeverity: 'major',
     summary:
       /AclCriteriaValidator|McpEntityIncludes|applyDefaultIncludes|JsonEntityEncoder|jsonSerialize|association (ACL|read|privilege)/iu,
+    allowed: [
+      {
+        rule: 'MCP-006',
+        file: 'src/**',
+        minSeverity: 'minor',
+        summary: /McpEntityIncludes|applyDefaultIncludes|JsonEntityEncoder|jsonSerialize/iu,
+      },
+    ],
   },
   // Catch: A serverless app MCP tool in Resources/mcp.xml points at /store-api/script/...
   // (HTTP-cached) and its Twig script reads raw request content instead of POST form
   // arguments. Needs a major+ finding that names MCP-007 or describes /api/script/ or
-  // hook.request.request.all('arguments').
+  // hook.request.request.all('arguments'); the raw-body read (getContent(), "POST form
+  // field 'arguments'") is the second half of the same rule.
   // Ignore: The app tool targets /api/script/... and reads hook.request.request.all('arguments').
   'mcp-app-script': {
     rule: 'MCP-007',
     file: '**',
     minSeverity: 'major',
     summary:
-      /\/api\/script\/|\/store-api\/script\/|HTTP cache|cache\.disable|request\.all\(['"]arguments['"]\)|form param|subrequest/iu,
+      /\/api\/script\/|\bstore-api\b|HTTP cache|cache\.disable|request\.all\(['"]arguments['"]\)|getContent|raw (JSON )?(request )?body|(POST )?form (field|param)|subrequest/iu,
+    // Served under /store-api/, the script's services.repository read skips
+    // product visibility for anonymous callers: a symptom of the same wrong route.
+    allowed: [
+      {
+        rule: 'MCP-007',
+        file: 'Resources/scripts/**',
+        minSeverity: 'minor',
+        summary: /anonymous|unauthenticated|visib|inactive|\bactive\b|hidden|disabled|enumerat|services\.repository/iu,
+      },
+    ],
   },
   // Catch: A dynamic #[McpResourceTemplate] class is tagged `mcp.resource` instead of
   // `mcp.resource_template` and uses CacheScope::Public on its ReadResourceResult. Needs
@@ -1255,15 +1337,17 @@ export const PAIRS: Record<string, ReviewPair> = {
   // the DAL. `getInt` types them but sets no bound, so any anonymous caller can
   // ask for the whole ranking in one request. Needs a major+ finding in src/
   // that names SEC-005 or describes the missing upper bound.
-  // Ignore: The same leaderboard route, but `limit` is clamped to 1..50 and `offset` to
-  // 0 or more before they reach the DAL. A minor+ finding that names SEC-005 or
-  // calls the input unbounded or unconstrained is a false positive.
+  // Ignore: The same leaderboard route, but `limit` is clamped to 1..50 and the
+  // ranking stops at the top 500 (an offset past it returns an empty ranking). A minor+ finding that names
+  // SEC-005 or calls the input unbounded or unconstrained is a false positive.
+  // Both halves list only customers of the request's sales channel who set a
+  // leaderboard nickname (the opt-in), so a public route without login is fine.
   'route-input': {
     rule: 'SEC-005',
     file: 'src/**',
     minSeverity: 'major',
     summary:
-      /unbound|no (upper |max(imum)? )?(bound|limit|cap)|unconstrained|not (constrained|capped|bounded|limited)|without (a )?(max|upper|cap)|whole table|dump/iu,
+      /unbound|no (upper |max(imum)? )?(bound|limit|cap)|unconstrained|not (constrained|capped|bounded|limited)|without (a )?(max|upper|cap)|whole table|dump|(every|all)\b[^.]{0,60}\b(single|one) (request|response)/iu,
   },
   // Catch: ProductReviewCsvExporter::export() takes a Symfony Request and reads the
   // query string itself, so HTTP input reaches a domain service. Needs a major+

@@ -1,16 +1,17 @@
 diff --git a/src/Core/Checkout/Cart/CartNormalizer.php b/src/Core/Checkout/Cart/CartNormalizer.php
-index 3f1a9c2..b7e04d8 100644
 --- a/src/Core/Checkout/Cart/CartNormalizer.php
 +++ b/src/Core/Checkout/Cart/CartNormalizer.php
-@@ -1,9 +1,14 @@
- <?php declare(strict_types=1);
-
- namespace Shopware\Core\Checkout\Cart;
-
+@@ -6,9 +6,16 @@
+ use Doctrine\DBAL\Connection;
+ use Shopware\Core\Defaults;
+ use Shopware\Core\Framework\Uuid\Uuid;
 +use Shopware\Tests\Integration\Core\Checkout\Cart\CartNormalizerIntegrationTest;
-+
+ 
  /**
   * Turns a cart into the array the storefront and the Store API return.
++ *
++ * It reads the product numbers straight from the database, so only an
++ * integration test covers it.
 + *
 + * @codeCoverageIgnore
 + * @see CartNormalizerIntegrationTest

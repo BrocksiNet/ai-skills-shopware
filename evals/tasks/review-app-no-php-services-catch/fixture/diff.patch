@@ -21,7 +21,7 @@ diff --git a/custom/apps/SwagBadgeApp/src/Subscriber/ProductPageSubscriber.php b
 new file mode 100644
 --- /dev/null
 +++ b/custom/apps/SwagBadgeApp/src/Subscriber/ProductPageSubscriber.php
-@@ -0,0 +1,33 @@
+@@ -0,0 +1,34 @@
 +<?php declare(strict_types=1);
 +
 +namespace SwagBadgeApp\Subscriber;

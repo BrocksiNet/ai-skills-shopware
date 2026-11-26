@@ -13,8 +13,8 @@
 
 ### 3. Testing
 
-1. Install a plugin that needs to decorate CartProcessor.
-2. The decoration is ignored.
+1. Install a plugin that decorates `AbstractCartProcessor`.
+2. Put a product in the cart: the plugin decoration runs during cart calculation.
 
 ### 4. Additional notes
 

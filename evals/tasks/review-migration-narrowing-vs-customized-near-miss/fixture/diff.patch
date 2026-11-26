@@ -2,7 +2,7 @@ diff --git a/src/Migration/Migration1730000001ShrinkExternalCode.php b/src/Migra
 new file mode 100644
 --- /dev/null
 +++ b/src/Migration/Migration1730000001ShrinkExternalCode.php
-@@ -0,0 +1,22 @@
+@@ -0,0 +1,21 @@
 +<?php declare(strict_types=1);
 +
 +namespace Swag\Loyalty\Migration;

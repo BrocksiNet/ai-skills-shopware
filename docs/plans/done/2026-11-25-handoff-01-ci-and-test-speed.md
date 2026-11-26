@@ -3,7 +3,7 @@
 - **Base branch:** `origin/main` (at or after `a21660c0`, post-v0.19.0)
 - **Suggested branch:** `perf/ci-and-test-speed`
 - **Parallelizable with:** Handoffs 02, 03, 04, 05, and 06 (touches only repo tooling, workflows, and `evals/tasks/*/skills` — zero overlap with `skills/` content or `rules/catalog.json`)
-- **Prerequisite:** Read [`AGENTS.md`](../../AGENTS.md) and [`docs/testing-quality.md`](../testing-quality.md) before editing.
+- **Prerequisite:** Read [`AGENTS.md`](../../../AGENTS.md) and [`docs/testing-quality.md`](../../testing-quality.md) before editing.
 
 ## Goal
 

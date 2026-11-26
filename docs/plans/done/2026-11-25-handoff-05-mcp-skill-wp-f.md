@@ -4,7 +4,7 @@
 - **Suggested branch:** `feat/sw-mcp-development`
 - **Related plan:** [`2026-11-core-sources-and-admin-api.md`](2026-11-core-sources-and-admin-api.md#wp-f-sw-mcp-development)
 - **Parallelizable with:** Handoffs 01, 02, 03, 04, and 06 (rebase and re-run renderers if `REGISTRY.md`, `rules/catalog.json`, `rules/sources.json`, or `skills/sw-skill-router/index.json` change on `main` first)
-- **Prerequisite:** Read [`AGENTS.md`](../../AGENTS.md), [`REGISTRY.md`](../../REGISTRY.md), [`2026-11-core-sources-and-admin-api.md`](2026-11-core-sources-and-admin-api.md), and `skills/sw-security/references/mcp-tool-acl.md` before editing.
+- **Prerequisite:** Read [`AGENTS.md`](../../../AGENTS.md), [`REGISTRY.md`](../../../REGISTRY.md), [`2026-11-core-sources-and-admin-api.md`](2026-11-core-sources-and-admin-api.md), and `skills/sw-security/references/mcp-tool-acl.md` before editing.
 
 ## Goal
 

@@ -1,3 +1,25 @@
+diff --git a/RELEASE_INFO-6.7.md b/RELEASE_INFO-6.7.md
+--- a/RELEASE_INFO-6.7.md
++++ b/RELEASE_INFO-6.7.md
+@@ -5,3 +5,7 @@
+ ### Administration
+ 
+ The order detail page now shows the technical name of the payment method in its tooltip.
++
++### Core
++
++`LegacyProductStockSubscriber` is deprecated and will be removed in 6.8.0.0. `ProductStockIndexer` already refreshes the product stock, so remove any decoration or extension of the subscriber.
+diff --git a/UPGRADE-6.8.md b/UPGRADE-6.8.md
+--- a/UPGRADE-6.8.md
++++ b/UPGRADE-6.8.md
+@@ -5,3 +5,7 @@
+ ## Reorder form line item blocks removed
+ 
+ `frontend.checkout.cart.reorder` resolves the reordered products from the order itself, so the reorder form no longer posts any `lineItems`.
++
++## `LegacyProductStockSubscriber` removed
++
++`ProductStockIndexer` refreshes the product stock, so `LegacyProductStockSubscriber` is removed. Remove any decoration or extension of the subscriber.
 diff --git a/src/Core/Content/Product/DataAbstractionLayer/LegacyProductStockSubscriber.php b/src/Core/Content/Product/DataAbstractionLayer/LegacyProductStockSubscriber.php
 index 4b1c0de..6d2f8a3 100644
 --- a/src/Core/Content/Product/DataAbstractionLayer/LegacyProductStockSubscriber.php
@@ -14,7 +36,7 @@ index 4b1c0de..6d2f8a3 100644
 + * @deprecated tag:v6.8.0 - Will be removed. The stock is refreshed by ProductStockIndexer.
 + */
  #[Package('inventory')]
-@@ -16,9 +20,13 @@ class LegacyProductStockSubscriber implements EventSubscriberInterface
+@@ -16,11 +20,17 @@ class LegacyProductStockSubscriber implements EventSubscriberInterface
 
      public static function getSubscribedEvents(): array
      {
@@ -31,3 +53,7 @@ index 4b1c0de..6d2f8a3 100644
      }
 
      public function onProductWritten(EntityWrittenContainerEvent $event): void
+     {
++        Feature::throwIfActive('v6.8.0.0', Feature::deprecatedClassMessage(self::class, 'v6.8.0.0'));
++
+         $this->indexer->refresh($event->getEventIds());

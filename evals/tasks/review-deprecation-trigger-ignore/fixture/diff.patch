@@ -4,13 +4,13 @@ index 3c2a9f1..b61e0d7 100644
 +++ b/src/Core/Content/Product/ProductCollection.php
 @@ -3,6 +3,7 @@
  namespace Shopware\Core\Content\Product;
-
+ 
  use Shopware\Core\Framework\DataAbstractionLayer\EntityCollection;
 +use Shopware\Core\Framework\Feature;
  use Shopware\Core\Framework\Log\Package;
-
+ 
  #[Package('inventory')]
-@@ -19,7 +20,14 @@ class ProductCollection extends EntityCollection
+@@ -19,8 +20,15 @@ class ProductCollection extends EntityCollection
      /**
 +     * @deprecated tag:v6.8.0 - Will be removed, use ProductCollection::filterActive() instead.
 +     *
