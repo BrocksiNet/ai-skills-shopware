@@ -8,5 +8,13 @@
       "https://github.com/shopware/shopware/pull/20739#discussion_r4082443321",
       "https://github.com/shopware/shopware/pull/20739#discussion_r4092917821"
     ]
-  }
+  },
+  "labels": [
+    {
+      "reference": "sw-core-development/references/api-schema.md",
+      "rule": "CORE-008",
+      "url": "https://github.com/shopware/shopware/pull/20739#discussion_r4092917821",
+      "why": "Store API OpenAPI schema review: request body schema must match runtime validation (company required when accountType is business)."
+    }
+  ]
 }

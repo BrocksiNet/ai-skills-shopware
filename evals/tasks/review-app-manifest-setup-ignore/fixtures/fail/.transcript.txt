@@ -1,0 +1,16 @@
+False positive claiming missing permission.
+
+```json
+{
+  "findings": [
+    {
+      "rule_id": "APP-002",
+      "severity": "major",
+      "file": "custom/apps/SwagOrderSync/manifest.xml",
+      "line": 19,
+      "summary": "The manifest must grant <update>order</update> for checkout.order.placed webhooks.",
+      "fix": "Add <update>order</update>."
+    }
+  ]
+}
+```

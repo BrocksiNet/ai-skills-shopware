@@ -10,5 +10,13 @@
       "https://github.com/shopware/shopware/pull/21104#discussion_r4165217126",
       "https://github.com/shopware/shopware/pull/21104#discussion_r4165219732"
     ]
-  }
+  },
+  "labels": [
+    {
+      "reference": "sw-core-development/references/api-schema.md",
+      "rule": "CORE-010",
+      "url": "https://github.com/shopware/shopware/pull/21104#discussion_r4165217126",
+      "why": "Store API OpenAPI schema omits required field declarations and permits arbitrary additionalProperties, making the response contract unreliable for external consumers."
+    }
+  ]
 }

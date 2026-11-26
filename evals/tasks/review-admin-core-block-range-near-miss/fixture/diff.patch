@@ -1,0 +1,26 @@
+diff --git a/src/Resources/app/administration/src/extension/sw-customer-base-info/index.js b/src/Resources/app/administration/src/extension/sw-customer-base-info/index.js
+new file mode 100644
+--- /dev/null
++++ b/src/Resources/app/administration/src/extension/sw-customer-base-info/index.js
+@@ -0,0 +1,5 @@
++import template from './sw-customer-base-info.html.twig';
++
++Shopware.Component.override('sw-customer-base-info', {
++    template,
++});
+diff --git a/src/Resources/app/administration/src/extension/sw-customer-base-info/sw-customer-base-info.html.twig b/src/Resources/app/administration/src/extension/sw-customer-base-info/sw-customer-base-info.html.twig
+new file mode 100644
+--- /dev/null
++++ b/src/Resources/app/administration/src/extension/sw-customer-base-info/sw-customer-base-info.html.twig
+@@ -0,0 +1,11 @@
++{% block sw_customer_base_metadata_default_payment %}
++    {% parent %}
++    <dl class="swag-customer-insights__list">
++        <dt class="sw-customer-base-info__label">
++            {{ $tc('swag-customer-insights.baseInfo.labelLastPayment') }}
++        </dt>
++        <dd class="swag-customer-insights__last-payment">
++            {{ customer.extensions.swagCustomerInsights?.lastPaymentMethod?.translated.distinguishableName ?? '-' }}
++        </dd>
++    </dl>
++{% endblock %}

@@ -1,0 +1,16 @@
+False positive objecting to include/ partial.
+
+```json
+{
+  "findings": [
+    {
+      "rule_id": "APP-005",
+      "severity": "major",
+      "file": "custom/apps/SwagBadgeApp/Resources/scripts/include/badge-label.twig",
+      "line": 1,
+      "summary": "`include` is not a valid Shopware hook directory so this script will never run.",
+      "fix": "Move it to product-page-loaded/."
+    }
+  ]
+}
+```

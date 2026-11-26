@@ -1,0 +1,16 @@
+False positive claiming a manifest mismatch.
+
+```json
+{
+  "findings": [
+    {
+      "rule_id": "APP-001",
+      "severity": "major",
+      "file": "custom/apps/SwagLoyaltySync/manifest.xml",
+      "line": 5,
+      "summary": "The app folder name does not match the label.",
+      "fix": "Change the label to SwagLoyaltySync."
+    }
+  ]
+}
+```

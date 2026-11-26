@@ -1,0 +1,7 @@
+The registration endpoint verifies `shopware-app-signature` in constant time against the raw query string and app secret before validating parameters, generating a per-shop random secret, and returning the HMAC `proof` and `confirmation_url`. No issues found.
+
+```json
+{
+  "findings": []
+}
+```

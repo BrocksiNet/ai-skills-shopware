@@ -1,0 +1,1 @@
+Raised PHPStan level to 10 in phpstan.neon. Remember to run phpstan --generate-baseline later to regenerate phpstan-baseline.neon.

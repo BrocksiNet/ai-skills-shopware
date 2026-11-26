@@ -1,0 +1,16 @@
+False positive rejecting Meteor Admin SDK manifest declaration.
+
+```json
+{
+  "findings": [
+    {
+      "rule_id": "APP-004",
+      "severity": "major",
+      "file": "custom/apps/SwagSyncApp/manifest.xml",
+      "line": 22,
+      "summary": "Apps should register a Vue plugin bundle instead of an iframe main-module in manifest.xml.",
+      "fix": "Add src/Resources/app/administration/src/main.js."
+    }
+  ]
+}
+```

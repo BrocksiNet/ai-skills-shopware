@@ -1,0 +1,52 @@
+diff --git a/src/Export/OrderSummaryExporter.php b/src/Export/OrderSummaryExporter.php
+new file mode 100644
+--- /dev/null
++++ b/src/Export/OrderSummaryExporter.php
+@@ -0,0 +1,46 @@
++<?php declare(strict_types=1);
++
++namespace Swag\OrderExport\Export;
++
++use Shopware\Core\Checkout\Customer\CustomerCollection;
++use Shopware\Core\Checkout\Order\OrderCollection;
++use Shopware\Core\Framework\Context;
++use Shopware\Core\Framework\DataAbstractionLayer\EntityRepository;
++use Shopware\Core\Framework\DataAbstractionLayer\Search\Criteria;
++
++final readonly class OrderSummaryExporter
++{
++    /**
++     * @param EntityRepository<OrderCollection> $orderRepository
++     * @param EntityRepository<CustomerCollection> $customerRepository
++     */
++    public function __construct(
++        private EntityRepository $orderRepository,
++        private EntityRepository $customerRepository,
++    ) {
++    }
++
++    /**
++     * @return list<array{orderNumber: string, email: string}>
++     */
++    public function loadRecentSummaries(Context $context): array
++    {
++        $criteria = new Criteria();
++        $criteria->setLimit(50);
++
++        $orders = $this->orderRepository->search($criteria, $context)->getEntities();
++        $rows = [];
++
++        foreach ($orders as $order) {
++            $customerId = $order->getOrderCustomer()?->getCustomerId();
++            if ($customerId === null) {
++                continue;
++            }
++
++            $customerCriteria = (new Criteria([$customerId]))->setLimit(1);
++            $customer = $this->customerRepository->search($customerCriteria, $context)->first();
++            $rows[] = ['orderNumber' => (string) $order->getOrderNumber(), 'email' => $customer?->getEmail() ?? ''];
++        }
++
++        return $rows;
++    }
++}

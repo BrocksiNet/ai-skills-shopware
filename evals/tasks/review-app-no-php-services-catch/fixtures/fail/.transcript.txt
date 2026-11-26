@@ -1,0 +1,24 @@
+Nit and wrong rule ID.
+
+```json
+{
+  "findings": [
+    {
+      "rule_id": "APP-003",
+      "severity": "nit",
+      "file": "custom/apps/SwagBadgeApp/src/Subscriber/ProductPageSubscriber.php",
+      "line": 11,
+      "summary": "Consider whether this should be an app script.",
+      "fix": "Move it to a script."
+    },
+    {
+      "rule_id": "PLG-026",
+      "severity": "major",
+      "file": "custom/apps/SwagBadgeApp/src/Resources/config/services.php",
+      "line": 7,
+      "summary": "Apps do not have a PHP DI container so services.php will not be loaded.",
+      "fix": "Use an app script."
+    }
+  ]
+}
+```

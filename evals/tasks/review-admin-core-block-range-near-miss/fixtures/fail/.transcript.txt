@@ -1,0 +1,14 @@
+```json
+{
+  "findings": [
+    {
+      "rule_id": "ADM-039",
+      "severity": "major",
+      "file": "src/Resources/app/administration/src/extension/sw-customer-base-info/sw-customer-base-info.html.twig",
+      "line": 1,
+      "summary": "The override targets `sw_customer_base_metadata_default_payment`, which is missing in Shopware 6.7 even though `composer.json` allows `~6.7.0`.",
+      "fix": "Target a block that exists in Shopware 6.7."
+    }
+  ]
+}
+```

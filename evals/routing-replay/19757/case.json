@@ -7,5 +7,12 @@
     "sw-admin-js/references/flags-and-modern-web.md": [
       "https://github.com/shopware/shopware/pull/19757#discussion_r3879374832"
     ]
-  }
+  },
+  "labels": [
+    {
+      "reference": "sw-admin-js/references/flags-and-modern-web.md",
+      "url": "https://github.com/shopware/shopware/pull/19757#discussion_r3879374832",
+      "why": "Reviewer asks to gate the legacy sw-tabs deprecation warning with Shopware.Feature.isActive('V6_8_0_0') rather than dropping legacy behavior."
+    }
+  ]
 }

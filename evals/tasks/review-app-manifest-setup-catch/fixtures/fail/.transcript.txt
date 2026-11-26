@@ -1,0 +1,24 @@
+Nit and wrong rule ID.
+
+```json
+{
+  "findings": [
+    {
+      "rule_id": "APP-002",
+      "severity": "nit",
+      "file": "custom/apps/SwagOrderSync/manifest.xml",
+      "line": 19,
+      "summary": "Double check the manifest permissions.",
+      "fix": "Review permissions."
+    },
+    {
+      "rule_id": "APP-001",
+      "severity": "major",
+      "file": "custom/apps/SwagOrderSync/manifest.xml",
+      "line": 19,
+      "summary": "The checkout.order.placed webhook is missing <read>order</read> permission.",
+      "fix": "Add <read>order</read>."
+    }
+  ]
+}
+```

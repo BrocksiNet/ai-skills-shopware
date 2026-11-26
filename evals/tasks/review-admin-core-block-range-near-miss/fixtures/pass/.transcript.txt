@@ -1,0 +1,16 @@
+The plugin claims compatibility with Shopware 6.7 (`~6.6.0 || ~6.7.0`), but overrides `sw_customer_base_metadata_default_payment`, which Shopware 6.7 removed.
+
+```json
+{
+  "findings": [
+    {
+      "rule_id": "PLG-001",
+      "severity": "major",
+      "file": "src/Resources/app/administration/src/extension/sw-customer-base-info/sw-customer-base-info.html.twig",
+      "line": 1,
+      "summary": "The override targets core block `sw_customer_base_metadata_default_payment`, which is missing in Shopware 6.7 even though `composer.json` allows `~6.7.0`, so the block silently does not render on 6.7.",
+      "fix": "Target a block present across both 6.6 and 6.7 (or provide a 6.7-compatible override / narrow the supported range)."
+    }
+  ]
+}
+```

@@ -1,0 +1,16 @@
+The exporter runs a separate `customerRepository->search()` inside the `foreach` loop for every order instead of loading the association on the initial query.
+
+```json
+{
+  "findings": [
+    {
+      "rule_id": "REV-021",
+      "severity": "major",
+      "file": "src/Export/OrderSummaryExporter.php",
+      "line": 41,
+      "summary": "`loadRecentSummaries()` runs a separate `customerRepository->search()` inside the `foreach` loop for each order (N+1 queries) instead of loading the `orderCustomer` association on the initial order criteria.",
+      "fix": "Call `$criteria->addAssociation('orderCustomer')` on the order search and read `$order->getOrderCustomer()?->getEmail()` directly without querying inside the loop."
+    }
+  ]
+}
+```

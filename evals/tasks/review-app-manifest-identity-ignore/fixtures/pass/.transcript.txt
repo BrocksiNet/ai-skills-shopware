@@ -1,0 +1,7 @@
+The app folder name `SwagLoyaltySync` matches `<meta><name>`, the manifest pins `manifest-3.0.xsd`, all required `<meta>` fields are present, and permissions are minimal. No issues found.
+
+```json
+{
+  "findings": []
+}
+```

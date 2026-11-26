@@ -1,0 +1,48 @@
+diff --git a/src/Subscriber/RecommendationCacheSubscriber.php b/src/Subscriber/RecommendationCacheSubscriber.php
+new file mode 100644
+--- /dev/null
++++ b/src/Subscriber/RecommendationCacheSubscriber.php
+@@ -0,0 +1,43 @@
++<?php declare(strict_types=1);
++
++namespace Swag\Recommendations\Subscriber;
++
++use Shopware\Core\Framework\Adapter\Cache\CacheTagCollector;
++use Shopware\Core\Framework\Struct\ArrayStruct;
++use Shopware\Storefront\Page\Product\ProductPageLoadedEvent;
++use Swag\Recommendations\RecommendationLoader;
++use Symfony\Component\EventDispatcher\EventSubscriberInterface;
++use Symfony\Contracts\Cache\CacheInterface;
++use Symfony\Contracts\Cache\ItemInterface;
++
++final readonly class RecommendationCacheSubscriber implements EventSubscriberInterface
++{
++    public function __construct(
++        private CacheTagCollector $cacheTagCollector,
++        private CacheInterface $cache,
++        private RecommendationLoader $loader,
++    ) {
++    }
++
++    public static function getSubscribedEvents(): array
++    {
++        return [
++            ProductPageLoadedEvent::class => 'onProductPageLoaded',
++        ];
++    }
++
++    public function onProductPageLoaded(ProductPageLoadedEvent $event): void
++    {
++        $productId = $event->getPage()->getProduct()->getId();
++        $context = $event->getSalesChannelContext();
++        $this->cacheTagCollector->addTag('swag-rec-' . $productId);
++
++        $items = $this->cache->get('swag_rec_' . $productId, function (ItemInterface $item) use ($productId, $context): array {
++            $item->expiresAfter(600);
++
++            return $this->loader->loadForProduct($productId, $context);
++        });
++
++        $event->getPage()->addExtension('swagRecommendations', new ArrayStruct(['items' => $items]));
++    }
++}

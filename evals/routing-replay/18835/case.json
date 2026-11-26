@@ -22,5 +22,12 @@
     "sw-testing/references/core-platform-patterns.md": [
       "https://github.com/shopware/shopware/pull/18835#discussion_r3955779642"
     ]
-  }
+  },
+  "labels": [
+    {
+      "reference": "sw-core-development/references/release-notes-and-adr.md",
+      "url": "https://github.com/shopware/shopware/pull/18835#discussion_r3719748234",
+      "why": "RELEASE_INFO-6.7.md carries outdated draft details and external reverse-proxy behavior descriptions that do not belong in release notes."
+    }
+  ]
 }

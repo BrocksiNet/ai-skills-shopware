@@ -27,7 +27,7 @@ Read only the reference that matches the task or the files it changes:
 <!-- routes:start: generated from routes.json by `node tools/bin/render-routes.ts`; do not edit -->
 | Read | When | Or the change touches |
 | ---- | ---- | --------------------- |
-| [`manifest-and-permissions.md`](references/manifest-and-permissions.md) | You edit the manifest, permissions or app lifecycle. | `manifest.xml`, `app:(install\|refresh\|activate\|validate)` |
+| [`manifest-and-permissions.md`](references/manifest-and-permissions.md) | You edit the manifest, permissions, app architecture boundaries, registration handshake or app lifecycle. | `manifest.xml`, `custom/apps/**/*.php`, `app:(install\|refresh\|activate\|validate)`, … |
 | [`app-scripts.md`](references/app-scripts.md) | You write an app script. | `Resources/scripts/**/*.twig` |
 <!-- routes:end -->
 

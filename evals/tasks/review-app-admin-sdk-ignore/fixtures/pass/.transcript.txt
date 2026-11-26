@@ -1,0 +1,7 @@
+The app declares its Administration UI as a Meteor Admin SDK `<main-module>` in `manifest.xml` with HTTPS source URL and existing backend setup. No issues found.
+
+```json
+{
+  "findings": []
+}
+```

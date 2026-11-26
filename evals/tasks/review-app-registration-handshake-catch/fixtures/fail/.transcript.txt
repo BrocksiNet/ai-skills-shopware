@@ -1,0 +1,24 @@
+Nit and wrong rule ID.
+
+```json
+{
+  "findings": [
+    {
+      "rule_id": "APP-006",
+      "severity": "nit",
+      "file": "src/Controller/RegistrationController.php",
+      "line": 20,
+      "summary": "Check the registration headers.",
+      "fix": "Add header validation."
+    },
+    {
+      "rule_id": "SEC-006",
+      "severity": "major",
+      "file": "src/Controller/RegistrationController.php",
+      "line": 20,
+      "summary": "register() does not verify the shopware-app-signature header on the registration request.",
+      "fix": "Verify shopware-app-signature with hash_equals()."
+    }
+  ]
+}
+```

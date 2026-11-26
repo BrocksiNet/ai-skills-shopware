@@ -16,5 +16,13 @@
     "sw-plugin-development/references/migrations.md": [
       "https://github.com/shopware/shopware/pull/20275#discussion_r3978650623"
     ]
-  }
+  },
+  "labels": [
+    {
+      "reference": "sw-plugin-development/references/migrations.md",
+      "rule": "PLG-030",
+      "url": "https://github.com/shopware/shopware/pull/20275#discussion_r3978650623",
+      "why": "Migration alters a column length to 1024 without checking whether shops already extended it past 1024, which would narrow and truncate existing postal-code rules."
+    }
+  ]
 }

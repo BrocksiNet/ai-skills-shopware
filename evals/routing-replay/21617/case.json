@@ -16,5 +16,12 @@
       "https://github.com/shopware/shopware/pull/21617#discussion_r4278703465",
       "https://github.com/shopware/shopware/pull/21617#discussion_r4278716667"
     ]
-  }
+  },
+  "labels": [
+    {
+      "reference": "sw-plugin-development/references/dal-usage.md",
+      "url": "https://github.com/shopware/shopware/pull/21617#discussion_r4278703465",
+      "why": "Reviewer questions Criteria query construction (missing setTerm and per-token Criteria.equals scoring for multi-word searchTerm)."
+    }
+  ]
 }

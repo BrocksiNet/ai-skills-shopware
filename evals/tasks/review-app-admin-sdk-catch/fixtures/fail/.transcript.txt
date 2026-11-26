@@ -1,0 +1,24 @@
+Nit and wrong rule ID.
+
+```json
+{
+  "findings": [
+    {
+      "rule_id": "APP-004",
+      "severity": "nit",
+      "file": "custom/apps/SwagSyncApp/src/Resources/app/administration/src/main.js",
+      "line": 1,
+      "summary": "Consider using the Meteor Admin SDK.",
+      "fix": "Switch to manifest.xml."
+    },
+    {
+      "rule_id": "ADM-006",
+      "severity": "major",
+      "file": "custom/apps/SwagSyncApp/src/Resources/app/administration/src/main.js",
+      "line": 1,
+      "summary": "Apps do not load Administration Vue plugin bundles; declare a Meteor Admin SDK module in manifest.xml.",
+      "fix": "Use <admin><main-module/> in manifest.xml."
+    }
+  ]
+}
+```

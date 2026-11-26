@@ -1,0 +1,14 @@
+```json
+{
+  "findings": [
+    {
+      "rule_id": "ARCH-002",
+      "severity": "major",
+      "file": "src/Export/OrderSummaryExporter.php",
+      "line": 41,
+      "summary": "`loadRecentSummaries()` runs a separate `customerRepository->search()` inside the `foreach` loop for each order (N+1 queries).",
+      "fix": "Call `$criteria->addAssociation('orderCustomer')` on the initial query."
+    }
+  ]
+}
+```

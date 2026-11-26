@@ -3,14 +3,23 @@
   "routes": [
     {
       "reference": "references/manifest-and-permissions.md",
-      "when": "You edit the manifest, permissions or app lifecycle.",
-      "paths_any": ["**/manifest.xml"],
-      "anchors_any": ["app:(install|refresh|activate|validate)"]
+      "when": "You edit the manifest, permissions, app architecture boundaries, registration handshake or app lifecycle.",
+      "paths_any": [
+        "**/manifest.xml",
+        "**/custom/apps/**/*.php",
+        "**/custom/apps/**/Resources/app/administration/**"
+      ],
+      "anchors_any": [
+        "app:(install|refresh|activate|validate)",
+        "shopware-(app|shop)-signature|confirmation_url|registrationUrl"
+      ]
     },
     {
       "reference": "references/app-scripts.md",
       "when": "You write an app script.",
-      "paths_any": ["**/Resources/scripts/**/*.twig"]
+      "paths_any": [
+        "**/Resources/scripts/**/*.twig"
+      ]
     }
   ]
 }

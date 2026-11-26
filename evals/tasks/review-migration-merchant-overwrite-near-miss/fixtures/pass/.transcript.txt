@@ -1,0 +1,16 @@
+The migration batches the update properly, but its `UPDATE mail_template_translation` overwrites merchant-customized mail templates because it omits `AND updated_at IS NULL`.
+
+```json
+{
+  "findings": [
+    {
+      "rule_id": "PLG-028",
+      "severity": "major",
+      "file": "src/Migration/Migration1730000002UpdateWelcomeMail.php",
+      "line": 34,
+      "summary": "The migration overwrites `mail_template_translation.content_html` for every matching template without guarding `updated_at IS NULL`, clobbering merchant-customized mail templates.",
+      "fix": "Add `AND updated_at IS NULL` to the `WHERE` clause so merchant-edited templates are left untouched."
+    }
+  ]
+}
+```

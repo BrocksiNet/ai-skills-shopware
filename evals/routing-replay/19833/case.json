@@ -10,5 +10,12 @@
     "sw-testing/references/core-platform-patterns.md": [
       "https://github.com/shopware/shopware/pull/19833#discussion_r3881421153"
     ]
-  }
+  },
+  "labels": [
+    {
+      "reference": "sw-testing/references/core-platform-patterns.md",
+      "url": "https://github.com/shopware/shopware/pull/19833#discussion_r3881421153",
+      "why": "Reviewer asks to convert repeated unit test cases into a data provider with descriptive case names."
+    }
+  ]
 }

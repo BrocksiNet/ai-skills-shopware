@@ -1,10 +1,11 @@
 // Grader: unit-test-passes
 // PASS when a unit-style PHPUnit test exists (TestCase, assertSame, data
-// provider, no kernel/DB) and, if phpunit + composer are available, it runs green.
+// provider, no kernel/DB — checked on comment-stripped code) and, if phpunit
+// + composer are available, it runs green.
 import { spawnSync } from 'node:child_process';
 import { accessSync, constants } from 'node:fs';
 import { join } from 'node:path';
-import { fail, findFile, type Grader, hasLine, read, verdict } from '../src/grade/kit.ts';
+import { fail, findFile, type Grader, hasLine, read, stripComments, verdict } from '../src/grade/kit.ts';
 
 function isExecutable(path: string): boolean {
   try {
@@ -18,13 +19,17 @@ function isExecutable(path: string): boolean {
 export const grade: Grader = ({ workdir }) => {
   const testFile = findFile(workdir, 'PriceCalculatorTest');
   if (testFile === undefined) return fail('PriceCalculatorTest.php not found');
-  const text = read(testFile);
+  const raw = read(testFile);
+  const code = stripComments(raw);
+  const dataProvider =
+    hasLine(code, /#\[(?:\\?PHPUnit\\Framework\\Attributes\\)?DataProvider\s*\(/u) ||
+    hasLine(raw, /\*\s*@dataProvider\s+\w+/u);
   const structural =
-    hasLine(text, /extends\s+TestCase/u) &&
-    hasLine(text, /assertSame/u) &&
-    hasLine(text, /DataProvider/iu) &&
+    hasLine(code, /\bextends\s+\\?(?:PHPUnit\\Framework\\)?TestCase\b/u) &&
+    hasLine(code, /assertSame\s*\(/u) &&
+    dataProvider &&
     // unit test must not pull in the kernel / DB
-    !hasLine(text, /IntegrationTestBehaviour|KernelTestBehaviour|getContainer\(/u);
+    !hasLine(code, /IntegrationTestBehaviour|KernelTestBehaviour|getContainer\s*\(/u);
 
   let ran = 'skipped';
   const phpunit = join(workdir, 'vendor/bin/phpunit');
