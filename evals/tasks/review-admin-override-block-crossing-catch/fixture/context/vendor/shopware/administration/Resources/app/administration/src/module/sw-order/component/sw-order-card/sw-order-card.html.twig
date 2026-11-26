@@ -1,0 +1,16 @@
+{% block sw_order_card %}
+<mt-card :title="orderTitle">
+    {% block sw_order_card_header %}
+    <div class="sw-order-card__grid">
+        <h3 class="sw-order-card__heading">{{ orderNumber }}</h3>
+    {% endblock %}
+
+    {% block sw_order_card_body %}
+        <div class="sw-order-card__details">{{ orderDetails }}</div>
+    {% endblock %}
+
+    {% block sw_order_card_footer %}
+    </div>
+    {% endblock %}
+</mt-card>
+{% endblock %}

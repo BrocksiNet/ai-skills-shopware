@@ -25,10 +25,18 @@ const ROOT = resolve(import.meta.dirname, '../..');
 const SOURCES = loadSources(ROOT);
 const TRUNK_SOURCE: Source =
   SOURCES.find((s) => s.id === 'shopware') ?? SOURCES[0] ?? assert.fail('no shopware source');
-// The recorded windows end before the ADR below existed, so the recordings hold no request for its path.
+// The recorded windows end before these post-October paths existed, so the recordings hold no request for them.
+const POST_RECORDING_PATHS = new Set([
+  'adr/2026-11-10-administration-public-api-snapshot.md',
+  'adr/2026-11-19-remove-claude-md-bridge-files.md',
+  'src/Administration/Resources/app/administration/technical-docs/11-code-quality/03-public-api-snapshot.md',
+  'src/Administration/Resources/app/administration/eslint-rules/deprecation-rules/utils/api-markers.ts',
+  'src/Administration/Resources/app/administration/eslint-rules/deprecation-rules/valid-api-markers.js',
+  'src/Administration/Resources/app/administration/scripts/generate-public-api/README.md',
+]);
 const TRUNK: Source = {
   ...TRUNK_SOURCE,
-  paths: TRUNK_SOURCE.paths.filter((p) => p !== 'adr/2026-11-19-remove-claude-md-bridge-files.md'),
+  paths: TRUNK_SOURCE.paths.filter((p) => !POST_RECORDING_PATHS.has(p)),
 };
 const report = (mined: Mined[], catalog: Catalog = loadCatalog(ROOT)): string =>
   renderReport(mined, catalog, mapIndex(ROOT, catalog, SOURCES));

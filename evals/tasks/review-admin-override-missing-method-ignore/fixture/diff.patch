@@ -1,0 +1,22 @@
+diff --git a/src/Resources/app/administration/src/extension/sw-order-list/index.js b/src/Resources/app/administration/src/extension/sw-order-list/index.js
+new file mode 100644
+index 0000000..2222222
+--- /dev/null
++++ b/src/Resources/app/administration/src/extension/sw-order-list/index.js
+@@ -0,0 +1,16 @@
++Shopware.Component.override('sw-order-list', {
++    methods: {
++        getOrderColumns() {
++            const columns = this.$super('getOrderColumns');
++
++            return [
++                ...columns,
++                {
++                    property: 'extensions.swagLoyalty.points',
++                    label: 'swag-loyalty.orderList.columnPoints',
++                    allowResize: true,
++                },
++            ];
++        },
++    },
++});

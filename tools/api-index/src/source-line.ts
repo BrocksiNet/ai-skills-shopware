@@ -12,11 +12,7 @@ const twigBlock = (name: string): RegExp => new RegExp(`\\{%-?\\s*block\\s+${esc
 const quoted = (name: string): RegExp => new RegExp(`['"\`]${escape(name)}['"\`]`, 'u');
 const word = (name: string): RegExp => new RegExp(`(?<![\\w$-])${escape(name)}(?![\\w-])`, 'u');
 
-/** The patterns that find an item, most specific first. */
-export function patternsFor(id: string): RegExp[] {
-  const colon = id.indexOf(':');
-  const prefix = id.slice(0, colon);
-  const rest = id.slice(colon + 1);
+function prefixPatterns(prefix: string, rest: string): RegExp[] | undefined {
   if (prefix === 'php') {
     const [fqcn = '', member] = rest.split('::');
     const short = fqcn.split('\\').at(-1) ?? fqcn;
@@ -41,6 +37,26 @@ export function patternsFor(id: string): RegExp[] {
     const short = name.split('\\').at(-1) ?? name;
     return [new RegExp(`\\b(class|interface|trait)\\s+${escape(short)}\\b`, 'u'), word(short)];
   }
+  if (prefix === 'scss') {
+    const kind = rest.slice(0, rest.indexOf(':'));
+    const name = rest.slice(rest.indexOf(':') + 1);
+    if (kind === 'var') return [new RegExp(`^\\s*${escape(name)}\\s*:`, 'u')];
+    return [new RegExp(`^\\s*@mixin\\s+${escape(name)}\\b`, 'u')];
+  }
+  if (prefix === 'snippet') {
+    const leaf = rest.split('.').at(-1) ?? rest;
+    return [new RegExp(`"${escape(leaf)}"\\s*:`, 'u')];
+  }
+  return undefined;
+}
+
+/** The patterns that find an item, most specific first. */
+export function patternsFor(id: string): RegExp[] {
+  const colon = id.indexOf(':');
+  const prefix = id.slice(0, colon);
+  const rest = id.slice(colon + 1);
+  const prefixed = prefixPatterns(prefix, rest);
+  if (prefixed !== undefined) return prefixed;
   const hash = rest.lastIndexOf('#');
   if (hash !== -1) {
     const block = rest.slice(hash + 1);

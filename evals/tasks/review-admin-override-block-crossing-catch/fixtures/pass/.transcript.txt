@@ -1,0 +1,16 @@
+The override replaces `sw_order_card_header` without `{% parent %}`, dropping the opening `<div class="sw-order-card__grid">` that closes in `sw_order_card_footer`.
+
+```json
+{
+  "findings": [
+    {
+      "rule_id": "ADM-046",
+      "severity": "major",
+      "file": "src/Resources/app/administration/src/extension/sw-order-card/sw-order-card.html.twig",
+      "line": 1,
+      "summary": "Replacing sw_order_card_header without {% parent %} drops the opening <div class=\"sw-order-card__grid\"> that closes in sw_order_card_footer, breaking Vue template compilation with an unmatched closing tag.",
+      "fix": "Keep {% parent %} inside sw_order_card_header and append the VIP badge span after it so the crossing <div> stays balanced."
+    }
+  ]
+}
+```

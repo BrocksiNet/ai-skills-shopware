@@ -157,6 +157,70 @@ export const PAIRS: Record<string, ReviewPair> = {
     summary:
       /(does ?n[o']?t|never|without|missing|no|instead of|skips?|bypass\w*)\W+(call(s|ing)?\W+)?(this\.)?\$?super\b|cop(y|ies|ied|ying)[^.]{0,60}(core|original|parent)|duplicat\w*[^.]{0,60}(core|original|parent)|replac\w* the (core|original|parent|whole)\b[^.]{0,40}(method|implementation|columns)|(other|later|third.party) (plugins?|extensions?|apps?|overrides?)\b[^.]{0,80}(skip|lost|lose|drop|bypass|ignor|overwrit|break|miss)|(skip|lose|drop|bypass|ignor|overwrit)\w*[^.]{0,60}(other|later|third.party) (plugins?|extensions?|apps?|overrides?)|(future|upstream|later) (core )?(\w+ )?(changes|fixes|updates|columns)/iu,
   },
+  // Catch: A core PR plans to remove the optional itemIndex parameter from
+  // sw-order-line-items-grid's onDeleteItem method in v6.8.0. Because the method
+  // itself stays, annotating it with @deprecated tag:v6.8.0 makes the extension
+  // ESLint preset fail every plugin that calls it; core trunk uses
+  // @bc-change ParameterRemoval version:v6.8.0 parameter:itemIndex instead.
+  // Ignore: The same planned parameter removal annotated with
+  // @bc-change ParameterRemoval version:v6.8.0 parameter:itemIndex while keeping
+  // the old behavior when v6.8.0.0 is off.
+  'admin-bc-change-marker': {
+    rule: 'ADM-049',
+    file: 'src/Administration/**',
+    minSeverity: 'major',
+    summary:
+      /@bc-change|ParameterRemoval|@deprecated[^.]{0,80}(stays?|remain|not removed|extension|eslint|preset|bc-change)|element[^.]{0,40}stays/iu,
+  },
+  // Catch: The plugin overrides sw_order_card_header without {% parent %}, while
+  // core's sw-order-card opens <div class="sw-order-card__grid"> in
+  // sw_order_card_header and closes </div> in sw_order_card_footer. Replacing
+  // the block drops the opening <div> and breaks Vue template compilation.
+  // Ignore: The override keeps {% parent %} and appends the badge inside the
+  // opened grid container, so the crossing <div> stays balanced.
+  'admin-override-block-crossing': {
+    rule: 'ADM-046',
+    file: 'src/Resources/app/administration/**',
+    minSeverity: 'major',
+    summary:
+      /\{%\s*parent\s*%\}|crossing|unclosed|mismatched|stray (closing )?tag|opening (div|tag|element)|closing (div|tag|element)|sw-order-card__grid|sw_order_card_footer|template compil/iu,
+  },
+  // Catch: The plugin overrides sw-order-list with getColumns() calling
+  // this.$super('getColumns'), but core's sw-order-list declares
+  // getOrderColumns(), not getColumns(). The override never intercepts core and
+  // $super fails at runtime.
+  // Ignore: The override defines getOrderColumns() and calls
+  // this.$super('getOrderColumns'), matching core's method name.
+  'admin-override-missing-method': {
+    rule: 'ADM-050',
+    file: 'src/Resources/app/administration/**',
+    minSeverity: 'major',
+    summary:
+      /getOrderColumns|getColumns|does not (exist|declare|define|have)|non-?existent|no (such )?method|wrong (method )?name|typo|never (called|invoked|runs)|\$super\(['"]getColumns['"]\)/iu,
+  },
+  // Catch: The plugin overrides sw_order_line_items_grid_column_label inside
+  // core's <template #column-label="{ item }"> and references itemIndex, which
+  // the slot does not expose, so it evaluates to undefined at runtime.
+  // Ignore: The override uses item.position from the exposed { item } slot prop.
+  'admin-override-scope-var': {
+    rule: 'ADM-047',
+    file: 'src/Resources/app/administration/**',
+    minSeverity: 'major',
+    summary:
+      /itemIndex|scope variable|slot (variable|prop|scope|binding)|not (exposed|provided|defined|available) (by|in) (the )?(slot|block|scope)|only (exposes|provides) \{?\s*item\s*\}?|undefined/iu,
+  },
+  // Catch: The plugin component imports format.utils directly from core's
+  // internal src/ tree and calls this.$parent.reloadEntityData(), coupling to
+  // internal file paths and parent component nesting.
+  // Ignore: The component uses Shopware.Utils.format.currency() and emits
+  // 'reload' instead of touching $parent or core internal paths.
+  'admin-plugin-parent-import': {
+    rule: 'ADM-048',
+    file: 'src/Resources/app/administration/**',
+    minSeverity: 'major',
+    summary:
+      /\$parent|internal (src|path|file|core)|vendor\/shopware\/administration|direct import|Shopware\.Utils|emit|provide\/inject/iu,
+  },
   // Catch: The released detail page renames the swag-loyalty-detail-sidebar position
   // identifier and its blocks-list.json entry. Apps and plugins that render
   // into the old identifier silently disappear. Needs a major+ finding in the

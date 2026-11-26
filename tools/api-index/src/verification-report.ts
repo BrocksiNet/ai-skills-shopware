@@ -31,7 +31,10 @@ function isFact(value: unknown): value is Fact {
     value.releases.every((entry: unknown) => isRange(entry)) &&
     (value.kind === 'unknown' || value.releases.length > 0) &&
     (value.value === undefined || typeof value.value === 'string') &&
-    (value.via === undefined || isText(value.via))
+    (value.via === undefined || isText(value.via)) &&
+    (value.affects === undefined ||
+      (Array.isArray(value.affects) &&
+        value.affects.every((entry: unknown) => entry === 'callers' || entry === 'extenders')))
   );
 }
 

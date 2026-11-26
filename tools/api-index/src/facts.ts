@@ -2,6 +2,8 @@
 // releases its composer range allows. Facts, not findings: each line says
 // what holds in which releases. No dependencies, so a tool that reads the
 // index can use it as is.
+import { snippetChange } from './admin-snippets.ts';
+import { type BcAudience, bcChangeAffects } from './bc-change.ts';
 import { Lookup } from './lookup.ts';
 import { memberChange } from './member-signature.ts';
 import { runs } from './runs.ts';
@@ -43,6 +45,9 @@ export interface Fact {
   via?: string;
   /** For a moved class: the version that removes the old name. */
   until?: string;
+  /** For a `bc-change` fact: who must act (`CallSiteCompatibilityChange` → callers,
+   *  `ExtenderCompatibilityChange` → extenders). */
+  affects?: BcAudience[];
 }
 
 const FLAGS: { field: Tracked; kind: FactKind }[] = [
@@ -86,6 +91,10 @@ function flagFacts(lookup: Lookup, target: string, isMember: boolean, resolved: 
       const value = key.split('\0')[0] ?? '';
       const fact: Fact = { target, kind, releases: runs(entry.indexes, indexes, lookup.names) };
       if (value !== 'true') fact.value = value;
+      if (kind === 'bc-change') {
+        const affects = bcChangeAffects(value.split(', '));
+        if (affects !== undefined) fact.affects = affects;
+      }
       if (entry.via !== undefined) fact.via = entry.via;
       facts.push(fact);
     }
@@ -147,17 +156,23 @@ function changedFacts(lookup: Lookup, target: string, resolved: Resolved[]): Fac
   return changes.length === 0 ? [] : [{ target, kind: 'changed', releases: changes }];
 }
 
-/** The releases of the range in which a prop, method or computed member
- *  changes its signature in a way an extension notices, one fact each. */
+/** The releases of the range in which a prop, method, computed member or
+ *  snippet changes its signature in a way an extension notices, one fact each. */
 function signatureFacts(lookup: Lookup, target: string, resolved: Resolved[]): Fact[] {
-  const kind = /\.(prop|js-method|computed)\.[^.#]+$/u.exec(target)?.[1];
+  const isSnippet = target.startsWith('snippet:');
+  const kind = isSnippet ? 'snippet' : /\.(prop|js-method|computed)\.[^.#]+$/u.exec(target)?.[1];
   if (kind === undefined) return [];
   const facts: Fact[] = [];
   let previous: string | undefined;
   for (const { index, item } of resolved) {
     if (item === undefined || !lookup.present(item, index)) continue;
     const signature = lookup.value(item, 'signature', index) ?? '';
-    const detail = previous === undefined ? undefined : memberChange(kind, previous, signature);
+    const detail =
+      previous === undefined
+        ? undefined
+        : isSnippet
+          ? snippetChange(previous, signature)
+          : memberChange(kind, previous, signature);
     const name = lookup.names[index] ?? '';
     if (detail !== undefined) facts.push({ target, kind: 'signature', releases: [[name, name]], value: detail });
     previous = signature;
@@ -204,7 +219,7 @@ export function factsFor(lookup: Lookup, target: string, how: string, range: str
     });
   }
   if (frontend !== undefined && target.includes('#')) facts.push(...changedFacts(lookup, target, resolved));
-  if (frontend !== undefined) facts.push(...signatureFacts(lookup, target, resolved));
+  if (frontend !== undefined || target.startsWith('snippet:')) facts.push(...signatureFacts(lookup, target, resolved));
   facts.push(...flagFacts(lookup, target, member !== undefined || frontend !== undefined, resolved, indexes));
   if (member === undefined && frontend === undefined) facts.push(...movedFacts(lookup, target, indexes));
   if (how === 'extends') {

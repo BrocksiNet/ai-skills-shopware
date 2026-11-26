@@ -16,6 +16,7 @@ import {
   stringOf,
   walkJs,
 } from './js.ts';
+import { applyState, twigTemplateStates } from './flag-state.ts';
 import type { Flags, Item } from './model.ts';
 import { scanTwig } from './twig.ts';
 
@@ -45,6 +46,7 @@ function deprecation(deprecated: string | undefined): Flags {
 export function templateItems(twig: string, file: string): Item[] {
   const id = `storefront:@Storefront/storefront/${file.slice(STOREFRONT_VIEWS.length + 1)}`;
   const scanned = scanTwig(twig);
+  const states = twigTemplateStates(twig);
   const items: Item[] = [
     { id, kind: 'template', file, signature: scanned.extends ?? '', flags: deprecation(scanned.deprecated) },
   ];
@@ -52,12 +54,14 @@ export function templateItems(twig: string, file: string): Item[] {
   for (const block of scanned.blocks) {
     if (seen.has(block.name)) continue;
     seen.add(block.name);
+    const flags = deprecation(block.deprecated);
+    applyState(flags, states.get(block.name));
     const item: Item = {
       id: `${id}#${block.name}`,
       kind: 'block',
       file,
       signature: block.parent ?? '',
-      flags: deprecation(block.deprecated),
+      flags,
     };
     if (block.body !== undefined) item.body = block.body;
     items.push(item);

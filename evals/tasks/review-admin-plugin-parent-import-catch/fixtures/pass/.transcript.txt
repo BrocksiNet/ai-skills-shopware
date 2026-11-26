@@ -1,0 +1,16 @@
+The component imports directly from core's internal `src/` path and traverses `this.$parent`.
+
+```json
+{
+  "findings": [
+    {
+      "rule_id": "ADM-048",
+      "severity": "major",
+      "file": "src/Resources/app/administration/src/component/swag-loyalty-order-summary/index.ts",
+      "line": 1,
+      "summary": "Importing format.utils directly from vendor/shopware/administration internal src/ and calling this.$parent.reloadEntityData() couples the plugin to private core file paths and component hierarchy.",
+      "fix": "Use Shopware.Utils.format.currency() instead of the internal import and emit an event instead of accessing this.$parent."
+    }
+  ]
+}
+```

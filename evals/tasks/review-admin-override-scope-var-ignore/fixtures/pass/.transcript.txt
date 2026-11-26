@@ -1,0 +1,7 @@
+The override keeps `{% parent %}` and uses `item.position`, which is exposed by `<template #column-label="{ item }">`.
+
+```json
+{
+  "findings": []
+}
+```

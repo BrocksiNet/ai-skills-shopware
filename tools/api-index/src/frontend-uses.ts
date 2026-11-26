@@ -33,7 +33,8 @@ const BUILDS: [RegExp, string][] = [
 export function isFrontendFile(path: string): boolean {
   if (/\.spec\.|\.d\.ts$|\/__mocks__\//u.test(path)) return false;
   if (BUILDS.some(([pattern]) => pattern.test(path))) return true;
-  if (VIEWS.test(path) || ADMIN.test(path)) return path.endsWith('.twig') || /\.[jt]s$/u.test(path);
+  if (ADMIN.test(path)) return path.endsWith('.twig') || /\.[jt]s$/u.test(path) || path.endsWith('.scss');
+  if (VIEWS.test(path)) return path.endsWith('.twig') || /\.[jt]s$/u.test(path);
   return STOREFRONT.test(path) && /\.[jt]s$/u.test(path);
 }
 
@@ -131,6 +132,42 @@ function pluginCall(node: CallExpression, file: string, out: Collector): void {
   if (name !== undefined) out.add(`js-plugin:${name}`, method === 'override' ? 'override' : 'call', file, lineOf(node));
 }
 
+const SNIPPET_CALL = /\$tc?\(\s*(['"])([A-Za-z0-9_-]+(?:\.[A-Za-z0-9_-]+)+)\1/gu;
+
+function snippetUses(text: string, file: string, out: Collector): void {
+  for (const match of text.matchAll(SNIPPET_CALL)) {
+    const key = match[2];
+    if (key !== undefined) out.add(`snippet:${key}`, 'snippet', file, lineAt(text, match.index));
+  }
+}
+
+function scssUses(scss: string, file: string, out: Collector): void {
+  const withoutBlocks = scss.replaceAll(/\/\*[\s\S]*?\*\//gu, (block) => block.replaceAll(/[^\n]/gu, ' '));
+  const lines = withoutBlocks.split('\n');
+  const localVars = new Set<string>();
+  for (const line of lines) {
+    const clean = line.replace(/\/\/.*$/u, '').trim();
+    const decl = /^\$([A-Za-z0-9_-]+)\s*:/u.exec(clean);
+    if (decl?.[1] !== undefined) localVars.add(decl[1]);
+  }
+  for (let index = 0; index < lines.length; index += 1) {
+    const clean = (lines[index] ?? '').replace(/\/\/.*$/u, '');
+    const trimmed = clean.trim();
+    const line = index + 1;
+    const isLocalDecl = /^\$[A-Za-z0-9_-]+\s*:/u.test(trimmed);
+    if (!isLocalDecl) {
+      for (const match of clean.matchAll(/\$([A-Za-z0-9_-]+)/gu)) {
+        const name = match[1];
+        if (name !== undefined && !localVars.has(name)) out.add(`scss:var:$${name}`, 'scss', file, line);
+      }
+    }
+    for (const match of clean.matchAll(/@include\s+([A-Za-z0-9_-]+)/gu)) {
+      const name = match[1];
+      if (name !== undefined) out.add(`scss:mixin:${name}`, 'scss', file, line);
+    }
+  }
+}
+
 function scriptUses(code: string, file: string, out: Collector): void {
   const ast = parseJs(code, file);
   const imports = importsOf(ast.program.body);
@@ -140,6 +177,7 @@ function scriptUses(code: string, file: string, out: Collector): void {
     else pluginCall(node, file, out);
     return false;
   });
+  if (ADMIN.test(file)) snippetUses(code, file, out);
 }
 
 const TWIG_CODE = /\{\{([\s\S]*?)\}\}|\{%-?\s*(\w+)([\s\S]*?)-?%\}/gu;
@@ -162,6 +200,7 @@ function templateUses(twig: string, file: string, out: Collector): void {
   if (ADMIN.test(file)) {
     for (const tag of twig.matchAll(/<(sw-[a-z0-9-]+)/gu))
       out.add(`admin:${tag[1] ?? ''}`, 'tag', file, lineAt(twig, tag.index));
+    snippetUses(twig, file, out);
     return;
   }
   const scanned = scanTwig(twig);
@@ -180,6 +219,7 @@ export function frontendUses(files: ReadonlyMap<string, string>): { uses: Use[];
     try {
       const build = BUILDS.find(([pattern]) => pattern.test(file));
       if (build !== undefined) out.add(build[1], 'build', file, 1);
+      else if (file.endsWith('.scss') && ADMIN.test(file)) scssUses(code, file, out);
       else if (file.endsWith('.twig')) templateUses(code, file, out);
       else if (ADMIN.test(file) || STOREFRONT.test(file)) scriptUses(code, file, out);
     } catch {

@@ -1,0 +1,14 @@
+```json
+{
+  "findings": [
+    {
+      "rule_id": "ADM-046",
+      "severity": "major",
+      "file": "src/Resources/app/administration/src/extension/sw-order-card/sw-order-card.html.twig",
+      "line": 1,
+      "summary": "Overriding sw_order_card_header breaks the crossing <div> tag closed in sw_order_card_footer.",
+      "fix": "Override sw_order_card_body instead."
+    }
+  ]
+}
+```

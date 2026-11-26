@@ -1,6 +1,7 @@
 // The facts for an extension: its PHP read with the use extractor, each
 // Shopware symbol looked up over the releases of its range. A diff narrows
 // the report to what the change adds, unless it changes the range itself.
+import { formatBcAffects } from './bc-change.ts';
 import { chainTargets, isChain } from './chains.ts';
 import type { DiffLines } from './diff.ts';
 import { type Fact, factsFor, type Lookup, presentThroughout } from './facts.ts';
@@ -192,8 +193,11 @@ export function describe(fact: Fact): string {
       return `only with the ${fact.value ?? ''} flag on in ${where}${via}`;
     case 'final-extended':
       return `extended, but final in ${where}`;
-    case 'bc-change':
-      return `announced change ${fact.value ?? ''} in ${where}${via}`;
+    case 'bc-change': {
+      const who = formatBcAffects(fact.affects);
+      const affects = who === '' ? '' : ` (affects ${who})`;
+      return `announced change ${fact.value ?? ''}${affects} in ${where}${via}`;
+    }
     case 'guarded-everywhere':
       return `guarded, but present in every release of the range (${where})`;
     case 'moved':

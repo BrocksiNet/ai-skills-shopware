@@ -1,0 +1,7 @@
+The override defines `getOrderColumns`, matching core's `sw-order-list` method name, and preserves core columns via `this.$super('getOrderColumns')`.
+
+```json
+{
+  "findings": []
+}
+```

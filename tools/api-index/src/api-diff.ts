@@ -10,6 +10,7 @@
 // override of it still renders. Admin props, methods and computed members
 // are compared by signature (member-signature.ts), and a new required prop
 // on an existing component is a change.
+import { type BcAudience, bcChangeAffects, formatBcAffects } from './bc-change.ts';
 import { Lookup } from './facts.ts';
 import { addedChange, changeOf } from './item-change.ts';
 import type { Item, Snapshot } from './model.ts';
@@ -19,7 +20,7 @@ import { mergeSnapshots } from './timeline.ts';
 
 export { type Surface, SURFACES, surfaceOf };
 
-export type ChangeKind = 'removed' | 'moved' | 'changed' | 'body-changed' | 'deprecated';
+export type ChangeKind = 'removed' | 'moved' | 'changed' | 'body-changed' | 'bc-change' | 'deprecated';
 
 export interface Change {
   surface: Surface;
@@ -27,6 +28,9 @@ export interface Change {
   id: string;
   /** For a removal: the base deprecated it, so the removal was announced. */
   announced?: boolean;
+  /** For a `bc-change`: who must act before the announced version
+   *  (`CallSiteCompatibilityChange` → callers, `ExtenderCompatibilityChange` → extenders). */
+  affects?: BcAudience[];
   /** What changed, in words. */
   detail: string;
   /** Where the item now is: a removed route under another id, a moved PHP
@@ -150,6 +154,16 @@ function keptChanges(
     const gone = `gone with the ${after.flags.until} flag on`;
     changes.push({ surface, kind: 'deprecated', id: item.id, detail: gone, file: after.file });
   }
+  const beforeBc = new Set(item.flags.bcChanges ?? []);
+  const addedBc = (after.flags.bcChanges ?? []).filter((entry) => !beforeBc.has(entry));
+  if (addedBc.length > 0) {
+    const affects = bcChangeAffects(addedBc);
+    const who = formatBcAffects(affects);
+    const bcDetail = `${addedBc.join(', ')}${who === '' ? '' : ` (affects ${who})`}`;
+    const change: Change = { surface, kind: 'bc-change', id: item.id, detail: bcDetail, file: after.file };
+    if (affects !== undefined) change.affects = affects;
+    changes.push(change);
+  }
   return changes;
 }
 
@@ -199,10 +213,11 @@ export function diffSnapshots(
 }
 
 /** Kinds that are never a break: they tell, they do not remove. */
-const NOT_BREAKS: ReadonlySet<ChangeKind> = new Set(['deprecated', 'moved', 'body-changed']);
+const NOT_BREAKS: ReadonlySet<ChangeKind> = new Set(['deprecated', 'moved', 'body-changed', 'bc-change']);
 
 function labelOf(change: Change): string {
   if (change.kind === 'body-changed') return 'body changed';
+  if (change.kind === 'bc-change') return 'bc change';
   if (NOT_BREAKS.has(change.kind)) return change.kind;
   if (change.announced === true) return `${change.kind} after deprecation`;
   return `BREAK ${change.kind}`;
@@ -220,19 +235,28 @@ export function diffSummary(diff: ApiDiff): string {
   const breaks = diff.changes.filter((change) => isBreak(change)).length;
   const announced = diff.changes.filter((change) => change.kind !== 'deprecated' && change.announced === true).length;
   const deprecated = diff.changes.filter((change) => change.kind === 'deprecated').length;
+  const bcChanges = diff.changes.filter((change) => change.kind === 'bc-change').length;
   const moved = diff.changes.filter((change) => change.kind === 'moved').length;
   const bodies = diff.changes.filter((change) => change.kind === 'body-changed').length;
   return (
     `Summary: ${plural(breaks, 'breaking change', 'breaking changes')} without a deprecation in ${diff.base}, ` +
     `${plural(announced, 'removal or change', 'removals or changes')} after a deprecation, ` +
     plural(deprecated, 'new deprecation', 'new deprecations') +
+    (bcChanges === 0 ? '' : `, ${plural(bcChanges, 'new BC change', 'new BC changes')}`) +
     (moved === 0 ? '' : `, ${plural(moved, 'move', 'moves')}`) +
     (bodies === 0 ? '' : `, ${plural(bodies, 'block body change', 'block body changes')}`) +
     '.'
   );
 }
 
-const ORDER: Record<ChangeKind, number> = { removed: 0, moved: 1, changed: 2, 'body-changed': 3, deprecated: 4 };
+const ORDER: Record<ChangeKind, number> = {
+  removed: 0,
+  moved: 1,
+  changed: 2,
+  'body-changed': 3,
+  'bc-change': 4,
+  deprecated: 5,
+};
 
 /** The diff as text: the summary, then by surface, breaks first. */
 export function diffText(diff: ApiDiff): string {

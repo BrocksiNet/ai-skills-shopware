@@ -3999,7 +3999,16 @@
       ],
       "defer_on_trunk": true,
       "trunk": {
-        "source": "coding-guidelines/core/backward-compatibility.md#administration"
+        "source": "coding-guidelines/core/backward-compatibility.md#administration",
+        "enforced_by": [
+          {
+            "tool": "scripts/generate-public-api/snapshot/committed-snapshot.spec.ts",
+            "kind": "test",
+            "catches": "reports stale committed Administration `public-api/` snapshots and removed blocks in core CI",
+            "misses": "plugin or app components, unannounced prop/method/block moves when a PR regenerates the snapshot without running the break check, and behavioral changes inside a method",
+            "trunk_only": true
+          }
+        ]
       }
     },
     {
@@ -4100,6 +4109,105 @@
         "plugin"
       ],
       "defer_on_trunk": false
+    },
+    {
+      "id": "ADM-046",
+      "skill": "sw-admin-js",
+      "file": "skills/sw-admin-js/references/extension-api.md",
+      "title": "Check core block boundaries before overriding without parent",
+      "status": "active",
+      "since": "2026-11-26",
+      "eval": "review-admin-override-block-crossing-catch",
+      "core_guide_ids": [],
+      "audience": [
+        "admin",
+        "plugin"
+      ],
+      "defer_on_trunk": false,
+      "trunk": {
+        "source": "src/Administration/Resources/app/administration/technical-docs/11-code-quality/03-public-api-snapshot.md#block-structure"
+      }
+    },
+    {
+      "id": "ADM-047",
+      "skill": "sw-admin-js",
+      "file": "skills/sw-admin-js/references/extension-api.md",
+      "title": "Use only v-for and scoped-slot variables the overridden block exposes",
+      "status": "active",
+      "since": "2026-11-26",
+      "eval": "review-admin-override-scope-var-catch",
+      "core_guide_ids": [],
+      "audience": [
+        "admin",
+        "plugin"
+      ],
+      "defer_on_trunk": false,
+      "trunk": {
+        "source": "src/Administration/Resources/app/administration/technical-docs/11-code-quality/03-public-api-snapshot.md#block-structure"
+      }
+    },
+    {
+      "id": "ADM-048",
+      "skill": "sw-admin-js",
+      "file": "skills/sw-admin-js/references/extension-api.md",
+      "title": "Do not access $parent or import directly from core internal src in a plugin",
+      "status": "active",
+      "since": "2026-11-26",
+      "eval": "review-admin-plugin-parent-import-catch",
+      "core_guide_ids": [],
+      "audience": [
+        "admin",
+        "plugin"
+      ],
+      "defer_on_trunk": false,
+      "trunk": {
+        "source": "adr/2026-11-10-administration-public-api-snapshot.md#what-is-public"
+      }
+    },
+    {
+      "id": "ADM-049",
+      "skill": "sw-admin-js",
+      "file": "skills/sw-admin-js/references/extension-api.md",
+      "title": "Use @bc-change (not @deprecated) for Administration elements that stay on core trunk",
+      "status": "active",
+      "since": "2026-11-26",
+      "eval": "review-admin-bc-change-marker-catch",
+      "core_guide_ids": [],
+      "audience": [
+        "core",
+        "admin"
+      ],
+      "defer_on_trunk": false,
+      "trunk": {
+        "source": "adr/2026-11-10-administration-public-api-snapshot.md#announcing-changes",
+        "enforced_by": [
+          {
+            "tool": "sw-deprecation-rules/valid-api-markers",
+            "kind": "eslint",
+            "catches": "reports malformed `@deprecated` and `@bc-change` markers, unknown kinds or keys, and single-edit tag typos in Administration JS, TS, Vue, and Twig comments",
+            "misses": "using a syntactically valid `@deprecated tag:vX.Y.Z` instead of `@bc-change <Kind> version:vX.Y.Z` on an element that stays, or a `@bc-change` whose kind or keys do not match the actual change",
+            "trunk_only": true
+          }
+        ]
+      }
+    },
+    {
+      "id": "ADM-050",
+      "skill": "sw-admin-js",
+      "file": "skills/sw-admin-js/references/extension-api.md",
+      "title": "Verify the target component declares every method an override replaces or calls via $super",
+      "status": "active",
+      "since": "2026-11-26",
+      "eval": "review-admin-override-missing-method-catch",
+      "core_guide_ids": [],
+      "audience": [
+        "admin",
+        "plugin"
+      ],
+      "defer_on_trunk": false,
+      "trunk": {
+        "source": "adr/2026-11-10-administration-public-api-snapshot.md#context"
+      }
     },
     {
       "id": "ARCH-001",

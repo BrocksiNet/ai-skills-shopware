@@ -43,6 +43,7 @@ interface Condition {
 const NOTHING: Condition = { whenTrue: {}, whenFalse: {} };
 
 const CHECK = /^(!?)\s*(?:[\w$]+\.)*feature\.isActive\(\s*(['"])([^'"]+)\2\s*\)$/iu;
+const TWIG_CHECK = /^(not\s+|!\s*)?feature\(\s*(['"])([^'"]+)\2\s*\)$/u;
 
 /** A `v-if` value: flag checks joined by `&&`. With an `||` it says nothing. */
 export function templateCondition(expression: string): Condition {
@@ -61,6 +62,29 @@ export function templateCondition(expression: string): Condition {
     checks += 1;
     const marker = flagMarker(match[3]);
     whenTrue = merge(whenTrue, match[1] === '!' ? { until: marker } : { from: marker });
+  }
+  const lone = checks === 1 && parts.length === 1;
+  return { whenTrue, whenFalse: lone ? flip(whenTrue) : {} };
+}
+
+/** A Twig `{% if ... %}` / `{% elseif ... %}` expression: `feature('...')`
+ *  or `not feature('...')`, joined by `and` / `&&`. With `or` / `||` it says nothing. */
+export function twigCondition(expression: string): Condition {
+  if (/\bor\b|\|\|/u.test(expression)) return NOTHING;
+  const parts = expression.split(/\band\b|&&/u).map((part) =>
+    part
+      .trim()
+      .replace(/^\((.*)\)$/u, '$1')
+      .trim(),
+  );
+  let whenTrue: FlagState = {};
+  let checks = 0;
+  for (const part of parts) {
+    const match = TWIG_CHECK.exec(part);
+    if (match?.[3] === undefined) continue;
+    checks += 1;
+    const marker = flagMarker(match[3]);
+    whenTrue = merge(whenTrue, match[1] === undefined ? { from: marker } : { until: marker });
   }
   const lone = checks === 1 && parts.length === 1;
   return { whenTrue, whenFalse: lone ? flip(whenTrue) : {} };
@@ -176,6 +200,54 @@ export function templateStates(source: string): TemplateStates {
   const slots = new Map<string, FlagState>();
   for (const [name, state] of slotSeen) if (state !== null && gated(state)) slots.set(name, state);
   return { blocks, slots };
+}
+
+interface TwigIfFrame {
+  outer: FlagState;
+  branch: FlagState;
+  elseState: FlagState;
+}
+
+const TWIG_TOKEN = /\{#[\s\S]*?#\}|\{%-?\s*(if|elseif|else|endif|block)\b([\s\S]*?)-?%\}/gu;
+
+/** The flag states of a Storefront Twig template's blocks from `{% if feature(...) %}`.
+ *  A block declared in both branches with different states stays ungated. */
+export function twigTemplateStates(source: string): Map<string, FlagState> {
+  const stack: TwigIfFrame[] = [];
+  const seen = new Map<string, FlagState | null>();
+  for (const match of source.matchAll(TWIG_TOKEN)) {
+    const [, tag, rest = ''] = match;
+    if (tag === undefined) continue;
+    const outer = stack.at(-1)?.branch ?? {};
+    if (tag === 'if') {
+      const cond = twigCondition(rest.trim());
+      stack.push({ outer, branch: merge(outer, cond.whenTrue), elseState: merge(outer, cond.whenFalse) });
+    } else if (tag === 'elseif') {
+      const top = stack.at(-1);
+      if (top !== undefined) {
+        const cond = twigCondition(rest.trim());
+        top.branch = merge(top.elseState, cond.whenTrue);
+        top.elseState = merge(top.elseState, cond.whenFalse);
+      }
+    } else if (tag === 'else') {
+      const top = stack.at(-1);
+      if (top !== undefined) {
+        top.branch = top.elseState;
+        top.elseState = top.outer;
+      }
+    } else if (tag === 'endif') {
+      stack.pop();
+    } else if (tag === 'block') {
+      const name = /^(\w+)/u.exec(rest.trim())?.[1];
+      if (name !== undefined) {
+        const earlier = seen.get(name);
+        seen.set(name, earlier === undefined || (earlier !== null && same(earlier, outer)) ? outer : null);
+      }
+    }
+  }
+  const blocks = new Map<string, FlagState>();
+  for (const [name, state] of seen) if (state !== null && gated(state)) blocks.set(name, state);
+  return blocks;
 }
 
 /** Copies a state onto an item's flags. */

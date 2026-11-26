@@ -1,0 +1,14 @@
+```json
+{
+  "findings": [
+    {
+      "rule_id": "ADM-046",
+      "severity": "nit",
+      "file": "src/Resources/app/administration/src/extension/sw-order-card/sw-order-card.html.twig",
+      "line": 1,
+      "summary": "Consider using {% parent %} in sw_order_card_header for easier upgrades.",
+      "fix": "Add {% parent %} to the block."
+    }
+  ]
+}
+```

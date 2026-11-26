@@ -1,0 +1,20 @@
+diff --git a/src/Administration/Resources/app/administration/src/module/sw-order/component/sw-order-line-items-grid/index.js b/src/Administration/Resources/app/administration/src/module/sw-order/component/sw-order-line-items-grid/index.js
+index 1111111..2222222
+--- a/src/Administration/Resources/app/administration/src/module/sw-order/component/sw-order-line-items-grid/index.js
++++ b/src/Administration/Resources/app/administration/src/module/sw-order/component/sw-order-line-items-grid/index.js
+@@ -19,9 +19,14 @@ export default {
+     },
+ 
+     methods: {
++        /**
++         * @deprecated tag:v6.8.0 - Parameter `itemIndex` will be removed in v6.8.0.
++         */
+         onDeleteItem(item, itemIndex) {
+             this.order.lineItems.remove(item.id);
+-            this.lastDeletedIndex = itemIndex;
++            if (!Shopware.Feature.isActive('v6.8.0.0')) {
++                this.lastDeletedIndex = itemIndex;
++            }
+             this.$emit('item-delete', item.id);
+         },
+     },

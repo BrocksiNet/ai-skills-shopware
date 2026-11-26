@@ -1,0 +1,12 @@
+{% block sw_order_line_items_grid %}
+<sw-data-grid
+    :data-source="lineItems"
+    :columns="getLineItemColumns"
+>
+    <template #column-label="{ item }">
+        {% block sw_order_line_items_grid_column_label %}
+        <span class="sw-order-line-items-grid__label">{{ item.label }}</span>
+        {% endblock %}
+    </template>
+</sw-data-grid>
+{% endblock %}
