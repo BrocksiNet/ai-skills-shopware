@@ -7,7 +7,7 @@ new file mode 100644
 +<mcp xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
 +    <mcp-tools>
 +        <mcp-tool name="inventory-check" url="/store-api/script/swag-inventory-check">
-+            <label>Check Inventory</label>
++            <label>Check Product Stock</label>
 +            <input-schema>
 +                <property name="sku" type="string" description="Product number" required="true"/>
 +            </input-schema>
@@ -21,10 +21,18 @@ diff --git a/Resources/scripts/store-api-swag-inventory-check/script.twig b/Reso
 new file mode 100644
 --- /dev/null
 +++ b/Resources/scripts/store-api-swag-inventory-check/script.twig
-@@ -0,0 +1,8 @@
+@@ -0,0 +1,15 @@
 +{% block response %}
 +    {% set payload = hook.request.getContent() %}
-+    {% set products = services.repository.search('product', { filter: [{ type: 'equals', field: 'productNumber', value: payload.sku }] }) %}
-+    {% set response = services.response.json({ success: true, data: { count: products.total } }) %}
-+    {% do hook.setResponse(response) %}
++    {% if payload.sku is not defined or payload.sku is empty %}
++        {% do hook.setResponse(services.response.json({ success: false, error: 'Missing required sku argument.' }, 400)) %}
++    {% else %}
++        {% set products = services.repository.search('product', { limit: 1, filter: [{ type: 'equals', field: 'productNumber', value: payload.sku }] }) %}
++        {% set product = products.first %}
++        {% if product is null %}
++            {% do hook.setResponse(services.response.json({ success: false, error: 'Product not found.' }, 404)) %}
++        {% else %}
++            {% do hook.setResponse(services.response.json({ success: true, data: { sku: product.productNumber, stock: product.stock, availableStock: product.availableStock } })) %}
++        {% endif %}
++    {% endif %}
 +{% endblock %}
