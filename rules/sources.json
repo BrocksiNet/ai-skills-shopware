@@ -14,6 +14,7 @@
         ".agents-templates/AGENTS.local.template.vagrant.md",
         "coding-guidelines",
         "adr/2026-06-17-shared-guidance-files-for-humans-and-agents.md",
+        "adr/2026-11-10-administration-public-api-snapshot.md",
         "adr/2026-11-19-remove-claude-md-bridge-files.md",
         "src/Core/DevOps/StaticAnalyze",
         ".github/AGENTS.md",
@@ -25,6 +26,10 @@
         "src/Administration/Resources/app/administration/src/module/AGENTS.md",
         "src/Administration/Resources/app/administration/.stylelintrc",
         "src/Administration/Resources/app/administration/eslint.config.ts",
+        "src/Administration/Resources/app/administration/eslint-rules/deprecation-rules/utils/api-markers.ts",
+        "src/Administration/Resources/app/administration/eslint-rules/deprecation-rules/valid-api-markers.js",
+        "src/Administration/Resources/app/administration/scripts/generate-public-api/README.md",
+        "src/Administration/Resources/app/administration/technical-docs/11-code-quality/03-public-api-snapshot.md",
         "src/Storefront/Resources/app/administration/eslint.config.ts",
         "src/Storefront/Resources/app/storefront/eslint.config.js",
         "src/Storefront/Resources/app/storefront/stylelint.config.js",
@@ -50,6 +55,10 @@
         { "path": ".agents/skills/sw-review", "skills": ["sw-pr-review", "sw-extension-review"] },
         { "path": ".agents-templates", "skills": ["sw-local-dev"] },
         { "path": "adr/2026-06-17-shared-guidance-files-for-humans-and-agents.md", "skills": ["sw-core-development"] },
+        {
+          "path": "adr/2026-11-10-administration-public-api-snapshot.md",
+          "skills": ["sw-admin-js", "sw-core-development"]
+        },
         { "path": "adr/2026-11-19-remove-claude-md-bridge-files.md", "skills": ["sw-core-development"] },
         { "path": "coding-guidelines/core/agent-skills.md", "skills": ["sw-core-development"] },
         { "path": ".github/AGENTS.md", "skills": ["sw-core-development"] },
@@ -59,6 +68,18 @@
         { "path": "src/Administration/Resources/app/administration/src", "skills": ["sw-admin-js"] },
         { "path": "src/Administration/Resources/app/administration/.stylelintrc", "skills": ["sw-admin-js"] },
         { "path": "src/Administration/Resources/app/administration/eslint.config.ts", "skills": ["sw-admin-js"] },
+        {
+          "path": "src/Administration/Resources/app/administration/eslint-rules/deprecation-rules",
+          "skills": ["sw-admin-js", "sw-core-development"]
+        },
+        {
+          "path": "src/Administration/Resources/app/administration/scripts/generate-public-api",
+          "skills": ["sw-admin-js", "sw-core-development"]
+        },
+        {
+          "path": "src/Administration/Resources/app/administration/technical-docs/11-code-quality/03-public-api-snapshot.md",
+          "skills": ["sw-admin-js", "sw-core-development"]
+        },
         { "path": "src/Storefront/Resources/app/administration/eslint.config.ts", "skills": ["sw-admin-js"] },
         { "path": "src/Storefront/Resources/app/storefront", "skills": ["sw-storefront"] },
         { "path": "src/Storefront/Resources/views/ludtwig-config.toml", "skills": ["sw-storefront"] },
