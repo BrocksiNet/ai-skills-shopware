@@ -2,6 +2,7 @@
 // releases its composer range allows. Facts, not findings: each line says
 // what holds in which releases. No dependencies, so a tool that reads the
 // index can use it as is.
+import { type BcAudience, bcChangeAffects } from './bc-change.ts';
 import { Lookup } from './lookup.ts';
 import { memberChange } from './member-signature.ts';
 import { runs } from './runs.ts';
@@ -43,6 +44,9 @@ export interface Fact {
   via?: string;
   /** For a moved class: the version that removes the old name. */
   until?: string;
+  /** For a `bc-change` fact: who must act (`CallSiteCompatibilityChange` → callers,
+   *  `ExtenderCompatibilityChange` → extenders). */
+  affects?: BcAudience[];
 }
 
 const FLAGS: { field: Tracked; kind: FactKind }[] = [
@@ -86,6 +90,10 @@ function flagFacts(lookup: Lookup, target: string, isMember: boolean, resolved: 
       const value = key.split('\0')[0] ?? '';
       const fact: Fact = { target, kind, releases: runs(entry.indexes, indexes, lookup.names) };
       if (value !== 'true') fact.value = value;
+      if (kind === 'bc-change') {
+        const affects = bcChangeAffects(value.split(', '));
+        if (affects !== undefined) fact.affects = affects;
+      }
       if (entry.via !== undefined) fact.via = entry.via;
       facts.push(fact);
     }

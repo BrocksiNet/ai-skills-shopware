@@ -117,7 +117,7 @@ export function flagsOf(node: Node, scope: Scope, isFinal: boolean): Flags {
   else if (/@final\b/u.test(doc)) flags.final = 'doc';
   const changes = attributes(node, scope)
     .filter((attr) => attr.name.startsWith(BC_CHANGE))
-    .map((attr) => `${attr.name.slice(BC_CHANGE.length)}@${argText(attr.args, 'version') ?? ''}`);
+    .map((attr) => `${attr.name.slice(BC_CHANGE.length)}@${argAt(attr.args, 0, 'version') ?? ''}`);
   if (changes.length > 0) flags.bcChanges = changes;
   return flags;
 }
