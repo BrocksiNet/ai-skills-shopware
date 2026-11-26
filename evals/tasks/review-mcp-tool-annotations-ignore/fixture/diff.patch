@@ -2,7 +2,7 @@ diff --git a/src/Mcp/Tool/ResetPointsTool.php b/src/Mcp/Tool/ResetPointsTool.php
 new file mode 100644
 --- /dev/null
 +++ b/src/Mcp/Tool/ResetPointsTool.php
-@@ -0,0 +1,54 @@
+@@ -0,0 +1,66 @@
 +<?php declare(strict_types=1);
 +
 +namespace Swag\Loyalty\Mcp\Tool;
@@ -14,9 +14,11 @@ new file mode 100644
 +use Shopware\Core\Framework\Mcp\Attribute\McpToolGroup;
 +use Shopware\Core\Framework\Mcp\Attribute\McpToolRequires;
 +use Shopware\Core\Framework\Mcp\Context\McpContextProvider;
++use Shopware\Core\Framework\Mcp\Result\McpToolError;
 +use Shopware\Core\Framework\Mcp\Result\McpToolResult;
 +use Shopware\Core\Framework\Mcp\Tool\McpToolResponse;
 +use Shopware\Core\Framework\Uuid\Uuid;
++use Swag\Loyalty\Service\LoyaltyBalanceWriter;
 +
 +#[McpTool(
 +    name: 'swag-loyalty-reset-points',
@@ -30,6 +32,7 @@ new file mode 100644
 +{
 +    public function __construct(
 +        private readonly Connection $connection,
++        private readonly LoyaltyBalanceWriter $balanceWriter,
 +        private readonly McpContextProvider $contextProvider,
 +    ) {
 +    }
@@ -46,13 +49,20 @@ new file mode 100644
 +            return $privilegeError;
 +        }
 +
-+        $op = function () use ($customerId, $dryRun): McpToolResult {
-+            $this->connection->executeStatement(
-+                'UPDATE swag_loyalty_points SET points = 0 WHERE customer_id = :customerId',
-+                ['customerId' => Uuid::fromHexToBytes($customerId)],
-+            );
++        if (!Uuid::isValid($customerId)) {
++            return $this->errorResult(McpToolError::INVALID_ARGUMENTS, 'Invalid customer UUID.');
++        }
 +
-+            return $this->successResult(['customerId' => $customerId, 'points' => 0], ['dryRun' => $dryRun]);
++        $op = function () use ($customerId, $context, $dryRun): McpToolResult {
++            $previousPoints = $this->balanceWriter->resetBalance($customerId, $context);
++            if ($previousPoints === null) {
++                return $this->errorResult(McpToolError::NOT_FOUND, 'No loyalty balance found for customer.');
++            }
++
++            return $this->successResult(
++                ['customerId' => $customerId, 'previousPoints' => $previousPoints, 'points' => 0],
++                ['dryRun' => $dryRun],
++            );
 +        };
 +
 +        return $dryRun ? $this->executeWithDryRunResult($this->connection, $context, $op) : $op();
@@ -61,13 +71,14 @@ new file mode 100644
 diff --git a/src/Resources/config/services.xml b/src/Resources/config/services.xml
 --- a/src/Resources/config/services.xml
 +++ b/src/Resources/config/services.xml
-@@ -10,5 +10,12 @@
+@@ -10,5 +10,13 @@
  
              <tag name="shopware.mcp.tool"/>
          </service>
 +
 +        <service id="Swag\Loyalty\Mcp\Tool\ResetPointsTool">
 +            <argument type="service" id="Doctrine\DBAL\Connection"/>
++            <argument type="service" id="Swag\Loyalty\Service\LoyaltyBalanceWriter"/>
 +            <argument type="service" id="Shopware\Core\Framework\Mcp\Context\McpContextProvider"/>
 +
 +            <tag name="shopware.mcp.tool"/>

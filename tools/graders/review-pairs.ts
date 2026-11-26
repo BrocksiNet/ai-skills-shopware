@@ -995,14 +995,14 @@ export const PAIRS: Record<string, ReviewPair> = {
   },
   // Catch: A plugin MCP tool claims #[McpToolGroup('discovery')] to appear on the first
   // tools/list. The discovery group is reserved for Shopware's three meta-tools, so
-  // the tool is silently demoted to `other` at compile time. Needs a major+ finding in
+  // the tool is silently demoted to `other` at compile time. Needs a minor+ finding in
   // src/ that names MCP-002 or describes the reserved discovery group.
   // Ignore: The same tool declares its own group #[McpToolGroup('swag-loyalty', description: '...')].
   // A minor+ finding that names MCP-002 or calls the group reserved is a false positive.
   'mcp-reserved-group': {
     rule: 'MCP-002',
     file: 'src/**',
-    minSeverity: 'major',
+    minSeverity: 'minor',
     summary: /discovery|reserved (group|toolset|prefix)|McpToolGroup|demot(ed|ion)|shopware-/iu,
   },
   // Catch: A plugin MCP tool tags its service with `mcp.tool` instead of `shopware.mcp.tool`

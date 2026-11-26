@@ -21,7 +21,7 @@ new file mode 100644
 +    name: 'swag-loyalty-points-summary',
 +    title: 'Loyalty Points Summary',
 +    annotations: new ToolAnnotations(readOnlyHint: true, openWorldHint: false),
-+    description: 'Return total active loyalty points across customers.',
++    description: 'Return the sum of customer loyalty point balances meeting the minimum threshold.',
 +)]
 +#[McpToolGroup('swag-loyalty', description: 'Inspect customer loyalty point balances and totals.')]
 +#[McpToolRequires('swag_loyalty_points:read')]
