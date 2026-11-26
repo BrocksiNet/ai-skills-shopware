@@ -25,7 +25,7 @@ diff --git a/src/Controller/StoreApi/LoyaltyController.php b/src/Controller/Stor
      }
  
      #[Route(
-@@ -29,4 +33,20 @@
+@@ -29,4 +33,24 @@
              'points' => $this->balance->forCustomer($context),
          ]);
      }
@@ -38,11 +38,15 @@ diff --git a/src/Controller/StoreApi/LoyaltyController.php b/src/Controller/Stor
 +    public function leaderboard(Request $request, SalesChannelContext $context): JsonResponse
 +    {
 +        $limit = min(max($request->query->getInt('limit', 10), 1), 50);
-+        // The leaderboard shows the top 500 at most.
-+        $offset = min(max(0, $request->query->getInt('offset', 0)), 450);
++        $offset = max(0, $request->query->getInt('offset', 0));
++
++        // The leaderboard shows the top 500 at most; past that the ranking is empty.
++        if ($offset >= 500) {
++            return new JsonResponse(['ranking' => []]);
++        }
 +
 +        return new JsonResponse([
-+            'ranking' => $this->leaderboard->top($limit, $offset, $context),
++            'ranking' => $this->leaderboard->top(min($limit, 500 - $offset), $offset, $context),
 +        ]);
 +    }
  }

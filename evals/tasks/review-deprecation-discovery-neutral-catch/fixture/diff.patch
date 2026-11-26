@@ -46,6 +46,6 @@ index 4b1c0de..9e27a31 100644
 +
      public function onProductWritten(EntityWrittenContainerEvent $event): void
      {
-+        Feature::triggerDeprecationOrThrow('v6.8.0.0', Feature::deprecatedClassMessage(self::class, 'v6.8.0.0'));
++        Feature::throwIfActive('v6.8.0.0', Feature::deprecatedClassMessage(self::class, 'v6.8.0.0'));
 +
          $this->indexer->refresh($event->getEventIds());

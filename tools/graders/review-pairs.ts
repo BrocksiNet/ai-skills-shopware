@@ -614,7 +614,9 @@ export const PAIRS: Record<string, ReviewPair> = {
   // Ignore: The same deprecated subscriber, with getSubscribedEvents() returning [] once
   // the removal flag is active. A minor+ finding that names CORE-012 or calls the
   // neutral return a throw is a false positive.
-  // Both halves announce the deprecation in RELEASE_INFO-6.7.md (CORE-003).
+  // Both halves announce the deprecation in RELEASE_INFO-6.7.md (CORE-003), and
+  // start onProductWritten() with Feature::throwIfActive(), which trunk PHPStan
+  // requires for subscriber callbacks (triggerDeprecationOrThrow drew findings).
   'deprecation-discovery-neutral': {
     rule: 'CORE-012',
     file: 'src/Core/**',
@@ -1048,7 +1050,8 @@ export const PAIRS: Record<string, ReviewPair> = {
   // cursor. A minor+ finding that names PLG-019 or asks for batching is a false
   // positive. Both halves copy stored data, not derived data (an earlier
   // verified-purchase backfill drew PLG-020 and order-version findings), and
-  // drop the old table in updateDestructive().
+  // keep the old table (dropping it drew findings about names the previous
+  // version writes during a rolling update).
   'migration-unbatched-backfill': {
     rule: 'PLG-019',
     file: 'src/Migration/**',
@@ -1322,8 +1325,8 @@ export const PAIRS: Record<string, ReviewPair> = {
   // the DAL. `getInt` types them but sets no bound, so any anonymous caller can
   // ask for the whole ranking in one request. Needs a major+ finding in src/
   // that names SEC-005 or describes the missing upper bound.
-  // Ignore: The same leaderboard route, but `limit` is clamped to 1..50 and `offset` to
-  // 0..450 (top 500) before they reach the DAL. A minor+ finding that names
+  // Ignore: The same leaderboard route, but `limit` is clamped to 1..50 and the
+  // ranking stops at the top 500 (an offset past it returns an empty ranking). A minor+ finding that names
   // SEC-005 or calls the input unbounded or unconstrained is a false positive.
   // Both halves list only customers of the request's sales channel who set a
   // leaderboard nickname (the opt-in), so a public route without login is fine.
@@ -1332,7 +1335,7 @@ export const PAIRS: Record<string, ReviewPair> = {
     file: 'src/**',
     minSeverity: 'major',
     summary:
-      /unbound|no (upper |max(imum)? )?(bound|limit|cap)|unconstrained|not (constrained|capped|bounded|limited)|without (a )?(max|upper|cap)|whole table|dump/iu,
+      /unbound|no (upper |max(imum)? )?(bound|limit|cap)|unconstrained|not (constrained|capped|bounded|limited)|without (a )?(max|upper|cap)|whole table|dump|(every|all)\b[^.]{0,60}\b(single|one) (request|response)/iu,
   },
   // Catch: ProductReviewCsvExporter::export() takes a Symfony Request and reads the
   // query string itself, so HTTP input reaches a domain service. Needs a major+
