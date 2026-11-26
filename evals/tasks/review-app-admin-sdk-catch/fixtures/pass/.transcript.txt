@@ -1,0 +1,16 @@
+This app tries to register an Administration Vue plugin bundle under `src/Resources/app/administration/src/main.js`. Shopware does not compile or boot plugin Administration bundles for apps.
+
+```json
+{
+  "findings": [
+    {
+      "rule_id": "APP-004",
+      "severity": "major",
+      "file": "custom/apps/SwagSyncApp/src/Resources/app/administration/src/main.js",
+      "line": 1,
+      "summary": "The app adds a plugin-style Administration Vue bundle (`Shopware.Component.register` / `Shopware.Module.register`), which Shopware does not compile or load for apps.",
+      "fix": "Remove `src/Resources/app/administration/` and declare the app Administration UI with Meteor Admin SDK entries (`<admin><main-module .../></admin>` or `<module>`) in `manifest.xml`."
+    }
+  ]
+}
+```

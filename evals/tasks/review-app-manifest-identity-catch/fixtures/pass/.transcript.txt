@@ -1,0 +1,16 @@
+The app manifest `<meta><name>` does not match its directory name under `custom/apps/`.
+
+```json
+{
+  "findings": [
+    {
+      "rule_id": "APP-001",
+      "severity": "major",
+      "file": "custom/apps/SwagLoyaltySync/manifest.xml",
+      "line": 5,
+      "summary": "The app `<meta><name>` is `LoyaltySync`, which does not match its directory name `SwagLoyaltySync`, causing `app:refresh` and `app:validate` to fail.",
+      "fix": "Change `<name>LoyaltySync</name>` to `<name>SwagLoyaltySync</name>` (or rename the folder to `LoyaltySync`) so the folder name matches `<meta><name>`."
+    }
+  ]
+}
+```

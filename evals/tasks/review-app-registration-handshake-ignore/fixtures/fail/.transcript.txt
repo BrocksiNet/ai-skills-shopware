@@ -1,0 +1,16 @@
+False positive claiming missing registration signature check.
+
+```json
+{
+  "findings": [
+    {
+      "rule_id": "APP-006",
+      "severity": "major",
+      "file": "src/Controller/RegistrationController.php",
+      "line": 22,
+      "summary": "The registration endpoint should verify shopware-shop-signature instead of shopware-app-signature.",
+      "fix": "Read shopware-shop-signature."
+    }
+  ]
+}
+```

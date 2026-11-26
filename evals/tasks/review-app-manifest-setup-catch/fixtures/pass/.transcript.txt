@@ -1,0 +1,16 @@
+The manifest declares a webhook for `checkout.order.placed` without declaring `<read>order</read>` in `<permissions>`.
+
+```json
+{
+  "findings": [
+    {
+      "rule_id": "APP-002",
+      "severity": "major",
+      "file": "custom/apps/SwagOrderSync/manifest.xml",
+      "line": 19,
+      "summary": "The manifest registers a `checkout.order.placed` webhook but `<permissions>` only grants `<read>product</read>` and omits `<read>order</read>`, so Shopware will not dispatch the webhook.",
+      "fix": "Replace `<read>product</read>` with `<read>order</read>` (or add `<read>order</read>` if product reads are also needed) so `<permissions>` matches the declared webhook."
+    }
+  ]
+}
+```

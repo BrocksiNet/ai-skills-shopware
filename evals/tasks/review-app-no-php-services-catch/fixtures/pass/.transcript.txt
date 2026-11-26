@@ -1,0 +1,16 @@
+This app attempts to ship a Symfony DI `services.php` file and a PHP `EventSubscriberInterface` class inside `custom/apps/SwagBadgeApp/`. Shopware apps have no in-process PHP container.
+
+```json
+{
+  "findings": [
+    {
+      "rule_id": "APP-003",
+      "severity": "major",
+      "file": "custom/apps/SwagBadgeApp/src/Subscriber/ProductPageSubscriber.php",
+      "line": 10,
+      "summary": "The app ships a plugin-style PHP subscriber and `services.php` DI config inside `custom/apps/SwagBadgeApp/`; Shopware apps have no in-process PHP container so these files are never loaded.",
+      "fix": "Replace the PHP subscriber and DI config with a sandboxed Twig app script under `custom/apps/SwagBadgeApp/Resources/scripts/product-page-loaded/`, or convert the extension to a PHP plugin."
+    }
+  ]
+}
+```

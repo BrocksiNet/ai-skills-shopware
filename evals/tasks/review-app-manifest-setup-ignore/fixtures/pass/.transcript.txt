@@ -1,0 +1,7 @@
+The manifest matches `<name>` to its folder, pins `manifest-3.0.xsd`, declares `<requirements><public-access/></requirements>` for its backend, omits any committed `<secret>`, and grants `<read>order</read>` matching the `checkout.order.placed` webhook. No issues found.
+
+```json
+{
+  "findings": []
+}
+```

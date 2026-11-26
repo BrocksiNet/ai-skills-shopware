@@ -1,0 +1,16 @@
+The `register()` endpoint skips verifying the `shopware-app-signature` header before registering the shop and issuing a signed HMAC `proof` and `secret`.
+
+```json
+{
+  "findings": [
+    {
+      "rule_id": "APP-006",
+      "severity": "blocking",
+      "file": "src/Controller/RegistrationController.php",
+      "line": 20,
+      "summary": "`register()` handles the `GET` registration handshake without verifying the `shopware-app-signature` header against the raw query string and app secret, allowing unauthenticated callers to forge shop registrations and obtain valid HMAC proofs.",
+      "fix": "Read `shopware-app-signature`, compute `hash_hmac('sha256', $request->getQueryString() ?? '', $this->appSecret)`, and reject with 401 via `hash_equals()` before persisting the shop or returning `proof`."
+    }
+  ]
+}
+```

@@ -1,0 +1,24 @@
+Nit and wrong rule ID.
+
+```json
+{
+  "findings": [
+    {
+      "rule_id": "APP-005",
+      "severity": "nit",
+      "file": "custom/apps/SwagBadgeApp/Resources/scripts/product-page-loaded.twig",
+      "line": 1,
+      "summary": "Check the script folder structure.",
+      "fix": "Review path."
+    },
+    {
+      "rule_id": "APP-001",
+      "severity": "major",
+      "file": "custom/apps/SwagBadgeApp/Resources/scripts/product-page-loaded.twig",
+      "line": 1,
+      "summary": "The app script sits directly in Resources/scripts/ instead of Resources/scripts/product-page-loaded/.",
+      "fix": "Move into the hook subdirectory."
+    }
+  ]
+}
+```

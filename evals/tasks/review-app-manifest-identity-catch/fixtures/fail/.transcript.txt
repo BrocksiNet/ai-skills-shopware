@@ -1,0 +1,24 @@
+Minor naming note and wrong rule ID.
+
+```json
+{
+  "findings": [
+    {
+      "rule_id": "APP-001",
+      "severity": "nit",
+      "file": "custom/apps/SwagLoyaltySync/manifest.xml",
+      "line": 5,
+      "summary": "The app name could match the folder.",
+      "fix": "Rename it."
+    },
+    {
+      "rule_id": "SEC-004",
+      "severity": "major",
+      "file": "custom/apps/SwagLoyaltySync/manifest.xml",
+      "line": 5,
+      "summary": "The app folder name SwagLoyaltySync does not match `<meta><name>` LoyaltySync.",
+      "fix": "Match the folder name."
+    }
+  ]
+}
+```

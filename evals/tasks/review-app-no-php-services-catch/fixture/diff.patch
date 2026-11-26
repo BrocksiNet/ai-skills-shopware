@@ -1,0 +1,58 @@
+diff --git a/custom/apps/SwagBadgeApp/src/Resources/config/services.php b/custom/apps/SwagBadgeApp/src/Resources/config/services.php
+new file mode 100644
+--- /dev/null
++++ b/custom/apps/SwagBadgeApp/src/Resources/config/services.php
+@@ -0,0 +1,14 @@
++<?php declare(strict_types=1);
++
++use Shopware\Core\System\SystemConfig\SystemConfigService;
++use SwagBadgeApp\Subscriber\ProductPageSubscriber;
++use Symfony\Component\DependencyInjection\Loader\Configurator\ContainerConfigurator;
++use function Symfony\Component\DependencyInjection\Loader\Configurator\service;
++
++return static function (ContainerConfigurator $container): void {
++    $services = $container->services();
++
++    $services->set(ProductPageSubscriber::class)
++        ->args([service(SystemConfigService::class)])
++        ->tag('kernel.event_subscriber');
++};
+diff --git a/custom/apps/SwagBadgeApp/src/Subscriber/ProductPageSubscriber.php b/custom/apps/SwagBadgeApp/src/Subscriber/ProductPageSubscriber.php
+new file mode 100644
+--- /dev/null
++++ b/custom/apps/SwagBadgeApp/src/Subscriber/ProductPageSubscriber.php
+@@ -0,0 +1,33 @@
++<?php declare(strict_types=1);
++
++namespace SwagBadgeApp\Subscriber;
++
++use Shopware\Core\Framework\Struct\ArrayStruct;
++use Shopware\Core\System\SystemConfig\SystemConfigService;
++use Shopware\Storefront\Page\Product\ProductPageLoadedEvent;
++use Symfony\Component\EventDispatcher\EventSubscriberInterface;
++
++final readonly class ProductPageSubscriber implements EventSubscriberInterface
++{
++    public function __construct(
++        private SystemConfigService $systemConfigService,
++    ) {
++    }
++
++    public static function getSubscribedEvents(): array
++    {
++        return [
++            ProductPageLoadedEvent::class => 'onProductPageLoaded',
++        ];
++    }
++
++    public function onProductPageLoaded(ProductPageLoadedEvent $event): void
++    {
++        $label = $this->systemConfigService->getString(
++            'SwagBadgeApp.config.badgeLabel',
++            $event->getSalesChannelContext()->getSalesChannelId(),
++        );
++        if ($label !== '') {
++            $event->getPage()->getProduct()->addExtension('swagBadge', new ArrayStruct(['label' => $label]));
++        }
++    }
++}

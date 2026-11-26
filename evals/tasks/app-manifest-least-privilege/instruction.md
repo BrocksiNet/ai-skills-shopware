@@ -1,5 +1,6 @@
-# Task: least-privilege manifest
+# Task: least-privilege Shopware app manifest
 
-Tighten the permissions in `manifest.xml`: remove the wildcard
-`<create>all</create>` / `<read>all</read>` entries. Keep only the specific
-entity permissions the example app needs (product read + order read).
+This Shopware 6 app's `manifest.xml` currently requests overly broad
+permissions. Tighten `<permissions>` to follow Shopware app least-privilege
+manifest conventions so the app can only read products and orders (no write
+permissions and no wildcards).

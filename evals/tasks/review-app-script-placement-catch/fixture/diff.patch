@@ -1,0 +1,10 @@
+diff --git a/custom/apps/SwagBadgeApp/Resources/scripts/product-page-loaded.twig b/custom/apps/SwagBadgeApp/Resources/scripts/product-page-loaded.twig
+new file mode 100644
+--- /dev/null
++++ b/custom/apps/SwagBadgeApp/Resources/scripts/product-page-loaded.twig
+@@ -0,0 +1,5 @@
++{% set product = hook.page.product %}
++
++{% if product.markAsTopseller %}
++    {% do product.addArrayExtension('swagBadge', { label: 'Featured' }) %}
++{% endif %}

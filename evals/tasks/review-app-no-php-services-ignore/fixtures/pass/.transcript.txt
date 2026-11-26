@@ -1,0 +1,7 @@
+The app uses a sandboxed Twig app script in the `product-page-loaded` hook directory with only the hook-exposed `hook.page.product` variable. No issues found.
+
+```json
+{
+  "findings": []
+}
+```

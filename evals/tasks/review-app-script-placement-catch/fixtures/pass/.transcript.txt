@@ -1,0 +1,16 @@
+The app script is placed directly under `Resources/scripts/` instead of inside the `product-page-loaded` hook subdirectory.
+
+```json
+{
+  "findings": [
+    {
+      "rule_id": "APP-005",
+      "severity": "major",
+      "file": "custom/apps/SwagBadgeApp/Resources/scripts/product-page-loaded.twig",
+      "line": 1,
+      "summary": "The app script is placed directly in `Resources/scripts/product-page-loaded.twig` instead of a hook-named subdirectory `Resources/scripts/product-page-loaded/*.twig`, so Shopware never runs it.",
+      "fix": "Move the file to `custom/apps/SwagBadgeApp/Resources/scripts/product-page-loaded/add-badge.twig`."
+    }
+  ]
+}
+```

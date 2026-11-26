@@ -1,0 +1,37 @@
+diff --git a/src/Controller/RegistrationController.php b/src/Controller/RegistrationController.php
+--- a/src/Controller/RegistrationController.php
++++ b/src/Controller/RegistrationController.php
+@@ -17,6 +17,29 @@ final readonly class RegistrationController
+     ) {
+     }
+ 
++    public function register(Request $request): Response
++    {
++        $shopId = (string) $request->query->get('shop-id', '');
++        $shopUrl = (string) $request->query->get('shop-url', '');
++        $timestamp = (string) $request->query->get('timestamp', '');
++
++        if ($shopId === '' || $shopUrl === '' || $timestamp === '') {
++            return new JsonResponse(['error' => 'Missing registration parameters'], Response::HTTP_BAD_REQUEST);
++        }
++
++        $scheme = parse_url($shopUrl, \PHP_URL_SCHEME);
++        if (filter_var($shopUrl, \FILTER_VALIDATE_URL) === false || !\in_array($scheme, ['https', 'http'], true)) {
++            return new JsonResponse(['error' => 'Invalid shop URL'], Response::HTTP_BAD_REQUEST);
++        }
++
++        $shopSecret = bin2hex(random_bytes(32));
++        $this->shops->upsertPending($shopId, $shopUrl, $shopSecret);
++
++        $proof = hash_hmac('sha256', $shopId . $shopUrl . $this->appName, $this->appSecret);
++
++        return new JsonResponse([
++            'proof' => $proof,
++            'secret' => $shopSecret,
++            'confirmation_url' => $this->confirmationUrl,
++        ]);
++    }
++
+     public function confirm(Request $request): Response
+     {
+         $payload = json_decode($request->getContent(), true, 512, \JSON_THROW_ON_ERROR);

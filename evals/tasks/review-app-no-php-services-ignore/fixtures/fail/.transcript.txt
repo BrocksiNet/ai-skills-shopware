@@ -1,0 +1,16 @@
+False positive claiming the app script should be a PHP subscriber.
+
+```json
+{
+  "findings": [
+    {
+      "rule_id": "APP-003",
+      "severity": "major",
+      "file": "custom/apps/SwagBadgeApp/Resources/scripts/product-page-loaded/add-badge.twig",
+      "line": 1,
+      "summary": "This app script should be implemented as a PHP event subscriber with services.php instead.",
+      "fix": "Move the logic to a PHP subscriber."
+    }
+  ]
+}
+```

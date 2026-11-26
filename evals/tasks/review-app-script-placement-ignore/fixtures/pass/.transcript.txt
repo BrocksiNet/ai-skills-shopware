@@ -1,0 +1,7 @@
+The app script sits in the `product-page-loaded` hook directory, factors its shared partial into `Resources/scripts/include/`, and uses only hook-exposed data. No issues found.
+
+```json
+{
+  "findings": []
+}
+```

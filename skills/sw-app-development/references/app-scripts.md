@@ -10,11 +10,14 @@ Shopware execution stack (introduced in 6.4.8.0; app lifecycle scripts in
 6.4.9.0). They are not arbitrary PHP: a script only sees the data and the
 pre-defined services that its **hook** exposes.
 
-## Placement (folder == hook name)
+## Placement and sandbox rules
 
-Scripts live in `Resources/scripts/`, one subdirectory per hook. The directory
-name must match the hook name; every `.twig` file inside runs when that hook
-fires:
+- **APP-005** Place every app script under `Resources/scripts/<hook-name>/*.twig`
+  matching the exact Shopware hook directory (and shared partials in
+  `Resources/scripts/include/`), and call only the variables and services that
+  hook exposes. Scripts placed directly in `Resources/scripts/` or under an
+  invented folder name never run; Symfony container access, arbitrary PHP, and
+  unexposed DAL repositories do not exist in the Twig sandbox.
 
 ```text
 └── MyExampleApp
@@ -30,10 +33,8 @@ fires:
     └── manifest.xml
 ```
 
-## Rules
+## Additional guidance
 
-- **Use the hook's services only.** Each hook documents the variables and
-  services available; do not assume container access or a repository.
 - **Keep scripts deterministic and cheap.** They run in request/cart/indexing
   paths; heavy or external work belongs in a backend reached via webhooks.
 - **Reuse via `include/`.** Put shared logic in `Resources/scripts/include` and
@@ -43,6 +44,6 @@ fires:
 
 ## Done
 
-- [ ] Script lives under `Resources/scripts/<hook-name>/` with the exact hook name.
-- [ ] Only the hook's exposed data/services are used; no assumed container/DAL.
+- [ ] Script lives under `Resources/scripts/<hook-name>/` with the exact hook name (`APP-005`).
+- [ ] Only the hook's exposed data/services are used; no assumed container/DAL (`APP-005`).
 - [ ] Shared logic factored into `include/`; scripts stay light.

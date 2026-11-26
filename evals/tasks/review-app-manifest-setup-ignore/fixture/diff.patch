@@ -1,0 +1,32 @@
+diff --git a/custom/apps/SwagOrderSync/manifest.xml b/custom/apps/SwagOrderSync/manifest.xml
+new file mode 100644
+--- /dev/null
++++ b/custom/apps/SwagOrderSync/manifest.xml
+@@ -0,0 +1,27 @@
++<?xml version="1.0" encoding="UTF-8"?>
++<manifest xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
++          xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/shopware/shopware/trunk/src/Core/Framework/App/Manifest/Schema/manifest-3.0.xsd">
++    <meta>
++        <name>SwagOrderSync</name>
++        <label>Order Sync</label>
++        <description>Notifies the fulfillment backend when orders are placed.</description>
++        <author>Swag</author>
++        <copyright>(c) Swag</copyright>
++        <version>1.0.0</version>
++        <license>MIT</license>
++    </meta>
++    <setup>
++        <registrationUrl>https://sync.example.com/register</registrationUrl>
++    </setup>
++    <requirements>
++        <public-access/>
++    </requirements>
++    <permissions>
++        <read>order</read>
++    </permissions>
++    <webhooks>
++        <webhook name="orderPlaced"
++                 url="https://sync.example.com/hooks/order"
++                 event="checkout.order.placed"/>
++    </webhooks>
++</manifest>

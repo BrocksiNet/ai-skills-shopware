@@ -269,6 +269,84 @@ export const PAIRS: Record<string, ReviewPair> = {
         /ApiRoutesHaveASchemaTest|schema test|schema coverage|not (covered|checked) by (the |any )?(schema )?test/iu,
     },
   },
+  // Catch: An app under custom/apps/SwagSyncApp/ adds an Administration Vue plugin
+  // bundle (Resources/app/administration/src/main.js with Shopware.Module.register).
+  // Shopware does not compile or boot plugin Administration JS bundles for apps;
+  // app Admin UI must use Meteor Admin SDK entries in manifest.xml.
+  // Ignore: The app declares an iframe main-module via <admin><main-module .../></admin>
+  // in manifest.xml. Any minor+ finding naming APP-004 or objecting to the Meteor
+  // Admin SDK entry is a false positive.
+  'app-admin-sdk': {
+    rule: 'APP-004',
+    file: '**',
+    minSeverity: 'major',
+    summary:
+      /Meteor|Admin SDK|manifest\.xml|main-module|iframe|Vue (plugin )?bundle|does not (compile|boot|load)|not (compiled|loaded|supported) (for|in) apps?/iu,
+  },
+  // Catch: custom/apps/SwagLoyaltySync/manifest.xml declares <meta><name>LoyaltySync</name>,
+  // which does not match its directory name SwagLoyaltySync, breaking app:refresh
+  // and app:validate.
+  // Ignore: custom/apps/SwagLoyaltySync/manifest.xml has <name>SwagLoyaltySync</name>,
+  // manifest-3.0.xsd, all required <meta> fields, and minimal permissions. Any
+  // minor+ finding naming APP-001 or claiming a folder/schema mismatch is a false positive.
+  'app-manifest-identity': {
+    rule: 'APP-001',
+    file: '**/manifest.xml',
+    minSeverity: 'major',
+    summary:
+      /folder name|directory name|does not match|mismatch|<name>|SwagLoyaltySync|LoyaltySync|app:refresh|app:validate/iu,
+  },
+  // Catch: custom/apps/SwagOrderSync/manifest.xml registers a webhook for
+  // checkout.order.placed while <permissions> only grants <read>product</read>,
+  // missing <read>order</read>. Without the matching permission Shopware does not
+  // dispatch the webhook.
+  // Ignore: The same manifest grants <read>order</read> matching checkout.order.placed,
+  // pins manifest-3.0.xsd, and declares <requirements><public-access/></requirements>.
+  // Any minor+ finding naming APP-002 or claiming missing permissions/setup is a false positive.
+  'app-manifest-setup': {
+    rule: 'APP-002',
+    file: '**/manifest.xml',
+    minSeverity: 'major',
+    summary:
+      /permission|order|checkout\.order\.placed|<read>order<\/read>|webhook[^.]{0,80}(not (dispatched|sent|delivered|fired)|reject|fail|require|missing)/iu,
+  },
+  // Catch: custom/apps/SwagBadgeApp/ adds a Symfony PHP subscriber injecting
+  // EntityRepository and a services.php DI file. Apps have no in-process PHP
+  // container; in-shop logic must be a sandboxed app script or move to a plugin.
+  // Ignore: custom/apps/SwagBadgeApp/ adds a sandboxed Twig app script under
+  // Resources/scripts/product-page-loaded/add-badge.twig. Any minor+ finding naming
+  // APP-003 or claiming app scripts cannot run in-shop is a false positive.
+  'app-no-php-services': {
+    rule: 'APP-003',
+    file: 'custom/apps/**',
+    minSeverity: 'major',
+    summary:
+      /app script|no (in-process )?PHP|no (Symfony )?(DI )?container|not (loaded|booted|executed|supported) in (an )?app|plugin(-style)? PHP|EntityRepository|services\.php|subscriber/iu,
+  },
+  // Catch: The app backend's GET /app/register endpoint computes and returns the
+  // HMAC proof and secret without verifying the incoming shopware-app-signature
+  // header against the query string and app secret.
+  // Ignore: GET /app/register verifies shopware-app-signature with hash_equals()
+  // before returning proof, per-shop random secret, and confirmation_url.
+  'app-registration-handshake': {
+    rule: 'APP-006',
+    file: 'src/**',
+    minSeverity: 'major',
+    summary:
+      /shopware-app-signature|registration[^.]{0,80}(signature|unverified|verif|hmac|authenticat)|(missing|without|skip\w*|no)[^.]{0,60}(signature|hmac) (check|verif)|unauthenticated|forge/iu,
+  },
+  // Catch: custom/apps/SwagBadgeApp/ places an app script directly at
+  // Resources/scripts/product-page-loaded.twig instead of inside the hook directory
+  // Resources/scripts/product-page-loaded/*.twig, so Shopware never runs it.
+  // Ignore: The script sits under Resources/scripts/product-page-loaded/add-badge.twig
+  // and includes a shared partial from Resources/scripts/include/badge-label.twig.
+  'app-script-placement': {
+    rule: 'APP-005',
+    file: '**/Resources/scripts/**',
+    minSeverity: 'major',
+    summary:
+      /hook(-| )?(name|directory|folder|subdirectory)|Resources\/scripts\/product-page-loaded\/|never (runs?|executes?|fires?|loaded)|direct(ly)? (in|under) Resources\/scripts|subdirectory/iu,
+  },
   // Catch: The new test pins forCustomer() with assertEquals(120, ...), which still
   // passes once the method returns the ledger's string '120'. Needs a minor+
   // finding in tests/ explaining how loose equality hides the scalar type change.

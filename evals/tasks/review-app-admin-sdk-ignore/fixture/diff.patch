@@ -1,0 +1,11 @@
+diff --git a/custom/apps/SwagSyncApp/manifest.xml b/custom/apps/SwagSyncApp/manifest.xml
+--- a/custom/apps/SwagSyncApp/manifest.xml
++++ b/custom/apps/SwagSyncApp/manifest.xml
+@@ -18,4 +18,7 @@
+     <permissions>
+         <read>order</read>
+     </permissions>
++    <admin>
++        <main-module source="https://sync.example.com/admin"/>
++    </admin>
+ </manifest>

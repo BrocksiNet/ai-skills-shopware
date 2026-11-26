@@ -5740,6 +5740,97 @@
           }
         ]
       }
+    },
+    {
+      "id": "APP-001",
+      "skill": "sw-app-development",
+      "file": "skills/sw-app-development/references/manifest-and-permissions.md",
+      "title": "Match the app folder name to <meta><name>, pin manifest-3.0.xsd, and fill required <meta> fields",
+      "status": "active",
+      "since": "2026-11-26",
+      "eval": "review-app-manifest-identity-catch",
+      "core_guide_ids": [],
+      "audience": [
+        "app"
+      ],
+      "defer_on_trunk": false
+    },
+    {
+      "id": "APP-002",
+      "skill": "sw-app-development",
+      "file": "skills/sw-app-development/references/manifest-and-permissions.md",
+      "title": "Match manifest <permissions> to webhooks and Admin API calls, declare needed <requirements>, and include <setup> only with a backend",
+      "status": "active",
+      "since": "2026-11-26",
+      "eval": "review-app-manifest-setup-catch",
+      "core_guide_ids": [],
+      "audience": [
+        "app"
+      ],
+      "defer_on_trunk": false,
+      "see": [
+        "SEC-004"
+      ]
+    },
+    {
+      "id": "APP-003",
+      "skill": "sw-app-development",
+      "file": "skills/sw-app-development/references/manifest-and-permissions.md",
+      "title": "Never ship plugin-style PHP services, Symfony DI configs, or direct DAL repositories inside an app",
+      "status": "active",
+      "since": "2026-11-26",
+      "eval": "review-app-no-php-services-catch",
+      "core_guide_ids": [],
+      "audience": [
+        "app"
+      ],
+      "defer_on_trunk": false
+    },
+    {
+      "id": "APP-004",
+      "skill": "sw-app-development",
+      "file": "skills/sw-app-development/references/manifest-and-permissions.md",
+      "title": "Build app Administration UI with Meteor Admin SDK entries in manifest.xml, not Administration Vue plugin bundles",
+      "status": "active",
+      "since": "2026-11-26",
+      "eval": "review-app-admin-sdk-catch",
+      "core_guide_ids": [],
+      "audience": [
+        "app"
+      ],
+      "defer_on_trunk": false
+    },
+    {
+      "id": "APP-005",
+      "skill": "sw-app-development",
+      "file": "skills/sw-app-development/references/app-scripts.md",
+      "title": "Place app scripts under Resources/scripts/<hook-name>/*.twig (or include/) and use only hook-exposed services",
+      "status": "active",
+      "since": "2026-11-26",
+      "eval": "review-app-script-placement-catch",
+      "core_guide_ids": [],
+      "audience": [
+        "app"
+      ],
+      "defer_on_trunk": false
+    },
+    {
+      "id": "APP-006",
+      "skill": "sw-app-development",
+      "file": "skills/sw-app-development/references/manifest-and-permissions.md",
+      "title": "Verify shopware-app-signature and return HMAC proof during app registration, then persist per-shop credentials",
+      "status": "active",
+      "since": "2026-11-26",
+      "eval": "review-app-registration-handshake-catch",
+      "core_guide_ids": [],
+      "audience": [
+        "app"
+      ],
+      "defer_on_trunk": false,
+      "see": [
+        "SEC-006",
+        "SEC-001"
+      ]
     }
   ]
 }

@@ -228,12 +228,37 @@
       "routes": [
         {
           "reference": "sw-app-development/references/manifest-and-permissions.md",
-          "when": "You edit the manifest, permissions or app lifecycle.",
+          "when": "You edit the manifest, permissions, app architecture boundaries, registration handshake or app lifecycle.",
           "paths_any": [
-            "**/manifest.xml"
+            "**/manifest.xml",
+            "**/custom/apps/**/*.php",
+            "**/custom/apps/**/Resources/app/administration/**"
           ],
           "anchors_any": [
-            "app:(install|refresh|activate|validate)"
+            "app:(install|refresh|activate|validate)",
+            "shopware-(app|shop)-signature|confirmation_url|registrationUrl"
+          ],
+          "rules": [
+            {
+              "id": "APP-001",
+              "title": "Match the app folder name to <meta><name>, pin manifest-3.0.xsd, and fill required <meta> fields"
+            },
+            {
+              "id": "APP-002",
+              "title": "Match manifest <permissions> to webhooks and Admin API calls, declare needed <requirements>, and include <setup> only with a backend"
+            },
+            {
+              "id": "APP-003",
+              "title": "Never ship plugin-style PHP services, Symfony DI configs, or direct DAL repositories inside an app"
+            },
+            {
+              "id": "APP-004",
+              "title": "Build app Administration UI with Meteor Admin SDK entries in manifest.xml, not Administration Vue plugin bundles"
+            },
+            {
+              "id": "APP-006",
+              "title": "Verify shopware-app-signature and return HMAC proof during app registration, then persist per-shop credentials"
+            }
           ]
         },
         {
@@ -241,6 +266,12 @@
           "when": "You write an app script.",
           "paths_any": [
             "**/Resources/scripts/**/*.twig"
+          ],
+          "rules": [
+            {
+              "id": "APP-005",
+              "title": "Place app scripts under Resources/scripts/<hook-name>/*.twig (or include/) and use only hook-exposed services"
+            }
           ]
         }
       ]
@@ -1134,12 +1165,37 @@
         },
         {
           "reference": "sw-app-development/references/manifest-and-permissions.md",
-          "when": "You edit the manifest, permissions or app lifecycle.",
+          "when": "You edit the manifest, permissions, app architecture boundaries, registration handshake or app lifecycle.",
           "paths_any": [
-            "**/manifest.xml"
+            "**/manifest.xml",
+            "**/custom/apps/**/*.php",
+            "**/custom/apps/**/Resources/app/administration/**"
           ],
           "anchors_any": [
-            "app:(install|refresh|activate|validate)"
+            "app:(install|refresh|activate|validate)",
+            "shopware-(app|shop)-signature|confirmation_url|registrationUrl"
+          ],
+          "rules": [
+            {
+              "id": "APP-001",
+              "title": "Match the app folder name to <meta><name>, pin manifest-3.0.xsd, and fill required <meta> fields"
+            },
+            {
+              "id": "APP-002",
+              "title": "Match manifest <permissions> to webhooks and Admin API calls, declare needed <requirements>, and include <setup> only with a backend"
+            },
+            {
+              "id": "APP-003",
+              "title": "Never ship plugin-style PHP services, Symfony DI configs, or direct DAL repositories inside an app"
+            },
+            {
+              "id": "APP-004",
+              "title": "Build app Administration UI with Meteor Admin SDK entries in manifest.xml, not Administration Vue plugin bundles"
+            },
+            {
+              "id": "APP-006",
+              "title": "Verify shopware-app-signature and return HMAC proof during app registration, then persist per-shop credentials"
+            }
           ]
         },
         {
@@ -1147,6 +1203,12 @@
           "when": "You write an app script.",
           "paths_any": [
             "**/Resources/scripts/**/*.twig"
+          ],
+          "rules": [
+            {
+              "id": "APP-005",
+              "title": "Place app scripts under Resources/scripts/<hook-name>/*.twig (or include/) and use only hook-exposed services"
+            }
           ]
         },
         {
