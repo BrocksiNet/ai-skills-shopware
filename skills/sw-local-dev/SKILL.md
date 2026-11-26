@@ -38,6 +38,7 @@ command:
 | Marker in the project root | Environment | Read |
 | -------------------------- | ----------- | ---- |
 | `AGENTS.local.md` | what it says; core copies it from `.agents-templates/` | the reference it names |
+| Git worktree of a linked `shopware-dev` checkout (`.git` is a file) | Podman worktree via `sw-dev worktree exec` | [`podman.md`](references/podman.md#git-worktrees) |
 | `.env` contains `shopware-dev (managed by sw-dev)` | Podman lane | [`podman.md`](references/podman.md) |
 | `.ddev/config.yaml` | DDEV | [`ddev.md`](references/ddev.md) |
 | `Vagrantfile` | Vagrant | [`vagrant.md`](references/vagrant.md) |
@@ -64,12 +65,12 @@ names and paths against `compose.yaml` or the `Vagrantfile`.
 
 ## The same task everywhere
 
-| Task | DDEV | Docker Compose | Vagrant | Podman lane | Native |
-| ---- | ---- | -------------- | ------- | ----------- | ------ |
-| One test | `ddev exec vendor/bin/phpunit --filter X` | `docker compose exec web vendor/bin/phpunit --filter X` | `vagrant ssh -c "cd /vagrant && vendor/bin/phpunit --filter X"` | `podman compose exec web vendor/bin/phpunit --filter X` | `vendor/bin/phpunit --filter X` |
-| Console | `ddev exec bin/console …` | `docker compose exec web bin/console …` | `vagrant ssh -c "cd /vagrant && bin/console …"` | `podman compose exec web bin/console …` | `bin/console …` |
-| Composer | `ddev composer …` | `docker compose exec web composer …` | `vagrant ssh -c "cd /vagrant && composer …"` | `podman compose exec web composer …` | `composer …` |
-| Database host | `db` | the compose service | from `.env` in the VM | the compose service | `127.0.0.1` |
+| Task | DDEV | Docker Compose | Vagrant | Podman lane | Podman worktree | Native |
+| ---- | ---- | -------------- | ------- | ----------- | --------------- | ------ |
+| One test | `ddev exec vendor/bin/phpunit --filter X` | `docker compose exec web vendor/bin/phpunit --filter X` | `vagrant ssh -c "cd /vagrant && vendor/bin/phpunit --filter X"` | `podman compose exec web vendor/bin/phpunit --filter X` | `sw-dev worktree exec vendor/bin/phpunit --no-configuration --bootstrap vendor/autoload.php tests/unit/…` | `vendor/bin/phpunit --filter X` |
+| Console | `ddev exec bin/console …` | `docker compose exec web bin/console …` | `vagrant ssh -c "cd /vagrant && bin/console …"` | `podman compose exec web bin/console …` | `sw-dev worktree exec bin/console …` | `bin/console …` |
+| Composer | `ddev composer …` | `docker compose exec web composer …` | `vagrant ssh -c "cd /vagrant && composer …"` | `podman compose exec web composer …` | `sw-dev worktree exec composer …` | `composer …` |
+| Database host | `db` | the compose service | from `.env` in the VM | the compose service | `database` (auto-wired by `sw-dev worktree exec`) | `127.0.0.1` |
 
 The service `web` and the folder `/vagrant` are the usual names; the
 references say where to check the real ones.

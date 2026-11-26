@@ -70,6 +70,39 @@ podman compose exec web bash -lc 'cd src/Storefront/Resources/app/storefront && 
 Use `podman compose` (not bare `docker`). Do **not** pass `-f compose.override.yaml`
 unless debugging — linked projects use `COMPOSE_FILE` in `.env`.
 
+## Git worktrees
+
+A git worktree (for example `~/.local/state/sf/worktrees/<task>` where `.git` is
+a file) is **not** synced into the lane's Mutagen volume. Running
+`podman compose exec web …` from a worktree hits the main checkout's files, not
+the worktree, and running host `php` / `composer` / `phpunit` uses the wrong
+host PHP version.
+
+Always run worktree commands through `sw-dev worktree exec`:
+
+```bash
+# Install dependencies in the lane's PHP container
+sw-dev worktree exec composer install --no-interaction --no-progress --prefer-dist
+
+# Pure unit tests (fast: skips phpunit.xml.dist and TestBootstrap / DB install)
+sw-dev worktree exec --no-network vendor/bin/phpunit --no-configuration --bootstrap vendor/autoload.php tests/unit/Path/To/FooTest.php
+
+# Integration tests (auto-attaches to the lane's network + MariaDB database:3306, per-worktree DB)
+sw-dev worktree exec vendor/bin/phpunit --no-coverage tests/integration/Path/To/FooTest.php --filter testBar
+
+# PHPStan and code style
+sw-dev worktree exec php src/Core/DevOps/StaticAnalyze/phpstan-bootstrap.php
+sw-dev worktree exec php -d memory_limit=-1 vendor/bin/phpstan analyze --memory-limit=4G --no-progress --error-format=raw <paths>
+sw-dev worktree exec vendor/bin/php-cs-fixer fix --config .php-cs-fixer.dist.php --sequential --dry-run <paths>
+```
+
+`sw-dev worktree exec` auto-detects the lane from the worktree's main checkout
+(override with `--lane <lane>`), inspects the lane's container image, mounts
+the worktree at `/var/www/html`, sets `PROJECT_ROOT=/var/www/html`, and wires
+`DATABASE_URL` to a per-worktree database (`--db <name>` to override) on the
+lane's compose network. Pass `--plan` to inspect the `podman run` command
+without running it.
+
 ## Multi-instance lanes
 
 Several checkouts run in parallel. **Use the workspace's project** — do not
@@ -200,6 +233,7 @@ sw-dev sync status           # lane Mutagen/container file status
 sw-dev proxy restart         # reload the proxy after the lane list changed
 sw-dev lane shell trunk      # open shell in the lane's web container
 sw-dev lane exec 66 bin/console cache:clear
+sw-dev worktree exec --no-network vendor/bin/phpunit --no-configuration --bootstrap vendor/autoload.php tests/unit/…
 sw-dev agentic bootstrap 65
 sw-dev agentic qa trunk ci
 sw-dev agentic matrix --with-qa
@@ -224,6 +258,7 @@ sw-dev validate --static-only   # no podman exec / no HTTP
 | `php bin/console …` on host (linked) | `podman compose exec web bin/console …` |
 | `composer install` on host (linked) | `podman compose exec web composer install` |
 | `./vendor/bin/phpunit` on host (linked) | MCP `phpunit_run` if callable, else exec in `web` |
+| `php` / `composer` / `phpunit` on host or `podman compose exec web` in a git worktree | `sw-dev worktree exec …` |
 | Reconstruct validate with phpstan/eslint by hand (CLI project) | `shopware-cli project validate` / `extension validate` |
 | `shopware-cli` against a linked shopware-dev trunk | `podman compose exec web …` |
 | Read host `vendor/` for symbols | Search source or use LSP/MCP in container |
