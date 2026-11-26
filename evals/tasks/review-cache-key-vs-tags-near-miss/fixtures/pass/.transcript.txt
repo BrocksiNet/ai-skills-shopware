@@ -1,0 +1,16 @@
+Cache tagging via `CacheTagCollector::addTag()` is fine for `^6.7.2`, but the application cache key only contains `$productId` while `loadForProduct()` depends on `$context` (sales channel, language, currency, customer group).
+
+```json
+{
+  "findings": [
+    {
+      "rule_id": "IMP-008",
+      "severity": "major",
+      "file": "src/Subscriber/RecommendationCacheSubscriber.php",
+      "line": 35,
+      "summary": "The cache key `swag_rec_{productId}` omits sales channel, language, currency, and customer group even though `loadForProduct()` uses `$context`, so one caller receives another sales channel's or currency's recommendations.",
+      "fix": "Include sales channel ID, language ID, currency ID, and customer group/rule hash in the cache key."
+    }
+  ]
+}
+```

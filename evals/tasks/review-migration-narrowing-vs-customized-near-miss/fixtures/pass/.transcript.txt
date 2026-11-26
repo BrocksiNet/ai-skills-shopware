@@ -1,0 +1,16 @@
+`update()` narrows `external_code` to `VARCHAR(32) NOT NULL` without a default, which fails or truncates existing rows in a non-destructive migration.
+
+```json
+{
+  "findings": [
+    {
+      "rule_id": "PLG-030",
+      "severity": "major",
+      "file": "src/Migration/Migration1730000001ShrinkExternalCode.php",
+      "line": 17,
+      "summary": "`update()` narrows `swag_loyalty_account.external_code` to `VARCHAR(32) NOT NULL` without a default, which fails on NULL rows or truncates values longer than 32 characters.",
+      "fix": "Keep `update()` additive and move any column narrowing or `NOT NULL` tightening to `updateDestructive()` after backfilling existing rows."
+    }
+  ]
+}
+```

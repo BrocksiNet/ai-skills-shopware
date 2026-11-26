@@ -1,0 +1,15 @@
+{
+    "name": "swag/recommendations",
+    "description": "Product detail recommendations",
+    "type": "shopware-platform-plugin",
+    "version": "2.0.0",
+    "license": "MIT",
+    "require": {
+        "shopware/core": "^6.7.2"
+    },
+    "autoload": {
+        "psr-4": {
+            "Swag\\Recommendations\\": "src/"
+        }
+    }
+}

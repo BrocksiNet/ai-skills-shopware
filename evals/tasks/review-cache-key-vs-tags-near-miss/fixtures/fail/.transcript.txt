@@ -1,0 +1,14 @@
+```json
+{
+  "findings": [
+    {
+      "rule_id": "PLG-007",
+      "severity": "major",
+      "file": "src/Subscriber/RecommendationCacheSubscriber.php",
+      "line": 35,
+      "summary": "The cache key `swag_rec_{productId}` omits sales channel, language, and currency, leaking recommendations across storefronts.",
+      "fix": "Include sales channel, language, and currency in the cache key."
+    }
+  ]
+}
+```

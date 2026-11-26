@@ -89,7 +89,11 @@ pairs per rule:
   findings must match an explicit `allowed` expectation for another real issue.
 - `-ignore`: a clean diff that looks similar. Every finding above `nit` fails
   unless the task explicitly permits it in `allowed`; unrelated false claims
-  cannot pass by citing a different rule.
+  cannot pass by citing a different rule. Two standalone `-ignore` tasks serve
+  as intentional extra negative controls for existing pairs:
+  `review-queue-custom-normalizer-ignore` (for `ARCH-006`, companion to
+  `review-queue-payload-*`) and `review-reset-method-tag-ignore` (for
+  `ARCH-001`, companion to `review-reset-interface-*`).
 
 Near-miss tasks (`review-<topic>-near-miss`) test the rule ID, not
 detection. The diff plants a real problem next to a rule that does not
@@ -98,9 +102,11 @@ file and severity whose summary describes the problem, under no catalog ID
 or one of the IDs in `accept`; a finding that describes the problem and
 cites the decoy fails the task. With the skill off the model cannot cite
 our IDs, so these tasks do not show the skill helping. They show it
-hurting, when it makes a reviewer reach for the nearest ID. The four
-decoys come from a real review of a plugin: `SF-013`, `IMP-008`, `REV-033`
-and `SEC-005`.
+hurting, when it makes a reviewer reach for the nearest ID. The first four
+decoys came from a real review of a plugin (`SF-013`, `IMP-008`, `REV-033`
+and `SEC-005`), and later additions cover DAL/performance (`ARCH-002`),
+migrations (`PLG-028`, `PLG-019`), cache (`PLG-007`), and Admin extension API
+(`ADM-039`).
 
 ```text
 tasks/review-<rule>-catch/

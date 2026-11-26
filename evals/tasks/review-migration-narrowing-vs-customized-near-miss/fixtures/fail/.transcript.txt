@@ -1,0 +1,14 @@
+```json
+{
+  "findings": [
+    {
+      "rule_id": "PLG-028",
+      "severity": "major",
+      "file": "src/Migration/Migration1730000001ShrinkExternalCode.php",
+      "line": 17,
+      "summary": "`update()` narrows `swag_loyalty_account.external_code` to `VARCHAR(32) NOT NULL` without a default, truncating existing values.",
+      "fix": "Move the narrowing ALTER TABLE to `updateDestructive()`."
+    }
+  ]
+}
+```
