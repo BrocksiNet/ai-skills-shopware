@@ -25,7 +25,7 @@ index 4b1c0de..9e27a31 100644
 + * @deprecated tag:v6.8.0 - Will be removed. The stock is refreshed by ProductStockIndexer.
 + */
  #[Package('inventory')]
-@@ -16,9 +20,16 @@ class LegacyProductStockSubscriber implements EventSubscriberInterface
+@@ -16,11 +20,20 @@ class LegacyProductStockSubscriber implements EventSubscriberInterface
 
      public static function getSubscribedEvents(): array
      {
@@ -45,3 +45,7 @@ index 4b1c0de..9e27a31 100644
 +    }
 +
      public function onProductWritten(EntityWrittenContainerEvent $event): void
+     {
++        Feature::triggerDeprecationOrThrow('v6.8.0.0', Feature::deprecatedClassMessage(self::class, 'v6.8.0.0'));
++
+         $this->indexer->refresh($event->getEventIds());

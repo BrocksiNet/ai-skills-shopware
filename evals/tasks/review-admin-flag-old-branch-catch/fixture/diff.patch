@@ -26,35 +26,41 @@ diff --git a/src/Resources/app/administration/src/module/swag-loyalty/component/
 new file mode 100644
 --- /dev/null
 +++ b/src/Resources/app/administration/src/module/swag-loyalty/component/swag-loyalty-points-preview/index.spec.ts
-@@ -0,0 +1,30 @@
-+import { mount } from '@vue/test-utils';
+@@ -0,0 +1,36 @@
++import { mount, type VueWrapper } from '@vue/test-utils';
 +import './index';
 +
++let wrapper: VueWrapper | undefined;
++
 +async function createWrapper(amountTotal: number) {
-+    return mount(await Shopware.Component.build('swag-loyalty-points-preview'), {
++    wrapper = mount(await Shopware.Component.build('swag-loyalty-points-preview'), {
 +        props: {
 +            order: { amountTotal },
 +        },
 +    });
++
++    return wrapper;
 +}
 +
 +describe('swag-loyalty-points-preview', () => {
 +    afterEach(() => {
++        wrapper?.unmount();
++        wrapper = undefined;
 +        jest.restoreAllMocks();
 +    });
 +
 +    it('rounds earned points down without V6_8_0_0', async () => {
 +        jest.spyOn(Shopware.Feature, 'isActive').mockReturnValue(false);
-+        const wrapper = await createWrapper(12.6);
++        const preview = await createWrapper(12.6);
 +
-+        expect(wrapper.vm.earnedPoints).toBe(12);
++        expect(preview.vm.earnedPoints).toBe(12);
 +    });
 +
 +    it('rounds earned points to the nearest point with V6_8_0_0', async () => {
 +        jest.spyOn(Shopware.Feature, 'isActive').mockImplementation((flag: string) => flag === 'V6_8_0_0');
-+        const wrapper = await createWrapper(12.6);
++        const preview = await createWrapper(12.6);
 +
-+        expect(wrapper.vm.earnedPoints).toBe(13);
++        expect(preview.vm.earnedPoints).toBe(13);
 +    });
 +});
 diff --git a/src/Resources/app/administration/src/module/swag-loyalty/service/points-rounding.ts b/src/Resources/app/administration/src/module/swag-loyalty/service/points-rounding.ts

@@ -57,7 +57,7 @@ diff --git a/src/Points/Leaderboard.php b/src/Points/Leaderboard.php
  use Shopware\Core\Framework\DataAbstractionLayer\Search\Sorting\FieldSorting;
  use Shopware\Core\Framework\Log\Package;
  use Shopware\Core\System\SalesChannel\SalesChannelContext;
-@@ -21,6 +23,11 @@
+@@ -21,6 +23,13 @@
      public function top(int $limit, int $offset, SalesChannelContext $context): array
      {
          $criteria = new Criteria();
@@ -67,5 +67,7 @@ diff --git a/src/Points/Leaderboard.php b/src/Points/Leaderboard.php
 +            new NotFilter(NotFilter::CONNECTION_AND, [new EqualsFilter('nickname', null)]),
 +        );
          $criteria->addSorting(new FieldSorting('points', FieldSorting::DESCENDING));
++        // Ties keep a stable order across offset pages.
++        $criteria->addSorting(new FieldSorting('id', FieldSorting::ASCENDING));
          $criteria->setLimit($limit);
          $criteria->setOffset($offset);

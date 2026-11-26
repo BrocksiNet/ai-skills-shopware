@@ -8,7 +8,7 @@ diff --git a/RELEASE_INFO-6.7.md b/RELEASE_INFO-6.7.md
 +
 +### Core
 +
-+`ProductPriceCalculator::calculate()` is deprecated and will be removed in 6.8.0.0. Use `ProductPriceCalculatorV2::calculate()` instead: it takes the same arguments and calculates the same prices, but matches the price rules once per batch instead of once per product. Decorate `ProductPriceCalculatorV2` instead of `ProductPriceCalculator`.
++`ProductPriceCalculator::calculate()` is deprecated and will be removed in 6.8.0.0. Use `ProductPriceCalculatorV2::calculate()` instead: it takes the same arguments and calculates the same prices, but matches the price rules once per batch instead of once per product. Core services that inject `AbstractProductPriceCalculator` now get `ProductPriceCalculatorV2`, so decorate `ProductPriceCalculatorV2` instead of `ProductPriceCalculator`.
 diff --git a/src/Core/Content/Product/SalesChannel/Price/ProductPriceCalculator.php b/src/Core/Content/Product/SalesChannel/Price/ProductPriceCalculator.php
 --- a/src/Core/Content/Product/SalesChannel/Price/ProductPriceCalculator.php
 +++ b/src/Core/Content/Product/SalesChannel/Price/ProductPriceCalculator.php
@@ -41,7 +41,7 @@ diff --git a/src/Core/Content/Product/SalesChannel/Price/ProductPriceCalculator.
 diff --git a/src/Core/Content/DependencyInjection/product.xml b/src/Core/Content/DependencyInjection/product.xml
 --- a/src/Core/Content/DependencyInjection/product.xml
 +++ b/src/Core/Content/DependencyInjection/product.xml
-@@ -10,5 +10,9 @@
+@@ -10,5 +10,12 @@
          <service id="Shopware\Core\Content\Product\SalesChannel\Price\ProductPriceCalculator">
              <argument type="service" id="Shopware\Core\Content\Product\SalesChannel\Price\PriceRuleMatcher"/>
          </service>
@@ -49,6 +49,9 @@ diff --git a/src/Core/Content/DependencyInjection/product.xml b/src/Core/Content
 +        <service id="Shopware\Core\Content\Product\SalesChannel\Price\ProductPriceCalculatorV2">
 +            <argument type="service" id="Shopware\Core\Content\Product\SalesChannel\Price\PriceRuleMatcher"/>
 +        </service>
++
++        <!-- Core services type-hint the abstract; they get V2 from now on. -->
++        <service id="Shopware\Core\Content\Product\SalesChannel\Price\AbstractProductPriceCalculator" alias="Shopware\Core\Content\Product\SalesChannel\Price\ProductPriceCalculatorV2"/>
      </services>
  </container>
 diff --git a/src/Core/Content/Product/SalesChannel/Price/ProductPriceCalculatorV2.php b/src/Core/Content/Product/SalesChannel/Price/ProductPriceCalculatorV2.php

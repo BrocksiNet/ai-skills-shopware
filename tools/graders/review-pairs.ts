@@ -18,9 +18,14 @@ const ADMIN_BC_CHANGE_SUMMARY =
 // either admin-bc-change-marker half; a reviewer may say so.
 const ADMIN_BC_CHANGE_SNAPSHOT: Expectation = {
   rule: 'ADM-039',
+  // ADM-049 itself says to regenerate public-api/, so a reviewer who misses
+  // the snapshot in the diff rightly cites it. The summary must be about the
+  // snapshot, so a marker false positive is still not excused.
+  also: ['ADM-049'],
   file: 'src/Administration/**',
   minSeverity: 'minor',
-  summary: /public[- ]api|snapshot|generate-public-api/iu,
+  summary:
+    /(public[- ]api|snapshot)[^.]{0,80}(regenerat|stale|not (updated|included)|missing|out of date)|(regenerat|generate-public-api)[^.]{0,80}(public[- ]api|snapshot)/iu,
 };
 
 export const PAIRS: Record<string, ReviewPair> = {

@@ -2,7 +2,7 @@ diff --git a/src/Migration/Migration1729800000MoveReviewAuthorName.php b/src/Mig
 new file mode 100644
 --- /dev/null
 +++ b/src/Migration/Migration1729800000MoveReviewAuthorName.php
-@@ -0,0 +1,60 @@
+@@ -0,0 +1,61 @@
 +<?php declare(strict_types=1);
 +
 +namespace Swag\Review\Migration;
@@ -14,7 +14,8 @@ new file mode 100644
 +
 +/**
 + * Moves the author name from swag_review_author onto swag_review; the old
-+ * table is dropped in updateDestructive().
++ * table is dropped in updateDestructive(). From this version on,
++ * ReviewPersister writes author_name and no longer touches swag_review_author.
 + */
 +class Migration1729800000MoveReviewAuthorName extends MigrationStep
 +{
