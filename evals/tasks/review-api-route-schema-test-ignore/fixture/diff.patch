@@ -39,7 +39,7 @@ new file mode 100644
 index 0000000..5a1c2e9
 --- /dev/null
 +++ b/src/Core/Framework/Api/ApiDefinition/Generator/Schema/StoreApi/paths/product-review.json
-@@ -0,0 +1,28 @@
+@@ -0,0 +1,30 @@
 +{
 +  "/store-api/product/{productId}/review": {
 +    "post": {

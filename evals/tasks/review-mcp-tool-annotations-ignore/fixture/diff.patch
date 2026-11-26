@@ -2,7 +2,7 @@ diff --git a/src/Mcp/Tool/ResetPointsTool.php b/src/Mcp/Tool/ResetPointsTool.php
 new file mode 100644
 --- /dev/null
 +++ b/src/Mcp/Tool/ResetPointsTool.php
-@@ -0,0 +1,66 @@
+@@ -0,0 +1,65 @@
 +<?php declare(strict_types=1);
 +
 +namespace Swag\Loyalty\Mcp\Tool;
@@ -50,13 +50,13 @@ new file mode 100644
 +        }
 +
 +        if (!Uuid::isValid($customerId)) {
-+            return $this->errorResult(McpToolError::INVALID_ARGUMENTS, 'Invalid customer UUID.');
++            return $this->errorResult('Invalid customer UUID.', McpToolError::INVALID_ARGUMENTS);
 +        }
 +
 +        $op = function () use ($customerId, $context, $dryRun): McpToolResult {
 +            $previousPoints = $this->balanceWriter->resetBalance($customerId, $context);
 +            if ($previousPoints === null) {
-+                return $this->errorResult(McpToolError::NOT_FOUND, 'No loyalty balance found for customer.');
++                return $this->errorResult('No loyalty balance found for customer.', McpToolError::NOT_FOUND);
 +            }
 +
 +            return $this->successResult(

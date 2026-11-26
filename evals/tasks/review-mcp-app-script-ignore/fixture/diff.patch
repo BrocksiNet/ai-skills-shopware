@@ -21,7 +21,7 @@ diff --git a/Resources/scripts/api-swag-inventory-check/script.twig b/Resources/
 new file mode 100644
 --- /dev/null
 +++ b/Resources/scripts/api-swag-inventory-check/script.twig
-@@ -0,0 +1,15 @@
+@@ -0,0 +1,14 @@
 +{% block response %}
 +    {% set args = hook.request.request.all('arguments') ?? {} %}
 +    {% if args.sku is not defined or args.sku is empty %}

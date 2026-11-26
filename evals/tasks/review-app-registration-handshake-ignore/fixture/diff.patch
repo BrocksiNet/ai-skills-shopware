@@ -1,14 +1,14 @@
 diff --git a/src/Controller/RegistrationController.php b/src/Controller/RegistrationController.php
 --- a/src/Controller/RegistrationController.php
 +++ b/src/Controller/RegistrationController.php
-@@ -17,6 +17,36 @@ final readonly class RegistrationController
+@@ -17,6 +17,44 @@ final readonly class RegistrationController
      ) {
      }
  
 +    public function register(Request $request): Response
 +    {
 +        $signature = $request->headers->get('shopware-app-signature');
-+        $queryString = $request->getQueryString() ?? '';
++        $queryString = (string) $request->server->get('QUERY_STRING', '');
 +        $expected = hash_hmac('sha256', $queryString, $this->appSecret);
 +        if (!\is_string($signature) || !hash_equals($expected, $signature)) {
 +            return new JsonResponse(['error' => 'Invalid signature'], Response::HTTP_UNAUTHORIZED);
@@ -20,6 +20,10 @@ diff --git a/src/Controller/RegistrationController.php b/src/Controller/Registra
 +
 +        if ($shopId === '' || $shopUrl === '' || $timestamp === '') {
 +            return new JsonResponse(['error' => 'Missing registration parameters'], Response::HTTP_BAD_REQUEST);
++        }
++
++        if (!ctype_digit($timestamp) || abs(time() - (int) $timestamp) > 300) {
++            return new JsonResponse(['error' => 'Registration request expired'], Response::HTTP_UNAUTHORIZED);
 +        }
 +
 +        $scheme = parse_url($shopUrl, \PHP_URL_SCHEME);

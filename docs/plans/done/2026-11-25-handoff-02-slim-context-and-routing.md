@@ -2,9 +2,9 @@
 
 - **Base branch:** `origin/main` (at or after `a21660c0`, post-v0.19.0)
 - **Suggested branch:** `feat/slim-context-and-routing`
-- **Related plan:** [`2026-10-slim-skill-context.md`](2026-10-slim-skill-context.md) (Phases 3, 2, and 4 — in that priority order; Phase 5 token-budget gate deferred)
+- **Related plan:** [`2026-10-slim-skill-context.md`](../2026-10-slim-skill-context.md) (Phases 3, 2, and 4 — in that priority order; Phase 5 token-budget gate deferred)
 - **Parallelizable with:** Handoffs 01, 03, 04, 05, and 06 (rebase and re-run `render-routes`, `render-router-index`, and `validate-skills` if another handoff updates `skills/` or `rules/catalog.json` first)
-- **Prerequisite:** Read [`AGENTS.md`](../../AGENTS.md) and [`2026-10-slim-skill-context.md`](2026-10-slim-skill-context.md) before editing.
+- **Prerequisite:** Read [`AGENTS.md`](../../../AGENTS.md) and [`2026-10-slim-skill-context.md`](../2026-10-slim-skill-context.md) before editing.
 
 ## Goal
 

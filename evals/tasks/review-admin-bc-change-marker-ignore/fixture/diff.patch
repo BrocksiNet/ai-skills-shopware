@@ -1,5 +1,5 @@
 diff --git a/src/Administration/Resources/app/administration/src/module/sw-order/component/sw-order-line-items-grid/index.js b/src/Administration/Resources/app/administration/src/module/sw-order/component/sw-order-line-items-grid/index.js
-index 1111111..3333333
+index 1111111..2222222
 --- a/src/Administration/Resources/app/administration/src/module/sw-order/component/sw-order-line-items-grid/index.js
 +++ b/src/Administration/Resources/app/administration/src/module/sw-order/component/sw-order-line-items-grid/index.js
 @@ -19,9 +19,14 @@ export default {
@@ -10,11 +10,55 @@ index 1111111..3333333
 +         * @bc-change ParameterRemoval version:v6.8.0 parameter:itemIndex
 +         */
          onDeleteItem(item, itemIndex) {
++            this.lastDeletedIndex = Shopware.Feature.isActive('v6.8.0.0')
++                ? this.order.lineItems.getIds().indexOf(item.id)
++                : itemIndex;
              this.order.lineItems.remove(item.id);
 -            this.lastDeletedIndex = itemIndex;
-+            if (!Shopware.Feature.isActive('v6.8.0.0')) {
-+                this.lastDeletedIndex = itemIndex;
-+            }
              this.$emit('item-delete', item.id);
          },
      },
+diff --git a/src/Administration/Resources/app/administration/src/module/sw-order/component/sw-order-line-items-grid/index.spec.js b/src/Administration/Resources/app/administration/src/module/sw-order/component/sw-order-line-items-grid/index.spec.js
+new file mode 100644
+index 0000000..3333333
+--- /dev/null
++++ b/src/Administration/Resources/app/administration/src/module/sw-order/component/sw-order-line-items-grid/index.spec.js
+@@ -0,0 +1,38 @@
++/**
++ * @sw-package checkout
++ */
++import swOrderLineItemsGrid from './index';
++
++function createContext() {
++    const lineItems = [{ id: 'first' }, { id: 'second' }];
++    lineItems.getIds = () => lineItems.map(({ id }) => id);
++    lineItems.remove = jest.fn();
++
++    return { order: { lineItems }, lastDeletedIndex: null, $emit: jest.fn() };
++}
++
++describe('module/sw-order/component/sw-order-line-items-grid', () => {
++    afterEach(() => {
++        global.activeFeatureFlags = [];
++    });
++
++    it('stores the passed itemIndex while v6.8.0.0 is off', () => {
++        global.activeFeatureFlags = [];
++        const context = createContext();
++
++        swOrderLineItemsGrid.methods.onDeleteItem.call(context, { id: 'second' }, 7);
++
++        expect(context.lastDeletedIndex).toBe(7);
++        expect(context.order.lineItems.remove).toHaveBeenCalledWith('second');
++    });
++
++    it('derives the index from the line items when v6.8.0.0 is on', () => {
++        global.activeFeatureFlags = ['v6.8.0.0'];
++        const context = createContext();
++
++        swOrderLineItemsGrid.methods.onDeleteItem.call(context, { id: 'second' }, 7);
++
++        expect(context.lastDeletedIndex).toBe(1);
++        expect(context.$emit).toHaveBeenCalledWith('item-delete', 'second');
++    });
++});

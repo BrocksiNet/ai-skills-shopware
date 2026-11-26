@@ -1,7 +1,7 @@
 {
   "swag-loyalty": {
     "orderCard": {
-      "vipBadge": "VIP loyalty order"
+      "programLabel": "Loyalty program"
     }
   }
 }

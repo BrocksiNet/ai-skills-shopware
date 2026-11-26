@@ -390,8 +390,9 @@ export const PAIRS: Record<string, ReviewPair> = {
   // Catch: The app backend's GET /app/register endpoint computes and returns the
   // HMAC proof and secret without verifying the incoming shopware-app-signature
   // header against the query string and app secret.
-  // Ignore: GET /app/register verifies shopware-app-signature with hash_equals()
-  // before returning proof, per-shop random secret, and confirmation_url.
+  // Ignore: GET /app/register verifies shopware-app-signature over the raw
+  // QUERY_STRING with hash_equals(), rejects a timestamp outside a 5-minute window,
+  // and then returns proof, per-shop random secret, and confirmation_url.
   'app-registration-handshake': {
     rule: 'APP-006',
     file: 'src/**',
@@ -1174,7 +1175,8 @@ export const PAIRS: Record<string, ReviewPair> = {
   // Catch: A plugin entity-search MCP tool builds Criteria from JSON and calls the
   // repository without AclCriteriaValidator, and returns raw jsonSerialize() instead of
   // McpEntityIncludes + JsonEntityEncoder. Needs a major+ finding in src/ that names
-  // MCP-006 or describes the missing criteria ACL validation or unbounded serialization.
+  // MCP-006 or describes the missing criteria ACL validation or unbounded serialization;
+  // a second, minor finding on the raw jsonSerialize() output is the same rule, not extra.
   // Ignore: The same tool checks registry->has(), validates with AclCriteriaValidator,
   // calls applyDefaultIncludes(), and serializes via JsonEntityEncoder.
   'mcp-entity-criteria': {
@@ -1183,18 +1185,27 @@ export const PAIRS: Record<string, ReviewPair> = {
     minSeverity: 'major',
     summary:
       /AclCriteriaValidator|McpEntityIncludes|applyDefaultIncludes|JsonEntityEncoder|jsonSerialize|association (ACL|read|privilege)/iu,
+    allowed: [
+      {
+        rule: 'MCP-006',
+        file: 'src/**',
+        minSeverity: 'minor',
+        summary: /McpEntityIncludes|applyDefaultIncludes|JsonEntityEncoder|jsonSerialize/iu,
+      },
+    ],
   },
   // Catch: A serverless app MCP tool in Resources/mcp.xml points at /store-api/script/...
   // (HTTP-cached) and its Twig script reads raw request content instead of POST form
   // arguments. Needs a major+ finding that names MCP-007 or describes /api/script/ or
-  // hook.request.request.all('arguments').
+  // hook.request.request.all('arguments'); the raw-body read (getContent(), "POST form
+  // field 'arguments'") is the second half of the same rule.
   // Ignore: The app tool targets /api/script/... and reads hook.request.request.all('arguments').
   'mcp-app-script': {
     rule: 'MCP-007',
     file: '**',
     minSeverity: 'major',
     summary:
-      /\/api\/script\/|\/store-api\/script\/|HTTP cache|cache\.disable|request\.all\(['"]arguments['"]\)|form param|subrequest/iu,
+      /\/api\/script\/|\bstore-api\b|HTTP cache|cache\.disable|request\.all\(['"]arguments['"]\)|getContent|raw (JSON )?(request )?body|(POST )?form (field|param)|subrequest/iu,
   },
   // Catch: A dynamic #[McpResourceTemplate] class is tagged `mcp.resource` instead of
   // `mcp.resource_template` and uses CacheScope::Public on its ReadResourceResult. Needs

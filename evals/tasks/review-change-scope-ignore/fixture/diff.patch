@@ -20,7 +20,7 @@ new file mode 100644
 index 0000000..e2a9d41
 --- /dev/null
 +++ b/tests/Unit/Shipping/ShippingCostResolverTest.php
-@@ -0,0 +1,22 @@
+@@ -0,0 +1,21 @@
 +<?php declare(strict_types=1);
 +
 +namespace Swag\OrderTools\Tests\Unit\Shipping;

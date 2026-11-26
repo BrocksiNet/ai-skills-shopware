@@ -2,7 +2,7 @@ diff --git a/custom/apps/SwagSyncApp/src/Resources/app/administration/src/main.j
 new file mode 100644
 --- /dev/null
 +++ b/custom/apps/SwagSyncApp/src/Resources/app/administration/src/main.js
-@@ -0,0 +1,16 @@
+@@ -0,0 +1,15 @@
 +Shopware.Component.register('swag-sync-overview', {
 +    template: '<div class="swag-sync-overview">Sync status</div>',
 +});

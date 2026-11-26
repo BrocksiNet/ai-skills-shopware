@@ -4,7 +4,7 @@
 - **Suggested branch:** `feat/admin-api-index-wp-cde` (or split into small PRs per section)
 - **Related plan:** [`2026-11-core-sources-and-admin-api.md`](2026-11-core-sources-and-admin-api.md#wp-c-admin-api-index-the-missing-surfaces) (re-verified 2026-11-25)
 - **Parallelizable with:** Handoffs 01, 03, 04, and 05 (if Handoff 02 splits `sw-admin-js/references/architecture.md`, rebase before editing `sw-admin-js` in Part 3)
-- **Prerequisite:** Read [`AGENTS.md`](../../AGENTS.md) and [`2026-11-core-sources-and-admin-api.md`](2026-11-core-sources-and-admin-api.md) (WP C, D, E) before editing.
+- **Prerequisite:** Read [`AGENTS.md`](../../../AGENTS.md) and [`2026-11-core-sources-and-admin-api.md`](2026-11-core-sources-and-admin-api.md) (WP C, D, E) before editing.
 
 ## Goal
 
@@ -44,7 +44,7 @@ Bump `GENERATOR` in `tools/api-index/src/model.ts` when indexed data changes, an
 
 Inspect core PRs `#22785` (`valid-api-markers` ESLint rule for `@bc-change <Kind> version:vX`) and `#23163` (block break check) first so we wire CI-enforced core checks into `trunk.enforced_by` rather than repeating them.
 
-Evaluate each plugin/extension candidate against the five curation criteria in [`README.md`](../../README.md) (prove delta with local A/B before keeping):
+Evaluate each plugin/extension candidate against the five curation criteria in [`README.md`](../../../README.md) (prove delta with local A/B before keeping):
 
 - An override replacing a block without `{% parent %}` where the core block has a crossing element or continues a `v-if` chain.
 - An override template referencing a slot or loop variable the block does not provide.

@@ -3,7 +3,7 @@
 - **Base branch:** `origin/main` (at or after `a21660c0`, post-v0.19.0)
 - **Suggested branch:** `feat/app-rules-and-eval-hygiene`
 - **Parallelizable with:** Handoffs 01, 02, 04, 05, and 06 (rebase and re-run renderers if `rules/catalog.json` or `skills/sw-skill-router/index.json` change on `main` first)
-- **Prerequisite:** Read [`AGENTS.md`](../../AGENTS.md), [`REGISTRY.md`](../../REGISTRY.md), and [`evals/README.md`](../../evals/README.md) before editing.
+- **Prerequisite:** Read [`AGENTS.md`](../../../AGENTS.md), [`REGISTRY.md`](../../../REGISTRY.md), and [`evals/README.md`](../../../evals/README.md) before editing.
 
 ## Goal
 
