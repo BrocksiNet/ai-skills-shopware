@@ -60,6 +60,9 @@ public function load(string|int $id): void
 **CORE-015** Values must stay machine-readable: `vX.Y.Z` version, parameter names **without**
 `$`, `::class` for class references, the real default for `NewOptionalParameter`.
 PHPStan rejects attributes that do not describe a structurally possible change.
+For Administration elements that stay on trunk (blocks, props, methods, scope
+variables), use the matching `@bc-change <Kind> version:vX.Y.Z` comment marker
+and regenerate `public-api/` (`ADM-049`).
 
 ## Deprecating code that already has a replacement
 

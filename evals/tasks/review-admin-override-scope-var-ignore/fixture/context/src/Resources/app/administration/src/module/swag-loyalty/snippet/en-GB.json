@@ -1,0 +1,7 @@
+{
+  "swag-loyalty": {
+    "lineItems": {
+      "position": "#{index}"
+    }
+  }
+}

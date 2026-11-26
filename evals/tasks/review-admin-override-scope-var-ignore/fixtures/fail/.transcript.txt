@@ -1,0 +1,14 @@
+```json
+{
+  "findings": [
+    {
+      "rule_id": "ADM-047",
+      "severity": "major",
+      "file": "src/Resources/app/administration/src/extension/sw-order-line-items-grid/sw-order-line-items-grid.html.twig",
+      "line": 3,
+      "summary": "The override uses item.position inside a scoped slot without verifying scope.",
+      "fix": "Pass position through a computed property instead."
+    }
+  ]
+}
+```

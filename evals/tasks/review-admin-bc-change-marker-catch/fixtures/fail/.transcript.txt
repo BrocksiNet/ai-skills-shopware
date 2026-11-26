@@ -1,0 +1,14 @@
+```json
+{
+  "findings": [
+    {
+      "rule_id": "ADM-049",
+      "severity": "minor",
+      "file": "src/Administration/Resources/app/administration/src/module/sw-order/component/sw-order-line-items-grid/index.js",
+      "line": 23,
+      "summary": "Check the JSDoc marker on onDeleteItem.",
+      "fix": "Update the JSDoc tag."
+    }
+  ]
+}
+```

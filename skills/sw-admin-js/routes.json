@@ -24,7 +24,13 @@
     },
     {
       "reference": "references/extension-api.md",
-      "when": "You change a shipped component, template block or position identifier.",
+      "when": "You change a shipped component, template block, deprecation marker or position identifier.",
+      "exclude_paths": [
+        "**/*.md",
+        "**/*.php",
+        "**/Resources/app/storefront/**",
+        "src/Storefront/**"
+      ],
       "paths_any": [
         "**/blocks-list.json",
         "**/administration/public-api/**"
@@ -32,7 +38,11 @@
       "anchors_any": [
         "positionIdentifier",
         "swDefinePublic\\(",
-        "Component\\.override\\("
+        "Component\\.override\\(",
+        "\\$super\\(",
+        "\\$parent\\b",
+        "@bc-change\\b",
+        "@deprecated\\s+tag:v"
       ]
     },
     {

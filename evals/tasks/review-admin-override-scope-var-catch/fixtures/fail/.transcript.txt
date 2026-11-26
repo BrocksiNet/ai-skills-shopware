@@ -1,0 +1,14 @@
+```json
+{
+  "findings": [
+    {
+      "rule_id": "ADM-047",
+      "severity": "nit",
+      "file": "src/Resources/app/administration/src/extension/sw-order-line-items-grid/sw-order-line-items-grid.html.twig",
+      "line": 3,
+      "summary": "Double-check whether itemIndex is available in this slot.",
+      "fix": "Verify itemIndex in the slot."
+    }
+  ]
+}
+```

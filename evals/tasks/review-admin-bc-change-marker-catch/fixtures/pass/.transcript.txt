@@ -1,0 +1,16 @@
+`onDeleteItem` itself stays in v6.8.0 and only drops its `itemIndex` parameter, so marking it `@deprecated tag:v6.8.0` causes the extension ESLint preset to flag every plugin call as calling a removed method.
+
+```json
+{
+  "findings": [
+    {
+      "rule_id": "ADM-049",
+      "severity": "major",
+      "file": "src/Administration/Resources/app/administration/src/module/sw-order/component/sw-order-line-items-grid/index.js",
+      "line": 23,
+      "summary": "onDeleteItem stays in v6.8.0 and only removes its itemIndex parameter, so @deprecated tag:v6.8.0 misclassifies the whole method as removed instead of using @bc-change ParameterRemoval.",
+      "fix": "Replace @deprecated with `@bc-change ParameterRemoval version:v6.8.0 parameter:itemIndex`."
+    }
+  ]
+}
+```

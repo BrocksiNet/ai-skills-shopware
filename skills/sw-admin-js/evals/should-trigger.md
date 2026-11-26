@@ -12,3 +12,6 @@
 - Does Shopware 6.8 require rewriting my sw-order-card override as a single file component with swDefineOverride?
 - I renamed a prop of my plugin's Administration component. Do other plugins care?
 - This Admin page clears each shared store field by hand in created() — should it call the store's reset?
+- My plugin overrides a core Admin block without `{% parent %}` — could a crossing tag or `v-if` chain break it?
+- Can my Administration plugin override read `this.$parent` or import a helper from core `src/app/`?
+- How do I annotate a planned parameter removal on a core Administration method with `@bc-change`?

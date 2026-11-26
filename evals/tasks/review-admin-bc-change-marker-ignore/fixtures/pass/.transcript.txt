@@ -1,0 +1,7 @@
+The change uses `@bc-change ParameterRemoval version:v6.8.0 parameter:itemIndex` on the staying `onDeleteItem` method and preserves the pre-6.8 behavior behind `Shopware.Feature.isActive('v6.8.0.0')`.
+
+```json
+{
+  "findings": []
+}
+```

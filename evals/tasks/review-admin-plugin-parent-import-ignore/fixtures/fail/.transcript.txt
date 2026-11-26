@@ -1,0 +1,14 @@
+```json
+{
+  "findings": [
+    {
+      "rule_id": "ADM-048",
+      "severity": "major",
+      "file": "src/Resources/app/administration/src/component/swag-loyalty-order-summary/index.ts",
+      "line": 21,
+      "summary": "Using Shopware.Utils.format.currency couples the plugin to global Shopware internals.",
+      "fix": "Import the formatter utility directly from vendor/shopware/administration."
+    }
+  ]
+}
+```

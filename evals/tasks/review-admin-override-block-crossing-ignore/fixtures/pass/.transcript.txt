@@ -1,0 +1,7 @@
+The override keeps `{% parent %}`, so `<div class="sw-order-card__grid">` remains open until `sw_order_card_footer` closes it.
+
+```json
+{
+  "findings": []
+}
+```

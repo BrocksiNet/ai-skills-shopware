@@ -110,7 +110,7 @@
         },
         {
           "reference": "sw-admin-js/references/extension-api.md",
-          "when": "You change a shipped component, template block or position identifier.",
+          "when": "You change a shipped component, template block, deprecation marker or position identifier.",
           "paths_any": [
             "**/blocks-list.json",
             "**/administration/public-api/**"
@@ -118,10 +118,15 @@
           "anchors_any": [
             "positionIdentifier",
             "swDefinePublic\\(",
-            "Component\\.override\\("
+            "Component\\.override\\(",
+            "\\$super\\(",
+            "\\$parent\\b",
+            "@bc-change\\b",
+            "@deprecated\\s+tag:v"
           ],
           "exclude_paths": [
             "**/*.md",
+            "**/*.php",
             "**/Resources/app/storefront/**",
             "src/Storefront/**"
           ],
@@ -133,6 +138,26 @@
             {
               "id": "ADM-042",
               "title": "A core component override calls $super for every method it replaces"
+            },
+            {
+              "id": "ADM-046",
+              "title": "Check core block boundaries before overriding without parent"
+            },
+            {
+              "id": "ADM-047",
+              "title": "Use only v-for and scoped-slot variables the overridden block exposes"
+            },
+            {
+              "id": "ADM-048",
+              "title": "Do not access $parent or import directly from core internal src in a plugin"
+            },
+            {
+              "id": "ADM-049",
+              "title": "Use @bc-change (not @deprecated) for Administration elements that stay on core trunk"
+            },
+            {
+              "id": "ADM-050",
+              "title": "Verify the target component declares every method an override replaces or calls via $super"
             }
           ]
         },
@@ -1508,7 +1533,7 @@
         },
         {
           "reference": "sw-admin-js/references/extension-api.md",
-          "when": "You change a shipped component, template block or position identifier.",
+          "when": "You change a shipped component, template block, deprecation marker or position identifier.",
           "paths_any": [
             "**/blocks-list.json",
             "**/administration/public-api/**"
@@ -1516,10 +1541,15 @@
           "anchors_any": [
             "positionIdentifier",
             "swDefinePublic\\(",
-            "Component\\.override\\("
+            "Component\\.override\\(",
+            "\\$super\\(",
+            "\\$parent\\b",
+            "@bc-change\\b",
+            "@deprecated\\s+tag:v"
           ],
           "exclude_paths": [
             "**/*.md",
+            "**/*.php",
             "**/Resources/app/storefront/**",
             "src/Storefront/**"
           ],
@@ -1531,6 +1561,26 @@
             {
               "id": "ADM-042",
               "title": "A core component override calls $super for every method it replaces"
+            },
+            {
+              "id": "ADM-046",
+              "title": "Check core block boundaries before overriding without parent"
+            },
+            {
+              "id": "ADM-047",
+              "title": "Use only v-for and scoped-slot variables the overridden block exposes"
+            },
+            {
+              "id": "ADM-048",
+              "title": "Do not access $parent or import directly from core internal src in a plugin"
+            },
+            {
+              "id": "ADM-049",
+              "title": "Use @bc-change (not @deprecated) for Administration elements that stay on core trunk"
+            },
+            {
+              "id": "ADM-050",
+              "title": "Verify the target component declares every method an override replaces or calls via $super"
             }
           ]
         },

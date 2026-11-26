@@ -1,0 +1,16 @@
+Core's `sw-order-list` declares `getOrderColumns`, not `getColumns`.
+
+```json
+{
+  "findings": [
+    {
+      "rule_id": "ADM-050",
+      "severity": "major",
+      "file": "src/Resources/app/administration/src/extension/sw-order-list/index.js",
+      "line": 3,
+      "summary": "sw-order-list does not declare getColumns() (core declares getOrderColumns()), so the override is never called by core and this.$super('getColumns') fails at runtime.",
+      "fix": "Rename the override method to getOrderColumns() and call this.$super('getOrderColumns')."
+    }
+  ]
+}
+```

@@ -31,7 +31,7 @@ Read only the reference that matches the task or the files it changes:
 | Read | When | Or the change touches |
 | ---- | ---- | --------------------- |
 | [`architecture.md`](references/architecture.md) | You add a module, component override or ACL privilege. | `administration/src/module/**`, `acl/index.*`, `Shopware.Module.register(` |
-| [`extension-api.md`](references/extension-api.md) | You change a shipped component, template block or position identifier. | `blocks-list.json`, `administration/public-api/**`, `positionIdentifier`, … |
+| [`extension-api.md`](references/extension-api.md) | You change a shipped component, template block, deprecation marker or position identifier. | `blocks-list.json`, `administration/public-api/**`, `positionIdentifier`, … |
 | [`testing.md`](references/testing.md) | You write or fix a Jest spec or the shared Jest setup. | `Resources/app/administration/**/*.spec.{js,ts}`, `Resources/app/administration/test/_setup/**`, `shallowMount(`, … |
 | [`flags-and-modern-web.md`](references/flags-and-modern-web.md) | A change needs a feature flag, a deprecation or a modern web API. | `Shopware.Feature.isActive(`, … |
 <!-- routes:end -->
@@ -104,4 +104,6 @@ default; there the rule still needs a reviewer.
 
 - `ADM-003` `no-deprecated-components` (ESLint, trunk only) reports listed deprecated `sw-*` components in Administration `.html.twig` templates and autofixes them to `mt-*`. It misses `.vue` templates, templates in JS or TS strings, raw `<dialog>` or popover markup, and `sw-*` components not in the configured list, such as `sw-loader` and `sw-popover`; flag those.
 - `ADM-007` `sw-core-rules/no-new-mixins` (ESLint, trunk only) reports `Mixin.register()` and `Shopware.Mixin.register()` in Administration `src` files, specs excluded, with inline disables blocked. It misses inline mixin objects in a `mixins` array, a renamed alias such as `const M = Shopware.Mixin`, `.vue` files, and a new component that pulls in an existing mixin through `Mixin.getByName()`; flag those.
+- `ADM-039` `scripts/generate-public-api/snapshot/committed-snapshot.spec.ts` (test, trunk only) reports stale committed Administration `public-api/` snapshots and removed blocks in core CI. It misses plugin or app components, unannounced prop/method/block moves when a PR regenerates the snapshot without running the break check, and behavioral changes inside a method; flag those.
+- `ADM-049` `sw-deprecation-rules/valid-api-markers` (ESLint, trunk only) reports malformed `@deprecated` and `@bc-change` markers, unknown kinds or keys, and single-edit tag typos in Administration JS, TS, Vue, and Twig comments. It misses using a syntactically valid `@deprecated tag:vX.Y.Z` instead of `@bc-change <Kind> version:vX.Y.Z` on an element that stays, or a `@bc-change` whose kind or keys do not match the actual change; flag those.
 <!-- enforced:end -->

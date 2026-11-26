@@ -1,0 +1,7 @@
+The component uses the public `Shopware.Utils.format.currency` helper and emits a `reload` event instead of reaching into core internals or `$parent`.
+
+```json
+{
+  "findings": []
+}
+```

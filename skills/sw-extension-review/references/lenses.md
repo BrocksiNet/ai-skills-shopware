@@ -58,7 +58,18 @@ points at a replacement the extenders can use today: `CORE-063`.
 - Does code that loads on every request use a package that `composer.json`
   only suggests, outside its guard: `PLG-032`?
 - Does an admin override replace a core method without `$super`:
-  `ADM-042`?
+  `ADM-042`, or override / call `$super` on a method name the target does not
+  declare: `ADM-050`?
+- Does an admin template override drop `{% parent %}` on a block with a
+  crossing tag or open `v-if` chain: `ADM-046`, or use a `v-for` / slot
+  variable the block does not expose: `ADM-047`?
+- Does plugin admin code reach into `this.$parent` or import directly from
+  core's internal `src/` tree: `ADM-048`? (Reading core `$refs` or styling
+  core CSS classes is advisory/`minor`, not blocking.)
+- For 6.8+ plugins, core also ships `public-api/` and
+  `admin:check-extensions --target=<major>`; `shopware-api-index` `facts`
+  covers historical 6.5–6.7 ranges (including SCSS variables/mixins and
+  snippet placeholders).
 - Does a bundle for 6.5 and 6.6+ bind `sw-*` fields with `@change` or a
   bare `@update:value`: `ADM-044`?
 
@@ -150,3 +161,5 @@ itself. Do not report them on a plugin or app diff:
   reference also holds `CORE-062`, which a plugin does report.
 - `CORE-076`: cached pages keep the old file URLs, so a grace period counts
   from the moment the reference changed.
+- `ADM-049`: core trunk `@bc-change` marker convention for Administration
+  elements that stay (validated by `valid-api-markers` in core CI).

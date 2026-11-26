@@ -1,0 +1,14 @@
+```json
+{
+  "findings": [
+    {
+      "rule_id": "ADM-050",
+      "severity": "minor",
+      "file": "src/Resources/app/administration/src/extension/sw-order-list/index.js",
+      "line": 3,
+      "summary": "Check whether getColumns is the right method name on sw-order-list.",
+      "fix": "Verify the method name."
+    }
+  ]
+}
+```

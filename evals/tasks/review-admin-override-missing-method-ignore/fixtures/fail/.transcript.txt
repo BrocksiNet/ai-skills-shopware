@@ -1,0 +1,14 @@
+```json
+{
+  "findings": [
+    {
+      "rule_id": "ADM-050",
+      "severity": "major",
+      "file": "src/Resources/app/administration/src/extension/sw-order-list/index.js",
+      "line": 3,
+      "summary": "sw-order-list does not declare getOrderColumns().",
+      "fix": "Override getColumns() instead."
+    }
+  ]
+}
+```

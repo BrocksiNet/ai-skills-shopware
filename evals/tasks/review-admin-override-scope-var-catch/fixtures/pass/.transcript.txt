@@ -1,0 +1,16 @@
+The overridden block sits inside `<template #column-label="{ item }">`, which does not expose `itemIndex`.
+
+```json
+{
+  "findings": [
+    {
+      "rule_id": "ADM-047",
+      "severity": "major",
+      "file": "src/Resources/app/administration/src/extension/sw-order-line-items-grid/sw-order-line-items-grid.html.twig",
+      "line": 3,
+      "summary": "The override references itemIndex, which is not exposed by the core #column-label=\"{ item }\" slot scope and evaluates to undefined (producing NaN) at runtime.",
+      "fix": "Use a property exposed on the item slot variable, such as item.position, instead of itemIndex."
+    }
+  ]
+}
+```

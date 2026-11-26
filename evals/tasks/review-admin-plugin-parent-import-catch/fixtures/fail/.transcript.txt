@@ -1,0 +1,14 @@
+```json
+{
+  "findings": [
+    {
+      "rule_id": "ADM-048",
+      "severity": "minor",
+      "file": "src/Resources/app/administration/src/component/swag-loyalty-order-summary/index.ts",
+      "line": 26,
+      "summary": "Using $parent can be brittle across upgrades.",
+      "fix": "Consider emitting an event instead."
+    }
+  ]
+}
+```

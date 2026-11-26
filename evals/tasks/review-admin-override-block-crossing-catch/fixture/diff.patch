@@ -1,0 +1,21 @@
+diff --git a/src/Resources/app/administration/src/extension/sw-order-card/index.js b/src/Resources/app/administration/src/extension/sw-order-card/index.js
+new file mode 100644
+index 0000000..1111111
+--- /dev/null
++++ b/src/Resources/app/administration/src/extension/sw-order-card/index.js
+@@ -0,0 +1,5 @@
++import template from './sw-order-card.html.twig';
++
++Shopware.Component.override('sw-order-card', {
++    template,
++});
+diff --git a/src/Resources/app/administration/src/extension/sw-order-card/sw-order-card.html.twig b/src/Resources/app/administration/src/extension/sw-order-card/sw-order-card.html.twig
+new file mode 100644
+index 0000000..2222222
+--- /dev/null
++++ b/src/Resources/app/administration/src/extension/sw-order-card/sw-order-card.html.twig
+@@ -0,0 +1,4 @@
++{% block sw_order_card_header %}
++<h3 class="sw-order-card__heading">{{ orderNumber }}</h3>
++<span class="swag-loyalty-order-card__badge">{{ $tc('swag-loyalty.orderCard.vipBadge') }}</span>
++{% endblock %}
