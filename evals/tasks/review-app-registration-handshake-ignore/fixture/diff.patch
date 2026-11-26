@@ -1,7 +1,7 @@
 diff --git a/src/Controller/RegistrationController.php b/src/Controller/RegistrationController.php
 --- a/src/Controller/RegistrationController.php
 +++ b/src/Controller/RegistrationController.php
-@@ -17,6 +17,44 @@ final readonly class RegistrationController
+@@ -17,6 +17,49 @@ final readonly class RegistrationController
      ) {
      }
  
@@ -24,6 +24,11 @@ diff --git a/src/Controller/RegistrationController.php b/src/Controller/Registra
 +
 +        if (!ctype_digit($timestamp) || abs(time() - (int) $timestamp) > 300) {
 +            return new JsonResponse(['error' => 'Registration request expired'], Response::HTTP_UNAUTHORIZED);
++        }
++
++        // One registration per signed URL: a replayed request inside the window is refused.
++        if (!$this->shops->claimRegistrationAttempt($shopId, $timestamp)) {
++            return new JsonResponse(['error' => 'Registration request already used'], Response::HTTP_CONFLICT);
 +        }
 +
 +        $scheme = parse_url($shopUrl, \PHP_URL_SCHEME);

@@ -164,13 +164,15 @@ export const PAIRS: Record<string, ReviewPair> = {
   // @bc-change ParameterRemoval version:v6.8.0 parameter:itemIndex instead.
   // Ignore: The same planned parameter removal annotated with
   // @bc-change ParameterRemoval version:v6.8.0 parameter:itemIndex while keeping
-  // the old behavior when v6.8.0.0 is off.
+  // the old behavior when v6.8.0.0 is off. Both halves ship a TS Jest spec for
+  // both flag states, the regenerated public-api/ snapshot line and a
+  // changelog, so neither half has a second problem to report.
   'admin-bc-change-marker': {
     rule: 'ADM-049',
     file: 'src/Administration/**',
     minSeverity: 'major',
     summary:
-      /@bc-change|ParameterRemoval|@deprecated[^.]{0,80}(stays?|remain|not removed|extension|eslint|preset|bc-change)|element[^.]{0,40}stays/iu,
+      /@bc-change|ParameterRemoval|@deprecated(?:[^.]|\.(?=\d)){0,140}(stays?|remain|not removed|extension|eslint|preset|bc-change)|element[^.]{0,40}stays/iu,
   },
   // Catch: The plugin overrides sw_order_card_header without {% parent %}, while
   // core's sw-order-card opens <div class="sw-order-card__grid"> in
@@ -391,8 +393,8 @@ export const PAIRS: Record<string, ReviewPair> = {
   // HMAC proof and secret without verifying the incoming shopware-app-signature
   // header against the query string and app secret.
   // Ignore: GET /app/register verifies shopware-app-signature over the raw
-  // QUERY_STRING with hash_equals(), rejects a timestamp outside a 5-minute window,
-  // and then returns proof, per-shop random secret, and confirmation_url.
+  // QUERY_STRING with hash_equals(), rejects a timestamp outside a 5-minute window
+  // and a replayed (shop-id, timestamp) pair, and then returns proof, per-shop random secret, and confirmation_url.
   'app-registration-handshake': {
     rule: 'APP-006',
     file: 'src/**',
@@ -1206,6 +1208,16 @@ export const PAIRS: Record<string, ReviewPair> = {
     minSeverity: 'major',
     summary:
       /\/api\/script\/|\bstore-api\b|HTTP cache|cache\.disable|request\.all\(['"]arguments['"]\)|getContent|raw (JSON )?(request )?body|(POST )?form (field|param)|subrequest/iu,
+    // Served under /store-api/, the script's services.repository read skips
+    // product visibility for anonymous callers: a symptom of the same wrong route.
+    allowed: [
+      {
+        rule: 'MCP-007',
+        file: 'Resources/scripts/**',
+        minSeverity: 'minor',
+        summary: /anonymous|unauthenticated|visib|inactive|\bactive\b|hidden|disabled|enumerat|services\.repository/iu,
+      },
+    ],
   },
   // Catch: A dynamic #[McpResourceTemplate] class is tagged `mcp.resource` instead of
   // `mcp.resource_template` and uses CacheScope::Public on its ReadResourceResult. Needs

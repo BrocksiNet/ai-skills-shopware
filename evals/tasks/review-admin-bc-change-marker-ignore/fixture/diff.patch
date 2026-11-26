@@ -1,3 +1,14 @@
+diff --git a/changelog/_unreleased/2026-11-20-derive-deleted-line-item-index.md b/changelog/_unreleased/2026-11-20-derive-deleted-line-item-index.md
+new file mode 100644
+--- /dev/null
++++ b/changelog/_unreleased/2026-11-20-derive-deleted-line-item-index.md
+@@ -0,0 +1,6 @@
++---
++title: Derive the deleted line item index from the order line items
++issue: NEXT-00000
++---
++# Administration
++* Announced the removal of parameter `itemIndex` from method `onDeleteItem` in component `sw-order-line-items-grid`. With feature flag `v6.8.0.0` the deleted index is derived from the order line items.
 diff --git a/src/Administration/Resources/app/administration/src/module/sw-order/component/sw-order-line-items-grid/index.js b/src/Administration/Resources/app/administration/src/module/sw-order/component/sw-order-line-items-grid/index.js
 index 1111111..2222222
 --- a/src/Administration/Resources/app/administration/src/module/sw-order/component/sw-order-line-items-grid/index.js
@@ -18,21 +29,23 @@ index 1111111..2222222
              this.$emit('item-delete', item.id);
          },
      },
-diff --git a/src/Administration/Resources/app/administration/src/module/sw-order/component/sw-order-line-items-grid/index.spec.js b/src/Administration/Resources/app/administration/src/module/sw-order/component/sw-order-line-items-grid/index.spec.js
+diff --git a/src/Administration/Resources/app/administration/src/module/sw-order/component/sw-order-line-items-grid/index.spec.ts b/src/Administration/Resources/app/administration/src/module/sw-order/component/sw-order-line-items-grid/index.spec.ts
 new file mode 100644
 index 0000000..3333333
 --- /dev/null
-+++ b/src/Administration/Resources/app/administration/src/module/sw-order/component/sw-order-line-items-grid/index.spec.js
-@@ -0,0 +1,38 @@
++++ b/src/Administration/Resources/app/administration/src/module/sw-order/component/sw-order-line-items-grid/index.spec.ts
+@@ -0,0 +1,40 @@
 +/**
 + * @sw-package checkout
 + */
 +import swOrderLineItemsGrid from './index';
 +
 +function createContext() {
-+    const lineItems = [{ id: 'first' }, { id: 'second' }];
-+    lineItems.getIds = () => lineItems.map(({ id }) => id);
-+    lineItems.remove = jest.fn();
++    const items = [{ id: 'first' }, { id: 'second' }];
++    const lineItems = Object.assign(items, {
++        getIds: () => items.map(({ id }) => id),
++        remove: jest.fn(),
++    });
 +
 +    return { order: { lineItems }, lastDeletedIndex: null, $emit: jest.fn() };
 +}
@@ -62,3 +75,15 @@ index 0000000..3333333
 +        expect(context.$emit).toHaveBeenCalledWith('item-delete', 'second');
 +    });
 +});
+diff --git a/src/Administration/Resources/app/administration/public-api/module/sw-order/component/sw-order-line-items-grid.api.md b/src/Administration/Resources/app/administration/public-api/module/sw-order/component/sw-order-line-items-grid.api.md
+--- a/src/Administration/Resources/app/administration/public-api/module/sw-order/component/sw-order-line-items-grid.api.md
++++ b/src/Administration/Resources/app/administration/public-api/module/sw-order/component/sw-order-line-items-grid.api.md
+@@ -13,7 +13,7 @@
+   canOpenProduct(item: any): any
+   createNewOrderLineItem(): any
+   onConfirmDelete(): any
+-  onDeleteItem(item: any, itemIndex: any): any
++  onDeleteItem(item: any, itemIndex: any): any  [bc-change ParameterRemoval v6.8.0 itemIndex]
+   onDeleteSelectedItems(): any
+   onInsertBlankItem(): any
+ ```
