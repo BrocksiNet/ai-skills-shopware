@@ -1,13 +1,15 @@
 // Grader: unit-test-yield-provider
-import { fail, findFile, type Grader, hasLine, read, verdict } from '../src/grade/kit.ts';
+// PASS when PriceCalculatorTest's data provider yields cases in real code
+// (comments stripped), without returning an array literal or `yield from`.
+import { fail, findFile, type Grader, hasLine, read, stripComments, verdict } from '../src/grade/kit.ts';
 
 export const grade: Grader = ({ workdir }) => {
   const file = findFile(workdir, 'PriceCalculatorTest');
   if (file === undefined) return fail('PriceCalculatorTest.php not found');
-  const text = read(file);
-  const usesYield = hasLine(text, /\byield\s+/u);
-  const returnArray = hasLine(text, /return\s*\[/u);
-  const yieldFrom = hasLine(text, /yield\s+from/u);
+  const code = stripComments(read(file));
+  const usesYield = hasLine(code, /\byield\s+/u);
+  const returnArray = hasLine(code, /\breturn\s*\[/u);
+  const yieldFrom = hasLine(code, /\byield\s+from\b/u);
   return verdict(usesYield && !returnArray && !yieldFrom, {
     yield: usesYield,
     return_array: returnArray,

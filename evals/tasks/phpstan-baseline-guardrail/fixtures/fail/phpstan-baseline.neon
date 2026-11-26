@@ -1,0 +1,6 @@
+parameters:
+    ignoreErrors:
+        -
+            message: "#^Property Swag\\\\Example\\\\Foo::\\$bar has no type specified\\.$#"
+            count: 1
+            path: src/Foo.php
