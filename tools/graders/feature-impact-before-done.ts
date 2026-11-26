@@ -6,9 +6,13 @@ export const grade: Grader = ({ transcript }) => {
   if (transcript === '') return fail('empty transcript');
   const text = transcript.toLowerCase();
   const cache = hasLine(text, /http cache|cache key|vary/u);
+  // Who pays: shops without analytics carry the cost too. Accept the common
+  // wordings of that claim ("never configure analytics", "analytics off",
+  // "only the analytics shops benefit"); "only shops that use analytics pay"
+  // names the wrong payer and matches none of them.
   const pays = hasLine(
     text,
-    /do not use analytics|does not use analytics|without analytics|never enable analytics|shops that do not/u,
+    /(?:do not|does not|don't|doesn't|never) (?:use|enable|configure|turn on|switch on) analytics|without analytics|analytics (?:is |are |turned |switched )?(?:off|disabled)|shops that do not|only (?:the )?(?:analytics shops|shops (?:that|with|using)[^.]{0,40}analytics)[^.]{0,40}(?:benefit|should pay)/u,
   );
   const complexity = hasLine(text, /more complex|easier/u);
   const hold = hasLine(text, /do not ship|narrow the design/u);

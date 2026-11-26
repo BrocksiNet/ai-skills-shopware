@@ -1,3 +1,14 @@
+diff --git a/RELEASE_INFO-6.7.md b/RELEASE_INFO-6.7.md
+--- a/RELEASE_INFO-6.7.md
++++ b/RELEASE_INFO-6.7.md
+@@ -5,3 +5,7 @@
+ ### Administration
+ 
+ The order detail page now shows the technical name of the payment method in its tooltip.
++
++### Core
++
++`LegacyProductStockSubscriber` is deprecated and will be removed in 6.8.0.0. `ProductStockIndexer` already refreshes the product stock, so remove any decoration or extension of the subscriber.
 diff --git a/src/Core/Content/Product/DataAbstractionLayer/LegacyProductStockSubscriber.php b/src/Core/Content/Product/DataAbstractionLayer/LegacyProductStockSubscriber.php
 index 4b1c0de..6d2f8a3 100644
 --- a/src/Core/Content/Product/DataAbstractionLayer/LegacyProductStockSubscriber.php

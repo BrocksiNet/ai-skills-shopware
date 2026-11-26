@@ -1,9 +1,8 @@
-diff --git a/src/Migration/Migration1729800000BackfillVerifiedPurchase.php b/src/Migration/Migration1729800000BackfillVerifiedPurchase.php
+diff --git a/src/Migration/Migration1729800000MoveReviewAuthorName.php b/src/Migration/Migration1729800000MoveReviewAuthorName.php
 new file mode 100644
-index 0000000..8c51054
 --- /dev/null
-+++ b/src/Migration/Migration1729800000BackfillVerifiedPurchase.php
-@@ -0,0 +1,55 @@
++++ b/src/Migration/Migration1729800000MoveReviewAuthorName.php
+@@ -0,0 +1,60 @@
 +<?php declare(strict_types=1);
 +
 +namespace Swag\Review\Migration;
@@ -13,7 +12,11 @@ index 0000000..8c51054
 +use Doctrine\DBAL\ParameterType;
 +use Shopware\Core\Framework\Migration\MigrationStep;
 +
-+class Migration1729800000BackfillVerifiedPurchase extends MigrationStep
++/**
++ * Moves the author name from swag_review_author onto swag_review; the old
++ * table is dropped in updateDestructive().
++ */
++class Migration1729800000MoveReviewAuthorName extends MigrationStep
 +{
 +    public function getCreationTimestamp(): int
 +    {
@@ -22,18 +25,18 @@ index 0000000..8c51054
 +
 +    public function update(Connection $connection): void
 +    {
-+        if (!$this->columnExists($connection, 'swag_review', 'verified_purchase')) {
++        if (!$this->columnExists($connection, 'swag_review', 'author_name')) {
 +            $connection->executeStatement(
-+                'ALTER TABLE `swag_review` ADD COLUMN `verified_purchase` TINYINT(1) NOT NULL DEFAULT 0'
++                'ALTER TABLE `swag_review` ADD COLUMN `author_name` VARCHAR(255) NULL'
 +            );
 +        }
 +
 +        $lastId = '';
 +        do {
 +            $ids = $connection->fetchFirstColumn(
-+                'SELECT `id` FROM `swag_review`
-+                WHERE `id` > :lastId AND `customer_id` IS NOT NULL
-+                ORDER BY `id`
++                'SELECT `review_id` FROM `swag_review_author`
++                WHERE `review_id` > :lastId
++                ORDER BY `review_id`
 +                LIMIT 1000',
 +                ['lastId' => $lastId],
 +                ['lastId' => ParameterType::BINARY],
@@ -43,19 +46,20 @@ index 0000000..8c51054
 +            }
 +
 +            $connection->executeStatement(
-+                'UPDATE `swag_review` SET `verified_purchase` = 1
-+                WHERE `id` IN (:ids)
-+                  AND EXISTS (
-+                    SELECT 1 FROM `order_line_item` li
-+                    INNER JOIN `order_customer` oc ON oc.`order_id` = li.`order_id`
-+                    WHERE li.`product_id` = `swag_review`.`product_id`
-+                      AND oc.`customer_id` = `swag_review`.`customer_id`
-+                  )',
++                'UPDATE `swag_review` r
++                INNER JOIN `swag_review_author` a ON a.`review_id` = r.`id`
++                SET r.`author_name` = a.`name`
++                WHERE r.`id` IN (:ids)',
 +                ['ids' => $ids],
 +                ['ids' => ArrayParameterType::BINARY],
 +            );
 +
 +            $lastId = (string) end($ids);
 +        } while (\count($ids) === 1000);
++    }
++
++    public function updateDestructive(Connection $connection): void
++    {
++        $connection->executeStatement('DROP TABLE IF EXISTS `swag_review_author`');
 +    }
 +}

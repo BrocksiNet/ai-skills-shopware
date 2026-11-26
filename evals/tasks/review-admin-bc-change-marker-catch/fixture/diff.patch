@@ -5,7 +5,7 @@ new file mode 100644
 @@ -0,0 +1,6 @@
 +---
 +title: Derive the deleted line item index from the order line items
-+issue: NEXT-00000
++issue: https://github.com/shopware/shopware/issues/12873
 +---
 +# Administration
 +* Deprecated parameter `itemIndex` of method `onDeleteItem` in component `sw-order-line-items-grid`. With feature flag `v6.8.0.0` the deleted index is derived from the order line items.
@@ -75,15 +75,3 @@ index 0000000..3333333
 +        expect(context.$emit).toHaveBeenCalledWith('item-delete', 'second');
 +    });
 +});
-diff --git a/src/Administration/Resources/app/administration/public-api/module/sw-order/component/sw-order-line-items-grid.api.md b/src/Administration/Resources/app/administration/public-api/module/sw-order/component/sw-order-line-items-grid.api.md
---- a/src/Administration/Resources/app/administration/public-api/module/sw-order/component/sw-order-line-items-grid.api.md
-+++ b/src/Administration/Resources/app/administration/public-api/module/sw-order/component/sw-order-line-items-grid.api.md
-@@ -13,7 +13,7 @@
-   canOpenProduct(item: any): any
-   createNewOrderLineItem(): any
-   onConfirmDelete(): any
--  onDeleteItem(item: any, itemIndex: any): any
-+  onDeleteItem(item: any, itemIndex: any): any  [deprecated tag:v6.8.0]
-   onDeleteSelectedItems(): any
-   onInsertBlankItem(): any
- ```

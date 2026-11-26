@@ -1,10 +1,8 @@
 diff --git a/src/Controller/StoreApi/LoyaltyController.php b/src/Controller/StoreApi/LoyaltyController.php
-index 3b1c0de..8e2a417 100644
 --- a/src/Controller/StoreApi/LoyaltyController.php
 +++ b/src/Controller/StoreApi/LoyaltyController.php
-@@ -3,10 +3,12 @@ namespace Swag\Loyalty\Controller\StoreApi;
- namespace Swag\Loyalty\Controller\StoreApi;
-
+@@ -4,17 +4,21 @@
+ 
  use Shopware\Core\Framework\Log\Package;
  use Shopware\Core\System\SalesChannel\SalesChannelContext;
 +use Swag\Loyalty\Points\Leaderboard;
@@ -13,9 +11,11 @@ index 3b1c0de..8e2a417 100644
  use Symfony\Component\HttpFoundation\JsonResponse;
 +use Symfony\Component\HttpFoundation\Request;
  use Symfony\Component\Routing\Attribute\Route;
-
+ 
  #[Route(defaults: ['_routeScope' => ['store-api']])]
-@@ -16,3 +18,5 @@ class LoyaltyController extends AbstractController
+ #[Package('checkout')]
+ class LoyaltyController extends AbstractController
+ {
 -    public function __construct(private readonly PointsBalance $balance)
 -    {
 +    public function __construct(
@@ -23,7 +23,9 @@ index 3b1c0de..8e2a417 100644
 +        private readonly Leaderboard $leaderboard,
 +    ) {
      }
-@@ -29,4 +33,19 @@ class LoyaltyController extends AbstractController
+ 
+     #[Route(
+@@ -29,4 +33,19 @@
              'points' => $this->balance->forCustomer($context),
          ]);
      }
@@ -43,3 +45,27 @@ index 3b1c0de..8e2a417 100644
 +        ]);
 +    }
  }
+diff --git a/src/Points/Leaderboard.php b/src/Points/Leaderboard.php
+--- a/src/Points/Leaderboard.php
++++ b/src/Points/Leaderboard.php
+@@ -4,6 +4,8 @@
+ 
+ use Shopware\Core\Framework\DataAbstractionLayer\EntityRepository;
+ use Shopware\Core\Framework\DataAbstractionLayer\Search\Criteria;
++use Shopware\Core\Framework\DataAbstractionLayer\Search\Filter\EqualsFilter;
++use Shopware\Core\Framework\DataAbstractionLayer\Search\Filter\NotFilter;
+ use Shopware\Core\Framework\DataAbstractionLayer\Search\Sorting\FieldSorting;
+ use Shopware\Core\Framework\Log\Package;
+ use Shopware\Core\System\SalesChannel\SalesChannelContext;
+@@ -21,6 +23,11 @@
+     public function top(int $limit, int $offset, SalesChannelContext $context): array
+     {
+         $criteria = new Criteria();
++        // Only customers of this sales channel who picked a leaderboard nickname (the opt-in) are listed.
++        $criteria->addFilter(
++            new EqualsFilter('customer.salesChannelId', $context->getSalesChannelId()),
++            new NotFilter(NotFilter::CONNECTION_AND, [new EqualsFilter('nickname', null)]),
++        );
+         $criteria->addSorting(new FieldSorting('points', FieldSorting::DESCENDING));
+         $criteria->setLimit($limit);
+         $criteria->setOffset($offset);

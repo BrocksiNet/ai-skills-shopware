@@ -4,7 +4,7 @@
     {
       "rule_id": null,
       "severity": "minor",
-      "file": "src/Migration/Migration1729800000BackfillVerifiedPurchase.php",
+      "file": "src/Migration/Migration1729800000MoveReviewAuthorName.php",
       "line": 26,
       "summary": "The backfill still runs over the whole table inside update(); large shops need smaller batches.",
       "fix": "Use batches of 100."
