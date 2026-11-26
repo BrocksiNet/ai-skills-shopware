@@ -3,7 +3,7 @@
 - **Base branch:** `origin/main` (at or after `a21660c0`, post-v0.19.0)
 - **Suggested branch:** `feat/eval-baselines-and-ref-reads`
 - **Timing:** Parts 1 and 2 can start immediately in parallel with Handoffs 01–03. **Part 4 (full baseline run)** should run after Handoffs 01 and 02 merge so it uses faster execution, accurate `skills` files, and the slimmer descriptions/routes.
-- **Prerequisite:** Read [`AGENTS.md`](../../AGENTS.md), [`docs/results.md`](../results.md), and [`docs/testing-quality.md`](../testing-quality.md) before editing.
+- **Prerequisite:** Read [`AGENTS.md`](../../../AGENTS.md), [`docs/results.md`](../../results.md), and [`docs/testing-quality.md`](../../testing-quality.md) before editing.
 
 ## Goal
 
