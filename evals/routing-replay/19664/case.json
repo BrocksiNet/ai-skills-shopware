@@ -10,5 +10,12 @@
     "sw-testing/references/integration-repository.md": [
       "https://github.com/shopware/shopware/pull/19664#discussion_r3922623573"
     ]
-  }
+  },
+  "labels": [
+    {
+      "reference": "sw-testing/references/core-platform-patterns.md",
+      "url": "https://github.com/shopware/shopware/pull/19664#discussion_r3922623573",
+      "why": "Reviewer asks to fold four repetitive integration tests with identical setup into a single test with a data provider."
+    }
+  ]
 }

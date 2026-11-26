@@ -13,5 +13,13 @@
     "sw-testing/references/integration-repository.md": [
       "https://github.com/shopware/shopware/pull/20596#discussion_r4045357192"
     ]
-  }
+  },
+  "labels": [
+    {
+      "reference": "sw-testing/references/exception-assertions.md",
+      "rule": "TEST-001",
+      "url": "https://github.com/shopware/shopware/pull/20596#discussion_r4045357192",
+      "why": "Reviewer points out that expectExceptionObject() already covers the exception message so the manual try/catch wrapper can be removed."
+    }
+  ]
 }

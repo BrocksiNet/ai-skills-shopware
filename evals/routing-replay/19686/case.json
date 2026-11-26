@@ -10,5 +10,12 @@
     "sw-review-learnings/references/api-aware.md": [
       "https://github.com/shopware/shopware/pull/19686#discussion_r3932266452"
     ]
-  }
+  },
+  "labels": [
+    {
+      "reference": "sw-core-development/references/release-notes-and-adr.md",
+      "url": "https://github.com/shopware/shopware/pull/19686#discussion_r3932502566",
+      "why": "RELEASE_INFO-6.7.md added a duplicate ## API heading instead of appending under the existing ## API section."
+    }
+  ]
 }

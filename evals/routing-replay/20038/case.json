@@ -10,5 +10,12 @@
     "sw-admin-js/references/testing.md": [
       "https://github.com/shopware/shopware/pull/20038#discussion_r3921961641"
     ]
-  }
+  },
+  "labels": [
+    {
+      "reference": "sw-admin-js/references/architecture.md",
+      "url": "https://github.com/shopware/shopware/pull/20038#discussion_r3921961641",
+      "why": "Reviewer questions registering raw mt-tabs directly instead of using Shopware's wrapper component in the Administration module."
+    }
+  ]
 }

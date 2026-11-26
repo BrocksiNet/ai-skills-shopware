@@ -7,5 +7,13 @@
     "sw-admin-js/references/testing.md": [
       "https://github.com/shopware/shopware/pull/21509#discussion_r4255303480"
     ]
-  }
+  },
+  "labels": [
+    {
+      "reference": "sw-admin-js/references/testing.md",
+      "rule": "ADM-033",
+      "url": "https://github.com/shopware/shopware/pull/21509#discussion_r4255303480",
+      "why": "Jest spec mutates shared session state without restoring it in afterEach or try/finally, risking state leaks across tests on failure."
+    }
+  ]
 }

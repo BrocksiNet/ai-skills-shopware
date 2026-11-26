@@ -30,5 +30,13 @@
     "sw-testing/references/test-assertions-and-shape.md": [
       "https://github.com/shopware/shopware/pull/20856#discussion_r4219752783"
     ]
-  }
+  },
+  "labels": [
+    {
+      "reference": "sw-testing/references/test-assertions-and-shape.md",
+      "rule": "TEST-035",
+      "url": "https://github.com/shopware/shopware/pull/20856#discussion_r4219731816",
+      "why": "Unit test uses static::anything() on DBAL parameter types, letting the test pass even if ParameterType::INTEGER for LIMIT is dropped."
+    }
+  ]
 }

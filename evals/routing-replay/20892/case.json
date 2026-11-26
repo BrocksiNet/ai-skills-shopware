@@ -8,5 +8,12 @@
       "https://github.com/shopware/shopware/pull/20892#discussion_r4119839192",
       "https://github.com/shopware/shopware/pull/20892#discussion_r4119839744"
     ]
-  }
+  },
+  "labels": [
+    {
+      "reference": "sw-storefront/references/twig-and-theme.md",
+      "url": "https://github.com/shopware/shopware/pull/20892#discussion_r4119839192",
+      "why": "Storefront SCSS theme review: use the CSS custom property fallback var(--sw-color-brand-primary, #{$sw-color-brand-primary}) instead of the raw SCSS variable."
+    }
+  ]
 }

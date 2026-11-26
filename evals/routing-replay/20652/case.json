@@ -13,5 +13,12 @@
     "sw-testing/references/core-platform-patterns.md": [
       "https://github.com/shopware/shopware/pull/20652#discussion_r4062677733"
     ]
-  }
+  },
+  "labels": [
+    {
+      "reference": "sw-core-development/references/deprecations.md",
+      "url": "https://github.com/shopware/shopware/pull/20652#discussion_r4062677733",
+      "why": "Reviewer asks to mark the deprecated storefront POST route test helper for removal with v6.8."
+    }
+  ]
 }

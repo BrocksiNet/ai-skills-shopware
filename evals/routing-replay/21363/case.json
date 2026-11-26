@@ -11,5 +11,12 @@
     "sw-core-development/references/release-notes-and-adr.md": [
       "https://github.com/shopware/shopware/pull/21363#discussion_r4245348996"
     ]
-  }
+  },
+  "labels": [
+    {
+      "reference": "sw-architecture/references/extension-mechanisms.md",
+      "url": "https://github.com/shopware/shopware/pull/21363#discussion_r4245100945",
+      "why": "New core extension event review: simplify the event contract to a single getContext(): SalesChannelContext accessor instead of redundant getters."
+    }
+  ]
 }

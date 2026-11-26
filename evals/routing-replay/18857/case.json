@@ -30,5 +30,13 @@
     "sw-testing/references/core-platform-patterns.md": [
       "https://github.com/shopware/shopware/pull/18857#discussion_r3690371595"
     ]
-  }
+  },
+  "labels": [
+    {
+      "reference": "sw-architecture/references/symfony-in-shopware.md",
+      "rule": "ARCH-001",
+      "url": "https://github.com/shopware/shopware/pull/18857#discussion_r3710268262",
+      "why": "Reviewer asks to use Symfony's ResetInterface and kernel.reset tag (which also fires between Messenger messages) instead of re-implementing manual request-reset wiring."
+    }
+  ]
 }
