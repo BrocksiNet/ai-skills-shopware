@@ -2,6 +2,8 @@
 // builds with: `build:admin.vite`, `build:admin.webpack` and
 // `build:storefront.webpack` exist while the config file does.
 import { errorMessage } from '../../src/errors.ts';
+import { adminScssItems, isAdminScssSource } from './admin-scss.ts';
+import { adminSnippetItems, isAdminSnippetSource } from './admin-snippets.ts';
 import { componentItems, globalItems, isAdminSource, positionItems, registrations, SHOPWARE_GLOBAL } from './admin.ts';
 import { readFiles } from './git.ts';
 import type { Item } from './model.ts';
@@ -36,7 +38,9 @@ function adminItems(files: Map<string, string>, unread: string[]): Item[] {
   const items: Item[] = [];
   for (const [path, code] of files) {
     try {
-      if (path.endsWith('.html.twig')) items.push(...positionItems(code, path));
+      if (isAdminScssSource(path)) items.push(...adminScssItems(code, path));
+      else if (isAdminSnippetSource(path)) items.push(...adminSnippetItems(code, path));
+      else if (path.endsWith('.html.twig')) items.push(...positionItems(code, path));
       else if (/Component\.(?:register|extend)\(/u.test(code))
         for (const registration of registrations(code, path, paths))
           items.push(...componentItems(registration, (file) => files.get(file)));
@@ -80,7 +84,7 @@ export function frontendItems(
     if (code.includes('new TwigFunction(') || code.includes('new TwigFilter(') || code.includes('getTag()'))
       items.push(...twigItems(code, path));
   }
-  const admin = all.filter((path) => isAdminSource(path));
+  const admin = all.filter((path) => isAdminSource(path) || isAdminScssSource(path) || isAdminSnippetSource(path));
   items.push(...adminItems(readFiles(repo, ref, admin), unread));
   const storefront = all.filter((path) => isStorefrontTemplate(path) || isStorefrontSource(path));
   items.push(...storefrontItems(readFiles(repo, ref, storefront), unread));

@@ -1,5 +1,6 @@
 // Which surface an item belongs to, which item owns it, and how the
 // admin, storefront and build items change in a way an extension notices.
+import { snippetChange } from './admin-snippets.ts';
 import { memberChange } from './member-signature.ts';
 import type { Item } from './model.ts';
 
@@ -40,7 +41,14 @@ export function surfaceOf(item: Item): Surface {
   )
     return kind;
   if (kind === 'entity' || kind === 'field') return 'entity';
-  if (id.startsWith('admin:') || id.startsWith('position:') || id.startsWith('global:')) return 'admin';
+  if (
+    id.startsWith('admin:') ||
+    id.startsWith('position:') ||
+    id.startsWith('global:') ||
+    id.startsWith('scss:') ||
+    id.startsWith('snippet:')
+  )
+    return 'admin';
   if (id.startsWith('storefront:') || id.startsWith('js-plugin:')) return 'storefront';
   return 'php';
 }
@@ -88,6 +96,7 @@ export function frontendChange(base: Item, head: Item): string | undefined {
   const before = base.signature ?? '';
   const after = head.signature ?? '';
   if (before === after) return undefined;
+  if (base.kind === 'snippet') return snippetChange(before, after);
   const member = memberChange(base.kind, before, after);
   if (member !== undefined) return member;
   if (base.kind === 'component' && before.startsWith('extends ')) return `${before} → ${after}`;

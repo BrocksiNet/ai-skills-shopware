@@ -27,7 +27,11 @@ export type UseKind =
   /** A build config core reads, such as the admin's `webpack.config.js`. */
   | 'build'
   /** An MCP DI service tag in an extension's services configuration. */
-  | 'mcp-tag';
+  | 'mcp-tag'
+  /** A core Admin SCSS variable or mixin imported from `~scss/variables` or `~scss/mixins`. */
+  | 'scss'
+  /** A core Admin snippet key passed to `$t()` or `$tc()`. */
+  | 'snippet';
 
 export interface Use {
   /** `php:Fqcn` or `php:Fqcn::member()` / `php:Fqcn::CONSTANT`, as in the index. */

@@ -96,3 +96,11 @@ test('withLines: a removal reads the base, everything else the head', () => {
     'Summary: 1 breaking change without a deprecation in v1, 0 removals or changes after a deprecation, 1 new deprecation.',
   );
 });
+
+test('lineOf: Admin SCSS variables, mixins, and snippet leaf keys', () => {
+  const scss = '$color-gray-100: #f0f2f5;\n$color-neutrals-slate-100: #f1f5f9;\n@mixin old-helper($size) {}\n';
+  assert.equal(lineOf('scss:var:$color-neutrals-slate-100', scss), 2);
+  assert.equal(lineOf('scss:mixin:old-helper', scss), 3);
+  const json = '{\n  "global": {\n    "default": {\n      "save": "Save"\n    }\n  }\n}\n';
+  assert.equal(lineOf('snippet:global.default.save', json), 4);
+});

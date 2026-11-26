@@ -2,7 +2,7 @@
 // symbol. docs/plans/done/2026-10-wp11-public-api-index.md explains the surfaces.
 
 export const SCHEMA = 1;
-export const GENERATOR = 'api-index/0.9.0';
+export const GENERATOR = 'api-index/0.10.0';
 
 export type ItemKind =
   | 'class'
@@ -27,6 +27,8 @@ export type ItemKind =
   | 'block'
   | 'position'
   | 'global'
+  | 'scss'
+  | 'snippet'
   | 'template'
   | 'js-plugin'
   | 'option'
@@ -46,10 +48,10 @@ export interface Flags {
   final?: 'keyword' | 'doc';
   /** Announced changes from `Shopware\Core\Framework\Deprecation\BCChange`, as `Name@version`. */
   bcChanges?: string[];
-  /** Admin: exists only with this feature flag on (`v6.8.0` for a major
+  /** Admin/Storefront: exists only with this feature flag on (`v6.8.0` for a major
    *  flag, else the flag name), see flag-state.ts. */
   from?: string;
-  /** Admin: exists only with this feature flag off; gone once it is on. */
+  /** Admin/Storefront: exists only with this feature flag off; gone once it is on. */
   until?: string;
 }
 
