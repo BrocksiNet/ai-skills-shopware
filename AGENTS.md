@@ -116,7 +116,7 @@ scripts/
   check-update.sh             # compare pinned version vs latest release tag (wrapper for tools/bin/check-update.ts)
 
 use-cases/                    # canonical `npx skills add` one-liners
-.claude-plugin/marketplace.json # Claude Code marketplace: the repo as plugin `shopware-skills`; version = .skills-version
+.claude-plugin/marketplace.json # Claude Code marketplace: plugin `shopware-skills` = this repo at the release tag; version and ref = .skills-version
 docs/                         # local validation, smoke evals, tooling stack
 .github/workflows/
   validate.yml                # cheap CI on every push (no model calls)

@@ -9,13 +9,23 @@
   "plugins": [
     {
       "name": "shopware-skills",
-      "source": "./",
+      "source": {
+        "source": "github",
+        "repo": "BrocksiNet/ai-skills-shopware",
+        "ref": "v0.20.0"
+      },
       "description": "Skills for building, reviewing and shipping Shopware 6 core changes, plugins and apps, with rules backed by evals.",
       "version": "0.20.0",
       "license": "MIT",
       "homepage": "https://github.com/BrocksiNet/ai-skills-shopware",
       "repository": "https://github.com/BrocksiNet/ai-skills-shopware",
-      "keywords": ["shopware", "php", "symfony", "plugin", "code-review"]
+      "keywords": [
+        "shopware",
+        "php",
+        "symfony",
+        "plugin",
+        "code-review"
+      ]
     }
   ]
 }

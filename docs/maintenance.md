@@ -468,9 +468,11 @@ session fails with a quota error until it resets.
 1. On a `chore/release-vX.Y.Z` branch, move `[Unreleased]` in
    [`CHANGELOG.md`](../CHANGELOG.md) into a dated section, written from the
    commits since the last tag (PRs do not fill `[Unreleased]`). Update the
-   compare links at the bottom, and bump `.skills-version` and the plugin
-   `version` in [`.claude-plugin/marketplace.json`](../.claude-plugin/marketplace.json)
-   (a test fails when the two differ).
+   compare links at the bottom, and bump `.skills-version` and, in
+   [`.claude-plugin/marketplace.json`](../.claude-plugin/marketplace.json),
+   the plugin `version` and source `ref` (a test fails when they differ).
+   Plugin installs fail between the merge and the release, because the tag
+   does not exist yet, so publish right after merging.
 2. Open the PR, wait for green CI and squash-merge it.
 3. Publish the release from the merge commit:
 

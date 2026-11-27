@@ -4,8 +4,9 @@ import { join } from 'node:path';
 import { describe, test } from 'node:test';
 
 // .claude-plugin/marketplace.json offers the skills as one Claude Code
-// plugin. Its `version` pins what users get, so it must move with every
-// release, together with .skills-version.
+// plugin. Its source `ref` (the release tag) decides which files users get
+// and its `version` when they are offered an update, so both move with
+// .skills-version on every release.
 const root = join(import.meta.dirname, '../..');
 
 const isRecord = (value: unknown): value is Record<string, unknown> =>
@@ -26,9 +27,10 @@ describe('Claude Code marketplace', () => {
     assert.equal(plugin?.version, pinned);
   });
 
-  test('the plugin is this repository, so it ships the skills/ folder', () => {
+  test('the plugin is this repository at the release tag', () => {
+    const pinned = readFileSync(join(root, '.skills-version'), 'utf8').trim();
     const [plugin] = plugins();
     assert.equal(plugin?.name, 'shopware-skills');
-    assert.equal(plugin.source, './');
+    assert.deepEqual(plugin.source, { source: 'github', repo: 'BrocksiNet/ai-skills-shopware', ref: pinned });
   });
 });

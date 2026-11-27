@@ -91,8 +91,8 @@ BrocksiNet/ai-skills-shopware` does the same. Use `--scope project` to share
 the plugin with your team through `.claude/settings.json`, or leave it out to
 install it for yourself only.
 
-The plugin follows releases, not `main`: it moves to a new version only when
-a release bumps it. To get the latest one:
+The plugin follows releases, not `main`: it installs the files of the
+latest release tag. To get the latest one:
 
 ```bash
 claude plugin marketplace update ai-skills-shopware
