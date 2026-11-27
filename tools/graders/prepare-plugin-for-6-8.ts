@@ -11,5 +11,13 @@ export const grade: Grader = ({ transcript }) => {
     hasLine(text, p),
   ).length;
   const wrong = hasLine(text, /feature_all=1|~6\.8\.0 only|6\.8\.0 only/u);
-  return verdict(flag && range && behaviors >= 2 && !wrong, { flag, range, behaviors, wrong });
+  // Reported, not scored: does the answer suggest the static next-major scan?
+  const nextMajorScan = text.includes('check-against next-major');
+  return verdict(flag && range && behaviors >= 2 && !wrong, {
+    flag,
+    range,
+    behaviors,
+    wrong,
+    next_major_scan: nextMajorScan,
+  });
 };
