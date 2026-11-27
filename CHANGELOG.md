@@ -8,6 +8,28 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- `sw-worktrees`: one place for git worktrees. `WT-001` puts them under one
+  root as `<project>/<kind>-<number>[-<slug>]` (reviews from
+  `pull/<n>/head`, work from the default branch), `WT-002` cleans up only
+  merged, clean and pushed worktrees with `git worktree remove` and prune,
+  and `WT-003` reads the user's preferences first. Three eval tasks cover
+  review naming, cleanup that keeps unpushed work, and preferences.
+- Personal skill preferences ([docs/skill-preferences.md](docs/skill-preferences.md)):
+  a skill ships `preferences.example.md`, the answers live in
+  `${AI_SKILLS_SHOPWARE_PREFS_DIR:-~/.config/ai-skills-shopware}/<skill>/preferences.md`
+  outside the repo. `validate-skills` checks the example is linked, the path
+  is named, and no `preferences.md` ships.
+- `sw-local-dev` (Podman): only autostart instances start (`sw-dev startup
+  --all` for every one), `sw-dev lane start|stop|refresh`, refresh a stopped
+  lane before testing on it, and `sw-dev mcp bootstrap` after a fresh install.
+
+### Changed
+
+- `sw-pr-review` and `sw-local-dev` point to `sw-worktrees` for where a
+  worktree goes and how it is named.
+
 ## [0.19.0] - 2026-11-25
 
 ### Added

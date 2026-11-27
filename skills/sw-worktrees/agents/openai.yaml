@@ -1,0 +1,4 @@
+interface:
+  display_name: "Shopware Worktrees"
+  short_description: "Create, name, find and clean up git worktrees in one place."
+  default_prompt: "Use $sw-worktrees to set up a worktree for reviewing this pull request."

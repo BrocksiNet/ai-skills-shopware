@@ -72,8 +72,8 @@ unless debugging — linked projects use `COMPOSE_FILE` in `.env`.
 
 ## Git worktrees
 
-A git worktree (for example `~/.local/state/sf/worktrees/<task>` where `.git` is
-a file) is **not** synced into the lane's Mutagen volume. Running
+A git worktree (`.git` is a file; where it goes and its name: `sw-worktrees`)
+is **not** synced into the lane's Mutagen volume. Running
 `podman compose exec web …` from a worktree hits the main checkout's files, not
 the worktree, and running host `php` / `composer` / `phpunit` uses the wrong
 host PHP version.

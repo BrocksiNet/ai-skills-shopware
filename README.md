@@ -90,7 +90,7 @@ Pinning, updating and tool folders are covered in
 | Build | `sw-plugin-development`, `sw-app-development`, `sw-core-development`, `sw-openapi-dto`, `sw-mcp-development`, `sw-admin-js`, `sw-storefront`, `sw-php-foundation`, `sw-testing`, `sw-security`, `sw-architecture` |
 | Ship | `sw-change-impact`, `sw-pr-description` |
 | Review | `sw-extension-review`, `sw-review-learnings`, `sw-pr-review` |
-| Run, research, answer | `sw-local-dev`, `sw-research-and-escalation`, `sw-assistant-style` |
+| Run, research, answer | `sw-local-dev`, `sw-worktrees`, `sw-research-and-escalation`, `sw-assistant-style` |
 | Find your way | `sw-skill-router`, `sw-help` |
 
 [`REGISTRY.md`](REGISTRY.md) lists what each skill owns. Every topic has
@@ -135,6 +135,7 @@ weekly, and model evals run monthly and before releases. See
 | [`docs/results.md`](docs/results.md) | What the A/B runs showed |
 | [`docs/maintenance.md`](docs/maintenance.md) | Automation that keeps rules current, and what is planned |
 | [`docs/skill-resolution.md`](docs/skill-resolution.md) | Core trunk's own skills next to ours |
+| [`docs/skill-preferences.md`](docs/skill-preferences.md) | Personal preferences for a skill, kept outside the repository |
 | [`docs/local-validation.md`](docs/local-validation.md) | Try the skills on your own shop and send feedback |
 | [`evals/README.md`](evals/README.md) | Writing and running eval tasks |
 | [`docs/testing-quality.md`](docs/testing-quality.md) | Coverage, targeted mutation checks, runtime contracts and measured gaps |

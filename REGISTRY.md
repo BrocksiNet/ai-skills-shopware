@@ -33,6 +33,7 @@ the surface skills can all be installed together without contradicting (see
 | `sw-pr-review` | maintainer | PR review threads | Reacting to GitHub review comments, fix vs reply vs push back | Initial PR body, generic idiomatic review |
 | `sw-extension-review` | maintainer | plugin / app review (`custom/plugins`, `custom/apps`) | Reviewing a whole plugin or app diff before merge, release or Store submission; findings with rule IDs and severities | Core PRs (core `sw-review`), review thread replies, writing the code, feature blast radius |
 | `sw-local-dev` | maintainer | local environment: DDEV, Docker Compose, Vagrant, native, linked Podman checkout, or Shopware CLI project | Running php/composer/phpunit/console/npm where the project runs, or shopware-cli project/extension validate | Test structure, PR text, release notes |
+| `sw-worktrees` | maintainer | any git repository of Shopware work (core, plugins, apps, related repos) | Creating, naming, finding, renaming and cleaning up git worktrees; a separate checkout to review a PR; personal root and layout via preferences | Running commands inside a worktree (`sw-local-dev`), review thread replies, rebases and merges |
 | `sw-storefront` | maintainer | storefront (Twig/theme/JS) | Storefront plugins, Twig blocks, theme SCSS, HTTP-cache-safe AJAX | Admin Vue, PHP DAL, generic CSS lectures |
 | `sw-admin-js` | maintainer | Administration JS/TS/Vue | Admin Vue/TS, Meteor `mt-*`, Jest specs, Admin ACL | Storefront Twig, PHPUnit, PHP services |
 | `sw-skill-router` | maintainer | any (the library itself) | "Which skill should I use", the start of Shopware work, a diff or a plan to route; runs `scripts/route.mjs` | Explaining the library (`sw-help`), the topics themselves |
@@ -106,6 +107,7 @@ the surface skills can all be installed together without contradicting (see
 | Migration tests, Codecov `#[CoversClass]`, core platform test placement | `sw-testing` |
 | Local execution per environment (DDEV, Docker Compose, Vagrant, native, Podman on shopware-dev; shopware-cli on CLI projects; MCP never blocking) | `sw-local-dev` |
 | shopware-dev hub (`~/shopware-dev`, `sw-dev link`, Mutagen, multi-lane proxy) | `sw-local-dev` |
+| Git worktrees: root, `<project>/<kind>-<number>[-<slug>]` naming, creation from the default branch or `pull/<n>/head`, safe cleanup (`git worktree remove`, prune) | `sw-worktrees` |
 | Storefront Twig/theme inheritance, PluginManager JS, Bootstrap storefront components, Twig 4 (`spaceless`, null attributes) | `sw-storefront` |
 | Storefront HTTP cache vs AJAX; no speculation/prerender on cart/checkout/account | `sw-storefront` |
 | Storefront public API for themes (Twig blocks and variables, JS plugin options and events, SCSS variables, `theme.json` fields, snippet keys) | `sw-storefront` |

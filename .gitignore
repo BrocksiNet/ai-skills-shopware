@@ -45,3 +45,6 @@ tools/api-index/npm/LICENSE
 
 # api-diff vs sw-impact cross-check output (tools/api-index/bin/cross-check.ts)
 tools/api-index/.cross-check/
+
+# Personal skill preferences live outside the repo (docs/skill-preferences.md)
+skills/*/preferences.md

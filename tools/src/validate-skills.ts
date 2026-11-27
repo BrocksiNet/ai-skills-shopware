@@ -4,7 +4,9 @@
 // Per skill: frontmatter `name` matches the folder, the description is under
 // 1024 characters (the budget every provider loads up front), SKILL.md is
 // under 500 lines, both activation eval files exist, and every
-// `](references/x.md)` link resolves. Across skills: no trigger phrase is
+// `](references/x.md)` link resolves. A skill with preferences.example.md
+// links it and names AI_SKILLS_SHOPWARE_PREFS_DIR; no skill ships a
+// personal preferences.md (docs/skill-preferences.md). Across skills: no trigger phrase is
 // claimed twice and no REGISTRY.md topic has two owners. Then the rule ID
 // and reference route checks, then the router index and the help skill.
 import { existsSync, readdirSync, readFileSync, statSync } from 'node:fs';
@@ -27,6 +29,8 @@ import { compareText } from './text.ts';
 const MAX_DESCRIPTION = 1024;
 const MAX_LINES = 500;
 const EVAL_FILES = ['evals/should-trigger.md', 'evals/should-not-trigger.md'];
+const PREFS_EXAMPLE = 'preferences.example.md';
+const PREFS_DIR_VAR = 'AI_SKILLS_SHOPWARE_PREFS_DIR';
 
 export interface ValidateSkillsOptions {
   root: string;
@@ -37,6 +41,21 @@ export interface ValidateSkillsOptions {
 interface Skill {
   errors: string[];
   phrases: string[];
+}
+
+/** docs/skill-preferences.md: the example ships with the skill and SKILL.md
+ *  links it and names the personal path; the answers file never ships. */
+function preferenceErrors(dir: string, skill: string, text: string): string[] {
+  const hasExample = existsSync(join(dir, PREFS_EXAMPLE));
+  const linksExample = text.includes(`](${PREFS_EXAMPLE})`);
+  return [
+    existsSync(join(dir, 'preferences.md'))
+      ? `${skill}: preferences.md holds personal answers; ship ${PREFS_EXAMPLE} instead`
+      : '',
+    linksExample && !hasExample ? `${skill}: dead internal link -> ${PREFS_EXAMPLE}` : '',
+    hasExample && !linksExample ? `${skill}: SKILL.md does not link ${PREFS_EXAMPLE}` : '',
+    hasExample && !text.includes(PREFS_DIR_VAR) ? `${skill}: SKILL.md does not name ${PREFS_DIR_VAR}` : '',
+  ];
 }
 
 function checkSkill(dir: string, skill: string): Skill {
@@ -55,6 +74,7 @@ function checkSkill(dir: string, skill: string): Skill {
     ...referenceLinks(text).map((rel) =>
       existsSync(join(dir, rel)) ? '' : `${skill}: dead internal link references/ -> ${rel}`,
     ),
+    ...preferenceErrors(dir, skill, text),
   ].filter((e) => e !== '');
   return { errors, phrases: triggerPhrases(description) };
 }
