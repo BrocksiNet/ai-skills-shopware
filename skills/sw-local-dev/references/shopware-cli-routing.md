@@ -38,8 +38,21 @@ Choose checks by scope:
   each extension's manifest/metadata validity.
 - `extension validate <path>` checks that extension. Select full validation,
   Store compliance and supported-version checks only when the task needs them.
+- `--check-against next-major` (0.22 and later, project and extension
+  validate) adds PHPStan rules for the breaking changes announced for the next
+  Shopware major. Use it when the task is upgrade preparation, usually with
+  `--only phpstan`.
 - Keep existing targeted unit, integration, build and browser checks when they
   cover behavior the CLI validation does not exercise.
+
+Limits and reports (0.22 and later, when the help lists them):
+
+- `validate`, `format` and `fix` take `--timeout` (`30s`, `5m`, `1h30m`) or
+  read `SHOPWARE_CLI_QA_TIMEOUT`; there is no limit by default. Set one for an
+  unattended run so a slow PHPStan pass cannot hang the task, and report a
+  timeout as an unfinished check, not a pass.
+- `fix` accepts `--format` like `validate` (summary, json, github, gitlab,
+  junit, markdown). Read the JSON report instead of parsing console output.
 
 Before execution, include the selected runner, binary/version, working directory,
 checks, proposed limits and side effects in the task plan. Validation runs in

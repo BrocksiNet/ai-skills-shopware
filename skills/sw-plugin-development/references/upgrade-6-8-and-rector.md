@@ -28,6 +28,14 @@ What you can already check:
 
 How to test, on a shop that still supports the current minor:
 
+- Start with a static scan for announced breaks. Shopware CLI 0.22 and later
+  can do this: `shopware-cli extension validate <path> --check-against
+  next-major --only phpstan` (or `project validate --check-against
+  next-major` for a shop project). PHPStan reads the breaking-change
+  attributes of the Shopware version it resolves and lists the code that
+  uses them. Check `--help` of the installed binary first; older releases do
+  not have the option. The scan finds API breaks only, not the behavior
+  changes below.
 - Keep the normal suite. Add a second run with `V6_8_0_0=1`.
 - `FEATURE_ALL` enables later flags as well. It is not the 6.8 run.
 - An explicit feature override can leave a linked flag (such as
