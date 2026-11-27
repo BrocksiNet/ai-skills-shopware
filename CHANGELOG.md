@@ -8,6 +8,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.20.0] - 2026-11-27
+
 ### Added
 
 - `sw-worktrees`: one place for git worktrees. `WT-001` puts them under one
@@ -24,11 +26,48 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `sw-local-dev` (Podman): only autostart instances start (`sw-dev startup
   --all` for every one), `sw-dev lane start|stop|refresh`, refresh a stopped
   lane before testing on it, and `sw-dev mcp bootstrap` after a fresh install.
+- `sw-mcp-development` (experimental): Shopware MCP tools in plugins and
+  apps. `MCP-001` to `MCP-008` cover structured results, the reserved
+  discovery group and `shopware-` prefix, tool registration, dry-run write
+  tools, annotations and parameter schemas, entity criteria ACL and
+  response bounds, serverless app script tools, and private cache hints for
+  resources. The API index lists MCP extension points and DI tags.
+- `sw-admin-js`: `ADM-046` to `ADM-050` for Administration overrides: block
+  boundaries before overriding without `{% parent %}`, only the variables a
+  block exposes, no `$parent` or core `src` imports, `@bc-change` for
+  elements that stay on trunk, and every overridden method must exist on
+  the target. Each has a review pair.
+- `sw-app-development` tags `APP-001` to `APP-006` (manifest identity,
+  permissions and setup, no plugin PHP in apps, Admin SDK UI, app script
+  placement, registration handshake), each with a review pair.
+- `sw-skill-router`: `route.mjs --brief` and `--hook` (a Claude Code hook
+  that does not repeat a route already shown in the session). The router
+  index carries active rule IDs and titles.
+- API index: BCChange facts tell callers from extenders, plus Storefront
+  feature flag states and older Admin SCSS and snippet surfaces.
+- Evals: A/B runs and the gate record which references the agent read;
+  five near-miss review tasks; `EVAL_CONCURRENCY` for local evals.
 
 ### Changed
 
 - `sw-pr-review` and `sw-local-dev` point to `sw-worktrees` for where a
   worktree goes and how it is named.
+- Skill descriptions are 41% shorter (11,863 to 7,039 characters) and keep
+  their load-before-editing triggers. Large references in `sw-testing`,
+  `sw-php-foundation` and `sw-plugin-development` are split so a route
+  loads less.
+- `sw-local-dev` documents `sw-dev worktree exec` for Podman worktrees.
+- Golden graders run in-process and in parallel; GitHub Actions, agent CLIs
+  and npm tooling updated.
+
+### Fixed
+
+- `evals.yml` no longer opens a baseline PR from a run the provider broke
+  (for example a Copilot quota that turned 284 of 285 tasks into agent
+  errors).
+- Review fixtures: no unintended second defect in the MCP fixtures,
+  repaired hunk headers in 25 patches (with a test), tighter graders and
+  `fixtures/fail` sneaks for 15 behavioral tasks.
 
 ## [0.19.0] - 2026-11-25
 
@@ -1191,7 +1230,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   (`actions/checkout@v5`, `markdownlint-cli2-action@v23`).
 - `docs/local-validation.md` and GitHub issue templates for feedback.
 
-[Unreleased]: https://github.com/BrocksiNet/ai-skills-shopware/compare/v0.19.0...main
+[Unreleased]: https://github.com/BrocksiNet/ai-skills-shopware/compare/v0.20.0...main
+[0.20.0]: https://github.com/BrocksiNet/ai-skills-shopware/compare/v0.19.0...v0.20.0
 [0.19.0]: https://github.com/BrocksiNet/ai-skills-shopware/compare/v0.18.0...v0.19.0
 [0.18.0]: https://github.com/BrocksiNet/ai-skills-shopware/compare/v0.17.0...v0.18.0
 [0.17.0]: https://github.com/BrocksiNet/ai-skills-shopware/compare/v0.16.0...v0.17.0
