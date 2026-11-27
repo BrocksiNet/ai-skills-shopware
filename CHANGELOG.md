@@ -8,6 +8,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- **Claude Code plugin.** Claude Code users can install every skill in one
+  step with `claude plugin install shopware-skills --marketplace
+  BrocksiNet/ai-skills-shopware`. The plugin follows releases, not `main`.
+  See [Claude Code plugin](docs/using/installation.md#claude-code-plugin).
+
 ## [0.20.0] - 2026-11-27
 
 This release adds a skill for git worktrees, lets skills remember how you

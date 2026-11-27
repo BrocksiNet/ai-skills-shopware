@@ -1,0 +1,31 @@
+{
+  "$schema": "https://json.schemastore.org/claude-code-marketplace.json",
+  "name": "ai-skills-shopware",
+  "owner": {
+    "name": "BrocksiNet",
+    "url": "https://github.com/BrocksiNet"
+  },
+  "description": "Agent Skills for Shopware 6 core, plugin, app, Storefront and Administration development.",
+  "plugins": [
+    {
+      "name": "shopware-skills",
+      "source": {
+        "source": "github",
+        "repo": "BrocksiNet/ai-skills-shopware",
+        "ref": "v0.20.0"
+      },
+      "description": "Skills for building, reviewing and shipping Shopware 6 core changes, plugins and apps, with rules backed by evals.",
+      "version": "0.20.0",
+      "license": "MIT",
+      "homepage": "https://github.com/BrocksiNet/ai-skills-shopware",
+      "repository": "https://github.com/BrocksiNet/ai-skills-shopware",
+      "keywords": [
+        "shopware",
+        "php",
+        "symfony",
+        "plugin",
+        "code-review"
+      ]
+    }
+  ]
+}
