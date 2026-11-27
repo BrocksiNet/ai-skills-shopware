@@ -57,7 +57,7 @@ PR template.
    drops the check, and today nobody notices.
 4. **Read the skill-authoring policy and the shared-guidance ADR**: the ADR
    for `sw-core-development`, the policy for this repo's own authoring
-   conventions (`docs/skill-resolution.md` depends on core and us writing
+   conventions (`docs/using/skill-resolution.md` depends on core and us writing
    skills the same way).
 5. **Local environment templates** (DDEV, Docker, native, Vagrant) →
    `sw-local-dev` (WP B).

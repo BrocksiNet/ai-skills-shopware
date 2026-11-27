@@ -58,7 +58,7 @@ Measured from `node tools/bin/replay-routes.ts --corpus evals/routing-replay`:
 - Add `--brief` to `skills/sw-skill-router/scripts/route.mjs`: prints a compact pointer list (2–10 lines: matched skill, reference path, rule IDs + one-line titles, and why it matched) with no verbose prose.
 - Add `--hook` to `skills/sw-skill-router/scripts/route.mjs`: computes the `--brief` output, compares a hash of the matched set against a small state file under the repository's `.git/` dir (safe for worktrees via `git rev-parse --git-dir`), and prints nothing when the routed set did not change since the last call.
 - Add unit tests in `tools/test/skill-router.test.ts` covering `--brief`, `--hook` repeat suppression, worktree git dirs, and JSON output compatibility.
-- Document the optional hook snippet and Claude Code `skillOverrides` (`name-only`) profile in `use-cases/` and `docs/installation.md` (explicitly pairing `"name-only"` with the hook so activation does not regress).
+- Document the optional hook snippet and Claude Code `skillOverrides` (`name-only`) profile in `use-cases/` and `docs/using/installation.md` (explicitly pairing `"name-only"` with the hook so activation does not regress).
 - Optionally add a `context: fork` note or variant for `sw-extension-review` and `sw-pr-review` (self-contained diff/PR skills; do not use `context: fork` on build skills that rely on conversation history).
 
 ### 5. Re-render generated files

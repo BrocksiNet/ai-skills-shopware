@@ -36,4 +36,4 @@ npx skills add FriendsOfShopware/agent-skills --skill shopware-phpunit -a cursor
 | ----- | ----------------- |
 | shopware/shopware migration + Codecov placement | `sw-testing` → `core-platform-patterns.md` |
 | Plugin fixture builders, Store API plugin routes | FoS `shopware-phpunit` (install separately) |
-| Auto-generate + review loop with MCP test-rules | shopware-ai-coding-tools plugin (optional; see `docs/tooling-stack.md`) |
+| Auto-generate + review loop with MCP test-rules | shopware-ai-coding-tools plugin (optional; see `docs/using/tooling-stack.md`) |

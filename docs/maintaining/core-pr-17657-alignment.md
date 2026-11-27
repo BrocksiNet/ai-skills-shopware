@@ -3,7 +3,7 @@
 We **mine** `shopware/shopware` trunk `.agents/skills/` for maintainer-backed
 deltas. We do **not** copy core’s in-repo skills — this repo stays the single
 source of truth for plugins, older core branches, and eval-backed rules
-(`sw-dev link`, install profiles in [`skill-resolution.md`](skill-resolution.md)).
+(`sw-dev link`, install profiles in [`skill-resolution.md`](../using/skill-resolution.md)).
 
 Seed PR: [#17657](https://github.com/shopware/shopware/pull/17657) (merged
 2026-06-26). **Last mined:** trunk 2026-10-19 (see
@@ -15,8 +15,8 @@ Seed PR: [#17657](https://github.com/shopware/shopware/pull/17657) (merged
 Canonical path: `.agents/skills/`; `.claude/skills` → symlink.
 
 From 2026-10-20 the weekly
-[`mine-trunk`](../.github/workflows/mine-trunk.yml) workflow lists new deltas
-in an issue labeled `trunk-drift`, and [`.mining-state.json`](.mining-state.json)
+[`mine-trunk`](../../.github/workflows/mine-trunk.yml) workflow lists new deltas
+in an issue labeled `trunk-drift`, and [`.mining-state.json`](../.mining-state.json)
 records how far trunk has been read. Record each decision from such an issue
 in a mining pass section here, as before.
 
@@ -44,7 +44,7 @@ row to the next mining pass.
 | [#21627](https://github.com/shopware/shopware/pull/21627) | PR template: What and why / How / Testing / Additional notes / Checklist | open | rewrite `sw-pr-description/references/pr-body-template.md` and the `pr-no-ai-trailers` fixtures | draft [#23](https://github.com/BrocksiNet/ai-skills-shopware/pull/23) |
 | [#21730](https://github.com/shopware/shopware/pull/21730) | Admin lint: no new `.js` in `src`, no new mixins; agent docs point at reference implementations, examples use `wrapComponentConfig()` | open | WP0 item 7, `admin-js-implementation-to-ts` grader; point `sw-admin-js` at the named component, composable and store | draft [#24](https://github.com/BrocksiNet/ai-skills-shopware/pull/24) |
 | [#21725](https://github.com/shopware/shopware/pull/21725) | Admin lint baselines that may only shrink (foundation of #21730) | open | none directly; merges before #21730 | not needed |
-| [#21502](https://github.com/shopware/shopware/pull/21502) | `composer skills:enable` / `skills:disable` | open | `docs/skill-resolution.md`: the official way to hide core skills in a full install | after merge |
+| [#21502](https://github.com/shopware/shopware/pull/21502) | `composer skills:enable` / `skills:disable` | open | `docs/using/skill-resolution.md`: the official way to hide core skills in a full install | after merge |
 
 [#21722](https://github.com/shopware/shopware/pull/21722), the first home of
 the Administration agent docs, was closed on 2026-10-20. The docs moved to
@@ -65,7 +65,7 @@ PR #21725 and then to #21730.
 | `sw-triage`, `sw-review`, `sw-bugfixer` | — | skip (gh-aw; explicit invocation only) |
 
 The ID column links a row to its entry in
-[`rules/catalog.json`](../rules/catalog.json). `—` means the owning skill is
+[`rules/catalog.json`](../../rules/catalog.json). `—` means the owning skill is
 not tagged yet.
 
 ## Testing (`sw-testing`)
@@ -164,7 +164,7 @@ not tagged yet.
 
 Trunk commits after the 2026-10-13 pass that changed `.agents/`,
 `coding-guidelines/` or enforcement. Work package WP0 of
-[`plans/done/2026-10-skills-evolution.md`](plans/done/2026-10-skills-evolution.md).
+[`plans/done/2026-10-skills-evolution.md`](../plans/done/2026-10-skills-evolution.md).
 
 | Core PR | Rule | Our target | Status |
 | ------- | ---- | ---------- | ------ |

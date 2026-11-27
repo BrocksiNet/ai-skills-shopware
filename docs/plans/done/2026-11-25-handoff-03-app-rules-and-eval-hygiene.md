@@ -12,7 +12,7 @@ Close the highest-value skill-tagging, grader-hygiene, and routing-replay gaps i
 1. Tag `sw-app-development` (`APP-001..`) in `rules/catalog.json` with real evals (currently **0** catalogued rules and only **1** eval task).
 2. Add almost-pass sneak `fixtures/fail/` cases to the **15 older behavioral tasks** that currently lack one.
 3. Add **near-miss review tasks** for commonly confused rule families (currently only 4 exist across 243 rules) and audit the 2 lone `-ignore` tasks.
-4. Expand hand-labelled ground truth in `evals/routing-replay/` from **3** comments to **15–20** comments and refresh the stale coverage numbers in `docs/results.md`.
+4. Expand hand-labelled ground truth in `evals/routing-replay/` from **3** comments to **15–20** comments and refresh the stale coverage numbers in `docs/results/README.md`.
 
 ## Scope of Changes
 
@@ -65,12 +65,12 @@ For each task:
   - Admin extension API (`ADM-039` component public API vs `PLG-001` core block missing in supported range).
 - Audit the two lone `-ignore` tasks (`review-queue-custom-normalizer-ignore` and `review-reset-method-tag-ignore`): confirm whether they are intentional extra negative controls for existing rules (`REV-033`, `ARCH-001`) and document that explicitly in their `instruction.md` / grader comments so future audits don't flag them as orphaned.
 
-### 4. Expand `evals/routing-replay/` hand labels and refresh `docs/results.md`
+### 4. Expand `evals/routing-replay/` hand labels and refresh `docs/results/README.md`
 
 - Currently `evals/routing-replay/` has 34 recorded PRs but only **3 hand-labelled comments**.
 - Review ~12–17 more recorded PRs in `evals/routing-replay/*/case.json` across `sw-testing`, `sw-core-development`, `sw-plugin-development`, `sw-admin-js`, `sw-storefront`, `sw-security`, and `sw-architecture` and add verified ground-truth `labels` (comment → rule ID + reference).
 - Verify `node tools/bin/replay-routes.ts --corpus evals/routing-replay` and `tools/test/route-replay.test.ts` pass with all hand labels selected (or open a concrete follow-up note for any genuine route miss uncovered).
-- Update the `"What is covered"` table in `docs/results.md` to reflect the real post-PR counts (active rules, rules with eval, eval tasks, review tasks, routing cases).
+- Update the `"What is covered"` table in `docs/results/README.md` to reflect the real post-PR counts (active rules, rules with eval, eval tasks, review tasks, routing cases).
 
 ## Verification
 
@@ -91,5 +91,5 @@ bash evals/test-graders.sh
 - All 15 listed behavioral tasks have a meaningful `fixtures/fail/` sneak that fails `evals/test-graders.sh`.
 - At least 4 new near-miss review tasks pass golden checks.
 - `evals/routing-replay/` has >= 15 verified hand labels passing `route-replay.test.ts`.
-- `docs/results.md` coverage counts match the repository.
+- `docs/results/README.md` coverage counts match the repository.
 - All deterministic CI checks pass.

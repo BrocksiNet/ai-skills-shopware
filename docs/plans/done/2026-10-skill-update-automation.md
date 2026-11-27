@@ -1,6 +1,6 @@
 # Skill update automation plan (2026-10)
 
-Status: **done** (2026-10-23), all phases; how it works today is in [`docs/maintenance.md`](../../maintenance.md) · Author: BrocksiNet · Created: 2026-10-23
+Status: **done** (2026-10-23), all phases; how it works today is in [`docs/maintaining/README.md`](../../maintaining/README.md) · Author: BrocksiNet · Created: 2026-10-23
 
 Rules go stale because Shopware changes every week. Half of the upkeep is
 automated already: the weekly trunk mining issue and the weekly API index.
@@ -11,7 +11,7 @@ The merge stays human, and every rule change still has to pass the A/B gate.
 It extends [WP8](2026-10-skills-evolution.md#wp8-automated-trunk-mining) and
 [WP9](2026-10-skills-evolution.md#wp9-upstream-watchlist) of the skills
 evolution plan, and builds the "Planned: upstream skill sets" part of the
-maintenance page (`docs/maintenance.md`, added in #54).
+maintenance page (`docs/maintaining/README.md`, added in #54).
 
 ## Why now
 
@@ -461,7 +461,7 @@ agent only explains them:
 
 `tools/bin/suggest-rules.ts` with the logic in `tools/src/suggest-*.ts` and
 the ask adapters in `tools/src/agent-ask.ts`; the user guide is
-[`docs/maintenance.md`](../../maintenance.md#suggesting-rule-changes).
+[`docs/maintaining/suggesting-rules.md`](../../maintaining/suggesting-rules.md#suggesting-rule-changes).
 Differences from the plan above:
 
 - Clusters are keyed by the rule a signal maps to (a rule-level match),
@@ -516,7 +516,7 @@ skill does not win stays a draft.
 
 **Later** (built 2026-10-26): the same command in a workflow, started by a
 `/draft <id>` comment on the drift issue. See
-[Suggesting rules in CI](../../maintenance.md#suggesting-rules-in-ci).
+[Suggesting rules in CI](../../maintaining/suggesting-rules.md#suggesting-rules-in-ci).
 
 **Acceptance**:
 
@@ -528,7 +528,7 @@ skill does not win stays a draft.
 
 `node tools/bin/suggest-rules.ts draft <id>` with the logic in
 `tools/src/draft-*.ts`; the user guide is
-[`docs/maintenance.md`](../../maintenance.md#drafting-a-proposal).
+[`docs/maintaining/suggesting-rules.md`](../../maintaining/suggesting-rules.md#drafting-a-proposal).
 Differences from the plan above:
 
 - The worktree goes to `.cache/drafts/<branch>` and starts from
@@ -605,13 +605,13 @@ planned. Each phase updates the docs in the same pull request as the code:
 
 | Phase | Docs to update |
 | ----- | -------------- |
-| 1 | `docs/maintenance.md`: the "Planned: upstream skill sets" section becomes "What runs today", with the source list and how to add a source. The short README has no mining paragraph any more, so the maintenance page carries it. |
-| 2 | `docs/maintenance.md`: how to read the drift issue grouped by skill and rule, and what "unmapped" means. `AGENTS.md`: fill `upstream` or `trunk.source` when adding a rule, so the mapper finds it. `rules/catalog.schema.json` describes `upstream`. |
-| 3 | `docs/maintenance.md`: the review collector, what it keeps and drops, where the `review-signals` release is, and how to download a month. The flowchart gets the daily path. |
-| 4 | A new section "Suggesting rule changes" in `docs/maintenance.md`: the command, its options, the proposal format, how to judge a proposal against the five criteria, and the retirement evidence. `AGENTS.md` "Repository layout" and "Adding or changing a rule" point to it. |
-| 5 | `docs/maintenance.md` "How a change lands": the drafted-PR path next to the manual one, the checks it runs, and what a reviewer looks at before merging. `AGENTS.md` lists the draft command. |
+| 1 | `docs/maintaining/README.md`: the "Planned: upstream skill sets" section becomes "What runs today", with the source list and how to add a source. The short README has no mining paragraph any more, so the maintenance page carries it. |
+| 2 | `docs/maintaining/README.md`: how to read the drift issue grouped by skill and rule, and what "unmapped" means. `AGENTS.md`: fill `upstream` or `trunk.source` when adding a rule, so the mapper finds it. `rules/catalog.schema.json` describes `upstream`. |
+| 3 | `docs/maintaining/README.md`: the review collector, what it keeps and drops, where the `review-signals` release is, and how to download a month. The flowchart gets the daily path. |
+| 4 | A new section "Suggesting rule changes" in `docs/maintaining/README.md`: the command, its options, the proposal format, how to judge a proposal against the five criteria, and the retirement evidence. `AGENTS.md` "Repository layout" and "Adding or changing a rule" point to it. |
+| 5 | `docs/maintaining/README.md` "How a change lands": the drafted-PR path next to the manual one, the checks it runs, and what a reviewer looks at before merging. `AGENTS.md` lists the draft command. |
 
-After phase 5, `docs/maintenance.md` explains the whole process end to end
+After phase 5, `docs/maintaining/README.md` explains the whole process end to end
 in one place: sources, signals, mapping, suggestions, drafts, gate and
 merge. This plan then gets status **done** and links to that page instead
 of repeating it.

@@ -77,7 +77,7 @@ Read only the reference that matches the task or the files it changes:
 ## Further reading
 
 - Core trunk skills: `.agents/skills/shopware-php-code`, `shopware-change-scope`
-- Install profiles: [`docs/skill-resolution.md`](../../docs/skill-resolution.md)
+- Install profiles: [`docs/using/skill-resolution.md`](../../docs/using/skill-resolution.md)
 
 ## Already enforced by CI (do not repeat)
 

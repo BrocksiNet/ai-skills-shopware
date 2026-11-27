@@ -17,7 +17,7 @@
 
 - `.mcp.json`, proxy configs, and Cursor MCP headers may hold real keys **locally**.
 - Do not copy those values into PRs, skills, or support tickets.
-- See `docs/tooling-stack.md` for team proxy setup.
+- See `docs/using/tooling-stack.md` for team proxy setup.
 
 ## Eval
 

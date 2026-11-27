@@ -2,8 +2,8 @@
 
 How the library is built, how an agent finds the right rule, and how every
 push proves the rules still hold. Contributor workflow:
-[`AGENTS.md`](../AGENTS.md). Ownership of every topic:
-[`REGISTRY.md`](../REGISTRY.md).
+[`AGENTS.md`](../../AGENTS.md). Ownership of every topic:
+[`REGISTRY.md`](../../REGISTRY.md).
 
 ## The parts
 
@@ -88,13 +88,13 @@ findings must name the rule. An `-ignore` task looks similar but is clean, so
 any finding fails. Near-miss tasks put a real problem next to a decoy rule and
 fail a review that cites the decoy.
 
-Results so far: [`results.md`](results.md). Running evals yourself:
-[`evals/README.md`](../evals/README.md) and [`smoke-evals.md`](smoke-evals.md).
+Results so far: [`results/README.md`](../results/README.md). Running evals yourself:
+[`evals/README.md`](../../evals/README.md) and [`smoke-evals.md`](smoke-evals.md).
 
 ## Version facts
 
 Many review wins turn on "this exists from that version". The model does not
-know that, so [`tools/api-index/`](../tools/api-index/) builds a public API
+know that, so [`tools/api-index/`](../../tools/api-index/) builds a public API
 index of every `shopware/shopware` release since 6.5.0.0:
 
 | Tool | Answers |
