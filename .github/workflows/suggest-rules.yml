@@ -1,7 +1,7 @@
 name: suggest-rules
 
 # Rule proposals from review comments and the drift issue, and drafts of them
-# (plan WP12 steps 4 and 5 in CI). docs/maintenance.md#suggesting-rules-in-ci
+# (plan WP12 steps 4 and 5 in CI). docs/maintaining/suggesting-rules.md#suggesting-rules-in-ci
 # explains how to use it.
 #
 #   - schedule (Monday 06:00 UTC, after mine-trunk.yml filed the drift issue)

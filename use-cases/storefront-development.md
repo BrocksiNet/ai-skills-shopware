@@ -59,7 +59,7 @@ npx -y modern-web-guidance@latest search "optimize product image LCP"
 ```
 
 Set `DISABLE_TELEMETRY=1` to stop anonymous usage data going to Google. More
-in [`docs/tooling-stack.md`](../docs/tooling-stack.md) and
+in [`docs/using/tooling-stack.md`](../docs/using/tooling-stack.md) and
 `skills/sw-research-and-escalation/references/modern-web-guidance.md`.
 
 ## Mixing use-cases

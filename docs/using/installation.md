@@ -12,11 +12,11 @@ has a ready one-liner:
 
 | You work on | Page |
 | ----------- | ---- |
-| Plugins and shop projects (most people) | [`use-cases/plugin-development.md`](../use-cases/plugin-development.md) |
-| Apps (`manifest.xml`, app scripts, webhooks) | [`use-cases/app-development.md`](../use-cases/app-development.md) |
-| `shopware/shopware` itself | [`use-cases/core-development.md`](../use-cases/core-development.md) |
-| Storefront and Administration, next to a PHP use-case | [`use-cases/storefront-development.md`](../use-cases/storefront-development.md) |
-| Reviewing plugins and apps | [`use-cases/extension-review.md`](../use-cases/extension-review.md) |
+| Plugins and shop projects (most people) | [`use-cases/plugin-development.md`](../../use-cases/plugin-development.md) |
+| Apps (`manifest.xml`, app scripts, webhooks) | [`use-cases/app-development.md`](../../use-cases/app-development.md) |
+| `shopware/shopware` itself | [`use-cases/core-development.md`](../../use-cases/core-development.md) |
+| Storefront and Administration, next to a PHP use-case | [`use-cases/storefront-development.md`](../../use-cases/storefront-development.md) |
+| Reviewing plugins and apps | [`use-cases/extension-review.md`](../../use-cases/extension-review.md) |
 
 Every set includes `sw-skill-router` and `sw-help`. Not sure what you need?
 Install those two first: `/sw-help` explains every skill, and
@@ -190,7 +190,7 @@ does not see prior conversation messages.
   skill, not `chrome-extensions`:
   `npx skills add GoogleChrome/modern-web-guidance --skill modern-web-guidance`.
   Shopware components win when both apply; see
-  [`storefront-development.md`](../use-cases/storefront-development.md#default-companion-modern-web-guidance).
+  [`storefront-development.md`](../../use-cases/storefront-development.md#default-companion-modern-web-guidance).
 - How this library fits next to the shopware-ai-coding-tools MCP servers:
   [`tooling-stack.md`](tooling-stack.md).
 - Trying the skills on a real local shop: [`local-validation.md`](local-validation.md).

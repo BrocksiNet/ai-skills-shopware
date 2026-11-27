@@ -50,8 +50,8 @@ Read only the reference that matches the task or the files it changes:
 
 ## Further reading
 
-- [`docs/skill-resolution.md`](../../docs/skill-resolution.md) — install profiles
-- MCP local keys: `sw-local-dev` / `docs/tooling-stack.md` (local only)
+- [`docs/using/skill-resolution.md`](../../docs/using/skill-resolution.md) — install profiles
+- MCP local keys: `sw-local-dev` / `docs/using/tooling-stack.md` (local only)
 
 ## Already enforced by CI (do not repeat)
 

@@ -1,6 +1,6 @@
 // Prints the release notes for one version from CHANGELOG.md, with the hard
 // wraps joined so GitHub does not break lines mid-sentence. See
-// docs/maintenance.md#cutting-a-release.
+// docs/maintaining/releasing.md#cutting-a-release.
 //
 //   node tools/bin/release-notes.ts v0.20.0 > /tmp/notes.md
 //   gh release create v0.20.0 --target <sha> --notes-file /tmp/notes.md

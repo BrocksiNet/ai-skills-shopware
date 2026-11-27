@@ -23,7 +23,7 @@ less of your agent's context.
 - **Personal preferences.** A skill can now ask how you like to work (for
   example, where your worktrees live) and keep your answers in
   `~/.config/ai-skills-shopware/`, outside the repository. See
-  [skill preferences](docs/skill-preferences.md).
+  [skill preferences](docs/using/skill-preferences.md).
 - **Building MCP tools (experimental).** The new `sw-mcp-development` skill
   helps when a plugin or app adds tools to Shopware's MCP server: naming and
   registering them, safe write tools with a dry run, permission checks, and
@@ -271,7 +271,7 @@ OpenAPI DTOs.
   plain `v-model` binds the wrong prop on Vue 3 and why an old `change`
   listener can get a native event, and accepts bindings that work with
   both. See the
-  [workflow study](docs/results.md#admin-form-binding-decision--november-4-2026).
+  [workflow study](docs/results/2026-11-04/experiments.md#admin-form-binding-decision--november-4-2026).
 - **Extension validation.** `sw-podman-dev` no longer passes `--no-copy` to
   `shopware-cli extension validate`; since shopware-cli 0.19.8 it checks
   the folder in place.
@@ -360,7 +360,7 @@ test expectations from changing quietly.
   with a reviewer trust score, published as the `review-signals` release.
 - `suggest-rules.ts` proposes new, changed and retired rules from those
   signals, and `suggest-rules draft <id>` turns one into a draft PR. See
-  [suggesting rule changes](docs/maintenance.md#suggesting-rule-changes).
+  [suggesting rule changes](docs/maintaining/suggesting-rules.md#suggesting-rule-changes).
 - `replay-routes.ts` measures router recall on 34 recorded core PRs, with
   a recall floor in CI.
 - Several eval tasks now ask for a feature instead of naming the rule,
@@ -402,7 +402,7 @@ a change needs, and `sw-help` lists what each skill is for.
 - **Breaking: new skill names.** `php-foundation` is now
   `sw-php-foundation`, and every `shopware-<topic>` skill is now
   `sw-<topic>`. Remove the old folders and install the new names, see
-  [installation](docs/installation.md). Our `sw-admin-js` no longer clashes
+  [installation](docs/using/installation.md). Our `sw-admin-js` no longer clashes
   with core's `shopware-admin-js`.
 - **Shorter README.** The README says why to use the library; installation,
   architecture, results and maintenance have their own pages under
@@ -702,7 +702,7 @@ request. It also brings the rules in line with core trunk as of
 
 ### Fixed
 
-- **Correct A/B steps.** The [local validation guide](docs/local-validation.md)
+- **Correct A/B steps.** The [local validation guide](docs/using/local-validation.md)
   no longer tells you to run `npx skills disable` or `enable`, which the
   skills CLI does not have. It now uses `npx skills remove` and the pinned
   `add` instead.
@@ -807,7 +807,7 @@ trunk. Testing rules are now in sync with core.
   `shopware-security` join the library.
 - **Core skills come first on trunk.** In a trunk checkout, the core
   `.agents/skills/` folder is the main source and this library adds to it.
-  See [skill resolution](docs/skill-resolution.md).
+  See [skill resolution](docs/using/skill-resolution.md).
 - **Testing rules from reviews.** New core testing rules come from pull
   request feedback, including the `#[Package]` attribute on test classes.
 
@@ -832,7 +832,7 @@ request.
 - **Rules from core trunk.** The skills now follow the rules collected in
   core pull request
   [shopware/shopware#17657](https://github.com/shopware/shopware/pull/17657).
-  See the [alignment notes](docs/core-pr-17657-alignment.md).
+  See the [alignment notes](docs/maintaining/core-pr-17657-alignment.md).
 - **Checks before you submit.** `shopware-review-learnings` adds
   pre-submit quality checks, a checklist for refactoring an interface, and
   patterns for `Feature` flags.
@@ -911,7 +911,7 @@ Podman dev setup. It also adds more review findings and testing patterns.
   and findings on OpenAPI schemas and thin controllers.
 - **Testing patterns.** `shopware-testing` points to the FriendsOfShopware
   `shopware-phpunit` skill for plugin-heavy test patterns.
-- **Tooling guide.** The [tooling stack guide](docs/tooling-stack.md)
+- **Tooling guide.** The [tooling stack guide](docs/using/tooling-stack.md)
   explains how this library works next to Shopware's AI coding tools and
   MCP servers.
 

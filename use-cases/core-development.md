@@ -3,7 +3,7 @@
 For changing the Shopware **platform** itself (`shopware/shopware`, `shopware-core`
 packages, first-party bundles under `src/`).
 
-See [`docs/skill-resolution.md`](../docs/skill-resolution.md) for **trunk overlay**
+See [`docs/using/skill-resolution.md`](../docs/using/skill-resolution.md) for **trunk overlay**
 vs **full** install when in-repo core skills are absent (6.5/6.6 branches).
 
 ## Trunk (`shopware/shopware` with `.agents/skills/`)
@@ -95,4 +95,4 @@ Wire `route.mjs --hook --task build` in `.claude/settings.json` so matched
 skills, references, and rule IDs arrive automatically when the diff changes.
 Only alongside that hook, optionally trim the listing with `skillOverrides`
 (`"name-only"` on non-router `sw-*` skills — never standalone). See
-[`docs/installation.md#automatic-routing-hook-claude-code`](../docs/installation.md#automatic-routing-hook-claude-code).
+[`docs/using/installation.md#automatic-routing-hook-claude-code`](../docs/using/installation.md#automatic-routing-hook-claude-code).

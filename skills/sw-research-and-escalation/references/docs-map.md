@@ -11,7 +11,7 @@ or the matching release tag — docs are the starting point, not the final word.
   at the **release tag matching the project version** (never `trunk`).
 - **Coding guidelines:** `shopware/shopware` `coding-guidelines/` and `adr/`.
 - **Core in-repo skills (trunk+):** `shopware/shopware` `.agents/skills/README.md`
-- **Install profiles:** this repo `docs/skill-resolution.md`
+- **Install profiles:** this repo `docs/using/skill-resolution.md`
 
 ## Topic map
 

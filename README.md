@@ -49,7 +49,7 @@ mistakes, five runs each:
 
 `api-diff` finds the breaks named in the 6.6, 6.7 and 6.8 UPGRADE files with
 97.2 % recall and 97.1 % precision. The full numbers are in
-[`docs/results.md`](docs/results.md), including where the skills made no
+[`docs/results/README.md`](docs/results/README.md), including where the skills made no
 difference.
 
 ## Quick start
@@ -81,7 +81,7 @@ For Storefront and Administration work, also install Google Chrome's
 Core Web Vitals questions. Shopware components still win; see the
 [storefront page](use-cases/storefront-development.md#default-companion-modern-web-guidance).
 Pinning, updating and tool folders are covered in
-[`docs/installation.md`](docs/installation.md).
+[`docs/using/installation.md`](docs/using/installation.md).
 
 ## What is inside
 
@@ -112,7 +112,7 @@ A skill is a short `SKILL.md`, references that hold the rules, and a
 `routes.json` that maps changed files and lines to references. Review skills
 borrow the topic skills' references instead of copying them, so a review
 and its rule cannot drift apart. Diagrams and the eval layers are in
-[`docs/architecture.md`](docs/architecture.md).
+[`docs/contributing/architecture.md`](docs/contributing/architecture.md).
 
 ## Staying current
 
@@ -124,22 +124,19 @@ and seven upstream skill sets: `shopwareLabs/ai-coding-tools`,
 issue that maps each change to the skill and rule it touches. A daily job collects review comments from
 merged core PRs into the `review-signals` release. The API index rebuilds
 weekly, and model evals run monthly and before releases. See
-[`docs/maintenance.md`](docs/maintenance.md).
+[`docs/maintaining/README.md`](docs/maintaining/README.md).
 
 ## Documentation
 
-| Doc | For |
-| --- | --- |
-| [`docs/installation.md`](docs/installation.md) | Install, pin, update, the `sw-` rename, where each tool loads skills |
-| [`docs/architecture.md`](docs/architecture.md) | Parts, routing, the router, eval layers, version facts |
-| [`docs/results.md`](docs/results.md) | What the A/B runs showed |
-| [`docs/maintenance.md`](docs/maintenance.md) | Automation that keeps rules current, and what is planned |
-| [`docs/skill-resolution.md`](docs/skill-resolution.md) | Core trunk's own skills next to ours |
-| [`docs/skill-preferences.md`](docs/skill-preferences.md) | Personal preferences for a skill, kept outside the repository |
-| [`docs/local-validation.md`](docs/local-validation.md) | Try the skills on your own shop and send feedback |
-| [`evals/README.md`](evals/README.md) | Writing and running eval tasks |
-| [`docs/testing-quality.md`](docs/testing-quality.md) | Coverage, targeted mutation checks, runtime contracts and measured gaps |
-| [`AGENTS.md`](AGENTS.md) | Contributing: repo layout, checks, adding rules and skills |
+All pages are listed in [`docs/README.md`](docs/README.md), grouped by
+what you want to do:
+
+| Folder | For |
+| ------ | --- |
+| [`docs/using/`](docs/README.md#using-the-skills) | Installing the skills, preferences, core trunk's skills next to ours, trying them on your shop |
+| [`docs/contributing/`](docs/README.md#contributing) | Architecture, smoke evals, tooling quality; with [`AGENTS.md`](AGENTS.md) and [`evals/README.md`](evals/README.md) |
+| [`docs/maintaining/`](docs/README.md#maintaining) | Automation that keeps rules current, rule suggestions, releases |
+| [`docs/results/`](docs/README.md#results) | What the A/B runs showed, and the archived evidence |
 
 ## Curation & governance
 
@@ -161,7 +158,7 @@ This is a curated library. A rule gets in only when it meets all five tests:
 request. Recurring findings from real reviews come in through the
 [issue templates](.github/ISSUE_TEMPLATE) and become rules with eval tasks.
 Maintainer rules from `shopware/shopware` are mined, not copied. See
-[`docs/core-pr-17657-alignment.md`](docs/core-pr-17657-alignment.md).
+[`docs/maintaining/core-pr-17657-alignment.md`](docs/maintaining/core-pr-17657-alignment.md).
 
 ## Credits
 

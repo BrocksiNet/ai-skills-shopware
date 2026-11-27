@@ -149,5 +149,5 @@ smoke_list_agents() {
 
 smoke_require_agent() {
   local agent="$1"
-  smoke_agent_available "${agent}" || smoke_die "agent not available: ${agent} (install CLI or set API key — see docs/smoke-evals.md)"
+  smoke_agent_available "${agent}" || smoke_die "agent not available: ${agent} (install CLI or set API key — see docs/contributing/smoke-evals.md)"
 }

@@ -4,7 +4,7 @@ Keep the result and its limitations easy to review. Historical trial details,
 source snapshots embedded in reports, mutation-survivor reviews and PR
 inventories live in a versioned archive. The original report paths contain
 short pointers to the shared
-[manifest](../evals/experiments/evidence-2026-11-04.json).
+[manifest](../../evals/experiments/evidence-2026-11-04.json).
 
 The manifest stores the repository, source commit and archive location once.
 Each record has its original path, byte count, SHA-256 and summary location.
@@ -26,8 +26,8 @@ The links below also open each original directly at that commit, independently
 of release-asset availability.
 
 The human-readable results remain in
-[results.md](results.md), [testing-quality.md](testing-quality.md) and the
-[maintenance report](skill-maintenance-2026-11-04.md). Runnable experiment
+[Results](README.md), [testing-quality.md](../contributing/testing-quality.md) and the
+[maintenance report](2026-11-04/skill-maintenance.md). Runnable experiment
 protocols, fixtures and graders stay in the checkout. Local raw trace
 directories named in the original reports are separate from this archive.
 
@@ -35,34 +35,34 @@ directories named in the original reports are separate from this archive.
 
 | Original record | Summary |
 | --- | --- |
-| [Initial quality measurements](https://github.com/BrocksiNet/ai-skills-shopware/blob/cb95aaf878ba0e7ac7bd2e7ad783659718d72d99/docs/quality-checks-2026-11-04.json) | [Original baseline](testing-quality.md#original-coverage-and-validation-baseline) |
-| [Seeded-fault replay](https://github.com/BrocksiNet/ai-skills-shopware/blob/cb95aaf878ba0e7ac7bd2e7ad783659718d72d99/docs/quality-seeded-faults-2026-11-04.json) | [Runtime contracts](testing-quality.md#runtime-and-dependency-contracts) |
-| [95% mutation follow-up](https://github.com/BrocksiNet/ai-skills-shopware/blob/cb95aaf878ba0e7ac7bd2e7ad783659718d72d99/docs/quality-95-2026-11-04.json) | [Final scoped scores and survivor review](testing-quality.md#95-gate-and-cli-workflow-follow-up--november-4-2026) |
+| [Initial quality measurements](https://github.com/BrocksiNet/ai-skills-shopware/blob/cb95aaf878ba0e7ac7bd2e7ad783659718d72d99/docs/quality-checks-2026-11-04.json) | [Original baseline](../contributing/testing-quality.md#original-coverage-and-validation-baseline) |
+| [Seeded-fault replay](https://github.com/BrocksiNet/ai-skills-shopware/blob/cb95aaf878ba0e7ac7bd2e7ad783659718d72d99/docs/quality-seeded-faults-2026-11-04.json) | [Runtime contracts](../contributing/testing-quality.md#runtime-and-dependency-contracts) |
+| [95% mutation follow-up](https://github.com/BrocksiNet/ai-skills-shopware/blob/cb95aaf878ba0e7ac7bd2e7ad783659718d72d99/docs/quality-95-2026-11-04.json) | [Final scoped scores and survivor review](../contributing/testing-quality.md#95-gate-and-cli-workflow-follow-up--november-4-2026) |
 
 ### Skill experiments
 
 | Original record | Summary |
 | --- | --- |
-| [Discovery screen](https://github.com/BrocksiNet/ai-skills-shopware/blob/cb95aaf878ba0e7ac7bd2e7ad783659718d72d99/evals/experiments/discovery-2026-11-04.json) | [Selection ceiling](results.md#discovery-consolidation-screen--november-4-2026) |
-| [Reference and code transfer](https://github.com/BrocksiNet/ai-skills-shopware/blob/cb95aaf878ba0e7ac7bd2e7ad783659718d72d99/evals/experiments/discovery-transfer-2026-11-04.json) | [First transfer comparison](results.md#reference-retrieval-and-code-transfer--november-4-2026) |
-| [Fact-sensitive transfer](https://github.com/BrocksiNet/ai-skills-shopware/blob/cb95aaf878ba0e7ac7bd2e7ad783659718d72d99/evals/experiments/facts-transfer-2026-11-04.json) | [Three-model comparison and exclusions](results.md#fact-sensitive-transfer-across-three-models--november-4-2026) |
-| [Queue-rule development screen](https://github.com/BrocksiNet/ai-skills-shopware/blob/cb95aaf878ba0e7ac7bd2e7ad783659718d72d99/evals/experiments/queue-screen-2026-11-04.json) | [Candidate left unpublished](skill-maintenance-2026-11-04.md#a-candidate-rejected-by-development-screening) |
+| [Discovery screen](https://github.com/BrocksiNet/ai-skills-shopware/blob/cb95aaf878ba0e7ac7bd2e7ad783659718d72d99/evals/experiments/discovery-2026-11-04.json) | [Selection ceiling](2026-11-04/experiments.md#discovery-consolidation-screen--november-4-2026) |
+| [Reference and code transfer](https://github.com/BrocksiNet/ai-skills-shopware/blob/cb95aaf878ba0e7ac7bd2e7ad783659718d72d99/evals/experiments/discovery-transfer-2026-11-04.json) | [First transfer comparison](2026-11-04/experiments.md#reference-retrieval-and-code-transfer--november-4-2026) |
+| [Fact-sensitive transfer](https://github.com/BrocksiNet/ai-skills-shopware/blob/cb95aaf878ba0e7ac7bd2e7ad783659718d72d99/evals/experiments/facts-transfer-2026-11-04.json) | [Three-model comparison and exclusions](2026-11-04/experiments.md#fact-sensitive-transfer-across-three-models--november-4-2026) |
+| [Queue-rule development screen](https://github.com/BrocksiNet/ai-skills-shopware/blob/cb95aaf878ba0e7ac7bd2e7ad783659718d72d99/evals/experiments/queue-screen-2026-11-04.json) | [Candidate left unpublished](2026-11-04/skill-maintenance.md#a-candidate-rejected-by-development-screening) |
 
 ### Maintenance review
 
 The [original maintenance record](https://github.com/BrocksiNet/ai-skills-shopware/blob/cb95aaf878ba0e7ac7bd2e7ad783659718d72d99/docs/skill-maintenance-2026-11-04.json)
 contains the PR inventory, review links and per-skill decisions. See the
-[maintenance summary](skill-maintenance-2026-11-04.md).
+[maintenance summary](2026-11-04/skill-maintenance.md).
 
 ### Sensitive-mail development screen
 
-The [compact record](../evals/experiments/security-mail-screen-v1.json)
+The [compact record](../../evals/experiments/security-mail-screen-v1.json)
 contains the result, limitations, prospective protocol hash and archive hash.
 The local, git-ignored archive at
 `evals/.results/security-mail-screen-2026-11-04-v1.tar.gz` preserves the complete
 unpublished development screen, including runnable inputs, packages, scripts,
 grader outputs, raw traces and replay instructions. It was not uploaded.
-Its summary is in [results.md](results.md#sensitive-mail-development-screen--november-4-2026).
+Its summary is in [the November 4 experiments](2026-11-04/experiments.md#sensitive-mail-development-screen--november-4-2026).
 
 The archive is 233,971 bytes. Its local copy was verified against the compact
 record and every member hash. To inspect it, verify its SHA-256, extract it,
@@ -74,12 +74,12 @@ from the later source audit. No skill or shared grader changed after this screen
 
 ### Administration workflow and binding studies
 
-The [decision record](../evals/experiments/admin-decisions-2026-11-04.json)
+The [decision record](../../evals/experiments/admin-decisions-2026-11-04.json)
 stores both local archive paths, sizes, SHA-256 hashes, frozen protocol/input
 hashes, outcomes and exclusions. Full traces, edited workdirs, source snapshots,
 calibration and replay oracles stay in the git-ignored archives under
 `evals/.results/`; no raw evidence was uploaded. The
-[summary](results.md#admin-form-binding-decision--november-4-2026) distinguishes
+[summary](2026-11-04/experiments.md#admin-form-binding-decision--november-4-2026) distinguishes
 the failed prospective gate from the exploratory engineering recommendation.
 
 Verify an archive against the record before extracting it. Run

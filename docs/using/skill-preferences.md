@@ -38,5 +38,5 @@ for example in your dotfiles.
 links it and names `AI_SKILLS_SHOPWARE_PREFS_DIR`, and that no skill folder
 holds a `preferences.md`.
 
-First user: `sw-worktrees` ([`SKILL.md`](../skills/sw-worktrees/SKILL.md),
-[`preferences.example.md`](../skills/sw-worktrees/preferences.example.md)).
+First user: `sw-worktrees` ([`SKILL.md`](../../skills/sw-worktrees/SKILL.md),
+[`preferences.example.md`](../../skills/sw-worktrees/preferences.example.md)).

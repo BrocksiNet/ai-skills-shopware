@@ -93,9 +93,9 @@ Other eval tasks (not in default suite): `no-contradiction-full-profile`.
 ## CI
 
 CI does not run the smoke harness. Model evals in CI use `evals/runner/ab.sh`
-through [`evals.yml`](../.github/workflows/evals.yml), with OpenCode and a free
+through [`evals.yml`](../../.github/workflows/evals.yml), with OpenCode and a free
 model by default (no key). See
-[`evals/README.md`](../evals/README.md#model-evals-in-ci-evalsyml).
+[`evals/README.md`](../../evals/README.md#model-evals-in-ci-evalsyml).
 
 To run the smoke harness in your own CI, set provider keys and `SMOKE_CI=1`.
 Agents without auth are skipped; the job fails if **zero** agents run.

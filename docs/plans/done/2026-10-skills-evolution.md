@@ -114,7 +114,7 @@ review guides before adding anything new.
 ### WP0 acceptance
 
 - All seven changes are merged. `validate-skills.sh` and `test-graders.sh` pass.
-- `docs/core-pr-17657-alignment.md` has a "Mining pass 2026-10-19" section
+- `docs/maintaining/core-pr-17657-alignment.md` has a "Mining pass 2026-10-19" section
   listing f2bf3794, 75b0a495, 190d734b, 8dc74f24 and 7ad011f1, each with a status.
 
 ---
@@ -202,7 +202,7 @@ run as parallel shards picked by `scripts/eval-plan.sh`.
 - `evals/runner/ab.sh`, `evals/runner/run-task.sh`
 - new `evals/runner/claude-task.sh`, `evals/runner/skills-profile.sh`, `scripts/eval-diff.sh`
 - `.github/workflows/evals.yml`
-- `evals/README.md`, `docs/smoke-evals.md`
+- `evals/README.md`, `docs/contributing/smoke-evals.md`
 
 ### WP1 acceptance
 
@@ -858,7 +858,7 @@ deltas.
 ## WP9: Upstream watchlist
 
 Status: **table done 2026-10-20** in
-[`core-pr-17657-alignment.md`](../../core-pr-17657-alignment.md#watchlist).
+[`core-pr-17657-alignment.md`](../../maintaining/core-pr-17657-alignment.md#watchlist).
 Changes since this plan was written: #21541 merged on 2026-10-19, so WP7
 phase B is unblocked. #21722 was closed; its Administration agent docs are
 now part of #21730, and #21725 is the lint-baseline PR #21730 builds on.
@@ -867,7 +867,7 @@ Prepared branches: draft PR #23 for #21627 and draft PR #24 for #21730
 
 Goal: prepare for open core PRs before they merge.
 
-Add a `## Watchlist` table to `docs/core-pr-17657-alignment.md`, updated by
+Add a `## Watchlist` table to `docs/maintaining/core-pr-17657-alignment.md`, updated by
 WP8 using `gh pr view --json state,mergedAt`:
 
 | PR | Topic | Our impact | Prepared branch |
@@ -877,7 +877,7 @@ WP8 using `gh pr view --json state,mergedAt`:
 | #21627 | PR template: What and why / How / Testing / Additional notes / Checklist | rewrite `sw-pr-description/references/pr-body-template.md` and the `pr-no-ai-trailers` fixtures | prepare now |
 | #21730 | Admin lint: no `.js` in `src`, no new mixins, `wrapComponentConfig()` required | WP0 #7, `admin-js-implementation-to-ts` grader | prepare now |
 | #21722 | Admin reference implementations named in AGENTS.md | point `sw-admin-js` to the named component, composable and store | after merge |
-| #21502 | `composer skills:enable` / `skills:disable` | `docs/skill-resolution.md`: the official way to hide core skills when using the full install | after merge |
+| #21502 | `composer skills:enable` / `skills:disable` | `docs/using/skill-resolution.md`: the official way to hide core skills when using the full install | after merge |
 
 ### WP9 acceptance
 

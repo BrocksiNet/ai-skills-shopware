@@ -1,89 +1,6 @@
-# Results
+# Experiments — November 4, 2026
 
-What the evals have shown so far, including where the skills did not help.
-Behavioral scores use scripted graders. A/B runs compare the same task with
-skills on and off; the packaging experiments compare three skill configurations.
-Method: [`architecture.md`](architecture.md#how-a-rule-is-proven).
-Detail and history: the plans in [`plans/`](plans/) and the
-[changelog](../CHANGELOG.md).
-
-Detailed historical JSON is available through the
-[evidence archive](evidence.md), with per-record hashes and pinned originals.
-
-## Where the skills change the answer
-
-The skills win where the answer is a Shopware fact the model cannot know: an
-API that changed in 6.7, an event that is no longer dispatched, a method that
-arrived in a later minor release.
-
-Claude Haiku, three runs per arm:
-
-| Rule | The planted problem | Skills off | Skills on |
-| ---- | ------------------- | ---------- | --------- |
-| `ADM-044` | One bundle for 6.5 and 6.6+ that binds `sw-*` form fields the old way | 0/3 | 3/3 |
-| `PLG-007` | A 6.7 subscriber to a `*CacheTagsEvent` that core no longer dispatches | 0/3 | 3/3 |
-| `SF-009` | A storefront form that still uses `sw_csrf` | 0/3 | 3/3 |
-| `ADM-009` | A new `webpack.config.js` where the Administration builds with Vite | 0/3 | 2/3 |
-
-No `-ignore` task got more false findings with the skills on.
-
-## Version facts beat rules alone
-
-Three review pairs use Shopware API that no skill names, so the skill cannot
-already know the answer. The third arm adds `api-facts` from the public API
-index. Claude Haiku, five runs per arm:
-
-| Task | Skills off | Skills on | Skills on plus facts |
-| ---- | ---------- | --------- | -------------------- |
-| A guard on a class whose method came later | 0/5 | 1/5 | 5/5 |
-| A method from 6.7.1.0 under a `~6.7.0` constraint | 0/5 | 0/5 | 5/5 |
-| A guard on an event every supported release has | 0/5 | 4/5 | 5/5 |
-| The three clean twins, no finding allowed | 14/15 | 13/15 | 15/15 |
-
-With facts, every catch passes and the false findings disappear. Rules alone
-catch 5 of 15.
-
-`api-diff` measured against the breaks named in the 6.6, 6.7 and 6.8
-UPGRADE files:
-
-| Measure | Value |
-| ------- | ----- |
-| Recall | 97.2 % |
-| Precision | 97.1 % |
-
-## The gate catches a bad rule
-
-A deliberately wrong rule in `sw-plugin-development` turned the
-`prepare-plugin-for-6-8` task from 3/3 to 0/3, and the eval gate went red. A
-rule that makes the model worse cannot ship unnoticed.
-
-## Where they did not help, and what changed
-
-- **Easy catches.** On the first six review catch tasks, Haiku found the
-  planted problem with and without the skills. Those tasks prove nothing, so
-  new catch tasks are built around facts the model lacks.
-- **Rule IDs.** A real plugin review with the skill had no false finding, but
-  only 3 of 12 cited rule IDs fit. Near-miss tasks now fail a review that
-  cites a plausible but wrong rule.
-- **Context cost.** Loading references by diff instead of all at once cost no
-  measurable tokens on `prepare-plugin-for-6-8`: plus 1.3 %, inside the
-  noise. It did not save tokens on that task either.
-- **Free CI models** often ignore skills. The gate fails a run when skills do
-  not load, or leak into the skills-off arm.
-
-## What is covered
-
-| Measure | Count |
-| ------- | ----- |
-| Active rules with an ID | 257 |
-| Rules with an eval task | 137 |
-| Eval tasks | 275 |
-| Review tasks (catch, ignore and near-miss) | 186 |
-| Routing cases | 21 |
-| Routing replay hand labels | 21 (across 34 recorded PRs) |
-
-Rules without an eval record why in the catalog, usually a process or style
-rule that core's own CI already enforces. They are the visible backlog.
+The experiment batch of November 4, 2026. The current summary is in [Results](../README.md); the raw records are in the [evidence archive](../evidence.md).
 
 ## Discovery consolidation screen — November 4, 2026
 
@@ -105,9 +22,9 @@ plugin-review task did not load a skill through the reported skill tool in
 any arm. The transfer comparison below follows up with prospective reference-retrieval
 and code tasks; additional model profiles remain outstanding.
 
-The [screening record](evidence.md#skill-experiments) includes
+The [screening record](../evidence.md#skill-experiments) includes
 package hashes, trial outcomes, selections, skill loads and token use.
-[Running the pilot](../evals/README.md#routerhelp-consolidation-pilot) prepares
+[Running the pilot](../../../evals/README.md#routerhelp-consolidation-pilot) prepares
 fresh packages outside the checkout. Exploratory runs with an unstated
 selection limit and packages inside this checkout were discarded before this
 screen; their apparent onboarding difference did not survive the correction.
@@ -156,12 +73,12 @@ lack of discrimination.
 The JavaScript checks execute edited modules in a fixture VM; PHP checks AST
 and service configuration, not a running Shopware container. The cases were
 prospectively authored here, not independently curated, and are now regression
-data. The [full record](evidence.md#skill-experiments)
+data. The [full record](../evidence.md#skill-experiments)
 contains the frozen manifest, prompts, per-trial retrieval/code/usage data,
 invalidated task inputs and failing answers. Raw events, exact evaluated
 sources and edited fixtures remain locally under
 `evals/.results/transfer-20261104-haiku/`. The
-[runner instructions](../evals/README.md#prospective-reference-and-code-transfer-comparison)
+[runner instructions](../../../evals/README.md#prospective-reference-and-code-transfer-comparison)
 describe how to reproduce the retained comparison.
 
 ## Fact-sensitive transfer across three models — November 4, 2026
@@ -252,7 +169,7 @@ paired decision rule; count task families as the independent evidence, rather
 than treating repeated attempts as unrelated tasks. Reference reads, usable
 completion, code correctness and cost should remain separate outcomes.
 
-The [full record](evidence.md#skill-experiments) retains
+The [full record](../evidence.md#skill-experiments) retains
 the original protocol, all 54 scheduled rows, prompts, primary and diagnostic
 metrics, exclusions, failing template, original ACL oracle and source audit.
 Exact frozen inputs, raw traces and edited code remain locally in
@@ -275,9 +192,9 @@ came from an additional finding about an underspecified default. A clean fixture
 also lacked a test required by the candidate. Original scores remain unchanged;
 repaired cases are regression data. No new rule or skill was published.
 
-The [maintenance report](skill-maintenance-2026-11-04.md) records the applied
+The [maintenance report](skill-maintenance.md) records the applied
 consolidations, source links, remaining candidates, evidence limits and the next
-decision method. The [screen record](evidence.md#skill-experiments)
+decision method. The [screen record](../evidence.md#skill-experiments)
 retains the original protocol, evaluated inputs, hashes and all trial outcomes.
 
 ## Sensitive-mail development screen — November 4, 2026
@@ -320,7 +237,7 @@ one PR. They are consumed development data, with no executed PHP or generated
 code outcome measurement. A rule change still needs a genuine baseline mistake
 and independent implementation tasks; these cases cannot supply that holdout.
 
-The [compact record](../evals/experiments/security-mail-screen-v1.json) links
+The [compact record](../../../evals/experiments/security-mail-screen-v1.json) links
 the local archive of frozen inputs, untested candidate, original grades,
 traces, retained workdirs, source audit and replay instructions. Detailed JSON
 and source snapshots stay out of tracked files. The archive is retained under
@@ -332,7 +249,7 @@ and source snapshots stay out of tracked files. The archive is retained under
 This is a narrow engineering recommendation from source-audited exploratory
 evidence. The original prospective retention gate was not met.
 
-The [focused protocol](../evals/experiments/admin-binding-v1.json) compared
+The [focused protocol](../../../evals/experiments/admin-binding-v1.json) compared
 the unchanged Admin skill with the same package minus only the `ADM-044`
 paragraph. Both arms were asked to read the architecture reference.
 The measured current package is pinned to `d81bd6f`, before the wording
@@ -388,12 +305,12 @@ The observed difference is +25 percentage points in the editor and +50 in the
 wizard, pooling the two models. These are descriptive sensitivity results,
 not independent population estimates or confidence bounds.
 
-The preceding [broad protocol](../evals/experiments/admin-workflows-v1.json)
+The preceding [broad protocol](../../../evals/experiments/admin-workflows-v1.json)
 completed 32 sessions but had two invalid verification families: ordinary
 directory imports were mishandled, and route exit was underspecified with
 multiple table instances. Its remaining two families tied at 8/8 per arm.
 The invalid families and repaired regression replays are retained separately;
 they do not support a skill-retirement recommendation.
 
-The [compact record](../evals/experiments/admin-decisions-2026-11-04.json)
+The [compact record](../../../evals/experiments/admin-decisions-2026-11-04.json)
 pins both protocols and the local archives of original and audited evidence.
