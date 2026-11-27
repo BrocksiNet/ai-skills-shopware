@@ -189,6 +189,17 @@ function failures(s: Stats, opts: GateOptions): string[] {
   return out;
 }
 
+/** Why these results say nothing about the skills, or null when they do: no
+ *  results, or more agent errors than the gate allows (the provider failed,
+ *  for example its quota ran out). Such a run must not become a baseline. */
+export function providerFailure(all: AbResult[], opts: GateOptions = GATE_DEFAULTS): string | null {
+  const results = latestPerTask(all);
+  if (results.length === 0) return 'no results';
+  const s = stats(results);
+  if (s.errorPct <= opts.maxErrorPct) return null;
+  return `${s.count.error} of ${results.length} tasks (${s.errorPct} %) ended in agent errors (limit ${opts.maxErrorPct} %)`;
+}
+
 export function gate(all: AbResult[], opts: GateOptions = GATE_DEFAULTS, expected?: EvalManifest): GateReport {
   const results = latestPerTask(all);
   const [first] = results;

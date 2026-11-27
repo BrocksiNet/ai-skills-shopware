@@ -2,7 +2,7 @@ import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { describe, test } from 'node:test';
 import { diff, changePct } from '../src/eval-diff.ts';
-import { gate, gateOptionsFromEnv } from '../src/eval-gate.ts';
+import { gate, gateOptionsFromEnv, providerFailure } from '../src/eval-gate.ts';
 import { type AbResult, latestPerTask, parseResults } from '../src/eval-results.ts';
 
 const rec = (task: string, over: Partial<AbResult> = {}): AbResult => ({
@@ -101,6 +101,22 @@ describe('latestPerTask', () => {
       out.map((r) => `${r.task}:${r.verdict}`),
       ['B:improved', 'a:error', 'b:improved'],
     );
+  });
+});
+
+describe('providerFailure', () => {
+  test('a run within the error limit is fine', () => {
+    const good = ['a', 'b', 'c'].map((task) => rec(task, { verdict: 'held', off: 2 }));
+    assert.equal(providerFailure([...good, error]), null);
+  });
+  test('a run that is mostly agent errors is named with the count', () => {
+    assert.equal(
+      providerFailure([held, error, { ...error, task: 'another-error' }]),
+      '2 of 3 tasks (66 %) ended in agent errors (limit 25 %)',
+    );
+  });
+  test('no results is a failure', () => {
+    assert.equal(providerFailure([]), 'no results');
   });
 });
 
