@@ -96,6 +96,7 @@ tools/                        # repo tooling in TypeScript (Node 26, no build st
   bin/test-graders.ts         # golden fixtures against every task grader
   bin/fake-agent.ts           # test double for SKILLS_AGENT_CMD
   bin/check-update.ts         # pinned version vs latest release tag
+  bin/release-notes.ts        # one CHANGELOG section as GitHub release notes (wraps joined, links absolute)
   bin/skill-context.ts        # share of input tokens our skills took in your recent Claude Code sessions
   test/*.test.ts              # node --test
   api-index/                  # public API index of shopware/shopware per release (own package: php-parser):

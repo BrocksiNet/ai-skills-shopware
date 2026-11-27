@@ -10,1225 +10,958 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [0.20.0] - 2026-11-27
 
+This release adds a skill for git worktrees, lets skills remember how you
+like to work, and brings a first, experimental skill for building MCP
+tools. Skill descriptions are also 41% shorter, so installed skills take
+less of your agent's context.
+
 ### Added
 
-- `sw-worktrees`: one place for git worktrees. `WT-001` puts them under one
-  root as `<project>/<kind>-<number>[-<slug>]` (reviews from
-  `pull/<n>/head`, work from the default branch), `WT-002` cleans up only
-  merged, clean and pushed worktrees with `git worktree remove` and prune,
-  and `WT-003` reads the user's preferences first. Three eval tasks cover
-  review naming, cleanup that keeps unpushed work, and preferences.
-- Personal skill preferences ([docs/skill-preferences.md](docs/skill-preferences.md)):
-  a skill ships `preferences.example.md`, the answers live in
-  `${AI_SKILLS_SHOPWARE_PREFS_DIR:-~/.config/ai-skills-shopware}/<skill>/preferences.md`
-  outside the repo. `validate-skills` checks the example is linked, the path
-  is named, and no `preferences.md` ships.
-- `sw-local-dev` (Podman): only autostart instances start (`sw-dev startup
-  --all` for every one), `sw-dev lane start|stop|refresh`, refresh a stopped
-  lane before testing on it, and `sw-dev mcp bootstrap` after a fresh install.
-- `sw-mcp-development` (experimental): Shopware MCP tools in plugins and
-  apps. `MCP-001` to `MCP-008` cover structured results, the reserved
-  discovery group and `shopware-` prefix, tool registration, dry-run write
-  tools, annotations and parameter schemas, entity criteria ACL and
-  response bounds, serverless app script tools, and private cache hints for
-  resources. The API index lists MCP extension points and DI tags.
-- `sw-admin-js`: `ADM-046` to `ADM-050` for Administration overrides: block
-  boundaries before overriding without `{% parent %}`, only the variables a
-  block exposes, no `$parent` or core `src` imports, `@bc-change` for
-  elements that stay on trunk, and every overridden method must exist on
-  the target. Each has a review pair.
-- `sw-app-development` tags `APP-001` to `APP-006` (manifest identity,
-  permissions and setup, no plugin PHP in apps, Admin SDK UI, app script
-  placement, registration handshake), each with a review pair.
-- `sw-skill-router`: `route.mjs --brief` and `--hook` (a Claude Code hook
-  that does not repeat a route already shown in the session). The router
-  index carries active rule IDs and titles.
-- API index: BCChange facts tell callers from extenders, plus Storefront
-  feature flag states and older Admin SCSS and snippet surfaces.
-- Evals: A/B runs and the gate record which references the agent read;
-  five near-miss review tasks; `EVAL_CONCURRENCY` for local evals.
+- **Git worktrees in one place.** The new `sw-worktrees` skill puts every
+  worktree under one folder with a predictable name per project and pull
+  request, and removes a worktree only when it is merged, clean and pushed.
+- **Personal preferences.** A skill can now ask how you like to work (for
+  example, where your worktrees live) and keep your answers in
+  `~/.config/ai-skills-shopware/`, outside the repository. See
+  [skill preferences](docs/skill-preferences.md).
+- **Building MCP tools (experimental).** The new `sw-mcp-development` skill
+  helps when a plugin or app adds tools to Shopware's MCP server: naming and
+  registering them, safe write tools with a dry run, permission checks, and
+  small, structured responses.
+- **Safer Administration overrides.** `sw-admin-js` now warns before you
+  replace a core block without `{% parent %}`, use variables the block does
+  not provide, reach into `$parent` or core source files, or override a
+  method the component does not have.
+- **App rules.** `sw-app-development` now has numbered rules for the
+  manifest, permissions, Admin SDK UI, app scripts and the registration
+  handshake, and the extension review checks them.
+- **Podman dev setup.** `sw-local-dev` knows the new `sw-dev` commands:
+  `startup` starts only autostart instances (`--all` for every one),
+  `lane start|stop|refresh` manages a lane, and `mcp bootstrap` sets up MCP
+  after a fresh install.
+- **Quieter router.** `sw-skill-router` can run as a Claude Code hook and
+  stays silent when it has nothing new to say; `--brief` prints a short list.
 
 ### Changed
 
-- `sw-pr-review` and `sw-local-dev` point to `sw-worktrees` for where a
-  worktree goes and how it is named.
-- Skill descriptions are 41% shorter (11,863 to 7,039 characters) and keep
-  their load-before-editing triggers. Large references in `sw-testing`,
-  `sw-php-foundation` and `sw-plugin-development` are split so a route
-  loads less.
-- `sw-local-dev` documents `sw-dev worktree exec` for Podman worktrees.
-- Golden graders run in-process and in parallel; GitHub Actions, agent CLIs
-  and npm tooling updated.
+- Shorter skill descriptions (11,863 to 7,039 characters), and the largest
+  references in `sw-testing`, `sw-php-foundation` and
+  `sw-plugin-development` are split, so the agent loads only the part it
+  needs.
+- `sw-pr-review` and `sw-local-dev` follow `sw-worktrees` for where a
+  worktree goes and what it is called.
+- The API index tells whether a breaking change affects code that calls an
+  API or code that extends it, and now covers Storefront feature flags and
+  older Administration SCSS and snippets.
 
-### Fixed
+### For contributors
 
-- `evals.yml` no longer opens a baseline PR from a run the provider broke
-  (for example a Copilot quota that turned 284 of 285 tasks into agent
-  errors).
-- Review fixtures: no unintended second defect in the MCP fixtures,
-  repaired hunk headers in 25 patches (with a test), tighter graders and
-  `fixtures/fail` sneaks for 15 behavioral tasks.
+- Evals record which references the agent read, five new near-miss review
+  tasks guard against citing the wrong rule, and `EVAL_CONCURRENCY` runs
+  local evals in parallel.
+- The model eval workflow no longer opens a baseline PR from a run the
+  provider broke (a Copilot quota had turned 284 of 285 tasks into errors).
+- Tighter graders and fixtures for 15 tasks, and repaired hunk headers in
+  25 review patches.
+- Golden graders run in-process and in parallel; dependencies updated.
 
 ## [0.19.0] - 2026-11-25
 
+This release adds two security rules, for untrusted XML and for MCP tool
+permissions, and corrects several PHP and Symfony tips that were wrong or
+too strict. Storefront and Administration work now pairs with Google
+Chrome's `modern-web-guidance` skill by default.
+
 ### Added
 
-- `sw-security`: `SEC-010` parses XML the code did not ship with
-  `XmlParser`, not `XmlUtils::parse()` or `loadFile()`, and `SEC-011` has a
-  plugin's MCP tool check its own privileges (`#[McpToolRequires]` only
-  documents them). Both come with review pairs and borrowed review routes.
-- `sw-php-foundation` tags its remaining rules as `PHP-003` to `PHP-014`
-  (strict types, imports, PER style, injected interfaces, PSR-20 clock,
-  named arguments, data shapes, readonly, list types, supported PHP range).
-- `rules/rejected.json` lists rule proposals a maintainer dropped, with the
-  reason. `suggest-rules` shows dropped rules the signals share words with
-  and fails a proposal that repeats a rejected title in the same skill.
+- **Safe XML parsing.** `sw-security` now asks you to parse XML that did
+  not ship with your code through `XmlParser`, not `XmlUtils::parse()` or
+  `loadFile()`. The extension review checks it too.
+- **MCP tool permissions.** An MCP tool in a plugin must check its own
+  privileges. The `#[McpToolRequires]` attribute only documents them and
+  does not enforce anything.
+- **Numbered PHP rules.** Every rule in `sw-php-foundation` now has an ID,
+  so reviews can cite it. They cover strict types, imports, code style,
+  injected interfaces, the clock, named arguments, data shapes, readonly
+  and the supported PHP range.
 
 ### Changed
 
-- Google Chrome's `modern-web-guidance` is now the default companion for
-  Storefront and Administration work (was: do not install). Shopware
-  components (Bootstrap, Meteor `mt-*`) still win. `sw-skill-router`
-  reminds you of it on frontend changes, or prints its install command
-  when it is missing.
-- PHP and Symfony guidance: keep the concrete DAL `EntityRepository` (there
-  is no repository interface to inject), use four-part major feature-flag
-  IDs and three-part release labels, keep simple typed internal arrays,
-  and use readonly only where the contract is immutable. `CORE-028` lets an
-  equivalent internal swap replace code directly and keeps dual paths for
-  incompatible changes or staged rollouts.
-- The Administration `public-api/` snapshot is routed like
-  `blocks-list.json`, the 6.8 extension Jest harness is documented, and the
-  Administration and Storefront deprecation-guard ESLint rules are recorded
-  as trunk-only checks of `CORE-022`.
+- **Modern web guidance by default.** Google Chrome's `modern-web-guidance`
+  is now the suggested companion for Storefront and Administration work
+  (before, we advised against it). Shopware components such as Bootstrap
+  and Meteor still win. `sw-skill-router` reminds you of it on frontend
+  changes, or prints the install command when it is missing.
+- **Corrected PHP and Symfony advice.** Keep the concrete DAL
+  `EntityRepository`, because there is no repository interface to inject.
+  Feature checks take the four-part flag ID such as `v6.8.0.0`, while
+  deprecations keep the three-part release such as `v6.8.0`. Simple typed
+  internal arrays are fine, and readonly is only for immutable contracts.
+- **Simpler internal swaps.** `sw-core-development` lets you replace an
+  internal implementation directly when the new one behaves the same. Two
+  code paths behind a flag are only needed for incompatible changes or a
+  staged rollout.
+- **Administration on 6.8.** `sw-admin-js` treats a change to core's new
+  `public-api/` block snapshot like one to `blocks-list.json`, as an
+  extension API change. It also explains how an extension's Jest tests
+  move to the 6.8 setup now that trunk removed the old feature-flag helper.
 
-### Fixed
+### For contributors
 
-- The repository-injection, HTTP client and clock graders check the
-  contract in the AST instead of tokens, so a nonexistent DAL interface or
-  an unused injected dependency no longer passes.
-- Model evals count a Claude read of a `SKILL.md` (Read or `cat`, `head`,
-  `sed`) as a loaded skill; listing or grepping it does not.
+- Core's Administration and Storefront deprecation-guard ESLint rules are
+  recorded as trunk-only checks.
+- A rejected-proposals list records dropped rule ideas with the reason;
+  `suggest-rules` shows them and fails a proposal that repeats one.
+- The repository-injection, HTTP client and clock graders check the code
+  structure instead of tokens, so a made-up DAL interface or an unused
+  dependency no longer passes.
+- Model evals count a real read of a skill file by Claude as a loaded
+  skill; listing or grepping it does not.
 
 ## [0.18.0] - 2026-11-20
 
+The API index now sees Administration changes it missed before: blocks
+that only exist with a feature flag, and signature changes of props and
+methods. The `shopware-api-index` package the skills run now needs Node 26
+or newer, and the old `sw-podman-dev` name is gone.
+
 ### Added
 
-- API index: admin blocks, slots and components that exist with a feature
-  flag on or off only carry `from` / `until` (`v6.8.0`). `api-diff` reports
-  a block moved behind the flag as announced, and facts name the flag
-  state. Generator `api-index/0.7.0`.
-- API index: admin props, methods and computed members carry their
-  signature (prop types, parameters, return types). `api-diff` reports a
-  new required parameter or prop, a removed parameter, a narrowed type and
-  a removed computed member; facts name the release a signature changed.
-  Generator `api-index/0.8.0`.
-- `tools/api-index/bin/cross-check.ts` compares `api-diff` with the
-  `sw-impact` annotations on core PRs and gives each miss a reason. The
-  first run found 6 of 33 admin findings; most misses were signatures,
-  which the index now records (above).
+- **Flag-dependent Administration blocks.** The API index knows which
+  admin blocks, slots and components exist only with a feature flag on or
+  off. A block moved behind the 6.8 flag counts as announced, not as a
+  break, and the facts name the flag state.
+- **Administration signatures.** The API index records prop types,
+  parameters and return types. It reports a new required parameter or
+  prop, a removed parameter, a narrowed type and a removed computed
+  member, and says in which release a signature changed.
 
 ### Changed
 
-- Repo tooling and CI now run on Node 26 (was 24): `tools/` and
-  `tools/api-index` need Node 26 or newer, and `@types/node` follows on 26.x.
-  The `shopware-api-index` package follows: `0.1.0-beta.2` needs Node 26
-  or newer, and the skills pin it.
-- `ARCH-001` in `sw-architecture` covers a service whose `reset()` method
-  already does something else: the `kernel.reset` tag then names another
-  method. New task `review-reset-method-tag-ignore`.
-- `sw-extension-review` rates a test that cannot fail as major, not minor,
-  and holds back core-only test conventions (untagged `#[Package]`,
-  `@internal`, `#[CoversClass]` on integration tests) on plugin diffs.
-- `suggest-rules draft`: the drafter prompt keeps the catalog title of an
-  updated rule and asks for a task for each new case, and the draft A/B
-  runs both halves of a review pair.
+- **Node 26 for the API index.** The `shopware-api-index` package the
+  skills run is now `0.1.0-beta.2` and needs Node 26 or newer.
+- **Services with their own reset.** `sw-architecture` covers a service
+  whose `reset()` method already does something else: the `kernel.reset`
+  tag then names another method.
+- **Fairer extension reviews.** `sw-extension-review` rates a test that
+  cannot fail as major instead of minor. On plugin changes it no longer
+  asks for test conventions that only core uses, such as the `#[Package]`
+  attribute or `#[CoversClass]` on integration tests.
 
 ### Removed
 
-- The `sw-podman-dev` pointer skill, kept for one release after its rename
-  to `sw-local-dev`. List `sw-local-dev` instead.
+- **`sw-podman-dev`.** The pointer kept for one release after the rename
+  is gone. Install `sw-local-dev` instead.
 
-### Fixed
+### For contributors
 
-- The `DEV-002` grader accepts a DDEV check script that runs tools directly
-  when `IS_DDEV_PROJECT=true` (inside the container) and uses `ddev exec`
-  otherwise.
-- `api-changes` rebuilds last week's trunk with the current generator when
-  the generator version changed, instead of reporting hundreds of
-  deprecations that only the generator change produced.
-- `suggest-rules draft` no longer creates an empty A/B results file before
-  the A/B, which made eval-local refuse to run.
+- Repo tooling and CI run on Node 26 (was 24).
+- A new API index cross-check compares `api-diff` with the impact notes on
+  core PRs and explains each miss; its first run led to the signature
+  support above.
+- The weekly API change report rebuilds last week's trunk when the
+  generator changed, instead of reporting hundreds of false deprecations.
+- `suggest-rules draft` keeps the title of an updated rule, asks for a
+  task per new case, runs both halves of a review pair in its A/B and no
+  longer blocks the A/B with an empty results file.
+- The DDEV grader accepts a check script that runs tools directly inside
+  the container and uses `ddev exec` outside it.
 
 ## [0.17.0] - 2026-11-12
 
+`sw-podman-dev` is now `sw-local-dev` and knows how to run Shopware
+commands in DDEV, Docker Compose, Vagrant, native and Podman setups. The
+skills no longer bundle a large API index script; they run a small npm
+package instead. There is also a new security rule for validation regexes.
+
 ### Added
 
-- `sw-local-dev` runs Shopware commands where the project runs: DDEV,
-  Docker Compose, Vagrant, native host tools, linked Podman lanes and
-  Shopware CLI projects, one reference each. Rules `DEV-002` to `DEV-005`
-  (one per new environment) and `DEV-006` (Podman, moved from the old skill
-  text). Each has a task that fixes a `scripts/check.sh` copied from the
-  wrong setup, except `DEV-003` (Docker): Haiku found the compose service
-  and `-T` without the skill, so it has `eval: null`. Core's four
-  `.agents-templates` and shopware-cli's skills now feed its drift issue.
-- `SEC-009` in `sw-security`: end a validation regex with `\z` or the `D`
-  modifier, because a bare `$` also matches before a trailing newline.
-  Core's PHPStan rule only runs in core, so extension reviews need it.
-  Review pair `review-regex-end-anchor`.
-- Review pairs for `PLG-018` (no heavy work in `updateDestructive()`) and
-  `PLG-020` (derived data comes from an indexer, not migration SQL):
-  `review-migration-destructive-backfill` and
-  `review-migration-derived-data`.
-- The weekly drift issue reads more of core: the nested Administration and
-  `.github` `AGENTS.md` files, the shared-guidance ADR, the agent-skills
-  policy, the four environment templates, and the rule settings in the
-  Admin and Storefront ESLint, Stylelint and ludtwig configs (a new
-  `lint-rule` signal, mapped to the rule a config enforces). Core's
-  `sw-bugfixer` and `shopware-knowledge-capture` skills map to our skills;
-  the triage skills are ignored with a new per-source `ignore` list.
-- `docs/plans/2026-11-core-sources-and-admin-api.md`: the plan for core
-  sources, local environments, MCP and the admin API index.
+- **Commands for every local setup.** `sw-local-dev` runs Shopware
+  commands where the project runs: DDEV, Docker Compose, Vagrant, native
+  host tools, linked Podman lanes and Shopware CLI projects.
+- **Regex end anchors.** `sw-security` asks you to end a validation regex
+  with `\z` or the `D` modifier, because a bare `$` also matches before a
+  trailing newline. Core's PHPStan check only runs in core, so extension
+  reviews need this rule.
 
 ### Changed
 
-- `sw-podman-dev` is renamed to `sw-local-dev`. The old name stays for one
-  release as a pointer; replace it in your install commands and in the
+- **`sw-podman-dev` is now `sw-local-dev`.** The old name stays for one
+  release as a pointer. Replace it in your install commands and in the
   `skills` list of `~/shopware-dev/instances.json`.
+- **API index as an npm package.** Five skills no longer carry their own
+  631 KB copy of the API index tool. They run the `shopware-api-index`
+  package, pinned to a version, for example
+  `npx -y shopware-api-index@0.1.0-beta.1 facts .`.
 
-- The 68 review pairs whose graders were each one `reviewCatch` or
-  `reviewIgnore` call are one table, `tools/graders/review-pairs.ts`:
-  136 grader files fewer, and the shared `summary` pattern is written once
-  per pair. `tools/src/grade/run.ts` looks a task up there when it has no
-  grader file. All 408 golden-fixture verdicts are unchanged.
-- The API index tool is no longer copied into five skills as
-  `scripts/shopware-api.mjs` (631 KB each). The skills run the
-  `shopware-api-index` npm package instead, pinned to `0.1.0-beta.1`:
-  `npx -y shopware-api-index@0.1.0-beta.1 facts .`. CI checks every skill
-  pins the version in `tools/api-index/npm/package.json`.
-- `shopware-api-index` releases are staged with npm trusted publishing
-  instead of the `NPM_TOKEN` secret: `publish-shopware-api.yml` runs
-  `npm stage publish`, and a maintainer approves the version on npmjs.com.
-  `0.1.0-beta.1` is the first release published this way.
-- Eval tasks no longer carry a `grade.sh` that only called
-  `tools/bin/grade.ts` (223 files). Harbor, the smoke harness, the runner
-  and `test-graders` call `node tools/bin/grade.ts <task>` directly; a task is
-  a folder with an `instruction.md`. The 7 AST-backed tasks keep their own
-  `grade.sh`, which `grade.ts` runs.
+### For contributors
 
-### Fixed
-
-- OpenCode eval runs no longer ask the model for a session title. Ollama
-  answers one request at a time, so tasks waited behind the title, and
-  hosted models paid tokens for it.
+- The weekly drift issue reads more of core: nested `AGENTS.md` files,
+  the shared-guidance ADR, the agent-skills policy, the environment
+  templates and the lint rule settings. Core's environment templates and
+  shopware-cli's skills feed the `sw-local-dev` drift too.
+- The 68 single-call review pairs are one table instead of 136 grader
+  files, and 223 tasks lost a `grade.sh` that only called `grade.ts`.
+  All golden verdicts are unchanged.
+- `shopware-api-index` is published with npm trusted publishing instead of
+  a token; a maintainer approves each version on npmjs.com.
+- Review pairs now test the two plugin migration rules: no heavy work in
+  `updateDestructive()`, and derived data from an indexer, not SQL.
+- Each new local setup has an eval task, except Docker, which Haiku
+  already handled without the skill.
+- OpenCode eval runs no longer ask the model for a session title, which
+  made Ollama tasks wait and cost hosted models tokens.
+- A plan for core sources, local environments, MCP and the admin API
+  index is in `docs/plans/`.
 
 ## [0.16.0] - 2026-11-09
 
+The API index tools now ship inside the skills, so checking an extension
+against several Shopware releases needs only Node. `sw-podman-dev` learns
+the new shopware-dev lane commands and hands Shopware CLI projects to the
+CLI's own skills. There is also an experimental skill for core's generated
+OpenAPI DTOs.
+
 ### Added
 
-- `sw-openapi-dto`, a core-only skill for the PHP request and response DTOs
-  that core generates from its OpenAPI schema (shopware/shopware#17858,
-  still a draft, so the skill is experimental). Rules `DTO-001` to `DTO-008`:
-  change the schema and regenerate instead of editing a generated DTO,
-  delete stale DTOs by hand, apply defaults in business code, return the
-  response DTO and set status and headers on it. Eval tasks
-  `dto-schema-first` (with a working generator stand-in in the fixture),
-  `dto-default-in-business-code` and `dto-response-status-header`.
-- `TEST-037` in `sw-testing`: unit and devops tests never run in a separate
-  process. Trunk's Danger rule `ProcessIsolationInTests` already catches it,
-  so the rule defers on trunk. Eval `no-separate-process-test`; Haiku
-  passes it without the skill too, so there is no measured gain yet.
-- `DEV-001` and the `shopware-cli-routing` eval cover runner selection for
-  linked core checkouts, CLI-managed shops, standalone plugins and unrelated
-  projects. Deterministic fixtures check command scope and validation coverage;
-  model activation and A/B behavior have not been measured for this change.
-- The API index tools ship inside the skills: `scripts/shopware-api.mjs` in
-  `sw-change-impact`, `sw-core-development`, `sw-extension-review` and
-  `sw-plugin-development` runs `diff` and `facts` with plain Node from the
-  installed skill folder. Output starts with a summary line, items carry
-  `[file:line]` in clone mode, and `diff` exits with 3 on a break. Eval
-  `supported-range-api-arrival`.
-- `facts` and `diff` report storefront and admin blocks whose body changed
-  between releases (`changed`, never a break). A missing block links to
-  core's template at the first release without it, and `SF-014` says when
-  to wrap `{{ parent() }}`, when to copy that template and when to move the
-  markup onto a block present in the whole range.
-- `api-index.yml` writes a weekly API change report (`api-changes.md`):
-  trunk against last week's trunk and each new tag against the tag before.
-- `tools/bin/skill-context.ts` measures how much of the input tokens in
-  Claude Code transcripts our skills take (under half a percent over 14
-  days), and `docs/plans/2026-10-slim-skill-context.md` plans a smaller
-  skill listing.
-- Track `FriendsOfShopware/shopware-rector` documentation as an upstream source
-  for Shopware compatibility guidance and drift mapping. The new
-  FriendsOfShopware `shopware-extension-security` and
-  `shopware-store-preflight` skills map to `sw-security` and
-  `sw-extension-review` in the drift issue.
+- **OpenAPI DTOs (experimental).** The new core-only `sw-openapi-dto` skill
+  covers the request and response DTOs core generates from its OpenAPI
+  schema: change the schema and regenerate instead of editing a DTO,
+  delete stale DTOs by hand, apply defaults in business code, and set
+  status and headers on the response DTO. The core feature is still a
+  draft (shopware/shopware#17858).
+- **API checks from the installed skill.** `sw-change-impact`,
+  `sw-core-development`, `sw-extension-review` and `sw-plugin-development`
+  bring a script that runs the API index `diff` and `facts` with plain
+  Node. Output starts with a summary line, and `diff` exits with 3 on a
+  break.
+- **Changed template blocks.** The API index reports Storefront and
+  Administration blocks whose content changed between releases. A missing
+  block links to core's template at the first release without it, and
+  `sw-storefront` says when to wrap `{{ parent() }}`, copy that template or
+  move the markup to a block that exists in every supported release.
+- **No separate test processes.** `sw-testing` says unit and devops tests
+  never run in a separate process. Trunk's Danger check already catches
+  this in core.
 
 ### Changed
 
-- `sw-podman-dev` hands CLI-managed Shopware work to the upstream CLI skills,
-  checks installed command capabilities and separates project quality checks
-  from extension metadata validation. Unrelated projects keep their own tools;
-  managed core checkouts keep their Podman/Mutagen route.
-- Plugin migration guidance links upstream Rector rules and compatibility
-  boundaries, reuses installed dependencies and records the selected versions
-  and sets rather than copying transformations into skills.
-- Four duplicate review rules merge into their owning rules (226 to 222
-  active rules). Eval runs freeze their task plan and keep trial outcomes
-  and provenance; the tools tests gain coverage and scoped Stryker profiles
-  with a 95% floor. Bulky historical eval reports moved to a versioned
-  evidence archive.
-- `api-index` reports a class with `#[ClassMoved]` and a member a parent,
-  trait or interface took over as a move, not a removal; moves are not
-  breaks. Negated `instanceof` guards narrow the type, and chained calls
-  (`$event->getPage()->getProduct()`) resolve, which adds real `@internal`
-  and `@deprecated` facts and drops false positives. The generator is at
-  `api-index/0.6.0`, so the weekly job rebuilds every tag.
-- `suggest-rules` proposes retiring a rule only when the skill-off arm
-  passes 3/3 on at least two models and neither the rule nor its `-ignore`
-  twin shows a gain. `PLG-027` to `PLG-030` and `PLG-032` stay.
-- `evals.yml`: a `run-evals` label and a manual dispatch run on Copilot by
-  default, and a model that fails the preflight is dropped instead of
-  failing the whole run.
-
-- `sw-podman-dev` covers the new shopware-dev lane lifecycle: `sw-dev lane
-  create|update|remove`, `sw-dev versions`, `sw-dev space` and `sw-dev prune`.
-  It forbids removing lanes or volumes without the user's go-ahead and keeps
-  `trunk` permanent. Extension wiring goes through `sw-dev ext` and the
-  git-excluded `composer.sw-dev.json`, so agents no longer dirty
-  `composer.json`. The hard-coded lane port table is replaced by `sw-dev list`.
+- **Shopware CLI projects.** `sw-podman-dev` picks the right runner for a
+  linked core checkout, a CLI-managed shop, a standalone plugin or an
+  unrelated project. It hands CLI-managed work to the upstream CLI skills
+  and keeps project quality checks apart from extension validation.
+- **Lane lifecycle.** `sw-podman-dev` knows `sw-dev lane
+  create|update|remove`, `sw-dev versions`, `sw-dev space` and `sw-dev
+  prune`. It never removes lanes or volumes without your go-ahead, and
+  `trunk` stays. Extensions are wired through `sw-dev ext` and a
+  git-excluded file, so agents no longer change `composer.json`.
+- **Rector for plugin migrations.** Plugin migration guidance links the
+  upstream Rector rules and their limits, and records the chosen versions
+  and rule sets instead of copying transformations into the skills.
+- **Fewer duplicate rules.** Four duplicate review rules are merged into
+  the rules that own them (226 to 222 active rules).
+- **Fewer false API breaks.** The API index reports a class moved with
+  `#[ClassMoved]`, or a member a parent, trait or interface took over, as
+  a move, not a removal. It also follows negated `instanceof` checks and
+  chained calls, which finds more real `@internal` and `@deprecated` uses.
 
 ### Fixed
 
-- Clarify `ADM-044` for legacy Administration fields across 6.5 and 6.6:
-  default `v-model` targets the wrong prop on Vue 3, and an old `change`
-  listener can receive a native event rather than text. Accept explicit
-  bindings that support both contracts. Add an entrypoint reminder to read
-  the reference for mixed-version forms. The [workflow study](docs/results.md#admin-form-binding-decision--november-4-2026)
-  supports retaining this specific fact, with model-dependent results and
-  explicit grader-repair limitations.
-- `sw-podman-dev` no longer passes `--no-copy` to
-  `shopware-cli extension validate`: since shopware-cli 0.19.8 it validates
+- **Old Administration fields on 6.5 and 6.6.** `sw-admin-js` explains why
+  plain `v-model` binds the wrong prop on Vue 3 and why an old `change`
+  listener can get a native event, and accepts bindings that work with
+  both. See the
+  [workflow study](docs/results.md#admin-form-binding-decision--november-4-2026).
+- **Extension validation.** `sw-podman-dev` no longer passes `--no-copy` to
+  `shopware-cli extension validate`; since shopware-cli 0.19.8 it checks
   the folder in place.
-- The `storefront-blocks-across-range` grader no longer counts the agent's
-  own cleanup ("I removed …") as a false alarm.
+
+### For contributors
+
+- A weekly API change report compares trunk with last week's trunk and
+  each new tag with the one before.
+- `tools/bin/skill-context.ts` measures how much of the input our skills
+  take (under half a percent over 14 days), with a plan to shrink it.
+- The drift issue tracks FriendsOfShopware's Rector docs and maps its new
+  security and store preflight skills to ours.
+- Eval runs freeze their task plan and keep trial outcomes; tool tests
+  have scoped Stryker profiles with a 95% floor; old eval reports moved to
+  an evidence archive.
+- `suggest-rules` proposes retiring a rule only when the skill shows no
+  gain on at least two models.
+- The `run-evals` label and manual runs use Copilot by default, and a
+  model that fails the preflight is dropped instead of failing the run.
+- The Storefront blocks grader no longer counts the agent's own cleanup as
+  a false alarm.
 
 ## [0.15.0] - 2026-10-29
 
+This release makes the skills leaner and more reliable: 58 rules that
+showed no measured effect are gone, and the main skills now load before an
+edit, even a small one. It also adds a final prose check for the agent's
+answers, a rule for new Administration components, and a rule that keeps
+test expectations from changing quietly.
+
 ### Added
 
-- `ADM-041` in `sw-admin-js`, from the Administration lint gate in
-  shopware/shopware#21730: new components are TypeScript, export
-  `wrapComponentConfig({ ... })` and use composables instead of mixins. On
-  trunk they copy the reference implementations named in the Administration
-  `AGENTS.md`, not the neighbouring code. Eval `admin-component-wrap-config`
-  with an AST grader. The new `no-new-mixins` ESLint rule is listed under
-  "Already enforced by CI" for `ADM-007`. `ADM-006` stays, narrowed to
-  plugins: a plugin module built with `Component.register` and Twig blocks
-  gets no `.vue` file, because other extensions cannot override its blocks.
-- `STY-001` in `sw-assistant-style`: before handing back prose, the agent
-  reads it once more and rewrites machine-writing tells (staged contrasts,
-  run-ups, bold-label lists, inflated words, chat phrases) without adding or
-  dropping facts. The checklist is our rewrite of
-  [`blader/humanizer`](https://github.com/blader/humanizer).
-  `sw-pr-description` carries the part that fits a PR body. In a local A/B
-  on Sonnet, a blind judge preferred the checked texts in 14 of 22 decided
-  pairs, and graders stayed green. Installing humanizer next to our skills
-  did nothing, because the agent never loaded it. Eval task
-  `plain-prose-dev-answer`; its grader uses the new
-  `tools/src/grade/prose.ts`. Humanizer is a drift source now, so a change
-  to its `SKILL.md` shows up under `STY-001` in the weekly issue.
-- `STY` prefix for `sw-assistant-style`. The support-reply block rule is
-  `STY-002`, and saying plainly when unsure is `STY-003`.
-- `TEST-036` in `sw-testing`: a PR that changes code keeps the existing
-  test expectations. A flipped, loosened or skipped assertion, or an edited
-  data-provider case, needs the behavior change announced in the PR and the
-  changelog. It is the second half of core review guide TEST-002, which
-  `TEST-035` does not cover. Review pair
-  `review-test-changed-expectation-*`; the `test-shape-and-flags.md` route
-  now also fires on assertion edits and named data-provider cases.
-- Drift mining reads every repository in `rules/sources.json`: core trunk
-  plus `shopwareLabs/ai-coding-tools`, `netresearch/php-modernization-skill`,
-  the `shopware/shopware-cli` skills and `FriendsOfShopware/agent-skills`.
-  `docs/.mining-state.json` has one entry per source; the old single-source
-  shape still reads.
-- The weekly drift issue groups each change by the skill and rule it
-  touches. A change ties to a rule through the catalog (`core_guide_ids`,
-  `enforced_by`, `trunk.source`, the new `upstream` field), then through
-  the skills' `routes.json`, then through the source's skill list. What no
-  rule covers is listed as unmapped. `--signals` writes the mapped changes as
-  JSON Lines for later tooling.
-- `PRD-001` and `PRD-008` record their trunk source, the PR template.
-- A daily review collector, `tools/bin/collect-reviews.ts`, turns review
-  comments and review bodies on merged PRs into signals mapped to skills
-  and rules. `.github/workflows/collect-reviews.yml` publishes the public
-  ones for `shopware/shopware` as the `review-signals` release, one file per
-  month. Private repositories such as `shopware/SwagCommercial` are only
-  collected locally into the git-ignored `.cache/review-signals/`.
-- Each reviewer gets a trust score from their own record: the share of
-  their comments the code changed after, starting from a prior that is
-  higher for org members. It lands in `reviewers.json` next to the signals.
-- The weekly drift issue has a "Review comments" section: the week's
-  review comments counted per skill and reference, with the PRs.
-- Replay tests for drift mining: ten recorded weeks across all sources,
-  checked against a hand reading. `mine-trunk.ts run --dry-run` prints the
-  report and the issue actions without touching issues or the state file;
-  the workflow has a `dry_run` input. `/mined <source>` moves only the
-  named sources.
-- `tools/bin/replay-routes.ts` replays the router over merged core PRs and
-  measures recall against the references their review comments map to,
-  and the references selected with no matching comment. A recorded corpus
-  of 34 public PRs in `evals/routing-replay/` keeps a recall floor in CI.
-- `tools/bin/agent-preflight.ts`: the evals workflow checks that the CI
-  model answers before the shards start.
-- `tools/bin/suggest-rules.ts` proposes new, updated and retired rules from
-  the `review-signals` release and the open drift issue, with the agent you
-  are logged in to. It clusters the signals without a model, weighted by
-  reviewer trust, asks the agent once per cluster (`SUGGEST_MAX_CLUSTERS`,
-  default 20) with the signals as quoted data, validates the JSON answer,
-  and checks that every evidence URL was in the input, the skill owns a
-  topic and a new rule has two PRs or a review that requested changes.
-  Retirement candidates come from `enforced_by` checks that are not
-  trunk-only, classes gone from the API index and A/B baselines where the
-  skill-off arm passes every repeat. Output goes to the git-ignored
-  `suggestions/`. See `docs/maintenance.md#suggesting-rule-changes`.
-- `suggest-rules draft <id>` turns one proposal into a branch
-  `rules/<skill>-<slug>` in its own worktree. The agent makes the change by
-  the steps in `AGENTS.md` with file and test tools only; the free checks
-  run (one retry with their output), `eval-local` runs the A/B for the
-  changed tasks, and a draft PR opens with the evidence, the criteria
-  answers, the checks and the A/B table, labelled `run-evals`. `--no-pr`
-  stops before the push. See `docs/maintenance.md#drafting-a-proposal`.
-- Review pair `review-thin-controller-catch` / `-ignore` for `PLG-006`: a
-  Store API balance route in a loyalty plugin. In the catch diff the
-  controller builds the Criteria, runs the aggregation and picks the tier;
-  in the ignore diff it calls one injected calculator service.
-  Haiku passes both with skills off too (3/3 each), so `PLG-006` gets a
-  `keep_reason`: with the skill on, the review cites `PLG-006`; with it off,
-  it gives no rule ID. The catch grader accepts `minor`, because the
-  review's severity scale calls working but costly code minor.
+- **New Administration components.** `sw-admin-js` now asks for
+  TypeScript, `wrapComponentConfig()` and composables instead of mixins in
+  new components. On trunk the agent copies the reference components named
+  in the Administration guide, not the code next to it.
+- **Answers that read like a person wrote them.** Before handing back
+  text, `sw-assistant-style` has the agent read it once more and rewrite
+  machine-writing tells without adding or dropping facts. The checklist is
+  our rewrite of [humanizer](https://github.com/blader/humanizer), and
+  `sw-pr-description` uses the part that fits a PR body.
+- **Test expectations stay put.** `sw-testing` now flags a PR that flips,
+  loosens or skips an existing assertion, or edits a data-provider case,
+  unless the PR and changelog announce the behavior change.
 
 ### Changed
 
-- The descriptions of `sw-plugin-development`, `sw-architecture`,
-  `sw-testing`, `sw-php-foundation`, `sw-core-development`, `sw-storefront`
-  and `sw-admin-js` say to load the skill before an edit, even a small and
-  fully specified one, and name the kinds of code that need it. In the
-  baseline, Haiku loaded no skill on build tasks it felt sure about. On 17
-  of those tasks it now loads one in 41 of 51 runs. No should-not-trigger
-  prompt of these skills fires. `sw-architecture` no longer tells the agent
-  to skip it for "one obvious edit". `sw-plugin-development` points at the
-  limit rule `ARCH-002`, because Haiku loads it without `sw-architecture`.
-- `ARCH-002` says how to read every row: a job that needs all of them pages
-  in a loop with `RepositoryIterator`, or with `IteratorFactory` or a DBAL
-  query and a last-ID cursor for a plain ID scan. One `setLimit()` without
-  the loop drops the rest. The old text allowed an undefined "export
-  exception".
-- `dal-search-without-limit` asks for a category teaser in a plugin with a
-  composer.json and a plugin class, instead of filtering a method called
-  `loadAll()`. On the old prompt the agent rightly refused to truncate "all".
-  Its grader checks every method that searches, following calls to helpers
-  in the class, so a limit in an unused helper no longer passes. Haiku: 3/3
-  with skills on, 0/3 off.
-- New task `dal-export-pages-through-all`: a nightly CLI export of every
-  product ID in a category. It passes only when a method that reads products
-  pages in a loop. A single `setLimit()` read fails. The new
-  `tools/src/grade/php-calls.ts` follows same-class calls for both DAL
-  graders. Haiku pages here without the skill, so the task holds.
-- `business-logic-in-controller` runs in a plugin skeleton and no longer
-  reads as "write one file". Its grader skipped a class-level `#[Route]`
-  (the Store API scope) and took the constructor for the route action, which
-  failed correct solutions.
-- `PHP-001` (no `empty()`) and `PHP-002` (backed enums for a fixed set of
-  values in new code) are tagged in `sw-php-foundation` with audience
-  `core`. `PHP-001` is enforced on trunk by PHPStan's `disallowedEmpty`;
-  `PHP-002` comes from the core coding guideline on PHP 8.1 features.
-  `sw-core-development` points at both, because Haiku loads it for core work
-  without `sw-php-foundation`. Their tasks are core features now: a domain
-  blocklist in `CustomerEmailValidator`, and review moderation states. With
-  skills off, Haiku kept `empty()` in 3 of 3 runs, and with skills on it
-  removed it in 3 of 3. `PHP-002` holds on Haiku and keeps a `keep_reason`.
-- Thin controllers are one rule now, `PLG-006`, stated in
-  `sw-plugin-development/references/api-contracts.md` with audience core and
-  plugin. `REV-010` (sw-review-learnings) and `CORE-035`
-  (sw-core-development) said the same thing; they are superseded by
-  `PLG-006`, and both skills point at it. The rule lives in a reference the
-  extension review reads, so a review can cite it.
-- `dal-search-without-limit`, `business-logic-in-controller` and
-  `no-dal-connection-for-entity-read` ask for a feature now instead of a fix
-  that names the rule. On the old prompts every profile passed them with
-  skills off. On the new ones, claude/haiku fails the first two in both
-  arms and never loads a skill, so `ARCH-002`, `PLG-006`, `REV-010` and
-  `CORE-035` stay. `PLG-003` and `REV-024` still hold and get a
-  `keep_reason`: review tasks cite them.
-
-- Three new core checks are cited in the catalog, so the drift issue files
-  their changes under the rule and the "Already enforced by CI" sections
-  list them: `StoreApiRouteExtensionRule` for `ARCH-004`,
-  `NoFeatureSkipInUnitTestsRule` for `TEST-006` and
-  `NoReflectionInUnitTestsRule` for `TEST-012`.
-- The CI eval model is `opencode/mimo-v2.6-flash-free`; LongCat is no
-  longer offered. OpenCode web search is off in eval sessions, and the
-  workflow runs 16 shards with a 330 minute A/B timeout.
-- The README shows the version facts A/B with all three arms, the
-  `ADM-009` result and the `api-diff` precision and recall, and describes
-  the mining and review collection that run today.
-- The `code-comments.md` route for `REV-034` also fires on "instead would"
-  and on any bare issue number in a comment.
+- **Plugin Administration modules stay overridable.** The old "follow the
+  patterns of the area" rule in `sw-admin-js` now covers plugins only: a
+  module built with `Component.register` and Twig blocks gets no `.vue`
+  file, because other extensions could not override its blocks.
+- **Skills load before an edit.** The descriptions of the main skills,
+  such as `sw-plugin-development`, `sw-architecture` and `sw-testing`, now
+  say to load the skill before any edit and name the code that needs it.
+  On small build tasks Haiku used to load no skill; now it loads one in 41
+  of 51 runs.
+- **Reading every row.** `sw-architecture` now says how to handle a job
+  that needs all rows: page through them in a loop, with
+  `RepositoryIterator` or an ID cursor. A single limit without the loop
+  silently drops the rest.
+- **PHP basics for core work.** The rules against `empty()` and for backed
+  enums now live in `sw-php-foundation`, and `sw-core-development` points
+  at them, because the agent often loads it alone for core work.
+- **One thin-controller rule.** Three copies of the same rule became one
+  in `sw-plugin-development`, which the extension review reads, so a review
+  can cite it.
+- **Fewer repeated checks.** Three more core checks are listed under
+  "Already enforced by CI": Store API route extension events, feature-flag
+  skips in unit tests and reflection in unit tests.
+- **Code comments.** The comment rule in `sw-review-learnings` now also
+  kicks in on "instead would" and on bare issue numbers in comments.
 
 ### Removed
 
-- 58 rules without a measured effect left the skills. Each stays in
-  `rules/catalog.json` as `retired`, with the evidence in the new
-  `retired_reason` field, which every retired or superseded rule now needs.
-  - 20 rules with an eval task: with the skill off, the task passed every
-    repeat on claude/haiku and on the free OpenCode model. Their tasks stay
-    as canaries.
-  - 38 rules without an eval: `suggest-rules draft-eval` wrote one, and with
-    the skill off claude/haiku passed every repeat. The drafted tasks were
-    not kept.
-- `keep_reason` in the catalog marks an active rule that stays although no
-  A/B shows an effect, and retirement passes skip it. Eight rules carry one,
-  because a miss is severe on weaker models: `SEC-001`, `PLG-023`,
-  `ADM-016`, `CORE-002`, `PLG-022`, `CORE-066`, `CORE-067` and `CORE-069`.
+- **58 rules without a measured effect.** With the skill switched off,
+  the agent already got these right in every run, so they only cost
+  context. Eight rules stay anyway, because a miss is severe on weaker
+  models, for example committing secrets or editing a released migration.
 
-### Fixed
+### For contributors
 
-- Drift mining skipped commits merged after the state but dated before it.
-  It now reads the commit range from the state's commit, and falls back to
-  dates when that commit is gone.
-- Drift mining read merge commits again, read Markdown outside the watched
-  paths and change logs, took code blocks and frontmatter for rules, missed
-  review persona bullets, reported helper classes as rule classes, and cut
-  commits at 300 files.
-- The mining workflow closed every older drift issue. It now closes one
-  only when the new report reaches as far in every source it lists.
-- Eval runs: a failed skill call no longer counts as a loaded skill, a
-  session that tried web search no longer counts as an agent error, and the
-  gate and baseline jobs need a successful plan. The baseline job refuses
-  empty results.
+- Drift mining reads every repository in `rules/sources.json`, groups the
+  weekly issue by skill and rule, and lists review comments per skill. It
+  has replay tests and a dry-run mode, and several mining bugs are fixed.
+- A daily collector turns review comments on merged core PRs into signals
+  with a reviewer trust score, published as the `review-signals` release.
+- `suggest-rules.ts` proposes new, changed and retired rules from those
+  signals, and `suggest-rules draft <id>` turns one into a draft PR. See
+  [suggesting rule changes](docs/maintenance.md#suggesting-rule-changes).
+- `replay-routes.ts` measures router recall on 34 recorded core PRs, with
+  a recall floor in CI.
+- Several eval tasks now ask for a feature instead of naming the rule,
+  with stricter graders, a new DAL paging task and a thin-controller
+  review pair. The catalog has `keep_reason` and `retired_reason` fields.
+- The CI eval model is `opencode/mimo-v2.6-flash-free`, with a preflight
+  check, 16 shards and no web search. Eval runs no longer count a failed
+  skill call as loaded, and the baseline job refuses empty results.
+- The prose check has its own eval task and grader. In a local A/B on
+  Sonnet a blind judge preferred the checked texts in 14 of 22 pairs, and
+  humanizer is now a drift source. The style rules got their own prefix.
+- The README shows current A/B results and how mining and review
+  collection work.
 
 ## [0.14.0] - 2026-10-23
 
-### Changed
-
-- **Breaking:** every skill name starts with `sw-`. `php-foundation` is
-  now `sw-php-foundation`, and `shopware-<topic>` is now `sw-<topic>`.
-  Rule IDs, routes and eval tasks keep their names. Remove the old folders
-  and install the new names (see `docs/installation.md`). Our
-  `sw-admin-js` no longer shares a folder name with core's
-  `shopware-admin-js`.
-- The README is short and says why to use the library. Installation,
-  architecture with diagrams, results and maintenance moved to their own
-  pages under `docs/`.
+Every skill name now starts with `sw-`, so you need to reinstall under the
+new names. The new `sw-skill-router` tells you which skills and references
+a change needs, and `sw-help` lists what each skill is for.
 
 ### Added
 
-- `sw-skill-router`: `/sw-skill-router` runs a dependency-free script that
-  reads the git diff, a saved diff or planned paths. It detects core,
-  plugin, app or project per file, filters by task (build, review, ship,
-  answer, run) and lists the skills and references to load, with the file
-  or line that triggered each. It also prints the install command for
-  missing skills. Its `index.json` is generated from a new `metadata` block
-  in every `SKILL.md` and from the routes.
-- Routes take `exclude_paths`, with a per-file default: production-code
-  references no longer fire on tests, ADRs or release notes, and a
-  Storefront file importing Storefront no longer selects the component
-  independence rules. A renamed file routes under its old and new path.
-  `tests/devops/` selects the core test patterns. New routing case
-  `test-suite-move`.
-- The router ranks skills and references by how many files matched, names
-  the base branch, merge base and commit count, warns on large diffs, and
-  says which core trunk skill leads a topic (`defers_to` metadata).
-- `REV-034` in `sw-review-learnings`: comments and docblocks describe the
-  code, not the history of the change. From shopware/shopware review
-  findings on #19917 and #20855. Routed by history words in comment lines,
-  with a review catch and ignore pair and the routing case `history-comment`.
-- `REV-035`: a visibility check by ID with `searchIds()` misses
-  restrictions set on `sales_channel.<entity>.loaded`, such as Dynamic
-  Access hiding categories. `->searchIds(` now selects the DAL review
-  reference. Review catch and ignore pair included.
-- `sw-help`: what every skill is for, grouped by task, with example prompts.
-- `validate-skills` checks the skill metadata, that the router index is up
-  to date, and that `sw-help` names every skill.
+- **Skill router.** `/sw-skill-router` reads your git diff, a saved diff
+  or planned paths, works out whether each file is core, plugin, app or
+  project code, and lists the skills and references to load with the file
+  or line behind each. It ranks them by matches, warns on large diffs,
+  says which core skill leads a topic, and prints install commands for
+  missing skills.
+- **Skill overview.** `sw-help` explains what every skill is for, grouped
+  by task, with example prompts.
+- **Comments about the code.** `sw-review-learnings` asks that comments
+  and docblocks describe the code, not the history of the change.
+- **Visibility checks by ID.** `sw-review-learnings` warns that a check
+  with `searchIds()` misses restrictions applied when entities load, such
+  as Dynamic Access hiding categories.
+
+### Changed
+
+- **Breaking: new skill names.** `php-foundation` is now
+  `sw-php-foundation`, and every `shopware-<topic>` skill is now
+  `sw-<topic>`. Remove the old folders and install the new names, see
+  [installation](docs/installation.md). Our `sw-admin-js` no longer clashes
+  with core's `shopware-admin-js`.
+- **Shorter README.** The README says why to use the library; installation,
+  architecture, results and maintenance have their own pages under
+  `docs/`.
+- **Less noise from references.** Production-code references no longer
+  load for tests, ADRs or release notes, and a renamed file counts under
+  its old and new path.
+
+### For contributors
+
+- Routes take `exclude_paths` with a default per file; new routing cases
+  for test suite moves and history comments.
+- Every `SKILL.md` has a `metadata` block that generates the router index.
+- `validate-skills` checks the metadata, that the router index is current
+  and that `sw-help` names every skill.
+- Review catch and ignore pairs for the two new review rules.
 
 ## [0.13.0] - 2026-10-22
 
+The API index, which `sw-change-impact` and `sw-core-development` use to
+spot breaking changes, now covers much more than PHP. It sees routes,
+entity fields, feature flags, configuration, the Administration, the
+Storefront and Twig, and a new diff command reports what a change breaks.
+
 ### Added
 
-- WP11 phase 3: the API index covers routes (with scope and OpenAPI
-  coverage), entity fields and their API flags, feature flags and bundle
-  configuration keys (generator `api-index/0.3.0`). Deprecations count
-  where core writes them: docblocks, the entity class, plain and YAML
-  comments, handler triggers and feature-flag branches.
-- `api-diff` reports what a change does to those surfaces: removed or
-  changed without a deprecation, removed after one, and newly deprecated.
-  It works on a `shopware/shopware` clone or offline from the index.
-  `bc-data-and-config.md` and `impact-review.md` point at it.
-- `check-breaks` measures `api-diff` against the breaks the 6.6, 6.7 and
-  6.8 UPGRADE files name: 97.2 % recall, 97.1 % precision. The weekly
-  index workflow runs it.
-- WP11 phase 4: the API index covers the admin and the storefront
-  (generator `api-index/0.4.0`). Admin: components with their props,
-  methods, emits, slots and template blocks, position identifiers and the
-  `Shopware` global, `@private` and `@deprecated` included. Storefront:
-  templates and blocks, and the JS plugins `main.js` registers with their
-  options and public methods. Also the Twig functions, filters and tags core
-  adds, and whether the admin and storefront build with webpack or Vite.
-- `api-diff` reports these surfaces (`admin`, `storefront`, `twig`,
-  `build`). `api-facts` reads an extension's admin overrides, storefront
-  templates, plugin overrides, Twig calls and admin `webpack.config.js`,
-  and finds an overridden block through the template's `sw_extends` chain
-  or the component it extends.
-- Three blind review pairs for `PLG-001` on frontend API core removed in
-  6.7: a storefront template, a storefront JS plugin and an admin block.
+- **Routes, entities, flags and config.** The API index records routes
+  with their scope and OpenAPI coverage, entity fields and their API
+  flags, feature flags and bundle configuration keys. It finds
+  deprecations wherever core writes them.
+- **Administration and Storefront.** The index covers admin components
+  with their props, methods, events, slots and blocks, and Storefront
+  templates, blocks and JS plugins with their options. It also knows the
+  Twig functions, filters and tags core adds, and whether the build uses
+  webpack or Vite.
+- **What a change breaks.** `api-diff` reports what a change removes,
+  changes or deprecates on all these surfaces, from a `shopware/shopware`
+  clone or offline from the index. The change-impact and core
+  compatibility references point at it.
+- **What an extension uses.** `api-facts` reads an extension's admin
+  overrides, Storefront templates, plugin overrides, Twig calls and admin
+  webpack config, and finds an overridden block through `sw_extends` or
+  the component it extends.
 
-### Fixed
+### For contributors
 
-- The index timeline merges one release at a time; with phase 4 the full
-  build ran out of memory.
+- `check-breaks` measures `api-diff` against the breaks in the 6.6, 6.7
+  and 6.8 UPGRADE files (97.2% recall, 97.1% precision); the weekly index
+  workflow runs it.
+- Three review pairs for frontend APIs core removed in 6.7: a Storefront
+  template, a Storefront JS plugin and an Administration block.
+- The index timeline merges one release at a time, because the full build
+  ran out of memory.
 
 ## [0.12.0] - 2026-10-22
 
+This release adds a public API index of Shopware and a command that checks
+an extension against it. The extension review can now tell whether the
+Shopware API a plugin uses exists, and is safe to use, in every release
+its `composer.json` allows.
+
 ### Added
 
-- WP11 phases 0 to 2: a public API index of `shopware/shopware`.
-  `tools/api-index` builds the PHP surface of every tag since 6.5.0.0 plus
-  trunk into one timeline, with internal, deprecated, experimental, final
-  and BC-change flags per release. A weekly workflow publishes it as the
-  `api-index` release asset.
-- `api-facts` reports, for an extension and its `composer.json` range, the
-  Shopware API it uses that is missing, internal, deprecated or changed in
-  part of the range, and guards on API every release already has. A class
-  guard counts only for the releases without the class. The extension
-  review lenses and `version-compatibility.md` point at it.
-- Review pairs for PLG-001 (`review-supported-range-*`,
-  `review-in-minor-range-*`), REV-015 (`review-dead-version-guard-*`,
-  `review-unneeded-guard-*`) and PLG-024 (`review-later-member-guard-*`).
-  The last three pairs use API no skill names; with `api-facts` Haiku
-  catches 15 of 15, with skills alone 5 of 15.
-- Review graders take an `also` list of rule IDs that are as right as the
-  expected one.
+- **Shopware API index.** A weekly build records the PHP API of every
+  Shopware release since 6.5.0.0 plus trunk, with which classes and
+  methods are internal, deprecated, experimental, final or changed in each
+  release.
+- **API facts for an extension.** `api-facts` lists the Shopware API an
+  extension uses that is missing, internal, deprecated or changed in part
+  of its supported range. It also flags version guards on API that every
+  release in the range already has. `shopware-extension-review` and
+  `shopware-plugin-development` point at it.
 
 ### Fixed
 
-- PLG-024: `CacheTagCollector` exists from 6.6.6.0 but `addTag()` only from
-  6.7.2.0, so the guard example checks the method.
+- **Version guard example.** The guard example in
+  `shopware-plugin-development` now checks for the `addTag()` method, not
+  the `CacheTagCollector` class: the class exists from 6.6.6.0, but the
+  method only from 6.7.2.0.
+
+### For contributors
+
+- Review pairs for the supported version range, dead or unneeded version
+  guards and guards on later members. On the last three, Haiku catches 15
+  of 15 with `api-facts` and 5 of 15 with the skills alone.
+- Review graders take an `also` list of rule IDs that count as equally
+  right.
 
 ## [0.11.0] - 2026-10-22
 
+This release teaches the extension review to catch problems that depend
+on a Shopware version or API fact, and brings `shopware-pr-description` in
+line with the new core PR template.
+
 ### Added
 
-- Six review pairs for problems that turn on a version or API fact:
-  - PLG-007: a 6.7 subscriber to a `*RouteCacheTagsEvent` that is no longer
-    dispatched (`review-cache-tags-event-*`)
-  - ADM-004: a flat privilege mapping that registers but breaks the role
-    screens (`review-admin-privilege-shape-*`)
-  - ADM-009: a `webpack.config.js` the 6.7 Vite build ignores
-    (`review-admin-webpack-config-*`)
-  - SF-009: `sw_csrf()`, removed in 6.5, in a new storefront form
-    (`review-sw-csrf-*`)
-  - PLG-026: a new `services.xml` in a plugin that targets 6.8
-    (`review-services-xml-68-*`)
-  - PLG-016: `Context::createDefaultContext()` for storefront product data
-    (`review-storefront-default-context-*`)
-- `validate-rules` fails when a review task expects a rule that is tagged
-  where the reviewing skill cannot read it. It moved the tags of PLG-003,
-  TEST-016 and TEST-035 into borrowed references, and
-  `shopware-extension-review` now borrows `removals-and-shims.md` (CORE-063)
-  and, for a plugin's own cache, `impact-review.md` (IMP-008).
-- The `version-compatibility.md` route also fires on a plugin
-  `services.xml` or `routes.xml`.
+- **Version-aware extension review.** `shopware-extension-review` now
+  catches six more problems: a 6.7 subscriber to a cache tags event that is
+  no longer dispatched, a flat privilege mapping that breaks the role
+  screens, a `webpack.config.js` the 6.7 Vite build ignores, `sw_csrf()` in
+  a new storefront form, a new `services.xml` in a plugin for 6.8, and the
+  default context for storefront product data.
+- **More rules in the review.** The review now also reads the rules on
+  deprecations that point at a usable replacement and, for a plugin's own
+  cache, on cache keys that hold every input.
+- **Plugin config files.** The version compatibility guide in
+  `shopware-plugin-development` now also loads when a change touches a
+  plugin's `services.xml` or `routes.xml`.
 
 ### Changed
 
-- `shopware-pr-description` follows the five-section core PR template from
-  shopware/shopware#21627: "What and why?", "How?" with an optional
-  "Impact" sub-section, "Testing", "Additional notes" and the new
-  checklist. The template's agent block on trunk wins over the skill. Its
-  rules are tagged PRD-001 to PRD-009. The `pr-no-ai-trailers` grader
-  checks trailers in any capitalisation and each kept text under its own
-  section.
-- WP6 acceptance: the skills must win on at least four review catch tasks
-  for plugin and app rules, not four of the six WP5 tasks, which Haiku
-  catches without the skill.
+- **New core PR template.** `shopware-pr-description` follows the
+  five-section template from shopware/shopware#21627: "What and why?",
+  "How?" with an optional "Impact" part, "Testing", "Additional notes" and
+  the checklist. The template's own agent instructions on trunk win over
+  the skill.
 
 ### Fixed
 
-- ADM-004, ADM-009, SF-009 and PLG-007 are tagged in the references
-  `shopware-extension-review` borrows, not in a `SKILL.md` it never reads.
-  The review cited ADM-016 for the privilege shape, the nearest ID it saw,
-  and had no Vite fact for ADM-009 at all.
-- ADM-004: the flat privilege shape passes `isPrivilegeMapping` and then
-  throws in the role screens; every role needs `dependencies`, even `[]`.
-- PLG-007: `addTag()` exists from 6.7.2; 6.7.0 and 6.7.1 dispatch
-  `AddCacheTagEvent`. `cache-tag-no-deprecated-event` accepts that event.
+- **Review cites the right rule.** Several rules sat where the extension
+  review never looked, so it cited the nearest rule it had read, or missed
+  the Vite fact entirely. They now live in the guides the review reads.
+- **Privilege mapping.** The skills now say that every role needs
+  `dependencies`, even an empty list. Without it the mapping registers and
+  then breaks the role screens.
+- **Cache tags on early 6.7.** `addTag()` exists from 6.7.2. On 6.7.0 and
+  6.7.1 the skills accept `AddCacheTagEvent` instead.
+
+### For contributors
+
+- Review pairs for each of the six new review problems.
+- `validate-rules` fails when a review task expects a rule tagged where
+  the reviewing skill cannot read it.
+- The PR description rules are tagged, and the `pr-no-ai-trailers` grader
+  checks trailers in any case and each kept text in its own section.
+- WP6 acceptance asks the skills to win on at least four review catch
+  tasks for plugin and app rules.
 
 ## [0.10.0] - 2026-10-21
 
+This release adds five rules taken from a real review of a plugin, so the
+extension review catches these problems in your code too. It also fixes a
+case where the review could not open its own references.
+
 ### Added
 
-- Five rules from a real review of a plugin, each with a review pair:
-  - ADM-042: a core component override calls `$super` for every method it
-    replaces (`review-admin-override-super-*`)
-  - ADM-043: a plugin role never grants `system_config` privileges
-    (`review-acl-system-config-*`)
-  - ADM-044: one Administration bundle for 6.5 and 6.6+ binds `sw-*` form
-    fields with `v-model:value` (`review-admin-field-event-*`)
-  - SEC-008: a stored idempotent response is replayed only to its caller
-    (`review-idempotency-key-scope-*`)
-  - PLG-032: boot-time code does not use a suggested package outside its
-    guard (`review-optional-package-guard-*`)
-- `shopware-extension-review` lenses ask about the five rules; the near-miss
-  table points at ADM-042, ADM-043 and SEC-008, and
-  `review-idempotency-scope-near-miss` accepts SEC-008.
+- **Administration overrides call `$super`.** `shopware-admin-js` now
+  checks that a core component override calls `$super` for every method it
+  replaces.
+- **No `system_config` in plugin roles.** A role a plugin ships must never
+  grant `system_config` privileges.
+- **One bundle for 6.5 and 6.6+.** An Administration bundle that serves
+  both binds `sw-*` form fields with `v-model:value`.
+- **Idempotent responses stay private.** `shopware-security` now says to
+  replay a stored idempotent response only to the caller that created it.
+- **Optional packages stay optional.** Code that runs at boot must not use
+  a suggested package outside its guard.
+- **Review questions.** `shopware-extension-review` now asks about all
+  five rules.
 
 ### Fixed
 
-- `shopware-extension-review` opens each selected reference by its path.
-  One A/B run reported the references as missing because file search does
-  not follow the symlinked skill folders.
+- **Review references open again.** `shopware-extension-review` opens each
+  selected reference by its path. File search does not follow the
+  symlinked skill folders, so one run reported the references as missing.
+
+### For contributors
+
+- A review pair for each new rule, and the idempotency near-miss task
+  accepts the new security rule.
 
 ## [0.9.0] - 2026-10-21
 
+This release adds `shopware-extension-review`, a skill that reviews a whole
+plugin or app change, and many new review rules for public API,
+migrations, caching and tests. Skills now read only the reference a change
+needs and skip what CI already checks, so reviews are shorter and more to
+the point.
+
 ### Added
 
-- Near-miss review tasks (`review-<topic>-near-miss`): a real problem next
-  to a rule that does not cover it. The finding must not cite that decoy
-  rule. Four tasks, from rule IDs a real plugin review got wrong: `SF-013`,
-  `IMP-008`, `REV-033` and `SEC-005`. Graded by `reviewNearMiss`.
-- `shopware-extension-review` cites a rule only when the rule's own
-  sentence covers the finding, and writes `null` otherwise. `lenses.md`
-  lists the near misses and asks about raw SQL writes (`PLG-003`,
-  `REV-024`, `PLG-007`), `uninstall()` (`PLG-008`) and admin ACL for new
-  associations (`ADM-004`). Findings that copy core behavior say "same as
-  core".
-- `shopware-extension-review` (plan WP6): reviews a plugin or app diff as a
-  whole and ends with the findings JSON of the review tasks. It defines no
-  rule; its `routes.json` borrows the references of the topic skills.
-  Install line in `use-cases/extension-review.md`.
-- Borrowed routes: a route for `../<skill>/references/<file>.md` with no
-  triggers of its own takes them from the owning skill. A `routes.json`
-  `audience` makes `validate-rules` require every out-of-audience rule in a
-  borrowed reference to be named in the borrowing skill.
-- WP7 phases B and C. Ten new review pairs, each backing a new rule:
-  - PLG-031: never make an existing API route stricter (`review-store-api-stricter-request-*`)
-  - SEC-007: do not change access or cache defaults of a released route (`review-route-defaults-changed-*`)
-  - SF-011, SF-012, SF-013: JS plugin options and events, snippet keys and
-    theme fields are public API; never switch the HTTP cache off from the side
-  - IMP-008: a cache key holds every input (`review-cache-key-missing-input-*`)
-  - ADM-039, ADM-040: Administration component API and position identifiers,
-    in the new `shopware-admin-js` reference `extension-api.md`
-  - ARCH-005: extension event properties are the contract; no whole `Request`
-  - CORE-063: a deprecation points at a replacement extensions can use today
-- Core-only rules CORE-064..077 (shims, data and config BC, CLI, platform
-  scope, asset lifetime) in four new `shopware-core-development` references,
-  without evals (`audience: ["core"]`).
-- `core_guide_ids` now map the core review-guide IDs of #21455 onto existing
-  rules where they already state the rule.
-- `shopware-security` (SEC-001..007) and `shopware-change-impact`
-  (IMP-001..008) carry rule IDs; their existing tasks back SEC-001, SEC-003,
-  SEC-004, IMP-001, IMP-002, IMP-006 and IMP-007.
-- Eight more review eval pairs (plan WP5 done, WP7 phase A): planted
-  problem in `-catch`, clean look-alike in `-ignore`, graded by
-  `tools/bin/grade-findings.ts`.
-  - `review-migration-customized-data-*`, `review-migration-feature-flag-*`,
-    `review-migration-narrowing-update-*`, `review-migration-unbatched-backfill-*`
-  - `review-reset-interface-*`, `review-queue-inline-fallback-*`,
-    `review-test-cannot-fail-*`, `review-twig-block-removed-*`
-- New rules, each backed by its catch task:
-  - PLG-028: content migrations skip rows the merchant edited.
-  - PLG-029: no feature flags in migrations.
-  - PLG-030: `update()` never narrows a column; that goes to `updateDestructive()`.
-  - ARCH-001: a service that memoizes in a property implements `ResetInterface`.
-  - REV-033: no inline synchronous fallback for queued work.
-  - SF-001: deprecate shipped Twig blocks, variables and templates before renaming them.
-  - TEST-035: a test must be able to fail.
-- `shopware-architecture` and `shopware-storefront` carry rule IDs
-  (ARCH-002..004, SF-002..010); the storefront tasks now back SF-002..010.
-  PLG-019 gets an eval. Catalog entries for the new rules list their core
-  guide IDs in `core_guide_ids`.
-- Routes: `symfony-in-shopware.md` loads for `ResetInterface`, `kernel.reset`
-  and `$this->x[$k] ??=` memos; `dal-and-performance.md` for queued work.
-  Routing cases `memoized-service` and `queued-work`.
-- Review-shaped evals (plan WP5, first two pairs). `review-<rule>-catch`
-  tasks plant a problem in `diff.patch`; `-ignore` tasks show a clean
-  look-alike. The agent reports findings as one fenced `json` block, and
-  `tools/bin/grade-findings.ts` grades it: the catch task needs a finding at
-  the file and severity that names the rule by ID or in its own words; the
-  ignore task fails on any such finding above `nit`. Pairs:
-  `review-event-hook-assert-*` (TEST-016) and `review-store-api-contract-*`.
-- PLG-027 in `shopware-plugin-development`: never change the type or
-  nullability of an existing API response field; add a new field and
-  deprecate the old one.
-
-- Weekly trunk mining (plan WP8). `tools/bin/mine-trunk.ts` reads the
-  `shopware/shopware` trunk commits since `docs/.mining-state.json` that touch
-  `.agents/`, `coding-guidelines/`, `src/Core/DevOps/StaticAnalyze/` or the PR
-  template. It reports:
-  - core guide IDs that no rule cites in `core_guide_ids`
-  - PHPStan and Danger rule classes that were added, removed or renamed,
-    and changes to classes that `enforced_by` cites
-  - changed guideline headings, agent skill bullets and PR template lines
-  `.github/workflows/mine-trunk.yml` posts the report as a `trunk-drift` issue
-  every Monday. A `/mined` comment opens a PR that moves the state. Tested
-  offline on recorded API responses for 2026-10-13..2026-10-19.
-- Eval plan, gate and diff in TypeScript (plan WP10 step 1). The logic lives
-  in `tools/src/` as pure functions over typed A/B records, with unit tests.
-  `scripts/eval-plan.sh`, `eval-gate.sh` and `eval-diff.sh` keep their
-  arguments, environment variables and output, and now call
-  `tools/bin/eval-*.ts`. They need Node 24, which the `evals.yml` jobs and the
-  runner self-test job now set up. A non-numeric `EVAL_GATE_*` setting is now
-  a usage error (exit 2) instead of a crash.
-- A/B runner in TypeScript (plan WP10 step 2). `evals/runner/ab.sh` and
-  `run-task.sh` now call `tools/bin/ab.ts` and `run-task.ts`; arguments,
-  environment, JSONL lines and exit codes are unchanged. New
-  `EVAL_AGENT_TIMEOUT_SECONDS` stops a hung agent and every process it
-  started, and an agent that leaves a background process holding its output
-  no longer blocks grading.
-- Agent adapters and the skills profile in TypeScript (plan WP10 step 3).
-  `evals/runner/opencode-task.sh`, `claude-task.sh`, `opencode-activation.sh`,
-  `claude-activation.sh` and `skills-profile.sh` now call `tools/bin/`. The
-  inline Python event parsing became typed parsers, tested on a recorded
-  OpenCode and a recorded Claude Code session. Output, logs and exit codes
-  are unchanged; the adapters no longer need `python3`, and the OpenCode
-  timeout no longer needs a watchdog subshell.
-- Activation evals and the local eval run in TypeScript (plan WP10 step 4).
-  `scripts/run-activation-evals.sh` and `scripts/eval-local.sh` now call
-  `tools/bin/activation.ts` and `eval-local.ts`; output and exit codes are
-  unchanged. A skill now counts as activated only when the agent output
-  names it as a whole entry, not inside a longer name. The activation run
-  prints its summary line even when an agent error stops it.
-- Skill validation in TypeScript (plan WP10 step 5). `scripts/validate-skills.sh`
-  now calls `tools/bin/validate-skills.ts`, which runs the rule ID and route
-  checks in the same process instead of starting `node` twice. The output
-  and exit code on the repository are unchanged. A description is now
-  measured without the leading space the bash version counted on folded
-  (`>-`) descriptions, and any top-level frontmatter key ends a folded
-  description, including one with no value on its line.
-- The last helper scripts in TypeScript (plan WP10 step 6).
-  `evals/test-graders.sh`, `evals/runner/fake-agent.sh` and
-  `scripts/check-update.sh` now call `tools/bin/test-graders.ts`,
-  `fake-agent.ts` and `check-update.ts`. Golden grader output and exit codes
-  are unchanged on all 64 tasks, and the fake agent behaves the same in all
-  2,268 combinations of its settings. `check-update` asks the GitHub API
-  directly instead of trying `gh` and then `curl`, sends `GH_TOKEN` or
-  `GITHUB_TOKEN` when set, and names the reason when the lookup fails. The
-  `grader-golden` CI job now runs on Node 24.
-- Strict lint and format for `tools/`: oxlint with type-aware rules (built on
-  typescript-go, so it checks against TypeScript 7) and oxfmt, both in the
-  `tools` CI job as `npm run lint` and `npm run format:check`. No `any`, no
-  unchecked casts or non-null assertions, no `||` on nullable values, no
-  floating promises, and no `process.exit`. All findings are fixed, with no
-  suppressions. JSON the tools read (`rules/catalog.json`, `routes.json`, A/B
-  results) is now checked field by field. A malformed record is reported
-  with its line and field instead of passing as a typed value.
-
-- Path-based reference routing. Each skill with references has a
-  `routes.json` that maps changed-file globs and diff-line regexes to the
-  reference to read. The routing list in `SKILL.md` is now a generated table
-  (`tools/bin/render-routes.ts`), `tools/bin/route.ts` prints what a diff
-  selects, and `evals/routing/` holds eight diff cases that `npm test` checks
-  on every push. `validate-skills.sh` fails on a missing target, an unrouted
-  reference or a stale table.
-- "Already enforced by CI (do not repeat)" sections in `shopware-testing`,
-  `shopware-core-development`, `shopware-plugin-development`,
-  `shopware-admin-js` and `shopware-review-learnings`. Each bullet names the
-  CI check, what it catches and what it misses, so reviews flag only the
-  gaps. `tools/bin/render-enforced.ts` generates them from the new
-  `trunk.enforced_by` objects in `rules/catalog.json`; the validator fails
-  on drift.
-- Rule IDs for `shopware-core-development` (CORE-001 to CORE-062) and
-  `shopware-admin-js` (ADM-001 to ADM-038).
-- `tools/`: repo tooling in TypeScript, run by Node 24 without a build step,
-  type-checked with `tsc` and tested with `node --test` in a new `tools` CI
-  job. The rule validator below lives there and also checks catalog field
-  types. Plan WP10 moves the eval runner next.
-- Rule IDs and a rule catalog. Every rule in `shopware-testing`,
-  `shopware-plugin-development` and `shopware-review-learnings` starts with a
-  stable ID such as `**TEST-016**`, and `rules/catalog.json` links it to its
-  file, eval task, trunk source and audience. `tools/bin/validate-rules.ts`
-  (run by `validate-skills.sh`) fails on unknown, duplicated, misplaced or
-  retired IDs, missing eval tasks, and rules with neither an eval nor a
-  reason, and prints eval coverage per skill.
-- Real model evals in CI (`evals.yml`). It shards A/B runs across parallel
-  jobs and gates them with `scripts/eval-gate.sh`. A monthly bot PR records
-  each baseline under `evals/baselines/`. Labeled PRs run only the tasks
-  they touch. The default agent is OpenCode with a free model, so CI needs
-  no API key or secret.
-- OpenCode adapters `evals/runner/opencode-task.sh` and
-  `opencode-activation.sh` (free models, isolated `HOME`, step cap and
-  timeout), Claude Code adapter `evals/runner/claude-task.sh`, and
-  `evals/runner/skills-profile.sh` to switch skills on or off per workdir.
-  `evals/runner/install-agent.sh` installs a pinned CLI in CI.
-- `scripts/eval-plan.sh`, `scripts/eval-gate.sh` and `scripts/eval-diff.sh`.
-- Skill-load tracking for A/B runs. The adapters report which skills they
-  loaded, `ab.sh` records `loaded_on` and `loaded_off`, and the gate fails
-  when fewer than half of the skill-on runs load a task skill, or when a
-  skill leaks into a skill-off run. A model that ignores skills can no longer
-  produce a green run that measured nothing.
-- `ab.sh` scores completed runs only, so one agent error no longer discards
-  a task's verdict, and treats a pass-rate gap below `EVAL_AB_MIN_DELTA_PCT`
-  (50 points) as noise instead of `improved` or `worse`.
-- `scripts/eval-local.sh` runs the A/B and the gate with a CLI you are
-  already logged in to (Claude Code by default, or OpenCode with your
-  logins via `OPENCODE_AUTH_FILE`), without API keys or free-tier limits.
-- `run-task.sh` retries agent errors (free models answer "Rate limit
-  exceeded") on a fresh workdir, and logs the error reason to the CI log.
-- `evals/runner/selftest.sh` with `fake-agent.sh`. It checks the whole eval
-  pipeline without model calls on every push.
-- `shopware-podman-dev`: OpenSearch is opt-in per lane (compose profile
-  `opensearch`). The skill says when a task needs it and how to enable it for
-  one lane without starving the shared Podman VM.
-- `shopware-testing`: observing events in tests. Use an owned
+- **Extension review.** The new `shopware-extension-review` skill reviews a
+  plugin or app diff as a whole, using the rules of the topic skills, and
+  ends with a findings list. See the install line in
+  [use-cases/extension-review.md](use-cases/extension-review.md).
+- **Careful rule citations.** The extension review cites a rule only when
+  the rule's own words cover the finding, and cites none otherwise. It also
+  asks about raw SQL writes, `uninstall()` and Admin ACL for new
+  associations, and says "same as core" when a finding copies core behavior.
+- **Public API stays stable.** New rules: never make an existing API route
+  stricter, never change the type or nullability of an API response field,
+  and never change the access or cache defaults of a released route.
+- **Storefront and Administration contracts.** Storefront JS plugin options
+  and events, snippet keys and theme fields count as public API, and the
+  HTTP cache is never switched off from the side. Administration component
+  API and position identifiers are covered in `shopware-admin-js`.
+- **Safer migrations.** Content migrations skip rows the merchant edited,
+  migrations use no feature flags, and `update()` never narrows a column;
+  that belongs in `updateDestructive()`.
+- **More review rules.** A cache key holds every input; a service that
+  memoizes in a property implements `ResetInterface`; queued work has no
+  inline synchronous fallback; extension events are a contract and do not
+  pass the whole `Request`.
+- **Deprecations that help.** Shipped Twig blocks, variables and templates
+  are deprecated before they are renamed, and a deprecation points at a
+  replacement that extensions can use today.
+- **Core-only rules.** Four new `shopware-core-development` references cover
+  removal shims, data and config compatibility, console commands, platform
+  scope and the lifetime of theme files and media.
+- **Rule IDs everywhere.** Every rule in the testing, plugin, core,
+  Administration, architecture, storefront, security, change impact and
+  review learnings skills now has a stable ID, so a review finding can name
+  the exact rule.
+- **Only the reference a change needs.** Each skill maps changed files and
+  diff lines to the reference to read, and its `SKILL.md` shows that as a
+  table. A service that memoizes now loads the Symfony reference, and queued
+  work loads the performance reference.
+- **Already enforced by CI.** The testing, core, plugin, Administration and
+  review learnings skills list the checks CI already runs, with what each
+  catches and misses, so reviews flag only the gaps.
+- **Event tests.** `shopware-testing` shows how to observe events: an owned
   `CollectingEventDispatcher` in unit tests or `EventHookDispatcher::on()` in
-  integration tests. Capture in the hook and assert afterwards, and never add
-  listeners to the shared `event_dispatcher`. New eval
-  `event-hook-capture-then-assert`, with an AST grader and snippet tests.
-- `shopware-core-development`: `Feature::throwIfActive()` for deprecated
-  exception classes and framework callbacks, and neutral return values for
-  discovery methods.
-- `docs/plans/2026-10-skills-evolution.md`: the accepted roadmap. It covers
-  rule IDs, real model evals, path routing, review evals and an extension
-  review skill.
+  integration tests. Capture first, assert afterwards, and never add
+  listeners to the shared dispatcher.
+- **Deprecated exceptions.** `shopware-core-development` covers
+  `Feature::throwIfActive()` for deprecated exception classes and framework
+  callbacks, and neutral return values for discovery methods.
+- **OpenSearch per lane.** In `shopware-podman-dev`, OpenSearch is opt-in per
+  lane. The skill says when a task needs it and how to turn it on for one
+  lane without starving the shared Podman VM.
 
 ### Changed
 
-- Task graders are TypeScript: `tools/graders/<task>.ts` holds the checks
-  of 98 tasks, and every `grade.sh` is the same wrapper over
-  `tools/bin/grade.ts`. `evals/grade-helpers.sh` and
-  `tools/bin/grade-findings.ts` are gone; `tools/src/grade/` replaces them.
-  The AST graders stay in `evals/tools/ast/`.
-- `evals/runner/selftest.sh` and its `eval-runner-selftest` CI job are
-  gone. The unit tests in the `tools` job now cover its cases, including
-  the command-line layer and a check that every shell wrapper reaches its
-  bin.
-- Model evals record token use. The Claude and OpenCode adapters write each
-  session's input and output tokens, `ab.sh` stores the averages per mode as
-  `tokens_on` and `tokens_off`, the gate summary shows them per task, and
-  `eval-diff.sh` compares skill-on tokens between two result files. The
-  runner self-test now covers the Claude adapter with a fake `claude` binary.
-- Reference routes can be `on_demand`: the task decides, not the diff, and
-  the router never selects them. `when-stuck.md`, `docs-map.md` and
-  `change-scope.md` use it instead of proxy triggers such as
-  `@phpstan-ignore` or an `always` route. `tools/bin/route.ts` now reports
-  `selected`, `always` and `on_demand` apart, and the routing cases check
-  only what the diff selects. The tables in `SKILL.md` show at most two
-  globs and one regex per row, which cuts them by about 15 %.
-- The default eval model is `opencode/longcat-2.5-preview-free`. It loaded a
-  task skill in 5 of 8 tasks; the previous default, Nemotron 3 Ultra, in 1 of 8.
-  CI uses 8 parallel A/B jobs.
-
-- `evals/runner/ab.sh` writes one JSON line per task. Its exit code is the
-  verdict: improved, held, no difference, worse or error. It refuses to run
-  without a skill profile command, because "on" and "off" would otherwise
-  load the same skills.
-- `evals/runner/run-task.sh` exits 4 on an agent error instead of counting it
-  as a failed task. It removes the skill profile before grading.
-- Layer 1 reads `SKILLS_ACTIVATION_CMD`, with `SKILLS_AGENT_CMD` as fallback,
-  so activation and task agents can share one environment.
-- `admin-acl-role-migration` now requires
-  `MigrationStep::addAdditionalPrivileges()`. A raw SQL update of `acl_role`
-  is the near-miss fail fixture.
-- `shopware-plugin-development` migrations: large data changes run in
-  ordered batches, and derived data goes to an indexer or `PostUpdateIndexer`.
-  Before, heavy work was sent to `update()` or a command.
-- `shopware-core-development`: one marker per surface (`@internal`,
-  `@experimental`, `@final` or `final class`) replaces "prefer `final` over
-  `@internal`".
-- `shopware-testing`: Danger's one-covers-class rule applies to every added
-  or modified test file.
-- Alignment doc: mining pass 2026-10-19 and an updated watchlist.
+- References that depend on the task rather than the diff, such as "when
+  stuck" and the docs map, load only on demand, and the routing tables are
+  about 15% shorter.
+- `shopware-plugin-development` runs large data changes in ordered batches
+  and sends derived data to an indexer or `PostUpdateIndexer`, instead of
+  doing heavy work in `update()` or a command.
+- `shopware-core-development` asks for one marker per surface (`@internal`,
+  `@experimental`, `@final` or a final class) instead of "prefer `final`
+  over `@internal`".
+- `shopware-testing`: the one-covers-class rule applies to every added or
+  changed test file.
 
 ### Fixed
 
-- `mwg-only-after-shopware-primitive` now fails when the agent adds a
-  modern-web-guidance skill; the shell check could never match.
-- `no-access-key-in-source` counts a key read from `$_ENV`; the shell
-  pattern treated `$` as an anchor.
-- The weekly eval workflow reported success while skipping every model step,
-  and its pass-rate gate could never fail. It now runs on free models, and
-  `agent=claude` without `ANTHROPIC_API_KEY` fails instead of skipping.
-- `shopware-admin-js` no longer tells you to write `acl_role.privileges` with
-  SQL, and no longer claims that Admin flag names must be uppercase. Both
-  contradicted the core review guides.
+- `shopware-admin-js` no longer tells you to write `acl_role.privileges`
+  with SQL, and no longer claims that Admin flag names must be uppercase.
+  Both contradicted the core review guides.
+
+### For contributors
+
+- Review evals: catch and ignore pairs for each new rule, and near-miss
+  tasks that fail when a finding cites a rule that does not cover it.
+- Real model evals in CI on a free OpenCode model, sharded, gated and with
+  a monthly baseline PR; they track skill loads and token use. The weekly
+  eval workflow no longer reports success while skipping every step.
+- `scripts/eval-local.sh` runs the A/B with a CLI you are logged in to;
+  runs retry agent errors and score completed runs only.
+- Repo tooling, the eval runner, the adapters and all task graders moved
+  to TypeScript in `tools/`, with strict lint and format in CI.
+- A weekly job reports drift on Shopware trunk guidelines as an issue, and
+  catalog entries map core review-guide IDs to our rules.
+- Two grader fixes, a stricter Admin ACL migration task, a new roadmap
+  under `docs/plans/` and a mining pass in the alignment doc.
 
 ## [0.8.0] - 2026-10-14
 
-### Fixed
-
-- Activation prompts no longer expose quoted routing notes to the model.
-- The Claude activation adapter and runner fail on CLI/API errors instead of
-  scoring them as silent skill selection.
-
-- `docs/local-validation.md` no longer tells you to run
-  `npx skills disable` / `enable`. The skills CLI (v1.7) has no such
-  commands; the A/B step now uses `npx skills remove` plus the pinned
-  `add`, or `evals/runner/ab.sh` for eval tasks.
-- CHANGELOG sections and compare links for v0.4.0, v0.5.0 and v0.6.0 were
-  missing; `[Unreleased]` compared against v0.3.0.
-- Stray triple spaces in the `shopware-admin-js` and `shopware-storefront`
-  descriptions.
+This release makes skills open on the sentence that starts the work, so
+the right skill loads for a bug fix, a public API change or a pull
+request. It also brings the rules in line with core trunk as of
+2026-10-13 and fixes wrong A/B steps in the local validation guide.
 
 ### Changed
 
-- Skill descriptions use prose trigger conditions; reference indexes explain
-  when to read each file. Every skill has Codex interface metadata.
-- Added a Claude activation adapter and three behavioral evals:
-  `support-reply-single-block`, `review-triage-with-confidence`, and
-  `linked-project-runs-in-container`. All three helped in two saved Claude
-  A/B rounds. The activation comparison needs a rerun because the original
-  adapter suppressed session-limit errors.
+- **Skills open on the first sentence.** Descriptions now say in plain
+  prose when a skill applies, and each reference index says when to read
+  which file. A private core bug fix stays with the core PHP skill, while
+  `shopware-core-development` opens for a public API, a deprecation, the
+  PHPStan baseline or a `RELEASE_INFO` entry.
+- **Clearer hand-offs between skills.** `shopware-change-impact` opens
+  when the next step is a commit or a PR, and `shopware-security` for a
+  route, controller, ACL, webhook or secret. On trunk, a plain "add a
+  test" or "open the PR" stays with the core skill for that job.
+- **Architecture for new or fragile structures.** `shopware-architecture`
+  opens when a change adds a new structure, or can break an existing one
+  without the diff showing it, and when the choice is between an event, a
+  decoration or a core edit. Writing the ADR stays with
+  `shopware-core-development`.
+- **Synced with core trunk.** Rules were checked against trunk as of
+  2026-10-13, including pull requests merged after 2026-09-28 and open ones
+  to watch.
+- **License and Codex metadata.** Every skill declares the MIT license in
+  its frontmatter, as core trunk skills do, and has Codex interface
+  metadata.
 
-- Every skill declares `license: MIT` in its frontmatter, as core trunk
-  skills do.
-- `docs/core-pr-17657-alignment.md`: new mining pass against trunk
-  2026-10-13 (PRs merged after 2026-09-28, plus open PRs to watch). The
-  three rows marked "documented" that already have evals now link them.
-  `AGENTS.md` and the alignment doc agree on the last mined date.
-- README skill index describes `shopware-core-development` the way its
-  description does now: public API, deprecation, PHPStan baseline,
-  RELEASE_INFO.
-- Skill descriptions match the sentence that starts the work. A private
-  core bugfix stays with `shopware-php-code`. `shopware-core-development`
-  opens for a public API, a deprecation, the PHPStan baseline, or
-  RELEASE_INFO. `shopware-change-impact` opens when the next step is a
-  commit or a PR. `shopware-security` opens for a route, controller, ACL,
-  webhook, or secret. `shopware-architecture` opens when the choice is an
-  event, a decoration, or a core edit. On trunk, a plain "add a test" stays
-  with `shopware-phpunit-tests`, and "open the PR" stays with
-  `shopware-pr-hygiene`. `validate-skills.sh` accepts a description
-  that quotes no trigger phrase.
-- `shopware-architecture` opens when a change introduces a new structure,
-  or can break an existing one without the diff saying so. A silent second
-  path is one case, not the whole skill. Writing the ADR or `RELEASE_INFO`
-  stays with `shopware-core-development`.
+### Fixed
+
+- **Correct A/B steps.** The [local validation guide](docs/local-validation.md)
+  no longer tells you to run `npx skills disable` or `enable`, which the
+  skills CLI does not have. It now uses `npx skills remove` and the pinned
+  `add` instead.
+- **Changelog gaps.** The sections and compare links for v0.4.0, v0.5.0
+  and v0.6.0 were missing.
+- **Tidier descriptions.** Stray spaces are gone from the Administration
+  and Storefront skill descriptions, and the README describes
+  `shopware-core-development` the way its description does.
+
+### For contributors
+
+- A Claude activation adapter and three new evals: support replies in one
+  block, review triage with confidence, and linked projects that run in a
+  container. All three helped in two Claude A/B rounds.
+- The Claude activation adapter and runner now fail on CLI or API errors
+  instead of scoring them as "no skill selected", and activation prompts no
+  longer show routing notes to the model.
+- `validate-skills.sh` accepts a description that quotes no trigger
+  phrase.
 
 ## [0.7.0] - 2026-10-02
 
-### Fixed
-
-- Podman dev skill: container-created files (webpack `dist/`, `.env.local`,
-  `install.lock`) vanish because the lane's Mutagen session runs as
-  `one-way-replica`, not because of `two-way-resolved` host wins. Documents how
-  to check the session mode and the `theme:change Storefront --all --sync` step
-  for fresh lanes whose storefront renders without CSS.
-- Trunk overlay: `sw-dev link` must not replace git-tracked core skills
-  (same-named `shopware-admin-js`) or `.claude/skills` when it aliases
-  `.agents/skills`. Cursor/Codex still get our Admin JS overlay.
-  `shopware-storefront` stays on the core-overlay preset (no core equivalent).
-
-### Changed
-
-- Copilot leftover holes: JS-to-TS matches basename `product-card.ts` and
-  an exact import path segment; `CoversClass` is counted per file; PluginManager
-  listeners must sit on the module registered as `ScrollHint`.
-- Dual-major feature flags (#20117): unit tests disable the newer major;
-  `integration-major` is one lane per `FEATURE_ALL=<major>`. Last mined
-  trunk 2026-09-14.
-- Plugin DI: 6.8-targeted plugins use PHP `ContainerConfigurator`, not
-  `services.xml`. `config.xml` stays XML.
-- Local execution: Podman on linked shopware-dev; `shopware-cli` on CLI
-  projects. MCP never blocks a fallback. Tooling-stack docs drop hook-enforced
-  ai-coding-tools as the default.
-- PHP method flatten strips comments first; ACL mapping shape is read
-  from the `addPrivilegeMappingEntry()` argument; `CoversClass` ignores
-  commented-out attributes.
-- Adversarial grader pass: scoped helpers strip comments and extract PHP
-  methods; new graders must check the subject relationship, not leftover
-  tokens. Almost-pass sneak-fails added or replaced for ACL, modal, Jest,
-  JS-to-TS, coverage ignore, DI tags, BCChange, `setAutoExit`, MWG, and
-  `CoversClass`.
-- Sixth Copilot pass: ACL SQL must live in a `MigrationStep::update()`,
-  PR trailer evals keep each section's description, listing evals keep
-  `ListingPageController`, and PluginManager listeners must sit on the
-  plugin class rather than in `main.js`.
-- Fifth Copilot pass: ACL mapping must use `roles.viewer.privileges`,
-  `mt-modal` is required when the module has no local `sw-modal`,
-  `StaticEntityRepository` assertions must observe `load()`, and
-  `setAutoExit(false)` must run before `Application::run()`. Twig
-  snippet tokens must sit inside the overridden block. MWG license
-  note is Apache-2.0.
-- ACL WHERE must select `swag_example.viewer` (not any filter), named
-  arguments must keep `true` / `0` / `null`, and UPGRADE past tense is
-  scoped to the CartProcessor section.
-- Fourth Copilot pass plus self-review of new graders: ACL migration
-  now scopes `product:read` to existing module roles, Jest requires a
-  real case/assertion, `StaticEntityRepository` must be wired into
-  `ProductLoader`, listing eval grades document `no-store` not client
-  fetch cache, `exit;`/`die` and `->has()` assertions are required,
-  RELEASE_INFO entries must sit in the existing Features section.
-  Added `mwg-only-after-shopware-primitive`. Documented grader
-  sneak-fail rules in `AGENTS.md`.
-- Third Copilot pass: Admin `main.js` entry is the TypeScript exception,
-  `mt-popover` is not a native popover, `calculate()` may use a receiver
-  variable, and PluginManager async `import()` is accepted. Storefront
-  cache wording now splits shared HTML vs private async loads. Added
-  evals for named arguments, Admin ACL + Jest colocation, DI deprecation
-  tags, UPGRADE past tense, listing `no-store` AJAX, Twig block/snippet,
-  `exit`/`die`, `StaticEntityRepository`, and `@codeCoverageIgnore`.
-- Tightened graders again after the second Copilot pass: assertion must
-  bind to `calculate()`, Storefront plugins need a Twig `data-scroll-hint`
-  host plus `window` add/remove, and `Filesystem` must be constructor-
-  promoted. Added evals `release-info-no-duplicate-heading` and
-  `pr-no-ai-trailers`.
-- Tightened new behavioral graders and smoke defaults after PR review:
-  exact BCChange metadata, class-docblock `@internal`, constructor-injected
-  `Filesystem`, `assertSame` on public APIs, Storefront `window` + `data-*` +
-  `destroy()`, checkout prefetch/`sw_extends`/`parent()`, Admin popover ban,
-  and `test-graders.sh` now runs both `fixture/` and `fixtures/fail/`.
-  Storefront CSRF/`sw_csrf` guidance dropped (gone since 6.5). App use-case
-  no longer routes Meteor Admin SDK to `shopware-admin-js`.
-- Mined `shopware/shopware` trunk skills as of 2026-09-01 (after #17657):
-  BC-change attributes vs `@deprecated reason:*`, PHPUnit reflection / one
-  `CoversClass` / `@internal` / `StaticEntityRepository` inference, Symfony
-  `Filesystem`, named arguments, release-note heading rules, no AI PR trailers.
+This release adds skills for the Storefront, the Administration and
+checking a change's impact before you ship it. It helps you prepare a
+plugin for Shopware 6.8 and brings many new rules from core trunk. Most of
+the work behind it went into stricter evals, so the skills are measured
+against real mistakes.
 
 ### Added
 
-- Plugin 6.8 preparation stays on the supported `composer.json` range. Test
-  with `V6_8_0_0=1`, not `FEATURE_ALL`. Call out behavior that still compiles
-  (cache rework, cart tax cents, document generation v2, flows after the
-  business process). The flag's separate container is a test switch.
-  Storefront Twig 4 drops `spaceless` and null HTML attributes. Administration
-  Twig overrides are not rewritten to the experimental Vue SFC API
+- **Storefront and Administration skills.** `shopware-storefront` and
+  `shopware-admin-js` cover Storefront and Administration work, with a
+  [Storefront use case](use-cases/storefront-development.md) to install
+  them.
+- **Impact check before you ship.** The new `shopware-change-impact` skill
+  reviews a working feature before you call it done: shared HTTP cache,
+  checkout cost for shops that do not use the feature, assets tested only
+  on a local disk, and container differences per feature flag. It ends
+  with ship, narrow the design, or do not ship.
+- **Preparing a plugin for 6.8.** The skills keep the supported
+  `composer.json` range, test with `V6_8_0_0=1` rather than `FEATURE_ALL`,
+  and call out changes that still compile but behave differently, such as
+  the cache rework, cart tax cents, document generation v2 and flows.
+- **Twig 4 and the Vue SFC API.** Storefront templates drop `spaceless`
+  and null HTML attributes for Twig 4. Administration Twig overrides are
+  not rewritten to the experimental Vue SFC API
   ([shopware/shopware#21162](https://github.com/shopware/shopware/discussions/21162)).
-  Evals: `prepare-plugin-for-6-8`, `twig4-spaceless-and-null-attribute`,
-  `admin-sfc-not-a-6-8-migration`.
-- `shopware-change-impact`: after a feature works, review blast radius before
-  calling it done (shared HTTP cache, checkout cost for shops that do not use
-  the feature, asset loading tested only against the local disk while
-  production assets are on S3, a Symfony container `if` that would compile a
-  different container per feature flag, easier vs more complex). Verdict is
-  ship, narrow the design, or do not ship. Evals:
-  `feature-impact-before-done`, `asset-loading-remote-filesystem`,
-  `container-if-splits-saas`.
-- Mined trunk skills through 2026-09-28: new Store API routes use a typed
-  extension event instead of a new abstract route class; repository integration
-  tests use `KernelTestBehaviour` and `DatabaseTransactionBehaviour` when that
-  is all they need; a test that asserts a throw while a major flag is active
-  is `@deprecated tag:` on that method.
-- Eval tasks: `bc-change-not-deprecated-reason`, `one-covers-class-per-file`,
-  `test-class-marked-internal`, `no-reflection-on-shopware-method`,
-  `symfony-filesystem-over-raw-php`, `storefront-plugin-manager-register`,
-  `no-speculation-on-checkout`, `admin-use-mt-modal`,
-  `release-info-no-duplicate-heading`, `pr-no-ai-trailers`,
-  `named-arguments-for-literals`, `admin-acl-role-migration`,
-  `admin-jest-colocated-spec`, `di-tag-not-while-referenced`,
-  `upgrade-entry-past-tense`, `storefront-no-blocking-nostore-ajax`,
-  `storefront-twig-block-snippet`, `test-no-exit-die`,
-  `static-entity-repository-stub`, `code-coverage-ignore-passthrough`,
-  `mwg-only-after-shopware-primitive`, `admin-js-implementation-to-ts`,
-  `storefront-no-sw-csrf`, `admin-no-cross-module-import`,
-  `storefront-media-thumbnails`, `unit-test-disable-newer-major`,
-  `plugin-xml-config-to-php`.
-- Skills: `shopware-storefront`, `shopware-admin-js`.
-- Use-case: `use-cases/storefront-development.md`.
-- Modern Web Guidance as an optional CLI lookup (not a vendored skill).
+- **Modern Web Guidance lookup.** Generic CSS, HTML and JavaScript
+  questions can use Modern Web Guidance as an optional CLI lookup, but only
+  when Shopware has no primitive for it. It is not installed as a skill.
+- **More rules from core trunk.** Rules mined from trunk up to 2026-09-28
+  cover BC-change attributes, one `CoversClass` per test file, Symfony
+  `Filesystem`, named arguments, release note headings, no AI trailers in
+  PRs, and typed extension events for new Store API routes.
+
+### Changed
+
+- **Plugin services in PHP.** Plugins that target 6.8 configure services
+  with PHP `ContainerConfigurator` instead of `services.xml`; `config.xml`
+  stays XML.
+- **Feature flags across two majors.** Unit tests disable the newer major
+  flag, and integration tests run one lane per `FEATURE_ALL` major.
+- **Running things locally.** The skills use Podman on a linked
+  shopware-dev setup and `shopware-cli` on CLI projects. A missing MCP
+  server never blocks the fallback.
+- **Admin SDK for apps.** The app use case no longer sends Meteor Admin
+  SDK work to `shopware-admin-js`.
+
+### Removed
+
+- **Storefront CSRF advice.** The `sw_csrf` guidance is gone, since
+  Shopware dropped it in 6.5.
+
+### Fixed
+
+- **Files vanishing in Podman lanes.** `shopware-podman-dev` explains that
+  files created in the container, such as webpack builds or `.env.local`,
+  vanish because the lane syncs one way. It shows how to check the sync
+  mode and how to fix a fresh lane whose Storefront has no CSS.
+- **Trunk overlay keeps core skills.** `sw-dev link` no longer replaces
+  core skills tracked in git, or `.claude/skills` when it points to
+  `.agents/skills`. Cursor and Codex still get our Administration overlay.
+
+### For contributors
+
+- Over 25 new eval tasks for the new rules, plus evals for the 6.8, Twig
+  4, SFC and impact-check guidance.
+- Six rounds of grader fixes after Copilot reviews: graders strip comments,
+  scope checks to the right method or block, and each has an almost-pass
+  fail fixture. `AGENTS.md` documents these grader rules.
+- `test-graders.sh` runs both the start fixture and the fail fixture.
 
 ## [0.6.0] - 2026-07-28
 
+This release adds skills for architecture and security decisions and
+explains how this library works next to the skills that ship with core
+trunk. Testing rules are now in sync with core.
+
 ### Added
 
-- `shopware-architecture` and `shopware-security` skills, with the trunk
-  skill-resolution model (`docs/skill-resolution.md`): core `.agents/skills/`
-  is primary on trunk, this repo is the overlay.
-- Core testing rules from PR review feedback, and a test-class `#[Package]`
-  eval.
+- **Architecture and security skills.** `shopware-architecture` and
+  `shopware-security` join the library.
+- **Core skills come first on trunk.** In a trunk checkout, the core
+  `.agents/skills/` folder is the main source and this library adds to it.
+  See [skill resolution](docs/skill-resolution.md).
+- **Testing rules from reviews.** New core testing rules come from pull
+  request feedback, including the `#[Package]` attribute on test classes.
 
 ### Changed
 
-- Testing rules synced with core trunk.
-- Smoke eval defaults refreshed; markdown lint fixes.
-- README install example pinned to v0.6.0.
+- **Synced with core trunk.** The testing rules match core trunk, and the
+  README install example is pinned to v0.6.0.
+
+### For contributors
+
+- New eval for the test class `#[Package]` rule, refreshed smoke eval
+  defaults and markdown lint fixes.
 
 ## [0.5.0] - 2026-06-23
 
+This release brings the skills in line with the rules core developers
+wrote down in core trunk, and adds checks to run before you submit a pull
+request.
+
 ### Added
 
-- Alignment with core PR #17657 (`docs/core-pr-17657-alignment.md`) and eval
-  tasks for the mined rules.
-- `shopware-review-learnings`: pre-submit quality checks, an interface
-  refactor checklist, and `Feature` flag patterns.
+- **Rules from core trunk.** The skills now follow the rules collected in
+  core pull request
+  [shopware/shopware#17657](https://github.com/shopware/shopware/pull/17657).
+  See the [alignment notes](docs/core-pr-17657-alignment.md).
+- **Checks before you submit.** `shopware-review-learnings` adds
+  pre-submit quality checks, a checklist for refactoring an interface, and
+  patterns for `Feature` flags.
+
+### For contributors
+
+- Eval tasks for the rules taken from core trunk.
 
 ## [0.4.0] - 2026-06-19
 
+This release helps you use Symfony instead of writing your own code.
+Most other changes make it easier to test the skills locally and in CI.
+
 ### Added
 
-- Symfony modernization guidance and a core eval task.
-- Local smoke eval harness (`evals/smoke/`) and harder behavioral tasks.
-- Shellcheck CI job and golden grader fixtures.
+- **Use what Symfony already has.** Plugin code uses a Symfony component
+  instead of hand-rolled code when the supported Shopware version ships
+  it. Core code keeps the old path behind a feature flag until the next
+  major.
 
-### Fixed
+### For contributors
 
-- CI shellcheck and grader-golden jobs restored.
-- Cursor smoke evals via browser login.
-- markdownlint MD040 and MD034.
+- A local smoke eval harness, harder behavioral tasks, and a core eval
+  task for the Symfony guidance.
+- A ShellCheck CI job and golden grader fixtures, with both CI jobs
+  repaired after they broke.
+- Cursor smoke evals work with a browser login.
+- Markdown lint fixes for code block languages and bare URLs.
 
 ## [0.3.0] - 2026-06-18
 
+This release teaches the skills the PHP and testing habits that core trunk
+uses, so code and tests written with them look like core code. Plugin work
+picks up the same habits.
+
 ### Added
 
-- `shopware-core-development/references/platform-architecture.md` — bundle ownership,
-  Core/Storefront boundaries, EventListener vs subscriber, `final`, session, migrations.
-- `php-foundation`: Shopware trunk habits (`empty()`, interface DI, PSR clock, `@var` discipline).
-- `shopware-testing`: unit-first placement, trunk PHPUnit rules (`expectExceptionObject`,
-  no `#[Depends]`, no mock `any()`, clock in tests).
-- `shopware-review-learnings`: ACL constant-form and migration destructive findings.
+- **Platform architecture.** `shopware-core-development` explains which
+  bundle owns what, the line between Core and Storefront, event listeners
+  versus subscribers, `final` classes, the session and migrations.
+- **Trunk PHP habits.** `php-foundation` covers the habits core trunk
+  follows: no `empty()`, interfaces for dependency injection, the PSR
+  clock, and careful `@var` annotations.
+- **Trunk testing rules.** `shopware-testing` puts unit tests first and
+  follows the trunk PHPUnit rules, such as `expectExceptionObject`, no
+  `#[Depends]`, no `any()` on mocks, and a clock in tests.
+- **New review findings.** `shopware-review-learnings` adds findings on
+  the form of ACL constants and on destructive migrations.
 
 ### Changed
 
-- `shopware-plugin-development`: inherits trunk PHP habits; thin-controller / OpenAPI pointers.
-- `shopware-plugin-development/references/migrations.md`: `updateDestructive()` scope.
+- **Plugins follow the trunk habits.** `shopware-plugin-development` takes
+  over the trunk PHP habits and points to thin controllers and OpenAPI.
+- **Destructive migrations.** The plugin migration guidance says what goes
+  into `updateDestructive()`: dropping data belongs there, never in
+  `update()`.
 
 ## [0.2.0] - 2026-06-11
 
+This release adds skills for writing and reviewing pull requests, a
+house style for answers, and an optional skill to run commands in a
+Podman dev setup. It also adds more review findings and testing patterns.
+
 ### Added
 
-- Skills: `shopware-pr-description`, `shopware-pr-review`, `shopware-assistant-style`,
-  `shopware-podman-dev` (optional; Podman/Mutagen + `~/shopware-dev` hub).
-- `shopware-review-learnings`: pre-submit checklist (CI, PR size, self-review),
-  Shopware-specific red flags, OpenAPI schema and thin-controller findings.
-- `docs/tooling-stack.md`; FoS shopware-phpunit references in `shopware-testing`.
-- Expanded `release-notes-and-adr.md` (from former changelog rule).
+- **Pull request skills.** `shopware-pr-description` writes the pull
+  request body for a Shopware contribution, and `shopware-pr-review` helps
+  you react to review comments.
+- **Assistant style.** `shopware-assistant-style` keeps answers plain and
+  short, without filler, and makes support replies ready to copy.
+- **Podman dev setup (optional).** `shopware-podman-dev` runs PHP,
+  Composer, PHPUnit and console commands inside Podman with Mutagen and the
+  `~/shopware-dev` hub, never on the host.
+- **More review findings.** `shopware-review-learnings` adds a pre-submit
+  checklist for CI, PR size and self-review, Shopware-specific red flags,
+  and findings on OpenAPI schemas and thin controllers.
+- **Testing patterns.** `shopware-testing` points to the FriendsOfShopware
+  `shopware-phpunit` skill for plugin-heavy test patterns.
+- **Tooling guide.** The [tooling stack guide](docs/tooling-stack.md)
+  explains how this library works next to Shopware's AI coding tools and
+  MCP servers.
 
 ### Changed
 
-- README and podman-dev docs: `sw-dev link` as preferred install path; optional podman skill.
-- `.gitignore`: `skills-lock.json`, `.agents/` (npx skills add artifacts).
+- **Release notes and ADRs.** The guidance on release notes and ADRs in
+  `shopware-core-development` is longer and replaces the former changelog
+  rule.
+- **Installing with sw-dev.** The README and Podman docs recommend
+  `sw-dev link` as the way to install.
+
+### For contributors
+
+- `.gitignore` covers `skills-lock.json` and `.agents/`, which
+  `npx skills add` creates.
 
 ## [0.1.0] - 2026-06-03
 
+The first release of a Shopware skills library that works with any agent.
+It installs into Cursor, Claude Code, Codex and OpenCode, and ships skills
+for core, plugin and app development, testing, PHP style and research.
+
 ### Added
 
-- Initial scaffold of the provider-independent Shopware skills repository.
-- Documented install targets for Cursor, Claude Code, Codex and OpenCode.
-- Shared `php-foundation` skill (PER-CS + PHPStan baseline, Shopware-aligned).
-- Skills organised by **target surface** (what you edit), not persona:
-  `shopware-core-development` (platform), `shopware-plugin-development` (PHP
-  plugin/project), and `shopware-app-development` (declarative apps). The surface
-  skills disambiguate on the path/artifact, are no longer install-time exclusive,
-  and coexist safely in a monorepo.
-- `shopware-app-development` skill: manifest + least-privilege permissions,
-  sandboxed Twig app scripts, webhooks + Admin API, Meteor Admin SDK; with
-  `manifest-and-permissions` and `app-scripts` references.
-- `shopware-testing` skill (PHPUnit unit/integration standards).
-- `shopware-review-learnings` skill (seeded entries + structured TODO slots).
-- `shopware-research-and-escalation` meta-skill (docs map, Context7 policy, when-stuck ladder).
-- `use-cases/` install recipes per use-case: `plugin-development.md`,
-  `app-development.md`, and `core-development.md`.
-- Real documentation links in the `core`, `plugin`, and `app` skills' further
-  reading, and the feature-flag deprecation annotations (`@feature-deprecated`,
-  `@major-deprecated`) in the core deprecations reference.
-- Eval suite: per-skill activation evals (Layer 1), behavioral fixture tasks (Layer 2),
-  and an A/B runner (Layer 3) with optional Harbor wiring.
-- `scripts/`: `check-update.sh`, `validate-skills.sh`, `run-activation-evals.sh`.
-- CI: `validate.yml` (every PR) and `evals.yml` (gated).
-- `.markdownlint.jsonc` config; CI Markdown lint enforced (no longer
-  `continue-on-error`) and CI actions pinned to Node 24 runtimes
-  (`actions/checkout@v5`, `markdownlint-cli2-action@v23`).
-- `docs/local-validation.md` and GitHub issue templates for feedback.
+- **Skills by what you edit.** `shopware-core-development` covers the
+  platform, `shopware-plugin-development` PHP plugins and projects, and
+  `shopware-app-development` apps. Each picks itself by the path or file
+  you work on, so all three can live in one monorepo.
+- **App development.** `shopware-app-development` covers the manifest with
+  least-privilege permissions, sandboxed Twig app scripts, webhooks with
+  the Admin API, and the Meteor Admin SDK.
+- **Shared PHP style.** `php-foundation` follows PER-CS and keeps the
+  PHPStan baseline in check, aligned with Shopware.
+- **Testing.** `shopware-testing` sets the standards for PHPUnit unit and
+  integration tests.
+- **Review learnings.** `shopware-review-learnings` collects findings from
+  real reviews, starting with a few seeded entries.
+- **Research and escalation.** `shopware-research-and-escalation` maps the
+  docs, says when to use Context7, and what to do when you are stuck.
+- **Install recipes.** The `use-cases/` folder has one install recipe each
+  for plugin, app and core development.
+- **Further reading.** The core, plugin and app skills link the real
+  Shopware docs, and the core deprecations reference covers the
+  `@feature-deprecated` and `@major-deprecated` annotations.
+
+### For contributors
+
+- An eval suite with activation evals per skill, behavioral fixture tasks,
+  and an A/B runner with optional Harbor wiring.
+- Scripts to check for updates, validate skills and run activation evals.
 
 [Unreleased]: https://github.com/BrocksiNet/ai-skills-shopware/compare/v0.20.0...main
 [0.20.0]: https://github.com/BrocksiNet/ai-skills-shopware/compare/v0.19.0...v0.20.0
