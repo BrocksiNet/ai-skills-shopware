@@ -57,7 +57,10 @@ Vagrant and native references, adds `SEC-009`, runs the API index from the
 flag states to the API index, moves tooling to Node 26 and widens `ARCH-001`. v0.19.0
 (2026-11-25) adds `SEC-010`, `SEC-011` and `PHP-003` to `PHP-014`, makes
 `modern-web-guidance` the default frontend companion and keeps a list of
-rejected rule proposals.
+rejected rule proposals. v0.20.0 (2026-11-27) adds `sw-worktrees` with
+personal skill preferences, the experimental `sw-mcp-development`,
+`ADM-046` to `ADM-050` and `APP-001` to `APP-006`, and cuts skill
+descriptions by 41%.
 
 Suggested milestones, as planned:
 
