@@ -2,7 +2,7 @@
 
 For building PHP extensions on top of Shopware 6: plugins under `custom/plugins`
 and customer-project code. In-repo core skills are usually **absent** — use the
-**full** profile from [`docs/skill-resolution.md`](../docs/skill-resolution.md).
+**full** profile from [`docs/using/skill-resolution.md`](../docs/using/skill-resolution.md).
 
 ## Skills for this use-case
 
@@ -61,4 +61,4 @@ diff changes (and stay silent when the matched set is unchanged), add a
 `.claude/settings.json`. Only once that hook is wired, optionally set the
 non-router `sw-*` skills to `"name-only"` via `skillOverrides` — never enable
 `"name-only"` without the hook. Full JSON snippets:
-[`docs/installation.md#automatic-routing-hook-claude-code`](../docs/installation.md#automatic-routing-hook-claude-code).
+[`docs/using/installation.md#automatic-routing-hook-claude-code`](../docs/using/installation.md#automatic-routing-hook-claude-code).

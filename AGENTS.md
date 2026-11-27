@@ -25,8 +25,8 @@ The terms the rest of this guide uses. Details follow in the sections linked.
 | Near-miss task | `review-<topic>-near-miss`: a real problem next to a rule that does not cover it. The finding must report it without citing that decoy rule. Guards against the most common review error, a plausible but wrong rule ID. |
 | Golden fixtures | `fixtures/pass/` and `fixtures/fail/` of a task: known answers the grader must pass and fail on every push, so a grader cannot silently go soft. |
 | Enforced by CI | A generated `SKILL.md` section listing rules an existing check (PHPStan, ECS, ESLint, Danger, a core test) already catches, so the agent does not repeat them. |
-| Preferences | A skill's personal settings: the skill ships `preferences.example.md` (questions and defaults), the user's answers live in `${AI_SKILLS_SHOPWARE_PREFS_DIR:-~/.config/ai-skills-shopware}/<skill>/preferences.md`, never in the repo. See [`docs/skill-preferences.md`](docs/skill-preferences.md). |
-| Drift mining | The weekly `trunk-drift` issue about changes on `shopware/shopware` trunk and the upstream skill sets in `rules/sources.json`, grouped by the skill and rule each change touches; `docs/.mining-state.json` marks how far each source has been read. See [`docs/maintenance.md`](docs/maintenance.md#reading-the-drift-issue). |
+| Preferences | A skill's personal settings: the skill ships `preferences.example.md` (questions and defaults), the user's answers live in `${AI_SKILLS_SHOPWARE_PREFS_DIR:-~/.config/ai-skills-shopware}/<skill>/preferences.md`, never in the repo. See [`docs/using/skill-preferences.md`](docs/using/skill-preferences.md). |
+| Drift mining | The weekly `trunk-drift` issue about changes on `shopware/shopware` trunk and the upstream skill sets in `rules/sources.json`, grouped by the skill and rule each change touches; `docs/.mining-state.json` marks how far each source has been read. See [`docs/maintaining/drift-and-reviews.md`](docs/maintaining/drift-and-reviews.md#reading-the-drift-issue). |
 
 ## Repository layout
 
@@ -37,7 +37,7 @@ skills/<skill-name>/
   routes.json                 # which reference a change needs (globs + line regexes; may borrow ../<skill>/references)
   evals/should-trigger.md       # activation eval prompts (must trigger)
   evals/should-not-trigger.md   # activation eval prompts (must stay quiet)
-  preferences.example.md      # optional: personal-preference questions + defaults (docs/skill-preferences.md)
+  preferences.example.md      # optional: personal-preference questions + defaults (docs/using/skill-preferences.md)
 
 evals/tasks/<task-name>/
   instruction.md              # prompt given to the agent
@@ -116,7 +116,13 @@ scripts/
   check-update.sh             # compare pinned version vs latest release tag (wrapper for tools/bin/check-update.ts)
 
 use-cases/                    # canonical `npx skills add` one-liners
-docs/                         # local validation, smoke evals, tooling stack
+docs/                         # index in docs/README.md
+  using/                      # installation, preferences, skill resolution, local validation
+  contributing/               # architecture, smoke evals, tooling quality
+  maintaining/                # drift and reviews, suggest-rules, releasing, core alignment
+  results/                    # A/B results, evidence archive, dated batches (2026-11-04/)
+  plans/                      # active plans and handoffs; finished ones in plans/done/
+  .mining-state.json          # how far drift mining has read each source
 .github/workflows/
   validate.yml                # cheap CI on every push (no model calls)
   evals.yml                   # model evals (gated: schedule, label, dispatch)
@@ -176,7 +182,7 @@ Smoke harness — graders only (no API cost):
 | 3 | A/B ablation — skill on vs off | agent API | `evals/runner/ab.sh` or `evals/smoke/smoke.sh suite` |
 
 Details: [`evals/README.md`](evals/README.md). Local A/B smoke:
-[`docs/smoke-evals.md`](docs/smoke-evals.md).
+[`docs/contributing/smoke-evals.md`](docs/contributing/smoke-evals.md).
 
 ### Grader contract
 
@@ -281,11 +287,11 @@ at the owning skill rather than re-defining the topic.
 To find candidates, run `node tools/bin/suggest-rules.ts --since 30d`: it
 clusters review comments and drift changes, asks your agent per cluster and
 checks the evidence. A proposal is a starting point for step 1, not a rule;
-see [`docs/maintenance.md`](docs/maintenance.md#suggesting-rule-changes).
+see [`docs/maintaining/suggesting-rules.md`](docs/maintaining/suggesting-rules.md#suggesting-rule-changes).
 `node tools/bin/suggest-rules.ts draft <id> [--no-pr]` has your agent walk
 these steps for one proposal in a worktree, runs the free checks and the
 A/B, and opens a draft PR; see
-[Drafting a proposal](docs/maintenance.md#drafting-a-proposal).
+[Drafting a proposal](docs/maintaining/suggesting-rules.md#drafting-a-proposal).
 
 ## Adding a skill
 
@@ -302,7 +308,7 @@ A/B, and opens a draft PR; see
    use-case surface skill.
 6. When a choice is personal (paths, names, ask vs auto), make it a
    preference instead of a fixed rule: ship `preferences.example.md` and
-   follow [`docs/skill-preferences.md`](docs/skill-preferences.md). Shared
+   follow [`docs/using/skill-preferences.md`](docs/using/skill-preferences.md). Shared
    files never hold anyone's personal paths, and a preference never
    overrides a safety rule.
 
@@ -332,7 +338,7 @@ node tools/bin/render-router-index.ts  # the router index ships the routes too
 When a change alters what a case in `evals/routing/` should select, update
 its `expected.json`; add a case for a new kind of change. To see what a
 route change does on real PRs, replay it on the review signals with
-`node tools/bin/replay-routes.ts` (see [`docs/maintenance.md`](docs/maintenance.md#replaying-the-router));
+`node tools/bin/replay-routes.ts` (see [`docs/maintaining/drift-and-reviews.md`](docs/maintaining/drift-and-reviews.md#replaying-the-router));
 `tools/test/route-replay.test.ts` holds the recorded corpus in
 `evals/routing-replay/` to a recall floor and a noise ceiling. `expected.json`
 lists only diff-selected references, never `always` or `on_demand` ones.
@@ -354,7 +360,7 @@ New tooling is TypeScript in [`tools/`](tools/): Node 26 runs the `.ts` files
 directly (type stripping, so only erasable syntax: no `enum`, no parameter
 properties, no namespaces). `npm run typecheck` runs `tsc` with `strict`;
 `npm test` runs `node --test`. Coverage and targeted Stryker checks keep that runner; see
-[`docs/testing-quality.md`](docs/testing-quality.md) for scope and commands. Keep runtime dependencies at zero where you
+[`docs/contributing/testing-quality.md`](docs/contributing/testing-quality.md) for scope and commands. Keep runtime dependencies at zero where you
 can, so `node tools/bin/<tool>.ts` works without `npm ci`. The eval runner
 and the task graders live here; what is left in shell are thin wrappers
 that keep old entry points working. The AST graders in `evals/tools/ast/`
@@ -404,12 +410,15 @@ Default agents: `claude codex cursor`. Cursor uses `agent login` locally; admin
 
 ## Related docs
 
+Every page is listed in [`docs/README.md`](docs/README.md). The ones agents
+need most:
+
 | Doc | Purpose |
 | --- | ------- |
-| [`docs/core-pr-17657-alignment.md`](docs/core-pr-17657-alignment.md) | Rule checklist mined from core trunk skills (seed PR #17657; manual passes up to 2026-10-19, weekly `trunk-drift` issues since) |
+| [`docs/maintaining/core-pr-17657-alignment.md`](docs/maintaining/core-pr-17657-alignment.md) | Rule checklist mined from core trunk skills (seed PR #17657; manual passes up to 2026-10-19, weekly `trunk-drift` issues since) |
 | [`docs/plans/`](docs/plans/README.md) | Active plans, sub-agent handoffs, and completed roadmaps under `docs/plans/done/` |
-| [`docs/skill-resolution.md`](docs/skill-resolution.md) | Trunk overlay vs full install; defer to core `.agents/skills/` when present |
-| [`docs/local-validation.md`](docs/local-validation.md) | Dogfood skills on a real Shopware instance |
-| [`docs/tooling-stack.md`](docs/tooling-stack.md) | ai-skills-shopware vs shopware-ai-coding-tools MCP |
-| [`docs/smoke-evals.md`](docs/smoke-evals.md) | Local A/B smoke harness |
+| [`docs/using/skill-resolution.md`](docs/using/skill-resolution.md) | Trunk overlay vs full install; defer to core `.agents/skills/` when present |
+| [`docs/using/local-validation.md`](docs/using/local-validation.md) | Dogfood skills on a real Shopware instance |
+| [`docs/using/tooling-stack.md`](docs/using/tooling-stack.md) | ai-skills-shopware vs shopware-ai-coding-tools MCP |
+| [`docs/contributing/smoke-evals.md`](docs/contributing/smoke-evals.md) | Local A/B smoke harness |
 | [`evals/harbor/README.md`](evals/harbor/README.md) | Containerized parallel eval runs |

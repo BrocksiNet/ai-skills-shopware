@@ -53,9 +53,9 @@ Install **`--skill modern-web-guidance` only** (exclude `chrome-extensions`) as 
 ### 3. Update install docs, use-cases, registry, and drift sources
 
 - **`README.md`**: Document `modern-web-guidance` as a default frontend companion install, and fix the stale *"five upstream skill sets"* count in `## Staying current` to match `rules/sources.json`.
-- **`docs/installation.md`**: Add `npx skills add GoogleChrome/modern-web-guidance --skill modern-web-guidance` under companion installs alongside `shopware/shopware-cli`.
+- **`docs/using/installation.md`**: Add `npx skills add GoogleChrome/modern-web-guidance --skill modern-web-guidance` under companion installs alongside `shopware/shopware-cli`.
 - **`use-cases/storefront-development.md`**: Promote Modern Web Guidance from "Optional CLI / do not install" to a default companion skill install right next to the frontend one-liner (keep `DISABLE_TELEMETRY=1` note).
-- **`docs/tooling-stack.md`** and **`docs/skill-resolution.md`**: Update references that currently say *"Do not install their `SKILL.md` next to ours"*.
+- **`docs/using/tooling-stack.md`** and **`docs/using/skill-resolution.md`**: Update references that currently say *"Do not install their `SKILL.md` next to ours"*.
 - **`REGISTRY.md`**: Update the coverage matrix row (`sw-research-and-escalation`) and the Sources table (`Apache-2.0` code / `CC-BY-4.0` guides; install as companion, do not vendor).
 - **`rules/sources.json`** (and **`docs/.mining-state.json`** if required by schema/validator): Add a `modern-web-guidance` source tracking `GoogleChrome/modern-web-guidance` (`branch: "main"`, `extractor: "markdown"`, `paths: ["skills/modern-web-guidance/SKILL.md"]`) mapped to `["sw-research-and-escalation", "sw-storefront", "sw-admin-js"]`. Verify against `rules/sources.schema.json` and `tools/bin/validate-skills.ts`.
 

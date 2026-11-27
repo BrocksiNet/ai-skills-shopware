@@ -6,7 +6,7 @@
 // under 500 lines, both activation eval files exist, and every
 // `](references/x.md)` link resolves. A skill with preferences.example.md
 // links it and names AI_SKILLS_SHOPWARE_PREFS_DIR; no skill ships a
-// personal preferences.md (docs/skill-preferences.md). Across skills: no trigger phrase is
+// personal preferences.md (docs/using/skill-preferences.md). Across skills: no trigger phrase is
 // claimed twice and no REGISTRY.md topic has two owners. Then the rule ID
 // and reference route checks, then the router index and the help skill.
 import { existsSync, readdirSync, readFileSync, statSync } from 'node:fs';
@@ -43,7 +43,7 @@ interface Skill {
   phrases: string[];
 }
 
-/** docs/skill-preferences.md: the example ships with the skill and SKILL.md
+/** docs/using/skill-preferences.md: the example ships with the skill and SKILL.md
  *  links it and names the personal path; the answers file never ships. */
 function preferenceErrors(dir: string, skill: string, text: string): string[] {
   const hasExample = existsSync(join(dir, PREFS_EXAMPLE));

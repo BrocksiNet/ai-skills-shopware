@@ -3,7 +3,7 @@
 - **Base branch:** `origin/main` (at or after `a21660c0`, post-v0.19.0)
 - **Suggested branch:** `feat/eval-baselines-and-ref-reads`
 - **Timing:** Parts 1 and 2 can start immediately in parallel with Handoffs 01–03. **Part 4 (full baseline run)** should run after Handoffs 01 and 02 merge so it uses faster execution, accurate `skills` files, and the slimmer descriptions/routes.
-- **Prerequisite:** Read [`AGENTS.md`](../../../AGENTS.md), [`docs/results.md`](../../results.md), and [`docs/testing-quality.md`](../../testing-quality.md) before editing.
+- **Prerequisite:** Read [`AGENTS.md`](../../../AGENTS.md), [`docs/results/README.md`](../../results/README.md), and [`docs/contributing/testing-quality.md`](../../contributing/testing-quality.md) before editing.
 
 ## Goal
 
@@ -21,7 +21,7 @@ Make progressive-disclosure retrieval observable in the A/B gate, resolve the kn
   5. `review-route-input-ignore` (`1/3` on vs `3/3` off)
 - **11 tasks where the skill NEVER loaded (`loaded_on = 0`):**
   `app-manifest-least-privilege`, `clock-interface-injection`, `code-coverage-ignore-passthrough`, `named-arguments-for-literals`, `no-contradiction-full-profile`, `pr-no-ai-trailers`, `review-codecoverage-ignore-see-catch`, `review-codecoverage-ignore-see-ignore`, `review-deprecation-discovery-neutral-catch`, `unit-test-exception-object`, `unit-test-passes`.
-- The Nov 4 transfer study in `docs/results.md` showed agents can invoke `SKILL.md` (`loaded_on = 1`) and still **skip reading the targeted `references/*.md`** — currently invisible in `ab.jsonl` and `eval-gate.ts`.
+- The Nov 4 transfer study in `docs/results/README.md` showed agents can invoke `SKILL.md` (`loaded_on = 1`) and still **skip reading the targeted `references/*.md`** — currently invisible in `ab.jsonl` and `eval-gate.ts`.
 
 ## Scope of Changes
 
@@ -44,7 +44,7 @@ Make progressive-disclosure retrieval observable in the A/B gate, resolve the kn
 ### 3. Audit ceiling (`held` / `no_difference`) tasks
 
 - Produce a short triage report (in the PR description or a follow-up issue) for the `98 held` + `62 no_difference` tasks:
-  - Flag rules with `held` across runs that have **no** `keep_reason` as candidates for retirement or sharper blind fixtures (per `docs/maintenance.md` and `rules/catalog.schema.json`).
+  - Flag rules with `held` across runs that have **no** `keep_reason` as candidates for retirement or sharper blind fixtures (per `docs/maintaining/README.md` and `rules/catalog.schema.json`).
   - Evaluate whether adding a fast **discriminating subset** flag/file (e.g. `EVAL_SUITE=core`) would let PRs run a ~30–40 task high-signal suite in minutes while keeping the full 244-task run on the monthly schedule.
 
 ### 4. Cut a fresh baseline (after Handoffs 01 & 02 merge)

@@ -11,7 +11,7 @@ they do not (6.5/6.6 branches, plugins, client projects).
 | **This repo** | `ai-skills-shopware/skills/` via `npx skills add` or `sw-dev link` | Any project, any version |
 
 We **mine** core for maintainer-backed rules; we **do not copy** core skill files
-into this repo. See [`core-pr-17657-alignment.md`](core-pr-17657-alignment.md).
+into this repo. See [`core-pr-17657-alignment.md`](../maintaining/core-pr-17657-alignment.md).
 
 ## Resolution rules
 
@@ -48,7 +48,7 @@ npx skills add BrocksiNet/ai-skills-shopware \
 ```
 
 Add `sw-app-development`, `sw-core-development`, workflow skills per
-[`use-cases/`](../use-cases/).
+[`use-cases/`](../../use-cases/).
 
 ### `core-overlay` — shopware/shopware trunk
 
@@ -131,6 +131,6 @@ For trunk instances, configure `instances.json` to the `core-overlay` preset.
 
 When core trunk skills change:
 
-1. Diff `shopware/shopware/.agents/skills/` against [`core-pr-17657-alignment.md`](core-pr-17657-alignment.md).
+1. Diff `shopware/shopware/.agents/skills/` against [`core-pr-17657-alignment.md`](../maintaining/core-pr-17657-alignment.md).
 2. Update defer pointers in our skills — do not import core files.
 3. Re-run `bash scripts/validate-skills.sh` and `bash evals/test-graders.sh`.

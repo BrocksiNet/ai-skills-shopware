@@ -3,7 +3,7 @@
 Consolidate duplicate rules before deleting skills. This pass keeps all **20
 skills**, reduces active rule IDs from **226 to 222**, updates two existing
 rules, and publishes no new rule. The machine-readable
-[evidence record](evidence.md#maintenance-review) contains the PR inventory,
+[evidence record](../evidence.md#maintenance-review) contains the PR inventory,
 review links, source commits and per-skill decisions.
 
 ## What was reviewed
@@ -86,7 +86,7 @@ harm or equivalence. The normalizer control also hit a ceiling.
 
 The candidate therefore stays unpublished; its ID is reserved in the catalog.
 All original grades remain in the
-[screen record](evidence.md#skill-experiments), alongside
+[screen record](../evidence.md#skill-experiments), alongside
 the evaluated inputs, protocol, provenance hashes and trace observations.
 Hashes were verified after every session had finished. The CLI reported
 $0.04984213 in usage; that is not an invoice. Skills loaded in all six on-arm
@@ -115,7 +115,7 @@ Do not turn each new check into another reviewer instruction. Existing
 `ADM-007` already records the no-new-mixins check. Core-only enforcement is
 not grounds to delete guidance needed by extensions.
 
-The subsequent [sensitive-mail development screen](results.md#sensitive-mail-development-screen--november-4-2026)
+The subsequent [sensitive-mail development screen](experiments.md#sensitive-mail-development-screen--november-4-2026)
 found no baseline defect miss or clean-case false positive in eight reviews.
 It stopped before candidate runs and left `SEC-002` unchanged. These cases
 are consumed; they do not justify adding a rule or removing `sw-security`.

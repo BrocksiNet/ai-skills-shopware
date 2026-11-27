@@ -4,7 +4,7 @@
 - **Suggested branch (for Part B only):** `chore/drift-199-housekeeping`
 - **Source issue:** [#199](https://github.com/BrocksiNet/ai-skills-shopware/issues/199) (`Drift: week of 2026-11-23`)
 - **Timing:** Parts A and B can run immediately; **Part C (`/mined`) runs last**, after Handoffs 02 and 03 are merged or explicitly ticketed.
-- **Prerequisite:** Read [`AGENTS.md`](../../../AGENTS.md) and [`docs/maintenance.md`](../../maintenance.md) before acting.
+- **Prerequisite:** Read [`AGENTS.md`](../../../AGENTS.md) and [`docs/maintaining/README.md`](../../maintaining/README.md) before acting.
 
 ## Goal
 

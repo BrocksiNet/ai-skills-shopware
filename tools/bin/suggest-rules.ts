@@ -1,6 +1,6 @@
 // Suggest rule changes from review signals and the drift issue (plan WP12
 // step 4), with the agent you are logged in to. Writes the git-ignored
-// suggestions/<date>.md and .json. docs/maintenance.md#suggesting-rule-changes
+// suggestions/<date>.md and .json. docs/maintaining/suggesting-rules.md#suggesting-rule-changes
 // explains the options and how to judge a proposal.
 //
 //   node tools/bin/suggest-rules.ts --since 2026-09-01            # all sources
