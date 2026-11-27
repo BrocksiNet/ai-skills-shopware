@@ -397,6 +397,17 @@ jobs:
             echo "::error::No A/B results to record for ${PROFILE_ID}; no baseline PR."
             exit 1
           fi
+          # A run the provider broke (quota used up, outage) is mostly agent
+          # errors; recording it would make it the next diff's reference.
+          # Exit 1 is that verdict; anything else is a broken check, so stop.
+          rc=0
+          reason="$(node tools/bin/eval-gate.ts --provider "$RUNNER_TEMP/results/ab.jsonl")" || rc=$?
+          if [ "$rc" -eq 1 ]; then
+            echo "::error::Not recording a ${PROFILE_ID} baseline: ${reason}. Check the provider, then rerun."
+            exit 1
+          elif [ "$rc" -ne 0 ]; then
+            exit "$rc"
+          fi
           # Before find: the folder does not exist until the first baseline.
           mkdir -p evals/baselines
           previous="$(find evals/baselines -name "*-${PROFILE_ID}.jsonl" | sort | tail -n1)"
