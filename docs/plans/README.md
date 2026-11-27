@@ -8,20 +8,19 @@ and finished handoffs move to [`done/`](done/) once their PRs merge.
 | Plan | Status | What remains |
 | ---- | ------ | ------------ |
 | [`2026-10-slim-skill-context.md`](2026-10-slim-skill-context.md) | Proposed (Phases 1–4 shipped; Phase 2–4 in PR [#212](https://github.com/BrocksiNet/ai-skills-shopware/pull/212)) | Phase 5 (smaller bodies) deferred; measure session activation with the routing hook before closing |
-| [`2026-11-25-handoff-04-eval-baselines-and-reference-reads.md`](2026-11-25-handoff-04-eval-baselines-and-reference-reads.md) | Part 1 shipped in PR [#213](https://github.com/BrocksiNet/ai-skills-shopware/pull/213) | Part 2 triage of 5 `worse` + 11 zero-load tasks, Part 3 ceiling audit, Part 4 fresh multi-model baseline |
 
 ## Wave 2 — 2026-11-25 quality, speed & context handoffs (done)
 
 All six handoffs ran in parallel on separate branches against `main`
-(`a21660c0`, post-v0.19.0). Handoff 04 Parts 2–4 continue as Wave 3 above; the
-rest moved to [`done/`](done/).
+(`a21660c0`, post-v0.19.0). Handoff 04 Parts 2–4 followed as Wave 3. All moved
+to [`done/`](done/).
 
 | Handoff | Shipped in |
 | ------- | ---------- |
 | [01 — CI & test speed](done/2026-11-25-handoff-01-ci-and-test-speed.md) | PR [#211](https://github.com/BrocksiNet/ai-skills-shopware/pull/211) |
 | [02 — Slim context & routing](done/2026-11-25-handoff-02-slim-context-and-routing.md) | PR [#212](https://github.com/BrocksiNet/ai-skills-shopware/pull/212) |
 | [03 — App rules & eval hygiene](done/2026-11-25-handoff-03-app-rules-and-eval-hygiene.md) | PR [#218](https://github.com/BrocksiNet/ai-skills-shopware/pull/218) |
-| [04 — Eval baselines & reference reads](2026-11-25-handoff-04-eval-baselines-and-reference-reads.md) | Part 1 in PR [#213](https://github.com/BrocksiNet/ai-skills-shopware/pull/213); Parts 2–4 active |
+| [04 — Eval baselines & reference reads](done/2026-11-25-handoff-04-eval-baselines-and-reference-reads.md) | Part 1 in PR [#213](https://github.com/BrocksiNet/ai-skills-shopware/pull/213); Parts 2–3 in PR [#219](https://github.com/BrocksiNet/ai-skills-shopware/pull/219); Part 4 baseline [run](https://github.com/BrocksiNet/ai-skills-shopware/actions/runs/45879446384); follow-ups in issue [#220](https://github.com/BrocksiNet/ai-skills-shopware/issues/220) |
 | [05 — `sw-mcp-development` (WP F)](done/2026-11-25-handoff-05-mcp-skill-wp-f.md) | PRs [#214](https://github.com/BrocksiNet/ai-skills-shopware/pull/214), [#216](https://github.com/BrocksiNet/ai-skills-shopware/pull/216) |
 | [06 — Admin API index & override rules (WP C/D/E)](done/2026-11-25-handoff-06-admin-api-index-and-rules-wp-cde.md) | PR [#217](https://github.com/BrocksiNet/ai-skills-shopware/pull/217) |
 
