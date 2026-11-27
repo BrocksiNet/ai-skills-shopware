@@ -77,6 +77,33 @@ npx skills update                 # update installed skills to the latest releas
 `check-update.sh` needs Node 26 and uses `GH_TOKEN` or `GITHUB_TOKEN` when
 set.
 
+## Claude Code plugin
+
+In Claude Code you can also install every skill at once as the
+`shopware-skills` plugin. This repo is its own plugin marketplace:
+
+```bash
+claude plugin install shopware-skills --marketplace BrocksiNet/ai-skills-shopware --scope project
+```
+
+Inside a session, `/plugin install shopware-skills --marketplace
+BrocksiNet/ai-skills-shopware` does the same. Use `--scope project` to share
+the plugin with your team through `.claude/settings.json`, or leave it out to
+install it for yourself only.
+
+The plugin follows releases, not `main`: it moves to a new version only when
+a release bumps it. To get the latest one:
+
+```bash
+claude plugin marketplace update ai-skills-shopware
+claude plugin update shopware-skills@ai-skills-shopware
+```
+
+Plugin skills carry the plugin name, for example
+`/shopware-skills:sw-help`. The plugin always installs all skills; to pick
+single skills or to use another agent, install with `npx skills add` as
+above.
+
 ## The `sw-` rename
 
 Since v0.14.0, every skill starts with `sw-`: `php-foundation` became

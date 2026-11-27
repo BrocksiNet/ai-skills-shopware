@@ -62,6 +62,13 @@ npx skills add BrocksiNet/ai-skills-shopware \
   -a claude-code -a cursor -a codex
 ```
 
+In Claude Code you can install all skills as one plugin instead (see
+[Claude Code plugin](docs/installation.md#claude-code-plugin)):
+
+```bash
+claude plugin install shopware-skills --marketplace BrocksiNet/ai-skills-shopware
+```
+
 Then, in your agent:
 
 - `/sw-help` shows what every skill is for, with example prompts.
