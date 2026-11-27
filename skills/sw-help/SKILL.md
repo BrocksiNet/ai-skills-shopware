@@ -67,6 +67,7 @@ shows which skills are installed here.
 | Run tests, linters and the dev environment in the right place (DDEV, Docker, Vagrant, native, Podman) | `sw-local-dev` | "Run phpunit for this test in my DDEV project" |
 | Research instead of guessing, and escalate when stuck | `sw-research-and-escalation` | "Does this service exist in 6.6?" |
 | Write short, plain answers and support replies | `sw-assistant-style` | "Draft a reply to this customer ticket" |
+| Create, find and clean up git worktrees in one place, with your own root and layout | `sw-worktrees` | "Check out PR 13742 in a worktree for review" |
 
 ## About the library
 

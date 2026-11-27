@@ -28,6 +28,7 @@ Read the reference that matches the task or the files it changes:
 
 1. **Fetch context** — PR comments, review threads, and changed files (GitHub MCP
    or `gh pr view` / `gh api`). Do not guess what reviewers said.
+   Need the branch locally? Place and name the worktree as `sw-worktrees` says.
 2. **Classify each thread** — valid fix, clarification reply, or invalid /
    intentional (push back with reasoning).
 3. **State confidence** — give an explicit percentage (e.g. "85% fix") when

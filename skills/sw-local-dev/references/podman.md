@@ -72,8 +72,8 @@ unless debugging — linked projects use `COMPOSE_FILE` in `.env`.
 
 ## Git worktrees
 
-A git worktree (for example `~/.local/state/sf/worktrees/<task>` where `.git` is
-a file) is **not** synced into the lane's Mutagen volume. Running
+A git worktree (`.git` is a file; where it goes and its name: `sw-worktrees`)
+is **not** synced into the lane's Mutagen volume. Running
 `podman compose exec web …` from a worktree hits the main checkout's files, not
 the worktree, and running host `php` / `composer` / `phpunit` uses the wrong
 host PHP version.
@@ -126,7 +126,25 @@ sw-dev lane create sw6716 --ref v6.7.16.0        # clone, register, link, instal
 sw-dev lane update sw67 --ref v6.7.16.0          # new tag, migrations, rebuild
 sw-dev lane remove sw65                          # dry run
 sw-dev lane remove sw65 --yes                    # containers, volumes, sessions, registry
+sw-dev lane start varnish                        # compose up, resume or create syncs, wait for the first sync
+sw-dev lane stop varnish                         # pause syncs, stop containers (volumes stay)
+sw-dev lane refresh varnish                      # latest code, fresh database, demo store
 ```
+
+`start`, `stop` and `refresh` take the lane or the instance id (`varnish`
+or `swvarnish`). `lane refresh <lane> [--template <name>|--no-demo]
+[--no-fetch] [--no-build] [--force]` pulls the latest code of the lane's
+branch (it adds `--no-fetch` by itself when the branch is not on origin),
+installs a fresh database through `lane update --install`, then imports the
+published catalog-generator demo store (default `music`) with `test-e2e.sh
+--sw-dev=<lane> --template=<name>`.
+
+When the user asks to test on or reuse a lane that is not running, run
+`sw-dev lane refresh <lane>` first, unless they want its current data kept.
+When you are done and the user wants the memory back, `sw-dev lane stop
+<lane>`. A fresh install drops the MCP extensions on `trunk`: run `sw-dev mcp
+bootstrap trunk` afterwards (see [composer.json stays
+clean](#composerjson-stays-clean)).
 
 `lane create` picks free ports, writes `instances/<id>.yaml`, links the
 checkout, starts the stack and the Mutagen session, then installs and builds
@@ -219,6 +237,10 @@ A bare `shopware/shopware` clone ships **no built assets and no `install.lock`**
 2. Mutagen: sessions should be watching (`mutagen sync list`). After reboot:
    `sw-dev startup` (or `~/shopware-dev/bin/sw-dev startup`). The old
    `~/scripts/dev-startup.sh` path is only a compatibility wrapper.
+   `sw-dev startup` starts, syncs and health-checks only the instances with
+   `"autostart": true` in `instances.json`. The others stay stopped with their
+   Mutagen sessions paused: `sw-dev lane start <lane>` for one, `sw-dev
+   startup --all` for every instance.
 3. After changing `~/shopware-dev` overrides: `sw-dev link-all`, then
    `podman compose up -d --force-recreate web` if volumes/ports changed.
 
@@ -227,7 +249,8 @@ A bare `shopware/shopware` clone ships **no built assets and no `install.lock`**
 `~/shopware-dev/bin/sw-dev` is the source of truth for local orchestration:
 
 ```bash
-sw-dev startup --quiet       # GPG, phpactor, Podman, proxy, Mutagen
+sw-dev startup --quiet       # GPG, phpactor, Podman, proxy, Mutagen (autostart instances only)
+sw-dev startup --all         # start, sync and check every instance
 sw-dev sync all              # all lane and non-agentic Mutagen sessions
 sw-dev sync status           # lane Mutagen/container file status
 sw-dev proxy restart         # reload the proxy after the lane list changed

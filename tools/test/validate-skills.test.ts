@@ -132,6 +132,26 @@ describe('validateSkills', () => {
     ]);
     assert.match(r.out, /\nvalidate-skills: 9 error\(s\)\n$/u);
   });
+  test('preferences: example linked and path named, no personal file shipped', () => {
+    const ok = 'Read `$AI_SKILLS_SHOPWARE_PREFS_DIR/x/preferences.md`; see [ex](preferences.example.md).\n';
+    const root = repo({
+      ...skill('alpha', 'a', ok),
+      'skills/alpha/preferences.example.md': '# q\n',
+      ...skill('beta', 'b', 'See [ex](preferences.example.md).\n'),
+      ...skill('gamma', 'c', 'No preferences mentioned.\n'),
+      'skills/gamma/preferences.example.md': '# q\n',
+      'skills/gamma/preferences.md': 'mine\n',
+    });
+    const errors = validate(root)
+      .out.split('\n')
+      .filter((l) => l.startsWith('  ERROR: '));
+    assert.deepEqual(errors, [
+      '  ERROR: beta: dead internal link -> preferences.example.md',
+      '  ERROR: gamma: preferences.md holds personal answers; ship preferences.example.md instead',
+      '  ERROR: gamma: SKILL.md does not link preferences.example.md',
+      '  ERROR: gamma: SKILL.md does not name AI_SKILLS_SHOPWARE_PREFS_DIR',
+    ]);
+  });
   test('a long description, a missing registry and a broken catalog', () => {
     const root = repo({ ...skill('alpha', 'x'.repeat(1024)), 'rules/catalog.json': '{' });
     rmSync(join(root, 'REGISTRY.md'));

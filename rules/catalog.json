@@ -18,7 +18,8 @@
     "XR": "sw-extension-review",
     "STY": "sw-assistant-style",
     "DTO": "sw-openapi-dto",
-    "MCP": "sw-mcp-development"
+    "MCP": "sw-mcp-development",
+    "WT": "sw-worktrees"
   },
   "rules": [
     {
@@ -5939,6 +5940,54 @@
         "SEC-006",
         "SEC-001"
       ]
+    },
+    {
+      "id": "WT-001",
+      "skill": "sw-worktrees",
+      "file": "skills/sw-worktrees/SKILL.md",
+      "status": "active",
+      "since": "2026-11-27",
+      "title": "Worktrees go under one root as <project>/<kind>-<number>[-<slug>], never in the main checkout or /tmp",
+      "eval": "worktree-review-naming",
+      "core_guide_ids": [],
+      "audience": [
+        "core",
+        "plugin",
+        "app"
+      ],
+      "defer_on_trunk": false
+    },
+    {
+      "id": "WT-002",
+      "skill": "sw-worktrees",
+      "file": "skills/sw-worktrees/SKILL.md",
+      "status": "active",
+      "since": "2026-11-27",
+      "title": "Check status, unpushed commits and PR state before git worktree remove; ask instead of removing work",
+      "eval": "worktree-cleanup-keeps-unpushed",
+      "core_guide_ids": [],
+      "audience": [
+        "core",
+        "plugin",
+        "app"
+      ],
+      "defer_on_trunk": false
+    },
+    {
+      "id": "WT-003",
+      "skill": "sw-worktrees",
+      "file": "skills/sw-worktrees/SKILL.md",
+      "status": "active",
+      "since": "2026-11-27",
+      "title": "Read the personal preferences file; only documented keys apply and never loosen safety rules",
+      "eval": "worktree-respects-preferences",
+      "core_guide_ids": [],
+      "audience": [
+        "core",
+        "plugin",
+        "app"
+      ],
+      "defer_on_trunk": false
     }
   ]
 }

@@ -25,6 +25,7 @@ The terms the rest of this guide uses. Details follow in the sections linked.
 | Near-miss task | `review-<topic>-near-miss`: a real problem next to a rule that does not cover it. The finding must report it without citing that decoy rule. Guards against the most common review error, a plausible but wrong rule ID. |
 | Golden fixtures | `fixtures/pass/` and `fixtures/fail/` of a task: known answers the grader must pass and fail on every push, so a grader cannot silently go soft. |
 | Enforced by CI | A generated `SKILL.md` section listing rules an existing check (PHPStan, ECS, ESLint, Danger, a core test) already catches, so the agent does not repeat them. |
+| Preferences | A skill's personal settings: the skill ships `preferences.example.md` (questions and defaults), the user's answers live in `${AI_SKILLS_SHOPWARE_PREFS_DIR:-~/.config/ai-skills-shopware}/<skill>/preferences.md`, never in the repo. See [`docs/skill-preferences.md`](docs/skill-preferences.md). |
 | Drift mining | The weekly `trunk-drift` issue about changes on `shopware/shopware` trunk and the upstream skill sets in `rules/sources.json`, grouped by the skill and rule each change touches; `docs/.mining-state.json` marks how far each source has been read. See [`docs/maintenance.md`](docs/maintenance.md#reading-the-drift-issue). |
 
 ## Repository layout
@@ -36,6 +37,7 @@ skills/<skill-name>/
   routes.json                 # which reference a change needs (globs + line regexes; may borrow ../<skill>/references)
   evals/should-trigger.md       # activation eval prompts (must trigger)
   evals/should-not-trigger.md   # activation eval prompts (must stay quiet)
+  preferences.example.md      # optional: personal-preference questions + defaults (docs/skill-preferences.md)
 
 evals/tasks/<task-name>/
   instruction.md              # prompt given to the agent
@@ -297,6 +299,11 @@ A/B, and opens a draft PR; see
 4. Register the skill and its topics in [`REGISTRY.md`](REGISTRY.md).
 5. Add install lines to README / relevant `use-cases/*.md` if it is a new
    use-case surface skill.
+6. When a choice is personal (paths, names, ask vs auto), make it a
+   preference instead of a fixed rule: ship `preferences.example.md` and
+   follow [`docs/skill-preferences.md`](docs/skill-preferences.md). Shared
+   files never hold anyone's personal paths, and a preference never
+   overrides a safety rule.
 
 ## Adding or changing a reference
 
