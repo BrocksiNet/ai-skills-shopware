@@ -10,64 +10,60 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [0.20.0] - 2026-11-27
 
+This release adds a skill for git worktrees, lets skills remember how you
+like to work, and brings a first, experimental skill for building MCP
+tools. Skill descriptions are also 41% shorter, so installed skills take
+less of your agent's context.
+
 ### Added
 
-- `sw-worktrees`: one place for git worktrees. `WT-001` puts them under one
-  root as `<project>/<kind>-<number>[-<slug>]` (reviews from
-  `pull/<n>/head`, work from the default branch), `WT-002` cleans up only
-  merged, clean and pushed worktrees with `git worktree remove` and prune,
-  and `WT-003` reads the user's preferences first. Three eval tasks cover
-  review naming, cleanup that keeps unpushed work, and preferences.
-- Personal skill preferences ([docs/skill-preferences.md](docs/skill-preferences.md)):
-  a skill ships `preferences.example.md`, the answers live in
-  `${AI_SKILLS_SHOPWARE_PREFS_DIR:-~/.config/ai-skills-shopware}/<skill>/preferences.md`
-  outside the repo. `validate-skills` checks the example is linked, the path
-  is named, and no `preferences.md` ships.
-- `sw-local-dev` (Podman): only autostart instances start (`sw-dev startup
-  --all` for every one), `sw-dev lane start|stop|refresh`, refresh a stopped
-  lane before testing on it, and `sw-dev mcp bootstrap` after a fresh install.
-- `sw-mcp-development` (experimental): Shopware MCP tools in plugins and
-  apps. `MCP-001` to `MCP-008` cover structured results, the reserved
-  discovery group and `shopware-` prefix, tool registration, dry-run write
-  tools, annotations and parameter schemas, entity criteria ACL and
-  response bounds, serverless app script tools, and private cache hints for
-  resources. The API index lists MCP extension points and DI tags.
-- `sw-admin-js`: `ADM-046` to `ADM-050` for Administration overrides: block
-  boundaries before overriding without `{% parent %}`, only the variables a
-  block exposes, no `$parent` or core `src` imports, `@bc-change` for
-  elements that stay on trunk, and every overridden method must exist on
-  the target. Each has a review pair.
-- `sw-app-development` tags `APP-001` to `APP-006` (manifest identity,
-  permissions and setup, no plugin PHP in apps, Admin SDK UI, app script
-  placement, registration handshake), each with a review pair.
-- `sw-skill-router`: `route.mjs --brief` and `--hook` (a Claude Code hook
-  that does not repeat a route already shown in the session). The router
-  index carries active rule IDs and titles.
-- API index: BCChange facts tell callers from extenders, plus Storefront
-  feature flag states and older Admin SCSS and snippet surfaces.
-- Evals: A/B runs and the gate record which references the agent read;
-  five near-miss review tasks; `EVAL_CONCURRENCY` for local evals.
+- **Git worktrees in one place.** The new `sw-worktrees` skill puts every
+  worktree under one folder with a predictable name per project and pull
+  request, and removes a worktree only when it is merged, clean and pushed.
+- **Personal preferences.** A skill can now ask how you like to work (for
+  example, where your worktrees live) and keep your answers in
+  `~/.config/ai-skills-shopware/`, outside the repository. See
+  [skill preferences](docs/skill-preferences.md).
+- **Building MCP tools (experimental).** The new `sw-mcp-development` skill
+  helps when a plugin or app adds tools to Shopware's MCP server: naming and
+  registering them, safe write tools with a dry run, permission checks, and
+  small, structured responses.
+- **Safer Administration overrides.** `sw-admin-js` now warns before you
+  replace a core block without `{% parent %}`, use variables the block does
+  not provide, reach into `$parent` or core source files, or override a
+  method the component does not have.
+- **App rules.** `sw-app-development` now has numbered rules for the
+  manifest, permissions, Admin SDK UI, app scripts and the registration
+  handshake, and the extension review checks them.
+- **Podman dev setup.** `sw-local-dev` knows the new `sw-dev` commands:
+  `startup` starts only autostart instances (`--all` for every one),
+  `lane start|stop|refresh` manages a lane, and `mcp bootstrap` sets up MCP
+  after a fresh install.
+- **Quieter router.** `sw-skill-router` can run as a Claude Code hook and
+  stays silent when it has nothing new to say; `--brief` prints a short list.
 
 ### Changed
 
-- `sw-pr-review` and `sw-local-dev` point to `sw-worktrees` for where a
-  worktree goes and how it is named.
-- Skill descriptions are 41% shorter (11,863 to 7,039 characters) and keep
-  their load-before-editing triggers. Large references in `sw-testing`,
-  `sw-php-foundation` and `sw-plugin-development` are split so a route
-  loads less.
-- `sw-local-dev` documents `sw-dev worktree exec` for Podman worktrees.
-- Golden graders run in-process and in parallel; GitHub Actions, agent CLIs
-  and npm tooling updated.
+- Shorter skill descriptions (11,863 to 7,039 characters), and the largest
+  references in `sw-testing`, `sw-php-foundation` and
+  `sw-plugin-development` are split, so the agent loads only the part it
+  needs.
+- `sw-pr-review` and `sw-local-dev` follow `sw-worktrees` for where a
+  worktree goes and what it is called.
+- The API index tells whether a breaking change affects code that calls an
+  API or code that extends it, and now covers Storefront feature flags and
+  older Administration SCSS and snippets.
 
-### Fixed
+### For contributors
 
-- `evals.yml` no longer opens a baseline PR from a run the provider broke
-  (for example a Copilot quota that turned 284 of 285 tasks into agent
-  errors).
-- Review fixtures: no unintended second defect in the MCP fixtures,
-  repaired hunk headers in 25 patches (with a test), tighter graders and
-  `fixtures/fail` sneaks for 15 behavioral tasks.
+- Evals record which references the agent read, five new near-miss review
+  tasks guard against citing the wrong rule, and `EVAL_CONCURRENCY` runs
+  local evals in parallel.
+- The model eval workflow no longer opens a baseline PR from a run the
+  provider broke (a Copilot quota had turned 284 of 285 tasks into errors).
+- Tighter graders and fixtures for 15 tasks, and repaired hunk headers in
+  25 review patches.
+- Golden graders run in-process and in parallel; dependencies updated.
 
 ## [0.19.0] - 2026-11-25
 
